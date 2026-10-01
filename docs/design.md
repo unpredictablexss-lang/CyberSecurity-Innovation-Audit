@@ -1,62 +1,114 @@
 # System Design
 
-## 1. 目标架构
+## 1. 设计定位
 
-系统采用“快速筛选 + 深度分析 + LLM 研判”的组合架构。
+2026 年项目不再定位为通用“规则扫描器 + LLM”，而是面向 OpenHarmony 的自动化漏洞发现与验证平台。
+
+主流程：
 
 ```text
-Repository
-   ↓
-Scanner
-   ↓
-Parser
-   ↓
-Rule Engine
-   ↓
-Program Analyzer
-   ↓
-Candidate Findings
-   ↓
-LLM Reviewer
-   ↓
-Dedup / Severity / Confidence
-   ↓
-Report
+大规模源码
+  ↓
+快速候选发现
+  ↓
+AST / CFG / Data Flow / Taint / Lifecycle
+  ↓
+多证据误报抑制
+  ↓
+PoC / 动态验证
+  ↓
+CWE / CVE / Severity / Dedup
+  ↓
+跨版本影响
+  ↓
+Patch / 修复后重验
+  ↓
+报告与性能统计
 ```
 
-## 2. 核心数据对象
+详细架构见：[`architecture_2026.md`](./architecture_2026.md)。
 
-建议后续统一定义 Finding：
+## 2. 核心原则
+
+- **漏斗式扫描**：全量代码做轻量分析，少量候选进入重分析。
+- **Finding 不等于漏洞**：候选、疑似、已验证、可报告必须分级。
+- **PoC 前移**：动态验证是判真的核心组件，不是比赛最后补的附件。
+- **证据优先**：Rule / AST / CFG / Data Flow / Runtime 都形成可追溯 Evidence。
+- **LLM 辅助而非裁判**：LLM 用于复杂上下文、解释、PoC/Patch 草案和报告，不替代确定性证据。
+- **优雅降级**：完整编译/AST/深度分析失败时，局部失败不能拖垮全局扫描。
+- **增量与缓存**：源码未变化时复用解析和分析结果。
+- **修复闭环**：Patch 后必须重新静态扫描并重跑原 PoC。
+
+## 3. 核心数据对象
+
+### Finding
+
+分析器产生的候选证据：
 
 - id
 - rule_id
 - vulnerability_type
-- cwe
+- candidate_cwe
+- file / function / line_range
+- source / sink / trace
+- guards
+- evidence_ids
+- static_confidence
+- reachability_confidence
+- security_impact
+- validation_status
+
+### VulnerabilityCase
+
+经过聚类、验证后的真实漏洞根因：
+
+- case_id
+- title
+- root_cause
+- cwe / cve
 - severity
+- primary_location
+- related_findings
+- trigger_conditions
+- runtime_evidence
+- poc
+- affected_modules
+- affected_versions
+- patch
+- patch_validation
 - confidence
-- file
-- start_line
-- end_line
-- function
+- report_status
+
+### Evidence
+
+所有关键结论都必须可追溯：
+
+- evidence_id
+- type
 - source
-- sink
-- trace
-- evidence
-- explanation
-- remediation
+- location
+- content
+- confidence
 
-统一数据结构可以避免规则引擎、污点分析和 LLM 输出互不兼容。
+## 4. 当前实现优先级
 
-## 3. 分析策略
+第一版先打通：
 
-第一层采用规则扫描，速度快、结果稳定、易解释；第二层程序分析解决变量传播、跨函数调用和上下文依赖；第三层 LLM 聚焦高风险候选，而不是无差别读取整个大型仓库。
+```text
+Scanner
+ → C/C++ Candidate Rules
+ → AST Context
+ → Finding
+ → Validation Harness
+ → ASan/UBSan Evidence
+ → VulnerabilityCase
+ → Markdown/JSON Report
+```
 
-## 4. 设计原则
+随后再加入 CFG、跨函数污点、历史补丁知识、跨版本和 LLM。
 
-- 规则、分析器、模型解耦
-- 所有漏洞结果使用统一结构
-- 每条 Finding 必须保留证据
-- 支持单独关闭某一分析模块
-- 测试样例必须覆盖真阳性和真阴性
-- 可重复运行
-- 结果可解释
+## 5. 两人分工
+
+- Web/审计方向：Source-Sink、路径/命令/权限/接口/敏感信息、历史漏洞知识、报告和可视化。
+- C++ 方向：Parser、内存安全、生命周期、CFG/Data Flow、Harness、Sanitizer、PoC 与 Patch 重验。
+- 共同：Evidence 数据模型、候选排序、Git 版本影响、Benchmark、Demo。
