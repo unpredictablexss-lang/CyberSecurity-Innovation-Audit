@@ -1,290 +1,48 @@
 # CyberSecurity-Innovation-Audit
 
-面向网络安全创新大赛的自动化源代码安全审计系统。
+面向 2026 年研究生网络安全创新大赛“OpenHarmony 开源代码漏洞挖掘”赛题的研究与工具设计仓库。
 
-> 本项目用于授权的安全测试、代码审计、漏洞研究与竞赛环境。请勿用于未经授权的攻击行为。
+当前状态：**架构与两周实施方案已形成，漏洞检测器和 PoC 验证器尚未实现。** 文档中的功能、指标、案例和目录代表设计目标；后续以固定 OpenHarmony 版本上的实际运行记录判断进展。
 
-## 项目目标
+## 两周目标
 
-结合传统静态分析、程序分析与大语言模型能力，对源码进行自动化安全审计，并输出结构化漏洞报告。
+3–4 人小组优先选择一个能在 Linux 上构建和测试的真实 OpenHarmony C/C++ 组件，跑通：
 
-项目希望逐步实现：
+~~~text
+固定源码/构建配置
+→ 静态候选或独立 fuzz
+→ 解释源、约束和危险操作
+→ 使用原组件代码构造合法输入
+→ 记录运行证据与安全影响
+→ 检查修复前后及其他版本
+→ 输出可复现报告
+~~~
 
-- 多语言源码扫描与语言识别
-- AST / 函数 / 变量 / 调用关系提取
-- 基础漏洞规则匹配
-- 数据流与污点传播分析
-- 可疑代码片段自动提取
-- LLM 辅助漏洞研判
-- 漏洞风险评级与置信度评估
-- 自动生成审计报告与修复建议
-- 多文件、跨函数联合分析
+研究创新选择“历史安全补丁中的安全约束迁移”：抽取修复所保证的性质，再检查别处代码是否满足同类性质，并用安全反例与动态实验检验。该方法仍是研究假设，当前没有效果数据。
 
-## 2026 赛题架构文档
+可选第二路线是 IPC/权限语义审计，只有取得匹配版本的系统环境、低权限调用主体和真实服务入口后才纳入主线。开发板和服务器的作用见环境文档。
 
-当前项目已经从通用源码审计骨架进一步收敛到 **OpenHarmony 开源代码漏洞挖掘** 赛题。
+## 从哪里读
 
-核心变化：不再把“规则命中”当成最终结果，而是采用 **漏斗式候选发现 → 程序分析 → 多证据误报抑制 → PoC/动态验证 → 跨版本影响 → Patch 重验** 的闭环架构。
+1. [2026 架构与取舍](docs/architecture_2026.md)：赛题理解、总体方案、证据与验证闭环。
+2. [路线比较](docs/technical_routes.md)：静态、fuzz、补丁约束迁移、权限审计的适用条件。
+3. [两周路线](docs/roadmap.md)：D1–D14 工作、分工、硬切换点。
+4. [环境与开发板入门](docs/environment_guide.md)：租 Linux 服务器、选择组件、判断何时需要目标设备。
+5. [模块与数据契约](docs/design.md)：TargetSnapshot、Candidate、Evidence、RunRecord、VulnerabilityCase。
+6. [实验评价](docs/evaluation_criteria.md)：覆盖、精度、PoC、性能、消融与未知真值。
+7. [赛题要求](docs/competition_requirements.md)、[漏洞范围](docs/vulnerability_scope.md)、[交付清单](docs/deliverables_checklist.md)。
 
-- [2026 总体架构：docs/architecture_2026.md](docs/architecture_2026.md)
-- [系统设计：docs/design.md](docs/design.md)
-- [开发路线：docs/roadmap.md](docs/roadmap.md)
-- [赛题要求拆解：docs/competition_requirements.md](docs/competition_requirements.md)
-- [评价指标：docs/evaluation_criteria.md](docs/evaluation_criteria.md)
+## 比赛成果的三个层级
 
-## 总体技术路线
+- **工具能力**：在公开历史修复前后和安全对照上可复现，证明分析链可运行。
+- **当前源码研究**：候选的数量、来源、审核状态与排除理由如实记录。
+- **正式漏洞案例**：目标版本、原组件 PoC、安全影响、CWE、已知 CVE、版本分析和修复建议具备证据。
 
-```text
-源码输入
-   ↓
-语言识别与预处理
-   ↓
-代码解析 / AST
-   ↓
-规则扫描
-   ↓
-程序分析
-   ├─ 调用图
-   ├─ 控制流图
-   ├─ 数据流分析
-   └─ 污点分析
-   ↓
-可疑代码片段提取
-   ↓
-LLM 二次审计
-   ↓
-漏洞去重 / 风险评级
-   ↓
-结构化审计报告
-```
+公开历史漏洞重现不等于新发现；未找到 CVE 不等于 0-day；宿主机 sanitizer 结果不自动等于真实系统入口可利用。进展与限制都应从运行记录提取。
 
-## 系统分层
+## 现有目录
 
-### 1. 代码解析层
+仓库当前的 src、rules、samples、tests、scripts、config、models、outputs 等目录多数仍为空骨架。具体模块只有在两周路线的真实组件闭环中需要时才实施，不按目录名推定功能已经存在。
 
-负责文件遍历、语言识别、AST、函数、变量、import/include 与调用关系提取。
+项目用于授权范围内的源码研究与赛事验证。真实新发现按 OpenHarmony 官方安全流程处理；相关运行包和报告在审核前由团队管理。
 
-对应目录：`src/parser/`
-
-### 2. 规则检测层
-
-通过规则快速定位危险函数、不安全 API、输入校验缺失、路径操作、命令执行、数据库拼接、内存安全和 Web 风险。
-
-对应目录：`src/rules/` 与 `rules/`
-
-### 3. 程序分析层
-
-逐步实现 CFG、调用图、数据流分析、污点分析以及 Source → Propagation → Sink 跨函数追踪。
-
-对应目录：`src/analyzer/`
-
-### 4. LLM 审计层
-
-利用大语言模型对静态分析筛选出的高风险片段做二次研判，包括复杂上下文、业务逻辑、多文件分析、漏洞解释、修复建议和误报抑制。
-
-对应目录：`src/llm/`
-
-### 5. 报告层
-
-单个漏洞至少输出：漏洞名称、CWE、风险等级、文件路径、行号、函数、Source、Sink、传播路径、证据代码、漏洞原因、触发条件、修复建议和置信度。
-
-## 计划支持的漏洞类型
-
-### Web / 服务端
-
-- SQL Injection
-- Command Injection
-- Path Traversal
-- Arbitrary File Read / Write
-- File Upload
-- SSRF
-- XSS
-- Template Injection
-- Unsafe Deserialization
-- Authentication / Authorization Logic Issues
-
-### C / C++
-
-- Buffer Overflow
-- Out-of-Bounds Read / Write
-- Use After Free
-- Double Free
-- Null Pointer Dereference
-- Integer Overflow
-- Format String
-- Dangerous Memory Operations
-- Resource Management Issues
-
-### Python / Java 等
-
-- 命令执行
-- SQL 注入
-- 路径操作
-- 不安全反序列化
-- 动态代码执行
-- 弱加密 / 不安全随机数
-- 敏感信息泄露
-- 权限与业务逻辑问题
-
-## MVP：第一版最小可行系统
-
-```text
-源码目录
-  ↓
-扫描文件
-  ↓
-语言识别
-  ↓
-基础规则检测
-  ↓
-可疑片段提取
-  ↓
-LLM 辅助分析
-  ↓
-JSON / Markdown 漏洞报告
-```
-
-第一版暂时不追求完整的全程序污点分析，优先保证：能运行、能扫描、能发现候选风险、能解释、能生成报告、后续容易扩展。
-
-## 项目目录
-
-```text
-CyberSecurity-Innovation-Audit/
-├── README.md
-├── requirements.txt
-├── docs/
-│   ├── competition_requirements.md
-│   ├── design.md
-│   └── roadmap.md
-├── src/
-│   ├── parser/
-│   ├── rules/
-│   ├── analyzer/
-│   ├── llm/
-│   └── utils/
-├── rules/
-│   ├── cpp/
-│   ├── java/
-│   ├── python/
-│   └── web/
-├── samples/
-│   ├── vulnerable/
-│   └── safe/
-├── tests/
-├── scripts/
-├── outputs/
-│   ├── reports/
-│   └── logs/
-├── models/
-└── config/
-```
-
-## 仓库结构与职责
-
-当前仓库按“文档设计、分析引擎、规则库、样例与测试、运行产物、配置与依赖”进行组织，各目录职责如下：
-
-1. `README.md`：项目目标、整体技术路线、五层架构、计划漏洞类型、MVP、开发阶段。
-2. `docs/competition_requirements.md`：之后整理正式赛题要求。
-3. `docs/design.md`：系统架构和 Finding 数据结构设计。
-4. `docs/roadmap.md`：从 MVP 到比赛版本的开发路线。
-5. `src/parser/`：源码解析。
-6. `src/rules/`：规则引擎。
-7. `src/analyzer/`：CFG、数据流、污点分析。
-8. `src/llm/`：大模型辅助审计。
-9. `src/utils/`：公共工具。
-10. `rules/cpp/`、`rules/java/`、`rules/python/`、`rules/web/`：不同语言与漏洞方向的外部规则库。
-11. `samples/vulnerable/` 和 `samples/safe/`：漏洞样例与安全对照样例。
-12. `tests/`：单元测试、回归测试和分析准确性验证。
-13. `scripts/`：环境初始化、批量扫描、Benchmark、数据准备等辅助脚本。
-14. `outputs/reports/`：生成的漏洞分析报告。
-15. `outputs/logs/`：扫描日志、调试日志、性能与执行记录。
-16. `models/`：本地模型、模型配置或后续实验相关文件。
-17. `config/`：扫描范围、规则开关、模型参数、运行参数等配置。
-18. `requirements.txt`：Python 依赖列表。
-
-对应目录结构：
-
-```text
-CyberSecurity-Innovation-Audit/
-├── README.md
-├── requirements.txt
-├── docs/
-│   ├── competition_requirements.md
-│   ├── design.md
-│   ├── roadmap.md
-│   ├── architecture_2026.md
-│   ├── evaluation_criteria.md
-│   └── ...
-├── src/
-│   ├── parser/
-│   ├── rules/
-│   ├── analyzer/
-│   ├── llm/
-│   └── utils/
-├── rules/
-│   ├── cpp/
-│   ├── java/
-│   ├── python/
-│   └── web/
-├── samples/
-│   ├── vulnerable/
-│   └── safe/
-├── tests/
-├── scripts/
-├── outputs/
-│   ├── reports/
-│   └── logs/
-├── models/
-└── config/
-```
-
-## 开发阶段
-
-### Phase 1 — 基础扫描框架
-
-- [ ] 文件递归扫描
-- [ ] 语言识别
-- [ ] 统一 Finding 数据结构
-- [ ] 基础规则引擎
-- [ ] Markdown / JSON 报告输出
-
-### Phase 2 — 规则库
-
-- [ ] Web 类漏洞
-- [ ] Python 风险规则
-- [ ] Java 风险规则
-- [ ] C / C++ 内存安全规则
-- [ ] 测试样例与回归测试
-
-### Phase 3 — 程序分析
-
-- [ ] AST
-- [ ] 调用图
-- [ ] CFG
-- [ ] 数据流
-- [ ] 污点分析
-- [ ] 跨函数追踪
-
-### Phase 4 — LLM 辅助审计
-
-- [ ] 可疑片段上下文构造
-- [ ] Prompt 模板
-- [ ] 漏洞二次判断
-- [ ] 修复建议生成
-- [ ] 误报抑制
-
-### Phase 5 — 比赛完善
-
-- [ ] Web / CLI 操作界面
-- [ ] 可视化调用链与污点路径
-- [ ] 批量项目扫描
-- [ ] Benchmark
-- [ ] 准确率 / 召回率 / 误报率评估
-- [ ] 比赛演示样例
-- [ ] 技术文档与答辩材料
-
-## 当前状态
-
-项目初始化阶段。
-
-下一步优先完成：**C/C++ 小型验证原型：候选规则 → AST → Finding → ASan/UBSan 验证 → VulnerabilityCase → 报告 → Patch 重验**。跑通闭环后再扩大到 OpenHarmony 具体模块。
