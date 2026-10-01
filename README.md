@@ -20,6 +20,18 @@
 - 自动生成审计报告与修复建议
 - 多文件、跨函数联合分析
 
+## 2026 赛题架构文档
+
+当前项目已经从通用源码审计骨架进一步收敛到 **OpenHarmony 开源代码漏洞挖掘** 赛题。
+
+核心变化：不再把“规则命中”当成最终结果，而是采用 **漏斗式候选发现 → 程序分析 → 多证据误报抑制 → PoC/动态验证 → 跨版本影响 → Patch 重验** 的闭环架构。
+
+- [2026 总体架构：docs/architecture_2026.md](docs/architecture_2026.md)
+- [系统设计：docs/design.md](docs/design.md)
+- [开发路线：docs/roadmap.md](docs/roadmap.md)
+- [赛题要求拆解：docs/competition_requirements.md](docs/competition_requirements.md)
+- [评价指标：docs/evaluation_criteria.md](docs/evaluation_criteria.md)
+
 ## 总体技术路线
 
 ```text
@@ -216,4 +228,4 @@ CyberSecurity-Innovation-Audit/
 
 项目初始化阶段。
 
-下一步优先完成：**扫描器 + 统一漏洞结果格式 + 第一批基础规则 + 报告输出**。
+下一步优先完成：**C/C++ 小型验证原型：候选规则 → AST → Finding → ASan/UBSan 验证 → VulnerabilityCase → 报告 → Patch 重验**。跑通闭环后再扩大到 OpenHarmony 具体模块。
