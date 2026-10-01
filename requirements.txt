@@ -1,0 +1,2 @@
+# Dependencies will be added incrementally as the MVP is implemented.
+# Keep this file minimal until the parser/rule-engine technology stack is fixed.
