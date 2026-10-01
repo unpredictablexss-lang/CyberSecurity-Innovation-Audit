@@ -179,6 +179,65 @@ CyberSecurity-Innovation-Audit/
 └── config/
 ```
 
+## 仓库结构与职责
+
+当前仓库按“文档设计、分析引擎、规则库、样例与测试、运行产物、配置与依赖”进行组织，各目录职责如下：
+
+1. `README.md`：项目目标、整体技术路线、五层架构、计划漏洞类型、MVP、开发阶段。
+2. `docs/competition_requirements.md`：之后整理正式赛题要求。
+3. `docs/design.md`：系统架构和 Finding 数据结构设计。
+4. `docs/roadmap.md`：从 MVP 到比赛版本的开发路线。
+5. `src/parser/`：源码解析。
+6. `src/rules/`：规则引擎。
+7. `src/analyzer/`：CFG、数据流、污点分析。
+8. `src/llm/`：大模型辅助审计。
+9. `src/utils/`：公共工具。
+10. `rules/cpp/`、`rules/java/`、`rules/python/`、`rules/web/`：不同语言与漏洞方向的外部规则库。
+11. `samples/vulnerable/` 和 `samples/safe/`：漏洞样例与安全对照样例。
+12. `tests/`：单元测试、回归测试和分析准确性验证。
+13. `scripts/`：环境初始化、批量扫描、Benchmark、数据准备等辅助脚本。
+14. `outputs/reports/`：生成的漏洞分析报告。
+15. `outputs/logs/`：扫描日志、调试日志、性能与执行记录。
+16. `models/`：本地模型、模型配置或后续实验相关文件。
+17. `config/`：扫描范围、规则开关、模型参数、运行参数等配置。
+18. `requirements.txt`：Python 依赖列表。
+
+对应目录结构：
+
+```text
+CyberSecurity-Innovation-Audit/
+├── README.md
+├── requirements.txt
+├── docs/
+│   ├── competition_requirements.md
+│   ├── design.md
+│   ├── roadmap.md
+│   ├── architecture_2026.md
+│   ├── evaluation_criteria.md
+│   └── ...
+├── src/
+│   ├── parser/
+│   ├── rules/
+│   ├── analyzer/
+│   ├── llm/
+│   └── utils/
+├── rules/
+│   ├── cpp/
+│   ├── java/
+│   ├── python/
+│   └── web/
+├── samples/
+│   ├── vulnerable/
+│   └── safe/
+├── tests/
+├── scripts/
+├── outputs/
+│   ├── reports/
+│   └── logs/
+├── models/
+└── config/
+```
+
 ## 开发阶段
 
 ### Phase 1 — 基础扫描框架
