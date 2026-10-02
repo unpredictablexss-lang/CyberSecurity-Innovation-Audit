@@ -27,7 +27,7 @@
 1. [2026 架构与取舍](docs/architecture_2026.md)：赛题理解、总体方案、证据与验证闭环。
 2. [路线比较](docs/technical_routes.md)：静态、fuzz、补丁约束迁移、权限审计的适用条件。
 3. [两周路线](docs/roadmap.md)：D1–D14 工作、分工、硬切换点。
-4. [环境与开发板入门](docs/environment_guide.md)：租 Linux 服务器、选择组件、判断何时需要目标设备。
+4. [环境与开发板入门](docs/environment_guide.md)：先用 Windows/WSL2，按实际需要准备 Linux 服务器或目标设备。
 5. [模块与数据契约](docs/design.md)：TargetSnapshot、Candidate、Evidence、RunRecord、VulnerabilityCase。
 6. [实验评价](docs/evaluation_criteria.md)：覆盖、精度、PoC、性能、消融与未知真值。
 7. [赛题要求](docs/competition_requirements.md)、[漏洞范围](docs/vulnerability_scope.md)、[交付清单](docs/deliverables_checklist.md)。
