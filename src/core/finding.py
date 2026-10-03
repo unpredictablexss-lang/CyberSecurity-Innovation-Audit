@@ -17,6 +17,12 @@ class Finding:
     explanation: str
     remediation: str
     status: str = "candidate"
+    function_start_line: Optional[int] = None
+    function_end_line: Optional[int] = None
+    context_start_line: Optional[int] = None
+    context_end_line: Optional[int] = None
+    context: Optional[str] = None
+    context_status: str = "unresolved"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
