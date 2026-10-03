@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
+from src.benchmark.historical import run_historical_benchmark, write_reports as write_historical_reports
 from src.core.report import render_markdown
 from src.core.scanner import scan_directory
 from src.triage.review import build_triage_report, write_triage_reports
@@ -104,6 +105,31 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", required=True)
     scan_parser = _configure_scan_parser(subparsers)
     baseline_parser = _configure_clang_baseline_parser(subparsers)
+
+    historical_parser = subparsers.add_parser(
+        "benchmark-historical",
+        help="Replay one published vulnerable/fixed commit pair as historical ground truth",
+    )
+    historical_parser.add_argument(
+        "--sample",
+        required=True,
+        help="Historical sample JSON manifest",
+    )
+    historical_parser.add_argument(
+        "--repo-dir",
+        required=True,
+        help="Local Git checkout containing both pinned commits",
+    )
+    historical_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/historical_benchmark.json",
+        help="Output JSON path",
+    )
+    historical_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/historical_benchmark.md",
+        help="Output Markdown path",
+    )
 
     allocator_parser = subparsers.add_parser(
         "validate-cjson-allocator",
@@ -240,6 +266,41 @@ def main() -> None:
         print(f"[OK] markdown report: {md_output}")
         return
 
+
+    if args.command == "benchmark-historical":
+        sample_path = Path(args.sample).resolve()
+        repo_dir = Path(args.repo_dir).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if not sample_path.is_file():
+            historical_parser.error(f"sample manifest does not exist: {sample_path}")
+        if json_output == md_output:
+            historical_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            result = run_historical_benchmark(sample_path, repo_dir)
+        except (ValueError, RuntimeError, OSError, json.JSONDecodeError) as error:
+            historical_parser.error(str(error))
+
+        write_historical_reports(result, json_output, md_output)
+
+        print(f"[OK] historical sample: {result.sample.sample_id}")
+        print(f"[OK] vulnerable commit exists: {result.vulnerable_commit_exists}")
+        print(f"[OK] fixed commit exists: {result.fixed_commit_exists}")
+        print(f"[OK] direct parent match: {result.direct_parent_match}")
+        print(
+            f"[OK] vulnerable/fixed candidates: "
+            f"{result.vulnerable.candidate_count}/{result.fixed.candidate_count}"
+        )
+        print(
+            f"[OK] vulnerable/fixed affected-region overlap: "
+            f"{result.text_candidate_overlap_in_vulnerable}/"
+            f"{result.text_candidate_overlap_in_fixed}"
+        )
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
 
     if args.command == "validate-cjson-allocator":
         target = Path(args.target).resolve()
