@@ -226,5 +226,6 @@ __pycache__/
 outputs/reports/*.json
 outputs/reports/*.md
 outputs/logs/
+outputs/bin/
 .tmp/
 .cache/

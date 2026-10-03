@@ -16,6 +16,11 @@ def render_markdown(result: ScanResult) -> str:
         "## Scan Summary",
         "",
         f"- Target: {_text(result.target)}",
+        f"- Include scope: {_text(', '.join(result.scope_includes))}",
+        (
+            "- Exclude scope: "
+            + _text(", ".join(result.scope_excludes) if result.scope_excludes else "(none)")
+        ),
         f"- Scanned files: {result.scanned_files}",
         f"- Scanned lines: {result.scanned_lines}",
         f"- Skipped source files: {len(result.skipped_files)}",
@@ -40,10 +45,33 @@ def render_markdown(result: ScanResult) -> str:
             f"- File: {_text(finding.file_path)}",
             f"- Line: {finding.line}",
             f"- Function: {_text(finding.function or 'unresolved')}",
+            (
+                "- Function range: "
+                + (
+                    f"{finding.function_start_line}-{finding.function_end_line}"
+                    if finding.function_start_line is not None
+                    and finding.function_end_line is not None
+                    else "unresolved"
+                )
+            ),
+            f"- Context status: {_text(finding.context_status)}",
+            (
+                "- Context lines: "
+                + (
+                    f"{finding.context_start_line}-{finding.context_end_line}"
+                    if finding.context_start_line is not None
+                    and finding.context_end_line is not None
+                    else "unresolved"
+                )
+            ),
             "",
             "**Evidence**",
             "",
             "    " + finding.evidence.replace("\n", "\n    "),
+            "",
+            "**Context**",
+            "",
+            "    " + (finding.context or "(unavailable)").replace("\n", "\n    "),
             "",
             f"**Explanation:** {_text(finding.explanation)}",
             "",

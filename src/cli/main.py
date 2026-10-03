@@ -2,18 +2,40 @@ import argparse
 import json
 from pathlib import Path
 
+from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
 from src.core.report import render_markdown
 from src.core.scanner import scan_directory
+from src.triage.review import build_triage_report, write_triage_reports
+from src.validation.cjson_allocator import (
+    PINNED_CJSON_COMMIT,
+    run_cjson_allocator_validation,
+    write_reports as write_allocator_reports,
+)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="CyberSecurity Innovation Audit MVP candidate scanner"
-    )
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
+def _configure_scan_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
     scan_parser = subparsers.add_parser("scan", help="Scan a source directory")
     scan_parser.add_argument("target", help="Target source directory")
+    scan_parser.add_argument(
+        "--include",
+        action="append",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Relative file or directory to include under target. "
+            "Repeat to include multiple paths. Default: entire target."
+        ),
+    )
+    scan_parser.add_argument(
+        "--exclude",
+        action="append",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Relative file or directory to exclude under target. "
+            "Repeat to exclude multiple paths."
+        ),
+    )
     scan_parser.add_argument(
         "--json-out",
         "--out",
@@ -25,6 +47,124 @@ def main() -> None:
         "--md-out",
         default="outputs/reports/report.md",
         help="Output Markdown path",
+    )
+    return scan_parser
+
+
+def _configure_clang_baseline_parser(
+    subparsers: argparse._SubParsersAction,
+) -> argparse.ArgumentParser:
+    baseline_parser = subparsers.add_parser(
+        "baseline-clang",
+        help="Run a reproducible clang --analyze baseline on explicit source files",
+    )
+    baseline_parser.add_argument("target", help="Target source directory")
+    baseline_parser.add_argument(
+        "--file",
+        action="append",
+        required=True,
+        metavar="PATH",
+        help=(
+            "Relative source file under target. Repeat for multiple files. "
+            "The baseline deliberately requires explicit files."
+        ),
+    )
+    baseline_parser.add_argument(
+        "--clang",
+        default="clang",
+        help="Clang executable to invoke (default: clang)",
+    )
+    baseline_parser.add_argument(
+        "--clang-arg",
+        action="append",
+        default=None,
+        metavar="ARG",
+        help=(
+            "Extra compiler/analyzer argument passed after the target include path. "
+            "Repeat to pass multiple arguments."
+        ),
+    )
+    baseline_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/clang_baseline.json",
+        help="Output JSON path",
+    )
+    baseline_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/clang_baseline.md",
+        help="Output Markdown path",
+    )
+    return baseline_parser
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="CyberSecurity Innovation Audit tooling"
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    scan_parser = _configure_scan_parser(subparsers)
+    baseline_parser = _configure_clang_baseline_parser(subparsers)
+
+    allocator_parser = subparsers.add_parser(
+        "validate-cjson-allocator",
+        help="Build and run the controlled cJSON allocator robustness harness",
+    )
+    allocator_parser.add_argument("target", help="Pinned cJSON source directory")
+    allocator_parser.add_argument(
+        "--harness",
+        default="validation/cjson/allocator_robustness.c",
+        help="Harness source path",
+    )
+    allocator_parser.add_argument(
+        "--binary",
+        default="outputs/bin/cjson_allocator_robustness",
+        help="Output binary path",
+    )
+    allocator_parser.add_argument(
+        "--compiler",
+        default="clang",
+        help="C compiler executable (default: clang)",
+    )
+    allocator_parser.add_argument(
+        "--expected-commit",
+        default=PINNED_CJSON_COMMIT,
+        help="Required clean cJSON source commit (default: pinned target commit)",
+    )
+    allocator_parser.add_argument(
+        "--repeat",
+        type=int,
+        default=3,
+        help="Repeat each controlled failure case N times (default: 3)",
+    )
+    allocator_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/cjson_allocator_validation.json",
+        help="Output JSON path",
+    )
+    allocator_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/cjson_allocator_validation.md",
+        help="Output Markdown path",
+    )
+
+    triage_parser = subparsers.add_parser(
+        "triage",
+        help="Build structured review packets from a candidate scan JSON report",
+    )
+    triage_parser.add_argument(
+        "--scan-report",
+        required=True,
+        help="Existing candidate scan JSON report",
+    )
+    triage_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/triage_packets.json",
+        help="Output triage JSON path",
+    )
+    triage_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/triage_packets.md",
+        help="Output triage Markdown path",
     )
 
     args = parser.parse_args()
@@ -39,7 +179,15 @@ def main() -> None:
         if json_output == md_output:
             scan_parser.error("JSON and Markdown output paths must differ")
 
-        result = scan_directory(target)
+        try:
+            result = scan_directory(
+                target,
+                include_paths=args.include,
+                exclude_paths=args.exclude,
+            )
+        except ValueError as error:
+            scan_parser.error(str(error))
+
         json_output.parent.mkdir(parents=True, exist_ok=True)
         md_output.parent.mkdir(parents=True, exist_ok=True)
         json_output.write_text(
@@ -49,12 +197,115 @@ def main() -> None:
         md_output.write_text(render_markdown(result), encoding="utf-8")
 
         print(f"[OK] scanned: {result.target}")
+        print(f"[OK] include scope: {', '.join(result.scope_includes)}")
+        print(
+            f"[OK] exclude scope: "
+            f"{', '.join(result.scope_excludes) if result.scope_excludes else '(none)'}"
+        )
         print(f"[OK] scanned files: {result.scanned_files}")
         print(f"[OK] scanned lines: {result.scanned_lines}")
         print(f"[OK] skipped source files: {len(result.skipped_files)}")
         print(f"[OK] candidate findings: {result.finding_count}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "baseline-clang":
+        target = Path(args.target).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if json_output == md_output:
+            baseline_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            result = run_clang_analyzer(
+                target=target,
+                files=args.file,
+                clang_executable=args.clang,
+                extra_args=args.clang_arg,
+            )
+        except (ValueError, RuntimeError, OSError) as error:
+            baseline_parser.error(str(error))
+
+        write_clang_reports(result, json_output, md_output)
+
+        print(f"[OK] baseline target: {result.target}")
+        print(f"[OK] clang version: {result.clang_version}")
+        print(f"[OK] files: {len(result.files)}")
+        print(f"[OK] diagnostics: {result.diagnostic_count}")
+        print(f"[OK] failed files: {len(result.failed_files)}")
+        print(f"[OK] elapsed seconds: {result.elapsed_seconds:.6f}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+
+    if args.command == "validate-cjson-allocator":
+        target = Path(args.target).resolve()
+        harness = Path(args.harness).resolve()
+        binary = Path(args.binary).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if json_output == md_output:
+            allocator_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            result = run_cjson_allocator_validation(
+                target=target,
+                harness=harness,
+                binary=binary,
+                compiler=args.compiler,
+                repeats=args.repeat,
+                expected_commit=args.expected_commit,
+            )
+        except (ValueError, OSError) as error:
+            allocator_parser.error(str(error))
+
+        write_allocator_reports(result, json_output, md_output)
+
+        sanitizer_runs = sum(1 for item in result.runs if item.sanitizer_detected)
+        print(f"[OK] allocator target: {result.target}")
+        print(f"[OK] build outcome: {result.build.outcome}")
+        print(f"[OK] runtime cases: {len(result.runs)}")
+        print(f"[OK] sanitizer-triggered runs: {sanitizer_runs}")
+        print(f"[OK] overall outcome: {result.outcome}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "triage":
+        scan_report = Path(args.scan_report).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if not scan_report.is_file():
+            triage_parser.error(f"scan report does not exist: {scan_report}")
+        if json_output == md_output:
+            triage_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            triage_report = build_triage_report(scan_report)
+        except (ValueError, OSError, json.JSONDecodeError, KeyError) as error:
+            triage_parser.error(str(error))
+
+        write_triage_reports(triage_report, json_output, md_output)
+
+        parsed_count = sum(
+            1
+            for packet in triage_report.packets
+            if packet.call_parse_status == "parsed_text_call"
+        )
+        unresolved_count = triage_report.packet_count - parsed_count
+
+        print(f"[OK] source scan report: {triage_report.source_report}")
+        print(f"[OK] target: {triage_report.target}")
+        print(f"[OK] candidate packets: {triage_report.packet_count}")
+        print(f"[OK] parsed call expressions: {parsed_count}")
+        print(f"[OK] unresolved call expressions: {unresolved_count}")
+        print(f"[OK] json triage report: {json_output}")
+        print(f"[OK] markdown triage report: {md_output}")
 
 
 if __name__ == "__main__":
