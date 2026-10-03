@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -132,6 +133,45 @@ class HistoricalBenchmarkTests(unittest.TestCase):
         self.assertIn("Historical ground truth only", data["interpretation"])
         self.assertIn("does not claim a new vulnerability", markdown)
         self.assertIn("No precision is computed", markdown)
+
+
+    def test_cli_writes_historical_reports(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repo, manifest, _, _ = self._build_fixture(root)
+            json_output = root / "cli-report.json"
+            md_output = root / "cli-report.md"
+            project_root = Path(__file__).resolve().parents[1]
+
+            process = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "src.cli",
+                    "benchmark-historical",
+                    "--sample",
+                    str(manifest),
+                    "--repo-dir",
+                    str(repo),
+                    "--json-out",
+                    str(json_output),
+                    "--md-out",
+                    str(md_output),
+                ],
+                cwd=project_root,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(process.returncode, 0, process.stderr)
+            data = json.loads(json_output.read_text(encoding="utf-8"))
+            markdown = md_output.read_text(encoding="utf-8")
+
+        self.assertEqual(data["sample"]["sample_id"], "fixture-copy")
+        self.assertIn("[OK] historical sample: fixture-copy", process.stdout)
+        self.assertIn("Historical Vulnerability Benchmark Replay", markdown)
+
 
 
 if __name__ == "__main__":
