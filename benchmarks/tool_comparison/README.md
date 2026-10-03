@@ -78,3 +78,31 @@ vulnerability. Zero diagnostics from one tool do not prove safety.
 The next safe engineering step is to write adapters that translate existing
 tool outputs into this protocol. Dynamic triggering, PoC work, or exploitability
 claims are intentionally outside this part of the implementation.
+
+## Adapter implementation
+
+The current branch now provides four format-only adapters:
+
+- src/providers/semgrep.py: Semgrep JSON -> ToolRunResult
+- src/providers/codeql.py: CodeQL SARIF -> ToolRunResult
+- src/providers/clang_sa.py: existing Clang baseline JSON -> ToolRunResult
+- src/providers/cppcheck.py: Cppcheck XML -> ToolRunResult
+- src/providers/registry.py: one normalize_tool_output(...) entry point
+
+All adapters receive an AdapterContext containing the pinned target, commit,
+scope, time and memory metadata.
+
+Adapters do not execute scanners and do not perform runtime validation. Their
+only responsibility is to preserve native diagnostics while translating them
+into the common schema.
+
+## Team / technical integration
+
+The consolidated implementation plan is documented in:
+
+- docs/strategy/team_parallel_multi_scanner_plan.md
+
+It combines the vertical real-case workflow with the horizontal multi-scanner
+benchmark line and fixes the merge point at the normalized Candidate/Evidence
+protocol rather than direct code concatenation.
+
