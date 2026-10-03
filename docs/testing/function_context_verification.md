@@ -1,7 +1,7 @@
 # Function Context Verification Plan
 
-> Branch: `feat/openharmony-target-onboarding`  
-> Status: **pending Ubuntu WSL / Codex verification**  
+> Branch: `feat/openharmony-target-onboarding`
+> Status: **verified in Ubuntu 22.04 WSL2 on 2026-10-04**; 14/14 tests passed, cJSON core remained 26 candidates, and all six spot checks matched. Actual results and unknowns are in [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md).
 > Scope: lightweight top-level C/C++ function context only. This is **not** Clang AST, CFG, data-flow, reachability, or vulnerability validation.
 
 ## Why this feature is next

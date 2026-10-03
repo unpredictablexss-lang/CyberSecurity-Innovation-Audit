@@ -37,7 +37,7 @@ cmake --build /home/audit/openharmony-targets/third_party_cJSON-build -j 4
 .venv/bin/python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON --json-out outputs/reports/cjson_candidate.json --md-out outputs/reports/cjson_candidate.md
 ~~~
 
-结果：99 个源码文件、22,377 行、跳过 0 个、49 条文本候选；sprintf 18、memcpy 16、strcpy 14、strcat 1。按目录：核心 cJSON.c 与 cJSON_Utils.c 共 26 条，tests 22 条，fuzzing 1 条。扫描器暂不支持用户指定排除目录，分母包括仓库内 Unity 测试框架；49 **不能**当成核心库漏洞数或准确率分子。完整运行报告只在本地忽略目录 outputs/reports/。
+结果：99 个源码文件、22,377 行、跳过 0 个、49 条文本候选；sprintf 18、memcpy 16、strcpy 14、strcat 1。按目录：核心 cJSON.c 与 cJSON_Utils.c 共 26 条，tests 22 条，fuzzing 1 条。这是加入显式 scope 前的**历史全仓基线**，分母包括 Unity 测试框架；49 **不能**当成核心库漏洞数或准确率分子。2026-10-04 已用 `--include cJSON.c --include cJSON_Utils.c` 独立复现 2 文件、4,681 行、26 条核心文本候选；新增函数上下文后候选身份仍逐项一致，详见 [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md)。完整运行报告只在本地忽略目录 outputs/reports/。
 
 成熟工具基线：clang-tidy、Clang Static Analyzer 均 not_started。fuzzing/cjson_read_fuzzer.c 有 LLVMFuzzerTestOneInput 入口，但未运行。ASan/UBSan 原组件验证也尚未开始。
 
@@ -77,7 +77,7 @@ cmake --build /home/audit/openharmony-targets/third_party_cJSON-build -j 4
 ## 下一步与验收
 
 1. 保存 T1 TargetSnapshot、固定提交、局部构建与测试结果；不夸大全目标构建状态。
-2. 为扫描器加入明确源码范围，重新扫描核心文件并保留当前 49 条全仓基线作对照。
+2. 已加入明确源码范围并复现核心两文件 26 条文本候选；保留原 49 条全仓基线作对照，不把启发式函数名当作漏洞验证。
 3. 用一个成熟静态工具做基线，对首批初筛候选逐项复核；不要把 warning 数量相加成漏洞数。
 4. 选一个有正常输入对照的真实调用路径，必要时用 ASan/UBSan 和失败分配器重复验证。无法复现时标 inconclusive/blocked。
 5. 同时探测 T2 的可独立编译子模块，避免最终作品只停留在通用第三方库。
