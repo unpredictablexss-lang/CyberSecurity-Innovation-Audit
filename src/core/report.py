@@ -16,6 +16,11 @@ def render_markdown(result: ScanResult) -> str:
         "## Scan Summary",
         "",
         f"- Target: {_text(result.target)}",
+        f"- Include scope: {_text(', '.join(result.scope_includes))}",
+        (
+            "- Exclude scope: "
+            + _text(", ".join(result.scope_excludes) if result.scope_excludes else "(none)")
+        ),
         f"- Scanned files: {result.scanned_files}",
         f"- Scanned lines: {result.scanned_lines}",
         f"- Skipped source files: {len(result.skipped_files)}",
