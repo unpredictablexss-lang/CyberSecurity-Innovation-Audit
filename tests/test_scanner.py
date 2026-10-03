@@ -69,6 +69,10 @@ class ScannerRegressionTests(unittest.TestCase):
         self.assertEqual(data["finding_count"], len(data["findings"]))
         self.assertEqual(data["finding_count"], 1)
         self.assertEqual(data["findings"][0]["status"], "candidate")
+        self.assertEqual(data["scope"]["include_paths"], ["."])
+        self.assertEqual(data["scope"]["exclude_paths"], [])
+        self.assertIn("Include scope: .", markdown)
+        self.assertIn("Exclude scope: (none)", markdown)
         self.assertIn("Scanned files: 2", markdown)
         self.assertIn("Candidate findings: 1", markdown)
         self.assertIn("demo_overflow.cpp", markdown)
@@ -96,6 +100,95 @@ class ScannerRegressionTests(unittest.TestCase):
             self.assertNotEqual(process.returncode, 0)
             self.assertIn("target is not a directory", process.stderr)
             self.assertFalse(json_output.exists())
+
+    def test_include_scope_scans_only_requested_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            core = root / "core"
+            tests_dir = root / "tests"
+            core.mkdir()
+            tests_dir.mkdir()
+            (core / "keep.c").write_text("strcpy(dst, src);\n", encoding="utf-8")
+            (tests_dir / "drop.c").write_text("strcpy(dst, src);\n", encoding="utf-8")
+
+            result = scan_directory(root, include_paths=["core"])
+
+        self.assertEqual(result.scope_includes, ["core"])
+        self.assertEqual(result.scope_excludes, [])
+        self.assertEqual(result.scanned_files, 1)
+        self.assertEqual(result.finding_count, 1)
+        self.assertEqual(Path(result.findings[0].file_path).name, "keep.c")
+
+    def test_exclude_scope_prunes_requested_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            core = root / "core"
+            tests_dir = root / "tests"
+            core.mkdir()
+            tests_dir.mkdir()
+            (core / "keep.c").write_text("memcpy(dst, src, n);\n", encoding="utf-8")
+            (tests_dir / "drop.c").write_text("strcpy(dst, src);\n", encoding="utf-8")
+
+            result = scan_directory(root, exclude_paths=["tests"])
+
+        self.assertEqual(result.scope_includes, ["."])
+        self.assertEqual(result.scope_excludes, ["tests"])
+        self.assertEqual(result.scanned_files, 1)
+        self.assertEqual(result.finding_count, 1)
+        self.assertEqual(Path(result.findings[0].file_path).name, "keep.c")
+
+    def test_overlapping_include_paths_do_not_double_count_files(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            core = root / "core"
+            core.mkdir()
+            (core / "one.c").write_text("strcpy(dst, src);\n", encoding="utf-8")
+            (root / "two.c").write_text("memcpy(dst, src, n);\n", encoding="utf-8")
+
+            result = scan_directory(root, include_paths=[".", "core"])
+
+        self.assertEqual(result.scanned_files, 2)
+        self.assertEqual(result.finding_count, 2)
+
+    def test_scope_path_cannot_escape_target_root(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with self.assertRaisesRegex(ValueError, "escapes target root"):
+                scan_directory(root, include_paths=["../outside"])
+
+    def test_cli_include_scope_is_recorded_in_reports(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            json_output = Path(directory) / "report.json"
+            md_output = Path(directory) / "report.md"
+            process = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "src.cli",
+                    "scan",
+                    "samples",
+                    "--include",
+                    "vulnerable",
+                    "--json-out",
+                    str(json_output),
+                    "--md-out",
+                    str(md_output),
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(process.returncode, 0, process.stderr)
+            data = json.loads(json_output.read_text(encoding="utf-8"))
+            markdown = md_output.read_text(encoding="utf-8")
+
+        self.assertEqual(data["scope"]["include_paths"], ["vulnerable"])
+        self.assertEqual(data["scope"]["exclude_paths"], [])
+        self.assertEqual(data["scanned_files"], 1)
+        self.assertEqual(data["finding_count"], 1)
+        self.assertIn("Include scope: vulnerable", markdown)
+        self.assertIn("[OK] include scope: vulnerable", process.stdout)
 
 
 if __name__ == "__main__":
