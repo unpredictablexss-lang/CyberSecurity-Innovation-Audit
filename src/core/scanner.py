@@ -4,7 +4,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-from src.core.context import find_top_level_function_spans, resolve_context
+from src.core.context import (
+    _strip_comments_and_literals,
+    find_top_level_function_spans,
+    resolve_context,
+)
 from src.core.finding import Finding
 
 
@@ -57,10 +61,18 @@ def _scan_lines(path: Path, lines: List[str]) -> List[Finding]:
     findings: List[Finding] = []
     function_spans = find_top_level_function_spans(lines)
 
-    for idx, line in enumerate(lines, start=1):
-        # This is a text candidate generator, not a C/C++ parser. A match can
-        # still be in a comment, macro, declaration, or unreachable code.
-        for func in dict.fromkeys(CALL_PATTERN.findall(line)):
+    # Mask comments and string literals before matching so that a dangerous
+    # call-shaped text inside a comment or string literal is not reported.
+    # The mask preserves every newline, keeping line numbers aligned with the
+    # original source. A match can still come from a macro, declaration, or
+    # unreachable code; only comment/string false positives are suppressed.
+    cleaned_text = _strip_comments_and_literals("\n".join(lines))
+    cleaned_lines = cleaned_text.split("\n")
+
+    for idx, (raw_line, cleaned_line) in enumerate(
+        zip(lines, cleaned_lines), start=1
+    ):
+        for func in dict.fromkeys(CALL_PATTERN.findall(cleaned_line)):
             cwe, vuln_type = DANGEROUS_CALLS[func]
             context = resolve_context(lines, idx, spans=function_spans)
             findings.append(
@@ -74,7 +86,7 @@ def _scan_lines(path: Path, lines: List[str]) -> List[Finding]:
                     file_path=str(path),
                     line=idx,
                     function=context.function,
-                    evidence=line.strip(),
+                    evidence=raw_line.strip(),
                     explanation=(
                         f"The text contains a call-shaped use of {func}(). "
                         "Arguments, destination capacity, reachability, and "

@@ -40,6 +40,36 @@ class ScannerRegressionTests(unittest.TestCase):
         self.assertEqual(result.finding_count, 1)
         self.assertEqual(result.findings[0].line, 2)
 
+    def test_comment_and_string_literal_calls_are_not_reported(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "example.c"
+            source.write_text(
+                "// strcpy(dst, src);\n"
+                'char *fmt = "sprintf(buf, fmt);";\n'
+                "/* memcpy(a, b, n); */\n"
+                "strcpy(dst, src);\n",
+                encoding="utf-8",
+            )
+            result = scan_directory(Path(directory))
+
+        self.assertEqual(result.scanned_files, 1)
+        self.assertEqual(result.scanned_lines, 4)
+        self.assertEqual(result.finding_count, 1)
+        self.assertEqual(result.findings[0].line, 4)
+        self.assertEqual(result.findings[0].rule_id, "cpp.dangerous_call.strcpy")
+
+    def test_inline_comment_after_real_call_keeps_single_match(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "example.c"
+            source.write_text(
+                "strcpy(dst, src); // strcpy(evil, x);\n",
+                encoding="utf-8",
+            )
+            result = scan_directory(Path(directory))
+
+        self.assertEqual(result.finding_count, 1)
+        self.assertEqual(result.findings[0].line, 1)
+
     def test_cli_writes_consistent_json_and_markdown(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             json_output = Path(directory) / "report.json"
