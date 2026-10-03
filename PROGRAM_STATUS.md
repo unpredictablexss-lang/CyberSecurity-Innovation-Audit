@@ -1,10 +1,10 @@
 # PROGRAM_STATUS.md
 
-> 项目：CyberSecurity-Innovation-Audit  
-> 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-03  
-> 当前分支：`feat/mvp-scanner`  
-> 当前 PR：#2 `feat: add MVP C++ dangerous call scanner`，目标分支 `main`，当前未合并。  
+> - 项目：CyberSecurity-Innovation-Audit
+> - 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘
+> - 更新日期：2026-10-03
+> - 当前分支：`feat/mvp-scanner`
+> - 当前 PR：#2 `feat: build C++ candidate scanner with scan summary and reports`，目标分支 `main`，当前未合并。
 > 本文用途：给 ChatGPT、Codex、队友和未来自己看的统一进度说明。继续开发前先读本文，避免重复搭环境、误把计划当成已实现功能，或跳过验证步骤。
 
 ---
