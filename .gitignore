@@ -216,3 +216,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local Python environment
+.venv/
+__pycache__/
+*.py[cod]
+
+# Local generated outputs
+outputs/reports/*.json
+outputs/logs/
+.tmp/
+.cache/
