@@ -1164,3 +1164,30 @@ main 合并前本地记录为 43 个测试；本分支新增 5 个 historical be
 
 GitHub Actions 在 Ubuntu 22.04 / Python 3.10 上已实际运行：**Ran 57 tests ... OK**。此前 historical benchmark 阶段为 48/48；本轮新增 schema + provider adapter 测试后总数为 57/57。
 
+---
+
+## 21. 2026-10-04 Multi-tool Comparison Orchestrator
+
+在统一 Adapter 基础上继续加入纯静态对比层：
+
+- `src/benchmark/compare.py`
+- `tests/test_tool_compare.py`
+- CLI：`compare-tools`
+
+职责：
+
+1. 读取两个及以上已归一化的 ToolRunResult JSON；
+2. 强制 target_id / commit / scope_files / scope_loc 一致；
+3. 汇总每个工具的 diagnostic 数、有效 file:line location 数、evidence_type、severity、耗时、Peak RSS；
+4. 生成 pairwise exact-location overlap；
+5. 输出 JSON / Markdown 对比报告。
+
+结论边界：
+
+- exact location overlap != 同一 root cause；
+- tool-only location != 自动 FP/FN；
+- 没有充分标注 ground truth 时不计算全局 Precision/Recall；
+- 不执行扫描器、不做 runtime trigger、不生成 PoC、不做 exploitability 判断、不做多工具投票式漏洞结论。
+
+GitHub Actions（Ubuntu 22.04 / Python 3.10）已实际运行：**Ran 62 tests ... OK**，失败 0。
+
