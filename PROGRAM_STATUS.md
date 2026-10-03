@@ -7,6 +7,8 @@
 > 当前 PR：#2 `feat: add MVP C++ dangerous call scanner`（目标分支：`main`，当前未合并）  
 > 本文用途：作为 ChatGPT、Codex 和团队成员的统一进度说明。开始新一轮开发前，应先阅读本文，避免重复搭环境、误判已实现功能或跳过验证步骤。
 
+> **2026-10-03 进度更新：** 下文第 4 节的 Step 1～7 已实施并通过回归测试；第 1 节记录环境历史，第 4 节保留原执行计划。当前可运行能力与限制以第 2、3、7 节为准。状态字段为 `candidate`，而 `confidence` / `severity` 为 `unassessed`；不能用“两个样例一正一负”推断真实项目的准确率。
+
 ---
 
 ## 1. 今天从零开始完成了什么
@@ -146,11 +148,15 @@ src/
 └── core/
     ├── __init__.py
     ├── finding.py
-    └── scanner.py
+    ├── scanner.py
+    └── report.py
 
 samples/
-└── vulnerable/
-    └── demo_overflow.cpp
+├── vulnerable/demo_overflow.cpp
+└── safe/demo_safe_copy.cpp
+
+tests/
+└── test_scanner.py
 ```
 
 ### 2.2 Finding 数据结构
@@ -169,8 +175,9 @@ samples/
 - evidence
 - explanation
 - remediation
+- status
 
-当前 Finding 仍是第一版，下一阶段计划加入独立的 `status` 字段。
+扫描器只设置 `status = candidate`；`confidence = unassessed` 和 `severity = unassessed` 表示尚未做置信度及危害评级。不要把流程状态当成置信度。
 
 ### 2.3 第一版 C/C++ 候选扫描器
 
@@ -191,7 +198,7 @@ samples/
    - `sprintf`
    - `gets`
    - `memcpy`
-4. 命中后生成结构化 Finding
+4. 命中后生成结构化 Finding，并记录已扫描文件数、行数和跳过的源码路径
 
 **重要边界：**
 
@@ -217,15 +224,21 @@ samples/
 当前有效命令：
 
 ```bash
-python -m src.cli scan samples/vulnerable --out outputs/reports/demo_report.json
+python -m src.cli scan samples \
+  --json-out outputs/reports/samples_report.json \
+  --md-out outputs/reports/samples_report.md
 ```
 
 已经实际运行成功，输出：
 
 ```text
 [OK] scanned: ...
-[OK] findings: 1
-[OK] report: .../outputs/reports/demo_report.json
+[OK] scanned files: 2
+[OK] scanned lines: 28
+[OK] skipped source files: 0
+[OK] candidate findings: 1
+[OK] json report: ...
+[OK] markdown report: ...
 ```
 
 示例代码中的：
@@ -236,15 +249,18 @@ strcpy(buf, input);
 
 被识别为 1 个候选 Finding。
 
-### 2.5 JSON 报告已经跑通
+### 2.5 JSON 与 Markdown 报告已经跑通
 
 当前报告包含：
 
 - target
+- scanned_files
+- scanned_lines
+- skipped_file_count / skipped_files
 - finding_count
 - findings[]
 
-每一条 finding 能输出规则、CWE、风险类别、位置、证据、解释和修复建议等字段。
+每一条 finding 能输出规则、候选 CWE、位置、证据、解释和修复建议等字段。Markdown 明确提示“仅为文本候选”。`--out` 保留为 `--json-out` 的兼容别名。
 
 ### 2.6 .gitignore 已配置
 
@@ -254,6 +270,7 @@ strcpy(buf, input);
 - `__pycache__/`
 - Python 编译缓存
 - `outputs/reports/*.json`
+- `outputs/reports/*.md`
 - `outputs/logs/`
 - `.tmp/`
 - `.cache/`
@@ -291,14 +308,16 @@ strcpy(buf, input);
     ↓
 第一版文本候选扫描器已跑通
     ↓
-下一步继续完善 MVP 基础闭环
+已具备候选状态、扫描统计、双报告、正负样例和回归测试
+    ↓
+下一步验证真实 OpenHarmony 组件与构建配置
 ```
 
 ---
 
-# 4. 下一阶段：1～7 步详细开发计划
+# 4. 本轮已完成：1～7 步详细开发计划
 
-这一轮暂时**不拉完整 OpenHarmony、不做九层架构的全部模块**。先把 MVP 从“能找到一条 strcpy”提升为“具有基本工程形态的候选扫描工具”。
+以下保留本轮的执行计划与验收思路。实际实现已通过第 7 步，并补充了自动化回归测试；尚未拉取或扫描真实 OpenHarmony 组件。
 
 ## Step 1：确认开发环境、分支和工作区状态
 
@@ -341,7 +360,7 @@ git checkout feat/mvp-scanner
 
 ### 为什么做
 
-当前已有：
+原实现曾有：
 
 ```text
 confidence = candidate
@@ -383,12 +402,12 @@ JSON Finding 中能够同时看到：
 
 ```json
 {
-  "confidence": "candidate",
+  "confidence": "unassessed",
   "status": "candidate"
 }
 ```
 
-后续程序分析、运行验证和人工审核可以改变 status，而不用混淆 confidence。
+原计划示例把 `confidence` 也写成 `candidate`，仍然混淆了两个概念；实际实现已改为 `unassessed`。后续程序分析、运行验证和人工审核可以分别更新状态与置信度。
 
 ---
 
@@ -627,7 +646,7 @@ git push
 
 下一阶段优先顺序建议：
 
-1. 为 scanner 增加最小自动测试，固定当前行为
+1. 已为 scanner 增加 4 个最小回归测试；后续要增加真实组件和注释、宏、跨行等边界案例
 2. 让规则从 Python 代码常量逐渐变成可配置/可扩展规则
 3. 抽取函数上下文，而不是只保存单行
 4. 区分“危险 API 出现”和“真实容量约束缺失”
@@ -677,4 +696,4 @@ Validated Case
 
 ## 7. 当前一句话状态
 
-> **Ubuntu 22.04 WSL2、GitHub、Python/C++ 工具链与 ASan 已打通；第一个 C/C++ 文本候选扫描器已经在自建 vulnerable 样例上成功产生 1 个 JSON Finding；当前正在 `feat/mvp-scanner` / PR #2 上继续完善 MVP，下一步按本文 Step 1～7 增加状态字段、扫描统计、Markdown 报告和安全负例，再进入真实 OpenHarmony 组件。**
+> **Ubuntu 22.04 WSL2、GitHub、Python/C++ 工具链与 ASan 已打通；`feat/mvp-scanner` / PR #2 上的文本候选扫描器已具有状态字段、扫描统计、JSON/Markdown 双报告、安全负例和 4 个回归测试。在自建样例上扫描 2 个文件、28 行并产生 1 个候选；真实 OpenHarmony 组件、AST/数据流、PoC、影响版本和真实准确率评估仍未完成。下一步锁定一个可构建组件的 repo/commit/build config，建立成熟工具基线与真实候选验证。**

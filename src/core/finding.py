@@ -16,6 +16,7 @@ class Finding:
     evidence: str
     explanation: str
     remediation: str
+    status: str = "candidate"
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

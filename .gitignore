@@ -224,6 +224,7 @@ __pycache__/
 
 # Local generated outputs
 outputs/reports/*.json
+outputs/reports/*.md
 outputs/logs/
 .tmp/
 .cache/

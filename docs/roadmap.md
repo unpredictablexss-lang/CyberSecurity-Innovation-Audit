@@ -8,7 +8,7 @@
 - [x] 整理官方赛题要求
 - [x] 整理评价指标与交付要求
 - [x] 形成 2026 总体架构
-- [ ] 建立第一批 vulnerable / safe 对照样例
+- [x] 建立第一批 vulnerable / safe 对照样例（仅为 smoke test，尚不能测真实准确率）
 - [ ] 收集可公开使用的历史 OpenHarmony 安全修复样例
 - [ ] 定义 Finding / Evidence / VulnerabilityCase 数据结构
 - [ ] 定义 Benchmark 指标格式
@@ -17,15 +17,15 @@
 
 目标：任何本地源码目录都能稳定跑完并输出候选结果。
 
-- [ ] CLI 入口
-- [ ] 目录递归扫描
-- [ ] 语言识别
+- [x] CLI 入口
+- [x] 目录递归扫描
+- [x] C/C++ 源文件后缀识别（尚非完整语言识别）
 - [ ] 文件/LOC/耗时统计
 - [ ] 增量 content hash
 - [ ] 规则加载框架
-- [ ] Finding JSON
-- [ ] Markdown 报告
-- [ ] 失败文件与跳过原因记录
+- [x] Finding JSON
+- [x] Markdown 候选报告
+- [x] 失败源码路径与跳过原因记录
 
 ## Milestone 2 — C/C++ 与接口安全候选引擎
 
@@ -33,7 +33,7 @@
 
 ### C/C++
 
-- [ ] Dangerous Memory API
+- [x] Dangerous Memory API 文本候选（尚未判断容量、可达性或真实漏洞）
 - [ ] Buffer / OOB 候选
 - [ ] Integer → allocation/copy/index 链
 - [ ] UAF / Double Free 基础状态规则
@@ -155,28 +155,28 @@ LLM 建立在确定性证据之上。
 
 不要马上做全 OpenHarmony。
 
-先完成一个小型验证原型：
+第一版候选扫描器与双报告已完成。现在优先用真实、可构建的 OpenHarmony 组件固定验证目标，而不是继续堆函数名。下一条闭环是：
 
 ```text
-C/C++ 样例
+真实组件 repo + commit + build config
  ↓
-候选规则
+成熟工具基线 + 当前候选扫描器
  ↓
-AST
+人工标注少量正负候选、记录误报原因
  ↓
-Finding
+AST/函数上下文/容量和 guard 判断
  ↓
-ASan/UBSan Harness
+原组件或最小保真 Harness 中的 ASan/UBSan 验证
  ↓
-验证证据
+可复现 PoC、触发条件、验证证据
  ↓
-VulnerabilityCase
+受影响分支/版本 + CWE/CVE 核验
  ↓
-报告
+VulnerabilityCase 与报告
  ↓
-Patch
+修复建议或 Patch
  ↓
-重跑 PoC
+重跑原 PoC 和回归测试
 ```
 
-这条链跑通后，再把分析对象扩展到 OpenHarmony 的具体模块。
+每一步都保存目标提交和构建命令；对未复现或安全影响不明确的结果保留 candidate，不进入正式漏洞报告。性能实验需单独记录耗时、内存和扫描范围，不能把文本扫描行数称作安全覆盖率。
