@@ -3,9 +3,9 @@
 > - 项目：CyberSecurity-Innovation-Audit
 > - 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘
 > - 更新日期：2026-10-04
-> - 当前分支：`feat/openharmony-target-onboarding`
-> - 已合并 PR：#2（MVP scanner 与目标筛选模板），merge commit `bef61d0caeed7c58b3887abc8b8cbfc33a1b4755`。
-> - 当前阶段：固定 cJSON 组件的候选发现、triage 与受控 allocator 运行时证据已在本地形成首条工程闭环；安全影响和真实 OpenHarmony 调用面尚未验证。
+> - 当前分支：`feat/historical-vuln-benchmark`
+> - 已合并 PR：#2（MVP scanner）与 #3（真实组件 onboarding / validation gates）。
+> - 当前阶段：历史真实漏洞 benchmark v0 已在 GitHub 分支实现，等待 Ubuntu 22.04 WSL2 本地验证；第一条 seed 为 c_utils singleton.h 已公开 UAF 修复。
 > 本文用途：给 ChatGPT、Codex、队友和未来自己看的统一进度说明。继续开发前先读本文，避免重复搭环境、误把计划当成已实现功能，或跳过验证步骤。
 
 ---
@@ -1021,3 +1021,102 @@ reportable vulnerability:     no conclusion
 - **路线 B：feat/first-party-target-cutils** —— 深入 c_utils 第一方组件，跑 scanner + triage + baseline + ASan/UBSan，选真实候选进入验证。已有素材：parcel 子模块可独立编译 + libFuzzer（见 docs/targets/c_utils_parcel_onboarding.md）。
 
 合并本分支后，下一分支从 A 或 B 开新分支，不再在 target-onboarding 里无限追加。
+
+---
+
+## 19. 2026-10-04 historical-vuln-benchmark 分支启动（待本地验证）
+
+### 为什么开这个分支
+
+target-onboarding 已证明真实组件 pipeline 能跑，但当前仍缺少能用于能力评估的真实漏洞 ground truth。这个分支不继续扩 cJSON，而是把公开历史安全修复变成可执行 benchmark，回答：
+
+- 工具对已知真实根因能否命中；
+- 修复前 / 修复后结果有何变化；
+- 当前 scanner 的真实盲区是什么；
+- 后续 AST / 生命周期 / 并发分析应该补哪一类能力。
+
+### 已在 GitHub 分支实现
+
+新增：
+
+    src/benchmark/__init__.py
+    src/benchmark/historical.py
+    benchmarks/historical/README.md
+    benchmarks/historical/c_utils_singleton_uaf.json
+    tests/test_historical_benchmark.py
+    docs/testing/historical_benchmark_verification.md
+
+CLI 新增：
+
+    python -m src.cli benchmark-historical       --sample <manifest.json>       --repo-dir <local-git-checkout>       --json-out <report.json>       --md-out <report.md>
+
+### 第一条 ground truth
+
+第一条 seed 使用 OpenHarmony 第一方 commonlibrary_c_utils 的已公开 singleton.h UAF 修复：
+
+- vulnerable commit: bdfafdaafddb01ab7ae13354ce2ada9555d7935c
+- fixed commit: 9a3f281120307ec7dcce17fae882dcc4e6a6f4d7
+- affected file: base/include/singleton.h
+- weakness: CWE-416
+- affected symbols: GetInstance / DestroyInstance
+
+公开 fix commit 的提交说明明确写明高并发下 GetInstance / DestroyInstance 会导致 Use After Free。该样本只用于历史能力评估，不是新漏洞。
+
+### runner 当前做什么
+
+benchmark runner 会：
+
+1. 验证 vulnerable/fixed commit 在本地 Git 仓库中存在；
+2. 检查 fixed commit 的直接父提交是否等于 pinned vulnerable commit；
+3. 检查受影响文件是否出现在修复 diff 中；
+4. 直接从两个 commit materialize 受影响源码，不切换用户工作树；
+5. 分别运行当前文本 candidate generator；
+6. 分别运行 tree-sitter AST sanity index；
+7. 记录 affected symbol 是否仍存在；
+8. 输出 JSON / Markdown replay report。
+
+### 结论边界
+
+该 runner 当前只做 metadata + static replay：
+
+    replay_status = metadata_and_static_replay_verified
+    runtime_validation = not_run
+
+它不会：
+
+- 把 historical case 当作新漏洞；
+- 把 candidate overlap 自动当 TP；
+- 用单个正样本计算 Precision；
+- 因 fixed revision 无告警就宣称安全；
+- 自动声称 exploitability / OpenHarmony system reachability。
+
+### 预期但尚未本地验证
+
+main 合并前本地记录为 43 个测试；本分支新增 5 个 historical benchmark 测试，因此若其他本地测试没有变化，预计完整发现数为 48。这个数字只是验证预期，不是已验证事实。
+
+本地下一步严格执行：
+
+    docs/testing/historical_benchmark_verification.md
+
+需要记录：
+
+- 实际 tests 总数与失败项；
+- 两个历史 commit 是否都可访问；
+- direct_parent_match；
+- changed_files / affected_files_changed；
+- vulnerable / fixed candidate 数；
+- affected-region overlap；
+- AST affected symbol presence；
+- runtime_validation 必须仍为 not_run。
+
+如果当前文本 scanner 对 singleton UAF 为 0 overlap，不应“修规则让 benchmark 通过”。这个 miss 本身就是有价值的真实盲区证据：危险 API 文本规则覆盖不了并发 / 生命周期型 UAF。
+
+### 这个分支后续方向
+
+通过第一条 replay 后：
+
+1. 用 TSan 或并发感知验证手段复现 singleton 历史根因；
+2. 再加入 2-4 个 OpenHarmony 第一方历史修复，优先选择不同根因；
+3. 对 root-cause group 去重，避免 backport / 近重复样本污染统计；
+4. 在样本规模足够前只报原始计数和命中情况，不虚构全局 Precision / Recall。
+
