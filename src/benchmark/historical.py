@@ -253,7 +253,12 @@ def run_historical_benchmark(
     started = time.perf_counter()
     sample = load_sample(sample_path)
     repo_dir = repo_dir.resolve()
-    if not (repo_dir / ".git").exists():
+    worktree_check = _git(
+        repo_dir,
+        ["rev-parse", "--is-inside-work-tree"],
+        check=False,
+    )
+    if worktree_check.returncode != 0 or worktree_check.stdout.strip() != "true":
         raise ValueError(f"repo_dir is not a Git working tree: {repo_dir}")
 
     vulnerable_exists = _commit_exists(repo_dir, sample.vulnerable_commit)
