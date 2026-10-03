@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "sample_id": "c_utils-singleton-uaf-2026-01",
+  "title": "DelayedSingleton concurrent shared_ptr UAF fix",
+  "repository": "openharmony/commonlibrary_c_utils",
+  "repo_url": "https://github.com/openharmony/commonlibrary_c_utils",
+  "vulnerable_commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+  "fixed_commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+  "weakness": "CWE-416",
+  "affected_files": [
+    "base/include/singleton.h"
+  ],
+  "affected_symbols": [
+    "GetInstance",
+    "DestroyInstance"
+  ],
+  "root_cause": "DelayedSingleton shared_ptr reads and writes were non-atomic across concurrent GetInstance and DestroyInstance operations, creating a published use-after-free race.",
+  "cve": null,
+  "source_refs": [
+    "https://github.com/openharmony/commonlibrary_c_utils/commit/9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+    "https://gitcode.com/openharmony/commonlibrary_c_utils/issues/560"
+  ],
+  "notes": "The fix commit explicitly describes a UAF under high parallel execution. This sample is historical ground truth for capability evaluation, not a new vulnerability."
+}
