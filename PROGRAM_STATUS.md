@@ -1092,7 +1092,7 @@ benchmark runner 会：
 
 ### 预期但尚未本地验证
 
-main 合并前本地记录为 43 个测试；本分支新增 5 个 historical benchmark 测试，因此若其他本地测试没有变化，预计完整发现数为 48。这个数字只是验证预期，不是已验证事实。
+main 合并前本地记录为 43 个测试；本分支新增 5 个 historical benchmark 测试。GitHub Actions（Ubuntu 22.04 / Python 3.10）已实际运行 `Ran 48 tests ... OK`，失败 0。用户本地 WSL 的 48-test 回归与真实 c_utils historical replay 仍待执行。
 
 本地下一步严格执行：
 
