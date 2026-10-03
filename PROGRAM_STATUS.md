@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；scan scope、轻量函数上下文、Clang Static Analyzer baseline 和 Candidate Triage Packet 已在 Ubuntu 22.04 WSL2 验证。完整回归 23/23 通过。固定提交 cJSON 核心两文件的文本扫描为 2 文件、4,681 行、26 条候选；triage 生成 26 个 packet，26 个调用表达式解析成功，0 个 unresolved；默认 `clang --analyze` 对两文件均退出 0、诊断 0。零 Clang 诊断不证明安全，26 条候选和 packet 也不是漏洞。**
+**MVP scanner 已合并到 main；scan scope、轻量函数上下文、Clang Static Analyzer baseline 和 Candidate Triage Packet 已在 Ubuntu 22.04 WSL2 验证。完整回归 23/23 通过。固定提交 cJSON 核心两文件为 2 文件、4,681 行、26 条文本候选；triage 生成 26 个 packet，26/26 调用表达式解析成功。对原先 3 条 `needs_context` + 2 条 `interesting` 已完成第二轮静态复核：cJSON.c:367 与 :570 降为 `likely_safe_static`，cJSON.c:1021 保留为低优先级长度算术问题，cJSON_Utils.c:234 与 :245 归并为同一个 unchecked-allocation-result 根因家族。已加入受控 allocator robustness harness 与验证清单，但该 runtime 实验尚未在用户 WSL/Codex 上执行。**
 
 ---
 
@@ -242,7 +242,7 @@ python -m unittest discover -s tests -v
 - 尚未实现数据流或污点分析；
 - Candidate Triage Packet 已对固定 cJSON 核心范围实测；它只组织调用实参、审查义务和 unknown 字段，不会自动判断 safe/vulnerable；跨组件解析可靠性尚未验证；
 - 尚未自动构造 PoC；
-- 尚未把 ASan Runner 接入工具；
+- 尚未把 ASan Runner 接入通用工具；当前只新增了 `validation/cjson/allocator_robustness.c` 的目标专用受控 harness，尚待 WSL/Codex 实测；
 - 尚未实现 fuzz；
 - 尚未实现 CWE 深度根因判断；
 - 尚未实现 CVE 关联；
@@ -876,3 +876,61 @@ spot check 至少覆盖：
 - 自动生成的审查义务在具体调用路径上能否满足；默认 `unknown` 不应被解释为漏洞，也不应被解释为安全。
 
 本轮验证 gate 已通过，但**没有开始下一阶段功能开发或人工漏洞定性**。下一轮可从既有的 3 条 `needs_context` 与 2 条 `interesting` 候选开始补充证据，而不是把 26 个 packet 直接作为竞赛成果。
+
+
+---
+
+## 15. 2026-10-04 priority review 与 allocator robustness gate（runtime 待验证）
+
+Candidate Triage Packet 已在 WSL 实测 23/23 通过后，继续对第一轮 3 条 `needs_context` 与 2 条 `interesting` 做了第二轮源码复核。结论记录在：
+
+```text
+docs/reviews/cjson_priority_review.md
+```
+
+当前静态研判：
+
+| 位置 | 当前状态 | 说明 |
+|---|---|---|
+| cJSON.c:367 | likely_safe_static | number 长度在 parse-buffer 范围内计数；按同一长度+1 分配并检查 NULL；直接 memcpy 未见容量不匹配 |
+| cJSON.c:570 | likely_safe_static | printbuffer offset/length 与扩容失败路径有显式检查；手工 realloc 成功后才复制旧 offset+1 |
+| cJSON.c:1021 | needs_context_low_priority | 命中的 memcpy 位于 no-escape 分支；更值得后续检查的是 size_t 长度算术，而不是 API 名本身 |
+| cJSON_Utils.c:234 | runtime_worthy_quality_issue | full_pointer 分配结果在该分支使用前未见 NULL 检查 |
+| cJSON_Utils.c:245 | same_root_cause | object 分支存在同类未检查 allocation-result 使用，应与 :234 去重为一个根因家族 |
+
+没有任何条目升级为 `validated vulnerability`。
+
+为验证 :234 / :245 的**组件健壮性行为**，当前分支新增：
+
+```text
+validation/cjson/allocator_robustness.c
+docs/testing/cjson_allocator_robustness_verification.md
+```
+
+该 harness：
+
+- 使用固定 cJSON 原组件源码；
+- 通过公开 `cJSON_InitHooks` 测试 allocator 行为；
+- 同时包含 normal allocator control 与受控 allocation-failure 情况；
+- 计划使用 ASan + UBSan 记录运行证据；
+- 不修改 cJSON 源码；
+- 不把 host-side 崩溃自动解释成 OpenHarmony 安全漏洞。
+
+当前状态：
+
+```text
+source review:                completed
+harness code:                 written
+WSL compile:                  pending
+normal controls:              pending
+failure-path runtime:         pending
+sanitizer evidence:           pending
+repeatability:                pending
+security impact:              unknown
+OpenHarmony system reachability: unknown
+reportable vulnerability:     no conclusion
+```
+
+下一轮只执行 `docs/testing/cjson_allocator_robustness_verification.md`。如果 normal control 自身失败，则先判 harness_invalid；如果 failure case 只证明 allocator-failure 下空指针崩溃，应优先记为 component robustness / quality issue，而不是高价值比赛漏洞。
+
+这一步通过后再决定：继续调查该根因的真实 OpenHarmony 调用面，还是把主力转向第一方 `c_utils` 组件。
