@@ -145,7 +145,9 @@ def build_triage_report(scan_report_path: Path) -> TriageReport:
         )
 
         if source_path.is_file() and call_name != "unknown":
-            lines = source_cache.setdefault(source_path, _read_source_lines(source_path))
+            if source_path not in source_cache:
+                source_cache[source_path] = _read_source_lines(source_path)
+            lines = source_cache[source_path]
             parsed = parse_call_at_line(
                 lines,
                 line_number=int(finding["line"]),
