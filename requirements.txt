@@ -1,2 +1,5 @@
-# Dependencies will be added incrementally as the MVP is implemented.
-# Keep this file minimal until the parser/rule-engine technology stack is fixed.
+# Dependencies are added incrementally as the tooling stack is fixed.
+# AST parsing (src/parser/ast.py) uses tree-sitter with the C and C++ grammars.
+tree-sitter>=0.23,<1
+tree-sitter-c>=0.23,<1
+tree-sitter-cpp>=0.23,<1
