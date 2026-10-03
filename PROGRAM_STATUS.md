@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；当前分支的 scan scope 与轻量函数上下文已在 Ubuntu 22.04 WSL2 验证。完整回归 14/14 通过，样例候选归入 `bad_copy`。固定提交 cJSON 核心两文件仍为 2 文件、4,681 行、26 条文本候选；本次 26 条均获启发式函数名，六个指定位置全部匹配，候选身份与旧报告逐项一致。`heuristic_top_level_function` 不是 AST 语义证明。成熟静态工具、原组件运行时漏洞验证和大规模性能基准均未做，尚无确认漏洞。**
+**MVP scanner 已合并到 main；scan scope 与轻量函数上下文已在 Ubuntu 22.04 WSL2 验证。完整回归 14/14 通过，固定提交 cJSON 核心两文件仍为 2 文件、4,681 行、26 条文本候选，26/26 均解析到启发式函数上下文，六个 spot check 全部匹配。2026-10-04 ChatGPT 已继续加入可复现的 Clang Static Analyzer baseline runner（`baseline-clang`）、4 个新测试和验证清单；该 baseline 代码尚未在用户 WSL/Codex 上实测，因此当前预期总测试为 18，但仍属 pending。原组件运行时漏洞验证和大规模性能基准尚未做，尚无确认漏洞。**
 
 ---
 
@@ -240,6 +240,7 @@ python -m unittest discover -s tests -v
 - 尚未实现 Patch 自动验证；
 - 尚未实现 LLM 二次研判；
 - 尚未实现完整比赛漏洞报告；
+- 成熟静态工具 baseline runner 已写入当前分支，但尚未在 WSL/Codex 上完成真实 cJSON baseline，因此仍不能写成已验证；
 - 尚未进行真实准确率、召回率和性能 Benchmark。
 
 当前状态只是：
@@ -711,3 +712,62 @@ python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
 - 两周竞赛交付所需的大规模性能、真实准确率和完整漏洞验证链。
 
 结论边界：context_status = heuristic_top_level_function 仅表示轻量启发式匹配到 top-level 函数，**不是 AST 证明，更不是漏洞验证**。下一阶段功能开发未在本轮开始。
+
+
+---
+
+## 13. 2026-10-04 Clang Static Analyzer baseline 代码更新（待 WSL/Codex 验证）
+
+function-context 已经在 WSL 实测 14/14 通过后，下一步开始建立“成熟工具对照”而不是继续增加危险函数规则。
+
+本次远程分支新增/修改：
+
+- `src/baseline/__init__.py`：baseline 模块边界说明；
+- `src/baseline/clang_analyzer.py`：封装 `clang --analyze`，按显式文件运行并记录 command / exit code / stdout / stderr / parsed diagnostics / elapsed；
+- `src/cli/main.py`：增加 `baseline-clang` 子命令；
+- `tests/test_clang_baseline.py`：新增 4 个 baseline runner 测试，使用临时 fake clang，不依赖真实 Clang 输出稳定性；
+- `docs/testing/clang_baseline_verification.md`：固定 cJSON 的本地验证清单。
+
+设计边界：
+
+```text
+Clang warning != validated vulnerability
+0 warning != proof of safety
+```
+
+baseline runner 不会修改 Finding.status，也不会把成熟工具结果和文本候选数量直接相加。
+
+预期测试总数：
+
+```text
+已验证 scanner/scope/context: 14
+新增 baseline runner tests:     4
+---------------------------------
+预期总数:                      18
+```
+
+但 18/18 尚未在用户 WSL 上实际执行。
+
+真实 baseline 目标仍固定：
+
+```text
+target commit:
+0c2c9dff82cc85539c8362132d7a5f6bf7d1e748
+
+files:
+cJSON.c
+cJSON_Utils.c
+```
+
+验证时必须记录：
+
+- `clang --version` 与 executable path；
+- 两个 source file 的 analyzer exit code；
+- diagnostic 数量和 warning/error/note 分布；
+- checker 分布；
+- 与现有 26 candidate 的 exact-location overlap；
+- Clang-only warning/error locations；
+- text-candidate-only locations；
+- baseline elapsed 与一次 `/usr/bin/time -v` 最大 RSS。
+
+若真实 Clang 因编译参数/宏/头文件失败，应记录 failed/blocked 及 stderr，不允许修改 cJSON 源码来伪造“分析成功”。
