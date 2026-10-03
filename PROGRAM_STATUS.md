@@ -999,4 +999,25 @@ reportable vulnerability:     no conclusion
 ### 未做 / 边界
 
 - 尚未把 AST 集成进 scanner 主链路（scanner 仍是文本正则）；尚未用修复前 commit bdfafdaa + TSan 复现 singleton.h UAF；尚未长时间 fuzz parcel；尚未产出任何可报告的 OpenHarmony 安全漏洞。
-- 下一优先级建议：用 TSan 复现 singleton.h UAF（验证 PoC 管线对真 UAF 有效）→ 把 AST 接入 scanner → 长时间 fuzz parcel 找 crash。
+- 下一优先级建议与分支收尾结论见第 18 节。
+
+---
+
+## 18. 分支收尾结论与下一分支规划
+
+### cJSON 的定位结论
+
+- cJSON 是本分支的 **pipeline validation target（练兵目标）**，不是 final vulnerability target。
+- 26 条文本候选经人工复核后无一升级为 validated；allocator 失败崩溃是组件级健壮性行为（普通 DoS），赛题明确不鼓励，不纳入竞赛漏洞。
+- 当前分支 **0 个 validated vulnerability**，这是诚实结论，不夸大。
+
+### 本分支的收尾边界（到此为止，不再扩大）
+
+本分支收尾后不再加入：完整 Tree-sitter AST 集成到 scanner、CodeQL/Semgrep/Cppcheck、c_utils 深入漏洞验证、历史 CVE 回放、VulnerabilityCase 完整体系（聚类/去重/跨版本）、正式 PoC 报告。这些是后续分支的事。本分支只做了一件事：把「真实组件 onboarding → scan scope → context → baseline → triage → runtime gate」这套基础流程固定下来。
+
+### 下一分支（二选一，建议先 A）
+
+- **路线 A（推荐优先）：feat/historical-vuln-benchmark** —— 找 3~5 个 OpenHarmony 第一方历史安全修复，固定 vulnerable/fixed commit，跑 scanner/clang/triage，看能否命中真实漏洞位置，形成第一版 benchmark。它最能补当前短板：无真实漏洞样本、无召回/误报证据、无 validated case。已有素材：c_utils singleton.h UAF（见 docs/targets/c_utils_singleton_uaf_groundtruth.md）。
+- **路线 B：feat/first-party-target-cutils** —— 深入 c_utils 第一方组件，跑 scanner + triage + baseline + ASan/UBSan，选真实候选进入验证。已有素材：parcel 子模块可独立编译 + libFuzzer（见 docs/targets/c_utils_parcel_onboarding.md）。
+
+合并本分支后，下一分支从 A 或 B 开新分支，不再在 target-onboarding 里无限追加。
