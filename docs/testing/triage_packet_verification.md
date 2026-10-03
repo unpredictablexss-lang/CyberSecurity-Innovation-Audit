@@ -1,7 +1,7 @@
 # Candidate Triage Packet Verification
 
 > Branch: `feat/openharmony-target-onboarding`  
-> Status: **pending Ubuntu WSL / Codex verification**  
+> Status: **verified in Ubuntu 22.04 WSL2 on 2026-10-04**; 23/23 tests passed, fixed cJSON core produced 26 packets with 26 parsed calls and 0 unresolved. Actual results and limits are in [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md).
 > Purpose: turn the existing 26 cJSON text candidates into structured review packets without claiming any vulnerability.
 
 ## Why this is the next step

@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；scan scope、轻量函数上下文与 Clang Static Analyzer baseline runner 已在 Ubuntu 22.04 WSL2 验证。完整回归 18/18 通过。固定提交 cJSON 核心两文件的文本扫描为 2 文件、4,681 行、26 条候选；默认 `clang --analyze` 对两文件均退出 0、诊断 0。2026-10-04 ChatGPT 已继续加入 Candidate Triage Packet 层：从现有 scan JSON 提取调用表达式、实参、安全审查义务、稳定 candidate_id 和待人工填写的 review 字段，并新增 5 个测试与验证清单；该层尚待用户 WSL/Codex 实测，因此预期总测试为 23，但仍属 pending。零 Clang 诊断不证明安全，26 条候选也不是漏洞。**
+**MVP scanner 已合并到 main；scan scope、轻量函数上下文、Clang Static Analyzer baseline 和 Candidate Triage Packet 已在 Ubuntu 22.04 WSL2 验证。完整回归 23/23 通过。固定提交 cJSON 核心两文件的文本扫描为 2 文件、4,681 行、26 条候选；triage 生成 26 个 packet，26 个调用表达式解析成功，0 个 unresolved；默认 `clang --analyze` 对两文件均退出 0、诊断 0。零 Clang 诊断不证明安全，26 条候选和 packet 也不是漏洞。**
 
 ---
 
@@ -99,20 +99,26 @@ src/
 │   ├── __init__.py
 │   ├── __main__.py
 │   └── main.py
-└── core/
+├── core/
+│   ├── __init__.py
+│   ├── context.py
+│   ├── finding.py
+│   ├── scanner.py
+│   └── report.py
+└── triage/
     ├── __init__.py
-    ├── context.py
-    ├── finding.py
-    ├── scanner.py
-    └── report.py
+    ├── callsite.py
+    └── review.py
 
 samples/
 ├── vulnerable/demo_overflow.cpp
 └── safe/demo_safe_copy.cpp
 
 tests/
+├── test_clang_baseline.py
 ├── test_context.py
-└── test_scanner.py
+├── test_scanner.py
+└── test_triage.py
 ```
 
 ### 2.2 Finding 数据结构
@@ -210,14 +216,14 @@ python -m src.cli scan samples \
 
 ### 2.6 回归测试
 
-当前 `tests/test_scanner.py` 有 9 个扫描/范围回归测试，`tests/test_context.py` 有 5 个函数上下文测试，`tests/test_clang_baseline.py` 有 4 个 baseline runner 测试；2026-10-04 在 WSL 实跑 18/18 通过。原 4 个扫描测试覆盖以下基础行为：
+当前 `tests/test_scanner.py` 有 9 个扫描/范围回归测试，`tests/test_context.py` 有 5 个函数上下文测试，`tests/test_clang_baseline.py` 有 4 个 baseline runner 测试，`tests/test_triage.py` 有 5 个 triage 测试；2026-10-04 在 WSL 实跑 **23/23 通过**。原 4 个扫描测试覆盖以下基础行为：
 
 1. vulnerable / safe 样例区分；
 2. 函数名边界与空格调用形式；
 3. CLI 写出 JSON 和 Markdown；
 4. CLI 对不存在 target 报错。
 
-本轮实际结果为 `Ran 18 tests ... OK`，失败 0；此前 9/9 和 14/14 的阶段结果分别保留在第 11～12 节。运行命令：
+最新实际结果为 `Ran 23 tests ... OK`，失败 0；此前 9/9、14/14、18/18 的阶段结果分别保留在第 11～13 节。运行命令：
 
 ```bash
 python -m unittest discover -s tests -v
@@ -234,7 +240,7 @@ python -m unittest discover -s tests -v
 - 尚未接入 AST；已验证的 function context 只是轻量 top-level 语法启发式，不能称为 AST；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
-- Candidate Triage Packet 代码已写入当前分支，但尚未在 WSL/Codex 上验证；它只组织调用实参、审查义务和 unknown 字段，不会自动判断 safe/vulnerable；
+- Candidate Triage Packet 已对固定 cJSON 核心范围实测；它只组织调用实参、审查义务和 unknown 字段，不会自动判断 safe/vulnerable；跨组件解析可靠性尚未验证；
 - 尚未自动构造 PoC；
 - 尚未把 ASan Runner 接入工具；
 - 尚未实现 fuzz；
@@ -257,6 +263,7 @@ python -m unittest discover -s tests -v
 → scope 功能 9/9 测试通过，cJSON 核心两文件 26 条候选逐项复现
 → function context 完整回归 14/14 通过，固定 cJSON 26 条获启发式函数名
 → Clang baseline 完整回归 18/18 通过，两文件分析退出 0、诊断 0
+→ triage 完整回归 23/23 通过，固定 26 个候选生成 26 个 packet，26 个调用已解析
 → 待做原编译参数对照、人工边界复核和原组件运行时验证
 ```
 
@@ -763,7 +770,7 @@ python -m src.cli baseline-clang /home/audit/openharmony-targets/third_party_cJS
 
 ---
 
-## 14. 2026-10-04 Candidate Triage Packet 代码更新（待 WSL/Codex 验证）
+## 14. 2026-10-04 Candidate Triage Packet 的 WSL 实测记录
 
 Clang baseline 已经在 WSL 实测 18/18 通过，固定 cJSON 核心两文件 `clang --analyze` 为 0 diagnostics。下一步不再比较“谁报得多”，而是把 26 条文本候选整理成可复核的结构化研判包。
 
@@ -811,7 +818,7 @@ memcpy(dst, src, n)
 预期总数: 23
 ```
 
-23/23 尚未在用户 WSL 实际执行。
+在 Ubuntu 22.04 WSL2 的当前分支基线 `c38702e` 上，实际执行 `python -m unittest discover -s tests -v`：**Ran 23 tests，OK；通过 23，失败 0，错误 0**。没有失败测试、traceback 或代码修复。
 
 固定 cJSON 验证要求：
 
@@ -834,3 +841,38 @@ spot check 至少覆盖：
 同一固定 scan report 重跑两次 triage 时，candidate_id 应保持稳定且 26 条唯一。
 
 通过这一 gate 后，下一轮才人工填写已经初筛的 3 条 `needs_context` + 2 条 `interesting` 的 review 字段，再决定是否进入原组件 ASan/UBSan/失败分配器实验。不得自动把它们升级为 validated。
+
+### Verified（本轮实测）
+
+- 同步远程分支到 `c38702e` 后工作树干净；固定 cJSON 源码 HEAD 为 `0c2c9dff82cc85539c8362132d7a5f6bf7d1e748`，源码工作树干净。本轮没有修改 cJSON、分析器、CLI 或测试代码。
+- 完整回归 **23/23 通过，失败 0，错误 0**。重新运行核心 scoped scan：**scanned_files = 2，scanned_lines = 4,681，candidate_findings = 26**；原始 26 个 Finding 的 `status` 仍全部为 `candidate`。
+- `triage` 输出 **candidate_count = 26，packet_count = 26，parsed call expressions = 26，unresolved = 0**；26 条 `call_parse_status` 均为 `parsed_text_call`。本目标无 unresolved 项，因此没有需列出的文件/行号/原因；这不代表其他项目也能全部解析。
+- `call_name` 分布：`memcpy` 9、`sprintf` 11、`strcpy` 5、`strcat` 1。26 条 packet 的 `review_status` 均为 `unreviewed`；`input_control`、`destination_capacity`、`length_origin`、`guard_evidence`、`reachability`、`security_impact` 均为 `unknown`，`runtime_validation` 均为 `not_started`。
+- 对同一 scan JSON 独立运行两次 triage：26 个 `candidate_id` 顺序和值完全相同，且首次结果中 26 个 ID 两两不同。这里只验证**同一输入报告重复运行**的稳定性，未验证跨 checkout 路径、源码改动或报告重排后的稳定性。
+- 26 个 Markdown packet 段落均能按 ID 找到，且每段包含位置、函数、调用解析状态、调用表达式、实参、审查义务、review 字段和源码上下文；开头明确写有 “Structured review aid only. These packets do not validate vulnerabilities.”。`memcpy` 和 `strcpy` packet 的义务是待审条件，不是漏洞结论。
+
+六处指定调用的实参结构逐一与固定源码及验证清单对照（仅忽略无关空格）：
+
+| 位置 | 实际调用实参 | 结果 |
+|---|---|---|
+| `cJSON.c:204` `memcpy` | `copy`; `string`; `length` | 正确，3 个 |
+| `cJSON.c:367` `memcpy` | `number_c_string`; `buffer_at_offset(input_buffer)`; `number_string_length` | 正确，3 个；嵌套调用未被拆开 |
+| `cJSON.c:465` `strcpy` | `object->valuestring`; `valuestring` | 正确，2 个 |
+| `cJSON.c:570` `memcpy` | `newbuffer`; `p->buffer`; `p->offset + 1` | 正确，3 个 |
+| `cJSON_Utils.c:234` `sprintf` | `(char*)full_pointer`; `"/%lu%s"`; `(unsigned long)child_index`; `target_pointer` | 正确，4 个；格式串单独成参 |
+| `cJSON_Utils.c:245` `strcat` | `(char*)full_pointer`; `(char*)target_pointer` | 正确，2 个 |
+
+本地生成 `outputs/reports/cjson_core_context.{json,md}`、`outputs/reports/cjson_core_triage.{json,md}`；复跑报告在 `/tmp/cjson_triage_second.{json,md}`。`outputs/reports` 中的运行产物被 Git 忽略，复现时按本节及 [验证清单](docs/testing/triage_packet_verification.md) 重新生成。本轮仅更新 `PROGRAM_STATUS.md` 和该验证清单的状态说明。
+
+### Unverified（本轮未验证）
+
+- 26 条 packet 的实参是否都具备编译器级语义正确性；这里只逐项列出结果并对六处已知调用做精确 spot check，解析器仍是文本启发式，不是 C/C++ AST。
+- 真实输入控制、目标缓冲区容量、长度来源与整数边界、guard 对调用的约束、跨函数可达性、运行时触发条件；没有运行 ASan/UBSan、PoC、fuzz 或完整组件测试套件。
+- candidate_id 在换机器、移动源码目录、改变扫描结果顺序或修改源码后的稳定性，以及其他 OpenHarmony 组件的解析覆盖率。
+
+### Unknown（需要后续证据）
+
+- 26 条文本候选中哪些是实际安全缺陷，哪些只是危险 API 的安全用法；是否有可报告给赛方的安全影响及受影响版本。
+- 自动生成的审查义务在具体调用路径上能否满足；默认 `unknown` 不应被解释为漏洞，也不应被解释为安全。
+
+本轮验证 gate 已通过，但**没有开始下一阶段功能开发或人工漏洞定性**。下一轮可从既有的 3 条 `needs_context` 与 2 条 `interesting` 候选开始补充证据，而不是把 26 个 packet 直接作为竞赛成果。
