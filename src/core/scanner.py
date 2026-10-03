@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
+from src.core.context import resolve_context
 from src.core.finding import Finding
 
 
@@ -60,6 +61,7 @@ def _scan_lines(path: Path, lines: List[str]) -> List[Finding]:
         # still be in a comment, macro, declaration, or unreachable code.
         for func in dict.fromkeys(CALL_PATTERN.findall(line)):
             cwe, vuln_type = DANGEROUS_CALLS[func]
+            context = resolve_context(lines, idx)
             findings.append(
                 Finding(
                     rule_id=f"cpp.dangerous_call.{func}",
@@ -70,7 +72,7 @@ def _scan_lines(path: Path, lines: List[str]) -> List[Finding]:
                     confidence="unassessed",
                     file_path=str(path),
                     line=idx,
-                    function=None,
+                    function=context.function,
                     evidence=line.strip(),
                     explanation=(
                         f"The text contains a call-shaped use of {func}(). "
@@ -81,6 +83,12 @@ def _scan_lines(path: Path, lines: List[str]) -> List[Finding]:
                         "Check the source and destination bounds in context. "
                         "Only propose a code change after confirming the risk."
                     ),
+                    function_start_line=context.function_start_line,
+                    function_end_line=context.function_end_line,
+                    context_start_line=context.context_start_line,
+                    context_end_line=context.context_end_line,
+                    context=context.snippet,
+                    context_status=context.status,
                 )
             )
 
