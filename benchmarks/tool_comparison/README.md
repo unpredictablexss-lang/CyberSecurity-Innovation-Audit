@@ -106,3 +106,25 @@ It combines the vertical real-case workflow with the horizontal multi-scanner
 benchmark line and fixes the merge point at the normalized Candidate/Evidence
 protocol rather than direct code concatenation.
 
+## Comparison command
+
+Once two or more tool-native reports have been converted into normalized
+ToolRunResult JSON files, compare them with:
+
+```bash
+python -m src.cli compare-tools \
+  --report outputs/reports/semgrep.normalized.json \
+  --report outputs/reports/codeql.normalized.json \
+  --report outputs/reports/clang.normalized.json \
+  --report outputs/reports/cppcheck.normalized.json \
+  --json-out outputs/reports/tool_comparison.json \
+  --md-out outputs/reports/tool_comparison.md
+```
+
+The command rejects reports whose target ID, commit, file count, or LOC scope
+do not match. It reports per-tool diagnostic/evidence counts and exact
+file/line overlap only.
+
+Exact-location overlap is deliberately descriptive. It is not a vote, not a
+root-cause equivalence proof, and not a vulnerability verdict.
+
