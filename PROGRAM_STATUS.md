@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；固定 cJSON 目标上的 scope、函数上下文、Clang baseline、Candidate Triage Packet 与受控 allocator 运行时验证已在 Ubuntu 22.04 WSL2 执行。当前本地完整回归 33/33 通过。核心两文件扫描仍为 2 文件、4,681 行、26 条文本候选；triage 为 26 个 packet、26/26 调用解析成功。cJSON_Utils.c:234 与 :245 属于同一未检查分配结果的根因家族：原组件源码在受控第二次分配失败时，array/object 路径各重复 3 次均产生 sanitizer 证据，正常对照均通过。这是组件级健壮性行为，**不是已确认的 OpenHarmony 安全漏洞**。剩余工作与结论边界见第 16 节。**
+**MVP scanner 已合并到 main；cJSON 首条工程闭环（scope、函数上下文、Clang baseline、triage、受控 allocator 运行时证据）已在 Ubuntu 22.04 WSL2 完成，本地完整回归 43/43 通过。本轮新增：scanner 注释/字符串误报修复；c_utils（第一方）parcel 子模块独立编译 + libFuzzer 验证；singleton.h UAF 作为 ground-truth 样本；Evidence/VulnerabilityCase 数据模型；tree-sitter AST 索引（函数/调用/变量）；组件级性能 benchmark。cJSON_Utils.c:234/:245 仍是组件级健壮性行为（allocator 失败崩溃），**不是已确认的 OpenHarmony 安全漏洞**。仍未产出可报告漏洞；c_utils 是第一方下一步主攻目标，结论边界见第 16、17 节。**
 
 ---
 
@@ -237,7 +237,7 @@ python -m unittest discover -s tests -v
 
 - 尚未对真实 OpenHarmony 组件完成全套构建、测试与运行时漏洞验证；
 - 尚未对 cJSON 核心候选完成原组件运行时验证或漏洞确认；本轮只验证了扫描范围与文本候选的可复现性；
-- 尚未接入 AST；已验证的 function context 只是轻量 top-level 语法启发式，不能称为 AST；
+- AST 已以独立模块 `src/parser/ast.py`（tree-sitter）接入，可提取函数/调用/变量并排除注释/字符串；但尚未集成到 scanner（scanner 仍用文本正则 + 启发式函数上下文，26 条候选与 AST 提取一致）；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
 - Candidate Triage Packet 已对固定 cJSON 核心范围实测；它只组织调用实参、审查义务和 unknown 字段，不会自动判断 safe/vulnerable；跨组件解析可靠性尚未验证；
@@ -967,3 +967,36 @@ reportable vulnerability:     no conclusion
 ### 结论边界
 
 本轮结果支持的最强表述是："原始固定 cJSON 组件在受控第二次分配失败条件下，array/object 两个路径各 3/3 稳定复现 sanitizer 确认的非法访问（写 NULL 指针）。" 这是组件级健壮性行为（unchecked allocation-result），**不是已确认的 OpenHarmony 安全漏洞**。赛题明确不鼓励无实际安全危害的普通 DoS，因此本结果不作为竞赛漏洞报告；它的价值是证明 validator 管线（harness → build → ASan/UBSan → 重复执行 → 证据留存）已在真实组件源码上跑通，可迁移到下一目标。下一阶段工作见第 7 节。
+
+---
+
+## 17. 2026-10-04 P1-P3 进展：c_utils 探测、ground truth、数据模型、AST 与 benchmark
+
+本轮在 cJSON 闭环之外推进了四件事，均已在 WSL 实测并逐条提交（分支 feat/openharmony-target-onboarding，提交 2b6e181..76fcc94）。
+
+### P1：c_utils（第一方）成为可行的下一个真实目标
+
+- 探明 c_utils 是 Rust + C++ 混合仓库，C++ 核心约 7201 行、30 个 .cpp，有 7 个现成 fuzz target（parcel/refbase/string/thread/timer/ashmem/directory）。
+- parcel 子模块（IPC 反序列化，1686 行）**可独立编译 + libFuzzer 模糊测试**，无需整树 GN/Ninja：只需最小 securec stub（memcpy_s/strcpy_s）+ fuzz_log override（不定义 CONFIG_HILOG 去 hilog）。首轮 10 秒 sanity run 78 万 runs、约 7 万 exec/s、无 crash。见 [docs/targets/c_utils_parcel_onboarding.md](docs/targets/c_utils_parcel_onboarding.md)。
+- 上游小 bug：base/test/fuzztest/fuzz_log.h 的 #else 分支把 FUZZ_LOG* 误写成 PARCEL_LOG*（不影响安全，仅影响独立编译）。
+
+### P1：ground-truth 样本（第一方历史安全修复）
+
+- 找到 commonlibrary_c_utils 的 singleton.h UAF 修复：DelayedSingleton<T>::GetInstance()/DestroyInstance() 对 std::shared_ptr 的非原子读/写在高并发下导致 use-after-free。修复 commit 9a3f2811（父 bdfafdaa），Issue #560，PR #586，2026-01-13 合入。见 [docs/targets/c_utils_singleton_uaf_groundtruth.md](docs/targets/c_utils_singleton_uaf_groundtruth.md)。
+- 这是一个并发数据竞争型 UAF，文本危险 API 规则**命中不到**，需要 TSan / 生命周期 / 并发分析——它量化了当前工具的真实盲区，并指向下一步能力建设方向。
+
+### P2：数据模型与真实 AST
+
+- 落地 Evidence（evidence_id/type/source/location/content/confidence）与 VulnerabilityCase（case_id/title/root_cause/cwe/cve/severity/primary_location/related_findings/source_to_sink_trace/trigger_conditions/poc/runtime_evidence/affected_modules/affected_versions/patch/patch_validation/confidence/report_status/evidence），对应 architecture_2026.md 第 12 节。见 src/core/evidence.py、src/core/case.py。
+- 接入 tree-sitter（tree-sitter-c/cpp），实现 src/parser/ast.py：提取函数定义（名/返回类型/参数/行范围）、调用表达式（名/参数/位置）、变量声明（名/类型/位置）。在 cJSON 核心两文件上，AST 提取的 26 条危险调用与文本 scanner 完全一致，且参数更精确、天然无注释/字符串误报。
+
+### P3：组件级性能 benchmark
+
+- 文本 scanner：cJSON 99 文件 0.507s、14.4 MB、约 195 files/s / 44k LOC/s；c_utils 122 文件 1.166s、约 105 files/s / 41k LOC/s（0 文本候选，因第一方代码用 memcpy_s/std::string 等安全 API）。
+- AST 解析：cJSON 99 文件 0.248s、22.8 MB、约 400 files/s / 90k LOC/s（比文本 scanner 更快更准）。
+- 详见 [docs/testing/performance_benchmark.md](docs/testing/performance_benchmark.md)。这是组件级数据，非 OpenHarmony 整树规模。
+
+### 未做 / 边界
+
+- 尚未把 AST 集成进 scanner 主链路（scanner 仍是文本正则）；尚未用修复前 commit bdfafdaa + TSan 复现 singleton.h UAF；尚未长时间 fuzz parcel；尚未产出任何可报告的 OpenHarmony 安全漏洞。
+- 下一优先级建议：用 TSan 复现 singleton.h UAF（验证 PoC 管线对真 UAF 有效）→ 把 AST 接入 scanner → 长时间 fuzz parcel 找 crash。
