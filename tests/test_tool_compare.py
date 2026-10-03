@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -118,6 +120,46 @@ class MultiToolComparisonTests(unittest.TestCase):
         self.assertIn("not a vulnerability vote", data["interpretation"])
         self.assertIn("Descriptive comparison only", markdown)
         self.assertIn("No Precision/Recall", markdown)
+
+
+    def test_cli_compare_tools_writes_reports(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            left = self._write(root, "left.json", report("semgrep", []))
+            right = self._write(root, "right.json", report("codeql", []))
+            json_output = root / "comparison.json"
+            md_output = root / "comparison.md"
+            project_root = Path(__file__).resolve().parents[1]
+
+            process = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "src.cli",
+                    "compare-tools",
+                    "--report",
+                    str(left),
+                    "--report",
+                    str(right),
+                    "--json-out",
+                    str(json_output),
+                    "--md-out",
+                    str(md_output),
+                ],
+                cwd=project_root,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(process.returncode, 0, process.stderr)
+            data = json.loads(json_output.read_text(encoding="utf-8"))
+            markdown = md_output.read_text(encoding="utf-8")
+
+        self.assertEqual(data["target_id"], "fixture-target")
+        self.assertEqual(len(data["tools"]), 2)
+        self.assertIn("[OK] tools: 2", process.stdout)
+        self.assertIn("Multi-tool Static Analysis Comparison", markdown)
 
 
 if __name__ == "__main__":
