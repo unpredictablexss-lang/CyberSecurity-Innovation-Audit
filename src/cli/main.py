@@ -2,10 +2,14 @@ import argparse
 import json
 from pathlib import Path
 
-from src.baseline.clang_analyzer import run_clang_analyzer, write_reports
+from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
 from src.core.report import render_markdown
 from src.core.scanner import scan_directory
 from src.triage.review import build_triage_report, write_triage_reports
+from src.validation.cjson_allocator import (
+    run_cjson_allocator_validation,
+    write_reports as write_allocator_reports,
+)
 
 
 def _configure_scan_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
@@ -100,6 +104,43 @@ def main() -> None:
     scan_parser = _configure_scan_parser(subparsers)
     baseline_parser = _configure_clang_baseline_parser(subparsers)
 
+    allocator_parser = subparsers.add_parser(
+        "validate-cjson-allocator",
+        help="Build and run the controlled cJSON allocator robustness harness",
+    )
+    allocator_parser.add_argument("target", help="Pinned cJSON source directory")
+    allocator_parser.add_argument(
+        "--harness",
+        default="validation/cjson/allocator_robustness.c",
+        help="Harness source path",
+    )
+    allocator_parser.add_argument(
+        "--binary",
+        default="outputs/bin/cjson_allocator_robustness",
+        help="Output binary path",
+    )
+    allocator_parser.add_argument(
+        "--compiler",
+        default="clang",
+        help="C compiler executable (default: clang)",
+    )
+    allocator_parser.add_argument(
+        "--repeat",
+        type=int,
+        default=3,
+        help="Repeat each controlled failure case N times (default: 3)",
+    )
+    allocator_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/cjson_allocator_validation.json",
+        help="Output JSON path",
+    )
+    allocator_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/cjson_allocator_validation.md",
+        help="Output Markdown path",
+    )
+
     triage_parser = subparsers.add_parser(
         "triage",
         help="Build structured review packets from a candidate scan JSON report",
@@ -181,7 +222,7 @@ def main() -> None:
         except (ValueError, RuntimeError, OSError) as error:
             baseline_parser.error(str(error))
 
-        write_reports(result, json_output, md_output)
+        write_clang_reports(result, json_output, md_output)
 
         print(f"[OK] baseline target: {result.target}")
         print(f"[OK] clang version: {result.clang_version}")
@@ -189,6 +230,40 @@ def main() -> None:
         print(f"[OK] diagnostics: {result.diagnostic_count}")
         print(f"[OK] failed files: {len(result.failed_files)}")
         print(f"[OK] elapsed seconds: {result.elapsed_seconds:.6f}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+
+    if args.command == "validate-cjson-allocator":
+        target = Path(args.target).resolve()
+        harness = Path(args.harness).resolve()
+        binary = Path(args.binary).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if json_output == md_output:
+            allocator_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            result = run_cjson_allocator_validation(
+                target=target,
+                harness=harness,
+                binary=binary,
+                compiler=args.compiler,
+                repeats=args.repeat,
+            )
+        except (ValueError, OSError) as error:
+            allocator_parser.error(str(error))
+
+        write_allocator_reports(result, json_output, md_output)
+
+        sanitizer_runs = sum(1 for item in result.runs if item.sanitizer_detected)
+        print(f"[OK] allocator target: {result.target}")
+        print(f"[OK] build outcome: {result.build.outcome}")
+        print(f"[OK] runtime cases: {len(result.runs)}")
+        print(f"[OK] sanitizer-triggered runs: {sanitizer_runs}")
+        print(f"[OK] overall outcome: {result.outcome}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
         return
