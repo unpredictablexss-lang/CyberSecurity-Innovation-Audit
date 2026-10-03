@@ -63,9 +63,10 @@ cmake --build /home/audit/openharmony-targets/third_party_cJSON-build -j 4
 ## T2：c_utils
 
 - [固定提交](https://github.com/openharmony/commonlibrary_c_utils/tree/3bdc11e00e7bf6e577cee300ad51045ca9958efd)；本地 /home/audit/openharmony-targets/commonlibrary_c_utils。
-- 仓库有 base/BUILD.gn、base/test/BUILD.gn、base/test/unittest 与 base/test/fuzztest。文档给出的构建途径为 OpenHarmony 整树 GN/Ninja；尚未找到顶层 host CMake 工程。
-- build/test/fuzz 的运行结果均 **unknown / not_started**。测试目录存在不等于测试已通过。
-- 第一方价值高，但完整产品依赖可能超出两周时间窗。后续只选一个输入处理子模块探测编译闭环，设时间上限。
+- 仓库有 base/BUILD.gn、base/test/BUILD.gn、base/test/unittest 与 base/test/fuzztest。文档给出的构建途径为 OpenHarmony 整树 GN/Ninja；无顶层 host CMake 工程。
+- 2026-10-04 已探明：parcel 子模块可独立编译 + libFuzzer 模糊测试，无需整树构建，只需最小 securec stub 与 fuzz_log override。首轮 10 秒 sanity run 78 万 runs、约 7 万 exec/s、无 crash。详见 [c_utils parcel 探测](c_utils_parcel_onboarding.md)。
+- 整树 build/test 仍 unknown / not_started；但 parcel 的宿主机独立 fuzz 已打通，是第一方组件里最有价值的输入处理攻击面。
+- 后续优先把 scanner/triage 与长时间 fuzz 对接到 parcel.cpp / refbase.cpp（引用计数是第二高价值攻击面）。
 
 ## T3：lwIP
 
