@@ -2,7 +2,7 @@
 
 > - 项目：CyberSecurity-Innovation-Audit
 > - 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘
-> - 更新日期：2026-10-03
+> - 更新日期：2026-10-04
 > - 当前分支：`feat/openharmony-target-onboarding`
 > - 已合并 PR：#2（MVP scanner 与目标筛选模板），merge commit `bef61d0caeed7c58b3887abc8b8cbfc33a1b4755`。
 > - 当前阶段：真实组件筛选与 cJSON 首条工程闭环；构建、测试和扫描的证据见目标配置与筛选记录。
@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main。真实目标第一轮筛选了 cJSON、c_utils、lwIP 三个固定提交；cJSON 的独立宿主机测试 1/1 通过，但完整测试构建缺少 test_fwk.h。当前扫描 cJSON 全仓 99 个源码文件、22,377 行，得到 49 条文本候选，其中核心库 26 条。已人工初筛 10 条，尚无确认漏洞。2026-10-04 已在当前分支加入显式 `--include/--exclude` 扫描范围、scope 报告字段和 5 个新增回归测试，但尚待 Ubuntu WSL/Codex 本地验证。验证通过后先重跑 cJSON 核心文件，再进入成熟静态工具基线和函数上下文分析。**
+**MVP scanner 已合并到 main。当前分支的显式 `--include/--exclude` 范围功能已在 Ubuntu 22.04 WSL2 实测：9/9 个回归测试通过，样例扫描与无效路径拒绝符合验证清单。固定提交的 cJSON 核心两文件扫描得到 2 文件、4,681 行、26 条文本候选、0 个跳过文件；26 条与此前全仓报告里的核心命中逐项一致。此前全仓基线仍为 99 文件、22,377 行、49 条候选。尚无确认漏洞；成熟静态工具和原组件运行时验证未做。**
 
 ---
 
@@ -148,6 +148,7 @@ severity = unassessed
 - 生成结构化 Finding；
 - 记录 scanned_files、scanned_lines、skipped_files、finding_count；
 - 跳过 `.git`、`.venv`、`__pycache__`、`.cache` 等目录。
+- 支持显式 `--include` / `--exclude` 相对路径范围，并在报告中记录 scope；本地验证见第 11 节。
 
 重要边界：
 
@@ -185,6 +186,8 @@ python -m src.cli scan samples \
 
 `--out` 仍作为 `--json-out` 的兼容别名。
 
+2026-10-04 已验证无参数旧用法及 include/exclude 样例；重叠 include 去重由回归测试覆盖。核心范围命令与结果见第 11 节。
+
 ### 2.5 报告输出
 
 已支持：
@@ -192,19 +195,20 @@ python -m src.cli scan samples \
 - JSON 报告；
 - Markdown 报告；
 - Markdown 明确提示“Text-pattern candidates only. No finding has been validated as a vulnerability.”
+- JSON 与 Markdown 均记录 include/exclude scope；核心范围报告的实际字段见第 11 节。
 
 本地生成报告位于 `outputs/reports/`，该目录下的 `.json` 和 `.md` 已被 `.gitignore` 忽略，不应提交。
 
 ### 2.6 回归测试
 
-当前 `tests/test_scanner.py` 已有 4 个最小回归测试，覆盖：
+当前 `tests/test_scanner.py` 有 9 个回归测试：原 4 个覆盖以下基础行为，另 5 个覆盖 include/exclude、重叠范围去重、路径逃逸拒绝及报告 scope 一致性。
 
 1. vulnerable / safe 样例区分；
 2. 函数名边界与空格调用形式；
 3. CLI 写出 JSON 和 Markdown；
 4. CLI 对不存在 target 报错。
 
-运行：
+2026-10-04 在 WSL 运行，实际结果 `Ran 9 tests ... OK`，失败 0。运行命令：
 
 ```bash
 python -m unittest discover -s tests -v
@@ -217,7 +221,7 @@ python -m unittest discover -s tests -v
 以下能力**尚未实现**，不要让 Codex 或后续文档误写成已完成：
 
 - 尚未对真实 OpenHarmony 组件完成全套构建、测试与运行时漏洞验证；
-- 尚未用新 `--include/--exclude` 功能完成 cJSON 核心源码的独立扫描统计；该功能代码与测试已写入远程分支，但本地验证仍 pending；
+- 尚未对 cJSON 核心候选完成原组件运行时验证或漏洞确认；本轮只验证了扫描范围与文本候选的可复现性；
 - 尚未接入 AST；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
@@ -239,7 +243,8 @@ python -m unittest discover -s tests -v
 → MVP scanner 合并到 main
 → 固定 3 个真实组件提交并完成第一轮筛选
 → cJSON 局部构建、单测、全仓扫描及 10 条初筛
-→ 待做核心范围扫描、成熟工具对照和运行时验证
+→ scope 功能 9/9 测试通过，cJSON 核心两文件 26 条候选逐项复现
+→ 待做成熟工具对照和原组件运行时验证
 ```
 
 ---
@@ -414,9 +419,9 @@ clean checkout
 
 ---
 
-## Step 12：真实组件上跑当前 scanner + 成熟工具基线（扫描完成，工具待做）
+## Step 12：真实组件上跑当前 scanner + 成熟工具基线（全仓与核心范围扫描完成，成熟工具待做）
 
-cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。成熟工具尚未运行。2026-10-04 已在当前分支加入可重复的 `--include` / `--exclude` 范围参数，并将 scope 写入 JSON/Markdown；同时新增 5 个 scope 回归测试。该功能尚未在用户 Ubuntu WSL 上实跑验证，因此下一动作是按 `docs/testing/scan_scope_verification.md` 先把测试跑绿，再用 `--include cJSON.c --include cJSON_Utils.c` 复现核心 26 条基线。
+cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。2026-10-04 已按 [scope 验证清单](docs/testing/scan_scope_verification.md) 在 WSL 验证 9 个测试和全部样例命令。固定提交的核心两文件 scoped scan 为 2 文件、4,681 行、26 条候选；JSON 与 Markdown 均记录同一 include/exclude 范围，且 26 条与旧全仓核心命中逐项一致。成熟工具尚未运行。
 
 当前 scanner 示例：
 
@@ -565,49 +570,16 @@ harness_invalid
 
 ---
 
-## 7. 接下来 2～3 天的实际顺序
+## 7. 当前验证后的工作顺序
 
-### 今天剩余时间
+scan scope 的回归、样例和 cJSON 核心两文件验证已经完成。下一轮按同一固定提交与核心范围：
 
-```text
-回归测试
-→ 合并 PR #2
-→ 新建 feat/openharmony-target-onboarding
-→ 阅读 docs/targets/target_selection.md
-→ 找 3 个候选组件
-```
+1. 选一个成熟静态工具建立可复现基线，记录命令、耗时、warning 与我们的候选交集。
+2. 复核 needs_context / interesting 候选的调用链、边界关系与实际输入条件。
+3. 只有存在可控输入与正常输入对照时，才在原组件上做 ASan/UBSan 或行为验证。
+4. 并行评估 c_utils 的一个小型第一方子模块，但不要把未知构建状态写成通过。
 
-### 下一工作日上半天
-
-```text
-clone 主/备选目标
-→ 构建探测
-→ 运行原始测试
-→ 固定第一个 TargetSnapshot
-```
-
-### 当前最近一步（2026-10-04）
-
-```text
-Codex/WSL 验证 scan scope 9 个回归测试
-→ cJSON 核心两文件 scoped scan
-→ 对照此前 26 条核心 candidate
-→ clang-tidy / Clang Static Analyzer 选择一个成熟工具基线
-→ 复核 needs_context / interesting 候选
-→ 决定先做函数上下文还是 sanitizer 验证
-```
-
-测试计划见 `docs/testing/scan_scope_verification.md`。在 scoped scan 数字可复现之前，不更新正式基线统计。
-
-### 随后一天
-
-根据真实缺口决定：
-
-```text
-如果最大缺口是“看不到函数” → 做函数上下文/AST
-如果最大缺口是“看不到长度来源” → 做局部数据流
-如果已有高价值候选且组件可测试 → 做 sanitizer harness 和验证
-```
+本轮明确停止在 scope 验证与状态记录；未开始上述任何工具或验证实验。
 
 ---
 
@@ -628,24 +600,7 @@ Codex/WSL 验证 scan scope 9 个回归测试
 
 ## 9. 给 Codex 的下一轮任务模板
 
-可以直接交给 Codex：
-
-```text
-先阅读 PROGRAM_STATUS.md、docs/roadmap.md、docs/targets/target_selection.md、config/targets/template.yaml 和当前分支代码。
-
-当前 Step 1～7 已完成，不要重复实现 MVP 扫描器。
-
-本轮目标不是增加更多危险 API 规则，而是进入真实 OpenHarmony 组件 onboarding。
-
-请完成：
-1. 根据 docs/targets/target_selection.md 帮我填 3 个候选组件的调研表，但不要虚构 build/test 成功；
-2. 对所有 build/test/fuzz 字段默认写 unknown，等待我在 Ubuntu WSL 本地真实执行；
-3. 为选出的主目标生成 config/targets/<component>.yaml 草案；
-4. 输出我本地需要执行的 clone、固定 commit、build、test、scan 命令；
-5. 不实现完整 AST/CFG/污点；
-6. 不把 candidate 称为 vulnerability；
-7. 说明哪些结论仍然 unknown。
-```
+下一轮先读本文件第 11 节、docs/testing/scan_scope_verification.md 和 docs/targets/target_selection.md。scan scope 已在 WSL 验证：9/9 回归通过，cJSON 核心两文件为 2 文件、4,681 行、26 条文本候选。不要重复实现该功能，也不要把候选称为漏洞。后续工作应由真实候选驱动，优先成熟工具基线与人工上下文复核；任何运行时结论需保存可复现证据。未实际运行的工具、构建或 PoC 结果保持 unknown / not_started。
 
 ---
 
@@ -656,33 +611,53 @@ Codex/WSL 验证 scan scope 9 个回归测试
 
 ---
 
-## 11. 2026-10-04 ChatGPT 远程代码更新（待 Codex/WSL 验证）
+## 11. 2026-10-04 scan scope 的 WSL 实测记录
 
-本次直接写入 `feat/openharmony-target-onboarding`：
+验证环境：Ubuntu 22.04 WSL2，分支 feat/openharmony-target-onboarding，项目提交 ba7144806bfc23c2d449c64883f015d9a5b9cfd1。cJSON 本地源码提交 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748，未改目标源码。按 docs/testing/scan_scope_verification.md 运行；本轮只更新文档，**未修改 scanner、CLI、报告器或测试代码**。
 
-- `src/core/scanner.py`：增加显式 include/exclude 扫描范围，防止路径逃逸、重叠 include 重复计数，并把 scope 写入 ScanResult。
-- `src/cli/main.py`：增加可重复使用的 `--include PATH` 与 `--exclude PATH` 参数。
-- `src/core/report.py`：Markdown 报告增加 include/exclude scope。
-- `tests/test_scanner.py`：在原 4 个测试基础上新增 5 个 scope 测试，目标总数 9。
-- `docs/testing/scan_scope_verification.md`：增加 Codex/WSL 验证清单。
+### 已验证
 
-这些提交**尚未由用户本地 Ubuntu WSL 实际执行**，因此不能写成“已验证通过”。
+- 执行 python -m unittest discover -s tests -v：**Ran 9 tests，OK；通过 9，失败 0，错误 0**。因此没有失败测试名或失败原因。
+- 旧命令扫描 samples：2 文件、28 行、1 条候选；无显式范围时 stdout 显示 include 为 .、exclude 为 (none)，旧用法可继续使用。
+- include vulnerable：1 文件、11 行、1 条候选；include safe：1 文件、17 行、0 条候选；exclude safe：1 文件、11 行、1 条候选，均与验证清单相符。
+- include ../outside 以退出码 1 拒绝，报 Include path escapes target root；include does-not-exist 也以退出码 1 拒绝，报 Included path does not exist。
+- 重叠 include 不重复计数由本轮通过的对应回归测试覆盖；未另对真实仓库运行重叠范围命令。
+- 固定提交 cJSON 的核心两文件 scoped scan：**scanned_files 2，scanned_lines 4,681，skipped_files 0，candidate findings 26**。规则分布：memcpy 9、sprintf 11、strcat 1、strcpy 5。
+- JSON 报告 outputs/reports/cjson_core_candidate.json 的 scope 实际为：
 
-本地下一步：
+~~~json
+{
+  "include_paths": ["cJSON.c", "cJSON_Utils.c"],
+  "exclude_paths": []
+}
+~~~
 
-```bash
-cd ~/openharmony-audit/CyberSecurity-Innovation-Audit
-git checkout feat/openharmony-target-onboarding
-git pull --ff-only
-source .venv/bin/activate
-python -m unittest discover -s tests -v
-```
+- Markdown 报告 outputs/reports/cjson_core_candidate.md 的对应字段为 Include scope: cJSON.c, cJSON_Utils.c；Exclude scope: (none)。两种报告范围一致。
+- 与此前全仓报告 outputs/reports/cjson_candidate.json 比较，旧报告的核心文件命中也是 26 条；逐项比较文件、行号、rule_id 与 evidence 后，26 条**顺序和内容完全一致**。这复现了旧记录的核心候选数，并非为了得到 26 修改代码或预期结果。
 
-预期在实现正确时：
+执行核心范围扫描的命令：
 
-```text
-Ran 9 tests
-OK
-```
+~~~bash
+python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
+  --include cJSON.c --include cJSON_Utils.c \
+  --json-out outputs/reports/cjson_core_candidate.json \
+  --md-out outputs/reports/cjson_core_candidate.md
+~~~
 
-随后按 `docs/testing/scan_scope_verification.md` 重跑 samples 和 cJSON 核心两文件。若任何测试或 cJSON 计数不一致，先定位原因，不为了让数字好看而修改预期结果。
+报告在本地 Git 忽略目录 outputs/reports/，不会随提交上传；复现者可运行上述命令重建。
+
+### 未验证
+
+- 没有把 26 条文本候选升级为漏洞；本轮没有原组件 PoC、ASan/UBSan 实验或影响分析。
+- 未运行 clang-tidy、Clang Static Analyzer、CodeQL 或 fuzz；没有成熟工具对照结果。
+- cJSON 完整测试套件仍未通过构建。已知 standalone checkout 缺 test_fwk.h；本轮没有补依赖或重试完整构建。
+- 没有测试大规模代码库的耗时、峰值内存、准确率或召回率。
+
+### unknown（需后续证据才能判断）
+
+- 26 条候选的真实安全影响、可控触发条件及受影响 OpenHarmony 版本。
+- 三个候选仓库与最终赛方指定代码范围/版本的匹配结论。
+- 补齐 test_fwk.h 等依赖后，cJSON 完整套件能否在此环境通过。
+- c_utils 的宿主机可构建性和其 fuzztest 的实际运行结果。
+
+下一步仍按既定路线：选一个成熟静态工具做同一核心范围基线，复核 needs_context / interesting 候选；在有可靠调用路径和正常输入对照后再考虑原组件运行时验证。不要把 26 条候选写成 26 个漏洞。

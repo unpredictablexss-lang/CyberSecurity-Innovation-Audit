@@ -1,7 +1,7 @@
 # Scan Scope Verification Plan
 
-> Branch: `feat/openharmony-target-onboarding`  
-> Status: **pending local WSL verification**  
+> Branch: `feat/openharmony-target-onboarding`
+> Status: **verified in Ubuntu 22.04 WSL2 on 2026-10-04**; 9/9 tests passed and the cJSON core scan reproduced 26 text candidates. Actual results and remaining unknowns are recorded in [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md).
 > Purpose: verify the new explicit source-scope feature before using its numbers in cJSON/OpenHarmony analysis.
 
 ## Why this change exists
