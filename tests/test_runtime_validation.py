@@ -1,6 +1,8 @@
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from src.validation.cjson_allocator import (
     AllocatorValidationResult,
@@ -8,6 +10,7 @@ from src.validation.cjson_allocator import (
     RunRecord,
     classify_validation,
     detect_sanitizer,
+    run_cjson_allocator_validation,
     write_reports,
 )
 
@@ -63,12 +66,38 @@ class RuntimeValidationTests(unittest.TestCase):
                 stderr="ERROR: AddressSanitizer: SEGV",
             ),
             run_record("object", "fail-second", "clean"),
+            run_record(
+                "array",
+                "fail-second",
+                "sanitizer_triggered",
+                exit_code=1,
+                stderr="ERROR: AddressSanitizer: SEGV",
+            ),
+            run_record("object", "fail-second", "clean"),
         ]
 
         self.assertEqual(
             classify_validation(build_record(), runs),
             "controlled_failure_sanitizer",
         )
+
+    def test_mixed_repetitions_are_inconclusive(self) -> None:
+        runs = [
+            run_record("array", "normal", "clean"),
+            run_record("object", "normal", "clean"),
+            run_record(
+                "array",
+                "fail-second",
+                "sanitizer_triggered",
+                exit_code=1,
+                stderr="ERROR: AddressSanitizer: SEGV",
+            ),
+            run_record("object", "fail-second", "clean"),
+            run_record("array", "fail-second", "nonzero_exit", exit_code=139),
+            run_record("object", "fail-second", "clean"),
+        ]
+
+        self.assertEqual(classify_validation(build_record(), runs), "inconclusive")
 
     def test_normal_control_failure_marks_harness_invalid(self) -> None:
         runs = [
@@ -93,6 +122,68 @@ class RuntimeValidationTests(unittest.TestCase):
             classify_validation(build_record("build_failed"), []),
             "build_failed",
         )
+
+    def test_runner_stops_after_invalid_normal_control(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "cjson"
+            target.mkdir()
+            for name in ("cJSON.c", "cJSON_Utils.c", "cJSON.h", "cJSON_Utils.h"):
+                (target / name).touch()
+            harness = root / "harness.c"
+            harness.touch()
+            fake_results = [
+                (0, 0.1, "", "", False),
+                (-11, 0.01, "", "", False),
+                (0, 0.01, "pointer=/child\n", "", False),
+            ]
+
+            with patch(
+                "src.validation.cjson_allocator._run_process",
+                side_effect=fake_results,
+            ) as process:
+                result = run_cjson_allocator_validation(
+                    target=target,
+                    harness=harness,
+                    binary=root / "harness",
+                    repeats=3,
+                )
+
+        self.assertEqual(result.outcome, "harness_invalid")
+        self.assertEqual(len(result.runs), 2)
+        self.assertEqual(process.call_count, 3)
+        self.assertIn("-no-pie", process.call_args_list[0].args[0])
+
+    def test_runner_rejects_wrong_source_commit_before_build(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "cjson"
+            target.mkdir()
+            for name in ("cJSON.c", "cJSON_Utils.c", "cJSON.h", "cJSON_Utils.h"):
+                (target / name).write_text("/* fixture */\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(target), "init", "-q"], check=True)
+            subprocess.run(["git", "-C", str(target), "add", "."], check=True)
+            subprocess.run(
+                [
+                    "git", "-C", str(target),
+                    "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                    "commit", "-qm", "fixture",
+                ],
+                check=True,
+            )
+            harness = root / "harness.c"
+            harness.touch()
+
+            with patch("src.validation.cjson_allocator._run_process") as process:
+                with self.assertRaisesRegex(ValueError, "Target commit mismatch"):
+                    run_cjson_allocator_validation(
+                        target=target,
+                        harness=harness,
+                        binary=root / "harness",
+                        expected_commit="0" * 40,
+                    )
+
+        process.assert_not_called()
 
     def test_reports_keep_component_level_interpretation(self) -> None:
         result = AllocatorValidationResult(

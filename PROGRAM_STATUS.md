@@ -5,14 +5,14 @@
 > - 更新日期：2026-10-04
 > - 当前分支：`feat/openharmony-target-onboarding`
 > - 已合并 PR：#2（MVP scanner 与目标筛选模板），merge commit `bef61d0caeed7c58b3887abc8b8cbfc33a1b4755`。
-> - 当前阶段：真实组件筛选与 cJSON 首条工程闭环；构建、测试和扫描的证据见目标配置与筛选记录。
+> - 当前阶段：固定 cJSON 组件的候选发现、triage 与受控 allocator 运行时证据已在本地形成首条工程闭环；安全影响和真实 OpenHarmony 调用面尚未验证。
 > 本文用途：给 ChatGPT、Codex、队友和未来自己看的统一进度说明。继续开发前先读本文，避免重复搭环境、误把计划当成已实现功能，或跳过验证步骤。
 
 ---
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；scan scope、轻量函数上下文、Clang Static Analyzer baseline 和 Candidate Triage Packet 已在 Ubuntu 22.04 WSL2 验证。完整回归 23/23 通过。固定提交 cJSON 核心两文件为 2 文件、4,681 行、26 条文本候选；triage 生成 26 个 packet，26/26 调用表达式解析成功。对原先 3 条 `needs_context` + 2 条 `interesting` 已完成第二轮静态复核：cJSON.c:367 与 :570 降为 `likely_safe_static`，cJSON.c:1021 保留为低优先级长度算术问题，cJSON_Utils.c:234 与 :245 归并为同一个 unchecked-allocation-result 根因家族。已加入受控 allocator robustness harness 与验证清单，但该 runtime 实验尚未在用户 WSL/Codex 上执行。**
+**MVP scanner 已合并到 main；固定 cJSON 目标上的 scope、函数上下文、Clang baseline、Candidate Triage Packet 与受控 allocator 运行时验证已在 Ubuntu 22.04 WSL2 执行。当前本地完整回归 33/33 通过。核心两文件扫描仍为 2 文件、4,681 行、26 条文本候选；triage 为 26 个 packet、26/26 调用解析成功。cJSON_Utils.c:234 与 :245 属于同一未检查分配结果的根因家族：原组件源码在受控第二次分配失败时，array/object 路径各重复 3 次均产生 sanitizer 证据，正常对照均通过。这是组件级健壮性行为，**不是已确认的 OpenHarmony 安全漏洞**。剩余工作与结论边界见第 16 节。**
 
 ---
 
@@ -216,14 +216,14 @@ python -m src.cli scan samples \
 
 ### 2.6 回归测试
 
-当前 `tests/test_scanner.py` 有 9 个扫描/范围回归测试，`tests/test_context.py` 有 5 个函数上下文测试，`tests/test_clang_baseline.py` 有 4 个 baseline runner 测试，`tests/test_triage.py` 有 5 个 triage 测试；2026-10-04 在 WSL 实跑 **23/23 通过**。原 4 个扫描测试覆盖以下基础行为：
+当前 `tests/test_scanner.py` 有 11 个扫描/范围回归测试，`tests/test_context.py` 有 5 个函数上下文测试，`tests/test_clang_baseline.py` 有 4 个 baseline runner 测试，`tests/test_triage.py` 有 5 个 triage 测试，`tests/test_runtime_validation.py` 本地有 8 个运行时验证测试；2026-10-04 在 WSL 实跑 **33/33 通过**。原 4 个扫描测试覆盖以下基础行为：
 
 1. vulnerable / safe 样例区分；
 2. 函数名边界与空格调用形式；
 3. CLI 写出 JSON 和 Markdown；
 4. CLI 对不存在 target 报错。
 
-最新实际结果为 `Ran 23 tests ... OK`，失败 0；此前 9/9、14/14、18/18 的阶段结果分别保留在第 11～13 节。运行命令：
+最新本地实际结果为 `Ran 33 tests ... OK`，失败 0；此前 9/9、14/14、18/18、23/23 的阶段结果分别保留在第 11～14 节。运行命令：
 
 ```bash
 python -m unittest discover -s tests -v
@@ -264,7 +264,8 @@ python -m unittest discover -s tests -v
 → function context 完整回归 14/14 通过，固定 cJSON 26 条获启发式函数名
 → Clang baseline 完整回归 18/18 通过，两文件分析退出 0、诊断 0
 → triage 完整回归 23/23 通过，固定 26 个候选生成 26 个 packet，26 个调用已解析
-→ 待做原编译参数对照、人工边界复核和原组件运行时验证
+→ 本地 allocator runner 回归 33/33 通过，固定 cJSON 受控失败路径各 3/3 sanitizer 复现
+→ 待做真实 OpenHarmony 调用面、攻击者控制与安全影响验证；不把组件健壮性实验写成比赛漏洞
 ```
 
 ---
@@ -880,7 +881,7 @@ spot check 至少覆盖：
 
 ---
 
-## 15. 2026-10-04 priority review 与 allocator robustness gate（runtime 待验证）
+## 15. 2026-10-04 priority review 与 allocator robustness gate（当时的待验证计划；实测见第 16 节）
 
 Candidate Triage Packet 已在 WSL 实测 23/23 通过后，继续对第一轮 3 条 `needs_context` 与 2 条 `interesting` 做了第二轮源码复核。结论记录在：
 
@@ -934,3 +935,35 @@ reportable vulnerability:     no conclusion
 下一轮只执行 `docs/testing/cjson_allocator_robustness_verification.md`。如果 normal control 自身失败，则先判 harness_invalid；如果 failure case 只证明 allocator-failure 下空指针崩溃，应优先记为 component robustness / quality issue，而不是高价值比赛漏洞。
 
 这一步通过后再决定：继续调查该根因的真实 OpenHarmony 调用面，还是把主力转向第一方 `c_utils` 组件。
+
+---
+
+## 16. 2026-10-04 受控 allocator robustness 的 WSL 实测记录
+
+验证环境：Ubuntu 22.04 WSL2，分支 feat/openharmony-target-onboarding，项目基线提交 23b21b9；cJSON 源码固定为 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748，工作树干净。按 docs/testing/cjson_allocator_runner_verification.md 与 docs/testing/cjson_allocator_robustness_verification.md 执行。本轮未修改 cJSON 源码；只新增 runner 的 commit 固定检查、`-no-pie` 兼容参数与更严格的分类逻辑，并记录运行时证据。
+
+### Verified（本轮实测）
+
+- 完整回归 `python -m unittest discover -s tests -v`：**Ran 33 tests，OK；通过 33，失败 0，错误 0**。test_runtime_validation.py 的 8 个测试覆盖分类与 commit 检查；本轮另新增 2 个 scanner 注释/字符串误报回归测试，均通过。
+- 固定 cJSON 目标 HEAD = `0c2c9dff82cc85539c8362132d7a5f6bf7d1e748`，`git status --short` 为空；runner 的 `expected_commit` 检查通过，`source_clean = True`。
+- harness 编译成功：`clang -std=c99 -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined -no-pie`，链接原组件 `cJSON.c` + `cJSON_Utils.c`，未复制/修改目标实现代码。
+- 运行时 8 个 case：array/object 各 1 个 normal 对照 + 各 3 个 fail-second 失败注入（`--repeat 3`）。
+- 2 个 normal 对照均 `clean`、exit 0；6 个 fail-second 全部 `sanitizer_triggered`、exit -6（SIGABRT）。
+- sanitizer 证据：array 路径 ASan SEGV（`SUMMARY: AddressSanitizer: SEGV ... _IO_str_overflow`，sprintf 写 NULL `full_pointer`）；object 路径 UBSan `cJSON_Utils.c:243:17: runtime error: applying zero offset to null pointer` + ASan SEGV（strcat 写 NULL）。array/object 两路径各自 3/3 复现一致，无 timeout、无 mixed outcome。
+- overall outcome = `controlled_failure_sanitizer`；JSON/Markdown 报告生成于 outputs/reports/cjson_allocator_validation.{json,md}（Git 忽略）。
+
+### Unverified（本轮未验证）
+
+- 未确认任何 OpenHarmony 应用/服务能否到达该路径；
+- 未确认攻击者能否影响所需的内存压力/分配失败条件；
+- 未确认该行为是否跨越安全边界；
+- 受影响 OpenHarmony 版本、CVE 状态、竞赛可报告漏洞状态均未确认。
+
+### Unknown（仍需证据）
+
+- :234 与 :245 的真实安全影响与可控触发条件；
+- 该根因在真实 OpenHarmony 集成调用面的可达性。
+
+### 结论边界
+
+本轮结果支持的最强表述是："原始固定 cJSON 组件在受控第二次分配失败条件下，array/object 两个路径各 3/3 稳定复现 sanitizer 确认的非法访问（写 NULL 指针）。" 这是组件级健壮性行为（unchecked allocation-result），**不是已确认的 OpenHarmony 安全漏洞**。赛题明确不鼓励无实际安全危害的普通 DoS，因此本结果不作为竞赛漏洞报告；它的价值是证明 validator 管线（harness → build → ASan/UBSan → 重复执行 → 证据留存）已在真实组件源码上跑通，可迁移到下一目标。下一阶段工作见第 7 节。

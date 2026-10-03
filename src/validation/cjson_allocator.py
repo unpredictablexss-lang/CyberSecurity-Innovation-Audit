@@ -13,6 +13,7 @@ SANITIZER_MARKERS = (
     "UndefinedBehaviorSanitizer",
     "runtime error:",
 )
+PINNED_CJSON_COMMIT = "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748"
 
 
 @dataclass
@@ -46,6 +47,9 @@ class AllocatorValidationResult:
     binary: str
     repeats: int
     build: BuildRecord
+    source_commit: Optional[str] = None
+    source_clean: Optional[bool] = None
+    expected_commit: Optional[str] = None
     runs: List[RunRecord] = field(default_factory=list)
     outcome: str = "inconclusive"
     interpretation: str = (
@@ -62,6 +66,9 @@ class AllocatorValidationResult:
             "compiler": self.compiler,
             "binary": self.binary,
             "repeats": self.repeats,
+            "source_commit": self.source_commit,
+            "source_clean": self.source_clean,
+            "expected_commit": self.expected_commit,
             "build": asdict(self.build),
             "runs": [asdict(item) for item in self.runs],
             "outcome": self.outcome,
@@ -71,6 +78,39 @@ class AllocatorValidationResult:
 
 def detect_sanitizer(text: str) -> bool:
     return any(marker in text for marker in SANITIZER_MARKERS)
+
+
+def _source_revision(root: Path) -> tuple[Optional[str], Optional[bool]]:
+    try:
+        top = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        head = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        status = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        return None, None
+
+    if (
+        top.returncode != 0
+        or head.returncode != 0
+        or status.returncode != 0
+        or Path(top.stdout.strip()).resolve() != root
+    ):
+        return None, None
+    return head.stdout.strip(), not bool(status.stdout.strip())
 
 
 def _run_outcome(
@@ -95,21 +135,35 @@ def classify_validation(build: BuildRecord, runs: Sequence[RunRecord]) -> str:
         return "build_failed"
 
     normal_runs = [item for item in runs if item.allocator_mode == "normal"]
-    if len(normal_runs) < 2 or any(item.outcome != "clean" for item in normal_runs):
+    if (
+        len(normal_runs) != 2
+        or {item.case for item in normal_runs} != {"array", "object"}
+        or any(item.outcome != "clean" for item in normal_runs)
+    ):
         return "harness_invalid"
 
     failure_runs = [
         item for item in runs if item.allocator_mode == "fail-second"
     ]
-    if not failure_runs:
+    if {item.case for item in failure_runs} != {"array", "object"}:
         return "inconclusive"
-    if any(item.outcome == "sanitizer_triggered" for item in failure_runs):
+
+    # One lucky sanitizer run must not hide inconsistent repetitions of the
+    # same path. Different paths may have different, but repeatable, outcomes.
+    outcomes_by_case = {
+        case: {item.outcome for item in failure_runs if item.case == case}
+        for case in ("array", "object")
+    }
+    if any(len(outcomes) != 1 for outcomes in outcomes_by_case.values()):
+        return "inconclusive"
+    outcomes = {next(iter(items)) for items in outcomes_by_case.values()}
+    if "timeout" in outcomes:
+        return "inconclusive"
+    if "sanitizer_triggered" in outcomes:
         return "controlled_failure_sanitizer"
-    if any(item.outcome == "nonzero_exit" for item in failure_runs):
+    if "nonzero_exit" in outcomes:
         return "controlled_failure_nonzero"
-    if any(item.outcome == "timeout" for item in failure_runs):
-        return "inconclusive"
-    if all(item.outcome == "clean" for item in failure_runs):
+    if outcomes == {"clean"}:
         return "failure_not_triggered"
     return "inconclusive"
 
@@ -159,6 +213,7 @@ def run_cjson_allocator_validation(
     build_timeout: float = 60.0,
     run_timeout: float = 5.0,
     extra_compile_args: Optional[Sequence[str]] = None,
+    expected_commit: Optional[str] = None,
 ) -> AllocatorValidationResult:
     root = target.resolve()
     harness_path = harness.resolve()
@@ -176,6 +231,15 @@ def run_cjson_allocator_validation(
     if missing:
         raise ValueError("Missing required cJSON files: " + ", ".join(missing))
 
+    source_commit, source_clean = _source_revision(root)
+    if expected_commit is not None:
+        if source_commit != expected_commit:
+            raise ValueError(
+                f"Target commit mismatch: expected {expected_commit}, got {source_commit or 'unknown'}"
+            )
+        if source_clean is not True:
+            raise ValueError("Target source worktree is not clean")
+
     binary_path.parent.mkdir(parents=True, exist_ok=True)
 
     build_command = [
@@ -185,6 +249,9 @@ def run_cjson_allocator_validation(
         "-O1",
         "-fno-omit-frame-pointer",
         "-fsanitize=address,undefined",
+        # On Ubuntu 22.04 WSL2, PIE ASan binaries can crash before main with
+        # no diagnostic. A non-PIE harness keeps the tested library unchanged.
+        "-no-pie",
         "-I",
         str(root),
         str(harness_path),
@@ -225,6 +292,9 @@ def run_cjson_allocator_validation(
         binary=str(binary_path),
         repeats=repeats,
         build=build_record,
+        source_commit=source_commit,
+        source_clean=source_clean,
+        expected_commit=expected_commit,
     )
 
     if build_outcome != "build_success":
@@ -235,19 +305,7 @@ def run_cjson_allocator_validation(
     runtime_env["ASAN_OPTIONS"] = "abort_on_error=1:detect_leaks=0"
     runtime_env["UBSAN_OPTIONS"] = "halt_on_error=1:print_stacktrace=1"
 
-    cases: List[tuple[str, str]] = [
-        ("array", "normal"),
-        ("object", "normal"),
-    ]
-    for _ in range(repeats):
-        cases.extend(
-            [
-                ("array", "fail-second"),
-                ("object", "fail-second"),
-            ]
-        )
-
-    for case, allocator_mode in cases:
+    def execute_case(case: str, allocator_mode: str) -> None:
         command = [str(binary_path), case, allocator_mode]
         exit_code, elapsed, stdout, stderr, timed_out = _run_process(
             command,
@@ -274,6 +332,16 @@ def run_cjson_allocator_validation(
             )
         )
 
+    for case in ("array", "object"):
+        execute_case(case, "normal")
+    if any(item.outcome != "clean" for item in result.runs):
+        result.outcome = "harness_invalid"
+        return result
+
+    for _ in range(repeats):
+        for case in ("array", "object"):
+            execute_case(case, "fail-second")
+
     result.outcome = classify_validation(result.build, result.runs)
     return result
 
@@ -288,6 +356,9 @@ def render_markdown(result: AllocatorValidationResult) -> str:
         "## Summary",
         "",
         f"- Target: {result.target}",
+        f"- Source commit: {result.source_commit or 'unknown'}",
+        f"- Source worktree clean: {result.source_clean}",
+        f"- Expected commit: {result.expected_commit or '(not enforced)'}",
         f"- Harness: {result.harness}",
         f"- Compiler: {result.compiler}",
         f"- Binary: {result.binary}",
@@ -300,6 +371,7 @@ def render_markdown(result: AllocatorValidationResult) -> str:
         f"- Exit code: {result.build.exit_code}",
         f"- Elapsed seconds: {result.build.elapsed_seconds:.6f}",
         f"- Command: `{shlex.join(result.build.command)}`",
+        f"- Compiler stderr: {result.build.stderr.strip() or '(empty)'}",
         "",
         "## Runs",
         "",
@@ -309,6 +381,13 @@ def render_markdown(result: AllocatorValidationResult) -> str:
         lines.append("No runtime cases executed because the build did not succeed.")
     else:
         for index, run in enumerate(result.runs, start=1):
+            diagnostic_summary = next(
+                (line.strip() for line in run.stderr.splitlines() if line.startswith("SUMMARY:")),
+                next(
+                    (line.strip() for line in run.stderr.splitlines() if "runtime error:" in line),
+                    "(none)",
+                ),
+            )
             lines.extend(
                 [
                     f"### Run {index}: {run.case} / {run.allocator_mode}",
@@ -318,6 +397,8 @@ def render_markdown(result: AllocatorValidationResult) -> str:
                     f"- Sanitizer detected: {run.sanitizer_detected}",
                     f"- Elapsed seconds: {run.elapsed_seconds:.6f}",
                     f"- Command: `{shlex.join(run.command)}`",
+                    f"- Stdout: {run.stdout.strip() or '(empty)'}",
+                    f"- Diagnostic summary: {diagnostic_summary}",
                     "",
                 ]
             )

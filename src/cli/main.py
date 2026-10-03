@@ -7,6 +7,7 @@ from src.core.report import render_markdown
 from src.core.scanner import scan_directory
 from src.triage.review import build_triage_report, write_triage_reports
 from src.validation.cjson_allocator import (
+    PINNED_CJSON_COMMIT,
     run_cjson_allocator_validation,
     write_reports as write_allocator_reports,
 )
@@ -123,6 +124,11 @@ def main() -> None:
         "--compiler",
         default="clang",
         help="C compiler executable (default: clang)",
+    )
+    allocator_parser.add_argument(
+        "--expected-commit",
+        default=PINNED_CJSON_COMMIT,
+        help="Required clean cJSON source commit (default: pinned target commit)",
     )
     allocator_parser.add_argument(
         "--repeat",
@@ -252,6 +258,7 @@ def main() -> None:
                 binary=binary,
                 compiler=args.compiler,
                 repeats=args.repeat,
+                expected_commit=args.expected_commit,
             )
         except (ValueError, OSError) as error:
             allocator_parser.error(str(error))
