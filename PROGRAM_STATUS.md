@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；scan scope、轻量函数上下文与 Clang Static Analyzer baseline runner 已在 Ubuntu 22.04 WSL2 验证。完整回归 18/18 通过。固定提交 cJSON 核心两文件的文本扫描为 2 文件、4,681 行、26 条候选；默认 `clang --analyze` 对两文件均退出 0，解析诊断 0、failed files 0，精确行重合 0。零诊断不证明安全，26 条候选也不是漏洞。原组件运行时验证、完整编译参数对照和大规模性能基准仍未做。**
+**MVP scanner 已合并到 main；scan scope、轻量函数上下文与 Clang Static Analyzer baseline runner 已在 Ubuntu 22.04 WSL2 验证。完整回归 18/18 通过。固定提交 cJSON 核心两文件的文本扫描为 2 文件、4,681 行、26 条候选；默认 `clang --analyze` 对两文件均退出 0、诊断 0。2026-10-04 ChatGPT 已继续加入 Candidate Triage Packet 层：从现有 scan JSON 提取调用表达式、实参、安全审查义务、稳定 candidate_id 和待人工填写的 review 字段，并新增 5 个测试与验证清单；该层尚待用户 WSL/Codex 实测，因此预期总测试为 23，但仍属 pending。零 Clang 诊断不证明安全，26 条候选也不是漏洞。**
 
 ---
 
@@ -234,6 +234,7 @@ python -m unittest discover -s tests -v
 - 尚未接入 AST；已验证的 function context 只是轻量 top-level 语法启发式，不能称为 AST；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
+- Candidate Triage Packet 代码已写入当前分支，但尚未在 WSL/Codex 上验证；它只组织调用实参、审查义务和 unknown 字段，不会自动判断 safe/vulnerable；
 - 尚未自动构造 PoC；
 - 尚未把 ASan Runner 接入工具；
 - 尚未实现 fuzz；
@@ -758,3 +759,78 @@ python -m src.cli baseline-clang /home/audit/openharmony-targets/third_party_cJS
 - c_utils 的宿主机构建、赛方指定代码范围与最终竞赛报告的实质漏洞证据。
 
 结论边界：Clang baseline 与本项目文本候选是两种独立证据，数量不能相加或当作准确率。下一阶段功能开发未在本轮开始。
+
+
+---
+
+## 14. 2026-10-04 Candidate Triage Packet 代码更新（待 WSL/Codex 验证）
+
+Clang baseline 已经在 WSL 实测 18/18 通过，固定 cJSON 核心两文件 `clang --analyze` 为 0 diagnostics。下一步不再比较“谁报得多”，而是把 26 条文本候选整理成可复核的结构化研判包。
+
+本次远程分支新增/修改：
+
+- `src/triage/__init__.py`：triage 模块边界；
+- `src/triage/callsite.py`：best-effort 调用表达式与实参解析，支持嵌套括号、多行调用、字符串中的逗号；
+- `src/triage/review.py`：生成 CandidateReviewPacket、稳定 candidate_id、安全义务模板和默认 review 状态；
+- `src/cli/main.py`：增加 `triage --scan-report ...` 子命令；
+- `tests/test_triage.py`：新增 5 个 triage 测试；
+- `docs/testing/triage_packet_verification.md`：固定 cJSON 验证清单。
+
+设计边界：
+
+```text
+triage packet != vulnerability verdict
+review_status = unreviewed
+input_control = unknown
+destination_capacity = unknown
+length_origin = unknown
+guard_evidence = unknown
+reachability = unknown
+security_impact = unknown
+runtime_validation = not_started
+```
+
+不同调用会产生不同“需要证明的安全义务”。例如：
+
+```text
+memcpy(dst, src, n)
+→ dst 至少有 n 字节可写
+→ src 至少有 n 字节可读
+→ n 的计算不能溢出/截断
+→ 重叠语义满足 API 要求
+```
+
+这些只是审查问题，不是自动结论。
+
+预期测试总数：
+
+```text
+此前已验证: 18
+新增 triage tests: 5
+---------------------
+预期总数: 23
+```
+
+23/23 尚未在用户 WSL 实际执行。
+
+固定 cJSON 验证要求：
+
+```text
+source candidates = 26
+triage packets = 26
+```
+
+必须记录实际的 parsed / unresolved call 数量，不能预设所有调用都能解析。
+
+spot check 至少覆盖：
+
+- `cJSON.c:204 memcpy(copy, string, length)`
+- `cJSON.c:367 memcpy(number_c_string, buffer_at_offset(input_buffer), number_string_length)`
+- `cJSON.c:465 strcpy(object->valuestring, valuestring)`
+- `cJSON.c:570 memcpy(newbuffer, p->buffer, p->offset + 1)`
+- `cJSON_Utils.c:234 sprintf(...)`
+- `cJSON_Utils.c:245 strcat(...)`
+
+同一固定 scan report 重跑两次 triage 时，candidate_id 应保持稳定且 26 条唯一。
+
+通过这一 gate 后，下一轮才人工填写已经初筛的 3 条 `needs_context` + 2 条 `interesting` 的 review 字段，再决定是否进入原组件 ASan/UBSan/失败分配器实验。不得自动把它们升级为 validated。
