@@ -5,6 +5,7 @@ from pathlib import Path
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports
 from src.core.report import render_markdown
 from src.core.scanner import scan_directory
+from src.triage.review import build_triage_report, write_triage_reports
 
 
 def _configure_scan_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
@@ -99,6 +100,26 @@ def main() -> None:
     scan_parser = _configure_scan_parser(subparsers)
     baseline_parser = _configure_clang_baseline_parser(subparsers)
 
+    triage_parser = subparsers.add_parser(
+        "triage",
+        help="Build structured review packets from a candidate scan JSON report",
+    )
+    triage_parser.add_argument(
+        "--scan-report",
+        required=True,
+        help="Existing candidate scan JSON report",
+    )
+    triage_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/triage_packets.json",
+        help="Output triage JSON path",
+    )
+    triage_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/triage_packets.md",
+        help="Output triage Markdown path",
+    )
+
     args = parser.parse_args()
 
     if args.command == "scan":
@@ -170,6 +191,39 @@ def main() -> None:
         print(f"[OK] elapsed seconds: {result.elapsed_seconds:.6f}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "triage":
+        scan_report = Path(args.scan_report).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if not scan_report.is_file():
+            triage_parser.error(f"scan report does not exist: {scan_report}")
+        if json_output == md_output:
+            triage_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            triage_report = build_triage_report(scan_report)
+        except (ValueError, OSError, json.JSONDecodeError, KeyError) as error:
+            triage_parser.error(str(error))
+
+        write_triage_reports(triage_report, json_output, md_output)
+
+        parsed_count = sum(
+            1
+            for packet in triage_report.packets
+            if packet.call_parse_status == "parsed_text_call"
+        )
+        unresolved_count = triage_report.packet_count - parsed_count
+
+        print(f"[OK] source scan report: {triage_report.source_report}")
+        print(f"[OK] target: {triage_report.target}")
+        print(f"[OK] candidate packets: {triage_report.packet_count}")
+        print(f"[OK] parsed call expressions: {parsed_count}")
+        print(f"[OK] unresolved call expressions: {unresolved_count}")
+        print(f"[OK] json triage report: {json_output}")
+        print(f"[OK] markdown triage report: {md_output}")
 
 
 if __name__ == "__main__":
