@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main。当前分支的显式 `--include/--exclude` 范围功能已在 Ubuntu 22.04 WSL2 实测：9/9 个回归测试通过，样例扫描与无效路径拒绝符合验证清单。固定提交的 cJSON 核心两文件扫描得到 2 文件、4,681 行、26 条文本候选、0 个跳过文件；26 条与此前全仓报告里的核心命中逐项一致。此前全仓基线仍为 99 文件、22,377 行、49 条候选。尚无确认漏洞；成熟静态工具和原组件运行时验证未做。**
+**MVP scanner 已合并到 main。显式 `--include/--exclude` 范围功能已在 Ubuntu 22.04 WSL2 实测：9/9 回归通过，固定提交 cJSON 核心两文件为 2 文件、4,681 行、26 条文本候选，与旧核心基线逐项一致。2026-10-04 ChatGPT 又在当前分支加入了轻量函数上下文解析：候选可记录 enclosing function、函数范围、本地 context 与 `context_status`，并新增 5 个测试；这部分尚未在用户 WSL/Codex 上实测，因此仍是 pending。成熟静态工具和原组件运行时漏洞验证仍未做，尚无确认漏洞。**
 
 ---
 
@@ -222,7 +222,7 @@ python -m unittest discover -s tests -v
 
 - 尚未对真实 OpenHarmony 组件完成全套构建、测试与运行时漏洞验证；
 - 尚未对 cJSON 核心候选完成原组件运行时验证或漏洞确认；本轮只验证了扫描范围与文本候选的可复现性；
-- 尚未接入 AST；
+- 尚未接入 AST；当前新增的 function context 只是轻量 top-level 语法启发式，尚待 WSL 验证，不能称为 AST；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
 - 尚未自动构造 PoC；
@@ -574,12 +574,13 @@ harness_invalid
 
 scan scope 的回归、样例和 cJSON 核心两文件验证已经完成。下一轮按同一固定提交与核心范围：
 
-1. 选一个成熟静态工具建立可复现基线，记录命令、耗时、warning 与我们的候选交集。
-2. 复核 needs_context / interesting 候选的调用链、边界关系与实际输入条件。
-3. 只有存在可控输入与正常输入对照时，才在原组件上做 ASan/UBSan 或行为验证。
-4. 并行评估 c_utils 的一个小型第一方子模块，但不要把未知构建状态写成通过。
+1. **先验证新加入的 function-context 功能**：按 `docs/testing/function_context_verification.md` 跑全部测试、samples 与固定 cJSON 核心范围，确认候选数量仍为 26，并记录 resolved/unresolved 数量。
+2. 通过后选一个成熟静态工具建立可复现基线，记录命令、耗时、warning 与我们的候选交集。
+3. 复核 needs_context / interesting 候选的函数、边界关系、调用链与实际输入条件。
+4. 只有存在可控输入与正常输入对照时，才在原组件上做 ASan/UBSan 或行为验证。
+5. 并行评估 c_utils 的一个小型第一方子模块，但不要把未知构建状态写成通过。
 
-本轮明确停止在 scope 验证与状态记录；未开始上述任何工具或验证实验。
+function-context 代码已经写入远程分支，但在 Codex/WSL 实测之前不能写成 verified。
 
 ---
 
@@ -661,3 +662,58 @@ python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
 - c_utils 的宿主机可构建性和其 fuzztest 的实际运行结果。
 
 下一步仍按既定路线：选一个成熟静态工具做同一核心范围基线，复核 needs_context / interesting 候选；在有可靠调用路径和正常输入对照后再考虑原组件运行时验证。不要把 26 条候选写成 26 个漏洞。
+
+
+---
+
+## 12. 2026-10-04 function-context 代码更新（待 WSL/Codex 验证）
+
+在 scan scope 已经完成 9/9 实测后，下一项代码改动针对人工审核中的真实痛点：Finding 原先只有单行 evidence，`function` 大多为空，无法快速判断候选属于哪个函数和哪段局部逻辑。
+
+本次远程分支新增/修改：
+
+- `src/core/context.py`：无额外 Python 依赖的轻量 top-level C/C++ function span/context resolver；
+- `src/core/finding.py`：增加 function range、context range、context text、context_status；
+- `src/core/scanner.py`：每个源码文件只计算一次 function spans，再把上下文附加到 Finding；
+- `src/core/report.py`：Markdown 输出 Function / Function range / Context status / Context；
+- `tests/test_context.py`：新增 5 个 context 测试；
+- `docs/testing/function_context_verification.md`：本地验证清单。
+
+设计边界：
+
+```text
+context_status = heuristic_top_level_function
+```
+
+表示“轻量启发式解析到一个 top-level 函数”，**不表示 Clang AST 已确认**。复杂 C++ 类内定义、宏/attribute 特殊结构或损坏源码可以保持 `unresolved`。
+
+本轮预期测试总数：
+
+```text
+原 scope / scanner tests: 9
+新增 context tests:       5
+----------------------------
+预期总数:                14
+```
+
+但 14/14 仍只是预期，必须由用户 WSL/Codex 实际运行后才能记为 verified。
+
+固定 cJSON 核心扫描的硬性回归条件：
+
+```text
+scanned_files = 2
+scanned_lines = 4681
+candidate findings = 26
+```
+
+加入上下文信息不应该使 candidate 数量发生变化。验证时还需记录：
+
+- resolved / unresolved 数量；
+- cJSON.c:204 → cJSON_strdup；
+- cJSON.c:367 → parse_number；
+- cJSON.c:465 → cJSON_SetValuestring；
+- cJSON.c:570 → ensure；
+- cJSON_Utils.c:234 / 245 → cJSONUtils_FindPointerFromObjectTo；
+- 一次 /usr/bin/time -v 的耗时和最大 RSS。
+
+如果解析不准，不允许为了提高 resolved 数量而强行填函数名；应保留 unresolved 并记录原因，后续再决定是否引入 Tree-sitter / Clang AST。
