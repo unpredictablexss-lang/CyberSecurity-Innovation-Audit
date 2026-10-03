@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
-from src.core.context import resolve_context
+from src.core.context import find_top_level_function_spans, resolve_context
 from src.core.finding import Finding
 
 
@@ -55,13 +55,14 @@ class ScanResult:
 
 def _scan_lines(path: Path, lines: List[str]) -> List[Finding]:
     findings: List[Finding] = []
+    function_spans = find_top_level_function_spans(lines)
 
     for idx, line in enumerate(lines, start=1):
         # This is a text candidate generator, not a C/C++ parser. A match can
         # still be in a comment, macro, declaration, or unreachable code.
         for func in dict.fromkeys(CALL_PATTERN.findall(line)):
             cwe, vuln_type = DANGEROUS_CALLS[func]
-            context = resolve_context(lines, idx)
+            context = resolve_context(lines, idx, spans=function_spans)
             findings.append(
                 Finding(
                     rule_id=f"cpp.dangerous_call.{func}",
