@@ -4,6 +4,7 @@ from pathlib import Path
 
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
 from src.benchmark.historical import run_historical_benchmark, write_reports as write_historical_reports
+from src.benchmark.compare import compare_normalized_reports, write_reports as write_comparison_reports
 from src.core.report import render_markdown
 from src.core.scanner import scan_directory
 from src.triage.review import build_triage_report, write_triage_reports
@@ -129,6 +130,28 @@ def main() -> None:
         "--md-out",
         default="outputs/reports/historical_benchmark.md",
         help="Output Markdown path",
+    )
+
+    compare_parser = subparsers.add_parser(
+        "compare-tools",
+        help="Compare two or more normalized static-analysis reports on the same fixed scope",
+    )
+    compare_parser.add_argument(
+        "--report",
+        action="append",
+        required=True,
+        metavar="JSON",
+        help="Normalized ToolRunResult JSON. Repeat for each tool.",
+    )
+    compare_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/tool_comparison.json",
+        help="Output comparison JSON path",
+    )
+    compare_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/tool_comparison.md",
+        help="Output comparison Markdown path",
     )
 
     allocator_parser = subparsers.add_parser(
@@ -298,6 +321,33 @@ def main() -> None:
             f"{result.text_candidate_overlap_in_vulnerable}/"
             f"{result.text_candidate_overlap_in_fixed}"
         )
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "compare-tools":
+        report_paths = [Path(value).resolve() for value in args.report]
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if json_output == md_output:
+            compare_parser.error("JSON and Markdown output paths must differ")
+        for path in report_paths:
+            if not path.is_file():
+                compare_parser.error(f"normalized tool report does not exist: {path}")
+
+        try:
+            result = compare_normalized_reports(report_paths)
+        except (ValueError, OSError, json.JSONDecodeError) as error:
+            compare_parser.error(str(error))
+
+        write_comparison_reports(result, json_output, md_output)
+
+        print(f"[OK] comparison target: {result.target_id}")
+        print(f"[OK] comparison commit: {result.commit}")
+        print(f"[OK] tools: {len(result.summaries)}")
+        print(f"[OK] scope files/loc: {result.scope_files}/{result.scope_loc}")
+        print(f"[OK] pairwise comparisons: {len(result.pairwise_overlaps)}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
         return
