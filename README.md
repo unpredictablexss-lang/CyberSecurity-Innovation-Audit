@@ -283,8 +283,19 @@ CyberSecurity-Innovation-Audit/
 - [ ] 比赛演示样例
 - [ ] 技术文档与答辩材料
 
-## 当前状态
+## 当前可运行的 MVP
 
-项目初始化阶段。
+当前实现是 **C/C++ 文本候选扫描器**，不是已确认漏洞检测器。命中危险调用后只生成 `status = candidate`；置信度、严重程度暂为 `unassessed`。CWE 只是候选分类，必须结合上下文和运行证据重新判断。它仍可能命中注释、声明或安全调用，也可能漏掉宏、别名和跨行写法；不要用两个自建样例宣称真实项目的准确率。
 
-下一步优先完成：**C/C++ 小型验证原型：候选规则 → AST → Finding → ASan/UBSan 验证 → VulnerabilityCase → 报告 → Patch 重验**。跑通闭环后再扩大到 OpenHarmony 具体模块。
+在仓库根目录运行（Python 3.10+，无需额外 Python 依赖）：
+
+```bash
+python -m src.cli scan samples \
+  --json-out outputs/reports/samples_report.json \
+  --md-out outputs/reports/samples_report.md
+python -m unittest discover -s tests -v
+```
+
+预期扫描 2 个 C/C++ 文件、28 行，生成 1 个候选；两个报告位于 `outputs/reports/` 且已被 Git 忽略。旧的 `--out` 仍可作为 `--json-out` 的别名。扫描统计仅表示当前文本规则实际读取的文件和行数，不是代码解析覆盖率或安全覆盖率。
+
+下一阶段优先选取**固定提交、可构建、可测试**的真实 OpenHarmony C/C++ 组件，记录构建配置与扫描范围，再做上下文分析和 ASan/UBSan 验证；只有验证证据充分时才升级为可报告漏洞。详细进度见 [PROGRAM_STATUS.md](PROGRAM_STATUS.md)。

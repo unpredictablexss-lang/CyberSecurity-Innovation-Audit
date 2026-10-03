@@ -1,0 +1,98 @@
+# TargetSnapshot v0 template
+# Copy this file to config/targets/<component>.yaml before filling real data.
+# Do not mark build/test/scan as success before running the commands locally.
+
+target_id: TBD
+project: OpenHarmony
+component: TBD
+
+source:
+  repo_url: TBD
+  upstream: official_openharmony_or_mirror
+  branch_or_tag: TBD
+  commit: TBD
+  local_path: /home/audit/openharmony-targets/TBD
+  license_note: unknown
+
+scope:
+  language:
+    - C/C++
+  source_paths:
+    - TBD
+  exclude_paths:
+    - third_party
+    - out
+    - build
+  denominator_policy: "Only files under source_paths with C/C++ suffixes are counted in MVP text scan."
+
+build:
+  status: unknown
+  mode: unknown
+  command: TBD
+  working_directory: TBD
+  toolchain: unknown
+  compile_commands_path: TBD
+  log_path: TBD
+  last_checked_at: TBD
+  failure_reason: TBD
+
+test:
+  status: unknown
+  command: TBD
+  working_directory: TBD
+  log_path: TBD
+  normal_input: TBD
+  expected_result: TBD
+  failure_reason: TBD
+
+mvp_scan:
+  status: unknown
+  command: TBD
+  json_report: TBD
+  markdown_report: TBD
+  scanned_files: unknown
+  scanned_lines: unknown
+  skipped_files: unknown
+  candidate_findings: unknown
+
+baseline_tools:
+  clang_tidy:
+    status: unknown
+    command: TBD
+    warning_count: unknown
+    log_path: TBD
+  clang_static_analyzer:
+    status: unknown
+    command: TBD
+    warning_count: unknown
+    log_path: TBD
+  fuzz:
+    status: unknown
+    existing_target: unknown
+    command: TBD
+    log_path: TBD
+
+triage:
+  status: not_started
+  sample_size: 0
+  interesting_candidates: 0
+  likely_safe_candidates: 0
+  scanner_quality_issues: 0
+  notes: TBD
+
+runtime_validation:
+  status: not_started
+  sanitizer: unknown
+  harness: unknown
+  normal_run: unknown
+  trigger_run: unknown
+  outcome: unknown
+  evidence_path: TBD
+
+notes:
+  assumptions:
+    - TBD
+  blockers:
+    - TBD
+  next_actions:
+    - Fill this file after real local commands are executed.
