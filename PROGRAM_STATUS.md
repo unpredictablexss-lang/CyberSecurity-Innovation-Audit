@@ -1120,3 +1120,47 @@ main 合并前本地记录为 43 个测试；本分支新增 5 个 historical be
 3. 对 root-cause group 去重，避免 backport / 近重复样本污染统计；
 4. 在样本规模足够前只报原始计数和命中情况，不虚构全局 Precision / Recall。
 
+---
+
+## 20. 2026-10-04 双线方案整合与多扫描器 Adapter 框架
+
+已将两份团队/技术方案整合为：
+
+`docs/strategy/team_parallel_multi_scanner_plan.md`
+
+统一口径：
+
+- 纵向真实 Candidate 闭环持续推进；
+- 横向 Semgrep / CodeQL / Clang SA / Cppcheck benchmark 并行；
+- 不直接拼接各工具代码，而是统一到 ToolRunResult / ToolDiagnostic / Candidate / Evidence；
+- 工具比较固定 target / commit / scope，并以 root cause 与 Evidence 为主要统计单位；
+- warning != vulnerability，no warning != safe，多工具命中不采用简单投票。
+
+本分支新增：
+
+`src/benchmark/tool_result.py`
+`src/providers/base.py`
+`src/providers/semgrep.py`
+`src/providers/codeql.py`
+`src/providers/clang_sa.py`
+`src/providers/cppcheck.py`
+`src/providers/registry.py`
+`tests/test_tool_result.py`
+`tests/test_provider_adapters.py`
+`benchmarks/tool_comparison/README.md`
+
+统一入口：
+
+`normalize_tool_output(provider, payload, AdapterContext) -> ToolRunResult`
+
+当前 Adapter 只做格式归一化：
+
+- Semgrep JSON -> pattern evidence；
+- CodeQL SARIF -> dataflow evidence；
+- Clang baseline JSON -> symbolic/path evidence；
+- Cppcheck XML -> lightweight static evidence。
+
+本轮没有实现外部工具自动运行、动态漏洞触发、PoC、exploitability 判断或多工具投票式漏洞结论。
+
+GitHub Actions 在 Ubuntu 22.04 / Python 3.10 上已实际运行：**Ran 57 tests ... OK**。此前 historical benchmark 阶段为 48/48；本轮新增 schema + provider adapter 测试后总数为 57/57。
+
