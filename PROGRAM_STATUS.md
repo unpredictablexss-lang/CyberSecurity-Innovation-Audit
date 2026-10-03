@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main。真实目标第一轮筛选了 cJSON、c_utils、lwIP 三个固定提交；cJSON 的独立宿主机测试 1/1 通过，但完整测试构建缺少 test_fwk.h。当前扫描 cJSON 全仓 99 个源码文件、22,377 行，得到 49 条文本候选，其中核心库 26 条。已人工初筛 10 条，尚无确认漏洞。下一步是控制扫描范围、运行成熟静态工具基线，并对值得继续追查的候选做原组件验证。**
+**MVP scanner 已合并到 main。真实目标第一轮筛选了 cJSON、c_utils、lwIP 三个固定提交；cJSON 的独立宿主机测试 1/1 通过，但完整测试构建缺少 test_fwk.h。当前扫描 cJSON 全仓 99 个源码文件、22,377 行，得到 49 条文本候选，其中核心库 26 条。已人工初筛 10 条，尚无确认漏洞。2026-10-04 已在当前分支加入显式 `--include/--exclude` 扫描范围、scope 报告字段和 5 个新增回归测试，但尚待 Ubuntu WSL/Codex 本地验证。验证通过后先重跑 cJSON 核心文件，再进入成熟静态工具基线和函数上下文分析。**
 
 ---
 
@@ -217,7 +217,7 @@ python -m unittest discover -s tests -v
 以下能力**尚未实现**，不要让 Codex 或后续文档误写成已完成：
 
 - 尚未对真实 OpenHarmony 组件完成全套构建、测试与运行时漏洞验证；
-- 尚未对 cJSON 核心源码做排除测试框架的独立扫描统计；
+- 尚未用新 `--include/--exclude` 功能完成 cJSON 核心源码的独立扫描统计；该功能代码与测试已写入远程分支，但本地验证仍 pending；
 - 尚未接入 AST；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
@@ -416,7 +416,7 @@ clean checkout
 
 ## Step 12：真实组件上跑当前 scanner + 成熟工具基线（扫描完成，工具待做）
 
-cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。成熟工具尚未运行。当前扫描器没有可配置源码范围，下一次需只统计核心文件并保留本次全仓报告作对照。
+cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。成熟工具尚未运行。2026-10-04 已在当前分支加入可重复的 `--include` / `--exclude` 范围参数，并将 scope 写入 JSON/Markdown；同时新增 5 个 scope 回归测试。该功能尚未在用户 Ubuntu WSL 上实跑验证，因此下一动作是按 `docs/testing/scan_scope_verification.md` 先把测试跑绿，再用 `--include cJSON.c --include cJSON_Utils.c` 复现核心 26 条基线。
 
 当前 scanner 示例：
 
@@ -586,14 +586,18 @@ clone 主/备选目标
 → 固定第一个 TargetSnapshot
 ```
 
-### 下一工作日下午
+### 当前最近一步（2026-10-04）
 
 ```text
-当前 scanner 扫真实目标
-→ 成熟工具基线
-→ 审核首批 10～30 个 candidate
-→ 统计最常见误报原因
+Codex/WSL 验证 scan scope 9 个回归测试
+→ cJSON 核心两文件 scoped scan
+→ 对照此前 26 条核心 candidate
+→ clang-tidy / Clang Static Analyzer 选择一个成熟工具基线
+→ 复核 needs_context / interesting 候选
+→ 决定先做函数上下文还是 sanitizer 验证
 ```
+
+测试计划见 `docs/testing/scan_scope_verification.md`。在 scoped scan 数字可复现之前，不更新正式基线统计。
 
 ### 随后一天
 
@@ -648,3 +652,37 @@ clone 主/备选目标
 ## 10. 最重要提醒
 
 **MVP scanner 阶段已经完成。下一步不是把规则表做得更长，而是选定一个可构建、可测试、固定 commit 的真实 OpenHarmony C/C++ 组件，把 `candidate → 上下文 → 原组件运行 → sanitizer/行为证据` 这条链第一次跑通。九层架构继续作为最终方向，但当前两周路线只实现真实案例所需要的纵切面。**
+
+
+---
+
+## 11. 2026-10-04 ChatGPT 远程代码更新（待 Codex/WSL 验证）
+
+本次直接写入 `feat/openharmony-target-onboarding`：
+
+- `src/core/scanner.py`：增加显式 include/exclude 扫描范围，防止路径逃逸、重叠 include 重复计数，并把 scope 写入 ScanResult。
+- `src/cli/main.py`：增加可重复使用的 `--include PATH` 与 `--exclude PATH` 参数。
+- `src/core/report.py`：Markdown 报告增加 include/exclude scope。
+- `tests/test_scanner.py`：在原 4 个测试基础上新增 5 个 scope 测试，目标总数 9。
+- `docs/testing/scan_scope_verification.md`：增加 Codex/WSL 验证清单。
+
+这些提交**尚未由用户本地 Ubuntu WSL 实际执行**，因此不能写成“已验证通过”。
+
+本地下一步：
+
+```bash
+cd ~/openharmony-audit/CyberSecurity-Innovation-Audit
+git checkout feat/openharmony-target-onboarding
+git pull --ff-only
+source .venv/bin/activate
+python -m unittest discover -s tests -v
+```
+
+预期在实现正确时：
+
+```text
+Ran 9 tests
+OK
+```
+
+随后按 `docs/testing/scan_scope_verification.md` 重跑 samples 和 cJSON 核心两文件。若任何测试或 cJSON 计数不一致，先定位原因，不为了让数字好看而修改预期结果。
