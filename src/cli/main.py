@@ -2,16 +2,12 @@ import argparse
 import json
 from pathlib import Path
 
+from src.baseline.clang_analyzer import run_clang_analyzer, write_reports
 from src.core.report import render_markdown
 from src.core.scanner import scan_directory
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="CyberSecurity Innovation Audit MVP candidate scanner"
-    )
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
+def _configure_scan_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
     scan_parser = subparsers.add_parser("scan", help="Scan a source directory")
     scan_parser.add_argument("target", help="Target source directory")
     scan_parser.add_argument(
@@ -46,6 +42,62 @@ def main() -> None:
         default="outputs/reports/report.md",
         help="Output Markdown path",
     )
+    return scan_parser
+
+
+def _configure_clang_baseline_parser(
+    subparsers: argparse._SubParsersAction,
+) -> argparse.ArgumentParser:
+    baseline_parser = subparsers.add_parser(
+        "baseline-clang",
+        help="Run a reproducible clang --analyze baseline on explicit source files",
+    )
+    baseline_parser.add_argument("target", help="Target source directory")
+    baseline_parser.add_argument(
+        "--file",
+        action="append",
+        required=True,
+        metavar="PATH",
+        help=(
+            "Relative source file under target. Repeat for multiple files. "
+            "The baseline deliberately requires explicit files."
+        ),
+    )
+    baseline_parser.add_argument(
+        "--clang",
+        default="clang",
+        help="Clang executable to invoke (default: clang)",
+    )
+    baseline_parser.add_argument(
+        "--clang-arg",
+        action="append",
+        default=None,
+        metavar="ARG",
+        help=(
+            "Extra compiler/analyzer argument passed after the target include path. "
+            "Repeat to pass multiple arguments."
+        ),
+    )
+    baseline_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/clang_baseline.json",
+        help="Output JSON path",
+    )
+    baseline_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/clang_baseline.md",
+        help="Output Markdown path",
+    )
+    return baseline_parser
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="CyberSecurity Innovation Audit tooling"
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    scan_parser = _configure_scan_parser(subparsers)
+    baseline_parser = _configure_clang_baseline_parser(subparsers)
 
     args = parser.parse_args()
 
@@ -86,6 +138,36 @@ def main() -> None:
         print(f"[OK] scanned lines: {result.scanned_lines}")
         print(f"[OK] skipped source files: {len(result.skipped_files)}")
         print(f"[OK] candidate findings: {result.finding_count}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "baseline-clang":
+        target = Path(args.target).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if json_output == md_output:
+            baseline_parser.error("JSON and Markdown output paths must differ")
+
+        try:
+            result = run_clang_analyzer(
+                target=target,
+                files=args.file,
+                clang_executable=args.clang,
+                extra_args=args.clang_arg,
+            )
+        except (ValueError, RuntimeError, OSError) as error:
+            baseline_parser.error(str(error))
+
+        write_reports(result, json_output, md_output)
+
+        print(f"[OK] baseline target: {result.target}")
+        print(f"[OK] clang version: {result.clang_version}")
+        print(f"[OK] files: {len(result.files)}")
+        print(f"[OK] diagnostics: {result.diagnostic_count}")
+        print(f"[OK] failed files: {len(result.failed_files)}")
+        print(f"[OK] elapsed seconds: {result.elapsed_seconds:.6f}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
 
