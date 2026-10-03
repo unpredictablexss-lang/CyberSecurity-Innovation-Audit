@@ -15,6 +15,26 @@ def main() -> None:
     scan_parser = subparsers.add_parser("scan", help="Scan a source directory")
     scan_parser.add_argument("target", help="Target source directory")
     scan_parser.add_argument(
+        "--include",
+        action="append",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Relative file or directory to include under target. "
+            "Repeat to include multiple paths. Default: entire target."
+        ),
+    )
+    scan_parser.add_argument(
+        "--exclude",
+        action="append",
+        default=None,
+        metavar="PATH",
+        help=(
+            "Relative file or directory to exclude under target. "
+            "Repeat to exclude multiple paths."
+        ),
+    )
+    scan_parser.add_argument(
         "--json-out",
         "--out",
         dest="json_out",
@@ -39,7 +59,15 @@ def main() -> None:
         if json_output == md_output:
             scan_parser.error("JSON and Markdown output paths must differ")
 
-        result = scan_directory(target)
+        try:
+            result = scan_directory(
+                target,
+                include_paths=args.include,
+                exclude_paths=args.exclude,
+            )
+        except ValueError as error:
+            scan_parser.error(str(error))
+
         json_output.parent.mkdir(parents=True, exist_ok=True)
         md_output.parent.mkdir(parents=True, exist_ok=True)
         json_output.write_text(
@@ -49,6 +77,11 @@ def main() -> None:
         md_output.write_text(render_markdown(result), encoding="utf-8")
 
         print(f"[OK] scanned: {result.target}")
+        print(f"[OK] include scope: {', '.join(result.scope_includes)}")
+        print(
+            f"[OK] exclude scope: "
+            f"{', '.join(result.scope_excludes) if result.scope_excludes else '(none)'}"
+        )
         print(f"[OK] scanned files: {result.scanned_files}")
         print(f"[OK] scanned lines: {result.scanned_lines}")
         print(f"[OK] skipped source files: {len(result.skipped_files)}")
