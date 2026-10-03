@@ -1,7 +1,7 @@
 import re
 from bisect import bisect_right
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Sequence
 
 
 _FUNCTION_NAME_PATTERN = re.compile(
@@ -211,16 +211,18 @@ def resolve_context(
     lines: List[str],
     line_number: int,
     radius: int = 3,
+    spans: Optional[Sequence[FunctionSpan]] = None,
 ) -> ResolvedContext:
     if line_number < 1 or line_number > len(lines):
         raise ValueError(f"line_number out of range: {line_number}")
     if radius < 0:
         raise ValueError("radius must be >= 0")
 
+    available_spans = spans if spans is not None else find_top_level_function_spans(lines)
     containing_span = next(
         (
             span
-            for span in find_top_level_function_spans(lines)
+            for span in available_spans
             if span.start_line <= line_number <= span.end_line
         ),
         None,
