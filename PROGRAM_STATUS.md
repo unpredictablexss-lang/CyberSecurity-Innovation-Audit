@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；scan scope 与轻量函数上下文已在 Ubuntu 22.04 WSL2 验证。完整回归 14/14 通过，固定提交 cJSON 核心两文件仍为 2 文件、4,681 行、26 条文本候选，26/26 均解析到启发式函数上下文，六个 spot check 全部匹配。2026-10-04 ChatGPT 已继续加入可复现的 Clang Static Analyzer baseline runner（`baseline-clang`）、4 个新测试和验证清单；该 baseline 代码尚未在用户 WSL/Codex 上实测，因此当前预期总测试为 18，但仍属 pending。原组件运行时漏洞验证和大规模性能基准尚未做，尚无确认漏洞。**
+**MVP scanner 已合并到 main；scan scope、轻量函数上下文与 Clang Static Analyzer baseline runner 已在 Ubuntu 22.04 WSL2 验证。完整回归 18/18 通过。固定提交 cJSON 核心两文件的文本扫描为 2 文件、4,681 行、26 条候选；默认 `clang --analyze` 对两文件均退出 0，解析诊断 0、failed files 0，精确行重合 0。零诊断不证明安全，26 条候选也不是漏洞。原组件运行时验证、完整编译参数对照和大规模性能基准仍未做。**
 
 ---
 
@@ -92,6 +92,9 @@ feat/openharmony-target-onboarding
 
 ```text
 src/
+├── baseline/
+│   ├── __init__.py
+│   └── clang_analyzer.py
 ├── cli/
 │   ├── __init__.py
 │   ├── __main__.py
@@ -207,14 +210,14 @@ python -m src.cli scan samples \
 
 ### 2.6 回归测试
 
-当前 `tests/test_scanner.py` 有 9 个扫描/范围回归测试，`tests/test_context.py` 有 5 个函数上下文测试；2026-10-04 在 WSL 实跑 14/14 通过。原 4 个扫描测试覆盖以下基础行为：
+当前 `tests/test_scanner.py` 有 9 个扫描/范围回归测试，`tests/test_context.py` 有 5 个函数上下文测试，`tests/test_clang_baseline.py` 有 4 个 baseline runner 测试；2026-10-04 在 WSL 实跑 18/18 通过。原 4 个扫描测试覆盖以下基础行为：
 
 1. vulnerable / safe 样例区分；
 2. 函数名边界与空格调用形式；
 3. CLI 写出 JSON 和 Markdown；
 4. CLI 对不存在 target 报错。
 
-本轮实际结果为 `Ran 14 tests ... OK`，失败 0；此前 9/9 的 scope 阶段结果保留在第 11 节。运行命令：
+本轮实际结果为 `Ran 18 tests ... OK`，失败 0；此前 9/9 和 14/14 的阶段结果分别保留在第 11～12 节。运行命令：
 
 ```bash
 python -m unittest discover -s tests -v
@@ -240,7 +243,7 @@ python -m unittest discover -s tests -v
 - 尚未实现 Patch 自动验证；
 - 尚未实现 LLM 二次研判；
 - 尚未实现完整比赛漏洞报告；
-- 成熟静态工具 baseline runner 已写入当前分支，但尚未在 WSL/Codex 上完成真实 cJSON baseline，因此仍不能写成已验证；
+- 尚未使用完整 OpenHarmony 编译参数做 Clang 分析，也未完成其他工具对照或真实漏洞确认；已完成的默认参数基线见第 13 节；
 - 尚未进行真实准确率、召回率和性能 Benchmark。
 
 当前状态只是：
@@ -252,7 +255,8 @@ python -m unittest discover -s tests -v
 → cJSON 局部构建、单测、全仓扫描及 10 条初筛
 → scope 功能 9/9 测试通过，cJSON 核心两文件 26 条候选逐项复现
 → function context 完整回归 14/14 通过，固定 cJSON 26 条获启发式函数名
-→ 待做成熟工具对照和原组件运行时验证
+→ Clang baseline 完整回归 18/18 通过，两文件分析退出 0、诊断 0
+→ 待做原编译参数对照、人工边界复核和原组件运行时验证
 ```
 
 ---
@@ -427,9 +431,9 @@ clean checkout
 
 ---
 
-## Step 12：真实组件上跑当前 scanner + 成熟工具基线（全仓与核心范围扫描完成，成熟工具待做）
+## Step 12：真实组件上跑当前 scanner + 成熟工具基线（核心扫描与默认 Clang baseline 已完成）
 
-cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。2026-10-04 已按 [scope 验证清单](docs/testing/scan_scope_verification.md) 在 WSL 验证 9 个测试和全部样例命令。固定提交的核心两文件 scoped scan 为 2 文件、4,681 行、26 条候选；JSON 与 Markdown 均记录同一 include/exclude 范围，且 26 条与旧全仓核心命中逐项一致。成熟工具尚未运行。
+cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。2026-10-04 已按 [scope 验证清单](docs/testing/scan_scope_verification.md) 在 WSL 验证 9 个测试和全部样例命令。固定提交的核心两文件 scoped scan 为 2 文件、4,681 行、26 条候选；JSON 与 Markdown 均记录同一 include/exclude 范围，且 26 条与旧全仓核心命中逐项一致。同两文件的默认参数 Clang Static Analyzer baseline 已运行，结果见第 13 节。
 
 当前 scanner 示例：
 
@@ -580,14 +584,14 @@ harness_invalid
 
 ## 7. 当前验证后的工作顺序
 
-scan scope 的回归、样例和 cJSON 核心两文件验证已经完成。下一轮按同一固定提交与核心范围：
+scan scope、函数上下文和默认参数 Clang baseline 的本地验证已经完成。下一轮按同一固定提交与核心范围：
 
-1. 选一个成熟静态工具建立可复现基线，记录命令、耗时、warning 与我们的候选交集。
+1. 取得/核对原 OpenHarmony 编译命令后，判断默认 Clang 分析缺少哪些必要宏与 include 参数；没有依据时不任意加参数。
 2. 复核 needs_context / interesting 候选的函数、边界关系、调用链与实际输入条件。
 3. 只有存在可控输入与正常输入对照时，才在原组件上做 ASan/UBSan 或行为验证。
 4. 并行评估 c_utils 的一个小型第一方子模块，但不要把未知构建状态写成通过。
 
-function-context 的本轮验证结果见第 12 节；本轮没有开始上述下一阶段工作。
+Clang baseline 的本轮验证结果见第 13 节；本轮没有开始上述下一阶段工作。
 
 ---
 
@@ -608,7 +612,7 @@ function-context 的本轮验证结果见第 12 节；本轮没有开始上述�
 
 ## 9. 给 Codex 的下一轮任务模板
 
-下一轮先读本文件第 11～12 节、两份 docs/testing 验证记录和 docs/targets/target_selection.md。scan scope 与轻量 function context 均已在 WSL 验证；不要重复实现，也不要把候选称为漏洞。后续工作应由真实候选驱动，优先成熟工具基线与人工上下文复核；任何运行时结论需保存可复现证据。未实际运行的工具、构建或 PoC 结果保持 unknown / not_started。
+下一轮先读本文件第 11～13 节、三份 docs/testing 验证记录和 docs/targets/target_selection.md。scan scope、轻量 function context 和默认参数 Clang baseline 均已在 WSL 验证；不要重复实现，也不要把候选或 Clang 的零诊断解释为安全结论。后续工作优先核对原编译参数与人工上下文；任何运行时结论需保存可复现证据。未实际运行的工具、构建或 PoC 结果保持 unknown / not_started。
 
 ---
 
@@ -657,7 +661,7 @@ python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
 ### 未验证
 
 - 没有把 26 条文本候选升级为漏洞；本轮没有原组件 PoC、ASan/UBSan 实验或影响分析。
-- 未运行 clang-tidy、Clang Static Analyzer、CodeQL 或 fuzz；没有成熟工具对照结果。
+- 截至本节 scan scope 验证时，尚未运行 clang-tidy、Clang Static Analyzer、CodeQL 或 fuzz；后续 Clang 结果见第 13 节。
 - cJSON 完整测试套件仍未通过构建。已知 standalone checkout 缺 test_fwk.h；本轮没有补依赖或重试完整构建。
 - 没有测试大规模代码库的耗时、峰值内存、准确率或召回率。
 
@@ -668,7 +672,7 @@ python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
 - 补齐 test_fwk.h 等依赖后，cJSON 完整套件能否在此环境通过。
 - c_utils 的宿主机可构建性和其 fuzztest 的实际运行结果。
 
-下一步仍按既定路线：选一个成熟静态工具做同一核心范围基线，复核 needs_context / interesting 候选；在有可靠调用路径和正常输入对照后再考虑原组件运行时验证。不要把 26 条候选写成 26 个漏洞。
+当时的下一步是同一核心范围的成熟工具基线；该项已于本文件第 13 节记录。后续仍需人工复核 needs_context / interesting 候选，在有可靠调用路径和正常输入对照后再考虑原组件运行时验证。不要把 26 条候选写成 26 个漏洞。
 
 
 ---
@@ -700,7 +704,7 @@ python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
 
 ### 未验证
 
-- 没有运行 clang-tidy、Clang Static Analyzer、fuzz 或原组件 ASan/UBSan/PoC；也没有证明任一 candidate 是漏洞。
+- 截至本节 function-context 验证时，尚未运行 clang-tidy、Clang Static Analyzer、fuzz 或原组件 ASan/UBSan/PoC；后续 Clang 结果见第 13 节，仍未证明任一 candidate 是漏洞。
 - 没有对大规模 OpenHarmony 代码库测耗时、峰值内存、准确率或召回率。
 - 没有做 AST、CFG、数据流、调用链可达性或完整 C++ 类内函数解析。本轮 26/26 只表示固定 cJSON 核心两文件的启发式函数名被填出。
 
@@ -716,58 +720,41 @@ python -m src.cli scan /home/audit/openharmony-targets/third_party_cJSON \
 
 ---
 
-## 13. 2026-10-04 Clang Static Analyzer baseline 代码更新（待 WSL/Codex 验证）
+## 13. 2026-10-04 Clang Static Analyzer baseline 的 WSL 实测记录
 
-function-context 已经在 WSL 实测 14/14 通过后，下一步开始建立“成熟工具对照”而不是继续增加危险函数规则。
+验证环境：Ubuntu 22.04 WSL2；项目基线提交 44b4843，分支 feat/openharmony-target-onboarding；cJSON 源码固定为 0c2c9dff82cc85539c8362132d7a5f6bf7d1e748，工作树干净。按 docs/testing/clang_baseline_verification.md 执行。本轮**没有修改 analyzer、CLI、测试或 cJSON 源码**；只更新进度、验证说明和 TargetSnapshot。
 
-本次远程分支新增/修改：
+### 已验证
 
-- `src/baseline/__init__.py`：baseline 模块边界说明；
-- `src/baseline/clang_analyzer.py`：封装 `clang --analyze`，按显式文件运行并记录 command / exit code / stdout / stderr / parsed diagnostics / elapsed；
-- `src/cli/main.py`：增加 `baseline-clang` 子命令；
-- `tests/test_clang_baseline.py`：新增 4 个 baseline runner 测试，使用临时 fake clang，不依赖真实 Clang 输出稳定性；
-- `docs/testing/clang_baseline_verification.md`：固定 cJSON 的本地验证清单。
+- Clang executable path：/usr/bin/clang；版本首行：Ubuntu clang version 14.0.0-1ubuntu1.1。
+- 完整回归 python -m unittest discover -s tests -v：**Ran 18 tests，OK；通过 18，失败 0，错误 0**。无失败测试名、traceback 或代码修复。
+- 对固定 cJSON 核心两文件运行：
 
-设计边界：
+~~~bash
+python -m src.cli baseline-clang /home/audit/openharmony-targets/third_party_cJSON \
+  --file cJSON.c --file cJSON_Utils.c \
+  --json-out outputs/reports/cjson_clang_baseline.json \
+  --md-out outputs/reports/cjson_clang_baseline.md
+~~~
 
-```text
-Clang warning != validated vulnerability
-0 warning != proof of safety
-```
+- 两条实际 analyzer 命令均为 clang --analyze -Xanalyzer -analyzer-output=text -I /home/audit/openharmony-targets/third_party_cJSON 加对应源文件绝对路径；**没有添加 --clang-arg 或伪造编译参数**。cJSON.c exit_code = 0；cJSON_Utils.c exit_code = 0；二者 stderr 均为空。
+- JSON 实际：tool = clang-static-analyzer；files = [cJSON.c, cJSON_Utils.c]；file_count = 2；diagnostic_count = 0；failed_files = []；warning = 0、error = 0、note = 0；checker 分布 = {}。首次运行器 elapsed_seconds = 16.684430。
+- 与已验证的 26 条核心文本候选按文件名和行号比较：candidate_locations = 26；baseline_warning_error_locations = 0；exact_location_overlap = 0；Clang-only warning/error locations = 0；text-candidate-only locations = 26。这是**描述性位置比较**，不能将 26 条视为误报，也不能把 0 条 Clang 诊断当作安全证明。
+- Markdown 报告包含 Target、Clang version、Files、Diagnostics、Failed files、每个文件的 Command、Exit code、Elapsed 和免责声明。由于诊断数为 0，没有逐条诊断的 Checker/Message 行；报告写明 No parsed warning/error diagnostics，JSON 的 diagnostics 为 []。不为满足展示字段而虚构诊断。
+- 第二次对同一命令运行 /usr/bin/time -v：运行器自身 elapsed_seconds = 15.727517；外部墙钟 **0:15.96**，Maximum resident set size **179,716 kB**，Exit status **0**。仅为小目标 sanity check，不是最终比赛 Benchmark。
+- 原始 JSON/Markdown 运行报告位于本地忽略目录 outputs/reports/，性能复跑报告位于 /tmp/；均不随 Git 提交。
 
-baseline runner 不会修改 Finding.status，也不会把成熟工具结果和文本候选数量直接相加。
+### 未验证
 
-预期测试总数：
+- 未使用完整 OpenHarmony 编译命令、宏定义、include 路径或指定产品配置；当前只是两个独立 C 文件的默认 Clang 分析。
+- 未运行 clang-tidy、CodeQL、Joern、fuzz、原组件 ASan/UBSan 或 PoC；未验证任何候选的可利用性。
+- 未测大规模扫描耗时/内存、准确率、召回率或影响版本；cJSON 完整测试套件仍缺 test_fwk.h。
 
-```text
-已验证 scanner/scope/context: 14
-新增 baseline runner tests:     4
----------------------------------
-预期总数:                      18
-```
+### unknown（仍需证据）
 
-但 18/18 尚未在用户 WSL 上实际执行。
+- 补齐原 OpenHarmony 编译参数后，Clang 的诊断集合是否变化；零诊断不能推断为“无漏洞”。
+- 26 条文本候选的边界条件、真实安全影响和适用版本；Clang 不报告某行不等于该候选必定误报。
+- 其他组件上的 analyzer 可构建性、diagnostic 解析覆盖率及性能；本轮只分析固定 cJSON 核心两文件。
+- c_utils 的宿主机构建、赛方指定代码范围与最终竞赛报告的实质漏洞证据。
 
-真实 baseline 目标仍固定：
-
-```text
-target commit:
-0c2c9dff82cc85539c8362132d7a5f6bf7d1e748
-
-files:
-cJSON.c
-cJSON_Utils.c
-```
-
-验证时必须记录：
-
-- `clang --version` 与 executable path；
-- 两个 source file 的 analyzer exit code；
-- diagnostic 数量和 warning/error/note 分布；
-- checker 分布；
-- 与现有 26 candidate 的 exact-location overlap；
-- Clang-only warning/error locations；
-- text-candidate-only locations；
-- baseline elapsed 与一次 `/usr/bin/time -v` 最大 RSS。
-
-若真实 Clang 因编译参数/宏/头文件失败，应记录 failed/blocked 及 stderr，不允许修改 cJSON 源码来伪造“分析成功”。
+结论边界：Clang baseline 与本项目文本候选是两种独立证据，数量不能相加或当作准确率。下一阶段功能开发未在本轮开始。

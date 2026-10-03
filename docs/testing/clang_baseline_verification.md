@@ -1,8 +1,10 @@
 # Clang Static Analyzer Baseline Verification
 
-> Branch: `feat/openharmony-target-onboarding`  
-> Status: **pending Ubuntu WSL / Codex verification**  
+> Branch: `feat/openharmony-target-onboarding`
+> Status: **verified in Ubuntu 22.04 WSL2 on 2026-10-04**; 18/18 tests passed, both pinned cJSON files analyzed with exit code 0, and zero diagnostics were parsed. Actual counts, timing, and limits are in [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md).
 > Purpose: establish one mature static-analysis baseline on the exact same pinned cJSON core scope used by the MVP scanner.
+
+The zero-diagnostic Markdown report has no per-diagnostic Checker or Message rows because there are no diagnostics. It explicitly reports that none were parsed; JSON records an empty diagnostics array. This is not a safety conclusion.
 
 ## Why this is the next gate
 

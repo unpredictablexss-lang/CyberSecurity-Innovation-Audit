@@ -39,7 +39,7 @@ cmake --build /home/audit/openharmony-targets/third_party_cJSON-build -j 4
 
 结果：99 个源码文件、22,377 行、跳过 0 个、49 条文本候选；sprintf 18、memcpy 16、strcpy 14、strcat 1。按目录：核心 cJSON.c 与 cJSON_Utils.c 共 26 条，tests 22 条，fuzzing 1 条。这是加入显式 scope 前的**历史全仓基线**，分母包括 Unity 测试框架；49 **不能**当成核心库漏洞数或准确率分子。2026-10-04 已用 `--include cJSON.c --include cJSON_Utils.c` 独立复现 2 文件、4,681 行、26 条核心文本候选；新增函数上下文后候选身份仍逐项一致，详见 [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md)。完整运行报告只在本地忽略目录 outputs/reports/。
 
-成熟工具基线：clang-tidy、Clang Static Analyzer 均 not_started。fuzzing/cjson_read_fuzzer.c 有 LLVMFuzzerTestOneInput 入口，但未运行。ASan/UBSan 原组件验证也尚未开始。
+成熟工具基线：2026-10-04 已用 `/usr/bin/clang` 14.0.0-1ubuntu1.1 对上述核心两文件运行默认 `clang --analyze`，两个文件退出码均为 0，解析诊断 0、failed files 0；同一位置对照为精确重合 0、Clang-only 0、文本候选独有 26。原始报告在本地 `outputs/reports/cjson_clang_baseline.{json,md}`，命令、耗时和限制见 [PROGRAM_STATUS.md](../../PROGRAM_STATUS.md)。**零诊断不证明安全**，本轮未复用完整 OpenHarmony 编译参数；clang-tidy、fuzz 与原组件 ASan/UBSan 验证仍未运行。
 
 ### 第一批核心调用初筛
 
@@ -78,6 +78,6 @@ cmake --build /home/audit/openharmony-targets/third_party_cJSON-build -j 4
 
 1. 保存 T1 TargetSnapshot、固定提交、局部构建与测试结果；不夸大全目标构建状态。
 2. 已加入明确源码范围并复现核心两文件 26 条文本候选；保留原 49 条全仓基线作对照，不把启发式函数名当作漏洞验证。
-3. 用一个成熟静态工具做基线，对首批初筛候选逐项复核；不要把 warning 数量相加成漏洞数。
+3. 已在固定核心范围完成 Clang Static Analyzer 默认参数基线（0 诊断）；后续仍需结合源码上下文复核首批候选，不把零诊断当作安全证明。
 4. 选一个有正常输入对照的真实调用路径，必要时用 ASan/UBSan 和失败分配器重复验证。无法复现时标 inconclusive/blocked。
 5. 同时探测 T2 的可独立编译子模块，避免最终作品只停留在通用第三方库。

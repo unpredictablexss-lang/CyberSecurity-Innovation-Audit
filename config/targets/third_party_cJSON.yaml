@@ -64,6 +64,16 @@ mvp_scan:
   core_library_candidates: 26
   test_candidates: 22
   fuzzing_candidates: 1
+  core_scope:
+    source_paths: [cJSON.c, cJSON_Utils.c]
+    status: success
+    scanned_files: 2
+    scanned_lines: 4681
+    candidate_findings: 26
+    context_resolved: 26
+    context_unresolved: 0
+    json_report: outputs/reports/cjson_core_context.json
+    markdown_report: outputs/reports/cjson_core_context.md
 
 baseline_tools:
   clang_tidy:
@@ -72,10 +82,26 @@ baseline_tools:
     warning_count: unknown
     log_path: null
   clang_static_analyzer:
-    status: not_started
-    command: null
-    warning_count: unknown
-    log_path: null
+    status: success
+    command: .venv/bin/python -m src.cli baseline-clang /home/audit/openharmony-targets/third_party_cJSON --file cJSON.c --file cJSON_Utils.c --json-out outputs/reports/cjson_clang_baseline.json --md-out outputs/reports/cjson_clang_baseline.md
+    clang_executable: /usr/bin/clang
+    clang_version: Ubuntu clang version 14.0.0-1ubuntu1.1
+    file_count: 2
+    file_exit_codes: {cJSON.c: 0, cJSON_Utils.c: 0}
+    failed_files: 0
+    diagnostic_count: 0
+    warning_count: 0
+    error_count: 0
+    note_count: 0
+    checker_distribution: {}
+    runner_elapsed_seconds: 16.684430009001517
+    json_report: outputs/reports/cjson_clang_baseline.json
+    markdown_report: outputs/reports/cjson_clang_baseline.md
+    performance_sanity:
+      wall_clock: "0:15.96"
+      maximum_rss_kb: 179716
+      exit_status: 0
+    limitation: "No original OpenHarmony compile_commands/flags; zero diagnostics does not prove safety."
   fuzz:
     status: not_started
     existing_target: true
@@ -107,8 +133,8 @@ notes:
     - "Host cJSON_test does not prove the OpenHarmony-integrated full suite."
   blockers:
     - "Full build needs test_fwk.h, absent from standalone checkout."
-    - "Current scanner includes tests/unity because it lacks configurable scope."
+    - "Original OpenHarmony compile commands/flags are not yet available for the Clang baseline."
   next_actions:
-    - "Add scoped scan and recompute core-only denominator."
-    - "Run one mature static analysis baseline."
-    - "Verify interesting cases using original component and controlled allocation failure."
+    - "Manually review candidate inputs, bounds, and impact in the original component."
+    - "Compare against original OpenHarmony build flags when available."
+    - "Use controlled allocation failure only if the failure path has meaningful security impact."
