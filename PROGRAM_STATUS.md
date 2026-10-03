@@ -3,15 +3,16 @@
 > - 项目：CyberSecurity-Innovation-Audit
 > - 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘
 > - 更新日期：2026-10-03
-> - 当前分支：`feat/mvp-scanner`
-> - 当前 PR：#2 `feat: build C++ candidate scanner with scan summary and reports`，目标分支 `main`，当前未合并。
+> - 当前分支：`feat/openharmony-target-onboarding`
+> - 已合并 PR：#2（MVP scanner 与目标筛选模板），merge commit `bef61d0caeed7c58b3887abc8b8cbfc33a1b4755`。
+> - 当前阶段：真实组件筛选与 cJSON 首条工程闭环；构建、测试和扫描的证据见目标配置与筛选记录。
 > 本文用途：给 ChatGPT、Codex、队友和未来自己看的统一进度说明。继续开发前先读本文，避免重复搭环境、误把计划当成已实现功能，或跳过验证步骤。
 
 ---
 
 ## 0. 当前一句话状态
 
-**Ubuntu 22.04 WSL2、GitHub SSH、Python/C++ 工具链与 ASan 已打通；`feat/mvp-scanner` 上的 MVP 文本候选扫描器已完成：支持状态字段、扫描统计、JSON/Markdown 报告、安全负例和 4 个回归测试。当前扫描 2 个自建样例、28 行代码，产生 1 个 `candidate`。下一步不是继续堆危险函数名，而是进入真实 OpenHarmony 组件 onboarding：筛选 3 个可构建 C/C++ 组件，固定 repo/commit/build config，再跑当前 scanner 与成熟工具基线。**
+**MVP scanner 已合并到 main。真实目标第一轮筛选了 cJSON、c_utils、lwIP 三个固定提交；cJSON 的独立宿主机测试 1/1 通过，但完整测试构建缺少 test_fwk.h。当前扫描 cJSON 全仓 99 个源码文件、22,377 行，得到 49 条文本候选，其中核心库 26 条。已人工初筛 10 条，尚无确认漏洞。下一步是控制扫描范围、运行成熟静态工具基线，并对值得继续追查的候选做原组件验证。**
 
 ---
 
@@ -68,23 +69,17 @@ SUMMARY: AddressSanitizer: heap-buffer-overflow
 
 - GitHub SSH key 配置成功。
 - 私有仓库已 clone 到本地。
-- 当前功能分支：`feat/mvp-scanner`。
-- 当前 PR：#2，尚未合并到 `main`。
+- PR #2 已合并到 `main`，merge commit 为 `bef61d0caeed7c58b3887abc8b8cbfc33a1b4755`。
+- 当前功能分支：`feat/openharmony-target-onboarding`。
 
 基本开发流程：
 
 ```text
-main
+main（包含已合并的 MVP scanner）
   ↓ 新建功能分支
-feat/mvp-scanner
-  ↓ 本地开发 / 本地验证
-commit
-  ↓
-push
-  ↓
-PR #2 自动更新
-  ↓
-确认稳定后再 merge 到 main
+feat/openharmony-target-onboarding
+  ↓ 固定真实组件提交、保存构建与扫描证据
+提交并通过 PR 审核
 ```
 
 ---
@@ -221,9 +216,8 @@ python -m unittest discover -s tests -v
 
 以下能力**尚未实现**，不要让 Codex 或后续文档误写成已完成：
 
-- 尚未扫描真实 OpenHarmony 组件；
-- 尚未选择主目标组件；
-- 尚未固定任何真实 repo/commit/build config；
+- 尚未对真实 OpenHarmony 组件完成全套构建、测试与运行时漏洞验证；
+- 尚未对 cJSON 核心源码做排除测试框架的独立扫描统计；
 - 尚未接入 AST；
 - 尚未实现 CFG；
 - 尚未实现数据流或污点分析；
@@ -241,11 +235,11 @@ python -m unittest discover -s tests -v
 当前状态只是：
 
 ```text
-环境打通
-→ GitHub 打通
-→ MVP 文本候选扫描器跑通
-→ 双报告与回归测试跑通
-→ 准备进入真实 OpenHarmony 组件 onboarding
+环境与 GitHub 打通
+→ MVP scanner 合并到 main
+→ 固定 3 个真实组件提交并完成第一轮筛选
+→ cJSON 局部构建、单测、全仓扫描及 10 条初筛
+→ 待做核心范围扫描、成熟工具对照和运行时验证
 ```
 
 ---
@@ -306,49 +300,14 @@ config/targets/template.yaml
 
 ---
 
-## 6. 下一阶段 Step 8～15
+## 6. 真实组件 onboarding：Step 8～15
 
-## Step 8：最终回归并合并 MVP PR
+## Step 8：最终回归并合并 MVP PR（已完成）
 
-目标：把 MVP scanner 阶段稳定保存到 `main`，然后另开新分支进入目标组件阶段。
+2026-10-03 已运行 4 个回归测试（4/4 通过）及自建样例扫描（2 文件、28 行、1 条 candidate），检查 PR #2 变更范围后合并到 main；本地 main 已同步，并创建 feat/openharmony-target-onboarding 分支。MVP 阶段以合并提交 bef61d0caeed7c58b3887abc8b8cbfc33a1b4755 为基线。
+## Step 9：筛选 3 个真实 OpenHarmony C/C++ 候选组件（第一轮完成）
 
-本地执行：
-
-```bash
-cd ~/openharmony-audit/CyberSecurity-Innovation-Audit
-source .venv/bin/activate
-
-git pull --ff-only
-python -m unittest discover -s tests -v
-python -m src.cli scan samples \
-  --json-out outputs/reports/samples_report.json \
-  --md-out outputs/reports/samples_report.md
-git status
-```
-
-期望：
-
-- 4 个测试通过；
-- 扫描 2 个文件；
-- candidate findings 为 1；
-- 没有意外文件被 Git 跟踪。
-
-确认后，在 GitHub PR #2 中检查 Files changed，没有 `.venv`、运行报告、大文件或无关文件后，可以 merge。
-
-合并后本地：
-
-```bash
-git checkout main
-git pull --ff-only
-git branch -d feat/mvp-scanner
-git checkout -b feat/openharmony-target-onboarding
-```
-
-如果暂时不想 merge PR #2，也可以继续在 `feat/mvp-scanner` 上做 onboarding，但不推荐长期这样做。
-
----
-
-## Step 9：筛选 3 个真实 OpenHarmony C/C++ 候选组件
+已固定 cJSON、c_utils、lwIP 的 master 提交；cJSON 为首条工程闭环主目标，c_utils 为第一方备选，lwIP 因宿主机构建受阻而暂缓。命令结果与未知项见 [目标筛选记录](docs/targets/target_selection.md)。
 
 目标：找到至少 1 个主目标和 1 个备选目标。
 
@@ -384,7 +343,9 @@ docs/targets/target_selection.md
 
 ---
 
-## Step 10：为主目标建立 TargetSnapshot v0
+## Step 10：为主目标建立 TargetSnapshot v0（已完成）
+
+已填写 [cJSON TargetSnapshot](config/targets/third_party_cJSON.yaml)：精确记录独立测试通过和完整构建失败的不同状态，以及真实扫描的分母。
 
 从 `config/targets/template.yaml` 复制：
 
@@ -418,7 +379,9 @@ git log -1 --oneline
 
 ---
 
-## Step 11：证明原组件能正常构建和运行
+## Step 11：证明原组件能正常构建和运行（局部完成）
+
+cJSON 的 host cJSON_test 目标构建成功、ctest 1/1 通过；完整测试构建缺少 test_fwk.h，未达到全组件通过条件。原始日志位于本地 Git 忽略目录 outputs/logs/。
 
 在安全分析前先建立正常基线。
 
@@ -451,7 +414,9 @@ clean checkout
 
 ---
 
-## Step 12：真实组件上跑当前 scanner + 成熟工具基线
+## Step 12：真实组件上跑当前 scanner + 成熟工具基线（扫描完成，工具待做）
+
+cJSON 全仓扫描 99 文件、22,377 行、49 条文本候选；其中核心库 26 条，测试代码 22 条，fuzz 代码 1 条。成熟工具尚未运行。当前扫描器没有可配置源码范围，下一次需只统计核心文件并保留本次全仓报告作对照。
 
 当前 scanner 示例：
 
@@ -479,7 +444,9 @@ python -m src.cli scan /home/audit/openharmony-targets/<component>/<source-dir> 
 
 ---
 
-## Step 13：人工审核首批真实候选，建立误报原因字典
+## Step 13：人工审核首批真实候选，建立误报原因字典（首批 10 条已初筛）
+
+核心库 10 条初筛中，5 条 likely_safe、3 条 needs_context、2 条 interesting；没有 validated 漏洞。逐条原因见目标筛选记录。此处的状态仅表示下一步调查优先级。
 
 建议从真实扫描结果中抽 10～30 条，逐条回答：
 
