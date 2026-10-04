@@ -26,6 +26,10 @@ class HistoricalSample:
     source_refs: List[str] = field(default_factory=list)
     cve: Optional[str] = None
     notes: str = ""
+    label_status: str = "historical_candidate"
+    root_cause_group: str = ""
+    evidence_level: str = ""
+    runtime_replay_status: str = "not_run"
 
 
 @dataclass
@@ -129,7 +133,29 @@ def load_sample(path: Path) -> HistoricalSample:
         source_refs=[str(item) for item in data.get("source_refs", [])],
         cve=data.get("cve"),
         notes=str(data.get("notes", "")),
+        label_status=str(data.get("label_status", "historical_candidate")),
+        root_cause_group=str(data.get("root_cause_group", "")),
+        evidence_level=str(data.get("evidence_level", "")),
+        runtime_replay_status=str(data.get("runtime_replay_status", "not_run")),
     )
+
+
+def validate_sample_label(sample: HistoricalSample) -> List[str]:
+    """Return warnings for missing/weak label fields; never raises.
+
+    A historical sample may lack a public CVE, so cve is not required. This
+    only surfaces labeling gaps so a future curator can fill them in.
+    """
+    warnings: List[str] = []
+    if not sample.label_status.strip():
+        warnings.append("label_status is empty")
+    if not sample.root_cause_group.strip():
+        warnings.append("root_cause_group is empty")
+    if not sample.evidence_level.strip():
+        warnings.append("evidence_level is empty")
+    if not sample.source_refs:
+        warnings.append("source_refs is empty")
+    return warnings
 
 
 def _git(

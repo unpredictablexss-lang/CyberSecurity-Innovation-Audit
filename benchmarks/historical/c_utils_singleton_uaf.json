@@ -20,5 +20,9 @@
     "https://github.com/openharmony/commonlibrary_c_utils/commit/9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
     "https://gitcode.com/openharmony/commonlibrary_c_utils/issues/560"
   ],
-  "notes": "The fix commit explicitly describes a UAF under high parallel execution. This sample is historical ground truth for capability evaluation, not a new vulnerability."
+  "notes": "The fix commit explicitly describes a UAF under high parallel execution. This sample is historical ground truth for capability evaluation, not a new vulnerability.",
+  "label_status": "patch_confirmed",
+  "root_cause_group": "lifetime_uaf",
+  "evidence_level": "patch_and_issue",
+  "runtime_replay_status": "not_run"
 }
