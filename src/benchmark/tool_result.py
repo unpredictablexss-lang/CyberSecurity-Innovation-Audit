@@ -118,3 +118,60 @@ class ToolRunResult:
                 "not validated vulnerabilities; an empty diagnostic list is not proof of safety."
             ),
         }
+
+
+def render_markdown(result: "ToolRunResult") -> str:
+    lines = [
+        "# Normalized Tool Run Result",
+        "",
+        "> Descriptive scanner evidence only; diagnostics are candidates/evidence, "
+        "not validated vulnerabilities.",
+        "",
+        "## Run summary",
+        "",
+        f"- Run ID: {result.run_id}",
+        f"- Tool: {result.tool}",
+        f"- Tool version: {result.tool_version}",
+        f"- Target ID: {result.target_id}",
+        f"- Commit: {result.commit}",
+        f"- Scope: {result.scope_files} files / {result.scope_loc} LOC",
+        f"- Status: {result.status}",
+        f"- Elapsed seconds: {result.elapsed_seconds:.6f}",
+        f"- Peak memory MB: {result.peak_memory_mb if result.peak_memory_mb is not None else 'n/a'}",
+        f"- Diagnostics: {result.diagnostic_count}",
+        "",
+        "## Diagnostics",
+        "",
+    ]
+    if not result.diagnostics:
+        lines.append("(none)")
+    else:
+        lines.append("| ID | File | Line | Severity | CWE | Message |")
+        lines.append("|---|---|---:|---|---|---|")
+        for item in result.diagnostics:
+            lines.append(
+                f"| {item.diagnostic_id} | {item.file} | "
+                f"{item.line if item.line is not None else '-'} | {item.severity} | "
+                f"{item.candidate_cwe or '-'} | {item.message} |"
+            )
+    lines.extend(["", "## Limitations", ""])
+    for limitation in result.limitations:
+        lines.append(f"- {limitation}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def write_reports(
+    result: "ToolRunResult",
+    json_output: "Path",
+    markdown_output: "Path",
+) -> None:
+    import json as _json
+
+    json_output.parent.mkdir(parents=True, exist_ok=True)
+    markdown_output.parent.mkdir(parents=True, exist_ok=True)
+    json_output.write_text(
+        _json.dumps(result.to_dict(), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    markdown_output.write_text(render_markdown(result), encoding="utf-8")

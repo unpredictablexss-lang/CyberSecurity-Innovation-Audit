@@ -10,11 +10,22 @@ from src.core.report import render_markdown
 from src.core.ast_scanner import scan_directory_ast
 from src.core.scanner import scan_directory
 from src.triage.review import build_triage_report, write_triage_reports
+from src.benchmark.tool_result import write_reports as write_tool_reports
+from src.providers.base import AdapterContext
+from src.providers.registry import normalize_tool_output
 from src.validation.cjson_allocator import (
     PINNED_CJSON_COMMIT,
     run_cjson_allocator_validation,
     write_reports as write_allocator_reports,
 )
+
+
+def _read_tool_payload(path: Path):
+    text = path.read_text(encoding="utf-8", errors="replace")
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return text
 
 
 def _configure_scan_parser(subparsers: argparse._SubParsersAction) -> argparse.ArgumentParser:
@@ -251,6 +262,35 @@ def main() -> None:
         help="Output triage Markdown path",
     )
 
+    normalize_parser = subparsers.add_parser(
+        "normalize-tool-output",
+        help="Normalize one external tool report into a ToolRunResult",
+    )
+    normalize_parser.add_argument(
+        "--provider",
+        required=True,
+        choices=["semgrep", "codeql", "clang", "clang_sa", "cppcheck"],
+        help="External tool provider adapter",
+    )
+    normalize_parser.add_argument("--input", required=True, help="Tool-native report file")
+    normalize_parser.add_argument("--target-id", required=True, help="Benchmark target id")
+    normalize_parser.add_argument("--commit", required=True, help="Pinned source commit")
+    normalize_parser.add_argument("--scope-files", type=int, required=True, help="Scanned file count")
+    normalize_parser.add_argument("--scope-loc", type=int, required=True, help="Scanned LOC")
+    normalize_parser.add_argument("--elapsed-seconds", type=float, required=True, help="Tool run time")
+    normalize_parser.add_argument("--peak-memory-mb", type=float, default=None, help="Tool peak memory")
+    normalize_parser.add_argument("--run-id", default=None, help="Override run id")
+    normalize_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/normalized_tool.json",
+        help="Output normalized JSON path",
+    )
+    normalize_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/normalized_tool.md",
+        help="Output normalized Markdown path",
+    )
+
     args = parser.parse_args()
 
     if args.command == "scan":
@@ -454,6 +494,41 @@ def main() -> None:
         print(f"[OK] runtime cases: {len(result.runs)}")
         print(f"[OK] sanitizer-triggered runs: {sanitizer_runs}")
         print(f"[OK] overall outcome: {result.outcome}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "normalize-tool-output":
+        input_path = Path(args.input).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if not input_path.is_file():
+            normalize_parser.error(f"tool output does not exist: {input_path}")
+        if json_output == md_output:
+            normalize_parser.error("JSON and Markdown output paths must differ")
+
+        payload = _read_tool_payload(input_path)
+        run_id = args.run_id or f"{args.provider}:{args.target_id}:{args.commit[:8]}"
+        context = AdapterContext(
+            run_id=run_id,
+            target_id=args.target_id,
+            commit=args.commit,
+            scope_files=args.scope_files,
+            scope_loc=args.scope_loc,
+            elapsed_seconds=args.elapsed_seconds,
+            peak_memory_mb=args.peak_memory_mb,
+        )
+        try:
+            result = normalize_tool_output(args.provider, payload, context)
+        except (ValueError, TypeError) as error:
+            normalize_parser.error(str(error))
+
+        write_tool_reports(result, json_output, md_output)
+
+        print(f"[OK] normalized tool: {result.tool}")
+        print(f"[OK] run id: {result.run_id}")
+        print(f"[OK] diagnostics: {result.diagnostic_count}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
         return
