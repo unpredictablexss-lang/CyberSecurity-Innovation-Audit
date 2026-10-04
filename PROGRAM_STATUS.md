@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-**MVP scanner 已合并到 main；cJSON 首条工程闭环（scope、函数上下文、Clang baseline、triage、受控 allocator 运行时证据）已在 Ubuntu 22.04 WSL2 完成，本地完整回归 43/43 通过。本轮新增：scanner 注释/字符串误报修复；c_utils（第一方）parcel 子模块独立编译 + libFuzzer 验证；singleton.h UAF 作为 ground-truth 样本；Evidence/VulnerabilityCase 数据模型；tree-sitter AST 索引（函数/调用/变量）；组件级性能 benchmark。cJSON_Utils.c:234/:245 仍是组件级健壮性行为（allocator 失败崩溃），**不是已确认的 OpenHarmony 安全漏洞**。仍未产出可报告漏洞；c_utils 是第一方下一步主攻目标，结论边界见第 16、17 节。**
+**historical-vuln-benchmark 分支主线已落地：own scanner 从文本正则升级为 AST 候选扫描（`scan --engine text|ast`），并完成 text vs AST 对比、manual review 持久化、Tool Capability Matrix、Evidence 生成层（tool/triage → Evidence）、VulnerabilityCase draft 组装器，以及 normalize-tool-output CLI（队友扫描器线的文件读取入口）。本地完整回归 88/88 通过。AST scanner 在 cJSON 核心两文件复现 26 条危险调用、26/26 `ast_function_context`，与文本 scanner 完全对齐（宏定义场景 AST 正确排除 1 条文本误报）。所有产出保持 candidate/draft 状态，无 validated/reportable 漏洞结论。历史 benchmark 仍只有 singleton UAF 1 条 seed，尚未扩展多根因样本、尚未算 Precision/Recall、未做动态验证；详细见第 22 节。**
 
 ---
 
@@ -1191,3 +1191,47 @@ GitHub Actions 在 Ubuntu 22.04 / Python 3.10 上已实际运行：**Ran 57 test
 
 GitHub Actions（Ubuntu 22.04 / Python 3.10）已实际运行：**Ran 62 tests ... OK**，失败 0。
 
+---
+
+## 22. 2026-10-04 主线 P0-P5：AST scanner 与证据链闭环
+
+在队友已搭好的 tool_result / providers / compare / historical 基础上，本轮完成自己的主线（Candidate 仍是 Candidate，任何产出都不升级为漏洞）。
+
+### P0：AST 候选扫描 + 双模式 CLI
+
+- `src/core/ast_scanner.py`：tree-sitter 解析 → 函数/调用/变量 → 危险调用 → Finding（`status=candidate`，`context_status=ast_function_context`）。
+- `src/core/scanner.py` 的 ScanResult 增加 `engine` 字段；CLI `scan --engine text|ast`。
+- 验证：AST scanner 在 cJSON 核心两文件复现 26 条危险调用（sprintf 11 / memcpy 9 / strcpy 5 / strcat 1），26/26 函数归属；samples 上 vulnerable/safe 正确区分；注释/字符串不误报。
+
+### P1：text vs AST 对比
+
+- `src/benchmark/scanner_compare.py` + CLI `compare-scanners`：按 file+line+rule_id 对齐，输出 overlap / text_only / ast_only。
+- 验证：cJSON 核心 text=26 / ast=26 / overlap=26 / text_only=0 / ast_only=0；宏定义场景 text 误命中 1 条、AST 正确排除（这是 AST 减少文本误报的真实样例）。
+
+### P2：manual review 持久化
+
+- `src/triage/review_store.py`：`export_review_template`（导出可编辑 JSON）+ `merge_review_annotations`（读回合并，只更新 review 字段，reviewer/notes/next_action 归入 reviewer_notes）。
+
+### P3：Tool Capability Matrix
+
+- `src/benchmark/tool_matrix.py`：读取多个 ToolRunResult，输出每工具 diagnostic 数、distinct CWE 数、evidence_type 分布、耗时、peak memory；不计算 Precision/Recall/F1。
+
+### P4：Evidence 生成层
+
+- `src/core/evidence.py` 的 Evidence 增加 `proposition` 字段。
+- `src/evidence/from_tool_result.py`：ToolDiagnostic → Evidence。
+- `src/evidence/from_triage.py`：CandidateReviewPacket → 多条 Evidence（每个已复核维度一条 + reviewer_notes 一条）。
+
+### P5：VulnerabilityCase 组装器
+
+- `src/case/assembler.py`：`assemble_case_draft(candidate_id, evidence)` → `report_status=draft`、`confidence=unassessed`，永不自动 reportable/validated。
+
+### 队友线接口
+
+- CLI `normalize-tool-output`（`--provider semgrep|codeql|clang|clang_sa|cppcheck --input ...`）：读已有工具输出 → 统一 ToolRunResult。端到端验证 semgrep JSON → 1 diagnostic + CWE-120。
+- `src/benchmark/tool_result.py` 增加 `render_markdown` / `write_reports`。
+
+### 回归与边界
+
+- 本地完整回归 **Ran 88 tests ... OK**，失败 0（此前队友基线 62）。
+- 未做：历史样本多根因扩展、root-cause 命中矩阵、TSan 复现 singleton UAF、Precision/Recall、动态验证/PoC、跨版本影响、报告生成层。这些是下一批工作，不在本轮范围。
