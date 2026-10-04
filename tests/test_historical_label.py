@@ -59,6 +59,19 @@ class HistoricalLabelTests(unittest.TestCase):
         warnings = validate_sample_label(_sample())
         self.assertNotIn("cve", " ".join(warnings))
 
+    def test_all_bundled_samples_load_and_validate(self) -> None:
+        samples_dir = REPO_ROOT / "benchmarks" / "historical"
+        paths = sorted(samples_dir.glob("*.json"))
+        self.assertGreaterEqual(len(paths), 2)
+        groups = set()
+        for path in paths:
+            sample = load_sample(path)
+            self.assertTrue(sample.sample_id)
+            self.assertEqual(validate_sample_label(sample), [])
+            groups.add(sample.root_cause_group)
+        # at least two distinct root-cause groups across bundled samples
+        self.assertGreaterEqual(len(groups), 2)
+
 
 if __name__ == "__main__":
     unittest.main()
