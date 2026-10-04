@@ -30,6 +30,7 @@ CALL_PATTERN = re.compile(
 @dataclass
 class ScanResult:
     target: str
+    engine: str = "text"
     scanned_files: int = 0
     scanned_lines: int = 0
     findings: List[Finding] = field(default_factory=list)
@@ -44,6 +45,7 @@ class ScanResult:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "target": self.target,
+            "engine": self.engine,
             "scope": {
                 "include_paths": self.scope_includes,
                 "exclude_paths": self.scope_excludes,

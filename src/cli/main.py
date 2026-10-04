@@ -6,6 +6,7 @@ from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as wri
 from src.benchmark.historical import run_historical_benchmark, write_reports as write_historical_reports
 from src.benchmark.compare import compare_normalized_reports, write_reports as write_comparison_reports
 from src.core.report import render_markdown
+from src.core.ast_scanner import scan_directory_ast
 from src.core.scanner import scan_directory
 from src.triage.review import build_triage_report, write_triage_reports
 from src.validation.cjson_allocator import (
@@ -37,6 +38,12 @@ def _configure_scan_parser(subparsers: argparse._SubParsersAction) -> argparse.A
             "Relative file or directory to exclude under target. "
             "Repeat to exclude multiple paths."
         ),
+    )
+    scan_parser.add_argument(
+        "--engine",
+        choices=["text", "ast"],
+        default="text",
+        help="Candidate engine: text (regex) or ast (tree-sitter). Default: text.",
     )
     scan_parser.add_argument(
         "--json-out",
@@ -229,11 +236,18 @@ def main() -> None:
             scan_parser.error("JSON and Markdown output paths must differ")
 
         try:
-            result = scan_directory(
-                target,
-                include_paths=args.include,
-                exclude_paths=args.exclude,
-            )
+            if args.engine == "text":
+                result = scan_directory(
+                    target,
+                    include_paths=args.include,
+                    exclude_paths=args.exclude,
+                )
+            else:
+                result = scan_directory_ast(
+                    target,
+                    include_paths=args.include,
+                    exclude_paths=args.exclude,
+                )
         except ValueError as error:
             scan_parser.error(str(error))
 
@@ -246,6 +260,7 @@ def main() -> None:
         md_output.write_text(render_markdown(result), encoding="utf-8")
 
         print(f"[OK] scanned: {result.target}")
+        print(f"[OK] engine: {result.engine}")
         print(f"[OK] include scope: {', '.join(result.scope_includes)}")
         print(
             f"[OK] exclude scope: "
