@@ -1234,5 +1234,5 @@ GitHub Actions（Ubuntu 22.04 / Python 3.10）已实际运行：**Ran 62 tests .
 ### 回归与边界
 
 - 本地完整回归 **Ran 88 tests ... OK**，失败 0（此前队友基线 62）。
-- 已做：历史样本扩到 2 条、2 个不同 root-cause group（`lifetime_uaf` + `concurrency_race`/CWE-125/CVE-2025-20042），候选清单见 docs/targets/historical_sample_candidates.md。
+- 已做：历史样本扩到 3 条、3 个不同 root-cause group（`lifetime_uaf` + `concurrency_race`/CWE-125 + `null_deref`/CWE-476/CVE-2025-26690），候选清单见 docs/targets/historical_sample_candidates.md。dsoftbus 样本已跑 historical replay：direct_parent_match=True、affected_files_changed 命中、5 个受影响符号 AST 全部解析到、文本候选 0/0（miss 是文本危险 API 规则覆盖不了空指针解引用的盲区证据）、runtime_validation=not_run。
 - 未做：更多样本（整数溢出/越界写/空指针/double free）、root-cause 命中矩阵、TSan 复现、Precision/Recall、动态验证/PoC、跨版本影响、报告生成层。这些是下一批工作。

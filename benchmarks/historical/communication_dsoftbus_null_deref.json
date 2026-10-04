@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "sample_id": "communication_dsoftbus_null_deref_001",
+  "title": "communication_dsoftbus null pointer dereference historical fix",
+  "repository": "openharmony/communication_dsoftbus",
+  "repo_url": "https://github.com/openharmony/communication_dsoftbus",
+  "vulnerable_commit": "258662cd9840b55a31546a72d91027f6368cea84",
+  "fixed_commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+  "weakness": "CWE-476",
+  "affected_files": [
+    "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+  ],
+  "affected_symbols": [
+    "ClinetOnNodeOnlineStateChanged",
+    "ClinetOnNodeBasicInfoChanged",
+    "ClientOnNodeStatusChanged",
+    "ClinetOnLocalNetworkIdChanged",
+    "ClinetNotifyDeviceNotTrusted"
+  ],
+  "root_cause": "BusCenterClientProxy was allocated with new (std::nothrow) and immediately dereferenced without a null check, so allocation failure caused a null pointer dereference (CVE-2025-26690).",
+  "root_cause_group": "null_deref",
+  "label_status": "historical_candidate",
+  "evidence_level": "patch_and_advisory",
+  "runtime_replay_status": "not_run",
+  "cve": "CVE-2025-26690",
+  "source_refs": [
+    "https://github.com/openharmony/communication_dsoftbus/commit/192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+    "https://gitee.com/openharmony/communication_dsoftbus/pulls/9747",
+    "https://raw.githubusercontent.com/openharmony/security/master/zh/security-disclosure/2025/2025-07.md"
+  ],
+  "notes": "Historical benchmark sample only; not a new vulnerability. Fix adds null detection after each BusCenterClientProxy allocation."
+}

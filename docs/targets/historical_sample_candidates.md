@@ -9,6 +9,7 @@
 |---|---|---|---|---|---|
 | c_utils-singleton-uaf-2026-01 | commonlibrary_c_utils | lifetime_uaf | CWE-416 | - | metadata + 已核实 commit |
 | kernel_liteos_a-getgroups-oob-2025-03 | kernel_liteos_a | concurrency_race | CWE-125 | CVE-2025-20042 | metadata（runtime_replay=not_run） |
+| communication_dsoftbus_null_deref_001 | communication_dsoftbus | null_deref | CWE-476 | CVE-2025-26690 | metadata + static replay 已验证（0 文本候选，miss） |
 
 ## 待扩展候选（来自 OpenHarmony 官方 2025-03 / 2025-07 安全公告）
 
@@ -26,7 +27,7 @@
 - CVE-2025-23234 / 22897 arkcompiler_ets_runtime（栈溢出）
 
 ### 空指针解引用（CWE-476）
-- CVE-2025-26690 communication_dsoftbus（空指针）
+- CVE-2025-26690 communication_dsoftbus（空指针）→ 已落地，见 benchmarks/historical/communication_dsoftbus_null_deref.json
 - CVE-2025-21084 / 21097 / 22837 arkcompiler_ets_runtime（空指针）
 
 ### 类型混淆（CWE-843）
