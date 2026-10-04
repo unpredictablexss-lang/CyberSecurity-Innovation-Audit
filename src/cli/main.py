@@ -5,6 +5,7 @@ from pathlib import Path
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
 from src.benchmark.historical import run_historical_benchmark, write_reports as write_historical_reports
 from src.benchmark.compare import compare_normalized_reports, write_reports as write_comparison_reports
+from src.benchmark.scanner_compare import compare_text_and_ast, write_reports as write_scanner_compare_reports
 from src.core.report import render_markdown
 from src.core.ast_scanner import scan_directory_ast
 from src.core.scanner import scan_directory
@@ -158,6 +159,33 @@ def main() -> None:
     compare_parser.add_argument(
         "--md-out",
         default="outputs/reports/tool_comparison.md",
+        help="Output comparison Markdown path",
+    )
+
+    compare_scanners_parser = subparsers.add_parser(
+        "compare-scanners",
+        help="Compare text and AST candidate reports on the same target",
+    )
+    compare_scanners_parser.add_argument(
+        "--text-report",
+        required=True,
+        metavar="JSON",
+        help="Text-engine scan report JSON",
+    )
+    compare_scanners_parser.add_argument(
+        "--ast-report",
+        required=True,
+        metavar="JSON",
+        help="AST-engine scan report JSON",
+    )
+    compare_scanners_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/scanner_compare.json",
+        help="Output comparison JSON path",
+    )
+    compare_scanners_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/scanner_compare.md",
         help="Output comparison Markdown path",
     )
 
@@ -363,6 +391,35 @@ def main() -> None:
         print(f"[OK] tools: {len(result.summaries)}")
         print(f"[OK] scope files/loc: {result.scope_files}/{result.scope_loc}")
         print(f"[OK] pairwise comparisons: {len(result.pairwise_overlaps)}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "compare-scanners":
+        text_path = Path(args.text_report).resolve()
+        ast_path = Path(args.ast_report).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if json_output == md_output:
+            compare_scanners_parser.error("JSON and Markdown output paths must differ")
+        for path in (text_path, ast_path):
+            if not path.is_file():
+                compare_scanners_parser.error(f"scan report does not exist: {path}")
+
+        try:
+            result = compare_text_and_ast(text_path, ast_path)
+        except (ValueError, OSError, json.JSONDecodeError) as error:
+            compare_scanners_parser.error(str(error))
+
+        write_scanner_compare_reports(result, json_output, md_output)
+
+        print(f"[OK] comparison target: {result.target}")
+        print(f"[OK] text candidates: {result.text_count}")
+        print(f"[OK] ast candidates: {result.ast_count}")
+        print(f"[OK] overlap: {result.overlap_count}")
+        print(f"[OK] text only: {len(result.text_only)}")
+        print(f"[OK] ast only: {len(result.ast_only)}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
         return
