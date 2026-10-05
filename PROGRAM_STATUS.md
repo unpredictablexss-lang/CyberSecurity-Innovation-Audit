@@ -133,7 +133,8 @@ validated_vulnerability: 0
 - historical benchmark runner：`src/benchmark/historical.py`
 - multi-tool matrix：`src/benchmark/tool_matrix.py`
 - tool comparison orchestrator：`src/benchmark/compare.py`
-- 当前不计算正式 Precision / Recall。
+- root-cause hit matrix：`src/benchmark/root_cause_matrix.py`（状态只含 `possible_hit` / `miss` / `unknown` / `not_applicable`，不用 TP/FP/FN）
+- 当前不计算正式 Precision / Recall，最多报告 raw hit / miss / unknown 计数。
 
 ---
 
@@ -145,7 +146,7 @@ validated_vulnerability: 0
 2. 攻击者是否能实际触发分配失败；
 3. OpenHarmony 系统服务入口是否可达；
 4. Semgrep / CodeQL / Cppcheck 在这 3 个 historical samples 上的真实命中情况；
-5. root-cause 命中矩阵尚未完成；
+5. 外部工具（Semgrep / CodeQL / Cppcheck）在这 3 个 historical samples 上的真实命中情况仍未运行，root-cause 矩阵对应列为 `unknown`；
 6. 样本量只有 3 条，不计算正式 Precision / Recall；
 7. `kernel_liteos_a` UAF（CVE-2025-24298 / CVE-2025-27128）仍在候选池，未做；
 8. validated vulnerability 仍为 0。
@@ -157,10 +158,9 @@ validated_vulnerability: 0
 优先做：
 
 ```text
-1. root-cause 命中矩阵
-2. benchmark report
-3. 对 3 个样本跑统一 compare-tools / ToolMatrix
-4. 再决定是否扩第 4 个样本
+1. 对 3 个样本跑统一 compare-tools / ToolMatrix（把 root-cause 矩阵里外部工具列从 unknown 填成实际 hit/miss）
+2. benchmark report 生成
+3. 再决定是否扩第 4 个样本
 ```
 
 暂时不要做：
