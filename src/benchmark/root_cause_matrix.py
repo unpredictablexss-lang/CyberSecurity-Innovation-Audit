@@ -29,6 +29,7 @@ class ToolCandidate:
 class RootCauseHit:
     sample_id: str
     root_cause_group: str
+    weakness: str
     tool: str
     status: str
     evidence_count: int
@@ -80,6 +81,7 @@ def classify_tool_hit(
     return RootCauseHit(
         sample_id=sample.sample_id,
         root_cause_group=sample.root_cause_group,
+        weakness=sample.weakness,
         tool=tool,
         status=status,
         evidence_count=count,
@@ -112,21 +114,25 @@ def render_markdown(result: RootCauseMatrix) -> str:
         "> possible_hit = tool touched the affected file/symbol region (not a TP); "
         "miss = tool ran but did not touch it (not a FN); unknown = tool not run.",
         "",
-        "| sample | " + " | ".join(tools) + " |",
-        "|---|" + "---|" * len(tools),
+        "| sample_id | root_cause_group | weakness | " + " | ".join(tools) + " |",
+        "|---|---|---|" + "---|" * len(tools),
     ]
     by_sample = {sample_id: {row.tool: row for row in result.rows if row.sample_id == sample_id} for sample_id in samples}
     for sample_id in samples:
+        meta = by_sample[sample_id]
+        first = next(iter(meta.values()))
+        group = first.root_cause_group
+        weakness = first.weakness
         cells = []
         for tool in tools:
-            row = by_sample[sample_id].get(tool)
+            row = meta.get(tool)
             if row is None:
                 cells.append("unknown")
             elif row.status == "possible_hit":
                 cells.append(f"possible_hit({row.evidence_count})")
             else:
                 cells.append(row.status)
-        lines.append(f"| {sample_id} | " + " | ".join(cells) + " |")
+        lines.append(f"| {sample_id} | {group} | {weakness} | " + " | ".join(cells) + " |")
     lines.extend(["", "## Interpretation limits", ""])
     for note in [
         "No TP/FP/FN is assigned.",

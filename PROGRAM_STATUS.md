@@ -134,6 +134,7 @@ validated_vulnerability: 0
 - multi-tool matrix：`src/benchmark/tool_matrix.py`
 - tool comparison orchestrator：`src/benchmark/compare.py`
 - root-cause hit matrix：`src/benchmark/root_cause_matrix.py`（状态只含 `possible_hit` / `miss` / `unknown` / `not_applicable`，不用 TP/FP/FN）
+- benchmark summary report：`src/report/benchmark_report.py` + CLI `benchmark-report`（标题为 Historical Benchmark Summary Report，非 Vulnerability Report）
 - 当前不计算正式 Precision / Recall，最多报告 raw hit / miss / unknown 计数。
 
 ---
@@ -158,9 +159,8 @@ validated_vulnerability: 0
 优先做：
 
 ```text
-1. 对 3 个样本跑统一 compare-tools / ToolMatrix（把 root-cause 矩阵里外部工具列从 unknown 填成实际 hit/miss）
-2. benchmark report 生成
-3. 再决定是否扩第 4 个样本
+1. 真实跑 Semgrep / Cppcheck 在 3 个样本上，把 root-cause 矩阵里外部工具列从 unknown 填成实际 hit/miss
+2. 再决定是否扩第 4 个样本，或进入 c_utils 纵向验证分支
 ```
 
 暂时不要做：

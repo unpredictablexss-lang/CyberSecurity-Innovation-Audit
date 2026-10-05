@@ -13,6 +13,8 @@ from src.triage.review import build_triage_report, write_triage_reports
 from src.benchmark.tool_result import write_reports as write_tool_reports
 from src.providers.base import AdapterContext
 from src.providers.registry import normalize_tool_output
+from src.benchmark.historical import load_sample
+from src.report.benchmark_report import build_benchmark_report, write_reports as write_benchmark_reports
 from src.validation.cjson_allocator import (
     PINNED_CJSON_COMMIT,
     run_cjson_allocator_validation,
@@ -291,6 +293,26 @@ def main() -> None:
         help="Output normalized Markdown path",
     )
 
+    benchmark_report_parser = subparsers.add_parser(
+        "benchmark-report",
+        help="Generate the historical benchmark summary report",
+    )
+    benchmark_report_parser.add_argument(
+        "--samples-dir",
+        default="benchmarks/historical/",
+        help="Directory of historical sample JSON manifests",
+    )
+    benchmark_report_parser.add_argument(
+        "--json-out",
+        default="outputs/reports/historical_benchmark_summary.json",
+        help="Output summary JSON path",
+    )
+    benchmark_report_parser.add_argument(
+        "--md-out",
+        default="outputs/reports/historical_benchmark_summary.md",
+        help="Output summary Markdown path",
+    )
+
     args = parser.parse_args()
 
     if args.command == "scan":
@@ -494,6 +516,45 @@ def main() -> None:
         print(f"[OK] runtime cases: {len(result.runs)}")
         print(f"[OK] sanitizer-triggered runs: {sanitizer_runs}")
         print(f"[OK] overall outcome: {result.outcome}")
+        print(f"[OK] json report: {json_output}")
+        print(f"[OK] markdown report: {md_output}")
+        return
+
+    if args.command == "benchmark-report":
+        samples_dir = Path(args.samples_dir).resolve()
+        json_output = Path(args.json_out).resolve()
+        md_output = Path(args.md_out).resolve()
+
+        if not samples_dir.is_dir():
+            benchmark_report_parser.error(f"samples dir does not exist: {samples_dir}")
+        if json_output == md_output:
+            benchmark_report_parser.error("JSON and Markdown output paths must differ")
+
+        sample_paths = sorted(samples_dir.glob("*.json"))
+        if not sample_paths:
+            benchmark_report_parser.error(f"no historical samples found in {samples_dir}")
+
+        try:
+            samples = [load_sample(path) for path in sample_paths]
+            # own scanners miss the current non-dangerous-API samples; external
+            # tools have not been run yet, so they stay unknown.
+            tool_candidates = {
+                "own_text": [],
+                "own_ast": [],
+                "semgrep": None,
+                "codeql": None,
+                "clang_sa": None,
+                "cppcheck": None,
+            }
+            report = build_benchmark_report(samples, tool_candidates)
+        except (ValueError, json.JSONDecodeError) as error:
+            benchmark_report_parser.error(str(error))
+
+        write_benchmark_reports(report, json_output, md_output)
+
+        print(f"[OK] historical samples: {report.sample_count}")
+        print(f"[OK] root-cause groups: {', '.join(report.root_cause_group_distribution)}")
+        print(f"[OK] validated vulnerability: {report.validated_vulnerability}")
         print(f"[OK] json report: {json_output}")
         print(f"[OK] markdown report: {md_output}")
         return
