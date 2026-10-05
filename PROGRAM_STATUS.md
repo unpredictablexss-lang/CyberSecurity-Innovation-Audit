@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
+`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`（cutils、dsoftbus 两样本 possible_hit，liteos 全工具 miss）；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
 
 ---
 
@@ -154,13 +154,42 @@ validated_vulnerability: 0
 
 ---
 
-## 6. 下一步建议
+## 6b. 2026-10-05 外部工具（Semgrep / Cppcheck）在 3 个 historical samples 上的本机实测
+
+验证环境：Ubuntu 22.04.5 WSL2（本机），分支 `feat/historical-vuln-benchmark`。样本仓库以懒克隆（blob:none, --no-checkout）拉取到 `/root/openharmony-targets/`，逐一确认 vulnerable/fixed commit 存在后，用 `git show <commit>:<file>` 提取受影响文件到临时扫描树。工具执行：
+
+- Semgrep 1.179.0（`.venv` pip 安装，清华镜像）；因网络无法访问 semgrep.dev registry，使用本地通用规则（危险内存拷贝 API、nothrow new 未检查、单例 GetInstance/DestroyInstance、指针成员解引用），规则文件与报告留存在 WSL 本机。
+- Cppcheck 2.7（apt 安装），`--xml --enable=all --inconclusive`，对 C++ 头文件强制 `--language=c++`。
+
+各文件独立扫描后，用项目 `normalize-tool-output`（semgrep / cppcheck adapter）归一化为 ToolRunResult，再经桥接脚本把诊断映射到各样本的 affected file/symbol 区域，生成 root-cause 矩阵。结果：
+
+| 样本（root_cause_group / CWE） | own_text | own_ast | semgrep | cppcheck | clang_sa / codeql |
+|---|---|---|---|---|---|
+| c_utils singleton UAF（lifetime_uaf / CWE-416） | miss | miss | possible_hit(6) | possible_hit(10) | unknown |
+| communication_dsoftbus null_deref（null_deref / CWE-476） | miss | miss | possible_hit(44) | possible_hit(10) | unknown |
+| kernel_liteos_a GetGroups（concurrency_race / CWE-125） | miss | miss | miss | miss | unknown |
+
+要点与边界：
+
+- `possible_hit` 表示工具诊断**触及了受影响文件/符号区域**（例如 dsoftbus 的 `new (std::nothrow)` 与紧邻解引用、cutils 的 `GetInstance/DestroyInstance` 调用），是区域重叠描述，**不是漏洞确认**，也不等于该根因被正确表达。
+- 三样本根因均为非危险-API 型（生命周期/并发/空指针解引用），自研文本扫描器 0 命中符合既有盲区记录。
+- kernel_liteos_a 所有工具均 miss：锁作用域竞争与越界读对应工具（Semgrep 通用规则、Cppcheck 2.7）在单文件粒度上未触及 `GetGroups` 符号。这是盲区记录，不是失败。
+- 修复的边界 bug：`src/providers/cppcheck.py` 将 Cppcheck 输出的 `column="0"`（未知列）解析为 0，触发 `ToolDiagnostic` 的 `column >= 1` 校验失败，导致整个归一化中断；修复为把 0 归一化为 `None`。语义无其他变化，`package`/规则行为未改。
+- 本轮未运行 CodeQL / ClangSA（环境未装）；未做 PoC、TSan、动态触发、exploitability 判断；`validated_vulnerability = 0`。
+- 样本量仍只有 3，不计算正式 Precision / Recall；矩阵只报告 raw hit / miss / unknown。
+- 复现材料：归一化产物 12 份 JSON（`/root/bench-scan/normalized/`）与汇总报告 `outputs/reports/historical_benchmark_summary.{json,md}`（Git 忽略目录，不入库）；Semgrep 本地规则与桥接脚本存于 WSL 本机 `/root/bench-scan/`。
+
+---
+
+## 6c. 下一步建议
 
 优先做：
 
 ```text
-1. 真实跑 Semgrep / Cppcheck 在 3 个样本上，把 root-cause 矩阵里外部工具列从 unknown 填成实际 hit/miss
-2. 再决定是否扩第 4 个样本，或进入 c_utils 纵向验证分支
+1. 把 Semgrep 规则集从本地通用规则升级到 registry（c/cpp 官方规则），扩大模式覆盖面后重跑矩阵
+2. 在 WSL 安装并运行 Clang Static Analyzer（clang 已随 build-essential 可用），把 clang_sa 列从 unknown 填成实际 hit/miss
+3. 对照 dsoftbus / cutils 的 possible_hit 区域，逐个 review 诊断是否表达真实根因（是区域重叠还是语义命中）
+4. 再决定是否扩第 4 个样本，或进入 c_utils 纵向验证分支
 ```
 
 暂时不要做：

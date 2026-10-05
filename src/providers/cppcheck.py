@@ -43,6 +43,11 @@ class CppcheckAdapter(ToolAdapter):
                 col_text = location.get("column") if location is not None else None
                 line = int(line_text) if line_text and line_text.isdigit() else None
                 column = int(col_text) if col_text and col_text.isdigit() else None
+                # cppcheck emits column="0" for diagnostics where the column is
+                # intentionally unknown (e.g. unusedFunction). Model "0" as
+                # unknown (None) instead of an invalid coordinate.
+                if column == 0:
+                    column = None
                 diagnostic_id = (
                     f"cppcheck:{error_index}:{location_index}:{file}:{line or 0}:"
                     f"{rule_id or 'unresolved'}"
