@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`（cutils、dsoftbus 两样本 possible_hit，liteos 全工具 miss）；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。2026-10-06 完成了 cutils 与 dsoftbus 全部 possible_hit 区域的逐行语义 review：dsoftbus 的 semgrep 5/6 命中为**语义命中**（正确捕获 new-nothrow→紧邻解引用 null-deref 模式），其余均为区域重叠；并落地首条 OpenHarmony 专用增强规则 `rules/cpp/oh_shared_ptr_uaf.yaml`（从 cutils 修复提交反推 shared_ptr 非原子 reset 模式），矩阵新增 `semgrep_oh` 列，在 cutils vulnerable 版本语义命中 1 条、fixed 版本静默、其他样本零误报。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
+`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 **4 条** historical sample 的样本集（root_cause_group 覆盖 `lifetime_uaf` / `concurrency_race` / `null_deref` / `oob_write`）。GitHub Actions 已验证 **93 tests passed**，本机 WSL 完整回归 **105 tests OK**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。2026-10-06 三项进展：(1) 完成 cutils 与 dsoftbus 全部 possible_hit 区域的逐行语义 review——dsoftbus 的 semgrep 命中为语义命中（new-nothrow→紧邻解引用），cutils 均为区域重叠；(2) 落地首条 OpenHarmony 专用增强规则 `rules/cpp/oh_shared_ptr_uaf.yaml`（从 cutils 修复提交反推 shared_ptr 非原子 reset 模式），矩阵新增 `semgrep_oh` 列，vulnerable 命中 1 条、fixed 静默、其他样本零误报；(3) 新增 CVE-2025-23420 越界写样本（`arkcompiler_ets_runtime` JSArray sort，父提交已直接核验），**推翻了"缺失边界检查的越界写是 pattern 工具强项"这一假设**——semgrep/cppcheck 在该样本上精确命中已知漏洞行 **0 条**，`possible_hit` 纯属区域重叠；同时发现本地通用规则 `deref-after-arrow` 在 731 行文件上产生 144 条噪音（有效 0 条），需移除或收紧。新增行级"精确命中"统计后，4 样本 × 7 工具列中仅 2 个组合有精确命中（semgrep×dsoftbus 15 条、semgrep_oh×cutils 1 条）。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
 
 ---
 
@@ -23,8 +23,9 @@
 | `c_utils-singleton-uaf-2026-01` | `openharmony/commonlibrary_c_utils` | `lifetime_uaf` | CWE-416 | 第一方历史 UAF ground truth；暴露危险 API 文本扫描器对生命周期/并发型漏洞的盲区 | `not_run` |
 | `kernel_liteos_a-getgroups-oob-2025-03` | `openharmony/kernel_liteos_a` | `concurrency_race` | CWE-125 / CVE-2025-20042 | GetGroups 锁保护范围不足导致越界读；用于补充并发/越界读根因类型 | `not_run` |
 | `communication_dsoftbus_null_deref_001` | `openharmony/communication_dsoftbus` | `null_deref` | CWE-476 / CVE-2025-26690 | 空指针解引用 historical sample；补充漏洞类型多样性 | `not_run` |
+| `arkcompiler_ets_runtime-jsarray-sort-oob-2025-02` | `openharmony/arkcompiler_ets_runtime` | `oob_write` | CWE-787 / CVE-2025-23420 | JSArray::SortElementsByObject 缺失边界检查的越界读写；**用于检验"缺失边界检查"是否真是 pattern 工具强项**（实测结论见 6b.7） | `not_run` |
 
-样本扩展目标已经从单一 UAF 扩展到 3 个不同根因组：`lifetime_uaf`、`concurrency_race`、`null_deref`。这仍不足以计算正式 Precision / Recall，只能报告原始 hit / miss / unknown。
+样本扩展目标已经从单一 UAF 扩展到 4 个不同根因组：`lifetime_uaf`、`concurrency_race`、`null_deref`、`oob_write`。这仍不足以计算正式 Precision / Recall，只能报告原始 hit / miss / unknown。
 
 ---
 
@@ -147,10 +148,14 @@ validated_vulnerability: 0
 2. 攻击者是否能实际触发分配失败；
 3. OpenHarmony 系统服务入口是否可达；
 4. ✅ Semgrep / Cppcheck 已在本机实测，root-cause 矩阵已从 unknown 填为实值（见第 6b 节）；
-5. ✅ 外部工具真实命中情况已于 2026-10-05 完成，2026-10-06 完成语义 review（见第 6d 节）；
-6. 样本量只有 3 条，不计算正式 Precision / Recall；
+5. ✅ 外部工具真实命中情况已于 2026-10-05 完成，2026-10-06 完成语义 review（见第 6b.5 节）；
+6. 样本量为 4 条，仍不计算正式 Precision / Recall；
 7. `kernel_liteos_a` UAF（CVE-2025-24298 / CVE-2025-27128）仍在候选池，未做；
-8. validated vulnerability 仍为 0。
+8. validated vulnerability 仍为 0；
+9. `arkcompiler_ets_runtime` 越界写样本（CVE-2025-23420）的真实可利用性、比较器触发条件与受影响版本范围均未验证；本轮只做静态 replay，`runtime_replay_status = not_run`；
+10. 本地通用规则集里 `deref-after-arrow` 的噪音占比未量化——dsoftbus 那 44 条 possible_hit 中有多少来自该规则、移除后语义命中是否仍成立，**待重跑确认**；
+11. CodeQL / Clang Static Analyzer 仍未运行，矩阵对应两列全部为 `unknown`；
+12. OH 专用规则的跨项目误报率未测（当前 4 样本内为零误报，不代表其他项目）。
 
 ---
 
@@ -195,14 +200,14 @@ validated_vulnerability: 0
 
 **dsoftbus null_deref（CWE-476）**：根因是 5 个受影响函数中 `new (std::nothrow)` 后不检查 null 就直接 `->` 解引用。
 
-- Semgrep 44 条命中（vuln 36）：5 个受影响函数中 `new-nothrow-unchecked` + `deref-after-arrow` 组合精准定位了分配后紧邻解引用的 null-deref 模式。逐一审查：
-  - `ClinetOnNodeOnlineStateChanged`（L77-78）：new→proxy.second→紧邻解引用 ✅
-  - `ClinetOnNodeBasicInfoChanged`（L88-89）：同上 ✅
-  - `ClientOnNodeStatusChanged`（L103-104）：同上 ✅
-  - `ClinetOnLocalNetworkIdChanged`（L114-115）：同上 ✅
-  - `ClinetNotifyDeviceNotTrusted`（L129-130）：同上 ✅
+- Semgrep 44 条命中（vuln 36）：5 个受影响函数中 `new-nothrow-unchecked` + `deref-after-arrow` 组合精准定位了分配后紧邻解引用的 null-deref 模式。逐一审查（行号为 2026-10-06 直接从 `git show <vuln_commit>:<path>` 核实，修正了此前因 Windows 侧输出混入 stderr 导致的 7 行偏移）：
+  - `ClinetOnNodeOnlineStateChanged`（L70 new → L71 解引用）：✅ 语义命中
+  - `ClinetOnNodeBasicInfoChanged`（L81 new → L82 解引用）：✅
+  - `ClientOnNodeStatusChanged`（L96 new → L97 解引用）：✅
+  - `ClinetOnLocalNetworkIdChanged`（L107 new → L108 解引用）：✅
+  - `ClinetNotifyDeviceNotTrusted`（L122 new → L123 解引用）：✅
   - `GetClientProxy`（L38）：安全封装（调用方检查 null），判定为误报 ❌
-  - **判断：5/6 命中（83％）为语义命中**——Semgrep 的通用规则正确捕获了该样本的 null_deref 模式
+  - **判断：5/6 命中（83％）为语义命中**——Semgrep 的通用规则正确捕获了该样本的 null_deref 模式；精确行级证据见 6b.7
 - Cppcheck 10 条符号命中：全部为 `unusedFunction`，正确命中了 5 个 affected_symbols 的符号名，但与 null_deref 根因语义完全无关（诊断理由错误）。
   - **判断：区域重叠，非语义命中**
 
@@ -234,6 +239,7 @@ validated_vulnerability: 0
 | c_utils singleton UAF（lifetime_uaf） | possible_hit(6)，review 判定区域重叠 | **possible_hit(1)，语义命中** |
 | communication_dsoftbus null_deref（null_deref） | possible_hit(44)，5/6 语义命中 | miss(0) |
 | kernel_liteos_a GetGroups（concurrency_race） | miss(0) | miss(0) |
+| arkcompiler_ets_runtime JSArray sort（oob_write） | possible_hit(4)，**精确命中 0**（见 6b.7） | miss(0) |
 
 要点与边界：
 
@@ -244,18 +250,61 @@ validated_vulnerability: 0
 
 ---
 
+## 6b.7 2026-10-06 新增 oob_write 样本：一个被推翻的假设
+
+### 样本核验（满足"父提交不得未经核验当作 ground truth"）
+
+选取 CVE-2025-23420（官方 2025-03 公告：`arkcompiler_ets_runtime` 越界写，CVSS 3.8，修复 PR 11012）作为第 4 个样本，理由是越界写通常被认为是 pattern 工具的强项。核验链：
+
+- fixed commit `1b235315`（cherry-pick of PR 10670 to 5.0.2）：新增 `JSArray::CheckStableArrayAndGet/Set`，在每处直接 `ElementAccessor::Get/Set` 前加 `IsStableJSArray && index < ElementAccessor::GetElementsLength()` 检查，否则回退 `ObjectFastOperator`。
+- vulnerable commit `aeee3fd1`（直接父提交，`direct_parent_match = True`）：**已直接读取该提交内的 `js_array.cpp` 确认** `SortElementsByObject`（L638-671）仍含未加边界检查的 `ElementAccessor::Get(thisObjHandle, ...)`（L650/653/665）与 `ElementAccessor::Set(...)`（L666/668）。
+- 父提交的 commit message 指向无关 PR 合并（!10959），因此它**只能因为漏洞代码被直接核验过**才算 ground truth，不能因为"它是修复的父提交"就自动采信。这一点已写入样本 JSON 的 notes。
+- benchmark-historical 实跑：vulnerable/fixed commit 均存在，`affected-region overlap = False/False`，自研 text/AST 扫描器 0 候选（`ElementAccessor::Get/Set` 不在危险 API 名单内）。
+
+### 假设被推翻：缺失边界检查的越界写并非 pattern 工具强项
+
+原假设是"oob_write 属于 pattern 工具擅长类型，补进来能让矩阵出现更多语义命中"。实测结果相反：
+
+| 工具 | 矩阵状态 | 精确命中已知漏洞行（L650/653/665/666/668） |
+|---|---|---|
+| semgrep（本地通用规则） | possible_hit(4) | **0** |
+| cppcheck 2.7 | possible_hit(2) | **0** |
+| semgrep_oh（UAF 专用规则） | miss(0) | 0（规则面向 shared_ptr，正确不适用） |
+| own_text / own_ast | miss(0) | 0 |
+
+- cppcheck 在该文件仅 3 条诊断（`duplicateConditionalAssign` L123/124、`unsignedPositive` L628/663），**没有一条指向未检查的索引访问**。`unsignedPositive`(L663) 虽落在同一循环，但讲的是 `endIndex` 的无符号比较冗余，与越界写根因无关。
+- semgrep 通用规则报 144 条，全部来自 `deref-after-arrow`，落在漏洞行的为 **0 条**，函数体内仅 L641（`ASSERT(fn->IsUndefined()...)`）一条无关命中。
+- 根因分析：要发现该漏洞必须理解"排序过程中比较器可执行任意 JS，从而改变数组后端存储，使先前取得的 index/length 失效"——这是**跨调用的数据流与时序推理**，不是单行语法模式。因此 `possible_hit(4)` / `possible_hit(2)` 只是区域重叠，**不能**当作工具"能发现越界写"的证据。
+
+### 暴露的扫描器质量问题（需修复，非本轮结论）
+
+本地通用规则里的 `deref-after-arrow`（pattern `$P->$FIELD`）在 731 行的 C++ 文件上产生 144 条诊断、有效 0 条。它把 C++ 里最常见的成员访问全部报警，属于**纯噪音规则**，会虚增 possible_hit 计数并掩盖真实信号。后续应从通用规则集中移除或大幅收紧，并重新评估 dsoftbus 的 44 条命中里有多少来自该噪音规则。
+
+### 精确命中统计（新增的行级语义证据）
+
+为避免"区域重叠"被误读为"语义命中"，本轮在桥接脚本中增加了行级核验：只有诊断行号落在**已核实的漏洞行**上才计为精确命中。4 样本结果：
+
+| 工具 | 样本 | 精确命中行 | 条数 |
+|---|---|---|---|
+| semgrep | dsoftbus null_deref | 70, 71, 81, 82, 96, 97, 107, 108, 122, 123 | 15 |
+| semgrep_oh | c_utils singleton UAF | 141 | 1 |
+| 其余全部组合 | — | （无） | 0 |
+
+这是目前唯一可支撑"工具确实指向根因"的硬证据：**4 样本 × 7 工具列中，只有 2 个组合有精确命中**。
+
+---
+
 ## 6c. 下一步建议
 
 优先做：
 
 ```text
-1. 补 1~2 个 pattern 友好的历史样本（buffer overflow / integer overflow / use-of-uninitialized / command injection），
-   扩充矩阵覆盖面，让"通用工具能命中什么类型"有更多证据行
-2. 为 concurrency_race（liteos 锁竞态）与 null_deref 家族补 OH 专用规则，验证增强层在多根因家族上的可复制性
-3. 把 Semgrep 规则集从本地通用规则升级到 registry（c/cpp 官方规则），扩大模式覆盖面后重跑矩阵
-4. 在 WSL 安装并运行 Clang Static Analyzer（clang 已随 build-essential 可用），把 clang_sa 列从 unknown 填成实际 hit/miss
-5. 再决定是否进入 c_utils 纵向验证分支（TSan 复现属 A 线，本分支不做）
-```
+1. 移除或收紧 deref-after-arrow 噪音规则，重跑 4 样本矩阵，重新评估 dsoftbus 的 44 条命中含金量
+2. 为 oob_write 家族写 OH 专用规则（针对 ElementAccessor::Get/Set 缺失 GetElementsLength 检查），
+   验证"专用规则能否补上通用工具的 0 精确命中"
+3. 在 WSL 安装并运行 Clang Static Analyzer，把 clang_sa 列从 unknown 填成实际 hit/miss
+4. 把 Semgrep 规则集升级到 registry 官方 c/cpp 规则，对比本地通用规则的覆盖面差异
+5. 为 concurrency_race 与 null_deref 家族补 OH 专用规则，验证增强层在多根因家族上的可复制性
 ```
 
 暂时不要做：

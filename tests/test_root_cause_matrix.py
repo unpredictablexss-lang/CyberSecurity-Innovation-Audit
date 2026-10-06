@@ -75,12 +75,12 @@ class RootCauseMatrixTests(unittest.TestCase):
         by_tool = {row.tool for row in matrix.rows}
         self.assertEqual(by_tool, {"own_text", "own_ast", "semgrep", "codeql"})
 
-    def test_matrix_with_three_bundled_samples_all_text_miss(self) -> None:
+    def test_matrix_with_bundled_samples_all_text_miss(self) -> None:
         samples = [
             load_sample(path)
             for path in sorted((REPO_ROOT / "benchmarks" / "historical").glob("*.json"))
         ]
-        self.assertEqual(len(samples), 3)
+        self.assertEqual(len(samples), 4)
         tool_candidates = {
             "own_text": [],
             "own_ast": [],
@@ -91,7 +91,7 @@ class RootCauseMatrixTests(unittest.TestCase):
         }
         matrix = build_root_cause_hit_matrix(samples, tool_candidates)
         groups = {row.root_cause_group for row in matrix.rows}
-        self.assertGreaterEqual(len(groups), 3)
+        self.assertGreaterEqual(len(groups), 4)
         for row in matrix.rows:
             if row.tool in {"own_text", "own_ast"}:
                 self.assertEqual(row.status, "miss")
