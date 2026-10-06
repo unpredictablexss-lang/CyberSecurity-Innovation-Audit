@@ -16,6 +16,8 @@
 
 2026-10-06 追加（4）：semgrep.dev registry 网络已恢复可达（Windows/WSL 均 HTTP 200，`semgrep --config` 可在线拉取并执行），但**免费 registry 不含任何 C++ 规则**——154 条 `cpp.*` 全部是付费 `team_tier` pro 规则，`p/cpp` 为 404、`r/cpp` 为空，官方 `semgrep-rules` 仓库从无 `cpp/` 目录。因此已**弃用本地通用规则**（`deref-after-arrow` 噪音规则整体移除），改用 `0xdea/semgrep-rules`（MIT，49 条 c/cpp 规则，commit `dae50da6`）+ 官方 C 公共 registry 规则；同时新增第二条 OH 专用规则 `rules/cpp/oh_nothrow_null_deref.yaml`，把 dsoftbus 的「nothrow new 后未判空直接解引用」语义命中从旧通用规则手里恢复为专用规则命中（vulnerable 5 命中 / fixed 0 / 其他样本 0 误报）。详见第 6b.8 节。
 
+2026-10-06 追加（5）：完成"与分析单元对齐"的工具 bake-off（6b.10）——① Cppcheck+misra/cert/threadsafety、② Semgrep taint、④ weggli 均为**负结果**（无 vuln/fixed 判别力，threadsafety/cert 零输出）；③ **Joern c2cpg 为正结果**（单文件免构建出真 AST，dsoftbus 54 methods/247 calls，vuln `new=1 cmp=0` / fixed `cmp=1`，可判别），建议新增 `joern` 列；⑥ **Opengrep 1.30（LGPL-2.1）与 Semgrep 1.179 在同一规则集上结果逐条一致**，可作为引擎平替，但不解决免费 C++ 规则缺口。
+
 ---
 
 ## 1. 当前 historical samples
@@ -412,6 +414,70 @@ after —— OH 专用规则：
 
 ---
 
+## 6b.10 2026-10-06 与分析单元对齐的工具 bake-off（Cppcheck+addon / Semgrep taint / Joern / weggli / Opengrep）
+
+判据：分析单元 = **单文件、不构建、缺头文件**。看两件事——能否在这个粒度跑出真实 AST，以及对已知漏洞行有没有 **vuln/fixed 判别力**。
+
+| 工具 | 安装 | 单文件免构建 | 提取质量（dsoftbus） | vuln/fixed 判别 | 结论 |
+|---|---|---|---|---|---|
+| ① Cppcheck 2.7 + misra/cert/threadsafety | 已装 | ✅ | 可跑 | ❌ | **负**：669 条 MISRA 风格噪音，cert/threadsafety 0 条 |
+| ② Semgrep CE taint mode | 已装 | ✅ | 可跑 | ❌ | **负**：定位到 sink（6 条）但 sanitizer 不生效，6 vs 6 |
+| ③ Joern 4.0.649 (c2cpg) | 1.8GB | ✅ **真 AST** | 54 methods / 247 calls | ✅ **是** | **正**：新增 `joern` 列 |
+| ④ weggli 0.2.4 | 源码构建 | ✅ | 可跑 | ❌ | **负**：`not:` 无法跨早返回守卫，6 vs 6 |
+| ⑤ Semgrep CE 1.179 + 社区规则 | 已装 | ✅ | — | ✅ | 现有基线（语义命中靠 OH 专用规则） |
+| ⑥ Opengrep 1.30.0 | 46MB | ✅ | — | ✅ | **正**：与 Semgrep 逐条一致，可平替引擎 |
+| ✗ CodeQL 2.27.1 | 已装 | ❌ 需可编译 TU | 空 AST | n/a | 见 6b.9 |
+
+### ① Cppcheck + addons —— 负结果
+
+`--enable=all --inconclusive --addon=misra --addon=cert --addon=threadsafety`：misra **669** 条、cert **0** 条、threadsafety **0** 条。vuln/fixed 的**规则集合几乎完全相同**（唯一差异：cutils fixed 多 1 条 `misra-c2012-15.5`）。落在已知漏洞行的是 ark L665 `misra-c2012-10.4`、liteos L1052 `misra-c2012-1.4`，都是"essential type"风格规则，与根因无关。**addon 提升的是噪音，不是判别力**；`threadsafety` 对锁作用域竞争样本零输出。
+
+### ② Semgrep taint —— 负结果
+
+taint 规则：source=`new (std::nothrow) $T(...)`、sink=`$P->$M(...)`、sanitizer=空指针守卫。定位能力不错——dsoftbus vuln 命中 6 条（L71/82/97/108/123 = 5 个真实解引用点 + L143）。但 sanitizer 的三种写法（`pattern-inside if ($P == nullptr)` / 早返回守卫 / `by-side-effect: true`）**都无法抑制 fixed**：6 vs 6。根因是 taint sanitizer 要求数据流**经过**该节点，而"提前 return 的守卫"不在 source→sink 路径上。**结论：taint 能定位 sink 但不能表达早返回守卫；pattern 版 OH 规则（5/0）反而更好。**
+
+### ③ Joern 4.0.649 (c2cpg) —— 正结果
+
+- 安装：1.8GB bundle（经 `ghproxy.net` 镜像下载；GitHub release asset 在 WSL 侧直连超时），需 Java 17（`openjdk-17-jre-headless`）；zip 解压丢可执行位需 `chmod +x`（`c2cpg.sh`、`frontends/*/bin/*`）。
+- **免构建建 CPG 成功**（单文件、无头文件，未配置任何 `-I`）。提取质量：dsoftbus **54 methods / 247 calls**（`cpg.method.name` 里 `ClinetOnNodeOnlineStateChanged`、`ClinetOnNodeBasicInfoChanged`、`ClientOnNodeStatusChanged`、`ClinetOnLocalNetworkIdChanged`、`ClinetNotifyDeviceNotTrusted` **5 个 affected 函数全部在**）；liteos 125/569；ark 191/778。
+- 判别查询（每个 method 内 `<operator>.new` 调用数 vs `==`/`!=` 比较数）：
+
+| 样本 | vuln | fixed |
+|---|---|---|
+| dsoftbus 5 个目标函数 | `new=1 cmp=0` | `new=1 cmp=1`（新增空指针检查被 CPG 捕获） |
+| `GetClientProxy`（已知安全封装） | `new=1 cmp=0` | `new=1 cmp=0`（两版都报 → 仍是误报，与 6b.5 一致） |
+
+- 局限：对**纯头文件**处理弱——cutils `singleton.h` 只提出 2 methods / 0 calls（三个工具里唯一栽在 .h 上的）。
+- **结论：目前唯一在单文件粒度既能出真实 AST、又能对 vuln/fixed 给出判别的工具。建议作为新增 `joern` 列。**
+
+### ④ weggli 0.2.4 —— 负结果
+
+通过 TUNA crates 镜像 `cargo install weggli` 构建（crates.io tarball 直连 403）。模式 `{ $p = new (std::nothrow) $t(_); $p->$m(_); }` 命中 6 条（含 `GetClientProxy`）；加 `not: $p == NULL` / `not: $p != NULL` 后仍是 **6 vs 6**——`not:` 是语句块作用域，无法跨越"早返回守卫"。**免构建、轻量，但本样本无判别力**（与 taint 同病）。
+
+### ⑤/⑥ Semgrep CE 与 Opengrep —— 引擎平替，结果逐条一致
+
+- `opengrep/opengrep`：**LGPL-2.1**，3145★，2026-10-06 仍在更新；单文件 manylinux 二进制 46MB。语言列表里 **`c++` 与 `cpp` 同时存在**。
+- 用**完全相同的规则集**（`rules/cpp/vendor/raptor` + `rules/cpp`）跑 4 样本 × 2 修订，结果与 Semgrep 1.179 **逐条一致**：
+
+| 样本 | Semgrep CE 1.179 | Opengrep 1.30.0 |
+|---|---|---|
+| cutils singleton UAF | 1 / 0 | 1 / 0 |
+| kernel_liteos_a GetGroups | 41 / 41 | 41 / 41 |
+| communication_dsoftbus null_deref | 5 / 0 | 5 / 0 |
+| arkcompiler JSArray sort | 4 / 4 | 4 / 4 |
+
+- 差异：Opengrep 去掉了 `--metrics`（**默认无遥测**）；`--config p/...` 仍指向 Semgrep Registry；`opengrep-rules` 是 semgrep-rules **2024-12-13 的 fork**，仍是 `c/`（16 条）**无 `cpp/`** → 免费 C++ 规则的缺口**不变**。
+- **结论：Opengrep 可无缝平替 Semgrep CE 引擎**（结果一致 + LGPL + 无遥测 + 无许可变更风险），但**解决不了 C++ 规则缺口**——那部分仍靠 vendor/raptor + OH 专用规则。
+
+### 采纳建议
+
+1. **Joern c2cpg → 新增 `joern` 列**（唯一单文件粒度有判别力的工具）；注意其对 `.h` 头文件弱。
+2. **Opengrep → 作为 Semgrep 引擎的可选平替**（结果一致，许可更稳）；规则层不受影响。
+3. Cppcheck addon / Semgrep taint / weggli → **不采纳**（均无 vuln/fixed 判别力，属负结果保留）。
+4. CodeQL → 见 6b.9（单文件粒度不可用）。
+
+---
+
 ## 6c. 下一步建议
 
 优先做：
@@ -425,6 +491,8 @@ after —— OH 专用规则：
 5. ⏳ 部分完成：null_deref 家族已补 `oh_nothrow_null_deref`（vuln 5 / fixed 0）；concurrency_race 家族仍待补
 6. 为 concurrency_race 家族补 OH 专用规则（liteos GetGroups 锁作用域竞争），验证 raptor/官方 C 规则确无根因命中
 7. （可选）若能取得 Semgrep 付费 pro 账号，用 154 条 `cpp.*` pro 规则对比 raptor + OH 专用层的覆盖面
+8. 🆕 把 **Joern c2cpg 接入** `normalize-tool-output`（新增 joern adapter），填新增的 `joern` 列；先解决其对 `.h` 头文件提取弱的问题（见 6b.10）
+9. 🆕（可选）把 Semgrep 引擎**替换为 Opengrep**：已实测同一规则集结果逐条一致，LGPL-2.1、默认无遥测；不影响规则层（见 6b.10）
 ```
 
 暂时不要做：
