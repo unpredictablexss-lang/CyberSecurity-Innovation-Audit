@@ -1,0 +1,63 @@
+rules:
+  - id: raptor-use-after-free
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: HIGH
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-416: Use After Free"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://github.com/struct/mms
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+        - https://docs.microsoft.com/en-us/cpp/sanitizers/asan-error-examples
+    message: >-
+      The use of previously-freed memory can have any number of adverse
+      consequences, ranging from the corruption of valid data to the
+      execution of arbitrary code, depending on the instantiation and
+      timing of the flaw. The simplest way data corruption may occur
+      involves the system's reuse of the freed memory.
+    severity: ERROR
+    languages:
+      - c
+      - cpp
+    # NOTE: C++ `delete` and `delete[]` operators are not covered (refer also to `cpp.lang.security.use-after-free.*`).
+    # NOTE: `realloc` is not covered.
+    patterns:
+      - pattern-either:
+          # generic use after free
+          - pattern: $PTR->$_
+          - pattern: $PTR[$_]
+          - pattern: (*$PTR)
+          # use after free in return
+          - pattern: return $PTR;
+          # use after free in function calls
+          - patterns:
+              - pattern-either:
+                  - pattern: $FUN(..., <... $PTR ...>, ...)
+                  # no need to explicitly check the following patterns, as the deep expression operator above will already match them
+                  # - pattern: $FUN(..., <... $PTR->$_ ...>, ...)
+                  # - pattern: $FUN(..., <... $PTR[$_] ...>, ...)
+                  # - pattern: $FUN(..., <... (*$PTR) ...>, ...)
+                  # - pattern: $FUN(..., <... (*$PTR).$_ ...>, ...)
+                  - pattern: $PTR->$FUN(...)
+              # filter out double free instances
+              - metavariable-pattern:
+                  metavariable: $FUN
+                  patterns:
+                    - pattern-not: free
+      - pattern-inside: free($PTR); ...
+      - pattern-not-inside: |
+          free($PTR);
+          ...
+          $PTR = ...; 
+          ...

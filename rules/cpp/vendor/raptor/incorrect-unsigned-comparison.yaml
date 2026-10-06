@@ -1,0 +1,52 @@
+rules:
+  - id: raptor-incorrect-unsigned-comparison
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - audit
+      vulnerability_class: Improper Validation
+      likelihood: LOW
+      impact: MEDIUM
+      confidence: HIGH
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-697: Incorrect Comparison"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://g.co/kgs/PCHQjJ
+    message: >-
+      Checking if an unsigned variable is negative makes no sense and is
+      usually a good indication that something is probably wrong with the
+      code.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: some types are not covered.
+    # NOTE: incorrect unsigned assigments are not covered.
+    pattern-either:
+      # < (always false)
+      - pattern: (unsigned short $_) < 0
+      - pattern: (unsigned short int $_) < 0
+      - pattern: (unsigned int $_) < 0
+      - pattern: (unsigned long $_) < 0
+      - pattern: (unsigned long int $_) < 0
+      - pattern: (size_t $_) < 0
+      # <=
+      - pattern: (unsigned short $_) <= 0
+      - pattern: (unsigned short int $_) <= 0
+      - pattern: (unsigned int $_) <= 0
+      - pattern: (unsigned long $_) <= 0
+      - pattern: (unsigned long int $_) <= 0
+      - pattern: (size_t $_) <= 0
+      # >= (always true)
+      - pattern: (unsigned short $_) >= 0
+      - pattern: (unsigned short int $_) >= 0
+      - pattern: (unsigned int $_) >= 0
+      - pattern: (unsigned long $_) >= 0
+      - pattern: (unsigned long int $_) >= 0
+      - pattern: (size_t $_) >= 0

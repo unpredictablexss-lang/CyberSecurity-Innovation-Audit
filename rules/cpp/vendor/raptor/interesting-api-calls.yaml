@@ -1,0 +1,263 @@
+rules:
+  - id: raptor-interesting-api-calls
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - audit
+      vulnerability_class: Dangerous Method or Function
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-676: Use of Potentially Dangerous Function"
+      owasp:
+        - A08:2025 - Software or Data Integrity Failures
+      references:
+        - https://github.com/0xdea/rhabdomancer
+        - https://github.com/0xdea/ghidra-scripts/blob/main/Rhabdomancer.java
+        - https://github.com/x509cert/banned/blob/master/banned.h
+        - https://g.co/kgs/PCHQjJ
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+        - https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/28719-banned-api-usage-use-updated-function-replacement
+        - https://docs.oracle.com/cd/E37838_01/html/E61050/gnclc.html
+    message: >-
+      Locate all calls to interesting and potentially insecure API
+      functions (candidate points). The auditor can backtrace from these
+      candidate points to find pathways allowing access from untrusted
+      input.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: `goto`, `try/catch`, `sem/mutex`, `new/delete`, and `static_cast/reinterpret_cast` are not covered.
+    # NOTE: not all Microsoft-specific obsolete functions are covered.
+    # NOTE: consider excluding some matches for `strncpy`, `snprintf`, and similar functions where the length parameter is known at compile time (see `memcpy` below for an example). See also another possible approach described at https://cc-sw.com/semgrep-guide-for-a-security-engineer-part-6-of-6/. Beware of possible false negatives, though.
+    # NOTE: consider checking for format string specifiers that match the `(".*%l?s.*"|".*%S.*"|[a-zA-Z_][a-zA-Z0-9_]*)` regex.
+    # NOTE: consider extracting some patterns into separate rules to focus on the most interesting API calls (copy operations, exec functions, etc.).
+    # NOTE: nonlocking stdio functions (https://linux.die.net/man/3/fgets_unlocked) are not covered.
+    # NOTE: refer also to https://semgrep.dev/r?lang=C
+    pattern-either:
+      # priv
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*set\w*(u|g)id\s*$|^\w*(init|set)groups\s*$|^\w*Impersonate\w*\s*$'
+      # strcpy
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*str\w?(cpy|add)(_s)?(_l)?\s*$|^\w*stpn?cpy(_s)?(_l)?\s*$|^\w*(wc|mb|ftc|tc)s\w?cpy(_s)?(_l)?\s*$|^\w*wcpn?cpy(_s)?(_l)?\s*$'
+      # strcat
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*str\w?cat(_s)?(_l)?\s*$|^\w*(wc|mb|ftc|tc)s\w?cat(_s)?(_l)?\s*$'
+      # strtok
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*strtok(_r)?(_s)?(_l)?\s*$|^\w*(wc|mb)stok(_r)?(_s)?(_l)?\s*$|^\w*str(find|rspn|trns)\s*$'
+      # more string parsing (too noisy?)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*strr?chr\s*$|^\w*memchr\s*$|^\w*str(str|sep)\s*$|^\w*strc?spn\s*$|^\w*(str|wcs)pbrk\s*$'
+      # strlen (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*(str|wcs|mbs)n?len\s*$'
+      # printf
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*s\w*printf(_s)?(_l)?\w*\s*$'
+      # more printf (should be covered by the format-string-bugs rule)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*printf\w*\s*$|^\w*err\w*\s*$|^\w*warn\w*\s*$|^\w*syslog\w*\s*$'
+      # scanf
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*scanf(_s)?(_l)?\s*$'
+      # get
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*get(s|ws(_l)?|ts|tws|c|char|pw|pass|wd|cwd|login(_r)?|groups|hostname|domainname|opt|opt_long)\s*$|^\w*cuserid\s*$'
+      # environment
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*(get|set|put|unset)env\s*$|^\w*g_get_(home|tmp)_dir\s*$'
+      # memcpy
+      - patterns:
+          - pattern: $FUN($_, $_, $LEN, ...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*mem(c|p)?cpy(_s)?\s*$|^\w*memmove(_s)?\s*$|^\w*bcopy\s*$|^\w*CopyMemory\s*$'
+          # exclude length known at compile time (sizeof macro) - imperfect match with `memccpy`, but that's acceptable
+          - pattern-not: $FUN($_, $_, sizeof(...), ...)
+          # - pattern-not: $FUN($_, $_, <... sizeof(...) ...>, ...)
+          # exclude length known at compile time (numeric literal)
+          - metavariable-regex:
+              metavariable: $LEN
+              regex: '^(?!\s*(?:0[xX][0-9A-Fa-f]+|0[bB][01]+|0[0-7]*|[1-9][0-9]*)[uUlL]*\s*$).+'
+      # memset (too noisy, mostly irrelevant unless you use it to erase sensitive data)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*memset(_explicit)?\s*$|^\w*(explicit_)?bzero\s*$'
+      # alloc
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*alloc(a|f)?\s*$|^\w*alloc_?array\s*$'
+      # free (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*free\s*$'
+      # exec
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*exec(l|v)?(p|e)?e?\s*$|^\w*system\s*$|^\w*spawn\w?\s*$|^\w*wordexp\s*$|^\w*WinExec\s*$|^\w*ShellExecute(A|ExA|W|ExW)?\s*$|^\w*CreateProcess(A|AsUserA|W|AsUserW|WithLogonW|WithTokenW)?\s*$'
+      # i/o
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*open(at)?(64)?\s*$|^\w*pipe\s*$|^\w*read\s*$|^\w*recv(from)?\s*$|^\w*copylist\s*$|^\w*dbminit\s*$|^\w*LoadLibrary(A|ExA|W|ExW)?\s*$'
+      # more i/o (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*connect\s*$|^\w*write\s*$|^\w*hton(l|s)\s*$|^\w*ntoh(l|s)\s*$|^\w*dup2?\s*$'
+      # proc
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*fork\s*$'
+      # more proc (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*clone3?\s*$'
+      # rand
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*rand(_r|48)?\s*$'
+      # tmp
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*mk\w?temp(64)?\s*$|^\w*te?mpnam(_r)?\s*$|^\w*tmpfile\s*$|^\w*GetTempFileName(A|W)?\s*$'
+      # file
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*(mk|ch)(dir|nod)(at)?\s*$|^\w*creat\s*$|^\w*link(at)?\s*$|^\w*rename(at)?\s*$|^\w*access(at|at2|_ok)?\s*$|^\w*stat(at)?\s*$|^\w*ch(own|mod|root)(at)?\s*$|^\w*realpath\s*$|^\w*readlink(at)?\s*$|^\w*(tty|pts)name_r\s*$'
+      # more file
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*locale\s*$|^\w*(make|split)path\s*$|^\w*fattach\s*$|^\w*ftw\s*$|^\w*truncate\s*$|^\w*u(mask|limit)\s*$|^\w*AddAccessAllowedAce\s*$'
+      # conf
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*confstr\s*$|^\w*utmpx?name\s*$'
+      # string conversions
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*mbs(nr|r)?towcs(_l)?\s*$|^\w*wcs(nr|r)?tombs(_l)?\s*$|^\w*OemToCharW\s*$|^\w*MultiByteToWideChar\s*$'
+      # character conversions (mostly irrelevant)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*mbr?towc(_l)?\s*$|^\w*wcr?tomb(_l)?\s*$'
+      # inet
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*inet_(ntop|pton)\s*$'
+      # signals (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*kill\s*$|^\w*signal\s*$|^\w*sigaction\s*$|^\w*(set|long)jmp\s*$'
+      # time
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*cftime\s*$'
+      # syscall
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*syscall\s*$'
+      # kernel
+      - patterns:
+          - pattern: $FUN(...)
+          - metavariable-regex:
+              metavariable: $FUN
+              regex: '(?i)^\w*copy_(from|to)_user\s*$|^\w*(get|put)_user\s*$|^\w*copy(in|out)\s*$|^\w*cdev_init\s*$'
+      # more kernel (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*ioctl\w*\s*$|^\w*m(re|un)?map\s*$'
+      # more kernel (too noisy)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*cpu_to_(b|l)e(16|32|64)(p|s)?\s*$|^\w*(b|l)e(16|32|64)(p|s)?_to_cpu\s*$|^\w*xb_get_(32|64|bytes|word_array|bitmap)\s*$'
+      # assert (should be covered by suspicious-assert rule)
+      # - patterns:
+      #   - pattern: $FUN(...)
+      #   - metavariable-regex:
+      #       metavariable: $FUN
+      #       regex: '(?i)^\w*assert\w*\s*$'
+      # switch (too noisy)
+      #   - pattern: |
+      #     switch ($VAR) { }

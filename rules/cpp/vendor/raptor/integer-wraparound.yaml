@@ -1,0 +1,214 @@
+rules:
+  - id: raptor-integer-wraparound
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: HIGH
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-190: Integer Overflow or Wraparound"
+        - "CWE-128: Wrap-around Error"
+        - "CWE-131: Incorrect Calculation of Buffer Size"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+        - http://www.phrack.org/issues/60/10.html#article
+        - https://docs.microsoft.com/en-us/cpp/sanitizers/asan-error-examples
+        - https://dustri.org/b/playing-with-weggli.html
+    message: >-
+      The software performs a calculation that can produce an integer
+      overflow or wraparound, when the logic assumes that the resulting
+      value will always be larger than the original value. This can
+      introduce other weaknesses when the calculation is used for resource
+      management or execution control.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: only multiplication and sum with two operands are covered; other arithmetic operations should also be considered (e.g., left shift, even subtraction), as well as any operation with more than two operands.
+    # NOTE: some allocation functions such as `kmalloc`, `HeapAlloc`, and custom wrappers are not covered.
+    # NOTE: there might exist other buggy input validation patterns not covered here, including the same patterns with a different order of operands.
+    # NOTE: consider excluding `strlen` patterns to avoid false positives (at the cost of some false negatives).
+    # NOTE: we should do some tests with the deep expression operator, refer also to `cpp.lang.security.memory.integer-overflow-allocation.integer-overflow-allocation`.
+    # NOTE: a dedicated rule for C++ operators such as `new` should be implemented.
+    pattern-either:
+      # malloc, valloc (multiplication)
+      - patterns:
+          - pattern-either:
+              - pattern: $FUN($_ * $_)
+              - pattern: $FUN($_ *= $_)
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: malloc
+                - pattern: valloc
+      - patterns:
+          - pattern: $FUN($N)
+          - pattern-either:
+              - pattern-inside: |
+                  $N = $_ * $_;
+                  ...
+              - pattern-inside: |
+                  $N *= $_;
+                  ...
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: malloc
+                - pattern: valloc
+      # malloc, valloc (sum)
+      - patterns:
+          - pattern-either:
+              - pattern: $FUN($_ + $_)
+              - pattern: $FUN($_ += $_)
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: malloc
+                - pattern: valloc
+      - patterns:
+          - pattern: $FUN($N)
+          - pattern-either:
+              - pattern-inside: |
+                  $N = $_ + $_;
+                  ...
+              - pattern-inside: |
+                  $N += $_;
+                  ...
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: malloc
+                - pattern: valloc
+      # calloc, realloc, reallocf, aligned_alloc, VirtualAlloc (multiplication)
+      - patterns:
+          - pattern-either:
+              - pattern: $FUN($_, $_ * $_, ...)
+              - pattern: $FUN($_, $_ *= $_, ...)
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+                - pattern: realloc
+                - pattern: reallocf
+                - pattern: aligned_alloc
+                - pattern: VirtualAlloc
+      - patterns:
+          - pattern: $FUN($_, $N, ...)
+          - pattern-either:
+              - pattern-inside: |
+                  $N = $_ * $_;
+                  ...
+              - pattern-inside: |
+                  $N *= $_;
+                  ...
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+                - pattern: realloc
+                - pattern: reallocf
+                - pattern: aligned_alloc
+                - pattern: VirtualAlloc
+      # calloc, realloc, reallocf, aligned_alloc, VirtualAlloc (sum)
+      - patterns:
+          - pattern-either:
+              - pattern: $FUN($_, $_ + $_, ...)
+              - pattern: $FUN($_, $_ += $_, ...)
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+                - pattern: realloc
+                - pattern: reallocf
+                - pattern: aligned_alloc
+                - pattern: VirtualAlloc
+      - patterns:
+          - pattern: $FUN($_, $N, ...)
+          - pattern-either:
+              - pattern-inside: |
+                  $N = $_ + $_;
+                  ...
+              - pattern-inside: |
+                  $N += $_;
+                  ...
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+                - pattern: realloc
+                - pattern: reallocf
+                - pattern: aligned_alloc
+                - pattern: VirtualAlloc
+      # calloc (multiplication in 1st arg)
+      - patterns:
+          - pattern-either:
+              - pattern: $FUN($_ * $_, $_)
+              - pattern: $FUN($_ *= $_, $_)
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+      - patterns:
+          - pattern: $FUN($N, $_)
+          - pattern-either:
+              - pattern-inside: |
+                  $N = $_ * $_;
+                  ...
+              - pattern-inside: |
+                  $N *= $_;
+                  ...
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+      # calloc (sum in 1st arg)
+      - patterns:
+          - pattern-either:
+              - pattern: $FUN($_ + $_, $_)
+              - pattern: $FUN($_ += $_, $_)
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+      - patterns:
+          - pattern: $FUN($N, $_)
+          - pattern-either:
+              - pattern-inside: |
+                  $N = $_ + $_;
+                  ...
+              - pattern-inside: |
+                  $N += $_;
+                  ...
+          - metavariable-pattern:
+              metavariable: $FUN
+              pattern-either:
+                - pattern: calloc
+      # buggy input validation (sum)
+      # consider integer promotion (i.e., uint16_t are not vulnerable on 32-bit systems)
+      - pattern: $X > $MAX || ($X + $_) > $MAX
+      - pattern: $X >= $MAX || ($X + $_) > $MAX
+      - pattern: $X > $MAX || ($X + $_) >= $MAX
+      - pattern: $X >= $MAX || ($X + $_) >= $MAX
+      - pattern: $X < $MAX && ($X + $_) < $MAX
+      - pattern: $X <= $MAX && ($X + $_) < $MAX
+      - pattern: $X < $MAX && ($X + $_) <= $MAX
+      - pattern: $X <= $MAX && ($X + $_) <= $MAX
+      # buggy input validation (multiplication)
+      # consider integer promotion (i.e., uint16_t are not vulnerable on 32-bit systems)
+      - pattern: $X > $MAX || ($X * $_) > $MAX
+      - pattern: $X >= $MAX || ($X * $_) > $MAX
+      - pattern: $X > $MAX || ($X * $_) >= $MAX
+      - pattern: $X >= $MAX || ($X * $_) >= $MAX
+      - pattern: $X < $MAX && ($X * $_) < $MAX
+      - pattern: $X <= $MAX && ($X * $_) < $MAX
+      - pattern: $X < $MAX && ($X * $_) <= $MAX
+      - pattern: $X <= $MAX && ($X * $_) <= $MAX

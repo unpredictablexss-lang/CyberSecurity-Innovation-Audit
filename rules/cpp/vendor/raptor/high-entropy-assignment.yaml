@@ -1,0 +1,34 @@
+rules:
+  - id: raptor-high-entropy-assignment
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - audit
+      vulnerability_class: Hard-coded Secrets
+      likelihood: LOW
+      impact: MEDIUM
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-540: Inclusion of Sensitive Information in Source Code"
+      owasp:
+        - A06:2025 - Insecure Design
+      references:
+        - https://semgrep.dev/docs/writing-rules/metavariable-analysis
+        - https://github.com/semgrep/semgrep/pull/4672
+    message: >-
+      Entropy, or randomness, is a common approach for detecting secret
+      strings. If an assignment has high entropy, it might involve a
+      secret that should not be accessible to users.
+    severity: INFO
+    languages:
+      - c
+      - cpp
+    patterns:
+      - pattern: $_ = "$X"
+      - metavariable-analysis:
+          analyzer: entropy
+          metavariable: $X

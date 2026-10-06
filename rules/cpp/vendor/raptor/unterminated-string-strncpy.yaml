@@ -1,0 +1,56 @@
+rules:
+  - id: raptor-unterminated-string-strncpy
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-170: Improper Null Termination"
+        - "CWE-126: Buffer Over-read"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://g.co/kgs/PCHQjJ
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+    message: >-
+      If there is no NUL character byte in the first n bytes of the source
+      string, strncpy() and stpncpy() do not NUL-terminate the destination
+      buffer. If the program does not explicitly terminate the destination
+      buffer, this will almost certainly result in information disclosure,
+      and possibly a buffer overflow condition.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: other functions that do not `NUL`-terminate the destination buffer are not covered (e.g., `read`, `readlink`, `fread`, `memcpy`, etc.).
+    # NOTE: try to avoid false positives when `sizeof(dest) - 1` is used and in other similar cases.
+    patterns:
+      - pattern: $FUN(...)
+      - metavariable-pattern:
+          metavariable: $FUN
+          pattern-either:
+            - pattern: strncpy
+            - pattern: stpncpy
+            - pattern: wcsncpy
+            - pattern: wcpncpy
+            - pattern: _mbsncpy
+      - pattern-not-inside: |
+          $FUN($DST, $_, $_);
+          ...
+          $DST[$_] = NULL;
+      - pattern-not-inside: |
+          $FUN($DST, $_, $_);
+          ...
+          $DST[$_] = '\0';
+      - pattern-not-inside: |
+          $FUN($DST, $_, $_);
+          ...
+          $DST[$_] = 0;

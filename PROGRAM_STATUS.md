@@ -14,6 +14,8 @@
 
 `feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 **4 条** historical sample 的样本集（root_cause_group 覆盖 `lifetime_uaf` / `concurrency_race` / `null_deref` / `oob_write`）。GitHub Actions 已验证 **93 tests passed**，本机 WSL 完整回归 **105 tests OK**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。2026-10-06 三项进展：(1) 完成 cutils 与 dsoftbus 全部 possible_hit 区域的逐行语义 review——dsoftbus 的 semgrep 命中为语义命中（new-nothrow→紧邻解引用），cutils 均为区域重叠；(2) 落地首条 OpenHarmony 专用增强规则 `rules/cpp/oh_shared_ptr_uaf.yaml`（从 cutils 修复提交反推 shared_ptr 非原子 reset 模式），矩阵新增 `semgrep_oh` 列，vulnerable 命中 1 条、fixed 静默、其他样本零误报；(3) 新增 CVE-2025-23420 越界写样本（`arkcompiler_ets_runtime` JSArray sort，父提交已直接核验），**推翻了"缺失边界检查的越界写是 pattern 工具强项"这一假设**——semgrep/cppcheck 在该样本上精确命中已知漏洞行 **0 条**，`possible_hit` 纯属区域重叠；同时发现本地通用规则 `deref-after-arrow` 在 731 行文件上产生 144 条噪音（有效 0 条），需移除或收紧。新增行级"精确命中"统计后，4 样本 × 7 工具列中仅 2 个组合有精确命中（semgrep×dsoftbus 15 条、semgrep_oh×cutils 1 条）。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
 
+2026-10-06 追加（4）：semgrep.dev registry 网络已恢复可达（Windows/WSL 均 HTTP 200，`semgrep --config` 可在线拉取并执行），但**免费 registry 不含任何 C++ 规则**——154 条 `cpp.*` 全部是付费 `team_tier` pro 规则，`p/cpp` 为 404、`r/cpp` 为空，官方 `semgrep-rules` 仓库从无 `cpp/` 目录。因此已**弃用本地通用规则**（`deref-after-arrow` 噪音规则整体移除），改用 `0xdea/semgrep-rules`（MIT，49 条 c/cpp 规则，commit `dae50da6`）+ 官方 C 公共 registry 规则；同时新增第二条 OH 专用规则 `rules/cpp/oh_nothrow_null_deref.yaml`，把 dsoftbus 的「nothrow new 后未判空直接解引用」语义命中从旧通用规则手里恢复为专用规则命中（vulnerable 5 命中 / fixed 0 / 其他样本 0 误报）。详见第 6b.8 节。
+
 ---
 
 ## 1. 当前 historical samples
@@ -153,7 +155,7 @@ validated_vulnerability: 0
 7. `kernel_liteos_a` UAF（CVE-2025-24298 / CVE-2025-27128）仍在候选池，未做；
 8. validated vulnerability 仍为 0；
 9. `arkcompiler_ets_runtime` 越界写样本（CVE-2025-23420）的真实可利用性、比较器触发条件与受影响版本范围均未验证；本轮只做静态 replay，`runtime_replay_status = not_run`；
-10. 本地通用规则集里 `deref-after-arrow` 的噪音占比未量化——dsoftbus 那 44 条 possible_hit 中有多少来自该规则、移除后语义命中是否仍成立，**待重跑确认**；
+10. ✅ 已确认（2026-10-06，见 6b.8）：`deref-after-arrow` 是纯噪音——在 `js_array.cpp` 上 144/144 条来自该规则、对已知漏洞行精确命中 0；本地通用规则已整体弃用，改为 0xdea raptor（MIT）+ 官方 C 公共规则 + OH 专用规则；
 11. CodeQL / Clang Static Analyzer 仍未运行，矩阵对应两列全部为 `unknown`；
 12. OH 专用规则的跨项目误报率未测（当前 4 样本内为零误报，不代表其他项目）。
 
@@ -163,7 +165,7 @@ validated_vulnerability: 0
 
 验证环境：Ubuntu 22.04.5 WSL2（本机），分支 `feat/historical-vuln-benchmark`。样本仓库以懒克隆（blob:none, --no-checkout）拉取到 `/root/openharmony-targets/`，逐一确认 vulnerable/fixed commit 存在后，用 `git show <commit>:<file>` 提取受影响文件到临时扫描树。工具执行：
 
-- Semgrep 1.179.0（`.venv` pip 安装，清华镜像）；因网络无法访问 semgrep.dev registry，使用本地通用规则（危险内存拷贝 API、nothrow new 未检查、单例 GetInstance/DestroyInstance、指针成员解引用），规则文件与报告留存在 WSL 本机。
+- Semgrep 1.179.0（`.venv` pip 安装，清华镜像）；~~因网络无法访问 semgrep.dev registry~~，当时使用本地通用规则（危险内存拷贝 API、nothrow new 未检查、单例 GetInstance/DestroyInstance、指针成员解引用），规则文件与报告留存在 WSL 本机。**（2026-10-06 更新：registry 已恢复可达，本地通用规则已整体弃用，见 6b.8。）**
 - Cppcheck 2.7（apt 安装），`--xml --enable=all --inconclusive`，对 C++ 头文件强制 `--language=c++`。
 
 各文件独立扫描后，用项目 `normalize-tool-output`（semgrep / cppcheck adapter）归一化为 ToolRunResult，再经桥接脚本把诊断映射到各样本的 affected file/symbol 区域，生成 root-cause 矩阵。结果：
@@ -246,7 +248,7 @@ validated_vulnerability: 0
 - 这是**语义命中**：规则命中的 `reset()` 就是 UAF 根因的非原子写点，且只在 vulnerable 版本触发、fixed 版本静默、其他样本零误报——具备真实区分度，不是区域重叠。
 - 但边界必须诚实：pattern 工具的命中只证明"存在对 shared_ptr 的非原子 reset"，**不证明**该 reset 在真实 OpenHarmony 调用面上会被并发读者触发，也未做 TSan / 运行时验证；`possible_hit` 仍是区域+语义描述，不是 validated vulnerability。
 - 规则的 `$PTR.reset()` 是宽 pattern，在其他项目可能对"安全的单线程 reset"产生误报；本样本集内为零误报，但跨项目误报率未测。规则 metadata 的 confidence 标为 MEDIUM 而非 HIGH。
-- 当前只落地了 1 条 OH 专用规则（lifetime_uaf 家族），concurrency_race 与 null_deref 家族的专用规则尚未编写。
+- 截至本条时只落地了 1 条 OH 专用规则（lifetime_uaf 家族）。**2026-10-06 更新：已补第 2 条 `oh_nothrow_null_deref`（null_deref 家族），见 6b.8；concurrency_race 家族仍待补。**
 
 ---
 
@@ -280,6 +282,8 @@ validated_vulnerability: 0
 
 本地通用规则里的 `deref-after-arrow`（pattern `$P->$FIELD`）在 731 行的 C++ 文件上产生 144 条诊断、有效 0 条。它把 C++ 里最常见的成员访问全部报警，属于**纯噪音规则**，会虚增 possible_hit 计数并掩盖真实信号。后续应从通用规则集中移除或大幅收紧，并重新评估 dsoftbus 的 44 条命中里有多少来自该噪音规则。
 
+**（2026-10-06 已处理：整条本地通用规则集已弃用，改用 0xdea raptor 镜像 + 官方 C 公共规则 + OH 专用规则，ark 144→4，详见 6b.8。）**
+
 ### 精确命中统计（新增的行级语义证据）
 
 为避免"区域重叠"被误读为"语义命中"，本轮在桥接脚本中增加了行级核验：只有诊断行号落在**已核实的漏洞行**上才计为精确命中。4 样本结果：
@@ -294,17 +298,95 @@ validated_vulnerability: 0
 
 ---
 
+## 6b.8 2026-10-06 网络恢复：Semgrep registry 可达性与规则来源替换（弃用本地通用规则）
+
+### 网络复测（结论：已恢复）
+
+2026-10-06 在 Windows 与 WSL 两侧复测：`semgrep.dev`、registry API、清华 PyPI、GitHub 均返回 HTTP 200；`semgrep --config p/default --dryrun` 可在线拉取规则并执行。即**不再需要**"因网络无法访问 registry 而退化为本地通用规则"这一前提（该说明见 6b 节，已过时）。GitHub 在 WSL 侧仍不稳定（`git clone` 偶发 HTTP/2 framing error / 连接超时），但 registry 与 raw API 稳定。
+
+### 关键发现：免费 registry 对 C++ 基本零覆盖
+
+| 配置 | 规则数 | `languages: [c]` | `languages: [cpp]` |
+|---|---|---|---|
+| `p/default` | 1073 | 4 | **0** |
+| `p/security-audit` | 225 | 9 | **0** |
+| `p/ci` | 159 | 0 | 0 |
+| `p/c` | 2 | 2 | 0 |
+| `p/cpp` | — | — | HTTP 404 |
+| `r/cpp` | — | — | `rules: []` |
+
+registry API 共 6101 条规则：`cpp.*` 共 **154 条但全部为 `team_tier` 付费 pro 规则**（需登录且付费）；`c.*` 仅 **16 条 public**。官方 `semgrep/semgrep-rules` 仓库有 `c/`（16 条）但**从无 `cpp/` 目录**（git 历史亦未出现）。实测 `--config p/c` 的 C 规则不会作用于 `.cpp` 文件（语言隔离），在含 `gets()` 的 `.cpp` 上命中 0。
+
+结论：**"把本地通用规则换成官方 registry 规则"这条路径对 C++ 不成立**——免费 registry 没有 C++ 规则可换。旧的"本地通用规则"问题（`deref-after-arrow` 噪音）不能靠换成 registry 规则解决，必须另找镜像源 + 专用规则。
+
+### 替换方案（已落地）
+
+| 目标 | 规则来源 | 位置 |
+|---|---|---|
+| C（`.c`/`.h`） | Semgrep 官方 registry（`p/security-audit` 等） | 运行时 `--config` |
+| C++（`.cpp`/`.hpp`） | `0xdea/semgrep-rules`（MIT，875★，49 条 `raptor-*` c/cpp 规则，commit `dae50da6`） | `rules/cpp/vendor/raptor/`（已 vendor） |
+| OpenHarmony 专用 | `oh_shared_ptr_uaf.yaml`、**新增** `oh_nothrow_null_deref.yaml` | `rules/cpp/` |
+
+复用脚本：`scripts/semgrep_ruleset_scan.sh`。旧的 `/root/bench-scan/semgrep_rules.yaml`（本地通用规则，含 `deref-after-arrow`）**作废**。
+
+### before / after（4 样本 × 2 修订，Semgrep 1.179.0，同机复测）
+
+before —— 旧本地通用规则（2026-10-06 重跑，命令与配置一致）：
+
+| 样本 | vuln 条数 | fixed 条数 | vuln 规则分布 |
+|---|---|---|---|
+| cutils singleton UAF | 3 | 3 | `new-nothrow-unchecked` 1、`plain-new-expr` 2 |
+| kernel_liteos_a GetGroups | 0 | 0 | — |
+| communication_dsoftbus null_deref | 36 | 36 | `get-instance-call` 7、`new-nothrow-unchecked` 7、`plain-new-expr` 7、**`deref-after-arrow` 15** |
+| arkcompiler JSArray sort | 144 | 144 | **`deref-after-arrow` 144** |
+
+after —— raptor + 官方 C 公共规则（通用层）：
+
+| 样本 | vuln 条数 | fixed 条数 | 规则分布 |
+|---|---|---|---|
+| cutils singleton UAF | 0 | 0 | — |
+| kernel_liteos_a GetGroups | 41 | 41 | `raptor-signed-unsigned-conversion` 20、`raptor-integer-truncation` 13、`raptor-interesting-api-calls` 8 |
+| communication_dsoftbus null_deref | 0 | 0 | — |
+| arkcompiler JSArray sort | 4 | 4 | `raptor-suspicious-assert` 2、`raptor-typos` 2 |
+
+after —— OH 专用规则：
+
+| 样本 | 规则 | vuln | fixed | 命中行 |
+|---|---|---|---|---|
+| cutils singleton UAF | `oh-shared-ptr-nonatomic-reset-uaf` | 1 | 0 | 141 |
+| communication_dsoftbus null_deref | `oh-nothrow-alloc-unchecked-deref` | 5 | 0 | 70, 81, 96, 107, 122 |
+| 其余样本 | 两条规则 | 0 | 0 | — |
+
+要点与边界：
+
+- `deref-after-arrow` 噪音彻底归零：ark 从 144 → 4（且这 4 条是 `suspicious-assert`/`typos`，与 `oob_write` 根因无关）。旧通用规则对 4 个样本已知漏洞行的**行级精确命中为 0**，与"纯噪音"判断一致。
+- dsoftbus 的语义命中**没有丢失**：旧通用规则给出 36 条（vuln=fixed，无区分度）；新方案下通用层 0 条，而 OH 专用规则 `oh-nothrow-alloc-unchecked-deref` 精确命中 5 处分配点、fixed 静默——语义命中由**专用规则**承担，符合架构文档第 17 节创新点 A。
+- liteos 的 41 条 raptor 命中在 vuln/fixed 上**完全相同**（signed/unsigned、整数截断、interesting-api-calls），属风格类噪音，**不构成** `concurrency_race` 根因命中。
+- 新通用层的 4 个样本行级精确命中仍为 **0**（OH 专用层为 dsoftbus 5 行 + cutils 1 行）。
+- **不能**据此宣称免费工具"能发现"这些漏洞；`validated_vulnerability` 仍为 0。
+
+### 新增 OH 专用规则 `oh-nothrow-alloc-unchecked-deref`
+
+- 来源（ground truth 反推）：dsoftbus 修复 `192f3e11` 在每个 `new (std::nothrow) ...` 之后插入 `if (x == nullptr) { ...; return ...; }`。规则把 vulnerable pattern 定义为"nothrow 分配结果被 `->` 解引用且中间无 null 检查"。
+- 文件：`rules/cpp/oh_nothrow_null_deref.yaml`，CWE-476，`root_cause_group=null_deref`，confidence=MEDIUM。
+- 判别力（实测）：vulnerable 5 命中 / fixed 0 / cutils·liteos·ark 全 0 误报。
+- 边界：命中只证明"nothrow 分配结果被无守卫解引用"；**不证明**分配失败可被攻击者触发、也不证明可利用。仍非 validated vulnerability。
+
+---
+
 ## 6c. 下一步建议
 
 优先做：
 
 ```text
-1. 移除或收紧 deref-after-arrow 噪音规则，重跑 4 样本矩阵，重新评估 dsoftbus 的 44 条命中含金量
+1. ✅ 已完成 2026-10-06：移除 deref-after-arrow 噪音规则，重跑 4 样本矩阵（ark 144→4），dsoftbus 旧 36 条被 OH 专用规则取代；详见 6b.8
 2. 为 oob_write 家族写 OH 专用规则（针对 ElementAccessor::Get/Set 缺失 GetElementsLength 检查），
    验证"专用规则能否补上通用工具的 0 精确命中"
 3. 在 WSL 安装并运行 Clang Static Analyzer，把 clang_sa 列从 unknown 填成实际 hit/miss
-4. 把 Semgrep 规则集升级到 registry 官方 c/cpp 规则，对比本地通用规则的覆盖面差异
-5. 为 concurrency_race 与 null_deref 家族补 OH 专用规则，验证增强层在多根因家族上的可复制性
+4. ✅ 已完成 2026-10-06：registry 可达性已复测；结论是免费 registry **没有** cpp 规则，改用 0xdea 镜像（MIT），差异见 6b.8
+5. ⏳ 部分完成：null_deref 家族已补 `oh_nothrow_null_deref`（vuln 5 / fixed 0）；concurrency_race 家族仍待补
+6. 为 concurrency_race 家族补 OH 专用规则（liteos GetGroups 锁作用域竞争），验证 raptor/官方 C 规则确无根因命中
+7. （可选）若能取得 Semgrep 付费 pro 账号，用 154 条 `cpp.*` pro 规则对比 raptor + OH 专用层的覆盖面
 ```
 
 暂时不要做：

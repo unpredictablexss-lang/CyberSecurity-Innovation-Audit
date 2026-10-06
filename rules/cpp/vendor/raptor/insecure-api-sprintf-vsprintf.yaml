@@ -1,0 +1,38 @@
+rules:
+  - id: raptor-insecure-api-sprintf-vsprintf
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Dangerous Method or Function
+      likelihood: HIGH
+      impact: HIGH
+      confidence: HIGH
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-676: Use of Potentially Dangerous Function"
+        - "CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')"
+        - "CWE-787: Out-of-bounds Write"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://g.co/kgs/PCHQjJ
+    message: >-
+      A buffer overflow condition exists when a program attempts to put
+      more data in a buffer than it can hold, or when a program attempts to
+      put data in a memory area outside of the boundaries of a buffer.
+    severity: ERROR
+    languages:
+      - c
+      - cpp
+    patterns:
+      - pattern-either:
+          - pattern: sprintf($_, $FMT, ...)
+          - pattern: vsprintf($_, $FMT, ...)
+      - metavariable-regex:
+          metavariable: $FMT
+          # NOTE: some format string specifiers are not handled
+          regex: '(".*%l?s.*"|".*%S.*"|[a-zA-Z_][a-zA-Z0-9_]*)'
