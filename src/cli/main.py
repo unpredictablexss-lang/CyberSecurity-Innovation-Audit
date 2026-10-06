@@ -271,7 +271,7 @@ def main() -> None:
     normalize_parser.add_argument(
         "--provider",
         required=True,
-        choices=["semgrep", "codeql", "clang", "clang_sa", "cppcheck"],
+        choices=["semgrep", "codeql", "clang", "clang_sa", "cppcheck", "joern"],
         help="External tool provider adapter",
     )
     normalize_parser.add_argument("--input", required=True, help="Tool-native report file")

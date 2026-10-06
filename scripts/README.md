@@ -20,3 +20,22 @@ WITH_REGISTRY=0 scripts/semgrep_ruleset_scan.sh path/to/file.cpp
 ```
 
 结果写入 `outputs/reports/semgrep/`（Git 忽略）。
+
+## joern_nothrow_guard.sc
+
+Joern CPG 查询脚本，输出 `src/providers/joern.py` 约定的 findings JSON。它按
+"方法体内含 `new (std::nothrow)` 且没有任何 `==`/`!=`"判定候选缺失空指针守卫
+（CWE-476）。注意这是**结构性启发式**，不是数据流证明，已知会对安全封装产生假阳性、
+对含无关比较的函数产生假阴性。
+
+```sh
+joern-parse <file> -o cpg.bin
+JOERN_CPG=cpg.bin JOERN_OUT=findings.json JOERN_VERSION=4.0.649 \
+    joern --script scripts/joern_nothrow_guard.sc
+python -m src.cli normalize-tool-output --provider joern \
+    --input findings.json --target-id <id> --commit <sha> \
+    --scope-files 1 --scope-loc <loc> --elapsed-seconds 1.0 \
+    --json-out outputs/reports/joern.json --md-out outputs/reports/joern.md
+```
+
+详见 `PROGRAM_STATUS.md` 第 6b.11 节。

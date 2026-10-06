@@ -125,8 +125,74 @@ class ProviderAdapterTests(unittest.TestCase):
 
     def test_registry_alias_and_unknown_provider(self) -> None:
         self.assertEqual(get_adapter("clang-static-analyzer").provider, "clang_sa")
+        self.assertEqual(get_adapter("joern-cpg").provider, "joern")
         with self.assertRaisesRegex(ValueError, "unsupported provider adapter"):
             get_adapter("unknown-tool")
+
+    def test_joern_adapter_normalizes_query_findings(self) -> None:
+        payload = {
+            "joern_version": "4.0.649",
+            "findings": [
+                {
+                    "rule_id": "oh-nothrow-alloc-unchecked-deref",
+                    "file": "src/bus_center_client_proxy.cpp",
+                    "line": 70,
+                    "column": 58,
+                    "message": "nothrow allocation dereferenced without a null guard",
+                    "severity": "warning",
+                    "evidence_type": "control_flow",
+                    "cwe": ["CWE-476"],
+                }
+            ],
+        }
+
+        result = normalize_tool_output("joern", payload, context())
+
+        self.assertEqual(result.tool, "joern")
+        self.assertEqual(result.tool_version, "4.0.649")
+        self.assertEqual(result.diagnostic_count, 1)
+        diagnostic = result.diagnostics[0]
+        self.assertEqual(diagnostic.evidence_type, "control_flow")
+        self.assertEqual(diagnostic.file, "src/bus_center_client_proxy.cpp")
+        self.assertEqual(diagnostic.line, 70)
+        self.assertEqual(diagnostic.column, 58)
+        self.assertEqual(diagnostic.rule_id, "oh-nothrow-alloc-unchecked-deref")
+        self.assertEqual(diagnostic.candidate_cwe, "CWE-476")
+
+    def test_joern_adapter_accepts_bare_finding_list(self) -> None:
+        payload = [
+            {"file": "src/a.cpp", "line": 3, "message": "candidate"},
+        ]
+
+        result = normalize_tool_output("joern", payload, context(tool_version="4.0.649"))
+
+        self.assertEqual(result.tool_version, "4.0.649")
+        self.assertEqual(result.diagnostic_count, 1)
+        # A query that declares no evidence type falls back to dataflow.
+        self.assertEqual(result.diagnostics[0].evidence_type, "dataflow")
+
+    def test_joern_adapter_models_missing_coordinates_as_unknown(self) -> None:
+        payload = {
+            "findings": [
+                {"file": "src/a.cpp", "line": 0, "column": -1, "message": "synthetic node"}
+            ]
+        }
+
+        result = normalize_tool_output("joern", payload, context())
+
+        diagnostic = result.diagnostics[0]
+        self.assertIsNone(diagnostic.line)
+        self.assertIsNone(diagnostic.column)
+
+    def test_joern_adapter_rejects_unsupported_payload(self) -> None:
+        with self.assertRaisesRegex(ValueError, "must be a mapping with 'findings'"):
+            normalize_tool_output("joern", "not-a-report", context())
+        with self.assertRaisesRegex(ValueError, "unsupported evidence_type"):
+            normalize_tool_output(
+                "joern",
+                {"findings": [{"file": "a.cpp", "evidence_type": "made-up"}]},
+                context(),
+            )
 
 
 if __name__ == "__main__":
