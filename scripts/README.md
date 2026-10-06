@@ -23,10 +23,13 @@ WITH_REGISTRY=0 scripts/semgrep_ruleset_scan.sh path/to/file.cpp
 
 ## joern_nothrow_guard.sc
 
-Joern CPG 查询脚本，输出 `src/providers/joern.py` 约定的 findings JSON。它按
-"方法体内含 `new (std::nothrow)` 且没有任何 `==`/`!=`"判定候选缺失空指针守卫
-（CWE-476）。注意这是**结构性启发式**，不是数据流证明，已知会对安全封装产生假阳性、
-对含无关比较的函数产生假阴性。
+Joern CPG 查询脚本，输出 `src/providers/joern.py` 约定的 findings JSON。
+
+对每条 `$v = new (std::nothrow) T(...)` 判定：方法内存在 `$v->...` 解引用，且方法内
+**没有把 `$v` 本身与 null-ish 字面量比较**，才报为候选缺失空指针守卫（CWE-476）。
+这是 v2：相比 v1 的"方法级比较计数"，它消除了安全封装（只分配并 return）的假阳性，
+以及无关比较（如 `strcmp(...) != 0`）造成的假阴性。它仍是**结构性启发式**，不是数据流
+证明，也不识别自定义守卫函数或调用方的判空。
 
 ```sh
 joern-parse <file> -o cpg.bin
