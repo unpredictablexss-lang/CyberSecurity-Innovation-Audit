@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`（cutils、dsoftbus 两样本 possible_hit，liteos 全工具 miss）；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
+`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`（cutils、dsoftbus 两样本 possible_hit，liteos 全工具 miss）；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。2026-10-06 完成了 cutils 与 dsoftbus 全部 possible_hit 区域的逐行语义 review：dsoftbus 的 semgrep 5/6 命中为**语义命中**（正确捕获 new-nothrow→紧邻解引用 null-deref 模式），其余均为区域重叠（非语义命中）。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
 
 ---
 
@@ -146,8 +146,8 @@ validated_vulnerability: 0
 1. `communication_dsoftbus` 空指针样本的真实安全影响和可利用性；
 2. 攻击者是否能实际触发分配失败；
 3. OpenHarmony 系统服务入口是否可达；
-4. Semgrep / CodeQL / Cppcheck 在这 3 个 historical samples 上的真实命中情况；
-5. 外部工具（Semgrep / CodeQL / Cppcheck）在这 3 个 historical samples 上的真实命中情况仍未运行，root-cause 矩阵对应列为 `unknown`；
+4. ✅ Semgrep / Cppcheck 已在本机实测，root-cause 矩阵已从 unknown 填为实值（见第 6b 节）；
+5. ✅ 外部工具真实命中情况已于 2026-10-05 完成，2026-10-06 完成语义 review（见第 6d 节）；
 6. 样本量只有 3 条，不计算正式 Precision / Recall；
 7. `kernel_liteos_a` UAF（CVE-2025-24298 / CVE-2025-27128）仍在候选池，未做；
 8. validated vulnerability 仍为 0。
@@ -178,6 +178,35 @@ validated_vulnerability: 0
 - 本轮未运行 CodeQL / ClangSA（环境未装）；未做 PoC、TSan、动态触发、exploitability 判断；`validated_vulnerability = 0`。
 - 样本量仍只有 3，不计算正式 Precision / Recall；矩阵只报告 raw hit / miss / unknown。
 - 复现材料：归一化产物 12 份 JSON（`/root/bench-scan/normalized/`）与汇总报告 `outputs/reports/historical_benchmark_summary.{json,md}`（Git 忽略目录，不入库）；Semgrep 本地规则与桥接脚本存于 WSL 本机 `/root/bench-scan/`。
+
+---
+
+## 6b.5 2026-10-06 possible_hit 语义 review：区域重叠 vs 语义命中
+
+对 cutils（lifetime_uaf）与 dsoftbus（null_deref）全部 possible_hit 诊断做了逐行源码对照审查，判定"是触及了受影响函数区域"还是"确实表达了该样本的真实根因语义"。
+
+**cutils singleton UAF（CWE-416）**：根因是 `GetInstance()` 与 `DestroyInstance()` 之间 std::shared_ptr 的非原子读写竞态。
+
+- Semgrep 3 条（vuln）：`new-nothrow-unchecked` + `plain-new-expr` 触及 `GetInstance` 函数体，但命中的模式是"nothrow new 后未检查 null"（实际 safe：null shared_ptr 不会导致 UAF），另有 `DelayedRefSingleton` 模板类中的 `new` 完全无关。
+  - **判断：区域重叠，非语义命中**
+- Cppcheck 10 条：`identicalInnerCondition`（double-checked locking 条件相同）+ `unusedFunction`（`GetInstance`/`DestroyInstance`）。
+  - `identicalInnerCondition` 与并发有关联但不是 UAF 根因的表述；`unusedFunction` 是对的符号错的诊断类型。
+  - **判断：区域重叠，非语义命中**
+
+**dsoftbus null_deref（CWE-476）**：根因是 5 个受影响函数中 `new (std::nothrow)` 后不检查 null 就直接 `->` 解引用。
+
+- Semgrep 44 条命中（vuln 36）：5 个受影响函数中 `new-nothrow-unchecked` + `deref-after-arrow` 组合精准定位了分配后紧邻解引用的 null-deref 模式。逐一审查：
+  - `ClinetOnNodeOnlineStateChanged`（L77-78）：new→proxy.second→紧邻解引用 ✅
+  - `ClinetOnNodeBasicInfoChanged`（L88-89）：同上 ✅
+  - `ClientOnNodeStatusChanged`（L103-104）：同上 ✅
+  - `ClinetOnLocalNetworkIdChanged`（L114-115）：同上 ✅
+  - `ClinetNotifyDeviceNotTrusted`（L129-130）：同上 ✅
+  - `GetClientProxy`（L38）：安全封装（调用方检查 null），判定为误报 ❌
+  - **判断：5/6 命中（83％）为语义命中**——Semgrep 的通用规则正确捕获了该样本的 null_deref 模式
+- Cppcheck 10 条符号命中：全部为 `unusedFunction`，正确命中了 5 个 affected_symbols 的符号名，但与 null_deref 根因语义完全无关（诊断理由错误）。
+  - **判断：区域重叠，非语义命中**
+
+**结论**：dsoftbus 样本上 Semgrep 的 5/6 命中是**真实的语义命中**，证明了即使在通用规则层面，模式匹配工具对该类 null_deref 根因有效。其他 3 组 possible_hit 均为区域重叠——cutils 的 UAF 根因（并发 shared_ptr 竞态）本质上是生命周期/并发类漏洞，文本模式与轻量静态分析工具均只能触及代码区域，不能表达其真正根因语义。
 
 ---
 
