@@ -1,0 +1,38 @@
+# OpenHarmony-specific enhancement rule (C/C++).
+#
+# Root cause family: concurrent use-after-free from non-atomic std::shared_ptr
+# mutation on a singleton / state-holding member.
+#
+# Ground truth: commonlibrary_c_utils base/include/singleton.h
+#   DelayedSingleton<T>::DestroyInstance() used instance_.reset() while
+#   GetInstance() read instance_ without atomic access; under high parallelism
+#   this is a published UAF (Issue #560). Fix commit 9a3f2811 replaced the
+#   mutation with std::atomic_store(&instance_, ...) and the fast-path read
+#   with std::atomic_load(&instance_).
+#
+# Discriminative power (verified 2026-10-06 on the pinned vulnerable/fixed pair):
+#   vulnerable revision -> 1 hit (instance_.reset() inside DestroyInstance)
+#   fixed revision      -> 0 hits (reset() replaced by atomic_store)
+# This is a semantic hit on the lifetime_uaf root cause, not mere region overlap.
+#
+# Future extensions (designed but not yet firing on the current sample set):
+#   - double-checked-locking read of a shared_ptr without atomic_load
+#   - non-atomic `return instance_;` after an unsynchronized null check
+rules:
+  - id: oh-shared-ptr-nonatomic-reset-uaf
+    languages: [cpp]
+    message: >-
+      Non-atomic std::shared_ptr reset() on a state-holding member. If another
+      thread concurrently reads the same member (e.g. a singleton GetInstance()
+      returning it), the control block can be mutated while a reader still holds
+      it, producing a use-after-free race (CWE-416). Use std::atomic_store(&ptr,
+      ...) or guard every read and write with the same mutex.
+    severity: WARNING
+    metadata:
+      cwe:
+        - "CWE-416: Use After Free"
+      root_cause_group: lifetime_uaf
+      confidence: MEDIUM
+      references:
+        - https://gitcode.com/openharmony/commonlibrary_c_utils/issues/560
+    pattern: $PTR.reset()

@@ -2,7 +2,7 @@
 
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-05  
+> 更新日期：2026-10-06  
 > 当前分支：`feat/historical-vuln-benchmark`  
 > PR：#4 `feat: historical ground-truth benchmark and multi-scanner evidence adapters`  
 > 当前阶段：历史漏洞 benchmark、多扫描器证据归一化、AST scanner、Evidence/Case draft、root-cause 样本扩展。  
@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`（cutils、dsoftbus 两样本 possible_hit，liteos 全工具 miss）；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。2026-10-06 完成了 cutils 与 dsoftbus 全部 possible_hit 区域的逐行语义 review：dsoftbus 的 semgrep 5/6 命中为**语义命中**（正确捕获 new-nothrow→紧邻解引用 null-deref 模式），其余均为区域重叠（非语义命中）。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
+`feat/historical-vuln-benchmark` 已完成历史漏洞 benchmark 主线、AST scanner、text-vs-AST 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、`normalize-tool-output`、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools` 静态对比入口，以及 3 条 historical sample 的初步样本集。GitHub Actions 已验证 **93 tests passed**。2026-10-05 本机 WSL（Ubuntu 22.04.5）首次实测 Semgrep 1.179.0 + Cppcheck 2.7 在 3 个 historical samples 上的真实命中：root-cause 矩阵中 semgrep/cppcheck 列已从 `unknown` 填为 `possible_hit` / `miss`（cutils、dsoftbus 两样本 possible_hit，liteos 全工具 miss）；期间修复 cppcheck adapter 对 `column="0"` 误判的边界 bug。2026-10-06 完成了 cutils 与 dsoftbus 全部 possible_hit 区域的逐行语义 review：dsoftbus 的 semgrep 5/6 命中为**语义命中**（正确捕获 new-nothrow→紧邻解引用 null-deref 模式），其余均为区域重叠；并落地首条 OpenHarmony 专用增强规则 `rules/cpp/oh_shared_ptr_uaf.yaml`（从 cutils 修复提交反推 shared_ptr 非原子 reset 模式），矩阵新增 `semgrep_oh` 列，在 cutils vulnerable 版本语义命中 1 条、fixed 版本静默、其他样本零误报。当前 `validated_vulnerability = 0`，不得把 warning、candidate、benchmark miss/hit 或 crash 写成漏洞。
 
 ---
 
@@ -210,15 +210,52 @@ validated_vulnerability: 0
 
 ---
 
+## 6b.6 2026-10-06 OpenHarmony 专用增强规则：cutils UAF 语义命中
+
+针对 6b.5 review 暴露的盲区（通用工具无法表达 cutils 的并发 UAF 根因），落地了架构文档第 17 节创新点 A 的第一步：从历史修复反推 vulnerable pattern，编写 OpenHarmony 专用 Semgrep 规则。
+
+规则来源（ground truth 反推）：读取修复提交 `9a3f2811` 的 diff，确认官方修复把 `DelayedSingleton<T>::DestroyInstance()` 中的 `instance_.reset(); instance_ = nullptr;`（非原子写）替换为 `std::atomic_store(&instance_, ...)`，并把 `GetInstance()` 的非原子读改为 `std::atomic_load(&instance_)`。据此提取 vulnerable pattern = **对状态成员 std::shared_ptr 的非原子 `reset()`**。
+
+落库规则：`rules/cpp/oh_shared_ptr_uaf.yaml`，规则 id `oh-shared-ptr-nonatomic-reset-uaf`，pattern `$PTR.reset()`，CWE-416，root_cause_group=lifetime_uaf。
+
+区分度实测（固定 vulnerable/fixed pair，2026-10-06）：
+
+| 样本 | 版本 | semgrep_oh 命中 | 说明 |
+|---|---|---|---|
+| cutils singleton UAF | vulnerable | **1**（singleton.h:141 `instance_.reset()`） | 正是官方修复替换的那一行 |
+| cutils singleton UAF | fixed | 0 | 修复后 reset() 已被 atomic_store 取代 |
+| dsoftbus null_deref | vulnerable / fixed | 0 / 0 | 非目标根因，零误报 |
+| kernel_liteos_a GetGroups | vulnerable / fixed | 0 / 0 | 非目标根因，零误报 |
+
+矩阵新增 `semgrep_oh` 列（与通用 `semgrep` 列隔离，量化增强层的独立贡献）：
+
+| 样本（root_cause_group） | semgrep（通用） | semgrep_oh（OH 增强） |
+|---|---|---|
+| c_utils singleton UAF（lifetime_uaf） | possible_hit(6)，review 判定区域重叠 | **possible_hit(1)，语义命中** |
+| communication_dsoftbus null_deref（null_deref） | possible_hit(44)，5/6 语义命中 | miss(0) |
+| kernel_liteos_a GetGroups（concurrency_race） | miss(0) | miss(0) |
+
+要点与边界：
+
+- 这是**语义命中**：规则命中的 `reset()` 就是 UAF 根因的非原子写点，且只在 vulnerable 版本触发、fixed 版本静默、其他样本零误报——具备真实区分度，不是区域重叠。
+- 但边界必须诚实：pattern 工具的命中只证明"存在对 shared_ptr 的非原子 reset"，**不证明**该 reset 在真实 OpenHarmony 调用面上会被并发读者触发，也未做 TSan / 运行时验证；`possible_hit` 仍是区域+语义描述，不是 validated vulnerability。
+- 规则的 `$PTR.reset()` 是宽 pattern，在其他项目可能对"安全的单线程 reset"产生误报；本样本集内为零误报，但跨项目误报率未测。规则 metadata 的 confidence 标为 MEDIUM 而非 HIGH。
+- 当前只落地了 1 条 OH 专用规则（lifetime_uaf 家族），concurrency_race 与 null_deref 家族的专用规则尚未编写。
+
+---
+
 ## 6c. 下一步建议
 
 优先做：
 
 ```text
-1. 把 Semgrep 规则集从本地通用规则升级到 registry（c/cpp 官方规则），扩大模式覆盖面后重跑矩阵
-2. 在 WSL 安装并运行 Clang Static Analyzer（clang 已随 build-essential 可用），把 clang_sa 列从 unknown 填成实际 hit/miss
-3. 对照 dsoftbus / cutils 的 possible_hit 区域，逐个 review 诊断是否表达真实根因（是区域重叠还是语义命中）
-4. 再决定是否扩第 4 个样本，或进入 c_utils 纵向验证分支
+1. 补 1~2 个 pattern 友好的历史样本（buffer overflow / integer overflow / use-of-uninitialized / command injection），
+   扩充矩阵覆盖面，让"通用工具能命中什么类型"有更多证据行
+2. 为 concurrency_race（liteos 锁竞态）与 null_deref 家族补 OH 专用规则，验证增强层在多根因家族上的可复制性
+3. 把 Semgrep 规则集从本地通用规则升级到 registry（c/cpp 官方规则），扩大模式覆盖面后重跑矩阵
+4. 在 WSL 安装并运行 Clang Static Analyzer（clang 已随 build-essential 可用），把 clang_sa 列从 unknown 填成实际 hit/miss
+5. 再决定是否进入 c_utils 纵向验证分支（TSan 复现属 A 线，本分支不做）
+```
 ```
 
 暂时不要做：
