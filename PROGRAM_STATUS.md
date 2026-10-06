@@ -156,7 +156,7 @@ validated_vulnerability: 0
 8. validated vulnerability 仍为 0；
 9. `arkcompiler_ets_runtime` 越界写样本（CVE-2025-23420）的真实可利用性、比较器触发条件与受影响版本范围均未验证；本轮只做静态 replay，`runtime_replay_status = not_run`；
 10. ✅ 已确认（2026-10-06，见 6b.8）：`deref-after-arrow` 是纯噪音——在 `js_array.cpp` 上 144/144 条来自该规则、对已知漏洞行精确命中 0；本地通用规则已整体弃用，改为 0xdea raptor（MIT）+ 官方 C 公共规则 + OH 专用规则；
-11. CodeQL / Clang Static Analyzer 仍未运行，矩阵对应两列全部为 `unknown`；
+11. ✅ 已定性（2026-10-06，见 6b.9）：CodeQL（C++）已实测——工具可用，但在单文件样本粒度不可用（缺头文件→空 AST→0 结果）；`codeql` / `clang_sa` 两列应记 `not_applicable`（单文件粒度），要用须另立全仓库+真实构建工作流；ClangSA 本身仍未安装/未跑；
 12. OH 专用规则的跨项目误报率未测（当前 4 样本内为零误报，不代表其他项目）。
 
 ---
@@ -374,6 +374,44 @@ after —— OH 专用规则：
 
 ---
 
+## 6b.9 2026-10-06 CodeQL（C++）可行性实测：工具可用，但不适用于单文件样本粒度
+
+### 安装与"能跑起来"的部分
+
+- CodeQL CLI **2.27.1**（`codeql-linux64.zip`，416 MB，sha256 与官方 checksum 一致），解压于 `/root/bench-scan/codeql/codeql`；查询包 `codeql/cpp-queries@1.9.0` + 库 `codeql/cpp-all@12.1.1`。
+- 踩坑记录：用 `python3 -m zipfile` 解压**会丢失可执行位**，`extractor`/`java` 静默不可执行，症状是建库时报 `CodeQL detected code C/C++ but could not process any of it`。必须按 zip 的 `external_attr` 还原权限（本次还原 3052 个文件）。
+- 对照组（证明工具本身可用）：一个自包含 `main.cpp`（`strcpy` + `malloc`）→ `cpp-security-and-quality` 套件正确报出 `cpp/unbounded-write`（L7），提取质量 303 funcs / 12 calls / 38 stmts。
+
+### 样本实测（4 样本 × 2 修订，`--build-mode=none`，全套件 `cpp-security-and-quality.qls`）
+
+| 样本 | 建库 | 提取质量（funcs / calls / stmts） | 套件结果 |
+|---|---|---|---|
+| cutils `singleton.h` | **失败**（DB 无 `db-cpp` 数据集） | — | — |
+| liteos `process_syscall.c` | 成功 | 164 / 126 / 612 | **0** |
+| dsoftbus `bus_center_client_proxy.cpp` | 成功 | **3 / 0 / 4** | **0** |
+| ark `js_array.cpp` | 成功 | **2 / 0 / 0** | **0** |
+
+即：**vuln 版本上一无所获**，且提取出的 AST 近乎为空。
+
+### 根因（已验证，不是工具缺陷）
+
+- C/C++ 分析必须以**可编译的翻译单元**为单位。样本是"从仓库里抠出来的单文件"，其 8 个 `#include "..."`（`bus_center_client_proxy.h`、`lnn_log.h`、`softbus_def.h` …）在样本树中都不存在——**但用 `git ls-tree` 核实，它们全部存在于仓库树中**。头文件缺失 → 提取退化为空 AST。
+- `--build-mode=none` 不能替代构建：自包含文件能正常提取，一旦缺头文件就退化为空（对照实验可直接复现）。
+- 显式 `--command "g++ -fsyntax-only ..."` 同样失败（`fatal error: bus_center_client_proxy.h: No such file or directory`）。
+
+### 为什么没有继续走"全仓库 + 真实构建"
+
+本机目标仓库是 `--filter=blob:none` 的 **partial clone**，checkout 需按需从 GitHub 拉 blob。实测：全量 checkout 跑 16 分钟仍未完成（网络对 GitHub 抖动），**仅头文件**的 checkout 也用了 6m41s，且中途把工作树清空导致源文件丢失。OpenHarmony 的真实构建还需要 gn/ninja 与生成头文件，成本远超单文件 benchmark 的收益。
+
+### 结论与影响
+
+- **CodeQL（以及同样依赖编译的 Clang Static Analyzer）在单文件样本粒度上不可用**。原因不是工具不行，而是 benchmark 的**分析单元与工具要求不匹配**。
+- 矩阵中的 `codeql` / `clang_sa` 两列**不应继续记为"待补的 unknown"**；在单文件粒度下应标为 `not_applicable`，若要使用则必须另立"全仓库 + 真实构建"的独立工作流。
+- 本轮为**保留失败结果**（见第 7 节底线"实验必须保留失败结果"），不写入任何 hit/miss 结论。
+- 安装产物保留在 `/root/bench-scan/codeql/`（WSL 本机，未入库），后续如做全仓库分析可直接复用。
+
+---
+
 ## 6c. 下一步建议
 
 优先做：
@@ -382,7 +420,7 @@ after —— OH 专用规则：
 1. ✅ 已完成 2026-10-06：移除 deref-after-arrow 噪音规则，重跑 4 样本矩阵（ark 144→4），dsoftbus 旧 36 条被 OH 专用规则取代；详见 6b.8
 2. 为 oob_write 家族写 OH 专用规则（针对 ElementAccessor::Get/Set 缺失 GetElementsLength 检查），
    验证"专用规则能否补上通用工具的 0 精确命中"
-3. 在 WSL 安装并运行 Clang Static Analyzer，把 clang_sa 列从 unknown 填成实际 hit/miss
+3. ✅ 已完成 2026-10-06（CodeQL 侧）：工具装好且可用（对照样本命中 `cpp/unbounded-write`），但**单文件样本粒度下不适用**——缺头文件导致 AST 近乎为空、4 样本 0 结果；`codeql` / `clang_sa` 两列在单文件粒度应记 `not_applicable`，详见 6b.9。若要用，需另立"全仓库 + 真实构建"工作流（含 ClangSA）
 4. ✅ 已完成 2026-10-06：registry 可达性已复测；结论是免费 registry **没有** cpp 规则，改用 0xdea 镜像（MIT），差异见 6b.8
 5. ⏳ 部分完成：null_deref 家族已补 `oh_nothrow_null_deref`（vuln 5 / fixed 0）；concurrency_race 家族仍待补
 6. 为 concurrency_race 家族补 OH 专用规则（liteos GetGroups 锁作用域竞争），验证 raptor/官方 C 规则确无根因命中
