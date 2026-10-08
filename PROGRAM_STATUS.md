@@ -2,7 +2,7 @@
 
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-06  
+> 更新日期：2026-10-08
 > 当前分支：`feat/historical-vuln-benchmark`  
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`  
 > 当前阶段：PR #4 收尾检查；历史样本 benchmark、root-cause hit matrix、benchmark report、多扫描器证据归一化已落地。  
@@ -15,6 +15,10 @@
 `feat/historical-vuln-benchmark` 已从“搭框架”推进到“可收尾”：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
 
 最近一次代码 CI 已通过：GitHub Actions `Ran 105 tests ... OK`。当前 `validated_vulnerability = 0`。
+
+2026-10-08 本地 WSL Python 3.10 回归 **129/129 通过**（113 个既有测试 + 16 个新增测试）；
+该结果不是最新远端 CI。新增架构/规则审查与 `AGENTS.md` 开发约束，并接通保存结果到
+按样本、修复前后版本隔离的汇总报告。未提供结果时所有格子为 `unknown`，不再预设 miss。
 
 ---
 
@@ -108,7 +112,7 @@ python -m src.cli benchmark-report \
 - CodeQL 在单文件、缺头文件的样本粒度下不适用，应记为 `not_applicable`，如要使用需另立“全仓库 + 真实构建”工作流；
 - Clang Static Analyzer 已在本机实测（clang 14，`baseline-clang`）：4 样本 × 2 修订共 8 个文件**全部 `fatal error: '<header>' file not found`、0 诊断**，与 CodeQL 同一原因（无法形成翻译单元）→ 在单文件粒度同样记 `not_applicable`，不是 `miss`；
 - `root_cause_matrix` 原先只能产出 `unknown` / `possible_hit` / `miss`，文档里定义的 `not_applicable` 无法表达；已补 `NOT_APPLICABLE` 标记，使"没跑（unknown）"与"跑了但不适用（not_applicable）"可区分；
-- Joern c2cpg 在单文件粒度表现为正结果，`joern` adapter / matrix 列**已落地**：`src/providers/joern.py`（provider `joern`，别名 `joern-cpg`，CLI `normalize-tool-output --provider joern`）+ `scripts/joern_nothrow_guard.sc`；查询按分配变量做定向判空检查后，dsoftbus 样本为 vuln `possible_hit(5)` / fixed `miss(0)`，零误报零漏报（其余 3 样本均为 `miss`）；
+- Joern c2cpg 在单文件粒度表现为正结果，`joern` adapter / matrix 列**已落地**：`src/providers/joern.py`（provider `joern`，别名 `joern-cpg`，CLI `normalize-tool-output --provider joern`）+ `scripts/joern_nothrow_guard.sc`；历史本地实验记录 dsoftbus 为 vuln `possible_hit(5)` / fixed `miss(0)`（其余 3 样本均为 `miss`）。这只说明历史样本上的结构区分效果，不代表零误报/漏报；2026-10-08 审查确认其未分析 guard 支配关系，将脚本证据类型修正为 `syntax`，本轮未重跑 Joern。
 - Opengrep 与 Semgrep 在同一规则集上结果一致，可作为引擎平替候选，但不解决 C++ 规则缺口。
 
 ---
@@ -165,3 +169,35 @@ exploitability 自动判断
 - 实验必须保留失败结果
 - 报告中的每一个结论必须能追溯到 Evidence
 - 当前比较的是 root cause / analysis-unit coverage，不是 warning 数量
+
+## 10. 2026-10-08 架构审查与报告链路修复
+
+架构审查结论：保留 L0-L8 漏斗与 Candidate/Evidence 归一化边界。审查记录见
+`docs/reviews/architecture_rules_review_2026-10-08.md`；后续开发约束和每次推送前
+汇报要求写入根目录 `AGENTS.md`。
+
+已完成：
+
+- `benchmark-report --results <manifest>` 消费保存的归一化工具报告或已有 historical
+  text replay；未指定结果时不执行工具，也不制造 miss。
+- 每个结果绑定 sample_id、vulnerable/fixed、精确 commit 和 tool；拒绝错提交、
+  错 target_id、重复实验和越出声明范围的诊断。缺失、失败、范围不完整或符号未解析
+  结果保持 unknown；not_applicable 必须关联真实 failed/blocked 报告和明确原因。
+- 汇总 JSON/Markdown 记录修复前后独立行、原始报告路径/SHA-256、run ID、
+  工具版本、扫描范围、执行状态和工具局限；Joern 保留 symbol；样本数不再写死为 3。
+- OH 规则仅修正候选表述和局限：reset 规则不验证 shared_ptr 类型、并发或锁，
+  confidence 降为 LOW；nothrow/Joern 不证明 guard 支配关系。本轮未修改匹配模式。
+- WSL 实跑完整测试 129/129 通过；git diff --check 通过。
+- 实际导入本机保存的 `outputs/reports/bench_ark.json`，同时生成修复前后 text
+  summary；其他未提供的实验保持 unknown。报告保存于 Git 忽略目录
+  `outputs/reports/historical_benchmark_review.{json,md}`。另运行无 results 的 CLI
+  生成 `historical_metadata_review.{json,md}`，验证无实验时全部 unknown。
+
+仍未完成/边界：
+
+- 本轮没有重新运行外部工具，也没有将文档中的历史结果伪造成输入数据。
+- normalized 诊断缺失 symbol 时尚未自动从对应 commit 的 AST 映射符号；此时保留
+  unknown，后续需基于固定源码快照补充映射，不能按行号猜测根因命中。
+- AST 解析失败/部分解析统计仍需后续专门接入，本轮不扩大报告修复范围。
+- 四个历史样本 runtime 仍为 not_run；validated vulnerability 仍为 0；PR 保持 draft。
+- 远端 CI 需要在本轮推送后核验，不把本地测试结果当作远端成功。

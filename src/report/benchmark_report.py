@@ -8,14 +8,15 @@ is always 0 here.
 """
 
 from collections import Counter
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from src.benchmark.historical import HistoricalSample
 from src.benchmark.root_cause_matrix import (
     RootCauseMatrix,
-    ToolCandidate,
+    SampleToolRun,
     build_root_cause_hit_matrix,
+    build_revision_hit_matrix,
 )
 
 
@@ -39,17 +40,29 @@ class BenchmarkSummaryReport:
             "validated_vulnerability": self.validated_vulnerability,
             "interpretation": (
                 "Benchmark summary only. No Precision/Recall is computed because the "
-                "sample set (3) is too small and lacks negative ground truth. "
-                "possible_hit/miss/unknown describe tool coverage, not vulnerability truth."
+                f"sample set ({self.sample_count}) lacks adequate labeled controls. "
+                "possible_hit/miss/unknown/not_applicable describe static region coverage, "
+                "not vulnerability truth."
             ),
         }
 
 
 def build_benchmark_report(
     samples: List[HistoricalSample],
-    tool_candidates: Dict[str, Optional[List[ToolCandidate]]],
+    tool_candidates: Optional[Dict[str, object]] = None,
+    *,
+    runs: Optional[List[SampleToolRun]] = None,
+    tools: Optional[List[str]] = None,
 ) -> BenchmarkSummaryReport:
-    matrix = build_root_cause_hit_matrix(samples, tool_candidates)
+    if runs is not None and tool_candidates is not None:
+        raise ValueError("use either saved runs or legacy candidates, not both")
+    if runs is not None:
+        matrix = build_revision_hit_matrix(samples, runs, tools=tools)
+    elif tool_candidates is not None:
+        # Compatibility for callers comparing one explicitly supplied revision.
+        matrix = build_root_cause_hit_matrix(samples, tool_candidates)
+    else:
+        matrix = build_revision_hit_matrix(samples, [], tools=tools)
     groups = Counter(sample.root_cause_group for sample in samples)
     cwes = Counter(sample.weakness for sample in samples)
     runtime = {sample.sample_id: sample.runtime_replay_status for sample in samples}
@@ -63,9 +76,9 @@ def build_benchmark_report(
     )
 
 
-def _own_scanner_status(matrix: RootCauseMatrix, tool: str) -> Dict[str, str]:
+def _own_scanner_status(matrix: RootCauseMatrix, tool: str) -> dict:
     return {
-        row.sample_id: row.status
+        (row.sample_id, row.revision): row.status
         for row in matrix.rows
         if row.tool == tool
     }
@@ -73,7 +86,6 @@ def _own_scanner_status(matrix: RootCauseMatrix, tool: str) -> Dict[str, str]:
 
 def render_markdown(report: BenchmarkSummaryReport) -> str:
     matrix = report.root_cause_matrix
-    tools = sorted({row.tool for row in matrix.rows})
     own_text = _own_scanner_status(matrix, "own_text")
     own_ast = _own_scanner_status(matrix, "own_ast")
 
@@ -98,20 +110,35 @@ def render_markdown(report: BenchmarkSummaryReport) -> str:
     lines.extend(["", "### runtime_validation by sample", ""])
     for sample_id, status in report.runtime_validation_by_sample.items():
         lines.append(f"- {sample_id}: {status}")
-    lines.extend(["", "## Own scanner hit status", "", "| sample_id | own_text | own_ast |", "|---|---|---|"])
-    for sample_id in sorted(own_text):
-        lines.append(f"| {sample_id} | {own_text.get(sample_id, 'unknown')} | {own_ast.get(sample_id, 'unknown')} |")
+    lines.extend(["", "## Own scanner hit status", "", "| sample_id | revision | own_text | own_ast |", "|---|---|---|---|"])
+    for key in sorted({(row.sample_id, row.revision) for row in matrix.rows}):
+        sample_id, revision = key
+        lines.append(f"| {sample_id} | {revision} | {own_text.get(key, 'unknown')} | {own_ast.get(key, 'unknown')} |")
     lines.extend(["", "## Root-cause hit matrix", ""])
     lines.append(_render_matrix_markdown(matrix))
+    lines.extend(["", "## Saved run provenance and limitations", ""])
+    for row in matrix.rows:
+        if row.source_report:
+            lines.extend([
+                f"- {row.sample_id} / {row.revision} / {row.tool}: {row.status}",
+                f"  - Commit: `{row.commit}`; run ID: `{row.run_id}`",
+                f"  - Source: `{row.source_report}`; SHA-256: `{row.source_sha256}`",
+                f"  - Version: `{row.tool_version}`; execution: `{row.run_status}`; "
+                f"scope: {row.scope_files} files / {row.scope_loc} LOC",
+            ])
+            for limitation in row.limitations:
+                lines.append(f"  - Limitation: {limitation}")
+        if row.reason:
+            lines.append(f"- {row.sample_id} / {row.revision} / {row.tool}: {row.reason}")
     lines.extend(
         [
             "",
             "## Why no Precision/Recall",
             "",
-            "- Only 3 samples; no adequate labeled negative ground-truth set.",
+            f"- {report.sample_count} samples; no adequate labeled negative ground-truth set.",
             "- possible_hit is region overlap, not a confirmed true positive.",
             "- miss on one tool is a blind-spot record, not a measured false negative.",
-            "- Reporting raw hit / miss / unknown counts only.",
+            "- Reporting possible_hit / miss / unknown / not_applicable only.",
             "",
             "## Validated vulnerability",
             "",

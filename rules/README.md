@@ -17,6 +17,11 @@ rules/cpp/
     raptor/                   # 0xdea/semgrep-rules，MIT，49 条 c/cpp 规则
 ```
 
+两条 OH 规则目前都是待人工审查的结构候选：shared_ptr 规则实际匹配所有
+`.reset()`，未判断接收者类型、并发访问或锁；nothrow 规则未证明判空分支终止
+失败路径或支配解引用。历史修复前后结果仅说明对应样本上的区分效果。
+限制与后续开发约束见 `docs/reviews/architecture_rules_review_2026-10-08.md`。
+
 ## 规则来源策略
 
 **不再使用自制的“本地通用规则”**（旧的 `semgrep_rules.yaml`）。原因是其中

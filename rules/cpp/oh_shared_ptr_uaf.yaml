@@ -13,7 +13,10 @@
 # Discriminative power (verified 2026-10-06 on the pinned vulnerable/fixed pair):
 #   vulnerable revision -> 1 hit (instance_.reset() inside DestroyInstance)
 #   fixed revision      -> 0 hits (reset() replaced by atomic_store)
-# This is a semantic hit on the lifetime_uaf root cause, not mere region overlap.
+# This distinguishes the historical edit; it is not general UAF detection.
+# The pattern below matches ANY reset() receiver, including unique_ptr and safe
+# synchronized/local objects. It does not establish shared_ptr type, concurrent
+# access, or absence of locking. Always review those obligations separately.
 #
 # Future extensions (designed but not yet firing on the current sample set):
 #   - double-checked-locking read of a shared_ptr without atomic_load
@@ -22,17 +25,16 @@ rules:
   - id: oh-shared-ptr-nonatomic-reset-uaf
     languages: [cpp]
     message: >-
-      Non-atomic std::shared_ptr reset() on a state-holding member. If another
-      thread concurrently reads the same member (e.g. a singleton GetInstance()
-      returning it), the control block can be mutated while a reader still holds
-      it, producing a use-after-free race (CWE-416). Use std::atomic_store(&ptr,
-      ...) or guard every read and write with the same mutex.
+      reset() call matching a historical shared_ptr race pattern. Receiver type,
+      concurrent access and synchronization are unverified; this may be a safe
+      local or unique_ptr reset. Review the same object's readers and writers
+      before assigning CWE-416 or recommending atomic access/shared locking.
     severity: WARNING
     metadata:
       cwe:
         - "CWE-416: Use After Free"
       root_cause_group: lifetime_uaf
-      confidence: MEDIUM
+      confidence: LOW
       references:
         - https://gitcode.com/openharmony/commonlibrary_c_utils/issues/560
     pattern: $PTR.reset()

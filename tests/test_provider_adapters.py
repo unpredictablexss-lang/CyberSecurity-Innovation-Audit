@@ -138,6 +138,7 @@ class ProviderAdapterTests(unittest.TestCase):
                     "file": "src/bus_center_client_proxy.cpp",
                     "line": 70,
                     "column": 58,
+                    "symbol": "ClientOnNodeStatusChanged",
                     "message": "nothrow allocation dereferenced without a null guard",
                     "severity": "warning",
                     "evidence_type": "control_flow",
@@ -156,6 +157,7 @@ class ProviderAdapterTests(unittest.TestCase):
         self.assertEqual(diagnostic.file, "src/bus_center_client_proxy.cpp")
         self.assertEqual(diagnostic.line, 70)
         self.assertEqual(diagnostic.column, 58)
+        self.assertEqual(diagnostic.symbol, "ClientOnNodeStatusChanged")
         self.assertEqual(diagnostic.rule_id, "oh-nothrow-alloc-unchecked-deref")
         self.assertEqual(diagnostic.candidate_cwe, "CWE-476")
 

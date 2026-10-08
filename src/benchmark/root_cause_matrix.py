@@ -51,6 +51,39 @@ class RootCauseHit:
     tool: str
     status: str
     evidence_count: int
+    revision: str = "vulnerable"
+    commit: Optional[str] = None
+    run_id: Optional[str] = None
+    source_report: Optional[str] = None
+    source_sha256: Optional[str] = None
+    reason: str = ""
+    tool_version: Optional[str] = None
+    scope_files: Optional[int] = None
+    scope_loc: Optional[int] = None
+    analyzed_files: tuple = ()
+    run_status: Optional[str] = None
+    limitations: tuple = ()
+
+
+@dataclass(frozen=True)
+class SampleToolRun:
+    """Saved evidence bound to one sample, tool and exact revision."""
+
+    sample_id: str
+    revision: str
+    tool: str
+    commit: str
+    candidates: object
+    run_id: str
+    source_report: str
+    source_sha256: str
+    reason: str = ""
+    tool_version: str = "unknown"
+    scope_files: Optional[int] = None
+    scope_loc: Optional[int] = None
+    analyzed_files: tuple = ()
+    run_status: str = "completed"
+    limitations: tuple = ()
 
 
 @dataclass
@@ -63,8 +96,9 @@ class RootCauseMatrix:
             "interpretation": (
                 "Root-cause hit matrix only. possible_hit means a tool touched the "
                 "affected file/symbol region; it is not a true positive, and miss is "
-                "not a false negative. unknown means the tool was not run on that "
-                "sample; not_applicable means the tool was run but cannot apply to "
+                "not a false negative. unknown means missing/failed analysis, incomplete "
+                "scope or unresolved symbol identity; not_applicable means the tool "
+                "was run but cannot apply to "
                 "this analysis unit or weakness type (e.g. a build-dependent analyser "
                 "handed a single file whose headers are absent). No Precision/Recall "
                 "is computed."
@@ -106,7 +140,11 @@ def classify_tool_hit(
                 "tool candidates must be a list, None (not run) or NOT_APPLICABLE"
             )
         hits = [c for c in candidates if _hit_affected(sample, c)]
-        status = "possible_hit" if hits else "miss"
+        unresolved = any(
+            c.file in sample.affected_files and sample.affected_symbols
+            and c.symbol is None for c in candidates
+        )
+        status = "possible_hit" if hits else "unknown" if unresolved else "miss"
         count = len(hits)
     return RootCauseHit(
         sample_id=sample.sample_id,
@@ -116,6 +154,57 @@ def classify_tool_hit(
         status=status,
         evidence_count=count,
     )
+
+
+def build_revision_hit_matrix(
+    samples: List[HistoricalSample],
+    runs: List[SampleToolRun],
+    tools: Optional[List[str]] = None,
+) -> RootCauseMatrix:
+    """Isolate samples and revisions; missing or failed runs remain unknown."""
+    by_sample = {sample.sample_id: sample for sample in samples}
+    if len(by_sample) != len(samples):
+        raise ValueError("duplicate historical sample_id")
+    indexed = {}
+    for run in runs:
+        if run.sample_id not in by_sample:
+            raise ValueError(f"unknown sample_id: {run.sample_id}")
+        if run.revision not in {"vulnerable", "fixed"}:
+            raise ValueError(f"unsupported revision: {run.revision}")
+        sample = by_sample[run.sample_id]
+        expected = getattr(sample, f"{run.revision}_commit")
+        if run.commit != expected:
+            raise ValueError(f"commit mismatch for {run.sample_id}/{run.revision}")
+        key = (run.sample_id, run.revision, run.tool)
+        if key in indexed:
+            raise ValueError(f"duplicate benchmark run: {key}")
+        indexed[key] = run
+    tool_names = sorted(set(tools or []) | {run.tool for run in runs})
+    rows = []
+    for sample in samples:
+        for revision in ("vulnerable", "fixed"):
+            for tool in tool_names:
+                run = indexed.get((sample.sample_id, revision, tool))
+                hit = classify_tool_hit(sample, tool, run.candidates if run else None)
+                reason = run.reason if run else "No saved run supplied for this revision."
+                if run and hit.status == "unknown" and not reason:
+                    reason = "Candidate symbol is unresolved; region overlap is unknown."
+                rows.append(RootCauseHit(
+                    sample_id=hit.sample_id, root_cause_group=hit.root_cause_group,
+                    weakness=hit.weakness, tool=tool, status=hit.status,
+                    evidence_count=hit.evidence_count, revision=revision,
+                    commit=getattr(sample, f"{revision}_commit"),
+                    run_id=run.run_id if run else None,
+                    source_report=run.source_report if run else None,
+                    source_sha256=run.source_sha256 if run else None, reason=reason,
+                    tool_version=run.tool_version if run else None,
+                    scope_files=run.scope_files if run else None,
+                    scope_loc=run.scope_loc if run else None,
+                    analyzed_files=run.analyzed_files if run else (),
+                    run_status=run.run_status if run else None,
+                    limitations=run.limitations if run else (),
+                ))
+    return RootCauseMatrix(rows=rows)
 
 
 def build_root_cause_hit_matrix(
@@ -137,20 +226,22 @@ def build_root_cause_hit_matrix(
 
 
 def render_markdown(result: RootCauseMatrix) -> str:
-    samples = sorted({row.sample_id for row in result.rows})
+    sample_revisions = sorted({(row.sample_id, row.revision) for row in result.rows})
     tools = sorted({row.tool for row in result.rows})
     lines = [
         "# Root-Cause Hit Matrix",
         "",
         "> possible_hit = tool touched the affected file/symbol region (not a TP); "
-        "miss = tool ran but did not touch it (not a FN); unknown = tool not run.",
+        "miss = completed analysis with no region overlap (not a FN); "
+        "unknown = missing/failed run or unresolved location; "
+        "not_applicable = evidenced incompatible analysis unit.",
         "",
-        "| sample_id | root_cause_group | weakness | " + " | ".join(tools) + " |",
-        "|---|---|---|" + "---|" * len(tools),
+        "| sample_id | revision | root_cause_group | weakness | " + " | ".join(tools) + " |",
+        "|---|---|---|---|" + "---|" * len(tools),
     ]
-    by_sample = {sample_id: {row.tool: row for row in result.rows if row.sample_id == sample_id} for sample_id in samples}
-    for sample_id in samples:
-        meta = by_sample[sample_id]
+    for sample_id, revision in sample_revisions:
+        meta = {row.tool: row for row in result.rows
+                if row.sample_id == sample_id and row.revision == revision}
         first = next(iter(meta.values()))
         group = first.root_cause_group
         weakness = first.weakness
@@ -163,13 +254,13 @@ def render_markdown(result: RootCauseMatrix) -> str:
                 cells.append(f"possible_hit({row.evidence_count})")
             else:
                 cells.append(row.status)
-        lines.append(f"| {sample_id} | {group} | {weakness} | " + " | ".join(cells) + " |")
+        lines.append(f"| {sample_id} | {revision} | {group} | {weakness} | " + " | ".join(cells) + " |")
     lines.extend(["", "## Interpretation limits", ""])
     for note in [
         "No TP/FP/FN is assigned.",
-        "No Precision/Recall is computed from 3 samples.",
+        "No Precision/Recall is computed from this limited corpus.",
         "possible_hit is only region overlap, not a vulnerability vote.",
-        "unknown means the tool has not actually been run on that sample yet.",
+        "Unknown also includes failed runs and candidates lacking symbol identity.",
     ]:
         lines.append(f"- {note}")
     lines.append("")

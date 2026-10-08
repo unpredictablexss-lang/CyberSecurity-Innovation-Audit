@@ -21,12 +21,14 @@
 #   vulnerable revision -> 5 hits (lines 70, 81, 96, 107, 122)
 #   fixed revision      -> 0 hits (each site now guarded by a null check)
 #   cutils / liteos / arkcompiler samples (vuln + fixed) -> 0 false positives
-# This is a semantic hit on the null_deref root cause and is the OH-specific
+# This is a structural candidate for the null_deref root cause and is the OH-specific
 # replacement for the removed generic `new-nothrow-unchecked` / `deref-after-arrow`
 # local rules.
 #
 # Boundary: the hit proves that a nothrow allocation result is dereferenced
-# without a visible guard. It does NOT prove that allocation failure is
+# without a recognized syntactic guard. The excluded if may mention the pointer
+# without checking null or stopping the failing path. No CFG dominance,
+# reassignment or alias analysis is performed. It does NOT prove allocation failure is
 # attacker-reachable or that the resulting null deref is exploitable.
 #
 # Future extensions (not yet implemented):
@@ -37,7 +39,8 @@ rules:
     languages: [cpp]
     message: >-
       `new (std::nothrow)` result `$PTR` is dereferenced through `$PTR->$M(...)`
-      without an intervening null check. A failing nothrow allocation yields
+      without a recognized syntactic guard. Guard correctness and path coverage
+      are unverified. A failing nothrow allocation yields
       nullptr, so the dereference is a candidate NULL pointer dereference
       (CWE-476). Guard with `if ($PTR == nullptr) { ... }` before use.
     severity: WARNING

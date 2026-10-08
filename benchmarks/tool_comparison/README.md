@@ -132,9 +132,63 @@ Generate the historical benchmark summary:
 ```bash
 python -m src.cli benchmark-report \
   --samples-dir benchmarks/historical/ \
+  --results outputs/reports/summary_inputs.json \
   --json-out outputs/reports/historical_benchmark_summary.json \
   --md-out outputs/reports/historical_benchmark_summary.md
 ```
+
+`--results` reads saved evidence; it does not run scanners. Without it, every
+sample/revision/tool is `unknown`, including the own scanners. The matrix has
+separate `vulnerable` and `fixed` rows and includes Joern and OH-specific rules.
+Never populate missing runs with empty candidate lists to manufacture a `miss`.
+
+Create a local input manifest (paths relative to the manifest):
+
+```json
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "sample_id": "communication_dsoftbus_null_deref_001",
+      "revision": "vulnerable",
+      "report": "dsoftbus.joern.vulnerable.normalized.json",
+      "analyzed_files": ["core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"]
+    },
+    {
+      "sample_id": "communication_dsoftbus_null_deref_001",
+      "revision": "fixed",
+      "report": "dsoftbus.clang.fixed.normalized.json",
+      "not_applicable_reason": "Missing headers prevented forming a translation unit."
+    }
+  ]
+}
+```
+
+Normalized reports must be real `ToolRunResult` artifacts with `target_id` equal
+to `sample_id` and `commit` exactly matching the selected sample revision.
+Completed runs declare all `analyzed_files` (repository-relative paths); their
+count must match `scope_files`. Scope that omits an affected file is `unknown`.
+Diagnostics should carry a `symbol` when the provider can establish it (Joern
+now preserves query symbols). An affected-file diagnostic without a resolved
+symbol is `unknown`; it is never guessed into a hit or silently counted as a
+miss. Normalize absolute tool paths to repository-relative paths upstream.
+
+`not_applicable_reason` is allowed only for a saved failed/blocked run; the
+artifact is retained as evidence of the incompatibility. A general failure uses
+`reason` and stays `unknown`. A successful empty report is `miss` only for its
+own sample/revision. Duplicate runs for the same sample/revision/tool are
+rejected; choose a run explicitly rather than mixing experiments. Different
+rule sets should use different tool identities (e.g. `semgrep_oh`).
+
+To import the existing own-text historical replay, reference its saved report
+with `"format": "historical"`. One entry selects one revision; add a second
+entry for the fixed revision. The embedded sample/commits and saved candidate
+count are checked. AST counters do not count as an AST scanner run.
+
+Output records artifact path, SHA-256, run ID, commit, version, scope, execution
+status and tool limitations. An optional `sha256` in an input entry pins the
+expected artifact bytes. The summary remains static region coverage, not a
+vulnerability report or a claim that the fixed revision is safe.
 
 `compare-tools` rejects reports whose target ID, commit, file count, or LOC scope
 do not match. It reports per-tool diagnostic/evidence counts and exact file/line

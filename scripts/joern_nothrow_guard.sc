@@ -24,6 +24,9 @@
 //   - A guard written in a form other than an equality comparison of the
 //     variable (e.g. a custom `is_valid()` helper) is not recognised.
 //   - A hit is a candidate for review, never a vulnerability.
+//   - A comparison anywhere in the method suppresses a candidate, even if it
+//     occurs after the dereference or does not guard it. Identifier substring
+//     matching can also confuse different variables. No dominance is checked.
 
 import java.io.PrintWriter
 
@@ -114,7 +117,7 @@ cpg.method.l.foreach { method =>
             + "\"message\": \"nothrow allocation '" + esc(variable) + "' in method '"
             + esc(method.name) + "' is dereferenced without a null check on that variable\", "
             + "\"severity\": \"warning\", "
-            + "\"evidence_type\": \"control_flow\", "
+            + "\"evidence_type\": \"syntax\", "
             + "\"cwe\": [\"CWE-476\"]}"
         )
       }

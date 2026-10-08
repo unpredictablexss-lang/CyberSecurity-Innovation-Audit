@@ -99,6 +99,7 @@ class JoernAdapter(ToolAdapter):
                     severity=str(item.get("severity", "unassessed")).lower(),
                     message=str(item.get("message", "")),
                     candidate_cwe=cwe,
+                    symbol=item.get("symbol"),
                 )
             )
 

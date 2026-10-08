@@ -14,6 +14,7 @@ from src.benchmark.tool_result import write_reports as write_tool_reports
 from src.providers.base import AdapterContext
 from src.providers.registry import normalize_tool_output
 from src.benchmark.historical import load_sample
+from src.benchmark.report_inputs import DEFAULT_TOOLS, load_report_runs
 from src.report.benchmark_report import build_benchmark_report, write_reports as write_benchmark_reports
 from src.validation.cjson_allocator import (
     PINNED_CJSON_COMMIT,
@@ -303,6 +304,10 @@ def main() -> None:
         help="Directory of historical sample JSON manifests",
     )
     benchmark_report_parser.add_argument(
+        "--results",
+        help="Manifest binding saved tool reports to sample and vulnerable/fixed revision",
+    )
+    benchmark_report_parser.add_argument(
         "--json-out",
         default="outputs/reports/historical_benchmark_summary.json",
         help="Output summary JSON path",
@@ -536,18 +541,9 @@ def main() -> None:
 
         try:
             samples = [load_sample(path) for path in sample_paths]
-            # own scanners miss the current non-dangerous-API samples; external
-            # tools have not been run yet, so they stay unknown.
-            tool_candidates = {
-                "own_text": [],
-                "own_ast": [],
-                "semgrep": None,
-                "codeql": None,
-                "clang_sa": None,
-                "cppcheck": None,
-            }
-            report = build_benchmark_report(samples, tool_candidates)
-        except (ValueError, json.JSONDecodeError) as error:
+            runs = load_report_runs(Path(args.results).resolve(), samples) if args.results else []
+            report = build_benchmark_report(samples, runs=runs, tools=DEFAULT_TOOLS)
+        except (OSError, ValueError, json.JSONDecodeError) as error:
             benchmark_report_parser.error(str(error))
 
         write_benchmark_reports(report, json_output, md_output)

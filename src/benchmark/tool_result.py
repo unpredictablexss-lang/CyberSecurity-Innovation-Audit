@@ -38,6 +38,7 @@ class ToolDiagnostic:
     message: str
     candidate_cwe: Optional[str] = None
     confidence: str = "unassessed"
+    symbol: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.diagnostic_id.strip():
@@ -50,6 +51,8 @@ class ToolDiagnostic:
             raise ValueError("line must be >= 1 when provided")
         if self.column is not None and self.column < 1:
             raise ValueError("column must be >= 1 when provided")
+        if self.symbol is not None and (not isinstance(self.symbol, str) or not self.symbol.strip()):
+            raise ValueError("symbol must be non-empty when provided")
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
