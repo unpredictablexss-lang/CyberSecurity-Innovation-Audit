@@ -168,8 +168,9 @@ class ProviderAdapterTests(unittest.TestCase):
 
         self.assertEqual(result.tool_version, "4.0.649")
         self.assertEqual(result.diagnostic_count, 1)
-        # A query that declares no evidence type falls back to dataflow.
-        self.assertEqual(result.diagnostics[0].evidence_type, "dataflow")
+        # A query that declares no evidence type must not have a mechanism
+        # invented for it.
+        self.assertEqual(result.diagnostics[0].evidence_type, "unknown")
 
     def test_joern_adapter_models_missing_coordinates_as_unknown(self) -> None:
         payload = {

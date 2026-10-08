@@ -17,10 +17,11 @@ from src.benchmark.tool_result import ToolDiagnostic, ToolRunResult
 from src.providers.base import AdapterContext, ToolAdapter, first_cwe
 
 
-# CPG queries reason over control/data flow rather than raw text, so a Joern
-# finding defaults to the dataflow evidence type unless the query says
-# otherwise.
-_DEFAULT_EVIDENCE_TYPE = "dataflow"
+# Joern queries are project-authored and can be structural, control-flow or
+# dataflow. When a query does not declare its evidence type the adapter records
+# "unknown" rather than guessing a mechanism (matches the schema's
+# confidence="unassessed" default).
+_DEFAULT_EVIDENCE_TYPE = "unknown"
 
 
 def _extract_findings(payload: Any) -> List[Any]:
