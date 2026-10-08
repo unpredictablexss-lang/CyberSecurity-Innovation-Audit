@@ -12,7 +12,7 @@
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已从“搭框架”推进到“可收尾”：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
+`feat/historical-vuln-benchmark` 已从“搭框架”推进到“可收尾”：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
 
 最近一次代码 CI 已通过：GitHub Actions `Ran 105 tests ... OK`。当前 `validated_vulnerability = 0`。
 
@@ -57,7 +57,7 @@
 ### 3.2 多工具结果归一化
 
 - 统一数据契约：`src/benchmark/tool_result.py`
-- provider adapters：`src/providers/semgrep.py`、`codeql.py`、`clang_sa.py`、`cppcheck.py`
+- provider adapters：`src/providers/semgrep.py`、`codeql.py`、`clang_sa.py`、`cppcheck.py`、`joern.py`
 - 统一入口：`normalize_tool_output(provider, payload, AdapterContext)`
 - CLI：`normalize-tool-output`
 
@@ -106,7 +106,7 @@ python -m src.cli benchmark-report \
 - `deref-after-arrow` 这类本地通用规则噪音过高，已弃用；
 - 免费 Semgrep registry 对 C++ 基本无可用公共覆盖，当前规则层依赖 vendor/raptor + OH 专用规则；
 - CodeQL 在单文件、缺头文件的样本粒度下不适用，应记为 `not_applicable`，如要使用需另立“全仓库 + 真实构建”工作流；
-- Joern c2cpg 在单文件粒度表现为正结果，建议下一阶段新增 `joern` adapter / matrix 列；
+- Joern c2cpg 在单文件粒度表现为正结果，`joern` adapter / matrix 列**已落地**：`src/providers/joern.py`（provider `joern`，别名 `joern-cpg`，CLI `normalize-tool-output --provider joern`）+ `scripts/joern_nothrow_guard.sc`；查询按分配变量做定向判空检查后，dsoftbus 样本为 vuln `possible_hit(5)` / fixed `miss(0)`，零误报零漏报（其余 3 样本均为 `miss`）；
 - Opengrep 与 Semgrep 在同一规则集上结果一致，可作为引擎平替候选，但不解决 C++ 规则缺口。
 
 ---
@@ -118,7 +118,7 @@ python -m src.cli benchmark-report \
 3. `communication_dsoftbus` 分配失败是否攻击者可控；
 4. `arkcompiler_ets_runtime` 越界写样本的真实触发条件与受影响范围；
 5. OH 专用规则在更大 OpenHarmony 代码面上的误报率；
-6. `joern` adapter 尚未接入统一 `ToolRunResult`；
+6. `joern` 查询目前只覆盖 nothrow 判空模式，`oob_write` / `concurrency_race` 等根因家族尚无对应 CPG 查询；
 7. `kernel_liteos_a` UAF（CVE-2025-24298 / CVE-2025-27128）仍在候选池，未进入本 PR。
 
 ---
