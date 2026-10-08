@@ -12,12 +12,16 @@
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已从“搭框架”推进到“可收尾”：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
+`feat/historical-vuln-benchmark` 已完成主要静态实验框架并持续补跑工具，尚未完成覆盖验收：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
 
-历史文档记录的远端 CI 为 `Ran 105 tests ... OK`；当前 head 的远端 CI 尚未确认。
-当前本地完整回归为 **144/144 通过**；`validated_vulnerability = 0`。
-三个目标的固定提交/所需源码已补齐，四样本基线与 32 次外部工具/规则配置实验已执行。
-CodeQL、Joern 本轮未执行；Clang 缺头文件、kernel 部分解析；当前不能宣布分支完成。
+已确认提交 `4fbfef2` 的远端 Python unit tests 成功；后续提交的 CI 需单独核验。
+当前本地完整回归为 **149/149 通过**；`validated_vulnerability = 0`。
+三个目标的固定提交/所需源码已补齐；四样本已有 16 次自身基线和 48 次外部工具/规则配置运行记录。
+CodeQL、Joern 已补跑各 8 个版本单元。CodeQL 六单元缺 include、两单元 header-only 不适用；
+Joern 四单元部分解析，dsoftbus 修复前 5 条结构诊断、修复后 0 条。
+64 格汇总为 possible_hit=5、miss=29、unknown=20、not_applicable=10。
+c_utils Clang 补充头文件实验两版本均成功、零诊断，但没有模板实例化；不替换原始基线。
+Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭合；当前不能宣布分支完成。
 
 2026-10-08 本地 WSL Python 3.10 回归 **129/129 通过**（113 个既有测试 + 16 个新增测试）；
 该结果不是最新远端 CI。新增架构/规则审查与 `AGENTS.md` 开发约束，并接通保存结果到
@@ -35,7 +39,8 @@ CodeQL、Joern 本轮未执行；Clang 缺头文件、kernel 部分解析；当�
 | 当前分支 | `feat/historical-vuln-benchmark` |
 | 当前阶段 | 实验推进，不切 ready |
 | 历史 GitHub Actions 记录 | 105 tests passed；非当前 head 的验证 |
-| 当前本地回归 | 144 tests passed |
+| 当前本地回归 | 149 tests passed |
+| 已核验远端 CI | `4fbfef2` Python unit tests success；后续提交另验 |
 | validated vulnerability | 0 |
 
 ---
@@ -113,10 +118,10 @@ python -m src.cli benchmark-report \
 - `semgrep_oh` 已验证两条 OH 专用规则：`oh_shared_ptr_uaf.yaml`、`oh_nothrow_null_deref.yaml`；
 - `deref-after-arrow` 这类本地通用规则噪音过高，已弃用；
 - 免费 Semgrep registry 对 C++ 基本无可用公共覆盖，当前规则层依赖 vendor/raptor + OH 专用规则；
-- CodeQL 在单文件、缺头文件的样本粒度下不适用，应记为 `not_applicable`，如要使用需另立“全仓库 + 真实构建”工作流；
+- CodeQL 当前 no-build 实验：header-only 两单元明确不适用；其余六单元因缺 include 为 unknown。不能把所有缺依赖运行一概归为 not_applicable；需补固定依赖和构建上下文。
 - Clang Static Analyzer 已在本机实测（clang 14，`baseline-clang`）：4 样本 × 2 修订共 8 个文件**全部 `fatal error: '<header>' file not found`、0 诊断**，与 CodeQL 同一原因（无法形成翻译单元）→ 在单文件粒度同样记 `not_applicable`，不是 `miss`；
 - `root_cause_matrix` 原先只能产出 `unknown` / `possible_hit` / `miss`，文档里定义的 `not_applicable` 无法表达；已补 `NOT_APPLICABLE` 标记，使"没跑（unknown）"与"跑了但不适用（not_applicable）"可区分；
-- Joern c2cpg 在单文件粒度表现为正结果，`joern` adapter / matrix 列**已落地**：`src/providers/joern.py`（provider `joern`，别名 `joern-cpg`，CLI `normalize-tool-output --provider joern`）+ `scripts/joern_nothrow_guard.sc`；历史本地实验记录 dsoftbus 为 vuln `possible_hit(5)` / fixed `miss(0)`（其余 3 样本均为 `miss`）。这只说明历史样本上的结构区分效果，不代表零误报/漏报；2026-10-08 审查确认其未分析 guard 支配关系，将脚本证据类型修正为 `syntax`，本轮未重跑 Joern。
+- Joern adapter 与结构查询已落地并重跑：dsoftbus 为 vulnerable possible_hit(5) / fixed miss；ark 两版本 miss；c_utils/kernel 两版本均因解析问题 unknown。旧记录中“其余三样本均 miss”已被开启解析日志的实测修正。查询不分析 guard 支配关系，证据为 syntax，不代表零误报/漏报。
 - Opengrep 与 Semgrep 在同一规则集上结果一致，可作为引擎平替候选，但不解决 C++ 规则缺口。
 
 ---
@@ -133,7 +138,7 @@ python -m src.cli benchmark-report \
 
 ---
 
-## 7. 当前收尾 checklist
+## 7. 当前开发与实验 checklist
 
 - [x] root-cause hit matrix 已完成；
 - [x] benchmark summary report 已完成；
@@ -143,8 +148,9 @@ python -m src.cli benchmark-report \
 - [ ] 等本轮文档清理 commit 的 CI 跑完；
 - [x] Tool Capability Matrix API 与测试已实现，已补 target/commit/scope 和重复工具校验；
 - [x] 四样本固定源码已可读取，text/AST 与 Semgrep/Cppcheck/Clang 本轮实验产物已保存；
-- [ ] §18 第 5～6 步完整工具比较验收：CodeQL、Joern 本轮未运行，kernel 解析和
-  Clang 构建依赖限制尚未解决（最新实测见第 13 节）；
+- [x] CodeQL、Joern 各八个版本单元已执行，并检查原生覆盖日志；
+- [ ] §18 第 5～6 步完整工具比较验收：kernel/Joern 部分解析、CodeQL 缺 include 和
+  Clang 构建依赖限制尚未解决（最新实测见第 14 节）；
 - [ ] 暂不切 ready。
 
 ---
@@ -268,7 +274,7 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 实现层已接近完成，证据资产与远端验收未完成。补齐三目标对象、导入外部实验产物
 并确认最新 CI 后再评估 ready。PoC、TSan、可利用性和新漏洞挖掘属于后续分支。
 
-## 13. 2026-10-08 固定源码补齐与工具实验
+## 13. 2026-10-08 第一批固定源码补齐与工具实验（后续见第 14 节）
 
 “最终验收阶段”的表述过早：实现完成度不等于实验完成度。当前属于静态实验推进，
 不宣布分支完成、不将 draft 改为 ready。以下区分真实执行与未执行。
@@ -296,3 +302,21 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 详细条件、实验表和重跑命令见 docs/testing/static_experiments_2026-10-08.md。
 剩余工作：CodeQL/Joern 本轮执行与环境准备、解析局限和真实构建范围方案、更多独立
 样本/安全对照、当前远端 CI 和 PR 描述核验。动态验证尚未做，属于后续分支。
+
+## 14. 2026-10-08 CodeQL / Joern 补跑与覆盖核验
+
+- 各八单元重新执行；CodeQL 2.27.1 / cpp-queries 1.9.0，Joern 4.0.649。
+  原生输出、固定源码 hash、命令、耗时、退出码、解析日志和查询 hash 均保存。
+- CodeQL 不能凭成功退出判完整：SARIF 缺 include 的六单元均 unknown；
+  c_utils 两单元日志明确 0 source / 1 header、No source files found，当前配置 not_applicable。
+- Joern 默认 WARN 隐藏解析问题，已以 INFO / --log-problems 重跑。
+  c_utils 的 CASTProblem、kernel 的解析问题保留 unknown；dsoftbus 为修复前
+  possible_hit(5)、修复后 miss；ark 为两版本 miss，仅限当前 nothrow 查询。
+- 当前 64 条绑定运行记录、64 格矩阵：possible_hit=5、miss=29、unknown=20、
+  not_applicable=10。无未执行工具格，但不代表完整解析/构建覆盖或分支验收完成。
+- c_utils Clang 补充实验固定 nocopyable.h blob 并显式 C++，两版本成功、零诊断。
+  没有模板实例化，补充日志独立保存，不替换原始可比基线。
+- 回归 149/149 通过；新增进程失败/超时、CodeQL include/文件覆盖和 Joern CPG
+  日志覆盖测试。4fbfef2 的远端 CI 已核验成功，后续提交另验。PR #4 保持 draft。
+
+下一步优先固定依赖/编译配置、kernel 宏解析与 Joern 部分解析，再扩大独立样本/安全对照。

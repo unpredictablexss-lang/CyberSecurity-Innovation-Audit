@@ -35,7 +35,7 @@ UAF/null-deref detection or zero false positives/negatives. Arkcompiler Cppcheck
 overlaps the affected region before and after the fix, so it does not
 discriminate that patch. Kernel partial parsing is a limitation, not a miss.
 
-All eight Clang runs failed to form a translation unit due to absent headers
+In the first batch, all eight Clang runs failed to form a translation unit due to absent headers
 (e.g. nocopyable.h). CodeQL and Joern were not run in this experiment; their
 adapter unit tests do not count as scanner execution. Dynamic verification
 remains not_run; validated_vulnerability remains 0.
@@ -49,7 +49,7 @@ comparable runs; failed/partial inputs are excluded from that statistic view
 and remain visible in the root-cause summary. Generated artifacts are ignored
 by Git; this document records the experiment, not fabricated fixture results.
 
-The 64-cell summary has 4 possible_hit, 26 miss, 8 not_applicable, 26 unknown.
+The first-batch 64-cell summary has 4 possible_hit, 26 miss, 8 not_applicable, 26 unknown.
 possible_hit counts cells, not vulnerabilities. Unknown includes 16 unexecuted
 CodeQL/Joern cells, 8 kernel parsing/mapping cells and 2 unresolved c_utils
 Cppcheck cells. No Precision/Recall/FPR or exploitability is inferred.
@@ -80,6 +80,59 @@ and targets exact object IDs without checking out target code. The Semgrep
 Python target includes its bin directory and dependencies; scanners run in
 temporary snapshot directories with separate recorded environment/parameters.
 
-Current local regression: 144 tests passed. Current pushed-head CI remains a
-separate pending check. Continue CodeQL/Joern execution and compare build/source
-analysis units before calling the branch complete.
+First-batch local regression: 144 tests passed. Commit 4fbfef2 was subsequently
+verified with successful remote Python unit tests; later commits require their own check.
+
+## CodeQL / Joern follow-up batch
+
+Executed CodeQL 2.27.1 with locally installed codeql/cpp-queries 1.9.0
+cpp-security-and-quality.qls (183 queries), and Joern 4.0.649 with the unchanged
+project nothrow structural guard query, over all eight pinned revision units.
+Source SHA-256, commands, exit codes, elapsed time, query/suite hashes and native
+results are retained in per-unit execution.json. Joern was repeated with INFO
+logging and --log-problems because the default WARN level suppressed parser
+problem messages. A parsed=yes / CPG=yes row is required for each affected file.
+
+| Sample | CodeQL | Joern structural query |
+|---|---|---|
+| c_utils | both not_applicable: no-build reported 0 source files / 1 header, extraction failed | both unknown: CASTProblem |
+| dsoftbus | both unknown: missing includes in SARIF telemetry despite successful command exit | vulnerable possible_hit(5), fixed miss |
+| kernel | both unknown: missing includes | both unknown: parser problems |
+| arkcompiler | both unknown: missing includes | both miss |
+
+CodeQL's initial ark vulnerable run timed out after 180 seconds while writing
+results on /mnt/e. Repeating with the database on the WSL filesystem and a
+240-second bound completed; the original timeout log remains available. Six
+CodeQL databases/queries completed but SARIF failed-include telemetry prevents
+counting them as complete coverage. The header-only rejection applies to this
+analysis unit/profile, not to CodeQL capability in general.
+
+The current manifest binds 64 runs to 64 sample/revision/tool cells:
+possible_hit=5, miss=29, unknown=20, not_applicable=10. There are no remaining
+unexecuted tool cells in this scoped batch. This is execution coverage, not
+complete parsing, build coverage, vulnerability validation or final acceptance.
+Joern's dsoftbus overlap remains syntax evidence without dominance or runtime proof.
+
+A supplemental c_utils Clang probe uses the exact pinned nocopyable.h blob,
+-x c++ and -std=c++17. Both revisions compile without analyzer diagnostics.
+The probe has no template instantiation or original build settings, so it is
+kept outside the original comparable matrix. Kernel's Tree-sitter/Semgrep error
+near USER int *status suggests a macro-context issue; no source text was edited
+or macro-stripped to make coverage appear complete.
+
+Reproduce with database/output storage on the WSL filesystem:
+
+```bash
+python -m scripts.run_graph_tool_experiments \
+  --output-dir /path/on/wsl/static_baselines \
+  --codeql /path/to/codeql --joern /path/to/joern-cli \
+  --suite /path/to/cpp-queries/1.9.0/codeql-suites/cpp-security-and-quality.qls \
+  --timeout 240
+python -m scripts.run_graph_tool_experiments --output-dir /path/on/wsl/static_baselines --reconcile-only
+python -m scripts.probe_clang_header --repo /path/to/commonlibrary_c_utils \
+  --dependency /path/to/pinned/nocopyable.h --output-dir outputs/reports/static_baselines
+```
+
+The graph output directory must contain the previous baseline manifest and reports.
+Current local regression: 149 tests passed. Remaining work includes pinned
+dependency/build contexts, partial parsing and broader controls; PR #4 remains draft.
