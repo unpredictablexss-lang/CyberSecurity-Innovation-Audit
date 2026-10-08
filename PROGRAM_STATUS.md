@@ -106,6 +106,8 @@ python -m src.cli benchmark-report \
 - `deref-after-arrow` 这类本地通用规则噪音过高，已弃用；
 - 免费 Semgrep registry 对 C++ 基本无可用公共覆盖，当前规则层依赖 vendor/raptor + OH 专用规则；
 - CodeQL 在单文件、缺头文件的样本粒度下不适用，应记为 `not_applicable`，如要使用需另立“全仓库 + 真实构建”工作流；
+- Clang Static Analyzer 已在本机实测（clang 14，`baseline-clang`）：4 样本 × 2 修订共 8 个文件**全部 `fatal error: '<header>' file not found`、0 诊断**，与 CodeQL 同一原因（无法形成翻译单元）→ 在单文件粒度同样记 `not_applicable`，不是 `miss`；
+- `root_cause_matrix` 原先只能产出 `unknown` / `possible_hit` / `miss`，文档里定义的 `not_applicable` 无法表达；已补 `NOT_APPLICABLE` 标记，使"没跑（unknown）"与"跑了但不适用（not_applicable）"可区分；
 - Joern c2cpg 在单文件粒度表现为正结果，`joern` adapter / matrix 列**已落地**：`src/providers/joern.py`（provider `joern`，别名 `joern-cpg`，CLI `normalize-tool-output --provider joern`）+ `scripts/joern_nothrow_guard.sc`；查询按分配变量做定向判空检查后，dsoftbus 样本为 vuln `possible_hit(5)` / fixed `miss(0)`，零误报零漏报（其余 3 样本均为 `miss`）；
 - Opengrep 与 Semgrep 在同一规则集上结果一致，可作为引擎平替候选，但不解决 C++ 规则缺口。
 
@@ -131,6 +133,7 @@ python -m src.cli benchmark-report \
 - [x] PR 描述需要同步为“已完成 root-cause matrix / benchmark report”；
 - [x] 文档中的旧状态需要从“待完成 / pending / first seed”改为当前 4 样本状态；
 - [ ] 等本轮文档清理 commit 的 CI 跑完；
+- [x] §18 第 5 步：四类外部工具的结构化结果已齐 —— Semgrep / Cppcheck 有实际诊断，CodeQL / Clang SA 在单文件粒度记 `not_applicable`（原因见第 5 节）；第 6 步（Tool Capability Matrix）尚未开始；
 - [ ] 暂不切 ready。
 
 ---
