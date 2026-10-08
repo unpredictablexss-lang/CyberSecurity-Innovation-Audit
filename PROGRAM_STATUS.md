@@ -5,7 +5,7 @@
 > 更新日期：2026-10-08
 > 当前分支：`feat/historical-vuln-benchmark`  
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`  
-> 当前阶段：PR #4 收尾检查；历史样本 benchmark、root-cause hit matrix、benchmark report、多扫描器证据归一化已落地。  
+> 当前阶段：静态实验推进；模块已落地，但工具执行、可比性与覆盖验收尚未完成。
 > 重要边界：本分支不声明新漏洞，不做 PoC，不做 exploitability 结论；所有结果仍为 `candidate / draft / benchmark`。
 
 ---
@@ -15,7 +15,9 @@
 `feat/historical-vuln-benchmark` 已从“搭框架”推进到“可收尾”：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
 
 历史文档记录的远端 CI 为 `Ran 105 tests ... OK`；当前 head 的远端 CI 尚未确认。
-当前本地完整回归为 **142/142 通过**；`validated_vulnerability = 0`。
+当前本地完整回归为 **144/144 通过**；`validated_vulnerability = 0`。
+三个目标的固定提交/所需源码已补齐，四样本基线与 32 次外部工具/规则配置实验已执行。
+CodeQL、Joern 本轮未执行；Clang 缺头文件、kernel 部分解析；当前不能宣布分支完成。
 
 2026-10-08 本地 WSL Python 3.10 回归 **129/129 通过**（113 个既有测试 + 16 个新增测试）；
 该结果不是最新远端 CI。新增架构/规则审查与 `AGENTS.md` 开发约束，并接通保存结果到
@@ -31,9 +33,9 @@
 | PR 状态 | open / draft |
 | mergeability | mergeable（以 PR 页面实时状态为准） |
 | 当前分支 | `feat/historical-vuln-benchmark` |
-| 当前阶段 | 文档与 PR 描述收尾，不切 ready |
+| 当前阶段 | 实验推进，不切 ready |
 | 历史 GitHub Actions 记录 | 105 tests passed；非当前 head 的验证 |
-| 当前本地回归 | 142 tests passed |
+| 当前本地回归 | 144 tests passed |
 | validated vulnerability | 0 |
 
 ---
@@ -140,8 +142,9 @@ python -m src.cli benchmark-report \
 - [x] 文档中的旧状态需要从“待完成 / pending / first seed”改为当前 4 样本状态；
 - [ ] 等本轮文档清理 commit 的 CI 跑完；
 - [x] Tool Capability Matrix API 与测试已实现，已补 target/commit/scope 和重复工具校验；
-- [ ] §18 第 5～6 步的全样本实验验收：历史文字记录尚需关联可读取的保存报告；
-  本机三个目标缺少固定漏洞前提交，当前可复跑基线仅 arkcompiler（见第 12 节）；
+- [x] 四样本固定源码已可读取，text/AST 与 Semgrep/Cppcheck/Clang 本轮实验产物已保存；
+- [ ] §18 第 5～6 步完整工具比较验收：CodeQL、Joern 本轮未运行，kernel 解析和
+  Clang 构建依赖限制尚未解决（最新实测见第 13 节）；
 - [ ] 暂不切 ready。
 
 ---
@@ -230,6 +233,8 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 
 ## 12. 2026-10-08 分支收尾审计与静态基线复跑
 
+本节是 348945f 时的阶段记录；源码缺失项已在后续工作补齐，当前状态见第 13 节。
+
 按本分支静态 benchmark 范围评估，不按完整比赛系统评估：
 
 | 验收项 | 当前状态 | 证据/剩余工作 |
@@ -262,3 +267,32 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 
 实现层已接近完成，证据资产与远端验收未完成。补齐三目标对象、导入外部实验产物
 并确认最新 CI 后再评估 ready。PoC、TSan、可利用性和新漏洞挖掘属于后续分支。
+
+## 13. 2026-10-08 固定源码补齐与工具实验
+
+“最终验收阶段”的表述过早：实现完成度不等于实验完成度。当前属于静态实验推进，
+不宣布分支完成、不将 draft 改为 ready。以下区分真实执行与未执行。
+
+- c_utils/dsoftbus：备用仓库已有提交与树，GitHub raw 下载所需源码；按树中的
+  Git blob SHA-1 验证完全一致后补入对象库。kernel 通过官方 Gitee 镜像拉取 manifest
+  固定 SHA 与所需 blob；没有改变 manifest、目标 HEAD 或目标实现文件。
+- 四样本 × 两修订的 text/AST 基线均执行，16 份归一化报告；kernel AST 为 partial，
+  因而区域判断保持 unknown。源码准备及历史 replay 现在无缺对象失败。
+- 执行 32 次外部工具/规则配置实验：Cppcheck 2.7、Clang 14、Semgrep CE 1.179.0
+  vendor/raptor，以及相同 Semgrep 引擎的两条 OH 专用规则。原生输出、执行参数、
+  归一化报告、48 个输入记录、8 份能力矩阵及修订隔离 summary 均留存在 Git 忽略目录。
+- OH 规则：c_utils 修复前 possible_hit(1)、修复后 miss；dsoftbus 为 possible_hit(5)
+  与 miss。是结构候选区分，不证明并发、可达性、可利用性或发现新漏洞。
+- arkcompiler 的 Cppcheck 修复前后都 possible_hit(1)，不区分补丁；Semgrep vendor
+  在已知根因区域没有命中。kernel vendor Semgrep 每修订有 41 条诊断但同时报告
+  PartialParsing，保留 failed/unknown，不能以诊断数宣布漏洞发现。
+- Clang 8 次均执行但缺依赖头文件，无法形成翻译单元，记 not_applicable；CodeQL
+  和 Joern 本轮未运行，记 unknown，不能借历史文字记录假称已执行。
+- 64 格 summary：possible_hit 4、miss 26、not_applicable 8、unknown 26。
+  4 个 possible_hit 是格子数，不是 4 个漏洞；unknown 包括 16 格未运行工具、
+  8 格 kernel 部分解析/映射和 2 格 c_utils Cppcheck 符号未定位。
+- 完整回归 144/144 通过；新增原始源码恢复与 hash 不匹配拒绝测试。
+
+详细条件、实验表和重跑命令见 docs/testing/static_experiments_2026-10-08.md。
+剩余工作：CodeQL/Joern 本轮执行与环境准备、解析局限和真实构建范围方案、更多独立
+样本/安全对照、当前远端 CI 和 PR 描述核验。动态验证尚未做，属于后续分支。
