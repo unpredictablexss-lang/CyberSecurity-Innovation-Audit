@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import tempfile
 import time
@@ -164,12 +165,14 @@ def _git(
     *,
     check: bool = True,
 ) -> subprocess.CompletedProcess:
-    process = subprocess.run(
-        ["git", "-C", str(repo_dir), *args],
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    try:
+        process = subprocess.run(
+            ["git", "-c", "remote.origin.promisor=false", "-C", str(repo_dir), *args],
+            text=True, capture_output=True, check=False, timeout=20,
+            env={**os.environ, "GIT_NO_LAZY_FETCH": "1", "GIT_ALLOW_PROTOCOL": ""},
+        )
+    except subprocess.TimeoutExpired as error:
+        raise RuntimeError("Local historical Git read timed out") from error
     if check and process.returncode != 0:
         detail = process.stderr.strip() or process.stdout.strip() or "unknown git error"
         raise RuntimeError(f"git {' '.join(args)} failed: {detail}")

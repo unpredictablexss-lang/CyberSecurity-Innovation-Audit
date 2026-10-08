@@ -40,6 +40,18 @@ def _run(tool: str, target_id: str, cwes, evidence_types, seconds: float) -> Too
 
 
 class ToolMatrixTests(unittest.TestCase):
+    def test_rejects_cross_revision_scope_and_duplicate_tool_runs(self) -> None:
+        for field, value in (("commit", "fixed"), ("scope_files", 2), ("scope_loc", 200),
+                             ("tool", "semgrep")):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                left = _run("semgrep", "t1", ["CWE-120"], ["pattern"], 1.0).to_dict()
+                right = _run("codeql", "t1", ["CWE-120"], ["dataflow"], 1.0).to_dict()
+                right[field] = value
+                (root / "a.json").write_text(json.dumps(left), encoding="utf-8")
+                (root / "b.json").write_text(json.dumps(right), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "not directly comparable|duplicate tool"):
+                    build_tool_matrix([root / "a.json", root / "b.json"])
     def test_build_matrix_summarizes_tools(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -51,6 +63,7 @@ class ToolMatrixTests(unittest.TestCase):
             matrix = build_tool_matrix([root / "s.json", root / "c.json"])
 
         self.assertEqual(matrix.target_id, "t1")
+        self.assertEqual((matrix.commit, matrix.scope_files, matrix.scope_loc), ("abc", 1, 100))
         by_tool = {row.tool: row for row in matrix.rows}
         self.assertEqual(by_tool["semgrep"].diagnostic_count, 2)
         self.assertEqual(by_tool["semgrep"].cwe_count, 2)

@@ -14,7 +14,8 @@
 
 `feat/historical-vuln-benchmark` 已从“搭框架”推进到“可收尾”：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
 
-最近一次代码 CI 已通过：GitHub Actions `Ran 105 tests ... OK`。当前 `validated_vulnerability = 0`。
+历史文档记录的远端 CI 为 `Ran 105 tests ... OK`；当前 head 的远端 CI 尚未确认。
+当前本地完整回归为 **142/142 通过**；`validated_vulnerability = 0`。
 
 2026-10-08 本地 WSL Python 3.10 回归 **129/129 通过**（113 个既有测试 + 16 个新增测试）；
 该结果不是最新远端 CI。新增架构/规则审查与 `AGENTS.md` 开发约束，并接通保存结果到
@@ -31,7 +32,8 @@
 | mergeability | mergeable（以 PR 页面实时状态为准） |
 | 当前分支 | `feat/historical-vuln-benchmark` |
 | 当前阶段 | 文档与 PR 描述收尾，不切 ready |
-| 最近一次 GitHub Actions | 105 tests passed |
+| 历史 GitHub Actions 记录 | 105 tests passed；非当前 head 的验证 |
+| 当前本地回归 | 142 tests passed |
 | validated vulnerability | 0 |
 
 ---
@@ -134,10 +136,12 @@ python -m src.cli benchmark-report \
 - [x] root-cause hit matrix 已完成；
 - [x] benchmark summary report 已完成；
 - [x] `benchmark-report` CLI 已确认存在；
-- [x] PR 描述需要同步为“已完成 root-cause matrix / benchmark report”；
+- [ ] 核验 PR 描述与最新证据绑定、AST 覆盖及复跑结果一致（远端检查接口目前无法连接）；
 - [x] 文档中的旧状态需要从“待完成 / pending / first seed”改为当前 4 样本状态；
 - [ ] 等本轮文档清理 commit 的 CI 跑完；
-- [x] §18 第 5 步：四类外部工具的结构化结果已齐 —— Semgrep / Cppcheck 有实际诊断，CodeQL / Clang SA 在单文件粒度记 `not_applicable`（原因见第 5 节）；第 6 步（Tool Capability Matrix）尚未开始；
+- [x] Tool Capability Matrix API 与测试已实现，已补 target/commit/scope 和重复工具校验；
+- [ ] §18 第 5～6 步的全样本实验验收：历史文字记录尚需关联可读取的保存报告；
+  本机三个目标缺少固定漏洞前提交，当前可复跑基线仅 arkcompiler（见第 12 节）；
 - [ ] 暂不切 ready。
 
 ---
@@ -223,3 +227,38 @@ exploitability 自动判断
 限制：映射是文件级语法归属，尚不提供类型、宏展开、CFG、数据流或跨函数语义。
 Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此判漏洞；本轮不重跑外部
 分析器，不改变四个历史样本 runtime=not_run、validated vulnerability=0 和 draft 边界。
+
+## 12. 2026-10-08 分支收尾审计与静态基线复跑
+
+按本分支静态 benchmark 范围评估，不按完整比赛系统评估：
+
+| 验收项 | 当前状态 | 证据/剩余工作 |
+|---|---|---|
+| 4 个历史样本元数据 | 已实现 | 固定修复前后提交、根因分类 |
+| text/AST、人工 review、Evidence/Case draft | 已实现 | 单测与 CLI，仍为候选/草稿 |
+| 5 类外部工具 adapter | 已实现 | 格式归一化测试；不代表实验完成 |
+| 分样本/修订矩阵与汇总 | 已实现 | commit/scope/provenance/unknown 状态传递 |
+| Tool Capability Matrix | 已实现 | 复用 compare-tools 可比性校验，输出 commit 和 scope |
+| 本机全样本静态实验 | 部分完成 | 仅 arkcompiler 对象齐全；另三目标缺漏洞前提交 |
+| 全样本外部工具实验产物 | 待验收 | 历史文字结论不能替代可读取、可溯源的输入 |
+| 最新远端 CI、PR 描述复核 | 待验收 | GitHub 检查接口无法连接，不据此宣布 ready |
+
+本轮实测与改动：
+
+- 76c51a8 已成功推送，之前的网络失败已解除。
+- 修复能力矩阵只校验 target 的缺口：拒绝混合 commit、文件数、LOC 和重复工具；
+  commit/scope 输出到 JSON/Markdown，与 compare-tools 共用校验。
+- 新命令 `python -m scripts.replay_static_baselines --target-root <repos>` 保存历史
+  replay、text/AST 归一化报告、逐修订能力矩阵、inputs、summary 和 failures。
+  默认输出目录 outputs/reports/static_baselines，已加入 Git 忽略。
+- 本机 _oh_targets 实跑，并尝试 _wsl_targets_stage 作为 fallback：4 样本、64 格；arkcompiler 的 2 修订 × 2 引擎均为静态
+  区域 miss（4 格），其余 60 格 unknown。另三目标 vulnerable commit 在本机
+  不可读取；fallback 中部分 commit 已有但源码 blob 缺失，kernel fixed commit
+  仍缺失。每个目录的尝试原因记录到 failures.json，不假造扫描完成。
+- partial clone 的普通 Git 读取曾触发隐式补取并等待网络；本轮已停止该进程，
+  为历史回放和固定源码映射添加 origin promisor 禁用、GIT_NO_LAZY_FETCH、
+  空 GIT_ALLOW_PROTOCOL（禁止读取过程启动任何传输）和 20 秒超时。
+- 完整回归 **142/142 通过**；新增测试覆盖矩阵可比性和基线复跑到汇总的真实链路。
+
+实现层已接近完成，证据资产与远端验收未完成。补齐三目标对象、导入外部实验产物
+并确认最新 CI 后再评估 ready。PoC、TSan、可利用性和新漏洞挖掘属于后续分支。

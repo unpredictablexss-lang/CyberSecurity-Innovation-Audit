@@ -14,7 +14,7 @@ pipeline.
 | Cppcheck | lightweight C/C++ baseline | adapter done; local sample results evaluated |
 | CodeQL | data-flow / taint / cross-function evidence | adapter done; single-file no-build sample unit is `not_applicable` |
 | Clang Static Analyzer | path-sensitive / symbolic evidence | adapter done for existing baseline JSON |
-| Joern c2cpg | single-file CPG / AST-level query candidate | evaluated as promising; adapter not yet implemented |
+| Joern c2cpg | single-file CPG / AST-level query candidate | adapter implemented; current nothrow query is syntax evidence |
 
 The normalized contract is `ToolRunResult / ToolDiagnostic`. The merge point is
 Candidate / Evidence, not a scanner vote.
@@ -85,12 +85,13 @@ reportable vulnerability.
 
 ## Adapter implementation
 
-The current branch provides four format-only adapters:
+The current branch provides five format-only adapters:
 
 - `src/providers/semgrep.py`: Semgrep JSON -> ToolRunResult
 - `src/providers/codeql.py`: CodeQL SARIF -> ToolRunResult
 - `src/providers/clang_sa.py`: existing Clang baseline JSON -> ToolRunResult
 - `src/providers/cppcheck.py`: Cppcheck XML -> ToolRunResult
+- `src/providers/joern.py`: saved project query JSON -> ToolRunResult
 - `src/providers/registry.py`: one `normalize_tool_output(...)` entry point
 
 All adapters receive an `AdapterContext` containing the pinned target, commit,

@@ -3,7 +3,7 @@ import json
 import subprocess
 import tempfile
 import unittest
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -54,6 +54,25 @@ class AstCoverageTests(unittest.TestCase):
 
 
 class SnapshotMappingTests(unittest.TestCase):
+    def test_static_replay_creates_reusable_revision_evidence(self):
+        from scripts.replay_static_baselines import replay_baselines
+        samples_dir = self.root / "samples"
+        samples_dir.mkdir()
+        (samples_dir / "seed.json").write_text(json.dumps(asdict(self.seed)), encoding="utf-8")
+        output = self.root / "outputs"
+        summary = replay_baselines(samples_dir, self.root / "unavailable", output,
+                                   fallback_roots=[self.root])
+        rows = summary.root_cause_matrix.rows
+        self.assertEqual(len(rows), 16)
+        self.assertEqual(sum(row.status == "miss" for row in rows), 4)
+        self.assertEqual(sum(row.status == "unknown" for row in rows), 12)
+        matrix = json.loads((output / "seed.fixed.matrix.json").read_text())
+        self.assertEqual(matrix["commit"], self.fixed)
+        self.assertEqual(matrix["scope_files"], 1)
+        self.assertTrue((output / "inputs.json").exists())
+        self.assertTrue((output / "summary.md").exists())
+        self.assertEqual(self.git("rev-parse", "HEAD"), self.fixed)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

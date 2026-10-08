@@ -6,6 +6,7 @@ the benchmark cell unknown, including an empty diagnostic list.
 """
 
 import hashlib
+import os
 import subprocess
 from dataclasses import replace
 from pathlib import Path
@@ -15,7 +16,12 @@ from src.parser.ast import parse_source
 
 def map_snapshot_candidates(repo: Path, sample, commit: str, files: tuple, candidates: list):
     def git(*args):
-        return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, check=False)
+        try:
+            return subprocess.run(["git", "-c", "remote.origin.promisor=false", "-C", str(repo), *args],
+                                  capture_output=True, check=False, timeout=20,
+                                  env={**os.environ, "GIT_NO_LAZY_FETCH": "1", "GIT_ALLOW_PROTOCOL": ""})
+        except subprocess.TimeoutExpired as error:
+            raise ValueError("Local pinned-source Git read timed out") from error
 
     remote = git("remote", "get-url", "origin")
     origin = remote.stdout.decode("utf-8", errors="replace").strip().rstrip("/").lower()

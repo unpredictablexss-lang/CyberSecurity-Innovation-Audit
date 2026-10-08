@@ -178,11 +178,10 @@ def _location_rows(
     return rows
 
 
-def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
-    if len(paths) < 2:
-        raise ValueError("at least two normalized tool reports are required")
-
-    runs = [load_normalized_report(path.resolve()) for path in paths]
+def validate_comparable_runs(runs: Sequence[Mapping[str, Any]]) -> None:
+    """One analysis unit: same target, commit, scope and one run per tool."""
+    if not runs:
+        raise ValueError("at least one normalized tool report is required")
     reference = runs[0]
     comparison_key = (
         reference["target_id"],
@@ -192,7 +191,7 @@ def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
     )
 
     seen_tools = set()
-    for path, run in zip(paths, runs):
+    for run in runs:
         key = (
             run["target_id"],
             run["commit"],
@@ -202,7 +201,7 @@ def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
         if key != comparison_key:
             raise ValueError(
                 "tool reports are not directly comparable because target/commit/scope "
-                f"differs: {path}"
+                "differs"
             )
         tool = str(run["tool"])
         if tool in seen_tools:
@@ -210,6 +209,14 @@ def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
                 f"duplicate tool result is ambiguous for one comparison: {tool}"
             )
         seen_tools.add(tool)
+
+
+def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
+    if len(paths) < 2:
+        raise ValueError("at least two normalized tool reports are required")
+    runs = [load_normalized_report(path.resolve()) for path in paths]
+    validate_comparable_runs(runs)
+    reference = runs[0]
 
     summaries: List[ToolComparisonSummary] = []
     location_sets: Dict[str, Set[Location]] = {}

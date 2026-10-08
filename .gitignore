@@ -227,5 +227,6 @@ outputs/reports/*.json
 outputs/reports/*.md
 outputs/logs/
 outputs/bin/
+outputs/reports/static_baselines/
 .tmp/
 .cache/

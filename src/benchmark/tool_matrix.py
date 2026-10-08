@@ -10,7 +10,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from src.benchmark.compare import load_normalized_report
+from src.benchmark.compare import load_normalized_report, validate_comparable_runs
 
 
 @dataclass
@@ -27,10 +27,16 @@ class ToolMatrixRow:
 class ToolCapabilityMatrix:
     target_id: str
     rows: List[ToolMatrixRow] = field(default_factory=list)
+    commit: str = ""
+    scope_files: int = 0
+    scope_loc: int = 0
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "target_id": self.target_id,
+            "commit": self.commit,
+            "scope_files": self.scope_files,
+            "scope_loc": self.scope_loc,
             "rows": [asdict(row) for row in self.rows],
             "interpretation": (
                 "Descriptive per-tool capability summary only. Diagnostic count is not a "
@@ -45,15 +51,11 @@ def build_tool_matrix(report_paths: List[Path]) -> ToolCapabilityMatrix:
         raise ValueError("at least one normalized tool report is required")
 
     runs = [load_normalized_report(path.resolve()) for path in report_paths]
+    validate_comparable_runs(runs)
     reference_target = runs[0]["target_id"]
 
     rows: List[ToolMatrixRow] = []
     for run in runs:
-        if run["target_id"] != reference_target:
-            raise ValueError(
-                "tool reports are not comparable because target_id differs: "
-                f"{run['target_id']!r} vs {reference_target!r}"
-            )
         diagnostics = [
             item for item in run.get("diagnostics", []) if isinstance(item, dict)
         ]
@@ -81,6 +83,8 @@ def build_tool_matrix(report_paths: List[Path]) -> ToolCapabilityMatrix:
     return ToolCapabilityMatrix(
         target_id=str(reference_target),
         rows=sorted(rows, key=lambda row: row.tool),
+        commit=str(runs[0]["commit"]), scope_files=int(runs[0]["scope_files"]),
+        scope_loc=int(runs[0]["scope_loc"]),
     )
 
 
@@ -92,6 +96,8 @@ def render_markdown(result: ToolCapabilityMatrix) -> str:
         "not validated vulnerabilities.",
         "",
         f"## Target ID: {result.target_id}",
+        f"- Commit: `{result.commit}`",
+        f"- Scope: {result.scope_files} files / {result.scope_loc} LOC",
         "",
         "| Tool | Diagnostics | Distinct CWEs | Evidence types | Seconds | Peak MB |",
         "|---|---|---:|---:|---:|---:|",

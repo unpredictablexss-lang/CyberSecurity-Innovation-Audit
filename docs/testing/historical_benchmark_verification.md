@@ -101,7 +101,7 @@ Interpretation:
 
 - `possible_hit`: a tool touched the affected file / symbol region;
 - `miss`: the tool ran but did not touch that region;
-- `unknown`: the tool was not run;
+- `unknown`: missing/failed execution, incomplete scope or unresolved/partial AST coverage;
 - `not_applicable`: the tool does not apply to this analysis unit.
 
 Do not convert these states into TP / FP / FN. Do not call `possible_hit` a confirmed vulnerability.
@@ -194,3 +194,38 @@ published fix pair
 ```
 
 This is still benchmark evidence only. Do not report any historical sample as a newly discovered vulnerability.
+
+## 10. Current closure evidence (2026-10-08)
+
+Local regression: 142 tests passed. The historical 105-test CI note above does
+not verify the current head. Keep current remote CI and PR-description checks
+pending until the exact pushed head can be inspected.
+
+Replay the own static baselines without checking out target code:
+
+```bash
+python -m scripts.replay_static_baselines --target-root /path/to/component-repos
+python -m src.cli benchmark-report \
+  --results outputs/reports/static_baselines/inputs.json \
+  --json-out outputs/reports/static_baselines/rebuilt.json \
+  --md-out outputs/reports/static_baselines/rebuilt.md
+```
+
+Component directories use repository basenames from the sample manifests.
+The saved normalized artifacts can be reloaded by benchmark-report. Inspect
+failures.json as well as summary.json: failed historical materialization
+leaves cells unknown, and successful arkcompiler replay alone does not finish
+the four-sample experiment gate. On the present machine, three target repos
+lack the pinned vulnerable commit, so the fresh summary has 4 miss cells and
+60 unknown cells. No external-tool run is fabricated from older prose.
+
+Optional repeated `--fallback-target-root` arguments try other existing local
+component directories, without fetching. If all attempts fail, each directory
+and reason are retained in failures.json. Missing source blobs count as a
+materialization failure even when the commit object itself is present.
+
+Tool Capability Matrix and compare-tools share target/commit/files/LOC and
+duplicate-tool checks. Matrix implementation is complete; the experiment-filled
+cross-tool capability table remains pending. Local Git reads disable origin
+promisor lazy fetching, disallow protocol transport and use a timeout so absent partial-clone objects do not
+silently turn a local experiment into an unbounded network operation.
