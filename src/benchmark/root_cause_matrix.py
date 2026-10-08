@@ -63,6 +63,7 @@ class RootCauseHit:
     analyzed_files: tuple = ()
     run_status: Optional[str] = None
     limitations: tuple = ()
+    source_snapshots: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -84,6 +85,7 @@ class SampleToolRun:
     analyzed_files: tuple = ()
     run_status: str = "completed"
     limitations: tuple = ()
+    source_snapshots: tuple = ()
 
 
 @dataclass
@@ -203,6 +205,7 @@ def build_revision_hit_matrix(
                     analyzed_files=run.analyzed_files if run else (),
                     run_status=run.run_status if run else None,
                     limitations=run.limitations if run else (),
+                    source_snapshots=run.source_snapshots if run else (),
                 ))
     return RootCauseMatrix(rows=rows)
 

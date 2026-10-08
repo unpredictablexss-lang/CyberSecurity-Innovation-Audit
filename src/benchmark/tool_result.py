@@ -73,6 +73,7 @@ class ToolRunResult:
     peak_memory_mb: Optional[float] = None
     diagnostics: List[ToolDiagnostic] = field(default_factory=list)
     limitations: List[str] = field(default_factory=list)
+    parsing: List[dict] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if self.schema_version != 1:
@@ -116,6 +117,7 @@ class ToolRunResult:
             "diagnostic_count": self.diagnostic_count,
             "diagnostics": [item.to_dict() for item in self.diagnostics],
             "limitations": list(self.limitations),
+            "parsing": self.parsing,
             "interpretation": (
                 "Descriptive scanner evidence only. Diagnostics are candidates/evidence, "
                 "not validated vulnerabilities; an empty diagnostic list is not proof of safety."

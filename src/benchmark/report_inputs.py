@@ -13,6 +13,7 @@ from typing import List
 from src.benchmark.historical import HistoricalSample
 from src.benchmark.root_cause_matrix import NOT_APPLICABLE, SampleToolRun, ToolCandidate
 from src.benchmark.tool_result import ToolDiagnostic, ToolRunResult
+from src.benchmark.source_mapping import map_snapshot_candidates
 
 
 DEFAULT_TOOLS = ["own_text", "own_ast", "semgrep", "semgrep_oh", "codeql",
@@ -88,6 +89,7 @@ def load_report_runs(path: Path, samples: List[HistoricalSample]) -> List[Sample
         analyzed_files = ()
         run_status = "completed"
         limitations = ()
+        source_snapshots = ()
         report_format = entry.get("format", "normalized")
         if report_format == "historical":
             recorded = payload.get("sample", {})
@@ -137,6 +139,7 @@ def load_report_runs(path: Path, samples: List[HistoricalSample]) -> List[Sample
                                  for item in diagnostics],
                     peak_memory_mb=payload.get("peak_memory_mb"),
                     limitations=payload.get("limitations", []),
+                    parsing=payload.get("parsing", []),
                 )
             except (KeyError, TypeError) as error:
                 raise ValueError(f"malformed normalized report: {report_name}") from error
@@ -166,9 +169,37 @@ def load_report_runs(path: Path, samples: List[HistoricalSample]) -> List[Sample
                 candidates = _locations(diagnostics)
                 if any(candidate.file not in analyzed_files for candidate in candidates):
                     raise ValueError("candidate file is outside analyzed_files")
+                source_repo = entry.get("source_repo")
+                if source_repo is not None:
+                    if not isinstance(source_repo, str) or not source_repo.strip():
+                        raise ValueError("source_repo must be a non-empty path")
+                    candidates, source_snapshots, incomplete = map_snapshot_candidates(
+                        (path.parent / source_repo).resolve(), sample, expected_commit,
+                        analyzed_files, candidates,
+                    )
+                    limitations += ("Symbols mapped using pinned syntax only; no type/dataflow proof.",)
+                    if incomplete:
+                        candidates = None
+                        reason = "Pinned AST source coverage is partial or failed."
                 if not set(sample.affected_files).issubset(analyzed_files):
                     candidates = None
                     reason = "Analysis scope does not cover all affected files."
+                if not isinstance(run.parsing, list):
+                    raise ValueError("normalized parsing must be a list")
+                parsing = {}
+                for item in run.parsing:
+                    if not isinstance(item, dict) or item.get("status") not in {"complete", "partial", "failed"}:
+                        raise ValueError("invalid normalized parsing status")
+                    file = _relative_file(item.get("file"))
+                    if file not in analyzed_files or file in parsing:
+                        raise ValueError("parsing file outside scope or duplicated")
+                    parsing[file] = item["status"]
+                if (any(status != "complete" for status in parsing.values()) or
+                    (tool == "own_ast" and set(parsing) != set(analyzed_files))):
+                    candidates = None
+                    reason = "Saved AST parsing coverage is partial, failed or unrecorded."
+                if run.parsing:
+                    limitations += ("Saved parsing coverage: " + json.dumps(run.parsing, ensure_ascii=False),)
             else:
                 reason = entry.get("not_applicable_reason") or entry.get("reason")
                 if not isinstance(reason, str) or not reason.strip():
@@ -182,5 +213,6 @@ def load_report_runs(path: Path, samples: List[HistoricalSample]) -> List[Sample
             source_sha256=digest, reason=reason,
             tool_version=tool_version, scope_files=scope_files, scope_loc=scope_loc,
             analyzed_files=analyzed_files, run_status=run_status, limitations=limitations,
+            source_snapshots=source_snapshots,
         ))
     return runs

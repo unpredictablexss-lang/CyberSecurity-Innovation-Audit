@@ -196,8 +196,30 @@ exploitability 自动判断
 仍未完成/边界：
 
 - 本轮没有重新运行外部工具，也没有将文档中的历史结果伪造成输入数据。
-- normalized 诊断缺失 symbol 时尚未自动从对应 commit 的 AST 映射符号；此时保留
+- 本节截至 f6886be 时，normalized 诊断缺失 symbol 尚未自动从对应 commit 的 AST 映射符号；此时保留
   unknown，后续需基于固定源码快照补充映射，不能按行号猜测根因命中。
-- AST 解析失败/部分解析统计仍需后续专门接入，本轮不扩大报告修复范围。
+- 本节截至 f6886be 时，AST 解析失败/部分解析统计仍需后续专门接入，后续进展见第 11 节。
 - 四个历史样本 runtime 仍为 not_run；validated vulnerability 仍为 0；PR 保持 draft。
 - 远端 CI 需要在本轮推送后核验，不把本地测试结果当作远端成功。
+
+## 11. 2026-10-08 AST 覆盖状态与固定源码符号映射
+
+继续遵循 L1 解析索引 → benchmark 证据绑定 → L8 报告边界，没有增加新检测规则或动态触发。
+
+- AstIndex 新增 complete/partial 及 ERROR/missing 节点行范围；AST 扫描报告记录每个
+  已读取文件的 complete/partial/failed 状态，单文件解析失败不阻断其他文件。
+- 修正 C++ 限定方法的函数名提取，避免将 OHOS 等作用域名称误作函数名。
+- `benchmark-report` 输入支持可选 source_repo：校验 origin 仓库标识和精确 commit，
+  从固定 Git blob 读取源码；不切换分支、不使用未提交文件。完整解析且诊断行仅属于
+  一个已知函数时才补缺失 symbol，记录源码 SHA-256、commit、解析状态与错误范围。
+- 部分解析、失败或缺失 own_ast 覆盖状态均保持 unknown，不把零诊断写成 miss；
+  完整覆盖的空结果才可写成静态区域 miss。normalized parsing 可保留到最终报告。
+- WSL 完整回归 140/140 通过（新增 11 个测试）；覆盖固定 blob 与脏工作区隔离、
+  修复前后函数映射差异、错误仓库/提交、解析失败后继续、歧义范围，以及状态/哈希
+  传播到矩阵和 Markdown。远端 CI 尚需推送后核验。
+- AST CLI 样例扫描实跑：2 文件、28 行、1 个候选，两文件均 complete；报告保存到
+  Git 忽略目录 `outputs/reports/samples_ast_coverage.{json,md}`，仅证明工程 smoke test。
+
+限制：映射是文件级语法归属，尚不提供类型、宏展开、CFG、数据流或跨函数语义。
+Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此判漏洞；本轮不重跑外部
+分析器，不改变四个历史样本 runtime=not_run、validated vulnerability=0 和 draft 边界。

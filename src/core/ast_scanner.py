@@ -45,9 +45,9 @@ def _call_evidence(name: str, arguments: List[str]) -> str:
     return f"{name}({', '.join(arguments)})"
 
 
-def _scan_lines_ast(path: Path, lines: List[str], language: str) -> List[Finding]:
+def _scan_lines_ast(path: Path, lines: List[str], language: str, index=None) -> List[Finding]:
     code = "\n".join(lines)
-    index = parse_source(code, language=language)
+    index = index if index is not None else parse_source(code, language=language)
     findings: List[Finding] = []
 
     for call in index.calls:
@@ -92,7 +92,8 @@ def _scan_lines_ast(path: Path, lines: List[str], language: str) -> List[Finding
                 context_start_line=context_start,
                 context_end_line=context_end,
                 context=snippet,
-                context_status="ast_function_context" if function else "unresolved",
+                context_status=("ast_partial_context" if index.parse_status != "complete"
+                                else "ast_function_context" if function else "unresolved"),
             )
         )
 
@@ -137,7 +138,14 @@ def _read_and_record_source_ast(
 
     result.scanned_files += 1
     result.scanned_lines += len(lines)
-    result.findings.extend(_scan_lines_ast(path, lines, language))
+    try:
+        index = parse_source("\n".join(lines), language=language)
+    except (RuntimeError, ValueError) as error:
+        result.parsing.append({"file": str(path), "status": "failed", "reason": str(error)})
+        return
+    result.parsing.append({"file": str(path), "status": index.parse_status,
+                           "issues": index.parse_issues})
+    result.findings.extend(_scan_lines_ast(path, lines, language, index=index))
 
 
 def scan_directory_ast(

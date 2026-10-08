@@ -11,7 +11,9 @@ def render_markdown(result: ScanResult) -> str:
     lines = [
         "# Candidate Scan Report",
         "",
-        "> Text-pattern candidates only. No finding has been validated as a vulnerability.",
+        ("> Syntax-pattern candidates only. No finding has been validated as a vulnerability."
+         if result.engine == "ast" else
+         "> Text-pattern candidates only. No finding has been validated as a vulnerability."),
         "",
         "## Scan Summary",
         "",
@@ -31,6 +33,14 @@ def render_markdown(result: ScanResult) -> str:
     if result.skipped_files:
         lines += ["## Skipped Source Files", ""]
         lines += [f"- {_text(item)}" for item in result.skipped_files]
+        lines.append("")
+
+    if result.parsing:
+        lines += ["## AST parsing coverage", "",
+                  "Complete means syntactically parsed, not semantic or security coverage.", ""]
+        lines += [f"- {_text(item['file'])}: {_text(item['status'])}; "
+                  f"issues: {_text(item.get('issues', []))}; {_text(item.get('reason', ''))}"
+                  for item in result.parsing]
         lines.append("")
 
     for number, finding in enumerate(result.findings, start=1):

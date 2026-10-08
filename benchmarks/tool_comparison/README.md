@@ -190,6 +190,29 @@ status and tool limitations. An optional `sha256` in an input entry pins the
 expected artifact bytes. The summary remains static region coverage, not a
 vulnerability report or a claim that the fixed revision is safe.
 
+### Pinned AST symbol mapping and parsing coverage
+
+An input entry may add `"source_repo": "/path/to/component-checkout"` (or a
+manifest-relative path). The loader checks the origin owner/repository and
+exact pinned commit, then reads `git show <commit>:<file>` for declared files.
+It does not checkout a revision or read dirty working files. Missing symbols
+are filled only when a complete syntax tree identifies exactly one enclosing
+function at the diagnostic line. Missing lines, ambiguous ranges and unknown
+function names remain unresolved. Source bytes and parse status/issues are
+recorded under `source_snapshots`, with their SHA-256 hashes.
+
+Partial/failed snapshot parsing makes the run's coverage `unknown`, including
+when the tool produced no diagnostics. This is conservative syntax coverage,
+not a proof of C++ semantic validity, reachability or safety.
+
+`scan --engine ast` now emits per-file `parsing` statuses (`complete`, `partial`,
+`failed`) and ERROR/missing-node ranges in JSON and Markdown. Normalized reports
+can retain this `parsing` list using repository-relative file paths. Completed
+`own_ast` runs require complete saved parsing coverage for all `analyzed_files`;
+old reports without coverage remain `unknown`. Other tools with recorded
+partial/failed parsing likewise stay unknown. Normalization should preserve
+actual run coverage, never replace it with a clean reparse from a different run.
+
 `compare-tools` rejects reports whose target ID, commit, file count, or LOC scope
 do not match. It reports per-tool diagnostic/evidence counts and exact file/line
 overlap only.

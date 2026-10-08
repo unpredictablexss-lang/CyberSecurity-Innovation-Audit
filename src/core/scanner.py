@@ -37,6 +37,7 @@ class ScanResult:
     skipped_files: List[str] = field(default_factory=list)
     scope_includes: List[str] = field(default_factory=lambda: ["."])
     scope_excludes: List[str] = field(default_factory=list)
+    parsing: List[dict] = field(default_factory=list)
 
     @property
     def finding_count(self) -> int:
@@ -56,6 +57,7 @@ class ScanResult:
             "skipped_files": self.skipped_files,
             "finding_count": self.finding_count,
             "findings": [finding.to_dict() for finding in self.findings],
+            "parsing": self.parsing,
         }
 
 

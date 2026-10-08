@@ -128,6 +128,10 @@ def render_markdown(report: BenchmarkSummaryReport) -> str:
             ])
             for limitation in row.limitations:
                 lines.append(f"  - Limitation: {limitation}")
+            for snapshot in row.source_snapshots:
+                lines.append(f"  - Pinned source: `{snapshot['file']}` at `{snapshot['commit']}`; "
+                             f"AST: {snapshot['status']}; SHA-256: `{snapshot['sha256']}`; "
+                             f"issues: {snapshot.get('issues', [])}; {snapshot.get('reason', '')}")
         if row.reason:
             lines.append(f"- {row.sample_id} / {row.revision} / {row.tool}: {row.reason}")
     lines.extend(
