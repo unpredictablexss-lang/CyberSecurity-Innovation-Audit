@@ -3,6 +3,7 @@ from pathlib import Path
 
 from src.benchmark.historical import HistoricalSample, load_sample
 from src.benchmark.root_cause_matrix import (
+    NOT_APPLICABLE,
     RootCauseMatrix,
     ToolCandidate,
     build_root_cause_hit_matrix,
@@ -60,6 +61,39 @@ class RootCauseMatrixTests(unittest.TestCase):
         hit = classify_tool_hit(sample, "semgrep", None)
         self.assertEqual(hit.status, "unknown")
         self.assertEqual(hit.evidence_count, 0)
+
+    def test_not_applicable_is_distinct_from_unknown(self) -> None:
+        sample = _sample()
+
+        not_run = classify_tool_hit(sample, "codeql", None)
+        cannot_apply = classify_tool_hit(sample, "codeql", NOT_APPLICABLE)
+
+        self.assertEqual(not_run.status, "unknown")
+        self.assertEqual(cannot_apply.status, "not_applicable")
+        self.assertEqual(cannot_apply.evidence_count, 0)
+
+    def test_not_applicable_survives_matrix_build(self) -> None:
+        matrix = build_root_cause_hit_matrix(
+            [_sample()],
+            {"codeql": NOT_APPLICABLE, "clang_sa": None, "cppcheck": []},
+        )
+        by_tool = {row.tool: row.status for row in matrix.rows}
+        self.assertEqual(by_tool["codeql"], "not_applicable")
+        self.assertEqual(by_tool["clang_sa"], "unknown")
+        self.assertEqual(by_tool["cppcheck"], "miss")
+
+    def test_rejects_ambiguous_candidate_payload(self) -> None:
+        with self.assertRaisesRegex(ValueError, "must be a list"):
+            classify_tool_hit(_sample(), "codeql", "not_applicable")
+
+    def test_markdown_renders_not_applicable(self) -> None:
+        from src.benchmark.root_cause_matrix import render_markdown
+
+        matrix = build_root_cause_hit_matrix(
+            [_sample()], {"codeql": NOT_APPLICABLE}
+        )
+        text = render_markdown(matrix)
+        self.assertIn("not_applicable", text)
 
     def test_matrix_builds_sample_x_tool_rows(self) -> None:
         samples = [_sample(group="g1"), _sample(group="g2")]
