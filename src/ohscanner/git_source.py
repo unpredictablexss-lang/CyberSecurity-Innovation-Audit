@@ -127,7 +127,9 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
             raise ValueError("invalid object ID in Git tree")
         # With lazy fetching disabled, 'ls-tree -l' uses '-' for the size
         # of a missing local promisor blob. Fail explicitly; never fetch it.
-        if size == "-":
+        if size in ("-", "BAD"):
+            # Git versions differ: some return '-' and others emit 'BAD'
+            # for the missing size of an unfetched promisor object.
             raise ValueError("missing_local_git_object: blob unavailable locally "
                              + oid + " (" + path + "); offline-only read (no fetch)")
         if not size.isdecimal():
