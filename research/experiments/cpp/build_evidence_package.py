@@ -411,6 +411,31 @@ def binding_digest(record: dict) -> str:
     return sha256_bytes(raw.encode("utf-8"))
 
 
+def parsing_coverage(status: str, scope_files: int) -> dict:
+    if type(scope_files) is not int or scope_files < 1:
+        raise ValueError("scope_files must be a positive integer")
+    counts = {
+        "files_complete": 0,
+        "files_partial": 0,
+        "files_failed": 0,
+        "files_not_applicable": 0,
+        "files_not_run": 0,
+    }
+    if status == "complete":
+        counts["files_complete"] = scope_files
+    elif status == "complete_unresolved_symbol" or status.startswith("partial"):
+        counts["files_partial"] = scope_files
+    elif status.startswith("failed"):
+        counts["files_failed"] = scope_files
+    elif status.startswith("not_applicable"):
+        counts["files_not_applicable"] = scope_files
+    elif status == "not_run":
+        counts["files_not_run"] = scope_files
+    else:
+        raise ValueError(f"unsupported parsing status: {status}")
+    return {"status": status, **counts}
+
+
 def baseline_unit(sample_id: str, revision: str, tool: str) -> dict:
     sample = SAMPLES[sample_id]
     source = sample[revision]
@@ -421,6 +446,7 @@ def baseline_unit(sample_id: str, revision: str, tool: str) -> dict:
         else f"{sample['stem']}.{revision}.{tool}"
     )
     analysis_unit_id = f"{sample['pair_analysis_unit_id']}:{revision}"
+    scope_files = 1
     limitations = [
         "Affected-file snapshot only; no full product build or runtime validation.",
         "possible_hit is region/rule overlap only; miss is not a false negative and empty output is not proof of safety.",
@@ -441,7 +467,7 @@ def baseline_unit(sample_id: str, revision: str, tool: str) -> dict:
             "scope_kind": "historical_affected_region",
             "files": [sample["file"]],
             "symbols": sample["symbols"],
-            "scope_files": 1,
+            "scope_files": scope_files,
             "scope_loc": source["lines"],
         },
         "source_artifact": source_artifact(sample_id, revision),
@@ -451,9 +477,7 @@ def baseline_unit(sample_id: str, revision: str, tool: str) -> dict:
         "tool": tool_spec(tool),
         "run_id": run_id,
         "execution_status": execution_status,
-        "parsing_coverage": {"status": parsing_status, "files_complete": 1 if parsing_status == "complete" else 0,
-                             "files_partial": 1 if parsing_status.startswith("partial") or "unresolved" in parsing_status else 0,
-                             "files_failed": 1 if parsing_status.startswith("not_applicable") else 0},
+        "parsing_coverage": parsing_coverage(parsing_status, scope_files),
         "result_status": result_status,
         "result_evidence_count": evidence_count,
         "limitations": limitations,
@@ -514,6 +538,7 @@ def safe_unit(sample_id: str, tool: str) -> dict:
     revision = "fixed"
     source = sample[revision]
     run_id = None
+    scope_files = 1
     record = {
         "schema_version": 1,
         "record_type": "evidence_unit",
@@ -529,7 +554,7 @@ def safe_unit(sample_id: str, tool: str) -> dict:
             "files": [sample["file"]],
             "symbols": control["symbols"],
             "line_ranges": control["line_ranges"],
-            "scope_files": 1,
+            "scope_files": scope_files,
             "scope_loc": source["lines"],
         },
         "source_artifact": source_artifact(sample_id, revision),
@@ -539,7 +564,7 @@ def safe_unit(sample_id: str, tool: str) -> dict:
         "tool": tool_spec(tool),
         "run_id": run_id,
         "execution_status": "not_run",
-        "parsing_coverage": {"status": "not_run", "files_complete": 0, "files_partial": 0, "files_failed": 0},
+        "parsing_coverage": parsing_coverage("not_run", scope_files),
         "result_status": "unknown",
         "result_evidence_count": 0,
         "limitations": [

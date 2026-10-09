@@ -318,7 +318,10 @@ class TeammateAEvidencePackageTests(unittest.TestCase):
             ("execution failed", lambda unit: unit.__setitem__("execution_status", "failed")),
             (
                 "partial parsing",
-                lambda unit: unit["parsing_coverage"].__setitem__("status", "partial_macro_context"),
+                lambda unit: unit.__setitem__(
+                    "parsing_coverage",
+                    builder.parsing_coverage("partial_macro_context", unit["scope"]["scope_files"]),
+                ),
             ),
         )
         for name, mutate in cases:
@@ -339,17 +342,90 @@ class TeammateAEvidencePackageTests(unittest.TestCase):
             "status": "not_applicable_no_translation_unit",
             "files_complete": 0,
             "files_partial": 0,
-            "files_failed": 1,
+            "files_failed": 0,
+            "files_not_applicable": 1,
+            "files_not_run": 0,
         }
         self.assert_invalid(record, "explicit reason", "na-missing-reason")
 
         record["not_applicable_reason"] = "Required headers are unavailable; no translation unit can be formed."
         self.validate_record(record, "valid-na")
 
+        stale_failed_shape = copy.deepcopy(record)
+        stale_failed_shape["parsing_coverage"] = {
+            "status": "not_applicable_no_translation_unit",
+            "files_complete": 0,
+            "files_partial": 0,
+            "files_failed": 1,
+            "files_not_applicable": 0,
+            "files_not_run": 0,
+        }
+        self.assert_invalid(
+            stale_failed_shape,
+            "parsing coverage counts do not match status",
+            "na-as-failed-coverage",
+        )
+
+        missing_bucket_shape = copy.deepcopy(record)
+        missing_bucket_shape["parsing_coverage"].pop("files_not_run")
+        self.assert_invalid(
+            missing_bucket_shape,
+            "parsing coverage fields mismatch",
+            "missing-not-run-bucket",
+        )
+
         record = copy.deepcopy(self.record)
         record["result_status"] = "unknown"
         record["result_evidence_count"] = 1
         self.assert_invalid(record, "unknown cannot carry", "unknown-evidence")
+
+    def test_parsing_coverage_buckets_exclusive_and_explicit(self):
+        expected_by_status = {
+            "complete": "files_complete",
+            "complete_unresolved_symbol": "files_partial",
+            "partial_macro_context": "files_partial",
+            "failed": "files_failed",
+            "not_applicable_no_source_files": "files_not_applicable",
+            "not_run": "files_not_run",
+        }
+        for status, bucket in expected_by_status.items():
+            with self.subTest(status=status):
+                coverage = builder.parsing_coverage(status, 2)
+                self.assertEqual(coverage["status"], status)
+                self.assertEqual(
+                    {key: value for key, value in coverage.items() if key != "status"},
+                    {
+                        "files_complete": 2 if bucket == "files_complete" else 0,
+                        "files_partial": 2 if bucket == "files_partial" else 0,
+                        "files_failed": 2 if bucket == "files_failed" else 0,
+                        "files_not_applicable": 2 if bucket == "files_not_applicable" else 0,
+                        "files_not_run": 2 if bucket == "files_not_run" else 0,
+                    },
+                )
+
+        safe = copy.deepcopy(next(unit for unit in self.units if unit["control_role"] == "safe"))
+        self.assertEqual(safe["parsing_coverage"], {
+            "status": "not_run",
+            "files_complete": 0,
+            "files_partial": 0,
+            "files_failed": 0,
+            "files_not_applicable": 0,
+            "files_not_run": 1,
+        })
+        for status in (
+            "complete",
+            "complete_unresolved_symbol",
+            "partial_macro_context",
+            "not_applicable_no_source_files",
+        ):
+            generated = next(
+                unit for unit in self.units
+                if unit["control_role"] != "safe" and unit["parsing_coverage"]["status"] == status
+            )
+            self.assertEqual(
+                generated["parsing_coverage"],
+                builder.parsing_coverage(status, generated["scope"]["scope_files"]),
+            )
 
     def test_binding_digest_is_not_optional(self):
         record = copy.deepcopy(self.record)

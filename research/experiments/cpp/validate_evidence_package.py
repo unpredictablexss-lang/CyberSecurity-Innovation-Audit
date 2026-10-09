@@ -39,6 +39,7 @@ ALLOWED_PARSING = {
     "partial_macro_context",
     "partial_missing_includes",
     "partial_parser_problems",
+    "failed",
     "not_applicable_no_translation_unit",
     "not_applicable_no_source_files",
     "not_run",
@@ -50,6 +51,53 @@ def _load(path: Path) -> Any:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError(f"cannot read JSON evidence {path}: {error}") from error
+
+
+PARSING_COVERAGE_FIELDS = (
+    "files_complete",
+    "files_partial",
+    "files_failed",
+    "files_not_applicable",
+    "files_not_run",
+)
+
+
+def _expected_parsing_coverage(status: str, scope_files: int) -> dict:
+    counts = {field: 0 for field in PARSING_COVERAGE_FIELDS}
+    if status == "complete":
+        counts["files_complete"] = scope_files
+    elif status == "complete_unresolved_symbol" or status.startswith("partial"):
+        counts["files_partial"] = scope_files
+    elif status.startswith("failed"):
+        counts["files_failed"] = scope_files
+    elif status.startswith("not_applicable"):
+        counts["files_not_applicable"] = scope_files
+    elif status == "not_run":
+        counts["files_not_run"] = scope_files
+    else:
+        raise ValueError("unsupported parsing status")
+    return {"status": status, **counts}
+
+
+def _validate_parsing_coverage(record: dict, where: str) -> None:
+    parsing = record.get("parsing_coverage")
+    scope = record.get("scope")
+    if not isinstance(parsing, dict) or not isinstance(scope, dict):
+        raise ValueError(f"{where} unsupported parsing_coverage")
+    status = parsing.get("status")
+    if status not in ALLOWED_PARSING:
+        raise ValueError(f"{where} unsupported parsing_coverage")
+    if set(parsing) != {"status", *PARSING_COVERAGE_FIELDS}:
+        raise ValueError(f"{where} parsing coverage fields mismatch")
+    scope_files = scope.get("scope_files")
+    if type(scope_files) is not int or scope_files < 1:
+        raise ValueError(f"{where} parsing coverage requires positive scope_files")
+    expected = _expected_parsing_coverage(status, scope_files)
+    if parsing != expected:
+        raise ValueError(f"{where} parsing coverage counts do not match status")
+    for field in PARSING_COVERAGE_FIELDS:
+        if type(parsing[field]) is not int or parsing[field] < 0:
+            raise ValueError(f"{where} parsing coverage counts must be non-negative integers")
 
 
 def _binding_digest(record: dict) -> str:
@@ -299,9 +347,8 @@ def _validate_unit(record: dict, corpus: dict, where: str) -> None:
     execution_status = record.get("execution_status")
     if execution_status not in ALLOWED_EXECUTION:
         raise ValueError(f"{where} unsupported execution_status")
-    parsing = record.get("parsing_coverage")
-    if not isinstance(parsing, dict) or parsing.get("status") not in ALLOWED_PARSING:
-        raise ValueError(f"{where} unsupported parsing_coverage")
+    _validate_parsing_coverage(record, where)
+    parsing = record["parsing_coverage"]
     result_status = record.get("result_status")
     if result_status not in ALLOWED_RESULT:
         raise ValueError(f"{where} unsupported result_status")
@@ -351,6 +398,8 @@ def _validate_unit(record: dict, corpus: dict, where: str) -> None:
                 raise ValueError(f"{where} not_applicable requires explicit reason")
             if not str(parsing["status"]).startswith("not_applicable"):
                 raise ValueError(f"{where} not_applicable parsing coverage must state incompatibility")
+            if parsing["files_not_applicable"] != scope["scope_files"] or parsing["files_failed"] != 0:
+                raise ValueError(f"{where} not_applicable cannot be represented as failed parsing coverage")
         elif result_status == "unknown" and evidence_count != 0:
             raise ValueError(f"{where} unknown cannot carry classified evidence count")
 

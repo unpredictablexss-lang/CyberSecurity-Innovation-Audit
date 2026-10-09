@@ -38,13 +38,21 @@ deliberately absent because third-party source bytes are not committed.
 | Dimension | Values used here | Meaning |
 |---|---|---|
 | execution | `completed`, `failed`, `blocked`, `not_run` | Whether a tool process completed |
-| parsing coverage | `complete`, `partial_*`, `complete_unresolved_symbol`, `not_applicable_*`, `not_run` | Whether the pinned analysis unit was fully parsed/extracted |
+| parsing coverage | `complete`, `partial_*`, `complete_unresolved_symbol`, `failed`, `not_applicable_*`, `not_run` | Whether the pinned analysis unit was fully parsed/extracted |
 | result | `possible_hit`, `miss`, `unknown`, `not_applicable` | Historical benchmark cell interpretation |
 
 `possible_hit` is only candidate/rule/region overlap. `miss` requires completed
 execution and adequate parsing with no match. Failed, partial or missing
 analysis is `unknown`; an unexecuted scanner is `not_run` and never a miss.
 `not_applicable` requires a recorded incompatible-analysis-unit reason.
+
+File coverage uses five explicit, mutually exclusive counters:
+`files_complete`, `files_partial`, `files_failed`, `files_not_applicable` and
+`files_not_run`. They must sum to `scope_files` and exactly match the parsing
+status. In particular, `not_applicable_*` increments only
+`files_not_applicable`, while an unexecuted safe control increments only
+`files_not_run`; neither is a parsing failure.
+
 No cell is a confirmed vulnerability and no Precision/Recall is computed.
 The current report loader requires `target_id == sample_id`, while PR #5 binds
 `target_id="current-component:<repository>"`. This is a documented contract-change
@@ -98,7 +106,9 @@ commands.
   hashes.
 - This round does not modify `src/`, public schemas, CLI, providers, public IR
   or report modules. Missing public fields are recorded in
-  `research/corpus/native/contract_change_proposal.md`.- Top-level `interface_baseline` metadata pins PR #5 `feat/ohscanner-core`
+  `research/corpus/native/contract_change_proposal.md`.
+
+- Top-level `interface_baseline` metadata pins PR #5 `feat/ohscanner-core`
   head `108494bfe392ae62394ea82cd44d28cc03ebb163` and the SHA-256 of
   `src/ohscanner/contracts.py`; validator tests reject an incorrect head or
   contract hash.

@@ -62,12 +62,12 @@ schema. Real Git requests bind `target_id="current-component:<repository>"`,
 | `b61714186ccc9a0d5f14f1a08f2b214b077ccb480cbec5b4ed87eb577b7c4edd` | `benchmarks/historical/kernel_liteos_a_getgroups_oob.json` |
 | `2e1d411e2869738d5d4605b0a42de1b93b22e66e1f74f9609659bc4f80f5fea9` | `benchmarks/historical/communication_dsoftbus_null_deref.json` |
 | `f9b3f331a3592c57f851142f762ca13a98d731b80964a1043cb467f44e24f329` | `benchmarks/historical/arkcompiler_ets_runtime_jsarray_sort_oob.json` |
-| `e5ddfd184d85004751c2f89629bcd937c5a5b7f910adb599d2fc2dfcc843af2e` | `research/experiments/cpp/build_evidence_package.py` |
-| `9ae68da254ad861ff8f4f6d45011e891433648cd24168a83665b0cf58640e2a9` | `research/experiments/cpp/validate_evidence_package.py` |
-| `0e75b38ee3c9772a463984054fac793e5702e069d7dcc7f624a833dcb49f96d1` | `tests/test_teammate_a_evidence_package.py` |
+| `3d4dc2864cca097e4934547bd37166332b1283ceb719d1d4d30222ddca182346` | `research/experiments/cpp/build_evidence_package.py` |
+| `fdaa5f4f4dc6689389aaedfa8c5d55e61ffb30dc669fac93447089224af27c09` | `research/experiments/cpp/validate_evidence_package.py` |
+| `e168464dafe640fca18b74f7a5fc679f15c57e773558f9547a98962cb6b3b6e7` | `tests/test_teammate_a_evidence_package.py` |
 
 Project input manifest SHA-256:
-`522195d52fec49ab827506562d39af5b5b8cefaf81e1e8740c0bdd410e1c1092`.
+`492b0bee5929aeb76e39fac665e5413b39473681ed65ff9345ebb915ced4d55e`.
 It is the SHA-256 of `outputs/logs/teammate_a_input_manifest_2026-10-09.txt`,
 which contains sorted `sha256sum` records for all files under `src`, `tests`,
 `benchmarks/historical`, `research/corpus/native`,
@@ -94,7 +94,7 @@ python3 research/experiments/cpp/build_evidence_package.py --write \
 ```
 
 Input binding: project input manifest
-`522195d52fec49ab827506562d39af5b5b8cefaf81e1e8740c0bdd410e1c1092`.
+`492b0bee5929aeb76e39fac665e5413b39473681ed65ff9345ebb915ced4d55e`.
 
 Result:
 
@@ -146,7 +146,7 @@ Input binding: project input manifest.
 Real result:
 
 ```text
-Ran 204 tests in 15.231s
+Ran 205 tests in 15.210s
 
 OK
 ```
@@ -154,21 +154,21 @@ OK
 The log covers evidence identity/mixing, wrong commit and scope, source
 tree/blob/file hash mismatches, SourceUnit path/hash and ordering, failed or
 partial analysis not being `miss`, `not_run`/`unknown`/`not_applicable`
-boundaries, safe/baseline isolation, duplicate run IDs, report integration and
-the report-loader `target_id` contract gap.
+boundaries, exact parsing coverage buckets, safe/baseline isolation, duplicate
+run IDs, report integration and the report-loader `target_id` contract gap.
 
 ## Output hashes
 
 | SHA-256 | Output |
 |---|---|
-| `2f116b7c17299cd8e49b06ba39bf442dd829c61437e96d56c7b6cb06ba7bf26e` | `outputs/reports/static_baselines/evidence_units.json` |
-| `77a32f80f8b519a4f327ef50d8942afe9570dba1744f5a205cd1dd4257648433` | `outputs/reports/static_baselines/baseline_status.json` |
+| `d277bff261493d558caa705f27c1a51d9f0f1ebc1dc7e6e074a626a38b1aac84` | `outputs/reports/static_baselines/evidence_units.json` |
+| `f461c102fefd946a2f82f68df30a9bad74a4a72c308615e8f4ba2590473cd188` | `outputs/reports/static_baselines/baseline_status.json` |
 | `85a457be9a3e76b09f108145f2673da2bfbe293fd545df2b7ad82a7838a05b84` | `outputs/logs/teammate_a_build_write_2026-10-09.txt` |
 | `bd97088daac09c3b107514c0dbe5cdc942f23f619212825960ee9ddf86a89168` | `outputs/logs/teammate_a_build_check_2026-10-09.txt` |
 | `50161d589407baaa7c9b58f85d4086e76776618b62a673d17876f6f334ae80bf` | `outputs/logs/teammate_a_validate_2026-10-09.txt` |
-| `63c3ba7e019225c1d0b262eb8763deaa777082a24e0d0789e953ff3d3cf08c5f` | `outputs/logs/teammate_a_unittest_2026-10-09.txt` |
-| `522195d52fec49ab827506562d39af5b5b8cefaf81e1e8740c0bdd410e1c1092` | `outputs/logs/teammate_a_input_manifest_2026-10-09.txt` |
-| `ad3cde5e0dbdd43f96dbab15093e5c653690713757b7ef74519abe0406706751` | `outputs/logs/teammate_a_key_input_hashes_2026-10-09.txt` |
+| `0ba0507c5b133bf2ff6b542d4e3eb751f2c9852d631798402f7607c03e2fc87a` | `outputs/logs/teammate_a_unittest_2026-10-09.txt` |
+| `492b0bee5929aeb76e39fac665e5413b39473681ed65ff9345ebb915ced4d55e` | `outputs/logs/teammate_a_input_manifest_2026-10-09.txt` |
+| `2c225ca09b89d87bfa4f3bb042cc12ab3ab7c37a7eb9bb5be97ecacaa481d82d` | `outputs/logs/teammate_a_key_input_hashes_2026-10-09.txt` |
 
 ## Baseline state reconstruction
 
@@ -178,7 +178,11 @@ Across all 80 evidence units, execution states are
 `not_applicable_no_source_files=2`,
 `not_applicable_no_translation_unit=8`, `not_run=16`,
 `partial_cast_problem=2`, `partial_macro_context=8`,
-`partial_missing_includes=6`, `partial_parser_problems=2`.
+`partial_missing_includes=6`, `partial_parser_problems=2`. Exact parsing file
+coverage is `files_complete=34`, `files_partial=20`, `files_failed=0`,
+`files_not_applicable=10` and `files_not_run=16`. The five buckets are mutually
+exclusive and sum to 80 scoped files; `not_applicable_*` is not a parsing
+failure.
 
 The 64 vulnerable/fixed baseline cells project to
 `possible_hit=5`, `miss=29`, `unknown=20`, `not_applicable=10`. The 16 safe

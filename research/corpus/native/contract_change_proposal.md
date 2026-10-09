@@ -21,7 +21,10 @@ fields in one stable public structure.
 3. `source_artifact`: repository path, canonical exact-commit URL, retrieval
    method, `source_file_sha256`, `git_blob_sha1`, byte count and line count.
 4. Separate `execution_status`, `parsing_coverage.status` and benchmark
-   `result_status`; benchmark status remains evaluator-owned.
+   `result_status`; benchmark status remains evaluator-owned. Parsing coverage
+   also records exact `files_complete`, `files_partial`, `files_failed`,
+   `files_not_applicable` and `files_not_run` counters that sum to
+   `scope_files`.
 5. Tool identity including name, version and configuration/query/artifact
    hashes.
 6. Stable `run_id`, logical normalized/native artifact references and artifact
@@ -84,6 +87,8 @@ that public contract.
 - Wrong commit, repository, PR #5 request identity, source/tree/blob/file hash,
   analysis-unit scope or tool configuration invalidates the binding.
 - Failed, blocked, partial, missing and unexecuted states cannot map to `miss`.
+- Parsing coverage counters must exactly match the parsing status and sum to
+  `scope_files`; `not_applicable_*` is never represented as `files_failed`.
 - `not_applicable` is distinct from `unknown` and requires an explicit reason.
 - Report rendering preserves revision, scope and status boundaries and leaves
   `validated_vulnerability=0`.
