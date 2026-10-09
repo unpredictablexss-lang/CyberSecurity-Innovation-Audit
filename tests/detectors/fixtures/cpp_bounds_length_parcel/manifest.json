@@ -2,9 +2,9 @@
   "schema_version": 1,
   "provenance": {
     "kind": "self_authored_synthetic_fixture",
-    "repository": "local-synthetic-fixture",
+    "repository": "synthetic/fixture",
     "commit": "3333333333333333333333333333333333333333",
-    "snapshot_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "snapshot_sha256": "638c0b20a7e23603e6b265c54c8129b18fec1d5435e522e1b0a158b219c14012",
     "profile_id": "fixture-no-build",
     "note": "Research shape fixture only; not a public vulnerability benchmark."
   },
@@ -14,21 +14,24 @@
       "sha256": "929f4a2f018ad38d7998956a6c9f2e82dfba5c66aa9bae09a530bfaa4fb499b3",
       "parse_status": "complete",
       "parse_issues": [],
-      "fixture_category": "vulnerable_shape"
+      "fixture_category": "vulnerable_shape",
+      "expected_observation": "candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/fixed_guarded_parcel.cpp",
       "sha256": "68f08513275fe18604d82ac90755acc41c9264014d2299982f297ab43708d424",
       "parse_status": "complete",
       "parse_issues": [],
-      "fixture_category": "fixed_shape"
+      "fixture_category": "fixed_shape",
+      "expected_observation": "no_candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/safe_constant_length.cpp",
       "sha256": "12cf3584cb49c832c4588aef5ff3b9440f7c16d8e25e15f687a606c1f1cc4d00",
       "parse_status": "complete",
       "parse_issues": [],
-      "fixture_category": "safe_control"
+      "fixture_category": "safe_control",
+      "expected_observation": "no_candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/partial_parse_macro_guard.cpp",
@@ -37,7 +40,8 @@
       "parse_issues": [
         "Macro-controlled guard context is not expanded."
       ],
-      "fixture_category": "unknown_partial_parse"
+      "fixture_category": "unknown_partial_parse",
+      "expected_observation": "unknown_incomplete_analysis"
     },
     {
       "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/failed_parse_unbalanced.cpp",
@@ -46,7 +50,8 @@
       "parse_issues": [
         "Synthetic unbalanced conditional."
       ],
-      "fixture_category": "failed_parse"
+      "fixture_category": "failed_parse",
+      "expected_observation": "unknown_incomplete_analysis"
     }
   ]
 }

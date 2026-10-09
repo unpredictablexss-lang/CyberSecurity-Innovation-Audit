@@ -146,19 +146,15 @@ def evaluate_slice(
     )
 
 def _load_fixture_units() -> Tuple[ExperimentUnit, ...]:
-    import json
-    from pathlib import Path
+    from tests.detectors.fixture_support import BOUNDS_FIXTURES, load_units
 
-    root = Path(__file__).resolve().parents[3]
-    fixture_dir = root / "tests" / "detectors" / "fixtures" / "cpp_bounds_length_parcel"
-    manifest = json.loads((fixture_dir / "manifest.json").read_text(encoding="utf-8"))
     return tuple(
         ExperimentUnit(
-            path=item["path"],
-            text=(root / item["path"]).read_text(encoding="utf-8"),
-            parse_status=item["parse_status"],
+            path=unit.path,
+            text=unit.text,
+            parse_status=unit.parse_status,
         )
-        for item in manifest["units"]
+        for unit in load_units(BOUNDS_FIXTURES)
     )
 
 

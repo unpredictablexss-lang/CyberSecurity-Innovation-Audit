@@ -2,9 +2,9 @@
   "schema_version": 1,
   "provenance": {
     "kind": "self_authored_synthetic_fixture",
-    "repository": "local-synthetic-fixture",
+    "repository": "synthetic/fixture",
     "commit": "1111111111111111111111111111111111111111",
-    "snapshot_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "snapshot_sha256": "4160533563d01defbf63c94e7e4f8ff83da46590b0479381331b6a85200111f5",
     "profile_id": "fixture-no-build",
     "note": "Fixture metadata only; not a public vulnerability benchmark."
   },
@@ -15,7 +15,7 @@
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "vulnerable",
-      "expected_diagnostics": 1
+      "expected_observation": "candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp",
@@ -23,7 +23,7 @@
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "vulnerable_locked_shape",
-      "expected_diagnostics": 1
+      "expected_observation": "candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp",
@@ -31,7 +31,7 @@
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "fixed",
-      "expected_diagnostics": 0
+      "expected_observation": "no_candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp",
@@ -39,7 +39,7 @@
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "safe_control",
-      "expected_diagnostics": 0
+      "expected_observation": "no_candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp",
@@ -47,7 +47,7 @@
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "safe_control_shadowed_bindings",
-      "expected_diagnostics": 0
+      "expected_observation": "no_candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp",
@@ -55,7 +55,7 @@
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "vulnerable_conditional_rebind",
-      "expected_diagnostics": 1
+      "expected_observation": "candidate_shape"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp",
@@ -65,7 +65,7 @@
         "Macro-controlled reset context is not expanded."
       ],
       "fixture_category": "unknown_partial_parse",
-      "expected_diagnostics": 0
+      "expected_observation": "unknown_incomplete_analysis"
     },
     {
       "path": "tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp",
@@ -75,7 +75,7 @@
         "Synthetic unbalanced reset call."
       ],
       "fixture_category": "failed_parse",
-      "expected_diagnostics": 0
+      "expected_observation": "unknown_incomplete_analysis"
     }
   ]
 }

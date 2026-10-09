@@ -381,3 +381,11 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 新增自建 safe fixture `tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp`，manifest SHA-256 绑定；新增 nested outer alias 正例测试。没有修改公共 schema 或共享 Runner 语义。
 - Codex bundled Python 全量验证：`Ran 206 tests in 19.986s`，`OK (skipped=2)`。消融真实运行保持 lifetime base=4、straight-line rebind=3、sync=3；bounds base vulnerable=1/fixed=1/safe=0，guard vulnerable=1/fixed=0/safe=0。
 - 仍有限制：词法块只是近似，不处理宏、lambda capture、模板 wrapper 或完整 CFG；独立 holdout 仍未收集，v1 契约未冻结，hard timeout/进程/内存沙箱仍未实现。空 findings 和 `completed` 均不代表安全。
+
+## 21. 2026-10-09 合成 fixture 证据绑定修复（teammate A）
+
+- 自由审查发现 `cpp_lifetime` 与 `cpp_bounds_length_parcel` 的 manifest repository/snapshot 值未绑定实际 `ScanContext`，测试加载器也未强制核对 manifest 文件 SHA-256，存在跨 fixture 证据混用风险。现以 manifest 的 repository/commit/profile/snapshot 构造请求，并在 detector 运行前校验每个源文件哈希、fixture-set snapshot、重复路径及 fixture 目录边界。
+- `fixture_category` 明确仅为开发控制标签；`expected_observation` 只记录 `candidate_shape` / `no_candidate_shape` / `unknown_incomplete_analysis`，其中 partial/failed 均为 unknown。空 findings、`completed` 或 `no_candidate_shape` 均不代表安全结论。
+- 两个离线 research slice 的模块复现入口改为复用同一 hash 校验加载器，避免脚本运行与单测使用不同证据集合；没有修改公共 `contracts.py`、Runner、CLI、providers、frontend、IR 或报告 schema。
+- Codex bundled Python 全量验证：`Ran 213 tests in 20.217s`，`OK (skipped=2)`；定向 research-slice 回归 `Ran 10 tests, OK`，并补充重复路径与 `..` 路径穿越拒绝测试。以 `python -m research.experiments.cpp.lifetime_sync_slice` 与 `python -m research.experiments.cpp.bounds_length_parcel_slice` 复现时，lifetime 保持 `blocked`/unknown 覆盖语义，bounds 保持形状观察而非漏洞结论。
+- 仍有限制：这些仍是 self-authored synthetic fixtures，不是 OpenHarmony 真实提交或漏洞 ground truth；没有独立 holdout、CFG/宏/并发完整分析、硬超时或进程/内存沙箱。本节不改变候选/未评估默认状态，也不提供 Precision/Recall 或安全结论。
