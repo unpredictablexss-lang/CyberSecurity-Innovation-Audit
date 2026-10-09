@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "kind": "self_authored_synthetic_fixture",
+    "repository": "local-synthetic-fixture",
+    "commit": "1111111111111111111111111111111111111111",
+    "snapshot_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "profile_id": "fixture-no-build",
+    "note": "Fixture metadata only; not a public vulnerability benchmark."
+  },
+  "units": [
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp",
+      "sha256": "64559050d0316d71639019191c3171a3d2c63b5b2847582656e919a7ee4f2a1a",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_diagnostics": 1
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp",
+      "sha256": "f86d679436b3233060567e51dd4a425183d27311e77c4c928fa0861af97ca4d0",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable_locked_shape",
+      "expected_diagnostics": 1
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp",
+      "sha256": "f948416968e3180fb4a1a8d25bf1bc9bf2c2c1da12031132d0cd7b2878d9508f",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "fixed",
+      "expected_diagnostics": 0
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp",
+      "sha256": "a644a7ac6cac38f6cdde0c6f4ddb842c23d8daf230034693a51d47aacf4eb94a",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe_control",
+      "expected_diagnostics": 0
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp",
+      "sha256": "62e702f71e2836567c233b365e236031b141d8731efa6a35d10d5309c49b4afd",
+      "parse_status": "partial",
+      "parse_issues": [
+        "Macro-controlled reset context is not expanded."
+      ],
+      "fixture_category": "unknown_partial_parse",
+      "expected_diagnostics": 0
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp",
+      "sha256": "8aa3600071ed916868ade448c1522e2f86e2f58e41ce05643447a322b3ca962c",
+      "parse_status": "failed",
+      "parse_issues": [
+        "Synthetic unbalanced reset call."
+      ],
+      "fixture_category": "failed_parse",
+      "expected_diagnostics": 0
+    }
+  ]
+}
