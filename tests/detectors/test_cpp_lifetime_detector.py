@@ -191,6 +191,50 @@ void auto_pointer_shadowing(Widget* other) {
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
 
+    def test_auto_shadow_is_scoped_to_its_block(self) -> None:
+        unit = self.generated_unit(
+            "auto_shadow_scope_boundary",
+            """
+struct Widget { void Use() const {} };
+void auto_shadow_scope_boundary(Widget* other) {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    {
+        auto alias = other;
+        alias->Use();
+    }
+    alias->Use();
+}
+""",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "alias")
+
+    def test_auto_shadow_after_use_does_not_suppress_earlier_candidate(self) -> None:
+        unit = self.generated_unit(
+            "auto_shadow_after_use",
+            """
+struct Widget { void Use() const {} };
+void auto_shadow_after_use(Widget* other) {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    alias->Use();
+    {
+        auto alias = other;
+        alias->Use();
+    }
+}
+""",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "alias")
+
     def test_unbraced_conditional_rebinding_remains_candidate(self) -> None:
         unit = self.generated_unit(
             "unbraced_conditional_rebind",

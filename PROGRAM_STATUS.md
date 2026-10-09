@@ -408,7 +408,7 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 
 ## 24. 2026-10-09 cpp.lifetime auto 同名绑定边界回归（teammate A）
 
-- 将窄词法绑定识别扩展到简单 `auto name = expr` 声明，使嵌套块中的 inferred `auto` 同名声明可以遮蔽外层 raw alias，避免把内层 `*alias` / `alias->` 错拼到外层 `owner.reset()` 之后。新增确定性回归覆盖该 shadowing 边界；输出仍仅为 syntax candidate/unassessed。
-- Codex bundled Python 验证：lifetime 定向 `Ran 17 tests, OK`；公共契约/Runner 回归 `Ran 20 tests, OK`；全量 `Ran 217 tests in 20.348s`，`OK (skipped=2)`。lifetime research slice 保持 base=4、最终模式=3，mixed partial/failed 覆盖仍为 `blocked`/unknown。
+- 将窄词法绑定识别扩展到简单 `auto name = expr` 声明，使嵌套块中的 inferred `auto` 同名声明可以遮蔽外层 raw alias，避免把内层 `*alias` / `alias->` 错拼到外层 `owner.reset()` 之后。累计新增三组确定性回归：内层 auto shadow 不产生跨绑定候选、shadow 只约束其词法块、use 后出现的 auto shadow 不反向抑制更早候选；输出仍仅为 syntax candidate/unassessed。
+- Codex bundled Python 验证：lifetime 定向 `Ran 19 tests, OK`；公共契约/Runner 回归 `Ran 20 tests, OK`；全量 `Ran 219 tests in 22.498s`，`OK (skipped=2)`。lifetime research slice 保持 base=4、最终模式=3，mixed partial/failed 覆盖仍为 `blocked`/unknown。
 - 没有修改公共 `contracts.py`、Runner、CLI、providers、frontend、IR 或报告 schema。fixture 证据绑定、候选/possible_hit 边界及 partial/failed unknown 语义不变。
 - 仍有限制：简单 `auto name = expr` 只用于词法 shadowing，raw alias 建立仍限显式指针窄语法；`auto` 引用、复杂 declarator、成员、参数捕获、跨作用域 capture、CFG、宏和并发仍未完整建模。独立 holdout、真实 OpenHarmony corpus 与硬超时/进程/内存沙箱仍未实现。空 findings、`completed` 或 `no_candidate_shape` 均不代表安全。
