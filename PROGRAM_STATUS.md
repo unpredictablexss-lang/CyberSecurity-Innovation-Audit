@@ -1,18 +1,20 @@
+> **2026-10-09 状态提醒**：本文件 2026-10-08 的细节章节按时间记录历史试验，可能保留当时的 draft/待验收措辞；主线真实状态是 PR #4 已合入 `main`。下一阶段文档见 [三线并行总方案](docs/strategy/ohscanner_three_track_master_plan.md)、[Detector Contract v1](docs/contracts/ohscanner_detector_contract_v1.md)、[漏洞库与工具实验协议](docs/strategy/vulnerability_corpus_bakeoff_protocol.md)、[Web/IPC 专项任务书](docs/strategy/oh_web_interface_track.md)。它们均属**拟开发方案而非已实现软件**。
+
 # PROGRAM_STATUS.md
 
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-08
-> 当前分支：`feat/historical-vuln-benchmark`  
-> PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`  
-> 当前阶段：PR #4 第一阶段收口审查；静态 benchmark 与证据报告链路已实现，完整工具解析/真实构建覆盖仍是后续工作。
+> 更新日期：2026-10-09（下一阶段规划；旧阶段实测记录仍保留原日期）
+> 当前分支：`main`  
+> PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
+> 当前阶段：历史静态 benchmark 基线已合并；下一阶段三线并行自研 OHScanner **处于文档规划状态**，插件运行时与专项检测器尚未实现。
 > 重要边界：本分支不声明新漏洞，不做 PoC，不做 exploitability 结论；所有结果仍为 `candidate / draft / benchmark`。
 
 ---
 
 ## 0. 当前一句话状态
 
-`feat/historical-vuln-benchmark` 已完成主要静态实验框架并持续补跑工具，尚未完成覆盖验收：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
+`feat/historical-vuln-benchmark` 已完成主要静态实验框架并持续补跑工具，尚未完成覆盖验收：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 已在 2026-10-09 合并到 `main`；本节其余内容为历史阶段实验记录，不代表新的 OHScanner 插件已完成。
 
 已确认收口文档更新前代码 head `dd908f2` 的远端 CI Run #58：**149/149 通过**（Ubuntu 22.04 / Python 3.10）。文档更新产生新的 head 后必须重新核验 CI。
 最近一次本地完整回归记录为 **149/149 通过**；`validated_vulnerability = 0`。
@@ -34,13 +36,13 @@ Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭�
 | 项 | 状态 |
 |---|---|
 | PR | #4 |
-| PR 状态 | open / draft |
-| mergeability | mergeable（以 PR 页面实时状态为准） |
-| 当前分支 | `feat/historical-vuln-benchmark` |
-| 当前阶段 | 第一阶段收口审查；不自动切 ready |
+| PR 状态 | merged / closed（2026-10-09） |
+| mergeability | 已合并到 main，非待合并 PR |
+| 当前分支 | `main`（前历史分支记录见原 PR #4） |
+| 当前阶段 | 历史阶段完成合并；三线并行与自研 Detector 仍是计划 |
 | 最近确认的 GitHub Actions | 原代码 head `dd908f2` / Run #58：149 tests passed |
 | 当前本地回归 | 149 tests passed |
-| 最新提交核验 | 文档同步后的新 head 需要重新等待 CI；旧 149 项成功不能覆盖新提交 |
+| 最新阶段核验 | 历史 PR #4 合并前 CI 已成功；后续自研运行时尚无功能测试结果 |
 | validated vulnerability | 0 |
 
 ---
@@ -331,3 +333,14 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **待延续的实验限制**：CodeQL 六个分析单元缺 include、c_utils 两单元为 no-build header-only not_applicable；Joern/c_utils/kernel 的解析不完整；Clang 缺真实构建上下文；OH 规则尚未验证在宽代码面的误报率。不要将未覆盖误写为 miss。
 - **审查边界**：已核对关键模块的状态语义、输入绑定和代码结构，并确认现有测试覆盖多种错误输入；尚未完成独立人工 Review、原生实验日志/忽略目录中的结果复跑与许可证逐项核对。请勿把单测通过写成实验已完整复现。
 - **合并要求**：只接受第一阶段工程基线定位；新 head CI 成功、PR 文档同步和人工审查后由项目负责人决定 ready/merge，不自动执行。`validated_vulnerability = 0`，历史样本 runtime 为 `not_run`。
+
+
+## 16. 2026-10-09 下一阶段文档落地（规划，不是功能交付）
+
+- 已把三线并行 / 自研 OHScanner 策略写入 `docs/strategy/ohscanner_three_track_master_plan.md`；负责人负责平台与集成，A 负责 C/C++ 安全研究和自研 detector，B 负责 OpenHarmony WebView/JS/ArkTS/IPC/权限入口研究和自研 detector。
+- 已提出 `docs/contracts/ohscanner_detector_contract_v1.md`：拟定 SourceUnit、ScanContext、Detector、DetectorRun 和通往主线 ToolRunResult v1 的桥接；**尚无可 import 的对应接口实现，也未跑 Mock 双插件 CI**。
+- 已提出 `docs/strategy/vulnerability_corpus_bakeoff_protocol.md`：官方历史漏洞 S0–S3 索引、固定源码/修复对、安全对照、覆盖与失败记录、独立保留测试、根因级工具评估；**尚未收集声明数量的新样本**。
+- 已提出 `docs/strategy/oh_web_interface_track.md`：Web/ArkTS/IPC 优先真实攻击面、静态 guard/source-sink 研究，不把通用 Web 警告当 OpenHarmony 漏洞。
+- 新阶段正式扫描引擎的核心检测算法将自主实现；成熟工具用于离线实验/基准，扫描阶段不自动依赖调用外部大扫描器。
+- 下一步第一优先：负责人从当前 `main` 创建 `feat/ohscanner-core`，实现最小 Detector v1/Mock CPP+Interface 接入、异常隔离和 CI，然后队友按冻结接口独立开发本地模块。不得将该计划写成项目已经具有新漏洞检测能力。
+- `codex/cutils-component-pilot` 目前仅用于选择性迁移的试点参考；不整体合并、不将当前 c_utils 试点告警称为漏洞。
