@@ -84,6 +84,26 @@ class HistoricalBenchmarkTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "missing fields"):
                 load_sample(path)
 
+    def test_load_sample_rejects_paths_that_escape_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repo, manifest, _, _ = self._build_fixture(Path(directory))
+            original = json.loads(manifest.read_text(encoding="utf-8"))
+            for filename in ("../outside.c", "/tmp/outside.c", r"src\\..\\outside.c", "C:/outside.c", "."):
+                with self.subTest(filename=filename):
+                    invalid = dict(original, affected_files=[filename])
+                    manifest.write_text(json.dumps(invalid), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "repository-relative"):
+                        load_sample(manifest)
+            for sample_id in ("../outside", "sub/path", "."):
+                with self.subTest(sample_id=sample_id):
+                    invalid = dict(original, sample_id=sample_id)
+                    manifest.write_text(json.dumps(invalid), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "safe filename token"):
+                        load_sample(manifest)
+            manifest.write_text(json.dumps(dict(original, affected_files="src/demo.c")), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "non-empty list"):
+                load_sample(manifest)
+
     def test_replay_verifies_pair_and_exposes_candidate_delta(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             repo, manifest, vulnerable, fixed = self._build_fixture(Path(directory))
