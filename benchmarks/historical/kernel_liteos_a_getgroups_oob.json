@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "sample_id": "kernel_liteos_a-getgroups-oob-2025-03",
+  "title": "GetGroups scheduler-lock scope out-of-bounds read fix",
+  "repository": "openharmony/kernel_liteos_a",
+  "repo_url": "https://github.com/openharmony/kernel_liteos_a",
+  "vulnerable_commit": "6ac8e246b0efd57a28ea05b6e6973ae0602fe032",
+  "fixed_commit": "940a5a8c2cd1ced84d435933dbcdbb1a7fbf3000",
+  "weakness": "CWE-125",
+  "affected_files": [
+    "syscall/process_syscall.c"
+  ],
+  "affected_symbols": [
+    "GetGroups"
+  ],
+  "root_cause": "GetGroups read the group count under SCHEDULER_LOCK but released the lock before computing listSize and copying the group list, allowing a concurrent group-list mutation to race the memcpy (published as CVE-2025-20042 out-of-bounds read).",
+  "cve": "CVE-2025-20042",
+  "source_refs": [
+    "https://github.com/openharmony/kernel_liteos_a/commit/940a5a8c2cd1ced84d435933dbcdbb1a7fbf3000",
+    "https://gitee.com/openharmony/kernel_liteos_a/pulls/1263",
+    "https://raw.githubusercontent.com/openharmony/security/master/zh/security-disclosure/2025/2025-03.md"
+  ],
+  "notes": "Fix expands the SCHEDULER_LOCK scope so groupCount, listSize and the group-list memcpy stay protected. Historical ground truth for capability evaluation, not a new vulnerability.",
+  "label_status": "advisory_confirmed",
+  "root_cause_group": "concurrency_race",
+  "evidence_level": "patch_and_advisory",
+  "runtime_replay_status": "not_run"
+}

@@ -43,10 +43,14 @@ class AstIndex:
     functions: List[FunctionDef] = field(default_factory=list)
     calls: List[CallSite] = field(default_factory=list)
     variables: List[VariableDecl] = field(default_factory=list)
+    parse_status: str = "complete"
+    parse_issues: List[dict] = field(default_factory=list)
 
     def to_dict(self):
         return {
             "language": self.language,
+            "parse_status": self.parse_status,
+            "parse_issues": self.parse_issues,
             "functions": [f.__dict__ for f in self.functions],
             "calls": [c.__dict__ for c in self.calls],
             "variables": [v.__dict__ for v in self.variables],
@@ -89,12 +93,17 @@ def _function_name(def_node: Node, source: bytes) -> str:
     declarator = def_node.child_by_field_name("declarator")
     if declarator is None:
         return _descendant_text(def_node, {"identifier", "field_identifier"}, source) or "<unknown>"
-    name = _descendant_text(
-        declarator,
-        {"identifier", "field_identifier", "operator_name", "destructor_name"},
-        source,
-    )
-    return name or "<unknown>"
+    # Follow the declarator itself, not identifiers in a scope or parameter type.
+    while declarator.child_by_field_name("declarator") is not None:
+        declarator = declarator.child_by_field_name("declarator")
+    while declarator.type == "qualified_identifier":
+        name = declarator.child_by_field_name("name")
+        if name is None:
+            return "<unknown>"
+        declarator = name
+    if declarator.type in {"identifier", "field_identifier", "operator_name", "destructor_name"}:
+        return _text(declarator, source)
+    return "<unknown>"
 
 
 def _parameter_names(def_node: Node, source: bytes) -> List[str]:
@@ -151,6 +160,17 @@ def parse_source(code: str, language: str = "c") -> AstIndex:
     parser = _C_PARSER if language == "c" else _CPP_PARSER
     tree = parser.parse(source)
     root = tree.root_node
+    issues = []
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node.is_error or node.is_missing:
+            issues.append({
+                "kind": "missing" if node.is_missing else "error",
+                "start_line": node.start_point[0] + 1,
+                "end_line": node.end_point[0] + 1,
+            })
+        stack.extend(reversed(node.children))
 
     functions: List[FunctionDef] = []
     for node in _collect(root, "function_definition"):
@@ -192,4 +212,5 @@ def parse_source(code: str, language: str = "c") -> AstIndex:
             )
         )
 
-    return AstIndex(language=language, functions=functions, calls=calls, variables=variables)
+    return AstIndex(language=language, functions=functions, calls=calls, variables=variables,
+                    parse_status="partial" if root.has_error else "complete", parse_issues=issues)

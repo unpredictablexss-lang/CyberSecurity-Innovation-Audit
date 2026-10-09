@@ -1,0 +1,72 @@
+# OpenHarmony-specific enhancement rule (C++).
+#
+# Root cause family: NULL pointer dereference (CWE-476) where a
+# `new (std::nothrow)` allocation result is dereferenced through `->` without
+# an intervening null check. A failing nothrow allocation returns nullptr
+# instead of throwing, so the dereference is a candidate null deref.
+#
+# Ground truth: communication_dsoftbus
+#   core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp
+#   Five functions (ClinetOnNodeOnlineStateChanged, ClinetOnNodeBasicInfoChanged,
+#   ClientOnNodeStatusChanged, ClinetOnLocalNetworkIdChanged,
+#   ClinetNotifyDeviceNotTrusted) each did:
+#       sptr<BusCenterClientProxy> p = new (std::nothrow) BusCenterClientProxy(...);
+#       p->On...(...);
+#   Fix 192f3e11d74beeaa3d879333471deb8a24a7e1c5 inserts
+#       if (p == nullptr) { LNN_LOGE(...); return SOFTBUS_NETWORK_GET_CLIENT_PROXY_NULL; }
+#   immediately after every allocation. CVE-2025-26690.
+#
+# Discriminative power (verified 2026-10-06 with Semgrep 1.179.0 on the pinned
+# vulnerable/fixed pair):
+#   vulnerable revision -> 5 hits (lines 70, 81, 96, 107, 122)
+#   fixed revision      -> 0 hits (each site now guarded by a null check)
+#   cutils / liteos / arkcompiler samples (vuln + fixed) -> 0 false positives
+# This is a structural candidate for the null_deref root cause and is the OH-specific
+# replacement for the removed generic `new-nothrow-unchecked` / `deref-after-arrow`
+# local rules.
+#
+# Boundary: the hit proves that a nothrow allocation result is dereferenced
+# without a recognized syntactic guard. The excluded if may mention the pointer
+# without checking null or stopping the failing path. No CFG dominance,
+# reassignment or alias analysis is performed. It does NOT prove allocation failure is
+# attacker-reachable or that the resulting null deref is exploitable.
+#
+# Future extensions (not yet implemented):
+#   - `new` (throwing) followed by a redundant null check that hides a real bug
+#   - containers: `at()`/`operator[]` on a pointer that may be nullptr
+rules:
+  - id: oh-nothrow-alloc-unchecked-deref
+    languages: [cpp]
+    message: >-
+      `new (std::nothrow)` result `$PTR` is dereferenced through `$PTR->$M(...)`
+      without a recognized syntactic guard. Guard correctness and path coverage
+      are unverified. A failing nothrow allocation yields
+      nullptr, so the dereference is a candidate NULL pointer dereference
+      (CWE-476). Guard with `if ($PTR == nullptr) { ... }` before use.
+    severity: WARNING
+    metadata:
+      cwe:
+        - "CWE-476: NULL Pointer Dereference"
+      root_cause_group: null_deref
+      subcategory:
+        - audit
+      confidence: MEDIUM
+      references:
+        - CVE-2025-26690
+        - https://github.com/openharmony/communication_dsoftbus
+      derived_from: >-
+        fix 192f3e11d74beeaa3d879333471deb8a24a7e1c5 (adds `if (x == nullptr)`
+        guards after each `new (std::nothrow)` in bus_center_client_proxy.cpp)
+    patterns:
+      - pattern: |
+          $PTR = new (std::nothrow) $T(...);
+          ...
+          $PTR->$M(...);
+      - pattern-not: |
+          $PTR = new (std::nothrow) $T(...);
+          ...
+          if (<... $PTR ...>) {
+            ...
+          }
+          ...
+          $PTR->$M(...);

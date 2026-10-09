@@ -1,0 +1,86 @@
+rules:
+  - id: raptor-incorrect-use-of-free
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: HIGH
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-590: Free of Memory not on the Heap"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://github.com/shellphish/how2heap/blob/master/glibc_2.23/house_of_spirit.c
+    message: >-
+      The software calls free() on a pointer to memory that has a short 
+      lifetime and was not allocated using associated heap allocation 
+      functions such as malloc(), calloc(), or realloc().
+    severity: ERROR
+    languages:
+      - c
+      - cpp
+    # NOTE: this rule only covers `free` called on stack-allocated buffers (and possibly static variables); it does not cover other instances of `free` called on non-heap-allocated buffers; it also does not cover `alloca` and custom wrappers to `free`.
+    # NOTE: multi-dimensional arrays and other ways to create an array are not covered.
+    # NOTE: refer also to `raptor-mismatched-memory-management.yaml`.
+    pattern-either:
+      - patterns:
+          - pattern: free($PTR)
+          - pattern-either:
+              # array
+              - pattern-inside: |
+                  $_ $PTR[$_];
+                  ...
+              - pattern-inside: |
+                  $_ $PTR[$_] = ...;
+                  ...
+              - pattern-inside: |
+                  $_ $PTR[] = ...;
+                  ...
+              # pointer to array
+              - pattern-inside: |
+                  $_ $ARR[$_];
+                  ...
+                  $PTR = $ARR;
+                  ...
+              - pattern-inside: |
+                  $_ $ARR[$_] = ...;
+                  ...
+                  $PTR = $ARR;
+                  ...
+              - pattern-inside: |
+                  $_ $ARR[] = ...;
+                  ...
+                  $PTR = $ARR;
+                  ...
+      - patterns:
+          # address of local variable
+          - pattern: free(&$VAR)
+          - pattern-either:
+              - pattern-inside: |
+                  $_ $VAR;
+                  ...
+              - pattern-inside: |
+                  $_ $VAR = ...;
+                  ...
+              - pattern-inside: |
+                  $_ $VAR[$_];
+                  ...
+              - pattern-inside: |
+                  $_ $VAR[$_] = ...;
+                  ...
+              - pattern-inside: |
+                  $_ $VAR[] = ...;
+                  ...
+              - pattern-inside: |
+                  $_ * $VAR;
+                  ...
+              - pattern-inside: |
+                  $_ * $VAR = ...;
+                  ...

@@ -15,6 +15,7 @@ class Evidence:
     source: str
     location: Optional[str] = None
     content: str = ""
+    proposition: str = ""
     confidence: float = 0.0
 
     def to_dict(self) -> Dict[str, Any]:

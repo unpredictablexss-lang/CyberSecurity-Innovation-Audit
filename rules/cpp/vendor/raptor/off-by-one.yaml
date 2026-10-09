@@ -1,0 +1,107 @@
+rules:
+  - id: raptor-off-by-one
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-193: Off-by-one Error"
+        - "CWE-787: Out-of-bounds Write"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://g.co/kgs/PCHQjJ
+        - https://github.com/struct/mms
+    message: >-
+      The software calculates or uses an incorrect maximum or minimum value
+      that is 1 more, or 1 less, than the correct value.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: C++ `new` operator and some heap allocation functions are not covered.
+    # NOTE: some string and memory copy functions are not covered.
+    # NOTE: `memcpy(dst + 1, p, len)` and similar scenarios are not covered.
+    # NOTE: pattern `{$len=snprintf(_); malloc($len);}` is not covered.
+    # NOTE: some other ways to create an array are not covered.
+    # NOTE: refer also to `metavariable-comparison` to catch larger indexes as in https://github.com/parsiya/semgrep-hotspots/blob/main/cpp/arrays-out-of-bounds-access.yaml
+    # NOTE: refer also to `cpp.lang.security.strings.alloc-strlen.alloc-strlen` and `cpp.lang.security.strings.missing-nul-cpp-string-memcpy.missing-nul-cpp-string-memcpy`.
+    pattern-either:
+      # array access
+      - pattern: $BUF[sizeof($BUF)] = ...
+      - patterns:
+          - pattern: $BUF[$LEN] = ...
+          - pattern-either:
+              - pattern-inside: |
+                  $_ $BUF[$LEN];
+                  ...
+              - pattern-inside: |
+                  $_ $BUF[$LEN] = ...;
+                  ...
+      - patterns:
+          - pattern: |
+              *($BUF + $LEN) = ...
+          - pattern-either:
+              - pattern-inside: |
+                  $_ $BUF[$LEN];
+                  ...
+              - pattern-inside: |
+                  $_ $BUF[$LEN] = ...;
+                  ...
+      # two-dimentional array access
+      - patterns:
+          - pattern: $BUF[$X][$Y] = ...
+          - pattern-either:
+              - pattern-inside: |
+                  $_ $BUF[$_][$Y];
+                  ...
+              - pattern-inside: |
+                  $_ $BUF[$X][$_];
+                  ...
+        # - pattern: for (<... $I = $NUM ...>; <... $I <= $LEN ...>; <... $I++ ...>) ...
+        # - pattern: for (<... $I = $NUM ...>; <... $I <= $LEN ...>; <... ++$I ...>) ...
+      # suspicious loops
+      # <... $I = 0 ...> is still not supported by Semgrep as of 2025-11-22
+      # - pattern: for ($_ $I = $NUM; <... $I <= $LEN ...>; <... $I++ ...>) ...
+      # - pattern: for ($_ $I = $NUM; <... $I <= $LEN ...>; <... ++$I ...>) ...
+      # - pattern: while (<... $I <= $LEN ...>) ...
+      # - pattern: do ... while (<... $I <= $LEN ...>);
+      # strlen vs. sizeof
+      - pattern: strlen($SRC) > sizeof($DST)
+      - pattern: strlen($SRC) <= sizeof($DST)
+      - pattern: sizeof($DST) < strlen($SRC)
+      - pattern: sizeof($DST) >= strlen($SRC)
+      # potential strncat misuse
+      - patterns:
+          - pattern: strncat($_, $_, $LEN)
+          - metavariable-pattern:
+              metavariable: $LEN
+              patterns:
+                - pattern-not: $_ - 1
+      # out-of-bound indexing: strlen($STR) con be 0 leading to a -1 index
+      - pattern: $STR[strlen($STR) - 1]
+      - patterns:
+          - pattern-inside: |
+              $LEN = strlen($STR) - 1;
+              ...
+          - pattern: $STR[$LEN]
+      - patterns:
+          - pattern-inside: |
+              $LEN = strlen($STR);
+              ...
+          - pattern: $STR[$LEN - 1]
+      # no space allocated for NUL terminator
+      - pattern: malloc(strlen($STR))
+      - patterns:
+          - pattern-inside: |
+              $LEN = strlen($STR);
+              ...
+          - pattern: malloc($LEN)

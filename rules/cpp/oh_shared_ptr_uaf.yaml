@@ -1,0 +1,40 @@
+# OpenHarmony-specific enhancement rule (C/C++).
+#
+# Root cause family: concurrent use-after-free from non-atomic std::shared_ptr
+# mutation on a singleton / state-holding member.
+#
+# Ground truth: commonlibrary_c_utils base/include/singleton.h
+#   DelayedSingleton<T>::DestroyInstance() used instance_.reset() while
+#   GetInstance() read instance_ without atomic access; under high parallelism
+#   this is a published UAF (Issue #560). Fix commit 9a3f2811 replaced the
+#   mutation with std::atomic_store(&instance_, ...) and the fast-path read
+#   with std::atomic_load(&instance_).
+#
+# Discriminative power (verified 2026-10-06 on the pinned vulnerable/fixed pair):
+#   vulnerable revision -> 1 hit (instance_.reset() inside DestroyInstance)
+#   fixed revision      -> 0 hits (reset() replaced by atomic_store)
+# This distinguishes the historical edit; it is not general UAF detection.
+# The pattern below matches ANY reset() receiver, including unique_ptr and safe
+# synchronized/local objects. It does not establish shared_ptr type, concurrent
+# access, or absence of locking. Always review those obligations separately.
+#
+# Future extensions (designed but not yet firing on the current sample set):
+#   - double-checked-locking read of a shared_ptr without atomic_load
+#   - non-atomic `return instance_;` after an unsynchronized null check
+rules:
+  - id: oh-shared-ptr-nonatomic-reset-uaf
+    languages: [cpp]
+    message: >-
+      reset() call matching a historical shared_ptr race pattern. Receiver type,
+      concurrent access and synchronization are unverified; this may be a safe
+      local or unique_ptr reset. Review the same object's readers and writers
+      before assigning CWE-416 or recommending atomic access/shared locking.
+    severity: WARNING
+    metadata:
+      cwe:
+        - "CWE-416: Use After Free"
+      root_cause_group: lifetime_uaf
+      confidence: LOW
+      references:
+        - https://gitcode.com/openharmony/commonlibrary_c_utils/issues/560
+    pattern: $PTR.reset()

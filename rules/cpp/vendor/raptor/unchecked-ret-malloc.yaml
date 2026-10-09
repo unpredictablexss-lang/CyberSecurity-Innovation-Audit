@@ -1,0 +1,77 @@
+rules:
+  - id: raptor-unchecked-ret-malloc
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - audit
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-252: Unchecked Return Value"
+        - "CWE-690: Unchecked Return Value to NULL Pointer Dereference"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://g.co/kgs/PCHQjJ
+        - https://github.com/struct/mms
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+    message: >-
+      The software does not check the return value from a method or
+      function, which can prevent it from detecting unexpected states and
+      conditions.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: custom wrappers are not covered.
+    # NOTE: for another approach to NULL pointer dereferencing detection, refer to `cpp.lang.security.memory.null-deref.null-library-function.null-library-function`.
+    patterns:
+      - pattern-either:
+          - pattern: $RET = $FUN(...)
+      - metavariable-pattern:
+          metavariable: $FUN
+          pattern-either:
+            - pattern: malloc
+            - pattern: calloc
+            - pattern: realloc
+            - pattern: reallocf
+            - pattern: valloc
+            - pattern: aligned_alloc
+            - pattern: strdup
+            - pattern: strndup
+      - pattern-not-inside: |
+          $FUN(...);
+          ...
+          if (<... $RET ...>) ...
+      # no need to explicitly check the following patterns, as the deep expression operator above will already match them
+      # - pattern-not-inside: |
+      #     $FUN(...);
+      #     ...
+      #     if (<... $RET == NULL ...>) ...
+      # - pattern-not-inside: |
+      #     $FUN(...);
+      #     ...
+      #     if (<... NULL == $RET ...>) ...
+      # - pattern-not-inside: |
+      #     $FUN(...);
+      #     ...
+      #     if (<... $RET != NULL ...>) ...
+      # - pattern-not-inside: |
+      #     $FUN(...);
+      #     ...
+      #     if (<... NULL != $RET ...>) ...
+      # - pattern-not-inside: |
+      #     $FUN(...);
+      #     ...
+      #     if (<... !$RET ...>) ...
+      - pattern-not-inside: <... $_ == NULL ...>
+      - pattern-not-inside: <... NULL == $_ ...>
+      - pattern-not-inside: <... $_ != NULL ...>
+      - pattern-not-inside: <... NULL != $_ ...>
+      - pattern-not-inside: <... !$_ ...>

@@ -1,0 +1,46 @@
+rules:
+  - id: raptor-unsafe-ret-strlcpy-strlcat
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - audit
+      vulnerability_class: Memory Issues
+      likelihood: MEDIUM
+      impact: HIGH
+      confidence: MEDIUM
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-131: Incorrect Calculation of Buffer Size"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://lwn.net/Articles/507319/
+        - https://g.co/kgs/PCHQjJ
+    message: >-
+      The strlcpy() and strlcat() functions return the total length of the
+      string they tried to create. For strlcpy() that means the length of
+      the source string. For strlcat() that means the initial length of the
+      destination string plus the length of of the source string.
+      Therefore, this return value can be larger than the size of the
+      destination buffer. If it is used unsafely, e.g. as an index to write
+      to the destination buffer, memory corruption might occur.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    patterns:
+      - pattern-either:
+          - pattern: $_ = $FUN(...)
+          - pattern: $_ += $FUN(...)
+      - metavariable-pattern:
+          metavariable: $FUN
+          pattern-either:
+            - pattern: strlcpy
+            - pattern: strlcat
+            - pattern: wcslcpy
+            - pattern: wcslcat
+            - pattern: _mbslcpy
+            - pattern: _mbslcat

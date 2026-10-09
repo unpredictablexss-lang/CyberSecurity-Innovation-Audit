@@ -1,0 +1,145 @@
+rules:
+  - id: raptor-signed-unsigned-conversion
+    metadata:
+      author: Marco Ivaldi <raptor@0xdeadbeef.info>
+      category: security
+      subcategory:
+        - vuln
+      vulnerability_class: Other Security
+      likelihood: MEDIUM
+      impact: MEDIUM
+      confidence: LOW
+      technology:
+        - c
+        - cpp
+      cwe:
+        - "CWE-195: Signed to Unsigned Conversion Error"
+        - "CWE-196: Unsigned to Signed Conversion Error"
+        - "CWE-194: Unexpected Sign Extension"
+        - "CWE-191: Integer Underflow (Wrap or Wraparound)"
+        - "CWE-681: Incorrect Conversion between Numeric Types"
+        - "CWE-789: Memory Allocation with Excessive Size Value"
+      owasp:
+        - A10:2025 - Mishandling of Exceptional Conditions
+      references:
+        - https://g.co/kgs/PCHQjJ
+        - https://github.com/struct/mms
+        - https://www.sei.cmu.edu/downloads/sei-cert-c-coding-standard-2016-v01.pdf
+        - http://www.phrack.org/issues/60/10.html#article
+        - https://docs.microsoft.com/en-us/cpp/sanitizers/asan-error-examples
+    message: >-
+      The software uses a signed primitive and performs a cast to an
+      unsigned primitive, or uses an unsigned primitive and performs a cast
+      to a signed primitive, which can produce an unexpected value.
+      When the result of a function is to be used as a size parameter,
+      using negative return values can have unexpected results.
+      Although less frequent an issue, unsigned-to-signed conversion can be 
+      the precursor to buffer underwrite conditions. Buffer underwrites 
+      occur frequently when large unsigned values are cast to signed values, 
+      and then used as indexes into a buffer or for pointer arithmetic.
+    severity: WARNING
+    languages:
+      - c
+      - cpp
+    # NOTE: the deep expression operator is necessary to catch some matches because C/C++ integer promotions do not seem entirely supported by Semgrep; this may generate lots of false positives.
+    # NOTE: some types (e.g. `char`, `short`, `long`), functions (e.g., widechar and some alloc functions, custom wrappers), and use cases (e.g., comparisons) are not covered.
+    # NOTE: `wmemcpy`, `wmemmove`, and `wmemset` are not covered.
+    # NOTE: `memcpy_s`, `memmove_s`, `memset_explicit`, and similar variants are not covered.
+    # NOTE: `strcpy_s`, `strcat_s`, and similar variants are not covered.
+    # NOTE: try to avoid false positives where possible.
+    pattern-either:
+      # signed to unsigned
+      - patterns:
+          - pattern-either:
+              - pattern: (unsigned int $_) = <... (int $_) ...>
+              - pattern: (unsigned $_) = <... (int $_) ...>
+              - pattern: (size_t $_) = <... (int $_) ...>
+              - pattern: (size_t $_) = <... (off_t $_) ...>
+          - pattern-not: $_ = 0
+      - patterns:
+          - pattern-either:
+              - pattern: |
+                  unsigned int $FUN(...)
+                  {
+                  ...
+                  return (int $_);
+                  }
+              - pattern: |
+                  unsigned $FUN(...)
+                  {
+                  ...
+                  return (int $_);
+                  }
+              - pattern: |
+                  size_t $FUN(...)
+                  {
+                  ...
+                  return (int $_);
+                  }
+              - pattern: |
+                  size_t $FUN(...)
+                  {
+                  ...
+                  return (off_t $_);
+                  }
+          # improve output readability
+          - focus-metavariable: $FUN
+      - pattern: strncpy($_, $_, (int $_))
+      - pattern: stpncpy($_, $_, (int $_))
+      - pattern: strncat($_, $_, (int $_))
+      - pattern: strlcpy($_, $_, (int $_))
+      - pattern: strscpy($_, $_, (int $_))
+      - pattern: strlcat($_, $_, (int $_))
+      - pattern: snprintf($_, (int $_), ...)
+      - pattern: vsnprintf($_, (int $_), ...)
+      - pattern: swprintf($_, (int $_), ...)
+      - pattern: vswprintf($_, (int $_), ...)
+      - pattern: getcwd($_, (int $_))
+      - pattern: memcpy($_, $_, (int $_))
+      - pattern: mempcpy($_, $_, (int $_))
+      - pattern: memccpy($_, $_, $_, (int $_))
+      - pattern: memmove($_, $_, (int $_))
+      - pattern: memset($_, $_, (int $_))
+      - pattern: bcopy($_, $_, (int $_))
+      - pattern: alloca((int $_))
+      - pattern: malloc((int $_))
+      - pattern: calloc($_, (int $_))
+      - pattern: calloc((int $_), $_)
+      - pattern: realloc($_, (int $_))
+      - pattern: read($_, $_, (int $_))
+      - pattern: recv($_, $_, (int $_), $_)
+      - pattern: recvfrom($_, $_, (int $_), $_, ...)
+      - pattern: fread($_, (int $_), $_, $_)
+      # unsigned to signed
+      - pattern: (int $_) = <... (unsigned int $_) ...>
+      - pattern: (int $_) = <... (unsigned $_) ...>
+      - pattern: (int $_) = <... (size_t $_) ...>
+      - pattern: (off_t $_) = <... (size_t $_) ...>
+      - patterns:
+          - pattern-either:
+              - pattern: |
+                  int $FUN(...)
+                  {
+                  ...
+                  return (unsigned int $_);
+                  }
+              - pattern: |
+                  int $FUN(...)
+                  {
+                  ...
+                  return (unsigned $_);
+                  }
+              - pattern: |
+                  int $FUN(...)
+                  {
+                  ...
+                  return (size_t $_);
+                  }
+              - pattern: |
+                  off_t $FUN(...)
+                  {
+                  ...
+                  return (size_t $_);
+                  }
+          # improve output readability
+          - focus-metavariable: $FUN

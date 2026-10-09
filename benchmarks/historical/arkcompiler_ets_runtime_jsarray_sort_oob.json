@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+  "title": "JSArray::SortElementsByObject unchecked element access out-of-bounds write fix",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "repo_url": "https://github.com/openharmony/arkcompiler_ets_runtime",
+  "vulnerable_commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+  "fixed_commit": "1b23531531e768398682582969c2a9f17e72cafe",
+  "weakness": "CWE-787",
+  "affected_files": [
+    "ecmascript/js_array.cpp"
+  ],
+  "affected_symbols": [
+    "SortElementsByObject"
+  ],
+  "root_cause": "JSArray::SortElementsByObject performed insertion-sort element reads and writes through ElementAccessor::Get/Set without verifying that the index is within the element array length. When the array backing store changes or shrinks during the sort (the comparator runs arbitrary JS), the unchecked index access reads or writes out of bounds (published as CVE-2025-23420 out-of-bounds write, CVSS 3.8).",
+  "cve": "CVE-2025-23420",
+  "source_refs": [
+    "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11012",
+    "https://raw.githubusercontent.com/openharmony/security/master/zh/security-disclosure/2025/2025-03.md",
+    "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBKOHZ"
+  ],
+  "notes": "Fix commit 1b235315 is a cherry-pick of PR 10670 to the 5.0.2 branch. It introduces JSArray::CheckStableArrayAndGet / CheckStableArrayAndSet, which guard every direct ElementAccessor::Get/Set in SortElementsByObject with 'IsStableJSArray && index < ElementAccessor::GetElementsLength' and fall back to ObjectFastOperator otherwise. Verified 2026-10-06: parent commit aeee3fd1 exists locally and its js_array.cpp still contains the unguarded ElementAccessor::Get(thisObjHandle, ...) calls at lines 650/653/665 inside SortElementsByObject, so the parent is a genuine vulnerable state rather than an assumed one. Note the parent commit message refers to an unrelated PR merge (!10959); it qualifies as ground truth only because the vulnerable code was directly verified in it. This sample is chosen because missing-bounds-check out-of-bounds write is a root-cause family that pattern matchers can express, unlike the existing lifetime_uaf / concurrency_race / null_deref samples. Historical ground truth for capability evaluation, not a new vulnerability.",
+  "label_status": "advisory_confirmed",
+  "root_cause_group": "oob_write",
+  "evidence_level": "patch_and_advisory",
+  "runtime_replay_status": "not_run"
+}

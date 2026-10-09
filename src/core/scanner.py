@@ -30,12 +30,14 @@ CALL_PATTERN = re.compile(
 @dataclass
 class ScanResult:
     target: str
+    engine: str = "text"
     scanned_files: int = 0
     scanned_lines: int = 0
     findings: List[Finding] = field(default_factory=list)
     skipped_files: List[str] = field(default_factory=list)
     scope_includes: List[str] = field(default_factory=lambda: ["."])
     scope_excludes: List[str] = field(default_factory=list)
+    parsing: List[dict] = field(default_factory=list)
 
     @property
     def finding_count(self) -> int:
@@ -44,6 +46,7 @@ class ScanResult:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "target": self.target,
+            "engine": self.engine,
             "scope": {
                 "include_paths": self.scope_includes,
                 "exclude_paths": self.scope_excludes,
@@ -54,6 +57,7 @@ class ScanResult:
             "skipped_files": self.skipped_files,
             "finding_count": self.finding_count,
             "findings": [finding.to_dict() for finding in self.findings],
+            "parsing": self.parsing,
         }
 
 
