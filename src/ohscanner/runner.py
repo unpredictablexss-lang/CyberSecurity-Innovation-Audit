@@ -63,7 +63,12 @@ def _normalized(context, detector, selected, run, elapsed, error=None):
             confidence="unassessed", symbol=finding.symbol))
     findings.sort(key=lambda item: (item.file, item.line or 0, item.rule_id or "", item.diagnostic_id))
     limitations = list(run.limitations)
-    limitations.extend(("M0 synthetic fixture only; no real Git provenance verified.",
+    provenance_limitation = (
+        "M0 synthetic fixture only; no real Git provenance verified."
+        if context.request.provenance == "fixture" else
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared."
+    )
+    limitations.extend((provenance_limitation,
                         "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
                         "Diagnostic does not establish vulnerability, reachability or security impact."))
     if run.status == "blocked":
@@ -105,6 +110,16 @@ def run_all(context: ScanContext, registry: DetectorRegistry):
                               limitations=("Missing required shared facts: " + ", ".join(sorted(missing)),))
             results.append(_normalized(context, detector, selected, run, perf_counter() - start))
             continue
+        # The shared AST map may exist while individual translation units failed
+        # parsing. A detector that requires complete syntax may not claim success.
+        if "ast" in detector.required_facts:
+            incomplete = [unit.path for unit in selected if unit.parse_status != "complete"]
+            if incomplete:
+                run = DetectorRun(detector.detector_id, detector.version, "blocked",
+                                  limitations=("Required complete AST unavailable for: "
+                                               + ", ".join(incomplete[:8]),))
+                results.append(_normalized(context, detector, selected, run, perf_counter() - start))
+                continue
         try:
             run = detector.detect(context, selected)
             result = _normalized(context, detector, selected, run, perf_counter() - start)
