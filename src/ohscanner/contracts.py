@@ -57,8 +57,12 @@ class ScanRequest:
             raise ValueError("target/repository mismatch")
         if not re.fullmatch(r"[a-f0-9]{64}", self.snapshot_sha256):
             raise ValueError("invalid snapshot SHA-256")
-        if self.provenance != "fixture":
-            raise ValueError("M0 only supports synthetic fixture provenance")
+        if self.provenance not in ("fixture", "git_object"):
+            raise ValueError("unknown source provenance")
+        if self.provenance == "git_object" and (
+                not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", self.commit)
+                or self.profile_id != "light-ast"):
+            raise ValueError("Git source inputs need a full commit SHA and light-ast profile")
 
 
 @dataclass(frozen=True)
