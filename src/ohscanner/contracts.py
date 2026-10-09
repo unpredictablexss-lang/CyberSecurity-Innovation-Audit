@@ -9,7 +9,8 @@ import re
 
 def safe_relative_path(value: str) -> str:
     """Reject absolute, traversal, backslash, empty and noncanonical paths."""
-    if not isinstance(value, str) or not value or "\\" in value or "\x00" in value:
+    if (not isinstance(value, str) or not value or "\\" in value
+            or any(ord(char) < 32 or ord(char) == 127 for char in value)):
         raise ValueError("invalid source-relative path")
     path = PurePosixPath(value)
     if (path.is_absolute() or value.startswith("/") or ":" in value
@@ -53,6 +54,8 @@ class ScanRequest:
                    for value in (self.request_id, self.repository, self.commit,
                                  self.target_id, self.profile_id)):
             raise ValueError("missing scan identity")
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", self.repository):
+            raise ValueError("invalid declared repository name")
         if self.target_id != "current-component:" + self.repository:
             raise ValueError("target/repository mismatch")
         if not re.fullmatch(r"[a-f0-9]{64}", self.snapshot_sha256):
