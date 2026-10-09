@@ -1,5 +1,6 @@
 import argparse
 import json
+import subprocess
 from pathlib import Path
 
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
@@ -136,6 +137,20 @@ def main() -> None:
                                help="Directory of synthetic C/C++ and JS/ArkTS test fixtures")
     ohscan_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m0.json")
     ohscan_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m0.md")
+
+    ohscan_index_parser = subparsers.add_parser(
+        "ohscan-index", help="M1: index pinned local Git source objects (no vulnerability scan)"
+    )
+    ohscan_index_parser.add_argument("--repo-dir", required=True,
+                                     help="Local checked-out Git repository; source read from commit objects")
+    ohscan_index_parser.add_argument("--repository", required=True,
+                                     help="Declared repository identity such as openharmony/commonlibrary_c_utils")
+    ohscan_index_parser.add_argument("--commit", required=True,
+                                     help="Complete immutable Git commit SHA, not HEAD/branch/tag")
+    ohscan_index_parser.add_argument("--include", action="append", default=None,
+                                     help="Repository-relative source path or directory prefix (repeatable)")
+    ohscan_index_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m1_index.json")
+    ohscan_index_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m1_index.md")
 
     historical_parser = subparsers.add_parser(
         "benchmark-historical",
@@ -327,6 +342,29 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if args.command == "ohscan-index":
+        from src.ohscanner.indexing import run_git_index
+
+        try:
+            report = run_git_index(
+                repo_dir=Path(args.repo_dir),
+                repository=args.repository,
+                commit=args.commit,
+                includes=tuple(args.include or ["."]),
+                json_out=Path(args.json_out),
+                md_out=Path(args.md_out),
+            )
+        except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
+            ohscan_index_parser.error(str(error))
+        print("[OK] M1 pinned Git source index; no vulnerability detection performed")
+        print(f"[OK] commit: {report['commit']}")
+        print(f"[OK] scanned source files: {report['scope']['selected_source_files']}")
+        print(f"[OK] language coverage: {report['coverage']['languages']}")
+        print(f"[OK] parsing coverage: {report['coverage']['parsing_status']}")
+        print(f"[OK] json index: {args.json_out}")
+        print(f"[OK] markdown index: {args.md_out}")
+        return
 
     if args.command == "ohscan":
         from src.ohscanner.smoke import run_mock_smoke
