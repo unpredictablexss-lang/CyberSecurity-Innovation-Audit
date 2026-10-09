@@ -1,10 +1,11 @@
 import json
 import os
+import re
 import subprocess
 import tempfile
 import time
 from dataclasses import asdict, dataclass, field
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Dict, List, Optional, Sequence
 
 from src.core.scanner import scan_directory
@@ -116,8 +117,23 @@ def load_sample(path: Path) -> HistoricalSample:
         raise ValueError(
             f"unsupported historical sample schema_version: {data['schema_version']}"
         )
-    if not data["affected_files"]:
-        raise ValueError("historical sample affected_files must not be empty")
+    # These fields are also used as on-disk paths in replay/experiment scripts.
+    # Validate before any Git read or temporary source materialization.
+    sample_id = data["sample_id"]
+    if not isinstance(sample_id, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", sample_id):
+        raise ValueError("historical sample_id must be a safe filename token")
+    affected_files = data["affected_files"]
+    if not isinstance(affected_files, list) or not affected_files:
+        raise ValueError("historical sample affected_files must be a non-empty list")
+    for filename in affected_files:
+        if (
+            not isinstance(filename, str) or not filename or
+            "\\\\" in filename or ":" in filename or
+            PurePosixPath(filename).is_absolute() or
+            ".." in PurePosixPath(filename).parts or
+            PurePosixPath(filename).as_posix() == "."
+        ):
+            raise ValueError(f"historical affected file must be repository-relative: {filename}")
 
     return HistoricalSample(
         schema_version=int(data["schema_version"]),
