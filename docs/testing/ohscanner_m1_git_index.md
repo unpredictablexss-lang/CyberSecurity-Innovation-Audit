@@ -4,6 +4,8 @@
 >
 > **非常重要**：`ohscan-index` 是“源码和 AST 索引命令”，不是漏洞扫描器。没有运行任何 Detector，也没有发现或确认漏洞；生成 `candidate_count: 0` 只能解释为本阶段没有运行检测器。
 
+> **M1.5 后续修复（2026-10-09）**：Git partial clone 防隐式 fetch、按文件 AST 调度、证据义务 sidecar 均已经在本 Draft 分支追加实现。原 M1 说明中的“任何文件 partial → AST Detector 全部 blocked”已不再适用于默认模式。最新 Ubuntu 操作与剩余限制请以 [M1.5 复测文档](ohscanner_m15_offline_and_coverage.md) 为准。
+
 ## 1. 实现了什么
 
 | 层 | 路径 | 能力和限制 |
@@ -12,7 +14,7 @@
 | Frontend | `src/ohscanner/frontend.py` | C/C++ 重用 `src/parser/ast.py` 中 Tree-sitter，返回函数、调用与变量概要；失败/partial 显式记录 |
 | JS/ArkTS 占位 | 同上 | JS、TS、ETS 只记录路径/内容 hash，`parse_status=not_run`；**没有 JS/ArkTS AST、跨语言/IPC/权限分析** |
 | 接口与报告 | `src/ohscanner/contracts.py` + `indexing.py` | 接入 M0 `ScanRequest` / `SourceUnit`，按固定 commit、tree、文件哈希输出 JSON/Markdown |
-| Runner 兼容 | `src/ohscanner/runner.py` | 未来自研 Detector 可读 `ScanContext`；需要完整 AST 而某文件 partial 时直接 blocked；保留 M0 的模拟测试 |
+| Runner 兼容 | `src/ohscanner/runner.py` | 未来自研 Detector 可读 `ScanContext`；M1.5 后默认按文件运行完整 AST、记录 partial 文件未覆盖，只有 `ast_scope=whole_scope` 才全局 blocked |
 | CLI | `src/cli/main.py` | 新增 `ohscan-index`，不覆盖原 `scan` 和 M0 `ohscan` |
 | Tests | `tests/test_ohscanner_m1.py` | 在 CI 本地临时初始化 Git 仓库验证 SHA 固定、HEAD 变化、覆盖状态、文件跳过、CLI 与适配行为 |
 
