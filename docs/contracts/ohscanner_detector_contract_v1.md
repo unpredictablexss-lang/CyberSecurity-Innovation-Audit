@@ -160,6 +160,17 @@ sidecar 保存 `snapshot_sha256, model_version, detector_id/version, profile_id,
 
 **不准交付另一套 CLI、另一套 Candidate JSON、另一套统一 AST 基类。** 需要公共 IR 扩展时先提交申请，由负责人维护并测试向后兼容。
 
+## M1.5 补充：按文件 AST 调度与证据义务（已在 Draft PR #5 实现）
+
+> 实际代码优先：`src/ohscanner/runner.py`、`contracts.py`、`facts.py`。此处是对前面“完整 AST 不足时全部 blocked”策略的**修订**，其他仍未实现的长远 Contract 设计不变。
+
+1. 检测器如声明 `required_facts=("ast",)`，缺省 `ast_scope="per_file"`：只在 AST complete 文件运行，partial/failed/not_run 计为未分析，**绝不计为 miss 或 safe**；需全局完整上下文的算法显式声明 `ast_scope="whole_scope"`，遇任一部分解析文件会整体 blocked。
+2. `run_all(context, registry)` 保持返回原 `list[ToolRunResult]`，不破坏 M0 API。新增 `run_all_with_coverage(context, registry)` 返回 `(results, sidecar)`，其中 `sidecar["detectors"][detector_id]` 明确列出 `applicable_files`、`analyzed_files`、`unexamined[{file,parse_status,reason}]`、状态 `complete/partial/blocked/failed/not_applicable`。
+3. `ToolRunResult.status=completed` 只表示分配的**合格子集**完成，若总适用范围有跳过文件，`limitations` 必须带 `INCOMPLETE COVERAGE`，`parsing` 中同时保留 `analysis_status` 和 `analysis_reason`；整体组件安全性不能由 completed 或 0 diagnostics 推断。
+4. `ScanContext.shared_facts["facts_v1"]` 提供语法级 `functions/calls`；`resolved_target=null`、`guards=[]`，不伪造 guard dominance、类型解析、CFG 或对象生命周期。新增 `EvidenceObligation` 和 `DetectorFinding.evidence_obligations`，通过 `run_all_with_coverage` 的 sidecar 输出待证据，**不修改既有 `ToolDiagnostic v1`**。
+5. `git_object` 输入坚持本地 Git tree/blob 对象来源并封锁隐式传输。缺少本地 Blob 时应失败且提示用户在扫描之外明确准备对象；详细 Git 2.34 兼容试验见 `docs/testing/ohscanner_m15_offline_and_coverage.md`。
+6. 函数级 partial AST 局部分析属于后续研究；尚无严格错误区域/依赖证明前，不允许 partial 文件中的函数默认标 complete。
+
 ## 7. M0 统一 Mock 插件验收
 
 负责人先实现：
