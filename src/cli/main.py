@@ -332,7 +332,7 @@ def main() -> None:
         from src.ohscanner.smoke import run_mock_smoke
 
         try:
-            result = run_mock_smoke(Path(args.fixture_root).resolve(),
+            result = run_mock_smoke(Path(args.fixture_root),
                                     Path(args.json_out).resolve(),
                                     Path(args.md_out).resolve())
         except (ValueError, OSError, UnicodeError) as error:
