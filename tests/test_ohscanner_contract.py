@@ -63,7 +63,7 @@ class DetectorContractTests(unittest.TestCase):
 
     def test_reject_unsafe_paths(self):
         for path in ("../escape.cpp", "/root/other.cpp", "dir/../escape.cpp",
-                     "dir//other.cpp", "a\\b.cpp", "C:/outside.cpp", "./a.cpp"):
+                     "dir//other.cpp", "a\\b.cpp", "C:/outside.cpp", "./a.cpp", "line\\nfeed.cpp", "tab\\tname.cpp"):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 safe_relative_path(path)
 
@@ -80,6 +80,11 @@ class DetectorContractTests(unittest.TestCase):
     def test_request_target_must_match_repository(self):
         with self.assertRaises(ValueError):
             ScanRequest("a", "fixture/a", "synthetic", "0" * 64, "current-component:fixture/b")
+
+    def test_reject_malformed_repository_name(self):
+        with self.assertRaisesRegex(ValueError, "invalid declared repository"):
+            ScanRequest("id", "fixture/not\\nvalid", "synthetic",
+                        "0" * 64, "current-component:fixture/not\\nvalid")
 
     def test_unsupported_language_is_explicitly_blocked(self):
         units = (SourceUnit("example.js", "js", "hello", hashlib.sha256(b"hello").hexdigest()),)
