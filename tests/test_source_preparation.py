@@ -1,11 +1,15 @@
 import hashlib
 import io
 import json
+import stat
 import unittest
 from dataclasses import asdict
 from unittest.mock import patch
 
-import test_ast_coverage_mapping as fixtures
+try:
+    from tests import test_ast_coverage_mapping as fixtures
+except ImportError:
+    import test_ast_coverage_mapping as fixtures
 from scripts.prepare_historical_sources import prepare
 
 
@@ -20,6 +24,7 @@ class SourcePreparationTests(unittest.TestCase):
         content = self.code.encode()
         expected = hashlib.sha1(b"blob " + str(len(content)).encode() + b"\0" + content).hexdigest()
         object_path = self.repo / ".git" / "objects" / expected[:2] / expected[2:]
+        object_path.chmod(stat.S_IREAD | stat.S_IWRITE)
         object_path.unlink()
         return path, expected, object_path
 

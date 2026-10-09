@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from src.ohscanner.contracts import (
     DetectorFinding, DetectorRun, ScanContext, ScanRequest, SourceUnit,
@@ -207,9 +208,15 @@ class DetectorContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "real.cpp").write_text("ok", encoding="utf-8")
-            (root / "alias.cpp").symlink_to(root / "real.cpp")
-            with self.assertRaises(ValueError):
-                load_fixture(root)
+            (root / "alias.cpp").write_text("alias", encoding="utf-8")
+            real_is_symlink = Path.is_symlink
+
+            def portable_is_symlink(path):
+                return path.name == "alias.cpp" or real_is_symlink(path)
+
+            with patch.object(Path, "is_symlink", portable_is_symlink):
+                with self.assertRaises(ValueError):
+                    load_fixture(root)
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ def replay_baselines(samples_dir: Path, target_root: Path, output_dir: Path, fal
             commit = getattr(sample, f"{revision}_commit")
             report_paths = []
             with tempfile.TemporaryDirectory(prefix="oh-static-baseline-") as directory:
-                root = Path(directory)
+                root = Path(directory).resolve()
                 for file in sample.affected_files:
                     path = (root / file).resolve()
                     if not path.is_relative_to(root):

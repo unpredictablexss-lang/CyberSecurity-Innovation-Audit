@@ -3,7 +3,6 @@ import os
 import subprocess
 import sys
 import tempfile
-import textwrap
 import unittest
 from pathlib import Path
 
@@ -14,6 +13,42 @@ from src.baseline.clang_analyzer import (
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def make_fake_clang(directory: Path, version: str, checker: str, message: str) -> str:
+    script = directory / "fake_clang.py"
+    script.write_text(
+        "import pathlib\n"
+        "import sys\n"
+        "if '--version' in sys.argv:\n"
+        f"    print({version!r})\n"
+        "    raise SystemExit(0)\n"
+        "source = pathlib.Path(sys.argv[-1])\n"
+        "print(f'{source}:1:2: warning: ' + "
+        f"{message!r} + ' [' + {checker!r} + ']', "
+        "file=sys.stderr)\n"
+        "raise SystemExit(0)\n",
+        encoding="utf-8",
+    )
+    if os.name == "nt":
+        launcher = directory / "fake-clang.cmd"
+        launcher.write_bytes(
+            (
+                "@echo off\r\n"
+                f'"{sys.executable}" "{script}" %*\r\n'
+                "exit /b %errorlevel%\r\n"
+            ).encode("utf-8")
+        )
+        return str(launcher)
+    launcher = directory / "fake-clang"
+    launcher.write_text(
+        "#!/usr/bin/env python3\n"
+        f"import runpy\n"
+        f"runpy.run_path({str(script)!r}, run_name='__main__')\n",
+        encoding="utf-8",
+    )
+    launcher.chmod(launcher.stat().st_mode | 0o111)
+    return str(launcher)
 
 
 class ClangAnalyzerBaselineTests(unittest.TestCase):
@@ -52,35 +87,17 @@ class ClangAnalyzerBaselineTests(unittest.TestCase):
             root = Path(directory)
             source = root / "demo.c"
             source.write_text("void demo(void) {}\n", encoding="utf-8")
-
-            fake_clang = root / "fake-clang"
-            fake_clang.write_text(
-                textwrap.dedent(
-                    """                    #!/usr/bin/env python3
-                    import pathlib
-                    import sys
-
-                    if "--version" in sys.argv:
-                        print("Fake clang version 1.0")
-                        raise SystemExit(0)
-
-                    source = pathlib.Path(sys.argv[-1])
-                    print(
-                        f"{source}:1:1: warning: synthetic baseline warning "
-                        "[debug.synthetic]",
-                        file=sys.stderr,
-                    )
-                    raise SystemExit(0)
-                    """
-                ),
-                encoding="utf-8",
+            fake_clang = make_fake_clang(
+                root,
+                "Fake clang version 1.0",
+                "debug.synthetic",
+                "synthetic baseline warning",
             )
-            fake_clang.chmod(fake_clang.stat().st_mode | 0o111)
 
             result = run_clang_analyzer(
                 root,
                 files=["demo.c"],
-                clang_executable=str(fake_clang),
+                clang_executable=fake_clang,
             )
 
         self.assertEqual(result.clang_version, "Fake clang version 1.0")
@@ -98,30 +115,12 @@ class ClangAnalyzerBaselineTests(unittest.TestCase):
             target.mkdir()
             source = target / "demo.c"
             source.write_text("void demo(void) {}\n", encoding="utf-8")
-
-            fake_clang = temp / "fake-clang"
-            fake_clang.write_text(
-                textwrap.dedent(
-                    """                    #!/usr/bin/env python3
-                    import pathlib
-                    import sys
-
-                    if "--version" in sys.argv:
-                        print("Fake clang version 2.0")
-                        raise SystemExit(0)
-
-                    source = pathlib.Path(sys.argv[-1])
-                    print(
-                        f"{source}:1:2: warning: cli synthetic warning "
-                        "[debug.cli]",
-                        file=sys.stderr,
-                    )
-                    raise SystemExit(0)
-                    """
-                ),
-                encoding="utf-8",
+            fake_clang = make_fake_clang(
+                temp,
+                "Fake clang version 2.0",
+                "debug.cli",
+                "cli synthetic warning",
             )
-            fake_clang.chmod(fake_clang.stat().st_mode | 0o111)
 
             json_output = temp / "baseline.json"
             md_output = temp / "baseline.md"
@@ -135,7 +134,7 @@ class ClangAnalyzerBaselineTests(unittest.TestCase):
                     "--file",
                     "demo.c",
                     "--clang",
-                    str(fake_clang),
+                    fake_clang,
                     "--json-out",
                     str(json_output),
                     "--md-out",

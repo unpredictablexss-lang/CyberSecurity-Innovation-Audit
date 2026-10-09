@@ -17,8 +17,8 @@ from src.ohscanner.runner import DetectorRegistry, run_all
 PROJECT = Path(__file__).resolve().parents[1]
 
 
-def git(directory, *args):
-    done = subprocess.run(["git", "-C", str(directory), *args],
+def git(directory, *args, input=None):
+    done = subprocess.run(["git", "-C", str(directory), *args], input=input,
                           capture_output=True, text=True, check=True, timeout=20)
     return done.stdout.strip()
 
@@ -105,9 +105,16 @@ class GitObjectIndexTests(unittest.TestCase):
             load_git_sources(self.repo, self.commit, ("README.md",))
 
     def test_symlink_not_followed_and_non_utf8_not_disguised(self):
-        (self.repo / "src" / "link.cpp").symlink_to(self.repo / "src" / "a.cpp")
         (self.repo / "src" / "broken.cpp").write_bytes(b"\xff\xfe\x00")
-        git(self.repo, "add", "-A")
+        git(self.repo, "add", "--", "src/broken.cpp")
+        link_blob = git(
+            self.repo, "hash-object", "-w", "--stdin",
+            input="src/a.cpp\n",
+        )
+        git(
+            self.repo, "update-index", "--add", "--cacheinfo",
+            f"120000,{link_blob},src/link.cpp",
+        )
         git(self.repo, "commit", "-qm", "unsafe entries")
         updated = git(self.repo, "rev-parse", "HEAD")
         _, _, sources, inventory = load_git_sources(self.repo, updated)

@@ -365,3 +365,10 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 新增 `tests/test_ohscanner_m1.py`，CI 在临时本地 Git 仓库上覆盖真实 commit SHA 固定、工作树和 HEAD 漂移不影响索引、路径范围、symlink、non-UTF8/oversize 跳过、AST partial 和 CLI 端到端。回归结果以 Draft PR #5 最新 head 的 Actions 为准。
 - **尚未实测**完整 OpenHarmony `commonlibrary_c_utils` 当前代码的该命令；需要负责人在 Ubuntu/WSL 运行 `docs/testing/ohscanner_m1_git_index.md` 中的固定源码实验后回传文件/AST 覆盖结果。不要把过去队友的当前组件扫描数据伪装为本次 M1 运行结果。
 - M1 文档：`docs/testing/ohscanner_m1_git_index.md`；主线 `main` 尚未合并 PR #5，不改变 historical benchmark 正式基线。
+
+## 19. 2026-10-09 Windows 测试环境可移植性修复（teammate A 分支）
+
+- 已消除 Windows 上四类本地测试环境失败：Git loose-object 只读文件删除、无符号链接创建权限、伪 Clang 扩展名/执行方式、临时目录短路径解析导致的 snapshot root 误判。
+- 测试改为权限无关的 symlink 拒绝模拟和真实 Git tree `120000` symlink 条目；伪 Clang 在 Windows 使用 `.cmd` + 当前 Python，在 POSIX 保留可执行脚本；源码准备测试在 unlink 前清除只读位；静态复跑先规范化临时根目录。
+- Windows 实测使用 Codex bundled Python：`python -m unittest discover -s tests -v`，**Ran 205 tests, OK (skipped=2)**。Windows Store `python3.exe` 仅为 shim，不作为验证运行时。
+- 这些是测试/路径可移植性修复，不改变 detector 语义、公共 schema、解析覆盖结论或安全/漏洞状态；v1 契约仍未冻结。
