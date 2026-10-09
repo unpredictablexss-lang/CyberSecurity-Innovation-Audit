@@ -1,5 +1,7 @@
 # OHScanner 自研 Detector Plugin Contract v1（设计稿）
 
+> **开发分支实施说明（2026-10-09）**：在 `feat/ohscanner-core` / PR #5 已有 M0 最小 Python `ScanRequest/SourceUnit/ScanContext/DetectorRun/Detector` 和注册器/Bridge；M1 新增 `ohscan-index`，从本地固定 Git commit 读取源码并对 C/C++ 形成轻量 AST。下文包含 M2+ 仍未实现的目标字段（如 budget/可取消任务、独立进程硬超时、权限/Bridge 的 IR）；因此仍是逐步落地的协议草案，**不能认为全部字段、完整安全沙箱或真实漏洞算法已实现**。现有真实字段以 `src/ohscanner/contracts.py` 为准。
+
 > **实现状态：proposed / 尚未在 main 编码。** main 已有 `src/benchmark/tool_result.py` 的 `ToolDiagnostic`、`ToolRunResult(schema_version=1)`，以及 `src/providers/base.py` 的外部扫描器适配器。本文的 `ScanRequest` / `SourceUnit` / `ScanContext` / `Detector` / `DetectorRun` 尚未实现；不得从 `src.ohscanner` 直接 import。
 >
 > 目标：让负责人统一完成扫描底座，队友 A、B 各自交付独立 C/C++ 和 Web/ArkTS/IPC 自研检测插件，无需修改 main 的内部公共实现也能集成。契约首次 Mock CI 通过后再冻结；之后如需变更，单开契约 PR。

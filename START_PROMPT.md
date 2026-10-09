@@ -13,9 +13,10 @@
 
 当前事实：
 
-- Detector Contract v1 仍是 proposed；`ScanRequest/SourceUnit/ScanContext/Detector/DetectorRun` 尚未在 main 实现。
-- 负责人需要先落地 Mock CPP/Interface detector、公共 bridge 和 CI，才能冻结契约。
-- 契约未落地前只能按文档 fixture 做本地预研，不能直接 import `src.ohscanner` 或宣称接口可运行。
+- PR #5 head `c8c5bb1634141c98959758d12f3e41bdd3eaaf6b` 已实现 M0 `ScanRequest/SourceUnit/ScanContext/DetectorFinding/DetectorRun/Detector`、Registry、
+  Runner 和 ToolRunResult v1 Bridge；可从 `src.ohscanner.contracts` 使用当前接口。
+- M1 已实现 `ohscan-index` 和 C/C++ Tree-sitter 轻量索引；JS/TS/ArkTS 仅登记文本，`parse_status=not_run`。
+- v1 尚未冻结；真实 detector、硬超时、独立进程/内存沙箱、完整类型/CFG/数据流和 Bridge/permission IR 尚未实现。
 - 历史工具结果只能用于研究和方法设计，不能成为正式 detector 的运行依赖。
 
 本轮目标：
@@ -25,7 +26,7 @@
 - 建立 vulnerable/fixed/safe/partial-parse/failed fixture；
 - 输出候选、证据类型、位置、解释、局限和覆盖状态；
 - 提供确定性单元测试、稳定排序、超时/异常隔离和消融说明；
-- 写方法卡和 `ToolRunResult(schema_version=1)` 映射设计，但不修改公共 schema。
+- 基于当前 `Detector.detect(context, units) -> DetectorRun` 实现，并复用 Runner 到 `ToolRunResult(schema_version=1)` 的现有映射。
 
 建议先选 `cpp.lifetime`，只处理一种明确所有权/生命周期形状和一类 guard/同步约束；不要同时实现 UAF、double-free、null deref、integer overflow、OOB 和并发竞争。
 
@@ -46,7 +47,7 @@
 
 - 优先修改 `src/ohscanner/detectors/cpp/`、`research/experiments/cpp/`、`research/methods/cpp/`、
   `tests/detectors/` 和 detector 专用 fixtures。
-- 契约未冻结时，将本地接口和 bridge 映射明确标为 proposed implementation。
+- 以 `src/ohscanner/contracts.py` 为字段真源；不要自行修改公共接口，需要 M2+ 字段时写 contract-change proposal。
 - 一个 detector 的 timeout/crash 只能产生自己的失败记录，不能阻断其它模块。
 - 运行 `python3 -m unittest discover -s tests -v`；以真实结果为准，不沿用旧 CI 数字。
 
