@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "family_id": "lifetime_uaf",
+  "family_name": "Object lifetime and synchronization",
+  "selection_reason": "One of the two teammate-A priority root-cause families. The historical patch changes concurrent shared_ptr publication and destruction semantics, giving a small paired evidence base for candidate design without treating matches as vulnerability proof.",
+  "sample": {
+    "sample_id": "c_utils-singleton-uaf-2026-01",
+    "repository": "openharmony/commonlibrary_c_utils",
+    "repo_url": "https://github.com/openharmony/commonlibrary_c_utils",
+    "weakness": "CWE-416",
+    "cve": null,
+    "root_cause_group": "lifetime_uaf",
+    "label_status": "patch_confirmed",
+    "evidence_level": "patch_and_issue",
+    "pair_analysis_unit": {
+      "analysis_unit_id": "c_utils-singleton-uaf-2026-01:pair:base/include/singleton.h:DelayedSingleton",
+      "files": [
+        "base/include/singleton.h"
+      ],
+      "symbols": [
+        "DelayedSingleton<T>::GetInstance",
+        "DelayedSingleton<T>::DestroyInstance"
+      ],
+      "historical_manifest_symbols": [
+        "GetInstance",
+        "DestroyInstance"
+      ],
+      "line_ranges": {
+        "vulnerable": [
+          [
+            124,
+            151
+          ]
+        ],
+        "fixed": [
+          [
+            124,
+            146
+          ]
+        ]
+      }
+    },
+    "revisions": {
+      "vulnerable": {
+        "revision": "vulnerable",
+        "exact_commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+        "source_artifact": {
+          "repository_path": "base/include/singleton.h",
+          "canonical_url": "https://raw.githubusercontent.com/openharmony/commonlibrary_c_utils/bdfafdaafddb01ab7ae13354ce2ada9555d7935c/base/include/singleton.h",
+          "retrieval": "raw bytes at the exact commit; source bytes are not committed",
+          "source_file_sha256": "ce04ace5a2ad702d3f56e30be347dc9583c808dcf5aac80ee761bd70e05f1ad4",
+          "git_blob_sha1": "0e0c91010e39558202ab1c7f628c618fd7a09d23",
+          "bytes": 6010,
+          "lines": 212,
+          "git_tree_sha1": "b3ec65d247c4ca1ff07318fa72c0daa368128563"
+        }
+      },
+      "fixed": {
+        "revision": "fixed",
+        "exact_commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+        "source_artifact": {
+          "repository_path": "base/include/singleton.h",
+          "canonical_url": "https://raw.githubusercontent.com/openharmony/commonlibrary_c_utils/9a3f281120307ec7dcce17fae882dcc4e6a6f4d7/base/include/singleton.h",
+          "retrieval": "raw bytes at the exact commit; source bytes are not committed",
+          "source_file_sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+          "git_blob_sha1": "fb65b4d89ff9c60c54bc6a8e106b06935f23f633",
+          "bytes": 6043,
+          "lines": 214,
+          "git_tree_sha1": "69fbea434f22e2174a4dd79dff6ad25833e0ea49"
+        }
+      }
+    },
+    "safe_controls": [
+      {
+        "analysis_unit_id": "c_utils-singleton-uaf-2026-01:fixed:safe:Singleton_GetInstance",
+        "control_role": "safe",
+        "revision": "fixed",
+        "exact_commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+        "files": [
+          "base/include/singleton.h"
+        ],
+        "symbols": [
+          "Singleton<T>::GetInstance"
+        ],
+        "line_ranges": [
+          [
+            197,
+            206
+          ]
+        ],
+        "source_artifact": {
+          "repository_path": "base/include/singleton.h",
+          "canonical_url": "https://raw.githubusercontent.com/openharmony/commonlibrary_c_utils/9a3f281120307ec7dcce17fae882dcc4e6a6f4d7/base/include/singleton.h",
+          "retrieval": "raw bytes at the exact commit; source bytes are not committed",
+          "source_file_sha256": "9ed18694defc088c7bfe69327f6e4668d6c23d72a4f3c5516ad4635e9e511606",
+          "git_blob_sha1": "fb65b4d89ff9c60c54bc6a8e106b06935f23f633",
+          "bytes": 6043,
+          "lines": 214,
+          "git_tree_sha1": "69fbea434f22e2174a4dd79dff6ad25833e0ea49"
+        },
+        "control_shape": "Eager singleton accessor returning a reference to a static instance rather than publishing a shared_ptr that can race with destruction.",
+        "isolation": "This is a separate analysis unit from the DelayedSingleton vulnerable/fixed pair even though it shares the fixed file and commit. It cannot be used as the fixed-pair result or as proof of universal safety.",
+        "limitations": [
+          "Control label is shape-based and scoped to this analysis unit.",
+          "Static destruction order and unrelated lifecycle hazards were not validated."
+        ]
+      }
+    ],
+    "exclusions": [
+      {
+        "item": "runtime trigger, TSan race reproduction and exploitability",
+        "status": "not_run",
+        "reason": "This branch is corpus and static-baseline work only; dynamic triggering is outside scope."
+      },
+      {
+        "item": "template instantiation and product build context",
+        "status": "unknown",
+        "reason": "The baseline uses affected-file snapshots and the supplemental header probe has no template instantiation."
+      },
+      {
+        "item": "confirmed UAF verdict from Semgrep OH match",
+        "status": "excluded",
+        "reason": "The rule match is a candidate/possible_hit and does not prove concurrent control flow, ownership transfer or use-after-free impact."
+      }
+    ],
+    "provenance": {
+      "evidence_sources": [
+        "https://github.com/openharmony/commonlibrary_c_utils/commit/9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+        "https://gitcode.com/openharmony/commonlibrary_c_utils/issues/560"
+      ],
+      "source_license": "Apache-2.0 at repository level; retain upstream file headers and notices when source is retrieved",
+      "third_party_source_committed": false,
+      "attribution": "OpenHarmony commonlibrary_c_utils historical patch and issue evidence",
+      "originality_review": "No third-party detector code or rule text was copied into this corpus record."
+    }
+  }
+}

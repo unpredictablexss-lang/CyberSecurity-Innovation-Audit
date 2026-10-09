@@ -5,9 +5,9 @@
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
 > 更新日期：2026-10-09（下一阶段规划；旧阶段实测记录仍保留原日期）
-> 当前分支：`feat/ohscanner-core`（独立开发分支；main 不变）  
+> 当前分支：`codex/teammate-a-oh-vuln-corpus`（队友 A 分支；分支历史不并入 main）
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：历史基线已合并；OHScanner Core M0 Mock + M1 固定 Git 对象源码索引已在 PR #5 开发分支实现。真实漏洞算法、真实 c_utils Ubuntu 试跑及真实产品构建上下文仍未完成。
+> 当前阶段：历史基线已合并；队友 A 本轮完成 native historical corpus 证据包与可复现 baseline 元数据，不含完整 OHScanner。真实漏洞算法、独立保留集、真实产品构建上下文及运行时验证仍未完成。
 > 重要边界：本分支不声明新漏洞，不做 PoC，不做 exploitability 结论；所有结果仍为 `candidate / draft / benchmark`。
 
 ---
@@ -16,8 +16,15 @@
 
 `feat/historical-vuln-benchmark` 已完成主要静态实验框架并持续补跑工具，尚未完成覆盖验收：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 已在 2026-10-09 合并到 `main`；本节其余内容为历史阶段实验记录，不代表新的 OHScanner 插件已完成。
 
+2026-10-09 队友 A 本地证据包已核验：优先根因家族固定为 `lifetime_uaf` 与 `oob_write`，
+建立 vulnerable/fixed/safe 三类独立清单；`evidence_units.json` 以 80 个隔离单元绑定
+repository、exact commit、revision、sample_id、scope、source artifact/hash、tool/version、
+run_id 和 binding digest。其中 64 个历史 baseline 单元为 possible_hit=5、miss=29、
+unknown=20、not_applicable=10，另 16 个 safe-control 单元均为 `not_run/unknown`。
+WSL Ubuntu 22.04 / Python 3.10.12 完整发现回归为 **204/204 通过**；`validated_vulnerability=0`。
+本回合未运行扫描器、未计算 Precision/Recall、未声明零误报/漏报。
 已确认收口文档更新前代码 head `dd908f2` 的远端 CI Run #58：**149/149 通过**（Ubuntu 22.04 / Python 3.10）。文档更新产生新的 head 后必须重新核验 CI。
-最近一次本地完整回归记录为 **149/149 通过**；`validated_vulnerability = 0`。
+最近一次本地完整回归记录为 2026-10-09 队友 A worktree 的 **204/204 通过**（WSL Ubuntu 22.04 / Python 3.10.12）；`validated_vulnerability = 0`。旧的 149/149 数字保留为历史 CI/阶段记录，不作为本轮结果。
 三个目标的固定提交/所需源码已补齐；四样本已有 16 次自身基线和 48 次外部工具/规则配置运行记录。
 CodeQL、Joern 已补跑各 8 个版本单元。CodeQL 六单元缺 include、两单元 header-only 不适用；
 Joern 四单元部分解析，dsoftbus 修复前 5 条结构诊断、修复后 0 条。
@@ -38,11 +45,11 @@ Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭�
 | PR | #4 |
 | PR 状态 | merged / closed（2026-10-09） |
 | mergeability | 已合并到 main，非待合并 PR |
-| 当前分支 | `main`（前历史分支记录见原 PR #4） |
+| 当前分支 | `codex/teammate-a-oh-vuln-corpus`（队友 A 分支，main 不变） |
 | 当前阶段 | 历史阶段完成合并；三线并行与自研 Detector 仍是计划 |
 | 最近确认的 GitHub Actions | 原代码 head `dd908f2` / Run #58：149 tests passed |
-| 当前本地回归 | 149 tests passed |
-| 最新阶段核验 | 历史 PR #4 合并前 CI 已成功；后续自研运行时尚无功能测试结果 |
+| 当前本地回归 | 204 tests passed（2026-10-09 WSL full discover） |
+| 最新阶段核验 | 队友 A corpus/evidence 回归 204/204；独立 holdout 与真实 detector 尚无结果 |
 | validated vulnerability | 0 |
 
 ---
@@ -57,6 +64,22 @@ Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭�
 | `arkcompiler_ets_runtime-jsarray-sort-oob-2025-02` | `openharmony/arkcompiler_ets_runtime` | `oob_write` | CWE-787 / CVE-2025-23420 | `not_run` |
 
 样本覆盖 4 个 root-cause group：`lifetime_uaf`、`concurrency_race`、`null_deref`、`oob_write`。样本量仍不足以计算正式 Precision / Recall，只能报告 raw hit / miss / unknown / not_applicable 和逐样本解释。
+
+### 2.1 队友 A 优先家族与证据包（2026-10-09 已核验）
+
+- `lifetime_uaf`：`c_utils-singleton-uaf-2026-01`，vulnerable/fixed 分别绑定
+  `bdfafdaafddb01ab7ae13354ce2ada9555d7935c` / `9a3f281120307ec7dcce17fae882dcc4e6a6f4d7`。
+- `oob_write`：`arkcompiler_ets_runtime-jsarray-sort-oob-2025-02`，vulnerable/fixed 分别绑定
+  `aeee3fd12c03193545edea4b8e0fdfa3d9a03d11` / `1b23531531e768398682582969c2a9f17e72cafe`。
+- 每个家族另有独立 safe shape control；safe 与 fixed 共享固定源码时仍使用不同
+  `analysis_unit_id`、`control_role` 和 result 单元，不得替换 fixed-pair 结果。
+- `research/experiments/cpp/evidence_units.json` 为证据 source of truth；
+  `baseline_status.json` 只是 64 格投影。原始工具输出未提交，历史摘要未保留其 hash，
+  因此 artifact hash 明确记为 unknown/not retained，而非补写。
+- 回归覆盖证据混用、错误 commit/scope、失败/partial 误记为 miss、safe 隔离、
+  not_applicable/unknown 边界及报告集成。公共字段缺口仅形成
+  `research/corpus/native/contract_change_proposal.md`，未修改 `src/`、公共 schema、
+  CLI、providers、公共 IR 或报告模块。
 
 ---
 
@@ -365,3 +388,14 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 新增 `tests/test_ohscanner_m1.py`，CI 在临时本地 Git 仓库上覆盖真实 commit SHA 固定、工作树和 HEAD 漂移不影响索引、路径范围、symlink、non-UTF8/oversize 跳过、AST partial 和 CLI 端到端。回归结果以 Draft PR #5 最新 head 的 Actions 为准。
 - **尚未实测**完整 OpenHarmony `commonlibrary_c_utils` 当前代码的该命令；需要负责人在 Ubuntu/WSL 运行 `docs/testing/ohscanner_m1_git_index.md` 中的固定源码实验后回传文件/AST 覆盖结果。不要把过去队友的当前组件扫描数据伪装为本次 M1 运行结果。
 - M1 文档：`docs/testing/ohscanner_m1_git_index.md`；主线 `main` 尚未合并 PR #5，不改变 historical benchmark 正式基线。
+
+## 19. 2026-10-09 Teammate A 历史语料证据包与静态 baseline（本地待负责人审阅）
+
+- 从现有 4 条 historical samples 中确定队友 A 两个优先根因家族：`lifetime_uaf`（`c_utils-singleton-uaf-2026-01`）和 `oob_write`（`arkcompiler_ets_runtime-jsarray-sort-oob-2025-02`）；另两条样本保留为 baseline-only reference。
+- 为两个优先家族记录 vulnerable/fixed/safe 清单。安全对照使用固定 commit 的独立 analysis unit/scope，不替代 fixed 结果、不进入 vulnerable/fixed baseline 计数。
+- `research/experiments/cpp/build_evidence_package.py` 现以 PR #5 head `108494bfe392ae62394ea82cd44d28cc03ebb163` 的 `ScanRequest`/`SourceUnit`/`ScanContext` 字段名投影绑定 repository、完整 commit、revision、sample_id、scope、source artifact、source/tree/blob/file hash、tool/version/configuration、run_id 和完整记录 `binding_sha256`；未另造 manifest schema。
+- 生成物固定写入 ignored `outputs/reports/static_baselines/`；旧 checked-in `research/experiments/cpp/evidence_units.json` 与 `baseline_status.json` 已移除。`SourceUnit.text` 不进入仓库，第三方源码字节仅由 SHA-256 绑定。
+- metadata reconstruction 的 64 个 vulnerable/fixed cells 为 `possible_hit=5`、`miss=29`、`unknown=20`、`not_applicable=10`；另有 16 个 safe cells 为 `execution_status=not_run`、`result_status=unknown`。全 80 units 的执行状态为 `completed=50`、`failed=6`、`blocked=8`、`not_run=16`。这些是分析 cell，不是漏洞数或 TP/FP/FN。
+- 回归测试覆盖错误 PR #5 request identity、完整 commit、scope/run/request、source tree/blob/file hash、SourceUnit path/hash/排序、重复 run、vulnerable/fixed/safe 混用、失败/不完整分析误记 `miss`、`not_run`/`unknown`/`not_applicable` 边界和报告集成。`src/benchmark/report_inputs.py` 要求 `target_id == sample_id`，与 `current-component:<repository>` 不兼容；已写 contract-change proposal 并以直接 `SampleToolRun` 构造和显式不兼容测试处理，未改 `src/`。
+- 2026-10-09 WSL Ubuntu 22.04 / Python 3.10.12 实跑：evidence generator `--write`、deterministic check、validator 均成功；完整 `python3 -m unittest discover -s tests -v` 为 `Ran 204 tests in 15.231s / OK`。精确命令、输入/输出 hash 和局限见 `research/experiments/cpp/reproduction_2026-10-09.md`。
+- 本轮没有重跑历史扫描器，没有运行 detector、runtime trigger、TSan 或独立 holdout；raw scanner artifact hash、CodeQL suite hash、精确 Tree-sitter version 和完整构建上下文仍为 unknown/缺失。不得从本包计算 Precision/Recall 或宣称零误报/零漏报。
