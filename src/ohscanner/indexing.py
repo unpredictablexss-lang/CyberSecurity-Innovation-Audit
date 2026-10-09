@@ -1,13 +1,39 @@
 """M1 static source inventory on a pinned local Git commit. No vulnerability detection."""
 
 import json
+from importlib import metadata
 from pathlib import Path
+import platform
+import subprocess
 
 from .contracts import ScanContext, ScanRequest
 from .fixture import snapshot_digest
 from .facts import build_syntax_facts
 from .frontend import index_sources
 from .git_source import load_git_sources
+
+
+def environment_fingerprint():
+    """Reproduction information, not a guarantee of GN/product equivalence."""
+    git = subprocess.run(
+        ["git", "--version"], capture_output=True, text=True,
+        check=True, timeout=5,
+    ).stdout.strip()
+    versions = {}
+    for package in ("tree-sitter", "tree-sitter-c", "tree-sitter-cpp"):
+        try:
+            versions[package] = metadata.version(package)
+        except metadata.PackageNotFoundError:
+            versions[package] = "unavailable"
+    return {
+        "python": platform.python_version(),
+        "git": git,
+        "parsers": versions,
+        "parse_profile": "light-ast",
+        "build_profile": "none",
+        "macro_expansion": False,
+        "product_manifest_locked": False,
+    }
 
 
 def prepare_git_context(repo_dir: Path, repository: str, commit: str,
@@ -59,6 +85,7 @@ def run_git_index(repo_dir: Path, repository: str, commit: str,
         "snapshot_sha256": context.request.snapshot_sha256,
         "provenance": "local_git_objects",
         "profile_id": "light-ast",
+        "environment": environment_fingerprint(),
         "scope": inventory,
         "coverage": coverage,
         "source_units": [
@@ -88,6 +115,8 @@ def run_git_index(repo_dir: Path, repository: str, commit: str,
         f"- Commit: `{commit}`", f"- Git tree: `{tree}`",
         f"- Source manifest SHA-256: `{context.request.snapshot_sha256}`",
         f"- Profile: `light-ast`",
+        f"- Python: `{report['environment']['python']}`",
+        f"- Git: `{report['environment']['git']}`",
         f"- Scanned source files: **{inventory['selected_source_files']}**",
         f"- Tracked Git entries: {inventory['tracked_entries']}",
         f"- Out of scope: {inventory['out_of_scope']}",
