@@ -83,6 +83,23 @@ class ScanContext:
 
 
 @dataclass(frozen=True)
+class EvidenceObligation:
+    """A check still required before this finding could be a security claim.
+
+    M1.5 doesn't manufacture CFG/taint/guard dominance proof.
+    """
+    kind: str
+    description: str
+    status: str = "unknown"
+
+    def __post_init__(self):
+        if not self.kind.strip() or not self.description.strip():
+            raise ValueError("evidence obligation needs kind and description")
+        if self.status not in ("unknown", "missing", "satisfied", "not_applicable"):
+            raise ValueError("invalid evidence obligation status")
+
+
+@dataclass(frozen=True)
 class DetectorFinding:
     file: str
     line: int
@@ -92,9 +109,12 @@ class DetectorFinding:
     column: Optional[int] = None
     candidate_cwe: Optional[str] = None
     symbol: Optional[str] = None
+    evidence_obligations: Tuple[EvidenceObligation, ...] = ()
 
     def __post_init__(self):
         safe_relative_path(self.file)
+        if not all(isinstance(item, EvidenceObligation) for item in self.evidence_obligations):
+            raise ValueError("invalid evidence obligation")
         if isinstance(self.line, bool) or not isinstance(self.line, int) or self.line < 1:
             raise ValueError("invalid line number")
         if not self.rule_id or not self.message:
