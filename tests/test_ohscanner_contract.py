@@ -1,6 +1,9 @@
 """M0 first-party detector interface, source provenance and failure tests."""
 
 import hashlib
+import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -164,6 +167,36 @@ class DetectorContractTests(unittest.TestCase):
             (root / "test.cpp").write_text("after", encoding="utf-8")
             with self.assertRaises(ValueError):
                 verify_fixture_unchanged(root, context)
+
+    def test_runner_rejects_forged_snapshot_identity(self):
+        original = load_fixture(FIXTURE)
+        forged_request = ScanRequest(
+            original.request.request_id, original.request.repository,
+            original.request.commit, "0" * 64, original.request.target_id,
+        )
+        forged = ScanContext(forged_request, original.units)
+        registry = DetectorRegistry()
+        registry.register(MockCppDetector())
+        with self.assertRaisesRegex(ValueError, "manifest does not match"):
+            run_all(forged, registry)
+
+    def test_cli_runs_two_mock_detectors_end_to_end(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory)
+            command = [sys.executable, "-m", "src.cli", "ohscan",
+                       "--fixture-root", str(FIXTURE),
+                       "--json-out", str(out / "smoke.json"),
+                       "--md-out", str(out / "smoke.md")]
+            process = subprocess.run(
+                command, cwd=Path(__file__).resolve().parents[1],
+                capture_output=True, text=True, check=False, timeout=20,
+            )
+            self.assertEqual(process.returncode, 0, process.stderr)
+            result = json.loads((out / "smoke.json").read_text(encoding="utf-8"))
+            self.assertEqual([run["tool"] for run in result["runs"]],
+                             ["ohscanner.mock.cpp", "ohscanner.mock.interface"])
+            self.assertEqual(result["validated_vulnerability"], 0)
+            self.assertTrue((out / "smoke.md").is_file())
 
     def test_fixture_symlink_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
