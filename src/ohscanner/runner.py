@@ -84,6 +84,11 @@ def _normalized(context, detector, selected, run, elapsed, error=None):
 
 
 def run_all(context: ScanContext, registry: DetectorRegistry):
+    # Verify the provided units still bind to the request's declared fixture manifest.
+    # This is synthetic identity verification, not Git commit/tree verification.
+    from .fixture import snapshot_digest
+    if snapshot_digest(context.units) != context.request.snapshot_sha256:
+        raise ValueError("source unit manifest does not match ScanRequest")
     results = []
     for detector in registry.detectors():
         selected = tuple(unit for unit in context.units
