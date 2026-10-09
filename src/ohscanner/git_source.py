@@ -28,16 +28,31 @@ class GitSource:
 
 def _git(repo: Path, *args: str, timeout: int = 30) -> bytes:
     environment = os.environ.copy()
-    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    # A promisor/partial clone may auto-fetch missing objects even for cat-file.
+    # Transport and lazy fetching MUST both be disabled, including with Git
+    # versions that predate GIT_NO_LAZY_FETCH. No implicit network/local fetch.
+    environment.update({
+        "GIT_NO_REPLACE_OBJECTS": "1",
+        "GIT_NO_LAZY_FETCH": "1",
+        "GIT_ALLOW_PROTOCOL": "",
+        "GIT_TERMINAL_PROMPT": "0",
+        "GIT_OPTIONAL_LOCKS": "0",
+    })
+    # Match the no-promisor setting used by existing historical benchmark code.
+    # An arbitrary additional promisor remote cannot transfer because all
+    # transports are forbidden by GIT_ALLOW_PROTOCOL.
     process = subprocess.run(
-        ["git", "-C", str(repo), *args],
+        ["git", "-c", "remote.origin.promisor=false", "-C", str(repo), *args],
         stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         env=environment, check=False, timeout=timeout,
     )
     if process.returncode:
+        message = process.stderr.decode("utf-8", "replace")[:300]
+        if args and args[0] == "cat-file" and args[1] == "blob":
+            raise ValueError("missing_local_git_object_or_unreadable_blob: "
+                             + args[2] + "; offline-only read (no fetch). " + message)
         raise ValueError(
-            "Git object operation failed (" + " ".join(args[:2]) + "): "
-            + process.stderr.decode("utf-8", "replace")[:300]
+            "Git object operation failed (" + " ".join(args[:2]) + "): " + message
         )
     return process.stdout
 
