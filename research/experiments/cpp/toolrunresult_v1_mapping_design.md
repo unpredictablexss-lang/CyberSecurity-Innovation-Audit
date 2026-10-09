@@ -1,89 +1,102 @@
 # ToolRunResult(schema_version=1) proposed mapping design
 
-> 状态：detector-local **proposed bridge design/implementation**。Detector Contract v1 尚未冻结；本文件不修改 `src/benchmark/tool_result.py`、providers、frontend、IR、integration、triage、reporting、CLI 或公共 schema。
-> 代码位置：`src/ohscanner/detectors/cpp/proposed_toolrun_bridge.py`，只读构造现有 `ToolRunResult` / `ToolDiagnostic`。
+> 状态：**proposed mapping design**。Detector Contract v1 尚未冻结。本轮不修改
+> `src/benchmark/tool_result.py`、providers、frontend、IR、integration、triage、
+> reporting、CLI 或公共 schema。实际映射复用项目所有方维护的
+> `src/ohscanner/runner.py`；本文件记录 teammate A detector 的字段约束和
+> M2+ contract-change 需求，不创建第二套 bridge。
 
 ## 1. 输入和输出边界
 
 输入：
 
-- detector-local `ProposedScanRequest`：只用于 fixture provenance；
-- detector-local `ProposedDetectorRun`：candidate、coverage、limitations；
-- 由调用者提供的稳定 `run_id`。
+- 当前公共 `ScanRequest`：目标 repository/commit/profile/provenance；
+- 当前公共 `SourceUnit`：path/language/text/SHA-256/parse status/issues；
+- 当前公共 `ScanContext`；
+- `Detector.detect(context, units) -> DetectorRun`。
 
 输出：
 
 - 现有 `ToolRunResult(schema_version=1)`；
-- 现有 `ToolDiagnostic` 列表；
-- 现有 `parsing: [{file,status}]`；
-- detector-local explanation/constraints 等额外事实不塞入公共对象，保留 sidecar。
+- 现有 `ToolDiagnostic`；
+- Runner 生成的 `parsing: [{file,status,issues}]`；
+- Runner 生成的稳定 diagnostic ID。
 
-## 2. 字段映射
+不把 detector 的解释、constraints 或状态提升写入未知公共键。
 
-| Detector-local 字段 | ToolRunResult v1 | 规则 |
+## 2. DetectorRun 到 ToolRunResult
+
+| Detector 字段 | ToolRunResult v1 | 规则 |
 |---|---|---|
-| `detector_id` | `tool` | `ohscanner.cpp.lifetime`，不冒用外部 provider |
-| `version` | `tool_version` | 当前 `0.1.0-proposed`，继续标识契约未冻结 |
-| request provenance | `target_id, commit` | 调用者统一生成；detector 不得替换目标 |
-| run_id | `run_id` | 必须绑定 request/detector，不混用其它 run |
-| `scope_files,scope_loc` | 同名字段 | 指声明送入 unit 的范围，不等于成功解析范围 |
-| `status` | `status` | 只允许 `completed/failed/blocked`；不表示安全 |
-| `elapsed_seconds` | 同名字段 | 单模块计时 |
-| candidate | `diagnostics[]` | 只做描述性候选映射 |
-| `coverage[].parse_status` | `parsing[]` | 保持 `complete/partial/failed/not_run`；未把 `not_applicable` 强塞进当前 parsing |
-| run/candidate limitations | `limitations[]` | 去重后稳定排序 |
-| failure_kind | 仅 sidecar | 当前公共 schema 无此字段，不新增未知键 |
+| `detector_id` | `tool` / `Diagnostic.provider` | `ohscanner.cpp.lifetime`，不冒用外部 provider |
+| `version` | `tool_version` | `0.1.0-proposed`，继续标识 v1 未冻结 |
+| request identity | `run_id,target_id,commit` | `request_id:detector_id`，不混用其它 run |
+| `analyzed_files` | `scope_files,scope_loc` | 只统计 detector 声明已分析 unit，不等于 selected/parse 范围 |
+| `status` | `status` | 仅 `completed/failed/blocked`；不表示安全 |
+| Runner elapsed | `elapsed_seconds` | 单 detector 调用耗时 |
+| `findings[]` | `diagnostics[]` | 仅描述性 candidate 映射 |
+| selected `SourceUnit` | `parsing[]` | 保持 `complete/partial/failed/not_run` 和 `parse_issues` |
+| `limitations` | `limitations[]` | 与 Runner 固定限制合并 |
 
-## 3. Diagnostic 映射
+`failed`、异常和 cooperative timeout 只影响当前 detector 的结果，不能把其它
+detector 的 run 改写为失败或安全。
 
-| Detector-local | ToolDiagnostic v1 | 值 |
+## 3. DetectorFinding 到 ToolDiagnostic
+
+| DetectorFinding | ToolDiagnostic v1 | 值 |
 |---|---|---|
-| `diagnostic_id` | 同名 | 稳定哈希 ID；bridge 再折叠重复 ID |
-| `provider` | 同名 | `ohscanner.cpp.lifetime` |
-| `evidence_type` | 同名 | 仅 `syntax`；无 CFG/dataflow proof |
+| 无本地 ID | `diagnostic_id` | Runner 用 `file,line,rule_id,message` 稳定哈希生成 |
 | `file,line,column` | 同名 | 1-based source location |
 | `rule_id` | 同名 | `ohcpp-lifetime-unique-raw-alias-reset-001` |
-| `severity` | 同名 | `unassessed` |
-| `message` | 同名 | 描述 candidate shape，不写漏洞结论 |
+| `evidence_type` | 同名 | 仅 `syntax`；无 CFG/dataflow proof |
+| `message` | 同名 | candidate shape、解释、sync constraint 和非证明边界 |
 | `candidate_cwe` | 同名 | `CWE-416` 仅作初步候选 |
-| `confidence` | 同名 | `unassessed` |
 | `symbol` | 同名 | raw alias 名称 |
+| 无公共字段 | `severity/confidence` | Runner 强制 `unassessed` |
 
-`ToolDiagnostic` 没有 `confirmed` 字段，也不应添加。candidate 是否进入 review、是否具有安全影响、是否运行验证由后续独立流程决定。
+`ToolDiagnostic` 没有 `confirmed` 字段，也不应添加。candidate 是否进入
+review、是否具有安全影响、是否运行验证由后续独立流程决定。
 
-## 4. Sidecar 保留字段
+## 4. 需要 sidecar 或 contract-change proposal 的事实
 
-以下事实不能在不改公共 schema 的情况下完整进入 `ToolDiagnostic`，应由 owner-provided bridge 保存到 Evidence/trace sidecar：
+当前公共 schema 无法完整承载：
 
-- `source_sha256`
-- `explanation`
-- `limitations`
-- `constraints`（包括 `sync_scope=...`）
-- `missing_obligations`
-- `candidate_status="candidate"`
-- `review_status="unassessed"`
-- `validation_status="not_run"`
-- detector-local `failure_kind`
-- `analyzed_files` 与每文件 `parse_issues`
+- `source_sha256` 与 finding 的直接绑定；
+- `candidate_status="candidate"`、`review_status="unassessed"`、
+  `validation_status="not_run"`；
+- candidate-level constraints/missing obligations；
+- detector-local `failure_kind`；
+- cooperative timeout 与 hard timeout 的区别。
 
-建议稳定关联键仍由公共核心按 `repo|commit|profile|file|symbol|root_cause_family|normalized_location` 生成；本 detector 不擅自实现全局去重或 review 状态迁移。
+本轮把可表达内容压入 `DetectorFinding.message` 和
+`DetectorRun.limitations`，不向公共 dataclass 塞未知键。若负责人决定公共化，
+应另提 contract-change proposal，包含向后兼容、状态隔离和迁移测试。
 
 ## 5. 三种状态维度
 
-1. 执行状态：`completed/failed/blocked`，映射 `ToolRunResult.status`。
-2. 解析覆盖：`complete/partial/failed/not_run/not_applicable`，本轮只把 source unit 实际状态写入 `parsing`/sidecar。
-3. benchmark 根因匹配：`possible_hit/miss/unknown/not_applicable`，**不产生、不映射、不自报**，只能由绑定 sample/repo/commit/tool/scope/source artifact 的 benchmark evaluator 后续计算。
+1. 执行状态：`completed/failed/blocked`，映射 `ToolRunResult.status`；
+2. 解析覆盖：`complete/partial/failed/not_run`，映射 `parsing[]`，不能与
+   benchmark 状态混用；
+3. benchmark 根因匹配：`possible_hit/miss/unknown/not_applicable`，只能由
+   绑定 sample/repository/commit/tool/scope/source artifact 的 evaluator
+   计算，detector 不产生也不映射。
 
-`completed` 仅表示 detector 调用完成。`diagnostics=[]` 仍可能有 partial/failed/not_run 覆盖，绝不是安全证明。
+`completed` 仅表示 detector 调用完成。`diagnostics=[]` 仍可能有
+partial/failed/not_run 覆盖，绝不是安全证明。
 
 ## 6. 稳定性、重复与失败隔离
 
-- diagnostic 排序键：`(file,line,column,diagnostic_id,rule_id)`；
-- 相同 `diagnostic_id` 在 detector 和 bridge 两层折叠，并在 `limitations` 留痕；
-- coverage/analyzed_files 按 `file` 排序；
-- 每个 detector job 独立 timeout/catch exception；失败只生成自己的 `failed` run，不删除其它 detector 结果；
-- bridge 不把 exception 转成 safe/miss。
+- detector 排序键：`(file,line,column,rule_id,message)`；
+- detector 在返回前按 Runner identity `(file,line,rule_id,message)` 折叠重复；
+- Runner 再拒绝重复 diagnostic identity，并把异常隔离成该 detector 的
+  `failed` record；
+- `analyzed_files` 排序且不得超出 selected units；
+- Registry 按 detector ID 稳定排序；
+- cooperative timeout 只验证当前 detector 可返回 `failed` 而后续 detector
+  继续运行。共享 Runner 未实现 hard timeout、独立进程、kill/cancel 或内存
+  沙箱，不能把 cooperative test 描述为硬隔离。
 
 ## 7. 不做的公共变更
 
-本轮不新增 `ToolRunResult`/`ToolDiagnostic` 字段，不修改 providers，不把 sidecar 未知键传给公共 dataclass，不创建统一 CLI/JSON schema。若负责人未来决定公共化 `failure_kind`、`constraints` 或 candidate status，应另提 contract-change proposal，包含向后兼容和迁移测试。
+本轮不新增 `ToolRunResult`/`ToolDiagnostic` 字段，不修改 providers，不把
+sidecar 未知键传入公共 dataclass，不创建统一 CLI/JSON schema。

@@ -1,32 +1,28 @@
-"""Narrow C++ lifetime candidate detector (proposed local implementation).
+"""Narrow C++ lifetime candidate detector against the current M0 contract.
 
 Scope: one explicit ownership shape and one synchronization classification.
+The detector recognizes a same-function ``std::unique_ptr`` owner, a raw alias
+obtained with ``owner.get()``, owner invalidation with ``reset()``, and a later
+dereference of that raw alias before it is rebound from the owner. A scoped
+mutex is recorded as a synchronization constraint, but never treated as proof
+that the destroyed object remains alive.
 
-The detector recognizes a same-function explicit ``std::unique_ptr`` owner, a
-raw alias obtained with ``owner.get()``, owner invalidation with ``reset()``,
-and a later dereference of that raw alias before it is rebound from the owner.
-A scoped mutex is recorded as a synchronization constraint, but never treated
-as proof that the destroyed object remains alive.
+Detector Contract v1 is not frozen. This implementation uses the M0 classes in
+``src.ohscanner.contracts`` and produces only syntax-level candidate evidence.
 """
 
 from __future__ import annotations
 
-import hashlib
 import re
-import time
 from dataclasses import dataclass
-from pathlib import PurePosixPath
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
-from .proposed_contract import (
-    ProposedCoverage,
-    ProposedDiagnostic,
-    ProposedDetectorRun,
-    ProposedScanContext,
-    ProposedSourceUnit,
+from src.ohscanner.contracts import (
+    DetectorFinding,
+    DetectorRun,
+    ScanContext,
+    SourceUnit,
 )
-
-
 
 
 _OWNER_DECL_RE = re.compile(
@@ -87,18 +83,21 @@ class _ResetShape:
 
 
 @dataclass(frozen=True)
-class _UseShape:
-    alias: str
-    position: int
-    span: _Span
-
-
-@dataclass(frozen=True)
 class LifetimeAnalysisOptions:
-    """Ablation switches used by the research slice and deterministic tests."""
+    """Ablation switches used by the research slice and deterministic tests.
+
+    ``timeout_check`` is cooperative only. The shared Runner does not provide a
+    hard timeout or memory sandbox; this callback lets a detector fail its own
+    run without affecting another detector.
+    """
 
     suppress_rebound_alias: bool = True
     classify_sync_scope: bool = True
+    timeout_check: Optional[Callable[[], bool]] = None
+
+
+class _CooperativeTimeout(Exception):
+    pass
 
 
 def _mask_comments_and_literals(text: str) -> str:
@@ -110,7 +109,7 @@ def _mask_comments_and_literals(text: str) -> str:
     quote = ""
     while index < len(chars):
         pair = text[index : index + 2]
-        char = chars[index]
+        char = text[index]
         if state == "code":
             if pair == "//":
                 chars[index : index + 2] = [" ", " "]
@@ -187,10 +186,6 @@ def _call_end(masked: str, opening_paren: int) -> Optional[int]:
     return _matching_delimiter(masked, opening_paren, "(", ")")
 
 
-def _call_arguments(masked: str, opening_paren: int, closing_paren: int) -> str:
-    return masked[opening_paren + 1 : closing_paren].strip()
-
-
 def _block_spans(masked: str) -> Tuple[_Span, ...]:
     spans: List[_Span] = []
     for match in re.finditer(r"\{", masked):
@@ -236,48 +231,26 @@ def _use_positions(masked: str, alias: str) -> Tuple[int, ...]:
     merged: List[Tuple[int, int]] = []
     for start, end in spans:
         if merged and start < merged[-1][1]:
-            previous_start, previous_end = merged[-1]
-            merged[-1] = (previous_start, max(previous_end, end))
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
         else:
             merged.append((start, end))
     return tuple(start for start, _end in merged)
 
 
-def _stable_unique(diagnoses: Iterable[ProposedDiagnostic]) -> Tuple[ProposedDiagnostic, ...]:
-    unique: Dict[str, ProposedDiagnostic] = {}
-    for diagnosis in diagnoses:
-        unique.setdefault(diagnosis.diagnostic_id, diagnosis)
-    return tuple(sorted(unique.values(), key=lambda item: item.sort_key()))
+def _finding_key(finding: DetectorFinding) -> Tuple[str, int, str, str]:
+    return finding.file, finding.line, finding.rule_id, finding.message
 
 
-def _validate_request(context: ProposedScanContext) -> List[str]:
-    request = context.request
-    errors: List[str] = []
-    for field_name in ("request_id", "target_id", "repository", "profile_id"):
-        if not getattr(request, field_name).strip():
-            errors.append(f"request.{field_name} must not be empty")
-    if not re.fullmatch(r"[0-9a-f]{40}", request.commit):
-        errors.append("request.commit must be a full lowercase 40-character SHA")
-    if not re.fullmatch(r"[0-9a-f]{64}", request.snapshot_sha256):
-        errors.append("request.snapshot_sha256 must be a lowercase SHA-256")
-    return errors
-
-
-def _validate_source_unit(unit: ProposedSourceUnit) -> Optional[str]:
-    normalized = unit.path.replace("\\", "/")
-    pure_path = PurePosixPath(normalized)
-    if pure_path.is_absolute() or normalized.startswith("/"):
-        return "source path must be repository-relative"
-    if re.match(r"^[A-Za-z]:", normalized):
-        return "source path must not use a drive prefix"
-    if ".." in pure_path.parts or pure_path.as_posix() != normalized:
-        return "source path must be normalized and must not escape the repository"
-    if unit.language != "cpp":
-        return "only language_mode=cpp is in scope"
-    actual_hash = hashlib.sha256(unit.text.encode("utf-8")).hexdigest()
-    if actual_hash != unit.sha256:
-        return "source unit sha256 does not match text"
-    return None
+def _stable_unique(findings: Iterable[DetectorFinding]) -> Tuple[DetectorFinding, ...]:
+    unique: Dict[Tuple[str, int, str, str], DetectorFinding] = {}
+    for finding in findings:
+        unique.setdefault(_finding_key(finding), finding)
+    return tuple(
+        sorted(
+            unique.values(),
+            key=lambda item: (item.file, item.line, item.column or 0, item.rule_id, item.message),
+        )
+    )
 
 
 def _sync_context(
@@ -295,24 +268,28 @@ def _sync_context(
     return "no_same_scoped_mutex_lock_observed"
 
 
+def _check_timeout(options: LifetimeAnalysisOptions) -> None:
+    if options.timeout_check is not None and options.timeout_check():
+        raise _CooperativeTimeout()
+
+
 def _analyze_unit(
-    context: ProposedScanContext,
-    unit: ProposedSourceUnit,
+    unit: SourceUnit,
     options: LifetimeAnalysisOptions,
-) -> Tuple[Tuple[ProposedDiagnostic, ...], List[str]]:
+) -> Tuple[Tuple[DetectorFinding, ...], List[str]]:
     masked = _mask_comments_and_literals(unit.text)
     spans = _block_spans(masked)
     functions = _function_spans(masked)
     limitations: List[str] = []
-    diagnoses: List[ProposedDiagnostic] = []
+    findings: List[DetectorFinding] = []
+    function_spans = [span for _name, span in functions]
 
     owners = [
         _OwnerShape(
             owner=match.group("owner"),
             owner_type=match.group("type").strip(),
             position=match.start(),
-            span=_innermost_span(functions and [span for _, span in functions] or [], match.start())  # type: ignore[arg-type]
-            or _Span(0, len(masked)),
+            span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
         )
         for match in _OWNER_DECL_RE.finditer(masked)
     ]
@@ -321,8 +298,7 @@ def _analyze_unit(
             alias=match.group("alias"),
             owner=match.group("owner"),
             position=match.start(),
-            span=_innermost_span([span for _, span in functions], match.start())  # type: ignore[arg-type]
-            or _Span(0, len(masked)),
+            span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
         )
         for match in _RAW_ALIAS_RE.finditer(masked)
     ]
@@ -338,20 +314,23 @@ def _analyze_unit(
                 owner=match.group("owner"),
                 position=match.start(),
                 call_end=closing + 1,
-                span=_innermost_span([span for _, span in functions], match.start())  # type: ignore[arg-type]
-                or _Span(0, len(masked)),
+                span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
             )
         )
+
     for owner in owners:
+        _check_timeout(options)
         owner_aliases = [
-            alias
-            for alias in aliases
-            if alias.owner == owner.owner and alias.span.start == owner.span.start and alias.span.end == owner.span.end
+            alias for alias in aliases
+            if alias.owner == owner.owner
+            and alias.span.start == owner.span.start
+            and alias.span.end == owner.span.end
         ]
         owner_resets = [
-            reset
-            for reset in resets
-            if reset.owner == owner.owner and reset.span.start == owner.span.start and reset.span.end == owner.span.end
+            reset for reset in resets
+            if reset.owner == owner.owner
+            and reset.span.start == owner.span.start
+            and reset.span.end == owner.span.end
         ]
         if not owner_aliases or not owner_resets:
             continue
@@ -373,182 +352,112 @@ def _analyze_unit(
                     )
                     if rebound and options.suppress_rebound_alias:
                         continue
+                    _check_timeout(options)
                     line, column = _line_col(unit.text, use_position)
-                    if options.classify_sync_scope:
-                        sync_context = _sync_context(masked, spans, reset.position, use_position)
-                    else:
-                        sync_context = "not_classified"
-                    diagnosis_id = hashlib.sha256(
-                        "|".join(
-                            (
-                                context.request.repository,
-                                context.request.commit,
-                                context.request.profile_id,
-                                unit.path,
-                                owner.owner,
-                                alias.alias,
-                                "lifetime_unique_ptr_raw_alias",
-                                f"{line}:{column}",
-                                unit.sha256,
-                            )
-                        ).encode("utf-8")
-                    ).hexdigest()[:16]
-                    constraints = [
+                    sync_context = (
+                        _sync_context(masked, spans, reset.position, use_position)
+                        if options.classify_sync_scope
+                        else "not_classified"
+                    )
+                    constraints = (
                         "same_function_explicit_unique_ptr_owner",
                         "raw_alias_bound_with_owner_get",
                         "owner_reset_precedes_alias_dereference",
                         f"sync_scope={sync_context}",
-                    ]
-                    if rebound:
-                        constraints.append("alias_rebinding_observed_but_not_suppressed_by_ablation")
-                    diagnoses.append(
-                        ProposedDiagnostic(
-                            diagnostic_id=f"ohcpp-lifetime-{diagnosis_id}",
-                            provider="ohscanner.cpp.lifetime",
-                            evidence_type="syntax",
+                    )
+                    extra = (
+                        "alias_rebinding_observed_but_not_suppressed_by_ablation"
+                        if rebound and not options.suppress_rebound_alias
+                        else None
+                    )
+                    message = (
+                        f"Candidate only: raw alias '{alias.alias}' is dereferenced after "
+                        f"'{owner.owner}.reset()' invalidated the unique_ptr-owned object and "
+                        f"before 'alias = owner.get()' rebinding; syntax evidence; "
+                        f"sync_scope={sync_context}; not proof of UAF."
+                    )
+                    if extra:
+                        message += f" Constraint: {extra}."
+                    findings.append(
+                        DetectorFinding(
                             file=unit.path,
                             line=line,
-                            column=column,
                             rule_id="ohcpp-lifetime-unique-raw-alias-reset-001",
-                            severity="unassessed",
-                            message=(
-                                f"Candidate: raw alias '{alias.alias}' is dereferenced after "
-                                f"'{owner.owner}.reset()' invalidated the explicit unique_ptr owner."
-                            ),
+                            message=message,
+                            evidence_type="syntax",
+                            column=column,
                             candidate_cwe="CWE-416",
-                            confidence="unassessed",
                             symbol=alias.alias,
-                            explanation=(
-                                "Within one modeled function, the raw alias was obtained from "
-                                f"'{owner.owner}.get()', the owner was reset, and the same alias was "
-                                "dereferenced before a new owner.get() binding. This is syntax-level "
-                                "candidate evidence and not a vulnerability verdict."
-                            ),
-                            source_sha256=unit.sha256,
-                            limitations=(
-                                "Same-function syntax slice only; no whole-program CFG, exception-path, or dataflow proof.",
-                                "Mutex scope is descriptive and does not preserve the lifetime of a destroyed object.",
-                                "Macros, lambdas, containers, smart-pointer conversion, escaping aliases, and cross-function transfers are out of scope.",
-                            ),
-                            constraints=tuple(constraints),
-                            missing_obligations=(
-                                "Prove object liveness on every reachable path from reset() to dereference.",
-                                "Prove all alias publications, destruction order, and cross-thread visibility.",
-                                "Validate security impact and runtime behavior through a separate review process.",
-                            ),
                         )
                     )
-
     if owners and not functions:
-        limitations.append("Ownership syntax was observed outside a modeled function span and was not analyzed.")
-    return _stable_unique(diagnoses), limitations
+        limitations.append(
+            "Ownership syntax was observed outside a modeled function span and was not analyzed."
+        )
+    return _stable_unique(findings), limitations
 
 
 class LifetimeOwnershipGuardDetector:
-    """Proposed detector entry point; not a frozen OHScanner Detector API."""
+    """M0-compatible narrow detector; v1 remains unfrozen."""
 
     detector_id = "ohscanner.cpp.lifetime"
     version = "0.1.0-proposed"
     supported_languages = ("cpp",)
-    required_facts = (
-        "repository_commit_profile_provenance",
-        "source_path",
-        "source_text",
-        "source_sha256",
-        "parse_status",
-    )
+    # Source path/text/hash/parse status and request provenance are mandatory
+    # SourceUnit/ScanRequest fields. No synthetic shared-fact names are required.
+    required_facts: Tuple[str, ...] = ()
 
     def __init__(self, options: Optional[LifetimeAnalysisOptions] = None) -> None:
         self.options = options or LifetimeAnalysisOptions()
 
-    def detect(
-        self,
-        context: ProposedScanContext,
-        units: Sequence[ProposedSourceUnit],
-    ) -> ProposedDetectorRun:
-        started = time.perf_counter()
-        request_errors = _validate_request(context)
-        ordered_units = sorted(units, key=lambda unit: unit.path)
-        diagnoses: List[ProposedDiagnostic] = []
-        coverage: List[ProposedCoverage] = []
+    def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
+        del context
+        ordered_units = tuple(sorted({unit.path: unit for unit in units}.values(), key=lambda unit: unit.path))
+        findings: List[DetectorFinding] = []
         analyzed_files: List[str] = []
         limitations = [
-            "Detector Contract v1 remains proposed; this is a detector-local implementation.",
-            "No diagnostics is not proof of safety and is never a benchmark miss.",
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
         ]
-        limitations.extend(request_errors)
-        input_failed = bool(request_errors)
+        timed_out = False
 
         for unit in ordered_units:
-            if request_errors:
-                coverage.append(
-                    ProposedCoverage(
-                        file=unit.path,
-                        parse_status=unit.parse_status,
-                        parse_issues=tuple(unit.parse_issues) + tuple(request_errors),
-                        analyzed=False,
-                    )
-                )
-                continue
-            source_error = _validate_source_unit(unit)
-            if source_error:
-                input_failed = True
-                coverage.append(
-                    ProposedCoverage(
-                        file=unit.path,
-                        parse_status="failed",
-                        parse_issues=(source_error,),
-                        analyzed=False,
-                    )
-                )
-                limitations.append(f"{unit.path}: {source_error}")
-                continue
+            try:
+                _check_timeout(self.options)
+            except _CooperativeTimeout:
+                timed_out = True
+                limitations.append("Cooperative timeout stopped this detector run; remaining scope is unknown.")
+                break
             if unit.parse_status != "complete":
-                coverage.append(
-                    ProposedCoverage(
-                        file=unit.path,
-                        parse_status=unit.parse_status,
-                        parse_issues=unit.parse_issues,
-                        analyzed=False,
-                    )
-                )
                 limitations.append(
                     f"{unit.path}: parse_status={unit.parse_status}; analysis remains unknown for this unit."
                 )
                 continue
-            unit_diagnoses, unit_limitations = _analyze_unit(context, unit, self.options)
-            diagnoses.extend(unit_diagnoses)
+            try:
+                unit_findings, unit_limitations = _analyze_unit(unit, self.options)
+            except _CooperativeTimeout:
+                timed_out = True
+                limitations.append("Cooperative timeout stopped this detector run; remaining scope is unknown.")
+                break
+            findings.extend(unit_findings)
             limitations.extend(f"{unit.path}: {item}" for item in unit_limitations)
             analyzed_files.append(unit.path)
-            coverage.append(
-                ProposedCoverage(
-                    file=unit.path,
-                    parse_status="complete",
-                    parse_issues=unit.parse_issues,
-                    analyzed=True,
-                )
-            )
 
-        if not analyzed_files:
-            limitations.append(
-                "No complete source unit was analyzed; empty diagnostics must remain unknown, not safe."
-            )
-        scope_loc = sum(max(1, len(unit.text.splitlines())) for unit in ordered_units)
-        return ProposedDetectorRun(
+        if timed_out:
+            status = "failed"
+        elif len(analyzed_files) != len(ordered_units):
+            status = "blocked"
+        else:
+            status = "completed"
+        return DetectorRun(
             detector_id=self.detector_id,
             version=self.version,
-            status="failed" if input_failed else "completed",
-            diagnostics=_stable_unique(diagnoses),
+            status=status,
             analyzed_files=tuple(sorted(analyzed_files)),
-            coverage=tuple(sorted(coverage, key=lambda item: item.file)),
+            findings=_stable_unique(findings),
             limitations=tuple(sorted(set(limitations))),
-            elapsed_seconds=max(0.0, time.perf_counter() - started),
-            scope_files=len(ordered_units),
-            scope_loc=scope_loc,
-            failure_kind="input_validation" if input_failed else None,
-            missing_obligations=(
-                "Dominating CFG paths and exception/early-return behavior are not computed.",
-                "Object liveness, destructor timing, escaping aliases, and cross-function ownership transfer are not proved.",
-                "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
-            ),
         )

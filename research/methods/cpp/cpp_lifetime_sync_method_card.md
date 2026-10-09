@@ -1,126 +1,142 @@
 # MethodCard: cpp.lifetime.unique-raw-alias-reset-v1
 
-> 状态：detector-local **proposed implementation**。Detector Contract v1 尚未冻结，本文不宣称 `src.ohscanner` 插件接口已经可运行。
-> 选定方向：`cpp.lifetime`。`bounds/length/Parcel` 仅完成独立研究切片，未提升为本轮正式 detector。
-> 结果边界：只产生 `candidate / unassessed / validation_status=not_run` 的描述性静态证据；不自报 `confirmed`、`possible_hit`、`miss`、safe 或漏洞结论。
+> 状态：Detector Contract v1 尚未冻结。本 detector 使用当前已实现的
+> `src/ohscanner.contracts.Detector.detect(context, units) -> DetectorRun`
+> 接口，版本仍标记 `0.1.0-proposed`，映射设计仍属 proposed design。
+> `bounds/length/Parcel` 仅完成独立研究切片，未提升为正式 detector。
+> 结果只含 syntax-level `candidate` 证据；不自报 confirmed、safe、
+> `possible_hit/miss` 或漏洞结论。
 
 ## 1. 问题与精确适用范围
 
-本 detector 只处理一种所有权/生命周期形状：
+只处理一种所有权/生命周期形状：
 
 1. 同一个已解析 C++ 函数内显式声明 `std::unique_ptr<T> owner`；
 2. 通过 `T* alias = owner.get();` 建立 raw alias；
-3. 之后执行 `owner.reset(...)`，使 alias 所指旧对象的生命周期不再由该 owner 保持；
-4. 在没有 `alias = owner.get();` 重新绑定之前，出现 `alias->...`、`(*alias)...` 或 `*alias` 解引用；
-5. 对 reset 与解引用做一种同步约束分类：是否位于同一个 `std::lock_guard` / `std::unique_lock` / `std::scoped_lock` 词法作用域。
+3. 之后执行 `owner.reset(...)`，旧对象不再由该 owner 保持；
+4. 在 `alias = owner.get();` 重新绑定前，出现 `alias->...`、`(*alias)...`
+   或 `*alias` 解引用；
+5. 对 reset/use 分类是否处于同一个 `std::lock_guard`、`std::unique_lock`
+   或 `std::scoped_lock` 词法作用域。
 
-同步分类**不会抑制候选**。锁只能说明观察到的词法区域可能被同一互斥对象串行化，不能证明旧对象仍存活，也不能证明锁序、条件变量、回调、跨线程 alias 发布或析构顺序。
+同步分类不会抑制候选。锁不延长已析构对象生命周期，也不证明锁序、条件
+变量、回调、跨线程 alias 发布或析构顺序。本 detector 不同时处理 UAF
+全形态、double-free、null deref、integer overflow、OOB 或并发竞争。
 
-## 2. required_facts
-
-入口元数据：
+## 2. 接口与 required_facts
 
 - `detector_id = ohscanner.cpp.lifetime`
 - `version = 0.1.0-proposed`
 - `supported_languages = ("cpp",)`
-- `required_facts`：
-  - `repository_commit_profile_provenance`
-  - `source_path`
-  - `source_text`
-  - `source_sha256`
-  - `parse_status`
+- `required_facts = ()`
 
-`lexical function block`、`ownership operation`、`raw alias`、`sync scope` 由本 detector 从 `source_text` 的有限语法切片计算，不要求主线新增公共 IR 字段。没有 `complete` 解析覆盖时不分析该文件，并保留真实 `partial/failed/not_run`。
+`required_facts` 为空是因为下列输入已经是公共契约的必填字段，不应伪造为
+`ScanContext.shared_facts` key：
 
-## 3. 参考样本与数据拆分
+- request repository/commit/profile/provenance/snapshot SHA-256；
+- source repository-relative path；
+- source text；
+- source SHA-256；
+- `parse_status` 和 `parse_issues`。
 
-当前 fixtures 全部是**自建 synthetic development fixtures**，不是公开 OpenHarmony 漏洞基准：
+`lexical function block`、`ownership operation`、`raw alias`、`sync scope`
+由 detector 对 `SourceUnit.text` 做有限语法切片计算，不要求 M2+ 公共 IR
+字段。
 
-- vulnerable：`tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp`
-- vulnerable + mutex scope：`tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp`
-- fixed：`tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp`
-- safe control：`tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp`
-- partial/unknown：`tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp`
-- failed：`tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp`
+## 3. Fixtures 与覆盖
 
-固定来源、fixture 类别、parse 状态和逐文件 SHA-256 在 `tests/detectors/fixtures/cpp_lifetime/manifest.json`。独立 holdout 尚未执行，设计见 `research/methods/cpp/cpp_lifetime_holdout_plan.md`；不得把上述开发 fixtures 当独立测试成绩。
+全部为自建 synthetic development fixtures，不是公开 OpenHarmony 漏洞样本：
 
-## 4. 对照工具和工具证据
+| 类别 | Fixture | 预期 |
+|---|---|---:|
+| vulnerable | `tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp` | 1 candidate |
+| vulnerable + mutex | `tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp` | 1 candidate |
+| fixed | `tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp` | 0 |
+| safe control | `tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp` | 0 |
+| partial/unknown | `tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp` | 不分析 |
+| failed | `tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp` | 不分析 |
 
-本轮没有运行 Semgrep、Cppcheck、Clang SA、CodeQL 或 Joern，也没有复制第三方规则、查询或实现。正式 detector 运行路径只使用 Python 标准库和传入的 source units，不启动外部扫描器。
+`manifest.json` 记录逐文件 SHA-256、parse 状态和解析问题。包含
+partial/failed unit 时，即使 complete unit 已分析并产生候选，run 仍是
+`blocked`；`ToolRunResult.parsing` 保留逐文件真实状态。
 
-历史工具记录只作为研究背景，不向 detector 导入 vulnerability verdict。`.reset()` 规则命中、文件/符号重叠或单条 warning 都不作为本 detector 的漏洞证明。
+## 4. 算法
 
-## 5. 自研算法草图
+1. 保持偏移量地屏蔽注释和字符串/字符 literal；
+2. 识别函数花括号范围、`unique_ptr` owner、raw alias、`reset()` 和 alias
+   dereference；
+3. 只在 owner/alias/reset/use 位于同一函数范围且顺序满足
+   alias -> reset -> use 时生成候选；
+4. 若 reset/use 间存在同 owner 的 `alias = owner.get()`，最终模式抑制候选；
+5. 记录 `sync_scope=same_scoped_mutex_lock` 或
+   `sync_scope=no_same_scoped_mutex_lock_observed`，但不改变候选是否产生；
+6. 按 `(file,line,rule_id,message)` 折叠重复身份并稳定排序，避免共享
+   Runner 拒绝重复 diagnostic identity。
 
-1. 对文本做保偏移的注释/字符串掩码，保留换行和位置；
-2. 识别显式 `std::unique_ptr` owner、`owner.get()` raw alias、`owner.reset()`；
-3. 用大括号配对得到有限函数与块作用域；
-4. 只在同一函数 span 内按位置检查 `reset` 后是否有 alias 解引用；
-5. 若 reset 与 use 之间出现同一 alias 从同一 owner 重新 `get()`，抑制候选；
-6. 分类 reset/use 是否处于同一个 mutex lock scope；
-7. 生成稳定 `diagnostic_id`，按 `(file,line,column,diagnostic_id,rule_id)` 排序并折叠重复 ID。
+## 5. 输出映射
 
-复杂度：文本/正则扫描为 `O(N)`；当前简单事件配对最坏为同一函数内 `O(A*R*U)`（alias、reset、use 事件数），适合窄原型，不代表全仓性能结论。
+使用现有 `src/ohscanner.runner.run_all`，不新增公共 schema：
 
-## 6. 为什么结构匹配之外仍不足
+- `DetectorFinding.file/line/column` -> `ToolDiagnostic` 位置；
+- `evidence_type="syntax"` -> `ToolDiagnostic.evidence_type`；
+- `rule_id` -> `ohcpp-lifetime-unique-raw-alias-reset-001`；
+- `message` -> 解释 candidate shape、sync constraint 和非证明边界；
+- `candidate_cwe="CWE-416"` 仅是初步候选类别；
+- Runner 强制 `severity=confidence="unassessed"`；
+- `DetectorRun.analyzed_files` -> `scope_files/scope_loc`；
+- `SourceUnit.parse_status/parse_issues` -> `ToolRunResult.parsing`；
+- `DetectorRun.limitations` -> `ToolRunResult.limitations`，Runner 再补充
+  provenance、硬隔离缺失和非漏洞证明边界。
 
-结构顺序只能说明“看起来可能在旧对象失效后使用 alias”。仍缺：
+公共 schema 没有 candidate/review/validation status、constraints、
+source hash sidecar；本轮不修改 schema。若未来公共化这些字段，应单独提交
+contract-change proposal。
 
-- 所有可达路径上的 guard dominance、early return、exception 与析构顺序；
-- alias 是否逃逸、复制、闭包捕获、存入容器或跨函数传递；
-- `reset` 参数是否建立新 owner，以及新旧对象和 alias 的真实绑定；
-- 宏展开、模板实例化、编译配置和类型系统事实；
-- 并发 happens-before、锁序、条件变量、回调和线程可见性；
-- attacker control、安全影响与运行时触发。
+## 6. 状态语义
 
-因此证据类型只使用 `syntax`，confidence/severity 均为 `unassessed`。
+1. 执行：`completed/failed/blocked`，只表示 detector 调用结果；
+2. 解析覆盖：`complete/partial/failed/not_run`，缺失分析保持 unknown；
+3. benchmark 匹配：`possible_hit/miss/unknown/not_applicable`，本 detector
+   不产生、不映射、不自报。
 
-## 7. OpenHarmony 专用约束
+空 findings 不是 safe，也不是 benchmark `miss`；`completed` 不是安全结论。
 
-- 明确区分执行状态、解析覆盖和 benchmark 匹配状态；
-- 输出 candidate sidecar，默认 `review_status=unassessed`、`validation_status=not_run`；
-- mutex 事实只作为同步约束描述，不被解释为 lifetime proof；
-- partial/failed/not_run 文件产生未知覆盖，不产生安全或 miss 结论；
-- detector 不修改受检源码、不联网、不生成 exploit/PoC、不提升 review/vulnerability 状态。
+## 7. 确定性、失败隔离与超时
 
-## 8. 修复例、安全对照和失败/未知行为
+- 输入 unit 按 path 去重排序；finding 按 file/line/column/rule/message 稳定
+  排序；
+- detector 自身折叠重复 finding identity；
+- 共享 Runner 对每个 detector 独立捕获异常，crash 只生成该 detector 的
+  `failed` ToolRunResult，后续 detector 继续执行；
+- `LifetimeAnalysisOptions.timeout_check` 是 cooperative timeout，用于测试
+  detector 自身返回 `failed` 后其它模块继续运行；
+- 共享 Runner 尚无 hard timeout、独立进程、内存/文件沙箱或 kill/cancel。
+  因此不宣称已实现硬超时或资源隔离。
 
-- fixed：`reset` 后重新执行 `alias = owner.get()`，最终整合版不报；
-- safe：先使用 alias，再 reset，最终整合版不报；
-- partial：宏控制 reset 上下文未展开，不分析，coverage=`partial`；
-- failed：合成的不平衡 reset 输入，不分析，coverage=`failed`；
-- 输入 SHA 不匹配时，detector run=`failed` 且保留该文件失败记录，但不隐藏其它有效 unit 的候选。
+## 8. 消融结果（2026-10-09 真实运行）
 
-## 9. 消融结果（本轮真实运行）
-
-| 模式 | vulnerable | vulnerable+mutex | fixed | safe | partial | failed | 总诊断 |
+| 模式 | vulnerable | vulnerable+mutex | fixed | safe | partial | failed | 总 candidate |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| base pattern | 1 | 1 | 1 | 0 | 0（未知） | 0（失败） | 3 |
-| + alias liveness/rebind suppression | 1 | 1 | 0 | 0 | 0（未知） | 0（失败） | 2 |
-| + sync-scope classification | 1 | 1 | 0 | 0 | 0（未知） | 0（失败） | 2 |
+| base pattern | 1 | 1 | 1 | 0 | 0（unknown） | 0（failed parse） | 3 |
+| + alias rebinding suppression | 1 | 1 | 0 | 0 | 0（unknown） | 0（failed parse） | 2 |
+| + sync-scope classification | 1 | 1 | 0 | 0 | 0（unknown） | 0（failed parse） | 2 |
 
-解释：alias rebind constraint 消除了 fixed fixture 的结构误候选；sync classification 不改变当前计数，只增加 `same_scoped_mutex_lock` 约束事实。这个结果只说明开发 fixture 行为，不是准确率或泛化结论。
+alias rebinding constraint 消除 fixed fixture 的结构误候选；sync
+classification 不改变计数，只增加 `same_scoped_mutex_lock` 描述事实。
+这只是开发 fixture 行为，不是准确率或泛化结论，不计算 Precision/Recall。
 
-## 10. 结果映射与状态语义
+## 9. 已知限制与未验证命题
 
-详见 `research/experiments/cpp/toolrunresult_v1_mapping_design.md`。简要地说：
-
-- `detector_id/version -> tool/tool_version`
-- candidate -> 现有 `ToolDiagnostic`
-- `coverage[].parse_status -> ToolRunResult.parsing`
-- explanation/limitations/constraints/missing_obligations/source_sha256 -> detector-local sidecar
-- `completed/failed/blocked` 只映射执行状态
-- detector 不输出 benchmark `possible_hit/miss/unknown/not_applicable`
-
-## 11. 许可证与 provenance
-
-本方法、代码、fixtures 和测试均为本分支自建；未复制第三方源码、规则、查询或数据库。仅使用 Python 标准库和仓库已经存在的 `src.benchmark.tool_result.ToolRunResult/ToolDiagnostic` 作为只读映射目标。无第三方许可证附加项。
-
-## 12. 不成立或未验证的安全命题
-
-- 不证明任何真实 OpenHarmony 代码存在 UAF；
-- 不证明 mutex 能延长对象生命周期；
+- 不计算完整类型、CFG、path dominance、数据流、exception/early-return；
+- 不证明对象在所有可达路径上存活、析构时机、alias escape 或所有权转移；
+- 不建模 lambda capture、宏展开、template/container wrapper、回调、条件
+  变量、锁顺序或并发 alias publication；
 - 不证明 candidate 可达、可触发、可利用或具有安全影响；
-- 不计算 Precision/Recall、false positive/negative 或全仓覆盖；
-- 不把空诊断解释为 safe，也不把 partial/failed 解释为 miss。
+- 不证明任何真实 OpenHarmony 代码存在 UAF；
+- 独立 holdout 尚未收集或运行，不能宣称泛化、误报率或漏报率。
+
+## 10. 许可证与 provenance
+
+代码、fixtures、方法和测试均为本分支自建；未复制第三方源码、规则、查询
+或许可证材料。正式执行不启动 Semgrep、Cppcheck、Clang SA、CodeQL 或
+Joern，也不生成 exploit/PoC、编译产物或数据库。
