@@ -171,6 +171,26 @@ void non_owner_pointer_shadowing(Widget* other) {
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
 
+    def test_auto_pointer_shadowing_is_distinct_binding(self) -> None:
+        unit = self.generated_unit(
+            "auto_pointer_shadowing",
+            """
+struct Widget { void Use() const {} };
+void auto_pointer_shadowing(Widget* other) {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    {
+        auto alias = other;
+        alias->Use();
+    }
+}
+""",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+
     def test_unbraced_conditional_rebinding_remains_candidate(self) -> None:
         unit = self.generated_unit(
             "unbraced_conditional_rebind",

@@ -34,7 +34,7 @@ _RAW_ALIAS_RE = re.compile(
     r"(?P<alias>[A-Za-z_]\w*)\s*=\s*(?P<owner>[A-Za-z_]\w*)\s*\.\s*get\s*\(\s*\)"
 )
 _POINTER_BINDING_RE = re.compile(
-    r"\b(?:auto|[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*"
+    r"\b(?:(?:auto|[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*|auto\s+)"
     r"(?P<alias>[A-Za-z_]\w*)\s*(?P<decl_end>=|;|\()"
 )
 _RESET_RE = re.compile(r"\b(?P<owner>[A-Za-z_]\w*)\s*\.\s*reset\s*\(")
