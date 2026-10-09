@@ -1,14 +1,14 @@
 # OHScanner 自研 Detector Plugin Contract v1（设计稿）
 
-> **实现状态：proposed / 尚未在 main 编码。** main 已有 \`src/benchmark/tool_result.py\` 的 \`ToolDiagnostic\`、\`ToolRunResult(schema_version=1)\`，以及 \`src/providers/base.py\` 的外部扫描器适配器。本文的 \`ScanRequest\` / \`SourceUnit\` / \`ScanContext\` / \`Detector\` / \`DetectorRun\` 尚未实现；不得从 \`src.ohscanner\` 直接 import。
+> **实现状态：proposed / 尚未在 main 编码。** main 已有 `src/benchmark/tool_result.py` 的 `ToolDiagnostic`、`ToolRunResult(schema_version=1)`，以及 `src/providers/base.py` 的外部扫描器适配器。本文的 `ScanRequest` / `SourceUnit` / `ScanContext` / `Detector` / `DetectorRun` 尚未实现；不得从 `src.ohscanner` 直接 import。
 >
 > 目标：让负责人统一完成扫描底座，队友 A、B 各自交付独立 C/C++ 和 Web/ArkTS/IPC 自研检测插件，无需修改 main 的内部公共实现也能集成。契约首次 Mock CI 通过后再冻结；之后如需变更，单开契约 PR。
 
 ## 1. 三个边界不能混淆
 
-- **外部实验 Adapter**（现有 \`src/providers\`）：只把 Semgrep/CodeQL/Clang/Cppcheck/Joern 保存的原生输出转换为描述性结果，**不运行分析**。
-- **OHScanner Detector**（拟建 \`src/ohscanner/detectors\`）：自行执行语法/类型/guard/对象生命周期/输入传播等算法，**正式扫描不按漏洞类型启动上述外部工具**。
-- **结果 Bridge**（拟建 \`src/ohscanner/integration\`）：统一校验目标、快照、检测覆盖及异常，然后桥接到 main 现有的 \`ToolRunResult\`、Evidence、Review 和报告模块。
+- **外部实验 Adapter**（现有 `src/providers`）：只把 Semgrep/CodeQL/Clang/Cppcheck/Joern 保存的原生输出转换为描述性结果，**不运行分析**。
+- **OHScanner Detector**（拟建 `src/ohscanner/detectors`）：自行执行语法/类型/guard/对象生命周期/输入传播等算法，**正式扫描不按漏洞类型启动上述外部工具**。
+- **结果 Bridge**（拟建 `src/ohscanner/integration`）：统一校验目标、快照、检测覆盖及异常，然后桥接到 main 现有的 `ToolRunResult`、Evidence、Review 和报告模块。
 
 ~~~text
 Pinned ScanRequest + SourceUnits + SharedFacts
@@ -34,21 +34,21 @@ Pinned ScanRequest + SourceUnits + SharedFacts
 
 | 字段 | 最低要求 | 校验规则 |
 |---|---|---|
-| \`request_id\` | 非空扫描任务 ID | 唯一、可追踪 |
-| \`target_id\` | 例如 \`current-component:openharmony/commonlibrary_c_utils\` | 不得混为 historical sample_id |
-| \`repository\` | 官方仓库标识 | 与快照 origin 绑定 |
-| \`commit\` | 完整 commit SHA | 与固定源码一致，扫描中不变 |
-| \`snapshot_sha256\` | 源码清单 SHA-256 | 读取前后校验 |
-| \`profile_id\` | light-full / linux-host / product-build 等 | 不同 TU、宏和依赖配置不能混评 |
-| \`include_paths\` / \`exclude_paths\` | 仓库相对路径清单 | 禁止绝对路径、\`..\`、符号链接越界 |
-| \`language_mode\` | cpp/c/js/arkts/mixed | 不靠扩展名宣告解析完整 |
-| \`budget\` | 时间/内存等额度 | 不可无限运行、主动访问网络或修改受检源码 |
+| `request_id` | 非空扫描任务 ID | 唯一、可追踪 |
+| `target_id` | 例如 `current-component:openharmony/commonlibrary_c_utils` | 不得混为 historical sample_id |
+| `repository` | 官方仓库标识 | 与快照 origin 绑定 |
+| `commit` | 完整 commit SHA | 与固定源码一致，扫描中不变 |
+| `snapshot_sha256` | 源码清单 SHA-256 | 读取前后校验 |
+| `profile_id` | light-full / linux-host / product-build 等 | 不同 TU、宏和依赖配置不能混评 |
+| `include_paths` / `exclude_paths` | 仓库相对路径清单 | 禁止绝对路径、`..`、符号链接越界 |
+| `language_mode` | cpp/c/js/arkts/mixed | 不靠扩展名宣告解析完整 |
+| `budget` | 时间/内存等额度 | 不可无限运行、主动访问网络或修改受检源码 |
 
 ### SourceUnit
 
-\`path, language, sha256, text/content_ref, parse_status, parse_issues, symbol_index(optional), type_info(optional), cfg(optional), dataflow(optional)\`。
+`path, language, sha256, text/content_ref, parse_status, parse_issues, symbol_index(optional), type_info(optional), cfg(optional), dataflow(optional)`。
 
-\`parse_status\` 语义为 \`complete/partial/failed/not_run\`。类型/CFG/跨函数信息没有时应保留未知，不得臆造。由主线负责提供解析事实；A/B 可以提新需求但不可偷偷把其私有 AST 对象变成公共必填字段。
+`parse_status` 语义为 `complete/partial/failed/not_run`。类型/CFG/跨函数信息没有时应保留未知，不得臆造。由主线负责提供解析事实；A/B 可以提新需求但不可偷偷把其私有 AST 对象变成公共必填字段。
 
 ### ScanContext
 
@@ -68,30 +68,30 @@ class Detector(Protocol):
     ) -> DetectorRun: ...
 ~~~
 
-每个 DetectorRun 包含：\`diagnostics\`、\`analyzed_files\`、\`coverage\`、\`limitations\`、\`elapsed_seconds\`、\`status\` 和可选性能信息。运行时统一排序、路径验证和错误隔离。**某一个 detector crash 不得导致其他 detector 的证据消失**，但必须产生失败记录。
+每个 DetectorRun 包含：`diagnostics`、`analyzed_files`、`coverage`、`limitations`、`elapsed_seconds`、`status` 和可选性能信息。运行时统一排序、路径验证和错误隔离。**某一个 detector crash 不得导致其他 detector 的证据消失**，但必须产生失败记录。
 
 ## 3. 自研结果复用 main 现有 ToolRunResult v1
 
-现有字段（核实存在）：\`schema_version, run_id, tool, tool_version, target_id, commit, scope_files, scope_loc, status, elapsed_seconds, peak_memory_mb, diagnostics, limitations, parsing\`。
+现有字段（核实存在）：`schema_version, run_id, tool, tool_version, target_id, commit, scope_files, scope_loc, status, elapsed_seconds, peak_memory_mb, diagnostics, limitations, parsing`。
 
-现有 \`ToolDiagnostic\` 字段（核实存在）：\`diagnostic_id, provider, evidence_type, file, line, column, rule_id, severity, message, candidate_cwe, confidence, symbol\`。
+现有 `ToolDiagnostic` 字段（核实存在）：`diagnostic_id, provider, evidence_type, file, line, column, rule_id, severity, message, candidate_cwe, confidence, symbol`。
 
 映射约定：
 
 | 内部自研字段 | ToolRunResult v1 | 约定 |
 |---|---|---|
-| detector_id/version | \`tool/tool_version\` | 自研工具名使用 \`ohscanner.cpp.lifetime\`、\`ohscanner.interface.bridge\`，与 semgrep 区分 |
-| request | \`run_id,target_id,commit\` | 由核心生成并校验，不许 Detector 自行冒用别的目标 |
-| 已声明的分析范围 | \`scope_files/scope_loc\` | 具体 analyzed_files 在 sidecar 中保存，保证可核对范围 |
-| 执行状态 | \`status\` | 仅 \`completed / failed / blocked\` |
-| 诊断与初步 CWE | \`diagnostics\` | 只能写初步候选，未验证的 confidence 为 \`unassessed\` |
-| 解析状态 | \`parsing\` | 仍按已有的 \`file/status\` 结构保留真实错误；其他覆盖状态放 sidecar |
+| detector_id/version | `tool/tool_version` | 自研工具名使用 `ohscanner.cpp.lifetime`、`ohscanner.interface.bridge`，与 semgrep 区分 |
+| request | `run_id,target_id,commit` | 由核心生成并校验，不许 Detector 自行冒用别的目标 |
+| 已声明的分析范围 | `scope_files/scope_loc` | 具体 analyzed_files 在 sidecar 中保存，保证可核对范围 |
+| 执行状态 | `status` | 仅 `completed / failed / blocked` |
+| 诊断与初步 CWE | `diagnostics` | 只能写初步候选，未验证的 confidence 为 `unassessed` |
+| 解析状态 | `parsing` | 仍按已有的 `file/status` 结构保留真实错误；其他覆盖状态放 sidecar |
 | 额外语义事实 | 另存 Evidence/trace sidecar | 不擅自给 ToolDiagnostic dataclass 添加字段 |
 
-证据类型只能使用 \`src/benchmark/tool_result.py\` 支持的值：
-\`pattern, syntax, dataflow, control_flow, symbolic, historical, runtime, permission, web_dynamic, human_review, unknown\`。没有确定性路径证据不可写 \`dataflow\` 或 \`control_flow\`；CodeQL 供应商身份也不等于它的每一条告警都具备数据流证明。
+证据类型只能使用 `src/benchmark/tool_result.py` 支持的值：
+`pattern, syntax, dataflow, control_flow, symbolic, historical, runtime, permission, web_dynamic, human_review, unknown`。没有确定性路径证据不可写 `dataflow` 或 `control_flow`；CodeQL 供应商身份也不等于它的每一条告警都具备数据流证明。
 
-一个示意 \`ToolRunResult\`（**模拟 fixture，非真实漏洞输出**）：
+一个示意 `ToolRunResult`（**模拟 fixture，非真实漏洞输出**）：
 
 ~~~json
 {
@@ -127,34 +127,34 @@ class Detector(Protocol):
 }
 ~~~
 
-**严禁**将示例路径、行号或 candidate_count 当作已扫描 OpenHarmony 的实测事实。现有 \`ToolDiagnostic\` 没有 \`status=confirmed\` 字段；候选审查及是否已确认由独立 Review 记录维护。
+**严禁**将示例路径、行号或 candidate_count 当作已扫描 OpenHarmony 的实测事实。现有 `ToolDiagnostic` 没有 `status=confirmed` 字段；候选审查及是否已确认由独立 Review 记录维护。
 
 ## 4. 执行状态 / 分析覆盖 / 根因实验评价：三种不同维度
 
-1. **执行**：\`completed/failed/blocked\`（ToolRunResult）。
-2. **解析覆盖**：按文件、语言、配置区分 \`complete/partial/failed/not_run/not_applicable\`；未实现扩展状态时保存 sidecar，不要修改已有 \`parsing.status\` 的接受值。
-3. **基准根因匹配**：\`possible_hit/miss/unknown/not_applicable\`（由历史 benchmark 评估器根据固定修复对和真实分析覆盖给出，不由插件自报）。
+1. **执行**：`completed/failed/blocked`（ToolRunResult）。
+2. **解析覆盖**：按文件、语言、配置区分 `complete/partial/failed/not_run/not_applicable`；未实现扩展状态时保存 sidecar，不要修改已有 `parsing.status` 的接受值。
+3. **基准根因匹配**：`possible_hit/miss/unknown/not_applicable`（由历史 benchmark 评估器根据固定修复对和真实分析覆盖给出，不由插件自报）。
 
 没有诊断 ≠ 安全；解析 partial、缺头文件、未执行、范围不含 affected symbol ≠ miss。完整 host TU ≠ 完整设备路径/宏配置/模板实例。
 
 ## 5. Candidate 关联与审查 Sidecar（拟议）
 
-可选稳定关联键：\`SHA256(repo|commit|profile|file|symbol|root_cause_family|normalized_location)\`。多个工具警告在同一行不自动等于同一个根因；候选关联需要对象或路径证据。
+可选稳定关联键：`SHA256(repo|commit|profile|file|symbol|root_cause_family|normalized_location)`。多个工具警告在同一行不自动等于同一个根因；候选关联需要对象或路径证据。
 
-sidecar 保存 \`snapshot_sha256, model_version, detector_id/version, profile_id, analyzed_files, parse_status, artifact_sha256, trace_ref, missing_obligations, review_status, reviewer, input_control, reachability, security_impact, runtime_validation\` 等。默认 \`runtime_validation=not_run\`、\`validated_vulnerability=0\`，自研 Detector 无权变更为 confirmed/reportable。
+sidecar 保存 `snapshot_sha256, model_version, detector_id/version, profile_id, analyzed_files, parse_status, artifact_sha256, trace_ref, missing_obligations, review_status, reviewer, input_control, reachability, security_impact, runtime_validation` 等。默认 `runtime_validation=not_run`、`validated_vulnerability=0`，自研 Detector 无权变更为 confirmed/reportable。
 
-现有 \`src/triage/review_store.py\`、\`src/core/evidence.py\` 可以复用，但字段与数据格式不同，需由核心编写桥接和回归测试。
+现有 `src/triage/review_store.py`、`src/core/evidence.py` 可以复用，但字段与数据格式不同，需由核心编写桥接和回归测试。
 
 ## 6. 两位队友必须交付的“接入包”
 
 每个 Detector 必须附带：
 
-- 自研 Python 检测模块及明确入口，\`detector_id/version/required_facts\`；
-- \`method_card.md\`：方法来源、规则为何有效、OpenHarmony 专用约束、自主改造点、限制、第三方许可；
+- 自研 Python 检测模块及明确入口，`detector_id/version/required_facts`；
+- `method_card.md`：方法来源、规则为何有效、OpenHarmony 专用约束、自主改造点、限制、第三方许可；
 - 正例、修复后版本、安全相似代码、解析不完整/失败 fixture；真实数据必须有固定提交与文件哈希；
 - 可复现的单元测试与独立保留集结果，不得把开发时学习的漏洞作为独立测试成绩；
 - 运行耗时、解析/编译范围、失败样例、必要的 Evidence 引用；
-- \`README.md\`：负责人无需安装整个研究工具栈就能在 Mock / 固定源码上使用该 Detector。
+- `README.md`：负责人无需安装整个研究工具栈就能在 Mock / 固定源码上使用该 Detector。
 
 **不准交付另一套 CLI、另一套 Candidate JSON、另一套统一 AST 基类。** 需要公共 IR 扩展时先提交申请，由负责人维护并测试向后兼容。
 
