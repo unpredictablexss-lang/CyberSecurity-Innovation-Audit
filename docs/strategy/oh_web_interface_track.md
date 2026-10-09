@@ -2,7 +2,7 @@
 
 > 状态：**计划**；并非已发现 Web 漏洞或现有 Web/IPC detector 已实现。
 > 负责人负责引擎底座、插件契约、公共语义；B 负责真实攻击面定位、离线实验、OpenHarmony 专用检测算法、独立测试与接入包。无需自建 CLI、报告服务或重新实现整个 AST。
-> 必须遵守 \`docs/contracts/ohscanner_detector_contract_v1.md\` 与 \`docs/strategy/vulnerability_corpus_bakeoff_protocol.md\`。
+> 必须遵守 `docs/contracts/ohscanner_detector_contract_v1.md` 与 `docs/strategy/vulnerability_corpus_bakeoff_protocol.md`。
 
 ## 1. 为什么本方向不能直接叫“Web 漏洞扫描器”
 
@@ -30,7 +30,7 @@ OpenHarmony 含多语言、多进程和设备权限模型。传统网页 SQLi/XS
 
 - 先定位 OpenHarmony 官方仓库中确实存在的目标 API、模块和语言，固定 commit、分支、文件、公开文档、接口参数类型；
 - 逐条辨认用户可控来源、跨进程/跨语言边界、调用者身份、权限/白名单 guard、敏感 sink；
-- 出具 \`attack_surface_inventory.md\`，同时列出目前**无法证实**输入可控或有无权限检查的情况。
+- 出具 `attack_surface_inventory.md`，同时列出目前**无法证实**输入可控或有无权限检查的情况。
 
 **任务 B1：公开案例与对照**
 
@@ -45,7 +45,7 @@ OpenHarmony 含多语言、多进程和设备权限模型。传统网页 SQLi/XS
 **任务 B3：自主检测器**
 
 提议首个 detector：
-\`ohscanner.interface.permission\` 或 \`ohscanner.interface.bridge\`（最终名称以 v1 contract 登记为准）。
+`ohscanner.interface.permission` 或 `ohscanner.interface.bridge`（最终名称以 v1 contract 登记为准）。
 
 算法分层：
 1. 在 AST/符号索引中标识真实入口（IPC transaction / JS bridge exposed function 等）；
@@ -54,7 +54,7 @@ OpenHarmony 含多语言、多进程和设备权限模型。传统网页 SQLi/XS
 4. 识别敏感操作 sink，与入口及 guard 关联；
 5. 输出 candidate + evidence + missing obligations，而不是直接标注“权限绕过”。
 
-优先做函数内和**一跳**调用关系的有限分析；解析/类型/guard 支配信息不足时降级成 \`syntax\` 或 \`unknown\`，不要伪造 dataflow/control_flow 证据。可编写 OpenHarmony 专用的入口和能力 API 目录，但每项 API 需来源和版本证据，不能靠猜测字段名。
+优先做函数内和**一跳**调用关系的有限分析；解析/类型/guard 支配信息不足时降级成 `syntax` 或 `unknown`，不要伪造 dataflow/control_flow 证据。可编写 OpenHarmony 专用的入口和能力 API 目录，但每项 API 需来源和版本证据，不能靠猜测字段名。
 
 ## 4. 需要交给负责人接入的清单
 
@@ -75,11 +75,11 @@ docs/reviews/interface_attack_surface/   # 固定版本攻击面综述
 1. 一张 MethodCard：漏洞家族/输入/敏感目标/历史参考/工具实验与失败/自主改进/许可证；
 2. 可重放的固定源码索引与 positive/fixed/safe fixtures（如是 synthetic，明确标记）；
 3. 一个符合 v1 Contract 的 Detector，不发明新的全局 Finding 或 CLI；
-4. 明确要求主线提供哪些 \`required_facts\`、缺失时返回何种受限覆盖状态；
+4. 明确要求主线提供哪些 `required_facts`、缺失时返回何种受限覆盖状态；
 5. 单测（真实运行、失败/路径异常、guard 正例与负例、跨仓库/版本隔离）；
 6. 最小演示命令在负责人提供的统一 orchestrator 中运行，而不是独立 Web 服务或网络爬虫。
 
-结果通过 main 已存在的 \`ToolRunResult\` Bridge 保存；\`candidate_cwe\` 仅表示初步分类，\`validated_vulnerability=0\` 除非后续受控验证阶段有独立证据。
+结果通过 main 已存在的 `ToolRunResult` Bridge 保存；`candidate_cwe` 仅表示初步分类，`validated_vulnerability=0` 除非后续受控验证阶段有独立证据。
 
 ## 5. A 与 B 如何共享而不互相阻塞
 
@@ -91,7 +91,7 @@ docs/reviews/interface_attack_surface/   # 固定版本攻击面综述
 | benchmark lab | 执行记录模板、公共 hash/覆盖验证 | 内存安全基准 | 授权/接口安全基准 |
 | Review & Report | 候选关联合规、状态与输出 | 生命周期审查义务 | 权限与信任边界审查义务 |
 
-需要跨语言桥边时，B 应先提出可选边模型，例如 \`source_symbol → bridge_export → native_target_symbol\`，但**不要未经批准强制所有检测器升级统一 IR**。没有确定映射关系则输出 unknown；主线负责人批准后再扩公共事实结构。
+需要跨语言桥边时，B 应先提出可选边模型，例如 `source_symbol → bridge_export → native_target_symbol`，但**不要未经批准强制所有检测器升级统一 IR**。没有确定映射关系则输出 unknown；主线负责人批准后再扩公共事实结构。
 
 ## 6. 迭代建议与失败止损
 
