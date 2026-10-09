@@ -12,7 +12,7 @@ from src.ohscanner.frontend import index_sources
 from src.ohscanner.git_source import load_git_sources
 from src.ohscanner.indexing import prepare_git_context, run_git_index
 from src.ohscanner.mocks import MockCppDetector
-from src.ohscanner.runner import DetectorRegistry, run_all
+from src.ohscanner.runner import DetectorRegistry, run_all, run_all_with_coverage
 
 PROJECT = Path(__file__).resolve().parents[1]
 
@@ -177,7 +177,7 @@ class GitObjectIndexTests(unittest.TestCase):
         self.assertFalse(any("synthetic fixture only" in x for x in runs[0].limitations))
         self.assertEqual(runs[0].diagnostic_count, 0)
 
-    def test_ast_requirement_blocks_partial_cpp_parse(self):
+    def test_ast_requirement_runs_complete_files_and_preserves_partial_coverage(self):
         (self.repo / "src" / "broken.cpp").write_text(
             "int broken( {\n", encoding="utf-8"
         )
@@ -191,9 +191,34 @@ class GitObjectIndexTests(unittest.TestCase):
             required_facts = ("ast",)
         registry = DetectorRegistry()
         registry.register(NeedsAst())
-        result = run_all(context, registry)[0]
-        self.assertEqual(result.status, "blocked")
-        self.assertTrue(any("Required complete AST" in x for x in result.limitations))
+        results, coverage = run_all_with_coverage(context, registry)
+        result = results[0]
+        self.assertEqual(result.status, "completed")
+        self.assertEqual(result.scope_files, 1)
+        self.assertEqual(len(result.parsing), 2)
+        self.assertTrue(any("INCOMPLETE COVERAGE" in x for x in result.limitations))
+        details = coverage["detectors"][NeedsAst.detector_id]
+        self.assertEqual(details["status"], "partial")
+        self.assertEqual(details["analyzed_files"], ["src/a.cpp"])
+        self.assertEqual(details["unexamined"][0]["file"], "src/broken.cpp")
+        self.assertIn("incomplete_ast", details["unexamined"][0]["reason"])
+
+    def test_whole_scope_ast_can_still_block_on_one_partial_file(self):
+        (self.repo / "src" / "broken.cpp").write_text("int broken( {\n", encoding="utf-8")
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-qm", "partial")
+        updated = git(self.repo, "rev-parse", "HEAD")
+        context, _, _, _, _ = prepare_git_context(self.repo, "fixture/m1-sample", updated)
+        class NeedsWholeAst(MockCppDetector):
+            required_facts = ("ast",)
+            ast_scope = "whole_scope"
+        registry = DetectorRegistry()
+        registry.register(NeedsWholeAst())
+        result, coverage = run_all_with_coverage(context, registry)
+        self.assertEqual(result[0].status, "blocked")
+        self.assertEqual(result[0].scope_files, 0)
+        self.assertEqual(coverage["detectors"][NeedsWholeAst.detector_id]["status"], "blocked")
+        self.assertEqual(len(coverage["detectors"][NeedsWholeAst.detector_id]["unexamined"]), 2)
 
     def test_missing_c_cpp_grammar_is_not_silently_complete(self):
         from src.ohscanner.git_source import GitSource
