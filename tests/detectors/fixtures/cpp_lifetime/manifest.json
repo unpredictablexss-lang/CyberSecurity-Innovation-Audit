@@ -42,6 +42,14 @@
       "expected_diagnostics": 0
     },
     {
+      "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp",
+      "sha256": "b67d1bbf6f04e8aa520b69f3ed2aee16b36f09e626b820e835bb211e7fa4b02c",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable_conditional_rebind",
+      "expected_diagnostics": 1
+    },
+    {
       "path": "tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp",
       "sha256": "62e702f71e2836567c233b365e236031b141d8731efa6a35d10d5309c49b4afd",
       "parse_status": "partial",

@@ -40,7 +40,10 @@ class LifetimeDetectorTests(unittest.TestCase):
         self.assertEqual(candidate.symbol, "alias")
         self.assertEqual(candidate.rule_id, "ohcpp-lifetime-unique-raw-alias-reset-001")
         self.assertGreater(candidate.line, 0)
-        self.assertIn("before 'alias = owner.get()' rebinding", candidate.message)
+        self.assertIn(
+            "without a later unconditional straight-line 'alias = owner.get()' rebinding",
+            candidate.message,
+        )
         self.assertIn("not proof of UAF", candidate.message)
         self.assertTrue(any("not proof of safety" in item for item in run.limitations))
 
@@ -144,6 +147,16 @@ void commented() {
         self.assertEqual(len(base.findings), 1)
         self.assertIn("alias_rebinding_observed_but_not_suppressed_by_ablation", base.findings[0].message)
         self.assertEqual(complete.findings, ())
+
+    def test_conditional_rebinding_is_not_suppressed_without_cfg(self) -> None:
+        unit = unit_by_path(self.units, "vulnerable_conditional_rebind.cpp")
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn(
+            "conditional_or_non_straight_line_alias_rebinding_not_suppressed_without_cfg",
+            run.findings[0].message,
+        )
 
     def test_cooperative_timeout_fails_only_this_detector_run(self) -> None:
         vulnerable = unit_by_path(self.units, "vulnerable_unserialized.cpp")

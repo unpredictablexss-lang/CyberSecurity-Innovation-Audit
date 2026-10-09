@@ -14,8 +14,8 @@
 1. 同一个已解析 C++ 函数内显式声明 `std::unique_ptr<T> owner`；
 2. 通过 `T* alias = owner.get();` 建立 raw alias；
 3. 之后执行 `owner.reset(...)`，旧对象不再由该 owner 保持；
-4. 在 `alias = owner.get();` 重新绑定前，出现 `alias->...`、`(*alias)...`
-   或 `*alias` 解引用；
+4. 在无控制流边界的直行序列中不存在 `alias = owner.get();` 无条件重新绑定，
+   随后出现 `alias->...`、`(*alias)...` 或 `*alias` 解引用；
 5. 对 reset/use 分类是否处于同一个 `std::lock_guard`、`std::unique_lock`
    或 `std::scoped_lock` 词法作用域。
 
@@ -51,6 +51,7 @@
 |---|---|---:|
 | vulnerable | `tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp` | 1 candidate |
 | vulnerable + mutex | `tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp` | 1 candidate |
+| vulnerable + conditional rebind | `tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp` | 1 candidate |
 | fixed | `tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp` | 0 |
 | safe control | `tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp` | 0 |
 | partial/unknown | `tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp` | 不分析 |
@@ -67,7 +68,9 @@ partial/failed unit 时，即使 complete unit 已分析并产生候选，run �
    dereference；
 3. 只在 owner/alias/reset/use 位于同一函数范围且顺序满足
    alias -> reset -> use 时生成候选；
-4. 若 reset/use 间存在同 owner 的 `alias = owner.get()`，最终模式抑制候选；
+4. 仅当 reset/rebind/use 间没有控制流边界（分支、循环、跳转、短路或嵌套块）时，
+   同 owner 的 `alias = owner.get()` 才抑制候选；条件重绑定保持候选，避免在
+   无 CFG 时误删可达 stale-alias 路径；
 5. 记录 `sync_scope=same_scoped_mutex_lock` 或
    `sync_scope=no_same_scoped_mutex_lock_observed`，但不改变候选是否产生；
 6. 按 `(file,line,rule_id,message)` 折叠重复身份并稳定排序，避免共享
@@ -117,17 +120,20 @@ contract-change proposal。
 
 | 模式 | vulnerable | vulnerable+mutex | fixed | safe | partial | failed | 总 candidate |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| base pattern | 1 | 1 | 1 | 0 | 0（unknown） | 0（failed parse） | 3 |
-| + alias rebinding suppression | 1 | 1 | 0 | 0 | 0（unknown） | 0（failed parse） | 2 |
-| + sync-scope classification | 1 | 1 | 0 | 0 | 0（unknown） | 0（failed parse） | 2 |
+| base pattern | 1 | 1 | 1 | 0 | 0（unknown） | 0（failed parse） | 4 |
+| + straight-line alias rebinding suppression | 1 | 1 | 0 | 0 | 0（unknown） | 0（failed parse） | 3 |
+| + sync-scope classification | 1 | 1 | 0 | 0 | 0（unknown） | 0（failed parse） | 3 |
 
-alias rebinding constraint 消除 fixed fixture 的结构误候选；sync
-classification 不改变计数，只增加 `same_scoped_mutex_lock` 描述事实。
+straight-line alias rebinding constraint 消除 fixed fixture 的结构误候选，
+但不会消除条件重绑定 fixture；sync classification 不改变计数，只增加
+`same_scoped_mutex_lock` 描述事实。
 这只是开发 fixture 行为，不是准确率或泛化结论，不计算 Precision/Recall。
 
 ## 9. 已知限制与未验证命题
 
 - 不计算完整类型、CFG、path dominance、数据流、exception/early-return；
+- rebinding suppression 只认可无控制流边界的直行序列；嵌套块、条件、循环、
+  goto/label 与短路路径均保持候选或不作安全结论；
 - 不证明对象在所有可达路径上存活、析构时机、alias escape 或所有权转移；
 - 不建模 lambda capture、宏展开、template/container wrapper、回调、条件
   变量、锁顺序或并发 alias publication；

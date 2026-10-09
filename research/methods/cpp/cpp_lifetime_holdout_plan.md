@@ -10,8 +10,9 @@
 
 每个 split 至少保持：
 
-- vulnerable：显式 unique_ptr owner + raw alias + reset 后 alias use；
-- fixed：改变 ownership/alias 语义后风险形状消失；
+- vulnerable：显式 unique_ptr owner + raw alias + reset 后 alias use，包括无条件、
+  条件和非直行 rebinding 变体；
+- fixed：改变 ownership/alias 语义后风险形状消失，包括无条件直行 rebinding；
 - safe：相似 API/变量/锁但没有 stale alias use；
 - partial parse：宏、模板、缺类型或不完整编译上下文；
 - failed：解析器失败/超时/错误配置；

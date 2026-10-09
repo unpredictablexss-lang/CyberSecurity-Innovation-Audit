@@ -10,7 +10,9 @@
 - ID: `ohscanner.cpp.lifetime`
 - Version: `0.1.0-proposed`
 - Shape: explicit `std::unique_ptr` owner -> raw `owner.get()` alias ->
-  `owner.reset()` -> stale alias dereference before alias rebinding.
+  `owner.reset()` -> stale alias dereference without a later unconditional
+  straight-line alias rebinding. Conditional/non-straight-line rebinding is not
+  suppressed without CFG evidence.
 - Sync constraint: classify whether reset/use share one scoped mutex lock. The
   lock is never treated as lifetime proof.
 - Required shared facts: none. Request provenance and source path/text/SHA-256/

@@ -47,6 +47,10 @@ _FUNCTION_RE = re.compile(
     r"(?:->[^;{}]+)?\s*(?:const\s*)?(?:noexcept(?:\([^)]*\))?\s*)?\{"
 )
 _CONTROL_KEYWORDS = {"if", "for", "while", "switch", "catch", "return"}
+_CONTROL_BOUNDARY_RE = re.compile(
+    r"\b(?:if|else|for|while|do|switch|case|default|break|continue|return|goto|try|catch|throw)\b"
+    r"|[{}?]|&&|\|\|"
+)
 
 
 @dataclass(frozen=True)
@@ -343,14 +347,19 @@ def _analyze_unit(
                         continue
                     if not (alias.span.contains(use_position) and owner.span.contains(use_position)):
                         continue
-                    rebound = any(
-                        match.start() > reset.call_end
+                    rebound_matches = [
+                        match
+                        for match in _REBIND_RE.finditer(masked)
+                        if match.start() > reset.call_end
                         and match.start() < use_position
                         and match.group("alias") == alias.alias
                         and match.group("owner") == owner.owner
-                        for match in _REBIND_RE.finditer(masked)
+                    ]
+                    rebound = bool(rebound_matches)
+                    straight_line_rebound = rebound and not _CONTROL_BOUNDARY_RE.search(
+                        masked, reset.call_end, use_position
                     )
-                    if rebound and options.suppress_rebound_alias:
+                    if straight_line_rebound and options.suppress_rebound_alias:
                         continue
                     _check_timeout(options)
                     line, column = _line_col(unit.text, use_position)
@@ -365,15 +374,20 @@ def _analyze_unit(
                         "owner_reset_precedes_alias_dereference",
                         f"sync_scope={sync_context}",
                     )
-                    extra = (
-                        "alias_rebinding_observed_but_not_suppressed_by_ablation"
-                        if rebound and not options.suppress_rebound_alias
-                        else None
-                    )
+                    if rebound and not options.suppress_rebound_alias:
+                        extra = "alias_rebinding_observed_but_not_suppressed_by_ablation"
+                    elif rebound and not straight_line_rebound:
+                        extra = (
+                            "conditional_or_non_straight_line_alias_rebinding_"
+                            "not_suppressed_without_cfg"
+                        )
+                    else:
+                        extra = None
                     message = (
                         f"Candidate only: raw alias '{alias.alias}' is dereferenced after "
                         f"'{owner.owner}.reset()' invalidated the unique_ptr-owned object and "
-                        f"before 'alias = owner.get()' rebinding; syntax evidence; "
+                        f"without a later unconditional straight-line 'alias = owner.get()' "
+                        f"rebinding; syntax evidence; "
                         f"sync_scope={sync_context}; not proof of UAF."
                     )
                     if extra:

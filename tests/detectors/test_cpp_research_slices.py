@@ -87,9 +87,9 @@ class ResearchSliceTests(unittest.TestCase):
         complete = LifetimeOwnershipGuardDetector(
             LifetimeAnalysisOptions(suppress_rebound_alias=True, classify_sync_scope=True)
         ).detect(context, units)
-        self.assertEqual(len(base.findings), 3)
-        self.assertEqual(len(alias.findings), 2)
-        self.assertEqual(len(complete.findings), 2)
+        self.assertEqual(len(base.findings), 4)
+        self.assertEqual(len(alias.findings), 3)
+        self.assertEqual(len(complete.findings), 3)
         self.assertTrue(all("sync_scope=not_classified" in item.message for item in base.findings))
         self.assertTrue(
             any("sync_scope=same_scoped_mutex_lock" in item.message for item in complete.findings)
