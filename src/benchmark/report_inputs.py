@@ -73,7 +73,10 @@ def load_report_runs(path: Path, samples: List[HistoricalSample]) -> List[Sample
         report_name = entry.get("report")
         if not isinstance(report_name, str) or not report_name.strip():
             raise ValueError("run requires a saved report path")
-        report_path = (path.parent / report_name).resolve()
+        report_root = path.parent.resolve()
+        report_path = (report_root / report_name).resolve()
+        if not report_path.is_relative_to(report_root):
+            raise ValueError("saved report path must remain within the manifest directory")
         raw = report_path.read_bytes()
         payload = json.loads(raw.decode("utf-8"))
         if not isinstance(payload, dict):
