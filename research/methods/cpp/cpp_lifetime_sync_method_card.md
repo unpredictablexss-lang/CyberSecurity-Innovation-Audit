@@ -65,11 +65,12 @@ partial/failed unit 时，即使 complete unit 已分析并产生候选，run �
 ## 4. 算法
 
 1. 保持偏移量地屏蔽注释和字符串/字符 literal；
-2. 识别函数花括号范围、`unique_ptr` owner、raw alias、`reset()` 和 alias
-   dereference，并记录 owner/alias 的最内层词法块绑定范围；
+2. 识别函数花括号范围、`unique_ptr` owner、raw alias、显式指针声明、
+   `reset()` 和 alias dereference，并记录 owner/alias 的最内层词法块绑定范围；
 3. 只在 owner/alias/reset/use 属于同一函数及同名声明的最近词法绑定实例、
    顺序满足 alias -> reset -> use 时生成候选；兄弟块或嵌套块中的同名
-   shadowing 不跨范围拼接；
+   shadowing 不跨范围拼接，嵌套的非 `owner.get()` 指针声明也会遮蔽外层
+   raw alias；
 4. 仅当 reset/rebind/use 间没有控制流边界（分支、循环、跳转、短路或嵌套块）时，
    同 owner 的 `alias = owner.get()` 才抑制候选；条件重绑定保持候选，避免在
    无 CFG 时误删可达 stale-alias 路径；
@@ -134,6 +135,8 @@ straight-line alias rebinding constraint 消除 fixed fixture 的结构误候选
 ## 9. 已知限制与未验证命题
 
 - 不计算完整类型、CFG、path dominance、数据流、exception/early-return；
+- 通用绑定识别只覆盖当前窄语法中的显式 `Type* name` 声明；`auto name = ptr`、
+  引用、成员字段、函数参数捕获及复杂 declarator 仍可能混淆同名绑定；
 - rebinding suppression 只认可无控制流边界的直行序列；嵌套块、条件、循环、
   goto/label 与短路路径均保持候选或不作安全结论；
 - 不证明对象在所有可达路径上存活、析构时机、alias escape 或所有权转移；

@@ -33,6 +33,10 @@ _RAW_ALIAS_RE = re.compile(
     r"\b(?:auto|[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*"
     r"(?P<alias>[A-Za-z_]\w*)\s*=\s*(?P<owner>[A-Za-z_]\w*)\s*\.\s*get\s*\(\s*\)"
 )
+_POINTER_BINDING_RE = re.compile(
+    r"\b(?:auto|[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*"
+    r"(?P<alias>[A-Za-z_]\w*)\s*(?P<decl_end>=|;|\()"
+)
 _RESET_RE = re.compile(r"\b(?P<owner>[A-Za-z_]\w*)\s*\.\s*reset\s*\(")
 _REBIND_RE = re.compile(
     r"\b(?P<alias>[A-Za-z_]\w*)\s*=\s*(?P<owner>[A-Za-z_]\w*)\s*\.\s*get\s*\(\s*\)"
@@ -75,6 +79,14 @@ class _OwnerShape:
 class _AliasShape:
     alias: str
     owner: str
+    position: int
+    span: _Span
+    binding_scope: Optional[_Span]
+
+
+@dataclass(frozen=True)
+class _PointerBinding:
+    alias: str
     position: int
     span: _Span
     binding_scope: Optional[_Span]
@@ -244,24 +256,24 @@ def _nearest_owner(
     )
 
 
-def _nearest_alias(
-    aliases: Sequence[_AliasShape], alias_name: str, position: int
-) -> Optional[_AliasShape]:
+def _nearest_binding(
+    bindings: Sequence[_PointerBinding], alias_name: str, position: int
+) -> Optional[_PointerBinding]:
     candidates = [
-        alias
-        for alias in aliases
-        if alias.alias == alias_name
-        and alias.position < position
-        and alias.binding_scope is not None
-        and alias.binding_scope.contains(position)
+        binding
+        for binding in bindings
+        if binding.alias == alias_name
+        and binding.position < position
+        and binding.binding_scope is not None
+        and binding.binding_scope.contains(position)
     ]
     if not candidates:
         return None
     return min(
         candidates,
-        key=lambda alias: (
-            alias.binding_scope.end - alias.binding_scope.start,
-            -alias.position,
+        key=lambda binding: (
+            binding.binding_scope.end - binding.binding_scope.start,
+            -binding.position,
         ),
     )
 
@@ -354,6 +366,15 @@ def _analyze_unit(
         )
         for match in _RAW_ALIAS_RE.finditer(masked)
     ]
+    pointer_bindings = [
+        _PointerBinding(
+            alias=match.group("alias"),
+            position=match.start(),
+            span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
+            binding_scope=_innermost_span(spans, match.start()),
+        )
+        for match in _POINTER_BINDING_RE.finditer(masked)
+    ]
     resets = []
     for match in _RESET_RE.finditer(masked):
         opening = match.end() - 1
@@ -374,6 +395,12 @@ def _analyze_unit(
         alias.position: _nearest_owner(owners, alias.owner, alias.position)
         for alias in aliases
     }
+    alias_binding = {
+        alias.position: _nearest_binding(
+            pointer_bindings, alias.alias, alias.position + 1
+        )
+        for alias in aliases
+    }
     reset_owner = {
         reset.position: _nearest_owner(owners, reset.owner, reset.position)
         for reset in resets
@@ -392,13 +419,18 @@ def _analyze_unit(
         if not owner_aliases or not owner_resets:
             continue
         for alias in owner_aliases:
+            binding = alias_binding.get(alias.position)
+            if binding is None:
+                continue
             for reset in owner_resets:
                 if reset.position <= alias.position:
                     continue
                 for use_position in _use_positions(masked, alias.alias):
                     if use_position <= reset.call_end or use_position <= alias.position:
                         continue
-                    if _nearest_alias(aliases, alias.alias, use_position) != alias:
+                    if _nearest_binding(
+                        pointer_bindings, alias.alias, use_position
+                    ) != binding:
                         continue
                     if alias.binding_scope is None or owner.binding_scope is None:
                         continue
@@ -420,7 +452,9 @@ def _analyze_unit(
                         and owner.binding_scope is not None
                         and alias.binding_scope.contains(match.start())
                         and owner.binding_scope.contains(match.start())
-                        and _nearest_alias(aliases, alias.alias, match.start()) == alias
+                        and _nearest_binding(
+                            pointer_bindings, alias.alias, match.start()
+                        ) == binding
                         and _nearest_owner(owners, owner.owner, match.start()) == owner
                     ]
                     rebound = bool(rebound_matches)

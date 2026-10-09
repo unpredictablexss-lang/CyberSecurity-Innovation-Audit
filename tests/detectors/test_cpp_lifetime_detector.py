@@ -21,6 +21,15 @@ class LifetimeDetectorTests(unittest.TestCase):
         self.context = lifetime_context()
         self.detector = LifetimeOwnershipGuardDetector()
 
+    def generated_unit(self, name: str, text: str) -> SourceUnit:
+        return SourceUnit(
+            path=f"tests/detectors/fixtures/cpp_lifetime/generated_{name}.cpp",
+            language="cpp",
+            text=text,
+            sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            parse_status="complete",
+        )
+
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.lifetime")
         self.assertEqual(self.detector.version, "0.1.0-proposed")
@@ -139,6 +148,67 @@ void nested_outer_alias() {
             parse_status="complete",
         )
         run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "alias")
+
+    def test_non_owner_pointer_shadowing_is_distinct_binding(self) -> None:
+        unit = self.generated_unit(
+            "non_owner_pointer_shadowing",
+            """
+struct Widget { void Use() const {} };
+void non_owner_pointer_shadowing(Widget* other) {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    {
+        Widget* alias = other;
+        alias->Use();
+    }
+}
+""",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+
+    def test_unbraced_conditional_rebinding_remains_candidate(self) -> None:
+        unit = self.generated_unit(
+            "unbraced_conditional_rebind",
+            """
+struct Widget { void Use() const {} };
+void unbraced_conditional_rebind(bool enabled) {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    if (enabled) alias = owner.get();
+    alias->Use();
+}
+""",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn(
+            "conditional_or_non_straight_line_alias_rebinding_not_suppressed_without_cfg",
+            run.findings[0].message,
+        )
+
+    def test_rebinding_after_use_does_not_suppress_earlier_candidate(self) -> None:
+        unit = self.generated_unit(
+            "late_rebind_after_use",
+            """
+struct Widget { void Use() const {} };
+void late_rebind_after_use() {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    alias->Use();
+    alias = owner.get();
+}
+""",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 1)
         self.assertEqual(run.findings[0].symbol, "alias")
 

@@ -397,3 +397,10 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 从当前分支树移除 `PROMPT.md` 与 `START_PROMPT.md` 两个任务/生成式 prompt 产物。它们仍存在于历史提交中，但不再是当前交付树内容；没有删除或改写历史。
 - Codex bundled Python 验证：契约定向回归 `Ran 20 tests, OK`；全量 `Ran 213 tests in 20.252s`，`OK (skipped=2)`。三个恢复文件与 PR #5 基线 blob hash 完全一致，未修改代码、CLI、Runner、providers、frontend、IR 或报告 schema。
 - 仍有限制：v1 detector contract 仍是 proposed，独立 holdout、真实 OpenHarmony corpus、CFG/宏/并发完整分析及硬超时/进程/内存沙箱仍未实现；空 findings、`completed` 或 `no_candidate_shape` 均不代表安全。
+
+## 23. 2026-10-09 cpp.lifetime 同名绑定与重绑定边界回归（teammate A）
+
+- 自由审查复现了一个词法绑定缺口：嵌套块中的非 `owner.get()` 显式指针声明可遮蔽外层 raw alias，但旧实现只登记 `owner.get()` alias，仍把内层声明的 `*alias` 与 `alias->` 拼到外层 reset 后，产生结构性误候选。现统一登记窄语法内的显式 `Type* name` 声明，并要求 use/rebind 命中最近指针绑定实例。
+- 新增确定性边界回归：嵌套非 owner 指针 shadowing 不跨绑定组合；无花括号条件 `alias = owner.get()` 仍保持 candidate；use 之后才发生的 rebind 不反向抑制更早 stale-alias 候选。所有输出仍为 syntax candidate/unassessed，不产生 possible_hit、miss、safe 或 confirmed。
+- Codex bundled Python 全量验证：`Ran 216 tests in 20.461s`，`OK (skipped=2)`；lifetime 消融保持 base=4、alias liveness=3、sync=3，mixed partial/failed 覆盖保持 `blocked`/unknown。没有修改公共 contracts、Runner、CLI、providers、frontend、IR 或报告 schema。
+- 仍有限制：通用绑定只覆盖显式 `Type* name`，不完整处理 `auto name = ptr`、引用、成员、参数捕获或复杂 declarator；独立 holdout 仍未收集，CFG/宏/并发、真实 OpenHarmony corpus 和硬超时/进程/内存沙箱仍未实现。空 findings、`completed` 或 `no_candidate_shape` 均不代表安全。
