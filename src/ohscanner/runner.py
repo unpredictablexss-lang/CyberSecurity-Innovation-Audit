@@ -1,4 +1,10 @@
-"""Validate, isolate and normalize first-party detector runs to ToolRunResult v1."""
+"""Execute FIRST-PARTY detectors; preserve honest per-file coverage and evidence.
+
+Compatibility:
+  run_all(context, registry) -> list[ToolRunResult] remains unchanged.
+  run_all_with_coverage(...) -> (same results, structured sidecar).
+Neither function decides whether a diagnostic represents a real vulnerability.
+"""
 
 from hashlib import sha256
 from time import perf_counter
@@ -21,14 +27,28 @@ class DetectorRegistry:
             raise ValueError("supported languages required")
         if not isinstance(detector.required_facts, tuple):
             raise ValueError("required_facts must be a tuple")
+        # Default AST consumers support independent source-file analysis.
+        # Whole-program algorithms must opt into explicit full-scope gating.
+        if getattr(detector, "ast_scope", "per_file") not in ("per_file", "whole_scope"):
+            raise ValueError("ast_scope must be per_file or whole_scope")
         self._detectors[ident] = detector
 
     def detectors(self):
         return [self._detectors[key] for key in sorted(self._detectors)]
 
 
-def _normalized(context, detector, selected, run, elapsed, error=None):
-    if error:
+def _diagnostic_id(detector_id, finding):
+    digest = sha256(("|".join((finding.file, str(finding.line),
+                               finding.rule_id, finding.message))).encode("utf-8")).hexdigest()[:16]
+    return f"{detector_id}:{digest}"
+
+
+def _normalized(context, detector, selected, run, elapsed, error=None,
+                applicable=None, skipped=None):
+    """Normalize one run without hiding any unsupported or skipped file."""
+    applicable = tuple(selected) if applicable is None else tuple(applicable)
+    skipped = {} if skipped is None else dict(skipped)
+    if error is not None:
         run = DetectorRun(detector.detector_id, detector.version, "failed",
                           limitations=(f"Detector failed: {error.__class__.__name__}",))
     if not isinstance(run, DetectorRun):
@@ -49,9 +69,7 @@ def _normalized(context, detector, selected, run, elapsed, error=None):
         unit = paths[finding.file]
         if finding.line > len(unit.text.splitlines()):
             raise ValueError("finding location outside source")
-        digest = sha256(("|".join((finding.file, str(finding.line),
-                                   finding.rule_id, finding.message))).encode("utf-8")).hexdigest()[:16]
-        diagnostic_id = f"{detector.detector_id}:{digest}"
+        diagnostic_id = _diagnostic_id(detector.detector_id, finding)
         if diagnostic_id in seen_ids:
             raise ValueError("duplicate finding identity")
         seen_ids.add(diagnostic_id)
@@ -71,60 +89,146 @@ def _normalized(context, detector, selected, run, elapsed, error=None):
     limitations.extend((provenance_limitation,
                         "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
                         "Diagnostic does not establish vulnerability, reachability or security impact."))
+    if skipped:
+        limitations.append(
+            f"INCOMPLETE COVERAGE: {len(skipped)} applicable files not analyzed; "
+            "inspect parsing.analysis_status and the coverage sidecar."
+        )
     if run.status == "blocked":
         limitations.append("Coverage incomplete or unsupported; do not infer safety.")
     if run.status == "failed":
         limitations.append("Detector failed; unexamined scope is unknown.")
+
+    examined = set(run.analyzed_files) if run.status == "completed" else set()
+    parsing = [
+        {
+            "file": unit.path,
+            "status": unit.parse_status,
+            "issues": list(unit.parse_issues),
+            "analysis_status": "analyzed" if unit.path in examined else "not_analyzed",
+            "analysis_reason": (
+                "" if unit.path in examined else
+                skipped.get(unit.path, run.status if run.status != "completed" else "not_examined")
+            ),
+        }
+        for unit in applicable
+    ]
     return ToolRunResult(
         schema_version=1, run_id=context.request.request_id + ":" + detector.detector_id,
         tool=detector.detector_id, tool_version=detector.version,
         target_id=context.request.target_id, commit=context.request.commit,
-        scope_files=len(run.analyzed_files),
-        scope_loc=sum(len(paths[p].text.splitlines()) for p in run.analyzed_files),
+        scope_files=len(run.analyzed_files) if run.status == "completed" else 0,
+        scope_loc=sum(len(paths[p].text.splitlines()) for p in run.analyzed_files)
+                  if run.status == "completed" else 0,
         status=run.status, elapsed_seconds=elapsed, diagnostics=findings,
-        limitations=limitations,
-        parsing=[{"file": unit.path, "status": unit.parse_status,
-                  "issues": list(unit.parse_issues)} for unit in selected],
+        limitations=limitations, parsing=parsing,
     )
 
 
-def run_all(context: ScanContext, registry: DetectorRegistry):
-    # Verify the provided units still bind to the request's declared fixture manifest.
-    # This is synthetic identity verification, not Git commit/tree verification.
+def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
+    """Return normalized reports plus per-detector coverage and obligations.
+
+    The ToolRunResult v1 schema is unchanged. In particular, 'completed'
+    describes successful work on ELIGIBLE files, not whole-component safety.
+    A file in partial AST is not counted as a miss, even if other files ran.
+    """
     from .fixture import snapshot_digest
+
     if snapshot_digest(context.units) != context.request.snapshot_sha256:
         raise ValueError("source unit manifest does not match ScanRequest")
-    results = []
+    reports, sidecar = [], {"schema_version": 1, "detectors": {}}
     for detector in registry.detectors():
-        selected = tuple(unit for unit in context.units
-                         if unit.language in detector.supported_languages)
+        applicable = tuple(unit for unit in context.units
+                           if unit.language in detector.supported_languages)
+        selected = applicable
+        skipped = {}
+        run = None
+        error = None
         start = perf_counter()
-        if not selected:
+        if not applicable:
             run = DetectorRun(detector.detector_id, detector.version, "blocked",
                               limitations=("not_applicable: no source with supported language.",))
-            results.append(_normalized(context, detector, selected, run, perf_counter() - start))
-            continue
-        missing = set(detector.required_facts) - set(context.shared_facts)
-        if missing:
-            run = DetectorRun(detector.detector_id, detector.version, "blocked",
-                              limitations=("Missing required shared facts: " + ", ".join(sorted(missing)),))
-            results.append(_normalized(context, detector, selected, run, perf_counter() - start))
-            continue
-        # The shared AST map may exist while individual translation units failed
-        # parsing. A detector that requires complete syntax may not claim success.
-        if "ast" in detector.required_facts:
-            incomplete = [unit.path for unit in selected if unit.parse_status != "complete"]
-            if incomplete:
-                run = DetectorRun(detector.detector_id, detector.version, "blocked",
-                                  limitations=("Required complete AST unavailable for: "
-                                               + ", ".join(incomplete[:8]),))
-                results.append(_normalized(context, detector, selected, run, perf_counter() - start))
-                continue
-        try:
-            run = detector.detect(context, selected)
-            result = _normalized(context, detector, selected, run, perf_counter() - start)
-        except Exception as exc:
-            result = _normalized(context, detector, selected, None,
-                                 perf_counter() - start, error=exc)
-        results.append(result)
-    return results
+        else:
+            missing = set(detector.required_facts) - set(context.shared_facts)
+            if missing:
+                skipped = {unit.path: "missing_shared_facts" for unit in applicable}
+                run = DetectorRun(
+                    detector.detector_id, detector.version, "blocked",
+                    limitations=("Missing required shared facts: "
+                                 + ", ".join(sorted(missing)),),
+                )
+                selected = ()
+            elif "ast" in detector.required_facts:
+                incomplete = tuple(unit for unit in applicable
+                                   if unit.parse_status != "complete")
+                if getattr(detector, "ast_scope", "per_file") == "whole_scope":
+                    if incomplete:
+                        selected = ()
+                        skipped = {unit.path: "whole_scope_requires_complete_ast"
+                                   for unit in applicable}
+                        run = DetectorRun(
+                            detector.detector_id, detector.version, "blocked",
+                            limitations=(f"Whole-scope AST requires every applicable file "
+                                         f"to be complete; {len(incomplete)} are incomplete.",),
+                        )
+                else:
+                    selected = tuple(unit for unit in applicable if unit.parse_status == "complete")
+                    skipped = {unit.path: "incomplete_ast:" + unit.parse_status
+                               for unit in incomplete}
+                    if not selected:
+                        run = DetectorRun(
+                            detector.detector_id, detector.version, "blocked",
+                            limitations=("No file has complete AST for this detector.",),
+                        )
+        if run is None:
+            try:
+                run = detector.detect(context, selected)
+                report = _normalized(context, detector, selected, run,
+                                     perf_counter() - start, applicable=applicable,
+                                     skipped=skipped)
+            except Exception as exc:
+                error = exc
+                run = None
+                report = _normalized(context, detector, selected, run,
+                                     perf_counter() - start, error=error,
+                                     applicable=applicable, skipped=skipped)
+        else:
+            report = _normalized(context, detector, selected, run,
+                                 perf_counter() - start, applicable=applicable,
+                                 skipped=skipped)
+        reports.append(report)
+        analyzed = {item["file"] for item in report.parsing
+                    if item["analysis_status"] == "analyzed"}
+        sidecar["detectors"][detector.detector_id] = {
+            "scope_mode": getattr(detector, "ast_scope", "per_file"),
+            "status": (
+                "not_applicable" if not applicable else
+                "failed" if report.status == "failed" else
+                "blocked" if report.status == "blocked" else
+                "partial" if len(analyzed) != len(applicable) else "complete"
+            ),
+            "applicable_files": len(applicable),
+            "analyzed_files": sorted(analyzed),
+            "unexamined": [
+                {"file": item["file"], "parse_status": item["status"],
+                 "reason": item["analysis_reason"]}
+                for item in report.parsing if item["analysis_status"] != "analyzed"
+            ],
+            "evidence_obligations": (
+                [
+                    {"diagnostic_id": _diagnostic_id(detector.detector_id, finding),
+                     "obligations": [
+                         {"kind": obligation.kind, "description": obligation.description,
+                          "status": obligation.status}
+                         for obligation in finding.evidence_obligations
+                     ]}
+                    for finding in run.findings if finding.evidence_obligations
+                ] if run is not None and report.status == "completed" else []
+            ),
+        }
+    return reports, sidecar
+
+
+def run_all(context: ScanContext, registry: DetectorRegistry):
+    """Backwards-compatible M0/M1 interface."""
+    return run_all_with_coverage(context, registry)[0]
