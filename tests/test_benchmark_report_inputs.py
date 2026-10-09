@@ -120,6 +120,16 @@ class BenchmarkInputTests(unittest.TestCase):
         self.assertEqual(row.status, "unknown")
         self.assertIn("unresolved", row.reason)
 
+    def test_saved_reports_cannot_escape_manifest_directory(self):
+        path = self.manifest(normalized(self.seed))
+        original = json.loads(path.read_text(encoding="utf-8"))
+        for report_name in ("../outside.json", str(self.root.parent / "outside.json")):
+            with self.subTest(report=report_name):
+                entry = dict(original["runs"][0], report=report_name)
+                path.write_text(json.dumps({"schema_version": 1, "runs": [entry]}), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "within the manifest directory"):
+                    load_report_runs(path, [self.seed])
+
     def test_rejects_changed_source_hash(self):
         with self.assertRaisesRegex(ValueError, "sha256 mismatch"):
             load_report_runs(self.manifest(normalized(self.seed), sha256="0" * 64), [self.seed])
