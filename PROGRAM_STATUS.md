@@ -5,9 +5,9 @@
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
 > 更新日期：2026-10-09（下一阶段规划；旧阶段实测记录仍保留原日期）
-> 当前分支：`main`  
+> 当前分支：`feat/ohscanner-core`（独立开发分支；main 不变）  
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：历史静态 benchmark 基线已合并；下一阶段三线并行自研 OHScanner **处于文档规划状态**，插件运行时与专项检测器尚未实现。
+> 当前阶段：历史基线已合并；OHScanner Core 的 **M0 合成检测器契约原型已经在 PR #5 开发分支实现**，真实检测算法及 Git 固定源码扫描仍未实现。
 > 重要边界：本分支不声明新漏洞，不做 PoC，不做 exploitability 结论；所有结果仍为 `candidate / draft / benchmark`。
 
 ---
@@ -344,3 +344,13 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 新阶段正式扫描引擎的核心检测算法将自主实现；成熟工具用于离线实验/基准，扫描阶段不自动依赖调用外部大扫描器。
 - 下一步第一优先：负责人从当前 `main` 创建 `feat/ohscanner-core`，实现最小 Detector v1/Mock CPP+Interface 接入、异常隔离和 CI，然后队友按冻结接口独立开发本地模块。不得将该计划写成项目已经具有新漏洞检测能力。
 - `codex/cutils-component-pilot` 目前仅用于选择性迁移的试点参考；不整体合并、不将当前 c_utils 试点告警称为漏洞。
+
+
+## 17. 2026-10-09 OHScanner M0 代码原型（feat/ohscanner-core / PR #5）
+
+- 本分支新增 `src/ohscanner/contracts.py`：ScanRequest、SourceUnit、ScanContext、Detector、DetectorFinding、DetectorRun 的最小代码协议；与主线外部工具 Adapter 分离。
+- 已有 `src/ohscanner/runner.py`、`fixture.py`、`smoke.py` 和 `mocks.py`：两个合成 C/C++ / ArkTS 标记检测器使用同一注册器，桥接到已有 `ToolRunResult(schema_version=1)`；在命令行 `python -m src.cli ohscan --fixture-root tests/fixtures/ohscanner` 生成 JSON/Markdown。
+- 来源严格为 `fixture/ohscanner-core`，`commit=synthetic-fixture-v1`；文件哈希和请求清单哈希校验、路径与符号链接限制、异常隔离已覆盖测试。**仅合成样例演示，不验证实际 OpenHarmony Git commit/tree，不代表真实漏洞检测。**
+- PR #5 新代码最后一次核对：head `53aab448024569378080e3a8d522ef81971d2ba7`，GitHub Actions Run [#37897568236](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/37897568236) 通过，Python `unittest` **170/170 OK**（新增 19 项），包含新 CLI 端到端测试。
+- 仍缺真实源码前端、C/C++ 和 Web/ArkTS/IPC 实际检测器、独立进程硬超时/资源沙箱、真实 Git 来源核验、工具研究样本扩展、保留测试集评估。
+- 本分支保持 **Draft**，未经正式评审及负责人合并决策不切 Ready 或 Merge；上述 CI 结论在后续修改 head 时应重新验证。
