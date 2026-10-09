@@ -125,8 +125,13 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
             continue
         if not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", oid):
             raise ValueError("invalid object ID in Git tree")
-        if size == "-" or not size.isdecimal():
-            raise ValueError("missing blob size in Git tree")
+        # With lazy fetching disabled, 'ls-tree -l' uses '-' for the size
+        # of a missing local promisor blob. Fail explicitly; never fetch it.
+        if size == "-":
+            raise ValueError("missing_local_git_object: blob unavailable locally "
+                             + oid + " (" + path + "); offline-only read (no fetch)")
+        if not size.isdecimal():
+            raise ValueError("invalid blob size in Git tree")
         size_bytes = int(size)
         if size_bytes > MAX_BLOB_BYTES:
             inventory["oversize"] += 1
