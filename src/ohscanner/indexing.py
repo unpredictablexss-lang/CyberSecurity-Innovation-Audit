@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .contracts import ScanContext, ScanRequest
 from .fixture import snapshot_digest
+from .facts import build_syntax_facts
 from .frontend import index_sources
 from .git_source import load_git_sources
 
@@ -22,7 +23,11 @@ def prepare_git_context(repo_dir: Path, repository: str, commit: str,
             profile_id="light-ast", provenance="git_object",
         ),
         units=units,
-        shared_facts={"ast": ast, "coverage": coverage},
+        shared_facts={
+            "ast": ast,
+            "facts_v1": build_syntax_facts(ast),
+            "coverage": coverage,
+        },
     )
     return context, tree, inventory, coverage, sources
 
