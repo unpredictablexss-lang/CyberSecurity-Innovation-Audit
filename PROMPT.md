@@ -20,10 +20,13 @@ Candidate JSON、全局 AST/IR 或结果 schema。
 - `codex/cutils-component-pilot` 是参考试点，不是自动 merge 目标。其中固定
   `openharmony/commonlibrary_c_utils` commit `b807d3dadb7dbb7639fe85b3a5f72da18d318da2`
   的记录不等于真实产品构建或漏洞结论。
-- `docs/contracts/ohscanner_detector_contract_v1.md` 当前是 proposed 设计。`ScanRequest`、`SourceUnit`、
-  `ScanContext`、`Detector`、`DetectorRun` 尚未在 main 实现，不得直接 import `src.ohscanner` 或声称契约已冻结。
-- 负责人先实现统一 Mock 插件和 CI，才冻结契约并接入真实 detector。契约未落地前，可用同构 fixture 预研，
-  但必须标明是本地设计实现。
+- PR #5 / `feat/ohscanner-core` 已实现 M0 最小 Python 接口、Mock detector、Registry、Runner 和
+  ToolRunResult v1 Bridge，并实现 M1 `ohscan-index` 固定本地 Git commit/tree/blob 的 C/C++ 轻量 AST 索引。
+- 可从 `src.ohscanner.contracts` 使用 `ScanRequest/SourceUnit/ScanContext/DetectorFinding/DetectorRun/Detector`；
+  以 `src/ohscanner/contracts.py` 的真实字段为准，不再把它描述为尚未实现。
+- M0/M1 是可运行原型，但 v1 尚未冻结。PR #5 仍未实现硬超时、独立进程/内存沙箱、budget/cancel、完整类型/CFG/
+  数据流、Web/Bridge/permission IR，也不包含真实 C/C++ 漏洞 detector。
+- `main` 尚未合并 PR #5；工作分支可以使用当前接口，但任何公共字段变更仍需 contract-change proposal 和负责人评审。
 
 ## 算法方向
 
@@ -83,28 +86,79 @@ Candidate JSON、全局 AST/IR 或结果 schema。
 不要第一版同时实现 UAF、double-free、null deref、integer overflow、OOB、并发竞争和完整污点分析。
 先证明一个 detector 可挂载、可解释、可回放，再扩展根因家族。
 
-## 拟议接口使用规则
+## PR #5 当前接口定义
 
-可以依据契约文档预研：
+真实字段和校验以 `src/ohscanner/contracts.py` 为准。当前可直接实现的最小接口是：
 
-~~~text
-ScanRequest(target repository/commit/profile/scope/source_hash)
-  -> SourceUnit + shared facts + ScanContext
-  -> Detector.detect(context, source_units)
-  -> DetectorRun
-  -> owner-provided validation/provenance/status adapter
-  -> ToolRunResult v1
+~~~python
+SourceUnit(
+    path, language, text, sha256,
+    parse_status="not_run", parse_issues=()
+)
+
+ScanRequest(
+    request_id, repository, commit, snapshot_sha256, target_id,
+    profile_id="m0-synthetic", provenance="fixture"
+)
+
+ScanContext(request, units, shared_facts={})
+
+DetectorFinding(
+    file, line, rule_id, message,
+    evidence_type="pattern", column=None,
+    candidate_cwe=None, symbol=None
+)
+
+DetectorRun(
+    detector_id, version, status,
+    analyzed_files=(), findings=(), limitations=()
+)
+
+Detector.detect(context, units) -> DetectorRun
 ~~~
 
-但必须遵守：
+`Detector` 还必须声明：
+
+~~~python
+detector_id: str                 # 必须以 `ohscanner.` 开头且唯一
+version: str
+supported_languages: tuple[str, ...]
+required_facts: tuple[str, ...]
+~~~
+
+接口语义：
+
+1. `SourceUnit.path` 必须是规范的 POSIX 相对路径；拒绝绝对路径、`.`/`..`、反斜杠、空段、盘符和控制字符。
+2. `SourceUnit.language` 支持 `c/cpp/js/ts/arkts`；`parse_status` 支持 `complete/partial/failed/not_run`。
+3. `SourceUnit.sha256` 必须匹配 `text` 内容；`ScanContext.units` 按 path 排序且不得重复。
+4. `ScanRequest.repository` 是使用者声明的 `owner/repository`；`target_id` 必须是
+   `current-component:<repository>`。
+5. `provenance=fixture` 用于 M0 合成样例；`provenance=git_object` 要求完整 40/64 位 commit SHA 和
+   `profile_id=light-ast`。M1 只校验本地 Git 对象身份，不验证官方远端归属。
+6. `DetectorRun.status` 只能是 `completed/failed/blocked`。`completed` 必须覆盖所有选中的 supported-language units。
+7. finding 必须位于 analyzed scope 和真实源码行范围内。Runner 生成稳定 `diagnostic_id` 和排序，并映射到现有
+   `ToolRunResult(schema_version=1)`；severity/confidence 固定为 `unassessed`。
+8. Registry 校验 detector ID、版本、语言和 `required_facts`。缺失 shared facts 时返回 `blocked`。
+9. `required_facts` 含 `ast` 时，任何选中文件不是 `complete` 都返回 `blocked`，不得继续声称分析完成。
+10. detector exception 被隔离为该 detector 的 `failed`；目前是同步执行，尚无强制 timeout/memory limit。
+
+M1 Frontend / CLI：
+
+- `frontend.index_sources(sources)` 返回 `(units, ast_summary, coverage_summary)`。
+- C/C++ 复用 Tree-sitter 语法索引；JS/TS/ArkTS 只登记文本和 hash，`parse_status=not_run`，不推断 AST/IPC/权限事实。
+- `python -m src.cli ohscan-index --repo-dir ... --repository owner/repo --commit <full-sha> ...`
+  只读固定 Git tree/blob，不 checkout/fetch，也不运行 detector。
+- symlink/submodule、非 UTF-8、超大文件和超范围输入必须跳过或拒绝，并保留原因；不能记为已扫描。
+
+状态边界保持不变：
 
 - `completed/failed/blocked` 是执行状态；
 - `complete/partial/failed/not_run/not_applicable` 是解析覆盖；
-- `possible_hit/miss/unknown/not_applicable` 是 benchmark 根因匹配；
-- 三组状态不能混用。
-- 需要公共 IR 新字段时写 `contract-change proposal`，不要修改 `ToolRunResult`、providers、CLI 或共享 frontend/IR。
+- `possible_hit/miss/unknown/not_applicable` 是 benchmark 根因匹配。
+- 三组状态不能混用；`completed` 和空 finding 都不表示安全。
+- 需要 M2+ 的公共 IR、budget/cancel、硬隔离或新 schema 字段时，写 `contract-change proposal`，不要直接修改
+  `contracts.py`、`ToolRunResult`、providers、CLI 或共享 frontend/IR。
 - 输出必须确定性、可单测、可重放；一个 detector 失败不能阻断其它 detector，但必须保留失败原因。
-
 ## 允许修改的范围
 
 优先只修改：
