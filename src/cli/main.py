@@ -152,6 +152,22 @@ def main() -> None:
     ohscan_index_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m1_index.json")
     ohscan_index_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m1_index.md")
 
+    m2_parser = subparsers.add_parser(
+        "ohscan-run",
+        help="M2: run explicitly allowlisted first-party detector(s) on pinned local Git sources",
+    )
+    m2_parser.add_argument("--repo-dir", required=True, help="Local Git repository with full pinned objects")
+    m2_parser.add_argument("--repository", required=True, help="Owner/repository declaration")
+    m2_parser.add_argument("--commit", required=True, help="Complete immutable Git commit SHA")
+    m2_parser.add_argument("--include", action="append", default=None,
+                           help="Repository-relative path or prefix; repeatable")
+    m2_parser.add_argument("--detector", action="append", required=True,
+                           help="Explicit first-party detector ID; repeatable. Not an import path.")
+    m2_parser.add_argument("--allow-example-detectors", action="store_true",
+                           help="Acknowledge that 'ohscanner.example.*' is a non-security demonstration")
+    m2_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m2.json")
+    m2_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m2.md")
+
     historical_parser = subparsers.add_parser(
         "benchmark-historical",
         help="Replay one published vulnerable/fixed commit pair as historical ground truth",
@@ -342,6 +358,31 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if args.command == "ohscan-run":
+        from src.ohscanner.execution import run_fixed_commit_scan
+
+        try:
+            report = run_fixed_commit_scan(
+                repo_dir=Path(args.repo_dir),
+                repository=args.repository,
+                commit=args.commit,
+                includes=tuple(args.include or ["."]),
+                detector_ids=tuple(args.detector),
+                json_out=Path(args.json_out),
+                md_out=Path(args.md_out),
+                allow_examples=args.allow_example_detectors,
+            )
+        except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
+            m2_parser.error(str(error))
+        print("[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities")
+        print(f"[OK] source commit: {report['commit']}")
+        print(f"[OK] first-party detectors: {report['detector_count']}")
+        print(f"[OK] unverified diagnostics: {report['diagnostic_count']}")
+        print(f"[OK] run coverage: {report['status']}")
+        print(f"[OK] JSON report: {args.json_out}")
+        print(f"[OK] Markdown report: {args.md_out}")
+        return
 
     if args.command == "ohscan-index":
         from src.ohscanner.indexing import run_git_index
