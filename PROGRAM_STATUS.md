@@ -372,3 +372,12 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 测试改为权限无关的 symlink 拒绝模拟和真实 Git tree `120000` symlink 条目；伪 Clang 在 Windows 使用 `.cmd` + 当前 Python，在 POSIX 保留可执行脚本；源码准备测试在 unlink 前清除只读位；静态复跑先规范化临时根目录。
 - Windows 实测使用 Codex bundled Python：`python -m unittest discover -s tests -v`，**Ran 205 tests, OK (skipped=2)**。Windows Store `python3.exe` 仅为 shim，不作为验证运行时。
 - 这些是测试/路径可移植性修复，不改变 detector 语义、公共 schema、解析覆盖结论或安全/漏洞状态；v1 契约仍未冻结。
+
+
+## 20. 2026-10-09 cpp.lifetime 词法绑定边界审查与修复（teammate A）
+
+- 自由审查发现一个可复现的结构性误候选：同一函数的兄弟块或嵌套块复用相同 `owner`/`alias` 名称时，旧实现按名称和函数范围拼接了不同词法绑定实例，安全控制也会产生 candidate。
+- 已用最内层花括号块近似 owner/alias 的词法绑定范围，并按最近声明实例配对 owner、alias、reset、use 和 rebind；兄弟块/嵌套 shadowing 不再跨范围组合。外层 alias 在嵌套块中的合法 use 仍保留正例回归。
+- 新增自建 safe fixture `tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp`，manifest SHA-256 绑定；新增 nested outer alias 正例测试。没有修改公共 schema 或共享 Runner 语义。
+- Codex bundled Python 全量验证：`Ran 206 tests in 19.986s`，`OK (skipped=2)`。消融真实运行保持 lifetime base=4、straight-line rebind=3、sync=3；bounds base vulnerable=1/fixed=1/safe=0，guard vulnerable=1/fixed=0/safe=0。
+- 仍有限制：词法块只是近似，不处理宏、lambda capture、模板 wrapper 或完整 CFG；独立 holdout 仍未收集，v1 契约未冻结，hard timeout/进程/内存沙箱仍未实现。空 findings 和 `completed` 均不代表安全。

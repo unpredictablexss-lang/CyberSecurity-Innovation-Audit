@@ -42,6 +42,14 @@
       "expected_diagnostics": 0
     },
     {
+      "path": "tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp",
+      "sha256": "85045fd3030e7e584e5f784f1537f1759e05aa120e0760f972bcca03b0e100af",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe_control_shadowed_bindings",
+      "expected_diagnostics": 0
+    },
+    {
       "path": "tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp",
       "sha256": "b67d1bbf6f04e8aa520b69f3ed2aee16b36f09e626b820e835bb211e7fa4b02c",
       "parse_status": "complete",

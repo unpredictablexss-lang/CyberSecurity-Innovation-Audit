@@ -68,6 +68,7 @@ class _OwnerShape:
     owner_type: str
     position: int
     span: _Span
+    binding_scope: Optional[_Span]
 
 
 @dataclass(frozen=True)
@@ -76,6 +77,7 @@ class _AliasShape:
     owner: str
     position: int
     span: _Span
+    binding_scope: Optional[_Span]
 
 
 @dataclass(frozen=True)
@@ -220,6 +222,50 @@ def _innermost_span(spans: Sequence[_Span], position: int) -> Optional[_Span]:
     return min(containing, key=lambda span: (span.end - span.start, -span.start))
 
 
+def _nearest_owner(
+    owners: Sequence[_OwnerShape], owner_name: str, position: int
+) -> Optional[_OwnerShape]:
+    candidates = [
+        owner
+        for owner in owners
+        if owner.owner == owner_name
+        and owner.position < position
+        and owner.binding_scope is not None
+        and owner.binding_scope.contains(position)
+    ]
+    if not candidates:
+        return None
+    return min(
+        candidates,
+        key=lambda owner: (
+            owner.binding_scope.end - owner.binding_scope.start,
+            -owner.position,
+        ),
+    )
+
+
+def _nearest_alias(
+    aliases: Sequence[_AliasShape], alias_name: str, position: int
+) -> Optional[_AliasShape]:
+    candidates = [
+        alias
+        for alias in aliases
+        if alias.alias == alias_name
+        and alias.position < position
+        and alias.binding_scope is not None
+        and alias.binding_scope.contains(position)
+    ]
+    if not candidates:
+        return None
+    return min(
+        candidates,
+        key=lambda alias: (
+            alias.binding_scope.end - alias.binding_scope.start,
+            -alias.position,
+        ),
+    )
+
+
 def _use_positions(masked: str, alias: str) -> Tuple[int, ...]:
     escaped = re.escape(alias)
     patterns = (
@@ -294,6 +340,7 @@ def _analyze_unit(
             owner_type=match.group("type").strip(),
             position=match.start(),
             span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
+            binding_scope=_innermost_span(spans, match.start()),
         )
         for match in _OWNER_DECL_RE.finditer(masked)
     ]
@@ -303,6 +350,7 @@ def _analyze_unit(
             owner=match.group("owner"),
             position=match.start(),
             span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
+            binding_scope=_innermost_span(spans, match.start()),
         )
         for match in _RAW_ALIAS_RE.finditer(masked)
     ]
@@ -322,19 +370,24 @@ def _analyze_unit(
             )
         )
 
+    alias_owner = {
+        alias.position: _nearest_owner(owners, alias.owner, alias.position)
+        for alias in aliases
+    }
+    reset_owner = {
+        reset.position: _nearest_owner(owners, reset.owner, reset.position)
+        for reset in resets
+    }
+
     for owner in owners:
         _check_timeout(options)
         owner_aliases = [
             alias for alias in aliases
-            if alias.owner == owner.owner
-            and alias.span.start == owner.span.start
-            and alias.span.end == owner.span.end
+            if alias_owner.get(alias.position) == owner
         ]
         owner_resets = [
             reset for reset in resets
-            if reset.owner == owner.owner
-            and reset.span.start == owner.span.start
-            and reset.span.end == owner.span.end
+            if reset_owner.get(reset.position) == owner
         ]
         if not owner_aliases or not owner_resets:
             continue
@@ -343,9 +396,18 @@ def _analyze_unit(
                 if reset.position <= alias.position:
                     continue
                 for use_position in _use_positions(masked, alias.alias):
-                    if use_position <= reset.call_end:
+                    if use_position <= reset.call_end or use_position <= alias.position:
                         continue
-                    if not (alias.span.contains(use_position) and owner.span.contains(use_position)):
+                    if _nearest_alias(aliases, alias.alias, use_position) != alias:
+                        continue
+                    if alias.binding_scope is None or owner.binding_scope is None:
+                        continue
+                    if not (
+                        alias.binding_scope.contains(use_position)
+                        and owner.binding_scope.contains(use_position)
+                        and alias.span.contains(use_position)
+                        and owner.span.contains(use_position)
+                    ):
                         continue
                     rebound_matches = [
                         match
@@ -354,6 +416,12 @@ def _analyze_unit(
                         and match.start() < use_position
                         and match.group("alias") == alias.alias
                         and match.group("owner") == owner.owner
+                        and alias.binding_scope is not None
+                        and owner.binding_scope is not None
+                        and alias.binding_scope.contains(match.start())
+                        and owner.binding_scope.contains(match.start())
+                        and _nearest_alias(aliases, alias.alias, match.start()) == alias
+                        and _nearest_owner(owners, owner.owner, match.start()) == owner
                     ]
                     rebound = bool(rebound_matches)
                     straight_line_rebound = rebound and not _CONTROL_BOUNDARY_RE.search(
@@ -404,9 +472,9 @@ def _analyze_unit(
                             symbol=alias.alias,
                         )
                     )
-    if owners and not functions:
+    if owners and any(owner.binding_scope is None for owner in owners):
         limitations.append(
-            "Ownership syntax was observed outside a modeled function span and was not analyzed."
+            "Ownership syntax was observed outside a modeled block/function span and was not analyzed."
         )
     return _stable_unique(findings), limitations
 

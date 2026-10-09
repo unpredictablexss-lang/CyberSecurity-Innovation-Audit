@@ -54,6 +54,7 @@
 | vulnerable + conditional rebind | `tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp` | 1 candidate |
 | fixed | `tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp` | 0 |
 | safe control | `tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp` | 0 |
+| safe control + shadowed bindings | `tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp` | 0 |
 | partial/unknown | `tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp` | 不分析 |
 | failed | `tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp` | 不分析 |
 
@@ -65,9 +66,10 @@ partial/failed unit 时，即使 complete unit 已分析并产生候选，run �
 
 1. 保持偏移量地屏蔽注释和字符串/字符 literal；
 2. 识别函数花括号范围、`unique_ptr` owner、raw alias、`reset()` 和 alias
-   dereference；
-3. 只在 owner/alias/reset/use 位于同一函数范围且顺序满足
-   alias -> reset -> use 时生成候选；
+   dereference，并记录 owner/alias 的最内层词法块绑定范围；
+3. 只在 owner/alias/reset/use 属于同一函数及同名声明的最近词法绑定实例、
+   顺序满足 alias -> reset -> use 时生成候选；兄弟块或嵌套块中的同名
+   shadowing 不跨范围拼接；
 4. 仅当 reset/rebind/use 间没有控制流边界（分支、循环、跳转、短路或嵌套块）时，
    同 owner 的 `alias = owner.get()` 才抑制候选；条件重绑定保持候选，避免在
    无 CFG 时误删可达 stale-alias 路径；
@@ -135,8 +137,8 @@ straight-line alias rebinding constraint 消除 fixed fixture 的结构误候选
 - rebinding suppression 只认可无控制流边界的直行序列；嵌套块、条件、循环、
   goto/label 与短路路径均保持候选或不作安全结论；
 - 不证明对象在所有可达路径上存活、析构时机、alias escape 或所有权转移；
-- 不建模 lambda capture、宏展开、template/container wrapper、回调、条件
-  变量、锁顺序或并发 alias publication；
+- 词法绑定实例只用最内层花括号块近似；不建模 lambda capture、宏展开、
+  template/container wrapper、回调、条件变量、锁顺序或并发 alias publication；
 - 不证明 candidate 可达、可触发、可利用或具有安全影响；
 - 不证明任何真实 OpenHarmony 代码存在 UAF；
 - 独立 holdout 尚未收集或运行，不能宣称泛化、误报率或漏报率。

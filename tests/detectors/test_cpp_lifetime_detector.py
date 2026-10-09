@@ -57,7 +57,8 @@ class LifetimeDetectorTests(unittest.TestCase):
     def test_fixed_rebind_and_safe_control_have_no_findings(self) -> None:
         fixed = unit_by_path(self.units, "fixed_alias_rebind.cpp")
         safe = unit_by_path(self.units, "safe_use_before_reset.cpp")
-        for unit in (fixed, safe):
+        shadowed = unit_by_path(self.units, "safe_shadowed_scope_bindings.cpp")
+        for unit in (fixed, safe, shadowed):
             with self.subTest(unit=unit.path):
                 run = self.detector.detect(self.context, (unit,))
                 self.assertEqual(run.status, "completed")
@@ -109,6 +110,29 @@ void parenthesized_alias() {
 """
         unit = SourceUnit(
             path="tests/detectors/fixtures/cpp_lifetime/generated_parenthesized_alias.cpp",
+            language="cpp",
+            text=text,
+            sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            parse_status="complete",
+        )
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "alias")
+
+    def test_nested_use_of_outer_alias_remains_candidate(self) -> None:
+        text = """
+struct Widget { void Use() const {} };
+void nested_outer_alias() {
+    std::unique_ptr<Widget> owner;
+    Widget* alias = owner.get();
+    owner.reset();
+    {
+        alias->Use();
+    }
+}
+"""
+        unit = SourceUnit(
+            path="tests/detectors/fixtures/cpp_lifetime/generated_nested_outer_alias.cpp",
             language="cpp",
             text=text,
             sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
