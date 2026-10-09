@@ -2,7 +2,7 @@
 
 > Branch: `feat/historical-vuln-benchmark`  
 > Status: PR #4 implementation is no longer “pending”: historical samples, root-cause hit matrix, and benchmark summary report are implemented.  
-> Current gate: keep the PR as **draft**, refresh docs, and wait for CI before any ready/merge decision.
+> Current gate: independently review the code and saved-evidence boundaries, synchronize closeout documentation, and verify CI against the **final** PR head before ready/merge. No automatic merge.
 
 ---
 
@@ -28,13 +28,14 @@ Do not continue if there are unexplained local changes.
 python -m unittest discover -s tests -v
 ```
 
-The latest GitHub Actions run before this documentation cleanup recorded:
+The earlier branch checkpoint recorded 105 passing tests. The **pre-closeout code head** `dd908f2137ebb6a60fb8e876b04958677738f252` passed GitHub Actions CI Run #58 on Ubuntu 22.04 / Python 3.10:
 
 ```text
-Ran 105 tests ... OK
+Ran 149 tests in 2.134s
+OK
 ```
 
-Do not edit expected values only to match 105. Record the actual local total and any failing test names.
+This does **not** pre-approve subsequent documentation commits. Check CI again against the final head. Record actual totals and any failure; never change expectations merely to match a number.
 
 ---
 
@@ -195,9 +196,9 @@ published fix pair
 
 This is still benchmark evidence only. Do not report any historical sample as a newly discovered vulnerability.
 
-## 10. Current closure evidence (2026-10-08)
+## 10. Earlier closure checkpoint (2026-10-08)
 
-Local regression: 142 tests passed. The historical 105-test CI note above does
+This is a historical checkpoint predating the later 64-cell experiments and 149-test head. Local regression at that checkpoint: 142 tests passed. The historical 105-test CI note above does
 not verify the current head. Keep current remote CI and PR-description checks
 pending until the exact pushed head can be inspected.
 
@@ -229,3 +230,16 @@ duplicate-tool checks. Matrix implementation is complete; the experiment-filled
 cross-tool capability table remains pending. Local Git reads disable origin
 promisor lazy fetching, disallow protocol transport and use a timeout so absent partial-clone objects do not
 silently turn a local experiment into an unbounded network operation.
+
+## 11. PR #4 first-stage closeout review (2026-10-09)
+
+Scope of this PR: four pinned historical fix-pair manifests, scanner evidence normalization, stored-run provenance, separate vulnerable/fixed root-cause matrix, and benchmark reports. This is a **historical static benchmark/evidence engineering baseline**, not complete scanner coverage or new vulnerability discovery.
+
+- Pre-closeout code head `dd908f2` passed remote CI **149/149** (Run #58); verify a fresh successful CI run for any new documentation head.
+- The scoped experiment inventory contains 64 revision/tool cells: `possible_hit=5`, `miss=29`, `unknown=20`, `not_applicable=10`. These describe region/evidence states, **not** TP/FP/FN or vulnerabilities.
+- Joern adapter and saved-query normalization exist. The dsoftbus nothrow query differentiated vulnerable/fixed revisions in the local experiment; query evidence is syntactic and does not prove control-flow guard dominance.
+- CodeQL c_utils header-only units were not applicable in this no-build profile; six other units reported missing includes and remain unknown. Kernel/Joern partial parsing and Clang missing original build dependencies remain coverage limitations.
+- Generated native logs and normalized experimental artifacts were stored locally under ignored output paths. The repository documents commands and checks, but their retained local bytes are **not** independently re-executed by CI. Reviewers should inspect a pinned input manifest, native logs, report hashes and regenerated summary before treating the experiment as independently reproduced.
+- Before ready/merge: (1) synchronize PR description and PROGRAM_STATUS; (2) obtain independent human code/security-boundary review for changed adapters, source mapping, report loading, scripts and rule licensing; (3) ensure final head CI is green; (4) record limitations as follow-up work rather than incorrectly marking incomplete analyses as misses.
+- Current limits stay explicit: `validated_vulnerability=0`, runtime replay `not_run`, no formal Precision/Recall, no PoC or exploitability claim.
+
