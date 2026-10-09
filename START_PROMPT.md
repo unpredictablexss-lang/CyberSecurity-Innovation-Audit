@@ -13,7 +13,7 @@
 
 当前事实：
 
-- PR #5 已实现 M0 `ScanRequest/SourceUnit/ScanContext/DetectorFinding/DetectorRun/Detector`、Registry、
+- PR #5 head `c8c5bb1634141c98959758d12f3e41bdd3eaaf6b` 已实现 M0 `ScanRequest/SourceUnit/ScanContext/DetectorFinding/DetectorRun/Detector`、Registry、
   Runner 和 ToolRunResult v1 Bridge；可从 `src.ohscanner.contracts` 使用当前接口。
 - M1 已实现 `ohscan-index` 和 C/C++ Tree-sitter 轻量索引；JS/TS/ArkTS 仅登记文本，`parse_status=not_run`。
 - v1 尚未冻结；真实 detector、硬超时、独立进程/内存沙箱、完整类型/CFG/数据流和 Bridge/permission IR 尚未实现。

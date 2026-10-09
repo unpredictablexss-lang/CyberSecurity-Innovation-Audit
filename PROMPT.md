@@ -16,11 +16,11 @@ Candidate JSON、全局 AST/IR 或结果 schema。
   root-cause matrix 和报告基础。
 - 4 条历史样本覆盖 `lifetime_uaf`、`concurrency_race`、`null_deref`、`oob_write`，但样本量不足以计算
   Precision/Recall，且 `validated_vulnerability = 0`。
-- 本次分支准备时在 WSL Python 3.10 执行 `python -m unittest discover -s tests -v`，151/151 通过；这只验证当前静态基线，不代表 OHScanner detector 已实现。
+- 本次分支基于 PR #5 head `c8c5bb1634141c98959758d12f3e41bdd3eaaf6b` 同步后，在 WSL Python 3.10 执行 `python -m unittest discover -s tests -v`，185/185 通过；这只验证当前静态基线，不代表真实 C/C++ detector 已实现。
 - `codex/cutils-component-pilot` 是参考试点，不是自动 merge 目标。其中固定
   `openharmony/commonlibrary_c_utils` commit `b807d3dadb7dbb7639fe85b3a5f72da18d318da2`
   的记录不等于真实产品构建或漏洞结论。
-- PR #5 / `feat/ohscanner-core` 已实现 M0 最小 Python 接口、Mock detector、Registry、Runner 和
+- PR #5 head `c8c5bb1634141c98959758d12f3e41bdd3eaaf6b` / `feat/ohscanner-core` 已实现 M0 最小 Python 接口、Mock detector、Registry、Runner 和
   ToolRunResult v1 Bridge，并实现 M1 `ohscan-index` 固定本地 Git commit/tree/blob 的 C/C++ 轻量 AST 索引。
 - 可从 `src.ohscanner.contracts` 使用 `ScanRequest/SourceUnit/ScanContext/DetectorFinding/DetectorRun/Detector`；
   以 `src/ohscanner/contracts.py` 的真实字段为准，不再把它描述为尚未实现。
@@ -138,7 +138,7 @@ required_facts: tuple[str, ...]
 6. `DetectorRun.status` 只能是 `completed/failed/blocked`。`completed` 必须覆盖所有选中的 supported-language units。
 7. finding 必须位于 analyzed scope 和真实源码行范围内。Runner 生成稳定 `diagnostic_id` 和排序，并映射到现有
    `ToolRunResult(schema_version=1)`；severity/confidence 固定为 `unassessed`。
-8. Registry 校验 detector ID、版本、语言和 `required_facts`。缺失 shared facts 时返回 `blocked`。
+8. Registry 校验 detector ID、版本、语言和 `required_facts`；Runner 在缺失 shared facts 时返回 `blocked`。
 9. `required_facts` 含 `ast` 时，任何选中文件不是 `complete` 都返回 `blocked`，不得继续声称分析完成。
 10. detector exception 被隔离为该 detector 的 `failed`；目前是同步执行，尚无强制 timeout/memory limit。
 
