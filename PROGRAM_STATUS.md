@@ -389,3 +389,11 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 两个离线 research slice 的模块复现入口改为复用同一 hash 校验加载器，避免脚本运行与单测使用不同证据集合；没有修改公共 `contracts.py`、Runner、CLI、providers、frontend、IR 或报告 schema。
 - Codex bundled Python 全量验证：`Ran 213 tests in 20.217s`，`OK (skipped=2)`；定向 research-slice 回归 `Ran 10 tests, OK`，并补充重复路径与 `..` 路径穿越拒绝测试。以 `python -m research.experiments.cpp.lifetime_sync_slice` 与 `python -m research.experiments.cpp.bounds_length_parcel_slice` 复现时，lifetime 保持 `blocked`/unknown 覆盖语义，bounds 保持形状观察而非漏洞结论。
 - 仍有限制：这些仍是 self-authored synthetic fixtures，不是 OpenHarmony 真实提交或漏洞 ground truth；没有独立 holdout、CFG/宏/并发完整分析、硬超时或进程/内存沙箱。本节不改变候选/未评估默认状态，也不提供 Precision/Recall 或安全结论。
+
+## 22. 2026-10-09 分支文档卫生修复（teammate A）
+
+- 按 PR #5 head `108494bfe392ae62394ea82cd44d28cc03ebb163` 恢复必需的 `docs/strategy/ohscanner_teammate_development_guide.md` 及 README 入口；恢复后的 guide blob 为 `5ec375816c836cc838ea544b981c23ad90692aab`，与接口基线逐字一致。
+- 恢复 `docs/contracts/ohscanner_detector_contract_v1.md` 的基线实现状态说明，避免把已经由 `src/ohscanner/contracts.py` 实现的 M0/M1 接口误写为不可导入；proposed 字段仍保持未实现语义。
+- 从当前分支树移除 `PROMPT.md` 与 `START_PROMPT.md` 两个任务/生成式 prompt 产物。它们仍存在于历史提交中，但不再是当前交付树内容；没有删除或改写历史。
+- Codex bundled Python 验证：契约定向回归 `Ran 20 tests, OK`；全量 `Ran 213 tests in 20.252s`，`OK (skipped=2)`。三个恢复文件与 PR #5 基线 blob hash 完全一致，未修改代码、CLI、Runner、providers、frontend、IR 或报告 schema。
+- 仍有限制：v1 detector contract 仍是 proposed，独立 holdout、真实 OpenHarmony corpus、CFG/宏/并发完整分析及硬超时/进程/内存沙箱仍未实现；空 findings、`completed` 或 `no_candidate_shape` 均不代表安全。
