@@ -128,7 +128,7 @@ def load_sample(path: Path) -> HistoricalSample:
     for filename in affected_files:
         if (
             not isinstance(filename, str) or not filename or
-            "\\\\" in filename or ":" in filename or
+            chr(92) in filename or ":" in filename or
             PurePosixPath(filename).is_absolute() or
             ".." in PurePosixPath(filename).parts or
             PurePosixPath(filename).as_posix() == "."
