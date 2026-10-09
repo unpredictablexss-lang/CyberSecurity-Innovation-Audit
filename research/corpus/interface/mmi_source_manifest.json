@@ -1,0 +1,111 @@
+{
+  "repository": "openharmony/multimodalinput_input",
+  "commit": "2468d204d3f276c373841e057af35985296c8421",
+  "files": [
+    {
+      "path": "service/connect_manager/include/multimodal_input_connect_define.h",
+      "git_blob_sha1": "dda7ac1114c8696e99344ee395ec4c0f3b6f0ece",
+      "sha256": "1085bff6c607d652b3502d5b352de1ff19f9d835fd367d5ef36b2005386dbd05",
+      "bytes": 992,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/include/multimodal_input_connect_define.h"
+    },
+    {
+      "path": "service/connect_manager/include/multimodal_input_connect_stub.h",
+      "git_blob_sha1": "912b2e63554c46c65faadd1dbdad14260178d4cd",
+      "sha256": "8ad52dee6e27e821b7190182a36b427d1fc9e2a2aec2d272fa53df7f9d148859",
+      "bytes": 4033,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/include/multimodal_input_connect_stub.h"
+    },
+    {
+      "path": "service/connect_manager/src/multimodal_input_connect_stub.cpp",
+      "git_blob_sha1": "70b0c9cbcc5e4aba50fbd2d5c2fc05a29ac29433",
+      "sha256": "0f362a1cc13689c14f3826947f467b3a1966dfac229f0afbb1aa649922ba2d90",
+      "bytes": 28711,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/src/multimodal_input_connect_stub.cpp"
+    },
+    {
+      "path": "service/module_loader/include/mmi_service.h",
+      "git_blob_sha1": "6ae031cd0443da15ce3caacec3f4516482437b95",
+      "sha256": "99e6d9769c3dc3c46a3854167ed90af1769ec4944cda47ace06ac2843dd117cb",
+      "bytes": 7308,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/module_loader/include/mmi_service.h"
+    },
+    {
+      "path": "service/module_loader/src/mmi_service.cpp",
+      "git_blob_sha1": "fb82256ede3e73c3cae4e896262784398b3416bd",
+      "sha256": "b2809145400a676ffc8199c8ae4c7e3e6d5fdd804c26bef748df6d094010aade",
+      "bytes": 43916,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/module_loader/src/mmi_service.cpp"
+    },
+    {
+      "path": "service/permission_helper/include/permission_helper.h",
+      "git_blob_sha1": "a6f6a722ac80942407c10de1081a2540430f815c",
+      "sha256": "db284d53b12e69418d5ebcb899fbe693a8c6401a442f1b9b67a0a550a6b115eb",
+      "bytes": 1633,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/permission_helper/include/permission_helper.h"
+    },
+    {
+      "path": "service/permission_helper/src/permission_helper.cpp",
+      "git_blob_sha1": "6e50aefb88634bec64882b6214a7f58ae2b3054a",
+      "sha256": "88a5d0086f87d48575f63ebd827c5912280c1dca987c2aad49e3ede79fa6d6b4",
+      "bytes": 4128,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/permission_helper/src/permission_helper.cpp"
+    },
+    {
+      "path": "LICENSE",
+      "git_blob_sha1": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+      "sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+      "bytes": 10173,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/LICENSE"
+    },
+    {
+      "path": "service/connect_manager/include/i_multimodal_input_connect.h",
+      "git_blob_sha1": "ba8cc6cc51f1d79fd91889dedd540c29dd01d80f",
+      "sha256": "c96f172c5bef4c303975b8074948b4861a9e8cbba98a7590da921d5c3bfc37c8",
+      "bytes": 5070,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/include/i_multimodal_input_connect.h"
+    },
+    {
+      "path": "service/connect_manager/include/multimodal_input_connect_def_parcel.h",
+      "git_blob_sha1": "725e247aa1434c33b638e3f75ce0eb53f59ccf43",
+      "sha256": "7451d8635e4e95f80bcbd8f809c80170e6305ebd59f48f7c978edb77688525f0",
+      "bytes": 1163,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/include/multimodal_input_connect_def_parcel.h"
+    },
+    {
+      "path": "service/connect_manager/src/multimodal_input_connect_def_parcel.cpp",
+      "git_blob_sha1": "f3876ef976a7b38030d413ea043a273f11a9ee15",
+      "sha256": "7fd656d34f4c915077e25231b08bd680301b3eff286f583a95ae799acb7ef131",
+      "bytes": 1421,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/src/multimodal_input_connect_def_parcel.cpp"
+    },
+    {
+      "path": "service/module_loader/src/uds_server.cpp",
+      "git_blob_sha1": "223d74937515a76857575e1cb2d3807e05084ea4",
+      "sha256": "83a8adbfa95e79f640f49d9fa0fd3584ca36c393df5095f601862040700b2039",
+      "bytes": 11485,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/module_loader/src/uds_server.cpp"
+    },
+    {
+      "path": "util/common/include/mmi_log.h",
+      "git_blob_sha1": "86124e2c9f177ec98508d94e6edd8c286ddace77",
+      "sha256": "7dcec80e4c3f8c11b67d7b9075836eef28c3337e99278859af1e6d71ae37d44a",
+      "bytes": 4501,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/util/common/include/mmi_log.h"
+    },
+    {
+      "path": "util/common/include/util.h",
+      "git_blob_sha1": "f2ff5cc62fece83a6ec1ce0c5bf0c38b7bfc041c",
+      "sha256": "d5925556a3f993e9d7c69b171340815ce4a9e8d1d52e5af47cba40c73f245228",
+      "bytes": 2580,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/util/common/include/util.h"
+    },
+    {
+      "path": "util/common/include/define_multimodal.h",
+      "git_blob_sha1": "4f77d9753debea4cc306b91607e64631f3ed0783",
+      "sha256": "a9e055ccb8772a098a72846436cf2958f0fbedf4c2831a1aebae0cf8e5d67357",
+      "bytes": 8799,
+      "url": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/util/common/include/define_multimodal.h"
+    }
+  ]
+}

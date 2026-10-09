@@ -4,3 +4,6 @@
 
 # Vendored third-party rules are kept byte-identical to their upstream (LF).
 rules/cpp/vendor/** text eol=lf
+
+# Interface fixtures are content-hash bound across Windows and Ubuntu.
+research/corpus/interface/cpp_fixtures/*.cpp text eol=lf

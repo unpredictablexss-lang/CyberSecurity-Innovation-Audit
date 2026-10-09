@@ -1,0 +1,55 @@
+{
+  "research_schema": "interface-graph-fixture-v0",
+  "case_id": "synthetic-unreachable_sink",
+  "repository": "synthetic/interface",
+  "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "profile": "authored-model-only",
+  "file": "fixtures/demo.cpp",
+  "entry": "entry",
+  "synthetic": true,
+  "parse_status": "complete",
+  "graph_complete": true,
+  "nodes": [
+    {
+      "id": "entry",
+      "kind": "entry",
+      "edges": [
+        {
+          "to": "return"
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "kind": "guard",
+      "subject": "ipc_caller",
+      "permission": "demo.permission",
+      "resource": "demo.resource",
+      "edges": [
+        {
+          "to": "sink",
+          "granted": true
+        },
+        {
+          "to": "return",
+          "granted": false
+        }
+      ]
+    },
+    {
+      "id": "sink",
+      "kind": "sink",
+      "subject": "ipc_caller",
+      "permission": "demo.permission",
+      "resource": "demo.resource",
+      "edges": []
+    },
+    {
+      "id": "return",
+      "kind": "return",
+      "edges": []
+    }
+  ],
+  "expected_assessment": "no_uncovered_sink_in_fixture",
+  "split": "design_regression_not_holdout"
+}

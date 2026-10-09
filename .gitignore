@@ -230,3 +230,7 @@ outputs/bin/
 outputs/reports/static_baselines/
 .tmp/
 .cache/
+
+# Interface track local research caches
+research/experiments/interface/local_sources/
+.venv-linux/

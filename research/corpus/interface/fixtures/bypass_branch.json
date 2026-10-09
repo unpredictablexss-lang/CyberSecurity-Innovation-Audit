@@ -1,0 +1,58 @@
+{
+  "research_schema": "interface-graph-fixture-v0",
+  "case_id": "synthetic-bypass_branch",
+  "repository": "synthetic/interface",
+  "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "profile": "authored-model-only",
+  "file": "fixtures/demo.cpp",
+  "entry": "entry",
+  "synthetic": true,
+  "parse_status": "complete",
+  "graph_complete": true,
+  "nodes": [
+    {
+      "id": "entry",
+      "kind": "entry",
+      "edges": [
+        {
+          "to": "guard"
+        },
+        {
+          "to": "sink"
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "kind": "guard",
+      "subject": "ipc_caller",
+      "permission": "demo.permission",
+      "resource": "demo.resource",
+      "edges": [
+        {
+          "to": "sink",
+          "granted": true
+        },
+        {
+          "to": "return",
+          "granted": false
+        }
+      ]
+    },
+    {
+      "id": "sink",
+      "kind": "sink",
+      "subject": "ipc_caller",
+      "permission": "demo.permission",
+      "resource": "demo.resource",
+      "edges": []
+    },
+    {
+      "id": "return",
+      "kind": "return",
+      "edges": []
+    }
+  ],
+  "expected_assessment": "candidate",
+  "split": "design_regression_not_holdout"
+}

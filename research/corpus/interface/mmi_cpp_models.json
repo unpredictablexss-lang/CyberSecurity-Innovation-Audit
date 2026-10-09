@@ -1,0 +1,105 @@
+[
+  {
+    "research_schema": "cpp-permission-model-v0",
+    "repository": "openharmony/multimodalinput_input",
+    "commit": "2468d204d3f276c373841e057af35985296c8421",
+    "profile": "fixed-file-no-build",
+    "file": "service/connect_manager/src/multimodal_input_connect_stub.cpp",
+    "function": "MultimodalInputConnectStub::StubHandleAllocSocketFd",
+    "source_sha256": "0f362a1cc13689c14f3826947f467b3a1966dfac229f0afbb1aa649922ba2d90",
+    "model_version": "mmi-observed-0.1.0",
+    "entry_verified": true,
+    "entry_evidence": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/src/multimodal_input_connect_stub.cpp (OnRemoteRequest map; source-level only)",
+    "obligations_reviewed": false,
+    "guards": [
+      {
+        "callee": "PerHelper->CheckPermission",
+        "arguments": [
+          "PermissionHelper::APL_SYSTEM_BASIC_CORE"
+        ],
+        "success": "boolean_true",
+        "subject": "ipc_caller",
+        "permission": "unreviewed_obligation",
+        "resource": "AllocSocketFd",
+        "evidence": "Observed helper/guard syntax, not reviewed full product policy"
+      }
+    ],
+    "sinks": [
+      {
+        "callee": "AllocSocketFd",
+        "subject": "ipc_caller",
+        "permission": "unreviewed_obligation",
+        "resource": "AllocSocketFd",
+        "evidence": "Observed operation; actual authorization requirement remains unknown"
+      }
+    ]
+  },
+  {
+    "research_schema": "cpp-permission-model-v0",
+    "repository": "openharmony/multimodalinput_input",
+    "commit": "2468d204d3f276c373841e057af35985296c8421",
+    "profile": "fixed-file-no-build",
+    "file": "service/connect_manager/src/multimodal_input_connect_stub.cpp",
+    "function": "MultimodalInputConnectStub::StubAddInputEventFilter",
+    "source_sha256": "0f362a1cc13689c14f3826947f467b3a1966dfac229f0afbb1aa649922ba2d90",
+    "model_version": "mmi-observed-0.1.0",
+    "entry_verified": true,
+    "entry_evidence": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/src/multimodal_input_connect_stub.cpp (OnRemoteRequest map; source-level only)",
+    "obligations_reviewed": false,
+    "guards": [
+      {
+        "callee": "PerHelper->CheckPermission",
+        "arguments": [
+          "PermissionHelper::APL_SYSTEM_CORE"
+        ],
+        "success": "boolean_true",
+        "subject": "ipc_caller",
+        "permission": "unreviewed_obligation",
+        "resource": "AddInputEventFilter",
+        "evidence": "Observed helper/guard syntax, not reviewed full product policy"
+      }
+    ],
+    "sinks": [
+      {
+        "callee": "AddInputEventFilter",
+        "subject": "ipc_caller",
+        "permission": "unreviewed_obligation",
+        "resource": "AddInputEventFilter",
+        "evidence": "Observed operation; actual authorization requirement remains unknown"
+      }
+    ]
+  },
+  {
+    "research_schema": "cpp-permission-model-v0",
+    "repository": "openharmony/multimodalinput_input",
+    "commit": "2468d204d3f276c373841e057af35985296c8421",
+    "profile": "fixed-file-no-build",
+    "file": "service/connect_manager/src/multimodal_input_connect_stub.cpp",
+    "function": "MultimodalInputConnectStub::StubAddInputHandler",
+    "source_sha256": "0f362a1cc13689c14f3826947f467b3a1966dfac229f0afbb1aa649922ba2d90",
+    "model_version": "mmi-observed-0.1.0",
+    "entry_verified": true,
+    "entry_evidence": "https://github.com/openharmony/multimodalinput_input/blob/2468d204d3f276c373841e057af35985296c8421/service/connect_manager/src/multimodal_input_connect_stub.cpp (OnRemoteRequest map; source-level only)",
+    "obligations_reviewed": false,
+    "guards": [
+      {
+        "callee": "PerHelper->CheckMonitor",
+        "arguments": [],
+        "success": "boolean_true",
+        "subject": "ipc_caller",
+        "permission": "unreviewed_obligation",
+        "resource": "AddInputHandler",
+        "evidence": "Observed helper/guard syntax, not reviewed full product policy"
+      }
+    ],
+    "sinks": [
+      {
+        "callee": "AddInputHandler",
+        "subject": "ipc_caller",
+        "permission": "unreviewed_obligation",
+        "resource": "AddInputHandler",
+        "evidence": "Observed operation; actual authorization requirement remains unknown"
+      }
+    ]
+  }
+]

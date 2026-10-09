@@ -1,0 +1,38 @@
+{
+  "research_schema": "cpp-permission-model-v0",
+  "repository": "synthetic/interface",
+  "commit": "cccccccccccccccccccccccccccccccccccccccc",
+  "profile": "synthetic-cpp-subset",
+  "file": "fixtures/denial_fallthrough.cpp",
+  "function": "Handle",
+  "model_version": "0.1.0",
+  "entry_verified": true,
+  "entry_evidence": "Synthetic entry, not an OpenHarmony service",
+  "obligations_reviewed": true,
+  "source_sha256": "7c2083b867c0a290dc6a3e647b02e8715cd56fbcb7243b66b7e0ece36c153220",
+  "guards": [
+    {
+      "callee": "Allowed",
+      "arguments": [
+        "caller"
+      ],
+      "success": "boolean_true",
+      "subject": "ipc_caller",
+      "permission": "demo.permission",
+      "resource": "demo.resource",
+      "evidence": "Synthetic bool API model"
+    }
+  ],
+  "sinks": [
+    {
+      "callee": "Sensitive",
+      "subject": "ipc_caller",
+      "permission": "demo.permission",
+      "resource": "demo.resource",
+      "evidence": "Synthetic protected operation"
+    }
+  ],
+  "expected_assessment": "candidate",
+  "split": "design_regression_not_holdout",
+  "synthetic": true
+}

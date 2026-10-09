@@ -344,3 +344,29 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 新阶段正式扫描引擎的核心检测算法将自主实现；成熟工具用于离线实验/基准，扫描阶段不自动依赖调用外部大扫描器。
 - 下一步第一优先：负责人从当前 `main` 创建 `feat/ohscanner-core`，实现最小 Detector v1/Mock CPP+Interface 接入、异常隔离和 CI，然后队友按冻结接口独立开发本地模块。不得将该计划写成项目已经具有新漏洞检测能力。
 - `codex/cutils-component-pilot` 目前仅用于选择性迁移的试点参考；不整体合并、不将当前 c_utils 试点告警称为漏洞。
+
+## Interface track local integration — 2026-10-09
+
+- Local branch feat/oh-interface-detectors is based on main dcd9629f50a34545d75abc92c0a16c79723197db. This is local review work, not a remote/merged feature.
+- Migrated B-owned IPC source indexing, bounded permission helper/macro research, synthetic fixtures and tests. No owner core/catalog/CLI files copied into this branch.
+- IpcPermissionDetector matches the implemented contracts at feat/ohscanner-core 8c5c9d9b77857d9ccf41d101be6068f287453e81; four tests using actual frontend/runner/ToolRunResult bridge passed in a separate detached core worktree. Catalog approval/registration remains owner work.
+- Windows interface-focused suite: 96 cases, 92 passed and 4 core-dependent skips on main. The same four core tests pass on the core worktree. No fake core contracts added.
+- Windows main baseline: 151 cases, 1 failure/3 errors/2 skips. Interface branch full suite: 247 cases, the same 1 failure/3 errors, plus 4 explicit core-dependency skips. Failures are Unix executable fake-Clang and Windows read-only loose Git-object deletion tests; no added detector failures.
+- Core+interface Windows full suite: 297 cases, 1 failure/6 errors/2 skips; additional core errors concern Windows symlink privileges and file-transport Git handling, not interface adapter tests. This is not a full green regression.
+- Ubuntu verification (2026-10-09): migration completed; approved WSL execution now works as lzc. Rechecked full suite: 247 cases, 243 passed and 4 explicit core-dependency skips, no failures/errors. The four actual core adapter tests passed separately at core commit 8c5c9d9b77857d9ccf41d101be6068f287453e81. Log: outputs/logs/ubuntu-recheck-tests.log. Tests establish regression/contract behavior, not real vulnerability validation or owner approval to push.
+- Still limited: observed source constraints are not normative product permission requirements; no independent holdout/verified real vulnerability pair, runtime validation or security verdict. validated_vulnerability=0. No push/PR/merge performed.
+
+## Web family lexical prototypes — Ubuntu verification 2026-10-09
+
+- Added B-owned bridge nonliteral-script, raw URL string comparison and local-file/mixed-content configuration review detectors using existing DetectorRun/Finding/Obligation contracts. Pattern evidence only; no JS/ArkTS AST, taint or security verdict.
+- Added WebEngineDetector as explicit blocked entry only; no engine memory-safety detection implemented. Concrete frontend extension and engine evidence requests are prepared for owner review, not approved/sent.
+- Ubuntu full regression: 261 cases, 253 passed, 8 core-dependent skips; all eight Web+IPC adapter tests pass on real core 8c5c9d9. Ten new lexical tests use synthetic candidate/fixed-like/safe controls only. Log: outputs/logs/ubuntu-web-full-tests.log.
+- No independent holdout, verified real vulnerability pairs, API receiver/version proof, runtime validation or owner registration. Four-family semantic scanning remains incomplete. validated_vulnerability=0. No commit/push/PR/merge.
+
+## 队友B第一轮提交 — 2026-10-10 草稿交付
+
+- 用户明确要求将已完成工作推送到草稿分支；本轮目标为 draft/oh-interface-detectors-round1，供队长审查，不替代 main 或主开发分支 feat/oh-interface-detectors。
+- 包含 IPC 入口/权限链/有限宏分析、真实核心适配、Web 三类词法候选、明确受阻的 WebEngineDetector、合成样本/测试/方法卡与前端需求。
+- 最新已验证 Ubuntu 回归：261 项，253 通过、8 核心依赖跳过；8 项真实核心适配测试另行全部通过。提交前再次验证。
+- 不上传本地第三方源码、虚拟环境、缓存、生成报告和日志。未确认真实漏洞；无独立 holdout/真实漏洞修复对；Web 语义前端及内核算法尚未完成。
+- 此节记录草稿交付准备；远端推送结果以实际 Git 操作和聊天回执为准。不得自动标记 ready 或合并。

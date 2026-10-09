@@ -1,0 +1,28 @@
+{
+  "status": "observed_syntax_only_not_frozen_core_api",
+  "repository": "openharmony/multimodalinput_input",
+  "commit": "2468d204d3f276c373841e057af35985296c8421",
+  "entry": {
+    "symbol": "MultimodalInputConnectStub::StubHandleAllocSocketFd",
+    "transaction": "ALLOC_SOCKET_FD",
+    "code": 0
+  },
+  "parcel_fields": [
+    "moduleId",
+    "clientName"
+  ],
+  "identity_apis": [
+    "IPCSkeleton::GetCallingTokenID",
+    "GetCallingPid",
+    "GetCallingUid"
+  ],
+  "classification_api": "PermissionHelper::GetTokenType",
+  "separate_monitor_guard": {
+    "symbol": "PermissionHelper::CheckMonitorPermission",
+    "permission": "ohos.permission.INPUT_MONITORING",
+    "belongs_to_alloc_socket_fd_path": "not_established"
+  },
+  "resource_operation": "UDSServer::AddSocketPairInfo",
+  "resource_permission_requirement": "unknown",
+  "evidence_manifest": "research/corpus/interface/mmi_source_manifest.json"
+}
