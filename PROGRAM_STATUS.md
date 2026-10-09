@@ -5,7 +5,7 @@
 > 更新日期：2026-10-08
 > 当前分支：`feat/historical-vuln-benchmark`  
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`  
-> 当前阶段：静态实验推进；模块已落地，但工具执行、可比性与覆盖验收尚未完成。
+> 当前阶段：PR #4 第一阶段收口审查；静态 benchmark 与证据报告链路已实现，完整工具解析/真实构建覆盖仍是后续工作。
 > 重要边界：本分支不声明新漏洞，不做 PoC，不做 exploitability 结论；所有结果仍为 `candidate / draft / benchmark`。
 
 ---
@@ -14,8 +14,8 @@
 
 `feat/historical-vuln-benchmark` 已完成主要静态实验框架并持续补跑工具，尚未完成覆盖验收：当前已包含 4 条 OpenHarmony historical samples、text/AST scanner 对比、manual review 持久化、Tool Matrix、Evidence 生成层、VulnerabilityCase draft、Semgrep/CodeQL/ClangSA/Cppcheck/Joern adapter、`compare-tools`、root-cause hit matrix、`benchmark-report` 汇总命令，以及 OH 专用 Semgrep 规则的首轮验证。PR #4 仍保持 **draft**，不要先 ready。
 
-已确认提交 `4fbfef2` 的远端 Python unit tests 成功；后续提交的 CI 需单独核验。
-当前本地完整回归为 **149/149 通过**；`validated_vulnerability = 0`。
+已确认收口文档更新前代码 head `dd908f2` 的远端 CI Run #58：**149/149 通过**（Ubuntu 22.04 / Python 3.10）。文档更新产生新的 head 后必须重新核验 CI。
+最近一次本地完整回归记录为 **149/149 通过**；`validated_vulnerability = 0`。
 三个目标的固定提交/所需源码已补齐；四样本已有 16 次自身基线和 48 次外部工具/规则配置运行记录。
 CodeQL、Joern 已补跑各 8 个版本单元。CodeQL 六单元缺 include、两单元 header-only 不适用；
 Joern 四单元部分解析，dsoftbus 修复前 5 条结构诊断、修复后 0 条。
@@ -37,10 +37,10 @@ Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭�
 | PR 状态 | open / draft |
 | mergeability | mergeable（以 PR 页面实时状态为准） |
 | 当前分支 | `feat/historical-vuln-benchmark` |
-| 当前阶段 | 实验推进，不切 ready |
-| 历史 GitHub Actions 记录 | 105 tests passed；非当前 head 的验证 |
+| 当前阶段 | 第一阶段收口审查；不自动切 ready |
+| 最近确认的 GitHub Actions | 原代码 head `dd908f2` / Run #58：149 tests passed |
 | 当前本地回归 | 149 tests passed |
-| 已核验远端 CI | `4fbfef2` Python unit tests success；后续提交另验 |
+| 最新提交核验 | 文档同步后的新 head 需要重新等待 CI；旧 149 项成功不能覆盖新提交 |
 | validated vulnerability | 0 |
 
 ---
@@ -143,15 +143,15 @@ python -m src.cli benchmark-report \
 - [x] root-cause hit matrix 已完成；
 - [x] benchmark summary report 已完成；
 - [x] `benchmark-report` CLI 已确认存在；
-- [ ] 核验 PR 描述与最新证据绑定、AST 覆盖及复跑结果一致（远端检查接口目前无法连接）；
+- [ ] PR 描述与最新 64 格实验、Joern/CodeQL 覆盖限制、149 项 CI 记录一致性核对；
 - [x] 文档中的旧状态需要从“待完成 / pending / first seed”改为当前 4 样本状态；
-- [ ] 等本轮文档清理 commit 的 CI 跑完；
+- [ ] 本轮收口文档提交后，核对 GitHub Actions 对 **最终 head** 的 CI，而不沿用 `dd908f2` 的成功结果；
 - [x] Tool Capability Matrix API 与测试已实现，已补 target/commit/scope 和重复工具校验；
 - [x] 四样本固定源码已可读取，text/AST 与 Semgrep/Cppcheck/Clang 本轮实验产物已保存；
 - [x] CodeQL、Joern 各八个版本单元已执行，并检查原生覆盖日志；
 - [ ] §18 第 5～6 步完整工具比较验收：kernel/Joern 部分解析、CodeQL 缺 include 和
   Clang 构建依赖限制尚未解决（最新实测见第 14 节）；
-- [ ] 暂不切 ready。
+- [ ] 独立人工审查关键输入校验/源码映射/执行脚本、rule provenance 和保存证据的可复核性；确认后才考虑 ready。
 
 ---
 
@@ -320,3 +320,14 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   日志覆盖测试。4fbfef2 的远端 CI 已核验成功，后续提交另验。PR #4 保持 draft。
 
 下一步优先固定依赖/编译配置、kernel 宏解析与 Joern 部分解析，再扩大独立样本/安全对照。
+
+## 15. 2026-10-09 第一阶段收口审查状态
+
+本节是收口时点的最新说明；第 10–14 节记录了 2026-10-08 不同阶段的实验事实，旧计数和旧 pending 项不能代表当前状态。
+
+- **第一阶段可交付范围**：四个固定历史修复对、text/AST 扫描、五类工具结果 adapter（含 Joern）、保存结果绑定/校验、按修复前后隔离的 root-cause matrix、benchmark summary report 与回归测试。
+- **代码 CI**：文档同步之前的 `dd908f2` 在 GitHub Actions Run #58 通过 **149/149**；本次文档提交之后需重新核对新 head CI。
+- **静态实验事实**：64 个修复前后/工具格：5 possible_hit、29 miss、20 unknown、10 not_applicable；均不代表新发现漏洞、TP/FP/FN 或形式化覆盖率。
+- **待延续的实验限制**：CodeQL 六个分析单元缺 include、c_utils 两单元为 no-build header-only not_applicable；Joern/c_utils/kernel 的解析不完整；Clang 缺真实构建上下文；OH 规则尚未验证在宽代码面的误报率。不要将未覆盖误写为 miss。
+- **审查边界**：已核对关键模块的状态语义、输入绑定和代码结构，并确认现有测试覆盖多种错误输入；尚未完成独立人工 Review、原生实验日志/忽略目录中的结果复跑与许可证逐项核对。请勿把单测通过写成实验已完整复现。
+- **合并要求**：只接受第一阶段工程基线定位；新 head CI 成功、PR 文档同步和人工审查后由项目负责人决定 ready/merge，不自动执行。`validated_vulnerability = 0`，历史样本 runtime 为 `not_run`。
