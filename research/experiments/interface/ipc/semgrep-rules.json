@@ -1,0 +1,199 @@
+{
+  "rules": [
+    {
+      "id": "ipc-baseline-descriptor",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "AUTH-01 structural baseline candidate; no guard dominance/impact proof",
+      "patterns": [
+        {
+          "pattern": "$RET $C::OnRemoteRequest(...) { ... }"
+        },
+        {
+          "pattern-not": "$RET $C::OnRemoteRequest(...) { ... if ($D.ReadInterfaceToken() != $DESC) { ... return ...; } ... }"
+        },
+        {
+          "pattern-not": "$RET $C::OnRemoteRequest(...) { ... if ($D.ReadInterfaceToken() != $DESC) return ...; ... }"
+        },
+        {
+          "pattern-not": "$RET $C::OnRemoteRequest(...) { ... $TYPE $TOKEN = $D.ReadInterfaceToken(); ... if ($TOKEN != $DESC) { ... return ...; } ... }"
+        }
+      ],
+      "metadata": {
+        "family": "AUTH-01",
+        "origin": "first-party experiment rule; no vendor rule copied"
+      }
+    },
+    {
+      "id": "ipc-baseline-auth",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "AUTH-02 structural baseline candidate; no guard dominance/impact proof",
+      "patterns": [
+        {
+          "pattern-inside": "$RET $C::OnRemoteRequest(...) { ... }"
+        },
+        {
+          "pattern-either": [
+            {
+              "pattern": "StartAbility(...)"
+            },
+            {
+              "pattern": "GetDisplaySnapshot(...)"
+            },
+            {
+              "pattern": "GetRemoteHapTokenInfo(...)"
+            },
+            {
+              "pattern": "DeleteRemoteHapTokenInfo(...)"
+            }
+          ]
+        },
+        {
+          "pattern-not-inside": "$RET $C::OnRemoteRequest(...) { ... VerifyAccessToken(...); ... }"
+        },
+        {
+          "pattern-not-inside": "$RET $C::OnRemoteRequest(...) { ... if ($K::VerifyAccessToken(...) != $OK) return ...; ... }"
+        },
+        {
+          "pattern-not-inside": "$RET $C::OnRemoteRequest(...) { ... if ($K::VerifyAccessToken(...) != $OK) { ... return ...; } ... }"
+        }
+      ],
+      "metadata": {
+        "family": "AUTH-02",
+        "origin": "first-party experiment rule; no vendor rule copied"
+      }
+    },
+    {
+      "id": "ipc-baseline-service-identity",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "AUTH-03 structural baseline candidate; no guard dominance/impact proof",
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "$K.VerifyAccessToken(GetSelfTokenID(), ...)"
+            },
+            {
+              "pattern": "$K::VerifyAccessToken(GetSelfTokenID(), ...)"
+            },
+            {
+              "pattern": "VerifyAccessToken(getuid(), ...)"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "family": "AUTH-03",
+        "origin": "first-party experiment rule; no vendor rule copied"
+      }
+    },
+    {
+      "id": "ipc-baseline-ignored-guard",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "AUTH-04 structural baseline candidate; no guard dominance/impact proof",
+      "patterns": [
+        {
+          "pattern-either": [
+            {
+              "pattern": "$K::VerifyAccessToken(...);"
+            },
+            {
+              "pattern": "VerifyAccessToken(...);"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "family": "AUTH-04",
+        "origin": "first-party experiment rule; no vendor rule copied"
+      }
+    },
+    {
+      "id": "ipc-baseline-capability",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "CAP-01 structural baseline candidate; no guard dominance/impact proof",
+      "patterns": [
+        {
+          "pattern-inside": "$RET $C::OnRemoteRequest(...) { ... }"
+        },
+        {
+          "pattern-either": [
+            {
+              "pattern": "$R.WriteRemoteObject(...)"
+            },
+            {
+              "pattern": "$R.WriteFileDescriptor(...)"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "family": "CAP-01",
+        "origin": "first-party experiment rule; no vendor rule copied"
+      }
+    },
+    {
+      "id": "ipc-baseline-owner",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "AUTH-03 structural baseline candidate; no guard dominance/impact proof",
+      "patterns": [
+        {
+          "pattern-inside": "$RET $C::OnRemoteRequest(...) { ... }"
+        },
+        {
+          "pattern": "DeleteUserData(...)"
+        }
+      ],
+      "metadata": {
+        "family": "AUTH-03",
+        "origin": "first-party experiment rule; no vendor rule copied"
+      }
+    },
+    {
+      "id": "ipc-baseline-parcel-taint",
+      "languages": [
+        "cpp"
+      ],
+      "severity": "WARNING",
+      "message": "DATA-01 parcel to copy candidate; bounds not modeled",
+      "mode": "taint",
+      "pattern-sources": [
+        {
+          "pattern": "$D.ReadInt32()"
+        },
+        {
+          "pattern": "$D.ReadUint32()"
+        }
+      ],
+      "pattern-sinks": [
+        {
+          "pattern": "memcpy($DST, $SRC, $LEN)"
+        },
+        {
+          "pattern": "memcpy_s($DST, $CAP, $SRC, $LEN)"
+        }
+      ],
+      "metadata": {
+        "family": "DATA-01",
+        "origin": "first-party experiment rule"
+      }
+    }
+  ]
+}

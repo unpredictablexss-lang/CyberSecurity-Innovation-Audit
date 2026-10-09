@@ -1,0 +1,107 @@
+[
+  {
+    "sample_id": "metamorphic-relay_fixed",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (GetDescriptor() != incoming.ReadInterfaceToken()) return -1;\nOnCallback();\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "AUTH-01",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-auth_ignored_positive",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nAccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), \"p\"); StartAbility();\nreturn 0;\n}\n",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "family": "AUTH-04",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-identity_positive",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nif (AccessTokenKit::VerifyAccessToken(GetSelfTokenID(), \"p\") != 0) return -1; StartAbility();\nreturn 0;\n}\n",
+    "expected_rule": "ipc.auth.service-identity",
+    "family": "AUTH-03",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-coverage_positive",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nif (transaction == 1) { if (AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), \"ohos.permission.HOLDOUT\") != PERMISSION_GRANTED) return -1;\n } StartAbility();\nreturn 0;\n}\n",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "family": "AUTH-04",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-parcel_fixed",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nchar dst[64]; int n=incoming.ReadInt32(); if(n<0 || n>sizeof(dst)) return -1; memcpy(dst,incoming.ReadBuffer(64),n);\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "DATA-01",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-owner_fixed",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nif (AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), \"ohos.permission.HOLDOUT\") != PERMISSION_GRANTED) return -1;\nint target=incoming.ReadInt32(); if (IPCSkeleton::GetCallingUid()!=GetOwnerUid(target)) return -1; DeleteUserData(target);\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "AUTH-03",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-helper_fixed",
+    "text": "#include \"common_types.h\"\nbool Stub::Allowed(){ return AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), \"p\")==0; }\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nif (!Allowed()) return -1; StartAbility();\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "AUTH-02",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-helper_positive",
+    "text": "#include \"common_types.h\"\nvoid Stub::Handle(MessageParcel &incoming){ StartAbility(); }\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nHandle(incoming);\nreturn 0;\n}\n",
+    "expected_rule": "ipc.auth.missing",
+    "family": "AUTH-02",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-comments_safe",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\n// StartAbility(); GetSelfTokenID();\nLOG(\"StartAbility() CheckPermission()\");\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "AUTH-02",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-wrong_parcel_positive",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif(outgoing.ReadInterfaceToken()!=GetDescriptor()) return -1; OnCallback();\nreturn 0;\n}\n",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "family": "AUTH-01",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-cached_caller_fixed",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nauto caller=IPCSkeleton::GetCallingTokenID(); auto saved=IPCSkeleton::ResetCallingIdentity(); if (AccessTokenKit::VerifyAccessToken(caller,\"p\")!=0) return -1; StartAbility();\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "AUTH-03",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "metamorphic-switch_positive",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t transaction,MessageParcel &incoming,MessageParcel &outgoing,MessageOption &option) {\nif (incoming.ReadInterfaceToken() != GetDescriptor()) return -1;\nswitch(transaction){ case 1: if (AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), \"ohos.permission.HOLDOUT\") != PERMISSION_GRANTED) return -1;\n StartAbility(); break; case 2: StartAbility(); break; default: return -1;}\nreturn 0;\n}\n",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "family": "AUTH-04",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout"
+  },
+  {
+    "sample_id": "direct-requested-uid-safe",
+    "text": "#include \"common_types.h\"\n\nint Stub::OnRemoteRequest(uint32_t code,MessageParcel &data,MessageParcel &reply,MessageOption &option) {\nif (data.ReadInterfaceToken() != GetDescriptor()) return -1;\nif (AccessTokenKit::VerifyAccessToken(IPCSkeleton::GetCallingTokenID(), \"ohos.permission.TEST\") != PERMISSION_GRANTED) return -1;\nint target=data.ReadInt32(); if (IPCSkeleton::GetCallingUid()!=target) return -1; DeleteUserData(target);\nreturn 0;\n}\n",
+    "expected_rule": null,
+    "family": "AUTH-03",
+    "data_origin": "synthetic_metamorphic",
+    "split": "generated_holdout",
+    "note": "Trusted synthetic contract: target is a user UID, caller equality authorizes that target."
+  }
+]
