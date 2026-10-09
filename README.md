@@ -29,6 +29,7 @@
 - [2026 总体架构：docs/architecture_2026.md](docs/architecture_2026.md)
 - **[下一阶段三线并行总方案：自研 OHScanner 架构 / 分工 / 集成 / 验收](docs/strategy/ohscanner_three_track_master_plan.md)**（计划）
 - **[自研检测器插件 Contract v1：队友必须遵守的输入/输出接口](docs/contracts/ohscanner_detector_contract_v1.md)**（拟实施、尚未在代码冻结）
+- **[OHScanner 队友开发接入指南（M0/M1 实际可运行代码）](docs/strategy/ohscanner_teammate_development_guide.md)**（A/B 首先阅读）
 - [2021–2026 OpenHarmony 历史漏洞数据集与多扫描器实验协议](docs/strategy/vulnerability_corpus_bakeoff_protocol.md)（研究计划）
 - [Web / ArkTS / IPC 方向专项开发任务书](docs/strategy/oh_web_interface_track.md)（队友 B）
 - [系统设计：docs/design.md](docs/design.md)
