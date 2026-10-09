@@ -11,6 +11,8 @@ from src.ohscanner.contracts import ScanRequest
 from src.ohscanner.frontend import index_sources
 from src.ohscanner.git_source import load_git_sources
 from src.ohscanner.indexing import prepare_git_context, run_git_index
+from src.ohscanner.mocks import MockCppDetector
+from src.ohscanner.runner import DetectorRegistry, run_all
 
 PROJECT = Path(__file__).resolve().parents[1]
 
@@ -159,6 +161,39 @@ class GitObjectIndexTests(unittest.TestCase):
         )
         self.assertNotEqual(proc.returncode, 0)
         self.assertIn("full lowercase Git commit SHA", proc.stderr)
+
+    def test_pinned_context_can_use_shared_bridge_without_external_tools(self):
+        context, tree, inventory, coverage, sources = prepare_git_context(
+            self.repo, "fixture/m1-sample", self.commit
+        )
+        registry = DetectorRegistry()
+        registry.register(MockCppDetector())
+        runs = run_all(context, registry)
+        self.assertEqual(len(runs), 1)
+        self.assertEqual(runs[0].status, "completed")
+        self.assertEqual(runs[0].commit, self.commit)
+        self.assertEqual(runs[0].scope_files, 1)
+        self.assertTrue(any("local Git objects pinned" in x for x in runs[0].limitations))
+        self.assertFalse(any("synthetic fixture only" in x for x in runs[0].limitations))
+        self.assertEqual(runs[0].diagnostic_count, 0)
+
+    def test_ast_requirement_blocks_partial_cpp_parse(self):
+        (self.repo / "src" / "broken.cpp").write_text(
+            "int broken( {\n", encoding="utf-8"
+        )
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-qm", "syntactically partial")
+        updated = git(self.repo, "rev-parse", "HEAD")
+        context, _, _, _, _ = prepare_git_context(
+            self.repo, "fixture/m1-sample", updated
+        )
+        class NeedsAst(MockCppDetector):
+            required_facts = ("ast",)
+        registry = DetectorRegistry()
+        registry.register(NeedsAst())
+        result = run_all(context, registry)[0]
+        self.assertEqual(result.status, "blocked")
+        self.assertTrue(any("Required complete AST" in x for x in result.limitations))
 
     def test_missing_c_cpp_grammar_is_not_silently_complete(self):
         from src.ohscanner.git_source import GitSource
