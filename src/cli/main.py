@@ -129,6 +129,14 @@ def main() -> None:
     scan_parser = _configure_scan_parser(subparsers)
     baseline_parser = _configure_clang_baseline_parser(subparsers)
 
+    ohscan_parser = subparsers.add_parser(
+        "ohscan", help="M0 self-built mock detector contract smoke test (synthetic fixtures only)"
+    )
+    ohscan_parser.add_argument("--fixture-root", required=True,
+                               help="Directory of synthetic C/C++ and JS/ArkTS test fixtures")
+    ohscan_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m0.json")
+    ohscan_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m0.md")
+
     historical_parser = subparsers.add_parser(
         "benchmark-historical",
         help="Replay one published vulnerable/fixed commit pair as historical ground truth",
@@ -319,6 +327,22 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if args.command == "ohscan":
+        from src.ohscanner.smoke import run_mock_smoke
+
+        try:
+            result = run_mock_smoke(Path(args.fixture_root).resolve(),
+                                    Path(args.json_out).resolve(),
+                                    Path(args.md_out).resolve())
+        except (ValueError, OSError, UnicodeError) as error:
+            ohscan_parser.error(str(error))
+        print("[OK] M0 synthetic contract smoke; NOT a real vulnerability scan")
+        print(f"[OK] normalized first-party detector runs: {len(result['runs'])}")
+        print(f"[OK] target provenance: {result['provenance']}")
+        print(f"[OK] json report: {args.json_out}")
+        print(f"[OK] markdown report: {args.md_out}")
+        return
 
     if args.command == "scan":
         target = Path(args.target).resolve()
