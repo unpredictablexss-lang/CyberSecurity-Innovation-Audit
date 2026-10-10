@@ -420,3 +420,12 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **负向回归**：错误 origin/commit、内容替换、vulnerable/fixed 调换、伪造 manifest、mixed evidence、清空 analyzed scope、finding 超范围、重复 artifact 均有确定性拒绝测试。
 - **CI/main**：push workflow 已扩展到 `codex/**`、`feat/**`、`experiment/**`；`origin/main` 性能基线已合入当前 merge candidate。全量本地回归 `241/241`、shared-ptr targeted `17/17`、OHScanner targeted `35/35`、`py_compile` 和 `git diff --check` 通过。
 - **CI**：远端 Run [38043467633](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38043467633) 在 `50c1392` 成功；本次状态文档更新后的最终 head 需重新核验。PR 创建、ready 和 merge 尚未执行；holdout 仍为 `designed_not_executed`；shared_ptr finding 仍是 `candidate/unassessed`，不构成 confirmed/reportable 漏洞。
+
+
+## 23. 2026-10-10 队友 A 分支整合修正
+
+- 本节只记录 `codex/**` 与 `experiment/**` 工作；非队友 A 命名空间的工作不计入本次交付。
+- 新整合分支从 `6afb7d0` 建立，重放 shared_ptr 基线、lifetime/evidence/corpus、dataset survey 和 c_utils product/component research。
+- lifetime evidence package 的 interface baseline 已绑定 `6afb7d0` 和当前 `src/ohscanner/contracts.py` SHA-256；生成的 native run manifest 不提交，相关测试只在外部 artifact 存在时执行。
+- c_utils product/component 模块作为 research/reference-only 工具保留，不注册进 production detector catalog，不宣称真实产品构建或漏洞检测能力。
+- 详细分支状态、整合/取代/未完成分类见 `docs/reviews/teammate_a_branch_consolidation_2026-10-10.md`。

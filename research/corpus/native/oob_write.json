@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "family_id": "oob_write",
+  "family_name": "Bounds, length and backing-store stability",
+  "selection_reason": "One of the two teammate-A priority root-cause families. The historical patch introduces explicit stable-array and element-length guards around direct element access, giving a paired evidence base for bounds/candidate design without treating matches as vulnerability proof.",
+  "sample": {
+    "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "repo_url": "https://github.com/openharmony/arkcompiler_ets_runtime",
+    "weakness": "CWE-787",
+    "cve": "CVE-2025-23420",
+    "root_cause_group": "oob_write",
+    "label_status": "advisory_confirmed",
+    "evidence_level": "patch_and_advisory",
+    "pair_analysis_unit": {
+      "analysis_unit_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02:pair:ecmascript/js_array.cpp:SortElementsByObject",
+      "files": [
+        "ecmascript/js_array.cpp"
+      ],
+      "symbols": [
+        "JSArray::SortElementsByObject"
+      ],
+      "historical_manifest_symbols": [
+        "SortElementsByObject"
+      ],
+      "line_ranges": {
+        "vulnerable": [
+          [
+            638,
+            673
+          ]
+        ],
+        "fixed": [
+          [
+            638,
+            671
+          ]
+        ]
+      }
+    },
+    "revisions": {
+      "vulnerable": {
+        "revision": "vulnerable",
+        "exact_commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+        "source_artifact": {
+          "repository_path": "ecmascript/js_array.cpp",
+          "canonical_url": "https://raw.githubusercontent.com/openharmony/arkcompiler_ets_runtime/aeee3fd12c03193545edea4b8e0fdfa3d9a03d11/ecmascript/js_array.cpp",
+          "retrieval": "raw bytes at the exact commit; source bytes are not committed",
+          "source_file_sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b",
+          "git_blob_sha1": "2c58914ad27b6b3c5f570dbd2fe0ed02d1d9e471",
+          "bytes": 31896,
+          "lines": 732,
+          "git_tree_sha1": "0eea26c9eb6846f4d19926be83092c06f0d98692"
+        }
+      },
+      "fixed": {
+        "revision": "fixed",
+        "exact_commit": "1b23531531e768398682582969c2a9f17e72cafe",
+        "source_artifact": {
+          "repository_path": "ecmascript/js_array.cpp",
+          "canonical_url": "https://raw.githubusercontent.com/openharmony/arkcompiler_ets_runtime/1b23531531e768398682582969c2a9f17e72cafe/ecmascript/js_array.cpp",
+          "retrieval": "raw bytes at the exact commit; source bytes are not committed",
+          "source_file_sha256": "f6325075773451b9c9a314c6fec0c0177331786f5c9e6ce3069974eb4c79b0f6",
+          "git_blob_sha1": "58266855967e3dc4af97721d3a2fc5417cb887b6",
+          "bytes": 32924,
+          "lines": 754,
+          "git_tree_sha1": "52f27683e2f6e1ba8272aee7d5202c73059e10b4"
+        }
+      }
+    },
+    "safe_controls": [
+      {
+        "analysis_unit_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02:fixed:safe:CheckStableArray_guards",
+        "control_role": "safe",
+        "revision": "fixed",
+        "exact_commit": "1b23531531e768398682582969c2a9f17e72cafe",
+        "files": [
+          "ecmascript/js_array.cpp"
+        ],
+        "symbols": [
+          "JSArray::CheckStableArrayAndSet",
+          "JSArray::CheckStableArrayAndGet"
+        ],
+        "line_ranges": [
+          [
+            673,
+            693
+          ]
+        ],
+        "source_artifact": {
+          "repository_path": "ecmascript/js_array.cpp",
+          "canonical_url": "https://raw.githubusercontent.com/openharmony/arkcompiler_ets_runtime/1b23531531e768398682582969c2a9f17e72cafe/ecmascript/js_array.cpp",
+          "retrieval": "raw bytes at the exact commit; source bytes are not committed",
+          "source_file_sha256": "f6325075773451b9c9a314c6fec0c0177331786f5c9e6ce3069974eb4c79b0f6",
+          "git_blob_sha1": "58266855967e3dc4af97721d3a2fc5417cb887b6",
+          "bytes": 32924,
+          "lines": 754,
+          "git_tree_sha1": "52f27683e2f6e1ba8272aee7d5202c73059e10b4"
+        },
+        "control_shape": "Direct ElementAccessor access is guarded by stable-array and index-less-than-elements-length checks, with a generic indexed fallback outside the guard.",
+        "isolation": "This is a separate analysis unit from SortElementsByObject even though it shares the fixed file and commit. It is a guard-shape control and cannot be merged into the fixed-pair result.",
+        "limitations": [
+          "Control label is shape-based and scoped to this analysis unit.",
+          "Guard dominance, comparator re-entrancy and runtime impact were not proven by static overlap."
+        ]
+      }
+    ],
+    "exclusions": [
+      {
+        "item": "runtime comparator-triggered backing-store mutation",
+        "status": "not_run",
+        "reason": "No PoC, dynamic trigger or exploitability evaluation is in scope."
+      },
+      {
+        "item": "full ArkCompiler build, macro and dependency context",
+        "status": "unknown",
+        "reason": "Existing CodeQL/Clang snapshot experiments did not recover the complete build context."
+      },
+      {
+        "item": "confirmed out-of-bounds write verdict from Cppcheck overlap",
+        "status": "excluded",
+        "reason": "Cppcheck overlaps the same region before and after the fix and does not discriminate this patch."
+      }
+    ],
+    "provenance": {
+      "evidence_sources": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11012",
+        "https://raw.githubusercontent.com/openharmony/security/master/zh/security-disclosure/2025/2025-03.md",
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBKOHZ"
+      ],
+      "source_license": "Apache-2.0 at repository level; retain upstream file headers and notices when source is retrieved",
+      "third_party_source_committed": false,
+      "attribution": "OpenHarmony arkcompiler_ets_runtime historical patch and advisory evidence",
+      "originality_review": "No third-party detector code or rule text was copied into this corpus record."
+    }
+  }
+}

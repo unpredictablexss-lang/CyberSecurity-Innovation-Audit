@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "kind": "self_authored_synthetic_fixture",
+    "repository": "synthetic/fixture",
+    "commit": "3333333333333333333333333333333333333333",
+    "snapshot_sha256": "638c0b20a7e23603e6b265c54c8129b18fec1d5435e522e1b0a158b219c14012",
+    "profile_id": "fixture-no-build",
+    "note": "Research shape fixture only; not a public vulnerability benchmark."
+  },
+  "units": [
+    {
+      "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/vulnerable_unbounded_parcel.cpp",
+      "sha256": "929f4a2f018ad38d7998956a6c9f2e82dfba5c66aa9bae09a530bfaa4fb499b3",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable_shape",
+      "expected_observation": "candidate_shape"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/fixed_guarded_parcel.cpp",
+      "sha256": "68f08513275fe18604d82ac90755acc41c9264014d2299982f297ab43708d424",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "fixed_shape",
+      "expected_observation": "no_candidate_shape"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/safe_constant_length.cpp",
+      "sha256": "12cf3584cb49c832c4588aef5ff3b9440f7c16d8e25e15f687a606c1f1cc4d00",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe_control",
+      "expected_observation": "no_candidate_shape"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/partial_parse_macro_guard.cpp",
+      "sha256": "65b80ea6a69caed7eba31baa854fc17a52617b0389baa92c8daf2bd66c1e3c96",
+      "parse_status": "partial",
+      "parse_issues": [
+        "Macro-controlled guard context is not expanded."
+      ],
+      "fixture_category": "unknown_partial_parse",
+      "expected_observation": "unknown_incomplete_analysis"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_bounds_length_parcel/failed_parse_unbalanced.cpp",
+      "sha256": "77608bd5f17f7af99742c65139b55a4b0740d281ada7e72aea4e8f3a8279e65a",
+      "parse_status": "failed",
+      "parse_issues": [
+        "Synthetic unbalanced conditional."
+      ],
+      "fixture_category": "failed_parse",
+      "expected_observation": "unknown_incomplete_analysis"
+    }
+  ]
+}
