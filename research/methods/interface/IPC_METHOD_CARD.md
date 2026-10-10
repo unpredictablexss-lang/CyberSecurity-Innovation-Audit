@@ -20,3 +20,44 @@
 - Next work: parser/build context, dispatcher/cross-file relation summaries, requestedUID relationship precision, then targeted SMT constraints and independent historical holdout. No target recall guarantee yet.
 
 Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner_v0_1_2026-10-10.md.
+
+---
+
+# IPC method card v0.2 — entry discovery (2026-10-10)
+
+- Detector: `ohscanner.interface.ipc` 0.2.0; model unchanged (`oh-ipc-2026.10-v1`). New module:
+  `src/ohscanner/detectors/interface/entry_index.py`. No public contract, schema or CLI change.
+- Entry discovery replaced a hardcoded name allowlist (`OnRemoteRequest` / `*Inner` in `*Stub` /
+  `IpcPolicy.service_entries`) with a source-derived dispatch index:
+  - **Dispatchers by signature, not by name**: a member taking `(uint32_t code, MessageParcel&,
+    MessageParcel&, MessageOption&)`. This is what reaches `IPCObjectStub::SendRequest`, whose class
+    does not contain `Stub` and whose name is not `OnRemoteRequest`.
+  - **Code-to-handler bindings** recovered from the four shapes that actually occur: a
+    member-function-pointer table initialised in a *constructor*, a callable table filled by
+    `map[CODE] = std::bind(&Cls::Fn, this, ...)`, `switch (code)` cases (returning the handler or
+    calling it with parsed business objects), and `if (code == X) { return Handler(...); }`.
+  - **Preprocessor context is recorded, never decided**: a case inside `#ifndef CONFIG_IPC_SINGLE`
+    carries that condition on the entry; reachability under a build configuration is not asserted.
+  - **Graded evidence**: `source_dispatch` > `source_dispatch_case_call` > `virtual_override` >
+    `unresolved_handler`. Ambiguous overloads, unresolvable transaction codes and maps that are
+    defined but never dispatched are emitted explicitly; nothing is guessed.
+  - **Cross-file and one-hop delegation**: a dispatch-bound handler is admitted as a root even when
+    defined in another file; `Type::GetInstance()->Method` is followed only when the receiver type is
+    source-backed (object macro or explicit qualified receiver) and the target has exactly one
+    definition. No general cross-file name resolution was added, and `resolve()` is still same-file.
+- **Dispatcher-level guards are not modelled.** Where a dispatcher guards before dispatch (e.g.
+  `IsCallerValid()` / `IsPermissionGranted(code)`), the resulting candidate is classified
+  `AUTH-04 / ipc.auth.guard-coverage` — the uncertainty is coverage, not absent authorization — and
+  carries a `dispatch_binding` obligation. It is downgraded in classification, never suppressed.
+- Measured (ten real components, production code only, 5,270 files): 135 dispatchers, 592 bindings,
+  690 source-derived entry roots against 109 for the old predicate; 72 unresolved transaction codes.
+  Historical S2 roots indexed at their own revisions: 58 sample×revision records, 33 source-derived,
+  25 reachable only because `models.py` names them, 0 unreached.
+- Parser fixes required to reach that coverage: statement-carrying macro arguments
+  (`ENGINE_CHECK(cond, return ret, "msg")`) and `(this->*(iter->second))(...)` both broke the parse of
+  the very functions being sought; both are now normalised byte-for-byte, each recorded as a
+  limitation rather than assumed away.
+- Limits: no macro expansion, overload resolution or virtual-dispatch proof; `->*` targets are
+  confirmed textually because they are error nodes; entries are not reachability; three components
+  have no dispatcher source in-repo (IDL-generated). Report:
+  `docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`.

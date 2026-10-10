@@ -12,6 +12,7 @@ from tree_sitter import Language, Parser
 import tree_sitter_cpp
 import tree_sitter_c
 
+from .entry_index import EntryIndex
 from .models import IpcPolicy
 
 
@@ -89,10 +90,13 @@ class Observation:
     message: str
     trace: tuple
     root_key: tuple
+    entry_grade: str = "allowlist"   # "allowlist" | "dispatch"
+    dispatch_note: str = ""
 
 
 def normalize_syntax(source):
-    """Model only known format-string tokens and unresolved member dispatch.
+    """Model only known format-string tokens, statement-carrying macro arguments
+    and unresolved member dispatch.
 
     Byte lengths/newlines remain unchanged. Original source is retained for
     evidence. This is not macro expansion or resolution of member pointers.
@@ -106,9 +110,135 @@ def normalize_syntax(source):
                 return b'"'+b' '*(len(token)-2)+b'"'
         return match.group(0)
     normalized=re.sub(pattern,fmt,source,flags=re.S)
+    # `(this->*Ident)(args)` parses once the member-pointer operator is read as a
+    # plain member access, which keeps the receiver visible.
     normalized=re.sub(rb'\(this\s*->\s*\*\s*[A-Za-z_]\w*\)(?=\s*\()',
                       lambda m:m.group(0).replace(b'*',b' ',1),normalized)
+    # `(this->*(iter->second))(args)`, `(this->*(funcIter->second))(parcel)`: the
+    # target is itself an expression, so there is nothing to keep. Blanking the
+    # operator preserves every byte offset and leaves a plain call. The target is
+    # unresolved here, which is exactly what the dispatch index resolves instead.
+    normalized=re.sub(rb'this\s*->\s*\*\s*(?=\()',lambda m:b' '*len(m.group(0)),normalized)
+    normalized=_blank_macro_statement_arguments(normalized)
     return normalized
+
+
+_STATEMENT_KEYWORD = re.compile(rb"(?:return|break|continue)\b")
+_MACRO_CALL = re.compile(rb"\b[A-Z][A-Z0-9_]{2,}\s*\(")
+
+
+def _blank_macro_statement_arguments(source):
+    """Neutralize macro arguments that carry a statement, keeping every offset.
+
+    OpenHarmony macros such as
+
+        ENGINE_CHECK(ret == INT_CALL_SUCCESS, return ret, "Failed to GetNewVersionInfo");
+
+    embed a `return` statement in an argument list. Tree-sitter cannot parse that,
+    so the whole enclosing function is dropped as partial and none of its handlers
+    are ever analysed. The offending argument is replaced by a single `0` padded
+    with spaces (line breaks preserved), which is byte-for-byte the same length.
+
+    What this costs: the macro's effect is not modelled, so an early return inside
+    such a macro is not part of the CFG. That is recorded as a limitation rather
+    than silently assumed away.
+    """
+    out = bytearray(source)
+    for match in _MACRO_CALL.finditer(source):
+        open_index = match.end() - 1
+        close_index = _matching_paren(source, open_index)
+        if close_index is None:
+            continue
+        for start, end in _top_level_arguments(source, open_index, close_index):
+            if not _STATEMENT_KEYWORD.match(source[start:end].lstrip()):
+                continue
+            span = source[start:end]
+            if b"\n" in span:
+                blank = bytearray(b" " * len(span))
+                for index, byte in enumerate(span):
+                    if byte == 0x0A:
+                        blank[index] = 0x0A
+                for index, byte in enumerate(blank):
+                    if byte != 0x0A:
+                        blank[index] = 0x30
+                        break
+                out[start:end] = blank
+            else:
+                out[start:end] = b"0" + b" " * (len(span) - 1)
+    return bytes(out)
+
+
+def _matching_paren(source, open_index):
+    """Index of the `)` closing the `(` at `open_index`, skipping literals/comments."""
+    depth, index, length = 0, open_index, len(source)
+    while index < length:
+        byte = source[index]
+        if byte in (0x22, 0x27):
+            index = _skip_quoted(source, index, byte)
+            continue
+        if byte == 0x2F and index + 1 < length:
+            if source[index + 1] == 0x2F:
+                newline = source.find(b"\n", index)
+                if newline < 0:
+                    return None
+                index = newline
+                continue
+            if source[index + 1] == 0x2A:
+                close = source.find(b"*/", index)
+                if close < 0:
+                    return None
+                index = close + 2
+                continue
+        if byte == 0x28:
+            depth += 1
+        elif byte == 0x29:
+            depth -= 1
+            if depth == 0:
+                return index
+        index += 1
+    return None
+
+
+def _skip_quoted(source, index, quote):
+    index += 1
+    while index < len(source):
+        if source[index] == 0x5C:
+            index += 2
+            continue
+        if source[index] == quote:
+            return index + 1
+        index += 1
+    return len(source)
+
+
+def _top_level_arguments(source, open_index, close_index):
+    """Comma-separated argument spans between the parentheses, outermost level only."""
+    arguments, start = [], open_index + 1
+    depth, index = 0, open_index + 1
+    while index < close_index:
+        byte = source[index]
+        if byte in (0x22, 0x27):
+            index = _skip_quoted(source, index, byte)
+            continue
+        if byte == 0x2F and index + 1 < close_index:
+            if source[index + 1] == 0x2F:
+                newline = source.find(b"\n", index)
+                index = close_index if newline < 0 or newline >= close_index else newline
+                continue
+            if source[index + 1] == 0x2A:
+                close = source.find(b"*/", index)
+                index = close_index if close < 0 else close + 2
+                continue
+        if byte in (0x28, 0x5B, 0x7B):
+            depth += 1
+        elif byte in (0x29, 0x5D, 0x7D):
+            depth -= 1
+        elif byte == 0x2C and depth == 0:
+            arguments.append((start, index))
+            start = index + 1
+        index += 1
+    arguments.append((start, close_index))
+    return arguments
 
 
 class Interpreter:
@@ -121,6 +251,9 @@ class Interpreter:
         self.root = None
         self.active = ()
         self.capacities = {}
+        self.root_grade = "allowlist"
+        self.root_note = ""
+        self.index = None
         for unit in units:
             grammar = tree_sitter_c.language() if unit.language == "c" else tree_sitter_cpp.language()
             raw=unit.text.encode("utf-8")
@@ -168,6 +301,21 @@ class Interpreter:
                 if body and not node.has_error:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
                                                    source, tuple(params), tuple(parcels[:1])))
+        self._build_index(units)
+
+    def _build_index(self, units):
+        """Source-derived entry/dispatch index. Never fatal: an index failure
+        degrades entry discovery back to the name allowlist and says so."""
+        try:
+            self.index = EntryIndex(units, self.policy)
+        except Exception as error:                      # noqa: BLE001 - degrade, never crash
+            self.index = None
+            self.limitations.add("Entry index unavailable (" + type(error).__name__
+                                 + "); entry discovery fell back to the name allowlist.")
+        self.functions_by_owner_name = {}
+        for fn in self.functions:
+            owner = fn.owner.rsplit("::", 1)[-1] if fn.owner else ""
+            self.functions_by_owner_name.setdefault((owner, fn.name), []).append(fn)
 
     def bounded(self, states):
         # Keep a conservative merged state when the disjunction exceeds budget.
@@ -195,7 +343,8 @@ class Interpreter:
 
     def emit(self, family, rule, fn, node, state, message):
         self.observations.append(Observation(family, rule, fn.file,
-            node.start_point[0] + 1, fn.qualified, message, state.trace, (self.root.file, self.root.qualified)))
+            node.start_point[0] + 1, fn.qualified, message, state.trace,
+            (self.root.file, self.root.qualified), self.root_grade, self.root_note))
 
     def resolve(self, fn, name):
         # No arbitrary receiver or global name-only cross-class resolution.
@@ -205,6 +354,25 @@ class Interpreter:
         prefix = name.rsplit("::", 1)[0] if "::" in name else fn.owner
         matches = [f for f in self.functions if f.file == fn.file
                    and f.name == terminal(name) and f.owner == prefix]
+        return matches[0] if len(matches) == 1 else None
+
+    def delegated(self, callee):
+        """One hop from a handler into the service singleton it delegates to.
+
+        OpenHarmony stubs hand the request to the service implementation, which
+        lives in another file: `DelayedSingleton<XxxService>::GetInstance()->Method()`
+        or an object macro standing for exactly that expression. The receiver type
+        must be source-backed (an object macro, or an explicit `Type::GetInstance()`)
+        and the target must resolve to exactly one definition; anything else stays
+        unresolved rather than becoming a general cross-file name resolver.
+        """
+        if self.index is None:
+            return None
+        target = self.index.resolve_receiver(callee)
+        if not target or "::" not in target:
+            return None
+        owner, name = target.rsplit("::", 1)
+        matches = self.functions_by_owner_name.get((owner.rsplit("::", 1)[-1], name), [])
         return matches[0] if len(matches) == 1 else None
 
     def authorized(self, state, name):
@@ -223,8 +391,17 @@ class Interpreter:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message)
         if sensitive and not self.authorized(state, name):
-            self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
-                      "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization.")
+            if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
+                # A guard runs before dispatch, so this is a guard-coverage question
+                # (does it dominate this transaction?), not an absent-authorization
+                # one. Same path, same evidence, classified where the uncertainty is.
+                self.emit("AUTH-04", "ipc.auth.guard-coverage", fn, node, state,
+                          "Sensitive modeled call " + name + " has no matched caller authorization on "
+                          "this path, but the dispatcher performs an authorization call before dispatch; "
+                          "its dominance over this transaction is not established.")
+            else:
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization.")
         if name in self.policy.caller_class_sensitive_calls and not state.caller_class:
             self.emit("AUTH-03","ipc.auth.caller-class",fn,node,state,
                       "Sensitive token/privacy operation lacks a caller-class/system-application boundary: "+name)
@@ -321,6 +498,8 @@ class Interpreter:
                 self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
                           "Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown.")
             helper = self.resolve(fn, callee)
+            if helper is None:
+                helper = self.delegated(callee)
             self.action(fn, node, state, name, args)
             if helper and self.root.name in self.policy.entry_names and not state.descriptor:
                 self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
@@ -580,11 +759,38 @@ class Interpreter:
                 self.value(fn,node,s,depth)
         return self.bounded(done+active)
 
-    def run(self):
+    def _entry_roots(self):
+        """Entry roots: the legacy name allowlist, then source-derived dispatch handlers.
+
+        The allowlist is kept as the lower-grade fallback, so nothing that was
+        analysed before stops being analysed. Dispatch-derived handlers are added
+        only when the index bound them to exactly one definition.
+        """
+        roots, seen = [], set()
         for fn in self.functions:
             if not ((fn.name in self.policy.entry_names or fn.name in self.policy.transport_entries or (fn.name.endswith("Inner") and "Stub" in fn.owner)) and fn.parcel_params or fn.qualified in self.policy.service_entries):
                 continue
-            self.root=fn;self.capacities={};self.active=(fn,)
+            roots.append((fn, "allowlist", ""))
+            seen.add((fn.file, fn.qualified))
+        if self.index is None:
+            return roots
+        for owner, name, _ambiguity in self.index.root_bindings():
+            matches = self.functions_by_owner_name.get((owner, name), [])
+            if len(matches) != 1:
+                self.limitations.add("Dispatch handler not uniquely resolved: " + owner
+                                     + "::" + name + "; not used as an entry")
+                continue
+            fn = matches[0]
+            if (fn.file, fn.qualified) in seen:
+                continue
+            seen.add((fn.file, fn.qualified))
+            roots.append((fn, "dispatch", self.index.dispatch_note(owner, name)))
+        return roots
+
+    def run(self):
+        for fn, grade, note in self._entry_roots():
+            self.root=fn;self.root_grade=grade;self.root_note=note
+            self.capacities={};self.active=(fn,)
             env={p:Value("parcel",p) if p in fn.parcel_params else Value("request",p)
                  for p in fn.params}
             self.block(fn,fn.body,[State(env=env)],0)
