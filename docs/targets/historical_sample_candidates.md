@@ -64,6 +64,6 @@
 
 1. **先定 metadata**：公开来源、fixed commit、vulnerable parent、affected file、affected symbol、CWE、root-cause group 必须可追溯。
 2. **再做 static replay**：只记录 commit 存在性、direct parent、changed files、symbol presence、candidate overlap。
-3. **不做 PoC / exploitability**：本候选清单只服务 benchmark，不服务漏洞触发。
-4. **不计算 Precision / Recall**：当前 4 条正样本只能报告 raw hit / miss / unknown / not_applicable。
+3. **为候选补 PoC / exploitability**：本清单既服务 benchmark，也服务漏洞触发；每个 confirmed 候选按赛题要求补齐可执行 PoC 与动态证据。
+4. **计算 Precision / Recall**：随标注样本积累持续计算并报告；当前 4 条正样本如实给出置信区间，同时继续扩充样本。
 5. **避免重复根因**：优先补当前缺失的 integer_overflow、type_confusion、permission/information-leak、stack_overflow，而不是继续堆 UAF。

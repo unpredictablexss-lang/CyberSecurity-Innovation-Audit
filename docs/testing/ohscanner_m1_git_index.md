@@ -1,4 +1,5 @@
 # OHScanner M1：固定 Git Commit 的源码索引与 Frontend 试点
+> **政策更新 2026-10-10**：本文为历史记录（记录某时点实际做了什么），事实性内容保留原样。文中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**；当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物。
 
 > 当前状态：开发分支 `feat/ohscanner-core` / Draft PR #5 上的 M1 **代码实现**；真实 OpenHarmony 组件扫描实验需要在本地 Ubuntu/WSL 补跑。
 >

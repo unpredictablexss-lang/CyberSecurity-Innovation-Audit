@@ -3,7 +3,7 @@
 > 文档性质：**下一阶段技术设计与团队执行约定**，不是已实现功能清单。
 > 基线：PR #4 historical benchmark 已合并到 main；具体代码实现与现状以 `PROGRAM_STATUS.md` 和当前 GitHub 提交为准。
 > 技术主张：**离线多工具实验 → 提炼算法与语义 → 自主实现 OpenHarmony 专用检测器 → 统一候选证据接口 → 当前源码扫描与评估**。
-> 本项目限于授权安全研究、静态审计和竞赛评估；漏洞候选不能自动升级为已确认漏洞。
+> 本项目限于授权安全研究、静态审计和竞赛评估。漏洞候选按证据等级升级为已确认漏洞：不得仅凭工具告警自动升级，但达到 `AGENTS.md` 的 Evidence gate（固定 commit、可达入口、guard/敏感操作、危害论证 + 动态证据）时**必须**升级并产出漏洞报告。
 
 ## 0. 决策结论
 
@@ -172,7 +172,7 @@ ScanRequest(target repo/commit/profile/scope)
 2. 从新 `main` 建自己的 `feat/ohscanner-core`，只实现 SourceUnit、插件注册、报告桥接、scan profile、公共单测；保留之前 `feat/cutils-current-scan` 的组件试点工作为独立小 PR，避免将平台/实验/组件三项塞进同一 PR。
 3. 建立工程测试：输入提交不匹配、路径越界、宏/AST partial、缺 symbol、detector crash/timeout、重复候选、报告来源绑定与排序稳定。
 4. 先把 A/B 的 Mock 实现接入同一 CI；第 2 次迭代再把真实检测逻辑替换进去。
-5. 统一输出 `JSON/Markdown` 和候选审查模板，默认 `validation_status=not_run`，不生成未经验证的漏洞报告。
+5. 统一输出 `JSON/Markdown` 和候选审查模板；`validation_status` 默认 `not_run`，但**必须**随动态验证推进到 `validated`，并据此产出漏洞报告（赛题交付物，见 `AGENTS.md`）。
 
 ### 6.2 A / B 今天即可做的工作
 

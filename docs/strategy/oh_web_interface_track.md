@@ -79,7 +79,7 @@ docs/reviews/interface_attack_surface/   # 固定版本攻击面综述
 5. 单测（真实运行、失败/路径异常、guard 正例与负例、跨仓库/版本隔离）；
 6. 最小演示命令在负责人提供的统一 orchestrator 中运行，而不是独立 Web 服务或网络爬虫。
 
-结果通过 main 已存在的 `ToolRunResult` Bridge 保存；`candidate_cwe` 仅表示初步分类，`validated_vulnerability=0` 除非后续受控验证阶段有独立证据。
+结果通过 main 已存在的 `ToolRunResult` Bridge 保存；`candidate_cwe` 初为初步分类，随证据补齐升级为 confirmed 并记录证据等级。`validated_vulnerability` 默认 `0` 是起点：当本地隔离环境的动态验证与 `AGENTS.md` 的 Evidence gate 满足时即升级并由 `src/ohscanner/poc/` 产出 PoC 与漏洞报告（赛题交付物）。
 
 ## 5. A 与 B 如何共享而不互相阻塞
 
@@ -107,11 +107,11 @@ docs/reviews/interface_attack_surface/   # 固定版本攻击面综述
 
 ## 7. 权限、安全与评审规则
 
-- 只审计明确授权的源码、固定本地代码快照；本阶段不调用在线目标、不主动请求服务或进行漏洞触发。
+- 只审计明确授权的源码、固定本地代码快照；不调用在线目标、不主动请求线上服务。漏洞触发与动态验证在**本地隔离环境**中进行（赛题要求的 PoC 交付，见 `AGENTS.md` 的 Competition deliverables）。
 - 队友默认只在本地开发与保留原生研究数据，整理 patch/报告给负责人；由负责人决定远端分支、PR 和合并。
 - 模块不独自引入新的 schema、修改公共 providers、批量复制外部工具实现或上传未经核对许可的第三方源码。
 - 已知漏洞样本、人工标注、安全对照和测试集分割须明确；不能把修复后的代码无限外推为安全。
-- 输出只说明能由源码和可追溯 Evidence 支撑的静态结论；如需更高安全结论，应在后续隔离的验证阶段完成。
+- 输出结论只上升到能由源码与可追溯 Evidence 支撑的高度；达到门槛的候选在本地隔离验证阶段完成 PoC 与动态证据，升级为 confirmed/reportable 并记录证据等级。
 
 ## 8. B 每次交付的标准报告模板
 
@@ -132,4 +132,4 @@ docs/reviews/interface_attack_surface/   # 固定版本攻击面综述
 下一次需要负责人提供的 shared fact：
 ~~~
 
-**本方向的成功标准不是“找到 Web 漏洞数量”，而是产生可在 OpenHarmony 当前源码上独立运行、可解释、能接入统一引擎的专用接口安全检测模块。**
+**本方向的成功标准是：产生可在 OpenHarmony 当前源码上独立运行、可解释、能接入统一引擎的专用接口安全检测模块，并对其中证据充分的确认漏洞产出可执行 PoC、影响范围与修复建议，形成赛题要求的漏洞报告。不以"找到 Web 漏洞数量"为唯一指标，但确认漏洞与 PoC 是必须的交付物（见 `AGENTS.md`）。**

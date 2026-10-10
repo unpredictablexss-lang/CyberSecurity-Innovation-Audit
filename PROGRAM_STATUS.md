@@ -1,14 +1,16 @@
+> **2026-10-10 政策更新（优先于本文所有历史措辞）**：项目对齐赛题交付。本文 2026-10-08/10-09 各节为**历史记录**，其中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**。当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE 映射、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物；保留的只有"证据到哪一步、结论才到哪一步"的防误报纪律。目标对齐文档见 `docs/strategy/competition_deliverables_plan.md`。
+>
 > **2026-10-09 状态提醒**：本文件 2026-10-08 的细节章节按时间记录历史试验，可能保留当时的 draft/待验收措辞；主线真实状态是 PR #4 已合入 `main`。下一阶段文档见 [三线并行总方案](docs/strategy/ohscanner_three_track_master_plan.md)、[Detector Contract v1](docs/contracts/ohscanner_detector_contract_v1.md)、[漏洞库与工具实验协议](docs/strategy/vulnerability_corpus_bakeoff_protocol.md)、[Web/IPC 专项任务书](docs/strategy/oh_web_interface_track.md)。它们均属**拟开发方案而非已实现软件**。
 
 # PROGRAM_STATUS.md
 
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-09（下一阶段规划；旧阶段实测记录仍保留原日期）
+> 更新日期：2026-10-10（政策对齐赛题交付；旧阶段实测记录仍保留原日期）
 > 当前分支：`feat/ohscanner-core`（独立开发分支；main 不变）  
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
 > 当前阶段：历史基线已合并；OHScanner Core M0 Mock + M1 固定 Git 对象源码索引已在 PR #5 开发分支实现。真实漏洞算法、真实 c_utils Ubuntu 试跑及真实产品构建上下文仍未完成。
-> 重要边界：本分支不声明新漏洞，不做 PoC，不做 exploitability 结论；所有结果仍为 `candidate / draft / benchmark`。
+> 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
 
 ---
 
@@ -82,7 +84,7 @@ Adapter 只做格式归一化，不执行扫描器，不自动判漏洞。
 
 - tool / triage 到 Evidence：`src/evidence/from_tool_result.py`、`src/evidence/from_triage.py`
 - draft case 组装器：`src/case/assembler.py`
-- 当前只生成 `draft`，不生成 `reportable`。
+- case 组装默认产出 `draft`；证据满足门槛（见 `AGENTS.md` 的 Evidence gate）时产出 `reportable`，并在 case 上记录证据等级。当前实现尚待补齐该升级路径。
 
 ### 3.4 Benchmark / Matrix / Report
 
@@ -108,7 +110,7 @@ python -m src.cli benchmark-report \
   --md-out outputs/reports/historical_benchmark_summary.md
 ```
 
-输出标题为 `Historical Benchmark Summary Report`，不是 vulnerability report。该命令用于汇总样本数量、root-cause / CWE 分布、runtime 状态、own scanner 状态与 root-cause matrix。当前仍不计算 Precision / Recall。
+输出标题为 `Historical Benchmark Summary Report`，汇总样本数量、root-cause / CWE 分布、runtime 状态、own scanner 状态与 root-cause matrix；面向赛题的漏洞报告由 `src/report/vulnerability_report.py` 单独产出。计算 Precision / Recall（及 per-subtype recall、safe-fixed false-positive rate）是交付目标：随标注样本积累持续报告，样本量不足时如实标注置信区间而非拒绝计算。
 
 ---
 
@@ -157,16 +159,23 @@ python -m src.cli benchmark-report \
 
 ---
 
-## 8. 暂时不要做
+## 8. 本阶段必须产出（2026-10-10 起，取代原「暂时不要做」）
 
 ```text
-PoC
-TSan 复现
-动态触发
-exploitability 自动判断
-将 candidate 升级为 validated vulnerability
-基于 4 个正样本计算正式 Precision / Recall
+PoC                          —— 每个 confirmed 发现配可执行 PoC + 触发命令与观测结果
+动态验证                     —— 本地隔离环境构建目标组件，ASan/UBSan/TSan 或等效 harness 复现
+TSan 复现                    —— 并发类发现必须的运行时证据
+exploitability 判定          —— 形成"可达输入/权限边界 → 敏感操作 → 现实后果"的结论
+candidate → confirmed 升级   —— 证据满足 Evidence gate 即升级，并记录证据等级
+Precision / Recall           —— 随标注样本积累持续计算并报告（含 per-subtype recall、safe-fixed FPR）
+CWE/CVE 映射                 —— 每个发现标注 CWE；有公开编号的映射 CVE，新发现走 OH 漏洞披露流程
+影响范围                     —— 受影响模块 + 版本/分支 + 漏洞/修复 commit 边界
+修复建议                     —— 具名补丁或 diff，附 guard/effect 关系理由
+性能数据                     —— 真实组件上的扫描耗时与规模
+漏洞报告                     —— src/report/vulnerability_report.py 产出
 ```
+
+**唯一边界**：不得攻击线上真实服务；动态验证只在本地隔离环境进行。保留防误报纪律：结论只上升到证据支撑的高度。
 
 ---
 
