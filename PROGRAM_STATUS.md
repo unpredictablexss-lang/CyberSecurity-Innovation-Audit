@@ -411,3 +411,12 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 对可提交或可展示的实际漏洞结论，要求目标固定 commit、攻击前提、可达输入/权限边界、Guard/敏感操作、现实后果与可复核证据；缺失部分必须按 `EvidenceObligation` / `candidate` / `unknown` 处理，不得擅自升级确认状态。
 - 修改范围：`docs/strategy/ohscanner_three_track_master_plan.md` §0.1、`AGENTS.md`、`README.md` 和 `docs/strategy/vulnerability_corpus_bakeoff_protocol.md`。**只有文档与开发约束发生改变，未新增检测算法、告警分级代码或已确认漏洞；任何功能落地都需后续独立代码和测试。**
 - 当前仍位于 `feat/ohscanner-core` / Draft PR #5；`main` 未合并，相关 CI 以最终当前提交最新记录为准。
+
+
+## 22. 2026-10-10 纯 M-gate 合并技术审查收口
+
+- **R1 来源绑定已修复**：`research/experiments/cpp/shared_ptr_race_native_evidence.py` 现在只从认可的公开 Git origin、固定 commit/tree/blob 读取 source bytes，并用独立 binding manifest/hash 绑定 vulnerable/fixed revision、blob OID、Git tree 和 raw source SHA-256；任意导出文件不能再声明 `git_object`。
+- **R2 review verifier 已修复**：`src/ohscanner/detectors/cpp/shared_ptr_race_review.py` 从可信 `ScanContext + DetectorRun + fixture manifest + manifest hash` 重建 expected record，拒绝顶层 evidence class、fixture category、parse_issues、finding analyzed scope、artifact 唯一性和 stale hash 篡改。
+- **负向回归**：错误 origin/commit、内容替换、vulnerable/fixed 调换、伪造 manifest、mixed evidence、清空 analyzed scope、finding 超范围、重复 artifact 均有确定性拒绝测试。
+- **CI/main**：push workflow 已扩展到 `codex/**`、`feat/**`、`experiment/**`；`origin/main` 性能基线已合入当前 merge candidate。全量本地回归 `241/241`、shared-ptr targeted `17/17`、OHScanner targeted `35/35`、`py_compile` 和 `git diff --check` 通过。
+- **边界**：远端最终 head CI、PR 创建、ready 和 merge 尚未执行；holdout 仍为 `designed_not_executed`；shared_ptr finding 仍是 `candidate/unassessed`，不构成 confirmed/reportable 漏洞。
