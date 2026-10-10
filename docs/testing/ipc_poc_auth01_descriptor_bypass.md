@@ -49,7 +49,7 @@
 
 ## 4. 没有证明的事（逐条）
 
-- **可达性**：harness 直接调用 stub。远端调用者能否经真实 IPC 抵达这个 stub、需要什么 ability 注册与权限状态，**没有证明**，仍是 `EvidenceObligation`。因此记录里 `validated_vulnerability = 0`。
+- **可达性（已补一部分，仍是 `partial`）**：harness 直接调用 stub，但服务自身**把它导出**了——`Platform::SetPlatform` 构造 `PlatformCallbackStub` 并把它作为 `IPlatformApi::registerCallback` 的实参传出（`IRemoteBroker` 上的纯虚方法，即 IPC 事务），proxy 侧 `data.WriteRemoteObject(cb->AsObject())` 把它写进 Parcel，对端因此拿到可用的远程句柄并可向它发事务。**这一条链在 `manifest.json` 的 `reachability` 块里逐条固定了提交、文件 sha256、行号与原文，运行时会双重校验（摘要 + 该行原文是否还在）**，每条都写明「证明了什么 / 没有证明什么」。**没有证明**的是：无特权或无关进程能否拿到那个句柄、对端的身份与权限、以及对端是否会把句柄再转出去——最后一条恰恰是接口描述符校验要约束的场景。因此 `validated_vulnerability` 仍为 0。
 - **影响范围**：没有跨版本扫描，不知道哪些分支/版本受影响。
 - **修复建议**：没有产出补丁与「修复后原 PoC 失败」的重验闭环（修复版能拒绝是**上游既有补丁**的结果，不是本模块生成的补丁）。
 - **桩的边界**：`MessageHandler::SendMessage` 记录而非投递；`MessageParcel` 的 token 方法是桩（转发到真实 `WriteString16`/`ReadString16`）；`poc_compat.h` 补了历史头文件集缺失的 using 指示。全部逐条列在 harness 的 `README.md` 与 `manifest.json` 的 `known_limitations`。

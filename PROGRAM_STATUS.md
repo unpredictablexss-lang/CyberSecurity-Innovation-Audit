@@ -441,3 +441,11 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **边界**：后果是**可能性**而非已证实暴露——调用读类 API 不证明真的把数据返回给了未授权调用者；只有 Evidence gate 通过才能升级。候选仍是 `candidate/unassessed`，`validated_vulnerability = 0`。
 - **已知缺口，已提 CCR**：后果目前只能从 finding 消息里机读，因为公共 `DetectorFinding` 只有一个 CWE 字段；实测脚本把「取不到后果的候选数非 0」当硬失败而不是静默归零。见 `docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`（`proposed / not implemented`，未擅自改契约）。
 - **测试**：新增 `tests/test_ipc_disclosure_consequence.py`（11 项）：同一后果类跨两种机制的提升、非读类调用不冒充泄露、越界读保留自己的后果、未知规则不发明后果、机制 CWE 不被覆盖。全量 **266 项 OK**。
+
+## 25. 2026-10-11 接口线：AUTH-01 PoC 的可达性证据（partial）
+
+- **动机**：P0 的 harness 直接调用 stub，「远端能不能真的抵达」一直是 `EvidenceObligation`。WP7 的验收也要求「harness 人为并发不能冒充产品攻击路径」。所以把可达性的**已知部分固定下来、未知部分点名**，而不是留空。
+- **改动**：新增 `src/ohscanner/poc/reachability.py`——harness 清单可声明 `reachability` 块，每条关系带 `kind / commit / path / sha256 / line / evidence / establishes / does_not_establish`；运行时**双重校验**（文件摘要对固定提交 + 该行原文是否仍在），文件被移动或引用过期会**直接失败**，不会静默换一段代码描述。`runner` 与 `records` 已接线，报告多一节「可达性证据」。
+- **固定下来的关系链（`cve-2023-0036`，提交 `e663b470`）**：服务进程构造 stub（`services/src/platform.cpp:25`，sha256 `7ebe67fc…`）→ 把它作为 `IPlatformApi::registerCallback` 的实参传出（同文件 `:26`）；`registerCallback` 是 `IRemoteBroker` 接口上的纯虚方法（`services/include/i_platform_api.h:48`，sha256 `c2985b38…`），即 IPC 事务；proxy 侧 `data.WriteRemoteObject(cb->AsObject())`（`services/src/platform_api_proxy.cpp:47`，sha256 `8fc23c91…`）把它写进 Parcel。**结论：服务自己把 stub 导出到进程边界，持有该句柄的对端可向其发任意事务**——这正是接口描述符校验要约束的场景。
+- **仍未被证明（逐条写在记录里，状态 `partial`）**：无特权或无关进程能否拿到该句柄；对端的身份与权限；对端是否会把句柄再转出去。`SetPlatform` 的调用者在仓库外，因此「谁触发这条链」也不在本仓库证据范围内。**`validated_vulnerability` 仍为 0。**
+- **测试**：新增 6 项——`partial` 块必须对每条关系都写明「没有证明什么」、摘要/行号双重校验通过、无块即无声明、行号漂移必须失败、摘要不符必须失败、渲染结果必须出现「没有证明」。全量 **272 项 OK**。

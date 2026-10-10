@@ -42,6 +42,25 @@ isolation. The shim supplies exactly that using directive. It does not touch the
 component source and does not change behaviour: the symbol it makes visible is
 the one the code already names.
 
+## Reachability, and what it does not show
+
+`manifest.json` carries a `reachability` block: the pinned source relations that
+establish how the target is reached, each with what it does and does not
+establish. Every relation is checked twice at run time — the file digest against
+the pinned commit, and the quoted line against the recorded line number — so a
+moved file or a stale quote fails the run instead of quietly describing different
+code.
+
+The recorded chain is: the service constructs the stub (`platform.cpp:25`), passes
+it to `IPlatformApi::registerCallback` (`platform.cpp:26`), which is a pure virtual
+on an `IRemoteBroker` interface (`i_platform_api.h:48`), and the proxy marshals the
+object with `WriteRemoteObject` (`platform_api_proxy.cpp:47`), so a peer holding
+the handle can send transactions to it.
+
+What is **not** established: that an unprivileged or unrelated process can obtain
+that handle, what identity the peer has, or whether the peer forwards the handle
+onward. The status stays `partial`, and `validated_vulnerability` stays 0.
+
 ## Provenance and licence
 
 `stub/iremote_broker.h` reproduces the `DECLARE_INTERFACE_DESCRIPTOR` macro from
