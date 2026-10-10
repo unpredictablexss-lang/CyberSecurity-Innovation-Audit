@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/ohscanner-core
       - feat/openharmony-target-onboarding
   pull_request:
     branches:
