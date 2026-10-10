@@ -13,6 +13,7 @@ import sys
 import time
 from pathlib import Path
 
+from .reachability import verify as verify_reachability
 from .records import BuildRecord, CaseOutcome, PocResult, RevisionRun
 from .sources import materialize, pinned_files
 from .states import evidence_for, ladder_state, replay_label
@@ -199,4 +200,5 @@ def run_poc(manifest_path, git_dir, work_dir, compiler="clang++", cutils_dir=Non
                                             manifest["source_origin"]),
         revisions=revisions, state=state, evidence_level=evidence_for(state),
         validated_vulnerability=0,
-        limitations=tuple(manifest["known_limitations"]))
+        limitations=tuple(manifest["known_limitations"]),
+        reachability=verify_reachability(manifest.get("reachability"), git_dir))

@@ -5,7 +5,9 @@ with which compiler and sanitizers, what each case did, how the replay behaved,
 and what the result does not establish.
 """
 from dataclasses import asdict, dataclass, field
-from typing import Mapping, Tuple
+from typing import Mapping, Optional, Tuple
+
+from .reachability import ReachabilityEvidence, render_markdown as render_reachability
 
 
 @dataclass(frozen=True)
@@ -67,6 +69,7 @@ class PocResult:
     evidence_level: str
     validated_vulnerability: int
     limitations: Tuple[str, ...]
+    reachability: Optional[ReachabilityEvidence] = None
 
     def to_dict(self):
         return asdict(self)
@@ -126,7 +129,10 @@ def render_markdown(result):
                          + case.verdict + " | " + (_yes_no(expected) if expected is not None else "—")
                          + " |")
 
-    lines += ["", "## 3. 没有证明的事", ""]
+    if result.reachability is not None:
+        lines += ["", render_reachability(result.reachability)]
+
+    lines += ["", "## 4. 没有证明的事", ""]
     for item in result.limitations:
         lines.append("- " + item)
     lines.append("")

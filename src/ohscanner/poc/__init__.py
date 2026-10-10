@@ -19,6 +19,7 @@ and the PoC lifecycle is
 -> stable_reproduced`
 (`docs/architecture_2026.md` section 8.4, per `docs/evaluation_criteria.md` section 6).
 """
+from .reachability import ReachabilityEvidence, Relation, verify as verify_reachability  # noqa: F401
 from .records import PocResult, render_markdown  # noqa: F401
 from .runner import run_poc  # noqa: F401
 from .states import EVIDENCE_LEVELS, POC_STATES, REPLAY_LABELS, ladder_state, replay_label  # noqa: F401

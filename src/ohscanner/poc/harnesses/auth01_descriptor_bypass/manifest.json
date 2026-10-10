@@ -34,6 +34,52 @@
       "include_dirs": ["base/include", "base/src"]
     }
   },
+  "reachability": {
+    "status": "partial",
+    "summary": "The service exports the stub itself: Platform::SetPlatform constructs it and passes it as the argument of IPlatformApi::registerCallback, a pure virtual on an IRemoteBroker interface whose proxy marshals the object with WriteRemoteObject. A peer that holds that handle reaches OnRemoteRequest with a caller-chosen transaction code and payload, which is why an interface-descriptor check is the relevant defence. Whether an unprivileged or unrelated process can obtain the handle, and what identity the peer has, is NOT established here.",
+    "relations": [
+      {
+        "kind": "stub_is_constructed_in_the_service",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "path": "services/src/platform.cpp",
+        "sha256": "7ebe67fc4bc2c51e149a79f486c8ddea792d4b590cc22045992ce702167d31f4",
+        "line": 25,
+        "evidence": "sptr < IPlatformCallback > cb = new PlatformCallbackStub();",
+        "establishes": "the service process constructs the very stub object this PoC calls, so the target is a real product object rather than a test double",
+        "does_not_establish": "that any process other than the service can obtain it"
+      },
+      {
+        "kind": "stub_is_passed_to_a_remote_interface_call",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "path": "services/src/platform.cpp",
+        "sha256": "7ebe67fc4bc2c51e149a79f486c8ddea792d4b590cc22045992ce702167d31f4",
+        "line": 26,
+        "evidence": "this->platformApi->registerCallback(cb);",
+        "establishes": "the stub is handed to a call on IPlatformApi, an interface the service talks to over IPC, rather than kept local",
+        "does_not_establish": "which process implements IPlatformApi at this call site, nor the permission or registration gate on that call"
+      },
+      {
+        "kind": "register_callback_is_an_ipc_transaction",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "path": "services/include/i_platform_api.h",
+        "sha256": "c2985b3853e054da928cea51b12d7c7e1ddaef8fec613f4538e32ce1cb77a196",
+        "line": 48,
+        "evidence": "virtual int32_t registerCallback(const sptr<IPlatformCallback>& cb) = 0;",
+        "establishes": "registerCallback is a pure virtual on an IRemoteBroker interface, so passing the stub to it crosses a process boundary",
+        "does_not_establish": "the identity, privilege or category of the peer that receives the callback"
+      },
+      {
+        "kind": "callback_is_marshalled_to_the_peer",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "path": "services/src/platform_api_proxy.cpp",
+        "sha256": "8fc23c916124bf3dd817fcd7d5d0f19f4b346bdf4855928d58250ec5a6c28a60",
+        "line": 47,
+        "evidence": "data.WriteRemoteObject(cb->AsObject());",
+        "establishes": "the proxy writes the callback object into a Parcel, so the peer receives a usable remote handle to this stub and can send transactions to it",
+        "does_not_establish": "whether that peer forwards the handle onward, which is the scenario the missing interface-descriptor check would otherwise constrain"
+      }
+    ]
+  },
   "cases": [
     {"id": "no_token", "args": ["notoken"], "role": "attack",
      "expect": {"vulnerable": "trigger", "fixed": "no_trigger"},

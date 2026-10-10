@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 
 from src.ohscanner.poc import states, sources
+from src.ohscanner.poc.reachability import render_markdown as render_reachability
 from src.ohscanner.poc.runner import classify_case, parse_signals
 from src.ohscanner.poc.sources import PinnedFile, SourceMismatch, SourceUnavailable, materialize
 
@@ -155,6 +156,60 @@ class ManifestTests(unittest.TestCase):
     def test_limitations_state_that_reachability_is_not_established(self):
         joined = " ".join(self.manifest["known_limitations"]).lower()
         self.assertIn("reachability", joined)
+
+
+@unittest.skipUnless(PAIR_GIT.is_dir(), "the pinned source store is required")
+class ReachabilityEvidenceTests(unittest.TestCase):
+    """Reachability relations must be digest- and line-verified, not trusted."""
+
+    def setUp(self):
+        self.manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        self.entry = self.manifest["reachability"]
+
+    def test_the_harness_declares_a_partial_reachability_block(self):
+        self.assertEqual(self.entry["status"], "partial")
+        self.assertTrue(self.entry["relations"])
+        for relation in self.entry["relations"]:
+            with self.subTest(kind=relation["kind"]):
+                self.assertTrue(relation["establishes"])
+                # Every relation must name what it does NOT establish, so the
+                # remaining gap cannot be implied away.
+                self.assertTrue(relation["does_not_establish"])
+
+    def test_verification_checks_the_digest_and_the_quoted_line(self):
+        from src.ohscanner.poc.reachability import verify
+        evidence = verify(self.entry, PAIR_GIT)
+        self.assertEqual(evidence.status, "partial")
+        self.assertEqual(len(evidence.relations), len(self.entry["relations"]))
+        for relation in evidence.relations:
+            self.assertEqual(len(relation.commit), 40)
+            self.assertEqual(len(relation.sha256), 64)
+            self.assertTrue(relation.evidence)
+
+    def test_no_block_means_no_claim(self):
+        from src.ohscanner.poc.reachability import verify
+        self.assertIsNone(verify(None, PAIR_GIT))
+
+    def test_a_moved_quote_fails_instead_of_describing_other_code(self):
+        from src.ohscanner.poc.reachability import ReachabilityQuoteMismatch, verify
+        broken = json.loads(json.dumps(self.entry))
+        broken["relations"][0]["line"] = broken["relations"][0]["line"] + 40
+        with self.assertRaises(ReachabilityQuoteMismatch):
+            verify(broken, PAIR_GIT)
+
+    def test_a_changed_digest_fails(self):
+        from src.ohscanner.poc.sources import SourceMismatch
+        from src.ohscanner.poc.reachability import verify
+        broken = json.loads(json.dumps(self.entry))
+        broken["relations"][0]["sha256"] = "0" * 64
+        with self.assertRaises(SourceMismatch):
+            verify(broken, PAIR_GIT)
+
+    def test_the_rendered_record_states_what_is_not_established(self):
+        from src.ohscanner.poc.reachability import verify
+        rendered = render_reachability(verify(self.entry, PAIR_GIT))
+        self.assertIn("没有证明", rendered)
+        self.assertIn("partial", rendered)
 
 
 @unittest.skipUnless(shutil.which("clang++") and PAIR_GIT.is_dir() and CUTILS.is_dir(),
