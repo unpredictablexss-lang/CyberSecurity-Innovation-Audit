@@ -7,9 +7,9 @@
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
 > 更新日期：2026-10-10（政策对齐赛题交付；旧阶段实测记录仍保留原日期）
-> 当前分支：`feat/ohscanner-core`（独立开发分支；main 不变）  
+> 当前分支：`codex/teammate-a-shared-ptr-race-migration`（用于 `main` 合并技术审查的 merge candidate；尚未推送）
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：历史基线已合并；OHScanner Core M0 Mock + M1 固定 Git 对象源码索引已在 PR #5 开发分支实现。真实漏洞算法、真实 c_utils Ubuntu 试跑及真实产品构建上下文仍未完成。
+> 当前阶段：origin/main 的真实组件性能基线已合入 merge candidate；OHScanner Core M0-M2、shared_ptr race 候选检测器及来源/证据校验已进入同一候选。远端 CI 与负责人合并授权仍待完成。
 > 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
 
 ---
@@ -171,7 +171,10 @@ Precision / Recall           —— 随标注样本积累持续计算并报告�
 CWE/CVE 映射                 —— 每个发现标注 CWE；有公开编号的映射 CVE，新发现走 OH 漏洞披露流程
 影响范围                     —— 受影响模块 + 版本/分支 + 漏洞/修复 commit 边界
 修复建议                     —— 具名补丁或 diff，附 guard/effect 关系理由
-性能数据                     —— 真实组件上的扫描耗时与规模
+性能数据                     —— ✅ 已完成首轮实测：11 个真实组件 / 9,508 源文件 / 261.8 万行，
+                                累计 113.6 s，单进程峰值 RSS 上界 265.7 MB
+                                （`docs/testing/ohscanner_performance_scale.md`；语料清单与复跑脚本同目录）
+                                注：复跑需要 `ohscan-run`，该命令位于本 merge candidate，需与核心一起合入 main
 漏洞报告                     —— src/report/vulnerability_report.py 产出
 ```
 

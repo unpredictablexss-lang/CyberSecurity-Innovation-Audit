@@ -21,7 +21,7 @@
 | 4 | 影响范围（模块 + 版本分支） | 分支影响准确性 | 部分（仅固定 commit 对） | `src/report/`、跨版本 manifest 扫描 | 跨 tag/manifest 扫描同一根因，输出受影响版本区间与漏洞/修复 commit 边界 |
 | 5 | 修复建议/补丁 | 修复建议质量 | 空白 | `src/report/`、patch pattern 库 | 从 12+ 组历史修复对提炼 patch pattern，对新发现输出 diff 建议与理由 |
 | 6 | 漏洞分析报告 | 完整性 | 只有 benchmark 汇总（非漏洞报告） | **新增** `src/report/vulnerability_report.py` | 渲染 confirmed 发现为赛题格式报告 |
-| 7 | 性能数据 | 工具性能 | 空白（大库未测） | `src/benchmark/` | 性能基准脚本 + 真实 OpenHarmony 组件跑（文件/LOC/墙钟/峰值 RSS） |
+| 7 | 性能数据 | 工具性能 | ✅ **已完成首轮实测（2026-10-10）** | `scripts/perf_scale_scan.py` + `benchmarks/perf_scale_corpus_2026-10-10.json` | 11 个真实组件 / 9,508 源文件 / 261.8 万行，累计 113.6 s，峰值 RSS 上界 265.7 MB，84 files/s。报告 `docs/testing/ohscanner_performance_scale.md`。后续可补：并行/增量、整树（千万行）规模 |
 
 ## 2. PoC 与动态验证（交付件 #3，最高优先级缺口）
 
