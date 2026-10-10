@@ -7,9 +7,9 @@
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
 > 更新日期：2026-10-10（政策对齐赛题交付；旧阶段实测记录仍保留原日期）
-> 当前分支：`feat/ohscanner-core`（独立开发分支；main 不变）  
-> PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：历史基线已合并；OHScanner Core M0 Mock + M1 固定 Git 对象源码索引已在 PR #5 开发分支实现。真实漏洞算法、真实 c_utils Ubuntu 试跑及真实产品构建上下文仍未完成。
+> 工作分支：`feat/interface-ipc-detector`（接口/IPC 专项线，源自 `feat/ohscanner-core` 的 `830ef56`；原分支名 `feat/oh-a-interface-detectors`）
+> PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）
+> 当前阶段：接口/IPC 检测线已实现 v0.1（六家族有界析取解释器 + 12 组 S2 历史修复对 + 四工具对照 + 218 项回归，见 `docs/research/ipc_scanner_v0_1_2026-10-10.md`）。真实漏洞算法、真实 c_utils Ubuntu 试跑及真实产品构建上下文仍未完成；PoC/动态验证/漏洞报告等待补交付。
 > 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
 
 ---
@@ -405,6 +405,6 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 负责人新增**项目级正式规范**：优先研究、展示有可达安全边界与具体危害的真实高价值漏洞（越权/权限提升、敏感泄露、代码执行、可触发内存安全与严重可用性问题等）；不以工具告警条数或单纯代码设计提醒代替漏洞发现。
 - 对低价值的版本/普通公开资源/占位配置或未证实安全后果的提示，只保留研究级 `informational/candidate`；如果有证据形成实际攻击链，则重新评估。Web 示例仅用于说明危害严重性，**不代表 OpenHarmony 项目漏洞类别被限定为 Web**。
 - 优先对照可靠的历史公开漏洞、真实修复补丁、修复前后和相似安全对照，寻找 OpenHarmony 同根因漏洞及变体；不把历史相似性、CVE 名称或 AI 猜想当作现行组件可利用证明，也不排除尚无 CVE 的新漏洞。
-- 对可提交或可展示的实际漏洞结论，要求目标固定 commit、攻击前提、可达输入/权限边界、Guard/敏感操作、现实后果与可复核证据；缺失部分必须按 `EvidenceObligation` / `candidate` / `unknown` 处理，不得擅自升级确认状态。
+- 对可提交或可展示的实际漏洞结论，要求目标固定 commit、攻击前提、可达输入/权限边界、Guard/敏感操作、现实后果与可复核证据；缺失部分必须按 `EvidenceObligation` / `candidate` / `unknown` 处理。证据补齐到满足 Evidence gate 时**应当**升级为 `confirmed` / `reportable` 并记录证据等级（2026-10-10 政策，见 `AGENTS.md`）。
 - 修改范围：`docs/strategy/ohscanner_three_track_master_plan.md` §0.1、`AGENTS.md`、`README.md` 和 `docs/strategy/vulnerability_corpus_bakeoff_protocol.md`。**只有文档与开发约束发生改变，未新增检测算法、告警分级代码或已确认漏洞；任何功能落地都需后续独立代码和测试。**
 - 当前仍位于 `feat/ohscanner-core` / Draft PR #5；`main` 未合并，相关 CI 以最终当前提交最新记录为准。

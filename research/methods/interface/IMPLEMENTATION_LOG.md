@@ -1,4 +1,5 @@
 # IPC v0.1 执行记录
+> **政策更新 2026-10-10**：本文为历史记录（记录某时点实际做了什么），事实性内容保留原样。文中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**；当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物。
 
 基底：2026-10-10 fetch，B 分支 dcd9629 快进至 origin/feat/ohscanner-core 3b437e4；未改队长工作树、未推送。
 

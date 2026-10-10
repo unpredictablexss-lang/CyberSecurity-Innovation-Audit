@@ -1,0 +1,782 @@
+{
+  "schema_version": 1,
+  "collected_on": "2026-10-09",
+  "timezone": "Asia/Shanghai",
+  "purpose": "Interface-track S0 seed index; not an executable historical benchmark manifest",
+  "selection_policy": "Purposive official advisory selection for authorization and path/file research; not an exhaustive corpus",
+  "record_count": 17,
+  "independent_root_cause_count": null,
+  "s2_verified_count": 0,
+  "s3_verified_count": 0,
+  "validated_vulnerability": 0,
+  "records": [
+    {
+      "sample_id": "cve-2022-38081",
+      "cve_ids": [
+        "CVE-2022-38081"
+      ],
+      "component_as_advised": "security_access_token",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "tokensync 调用者权限边界；保留公告中的前置权限条件",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2022/2022-09.md",
+      "advisory_line": 8,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2022/2022-09.md#L8",
+      "advisory_blob_sha256": "c8c7a13a0c743118878dc75f8341b0f230b8afa19a6f8e386c0b3d630375137c",
+      "advisory_row_sha256": "4b5ee533ae904e198fd5ef5df310eb934c18c96ad1ef9f1e730c8f8e495a0446",
+      "advisory_date_text": {
+        "发布于": "2022.9.6",
+        "最后更新于": "2022.10.27"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/security_access_token/pulls/397"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2022-38064",
+      "cve_ids": [
+        "CVE-2022-38064"
+      ],
+      "component_as_advised": "windowmanager",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "窗口管理服务调用者授权",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2022/2022-09.md",
+      "advisory_line": 10,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2022/2022-09.md#L10",
+      "advisory_blob_sha256": "c8c7a13a0c743118878dc75f8341b0f230b8afa19a6f8e386c0b3d630375137c",
+      "advisory_row_sha256": "c76960651397ef759f669312c2a9c7f97125c0f3c2dcff69e1ec1fe4bdc5a6c1",
+      "advisory_date_text": {
+        "发布于": "2022.9.6",
+        "最后更新于": "2022.10.27"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/window_window_manager/pulls/1480"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2022-38700",
+      "cve_ids": [
+        "CVE-2022-38700"
+      ],
+      "component_as_advised": "multimedia_camera_framework",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "相机服务调用授权",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2022/2022-09.md",
+      "advisory_line": 11,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2022/2022-09.md#L11",
+      "advisory_blob_sha256": "c8c7a13a0c743118878dc75f8341b0f230b8afa19a6f8e386c0b3d630375137c",
+      "advisory_row_sha256": "820a9635a9b333f14da91d45e602ef06a20d885165bdc72ba0525a1c6dda0d85",
+      "advisory_date_text": {
+        "发布于": "2022.9.6",
+        "最后更新于": "2022.10.27"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/multimedia_camera_framework/pulls/247"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2022-42488",
+      "cve_ids": [
+        "CVE-2022-42488"
+      ],
+      "component_as_advised": "startup_init_lite",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "param 服务缺少权限检查",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2022/2022-10.md",
+      "advisory_line": 7,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2022/2022-10.md#L7",
+      "advisory_blob_sha256": "fac1ef6de54809b6d6784c244458dfc9b5eff296e3572e5972aa00889e4af716",
+      "advisory_row_sha256": "aa0f7fb5a8d9b18ff00e1d76a3d0da1114a0f1b8a0a10d61da9b6d5838014d25",
+      "advisory_date_text": {
+        "发布于": "2022.10.11",
+        "最后更新于": "2022.10.11"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/startup_init_lite/pulls/1104",
+        "https://gitee.com/openharmony/startup_init_lite/pulls/1074"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2024-21816",
+      "cve_ids": [
+        "CVE-2024-21816"
+      ],
+      "component_as_advised": "resourceschedule_background_task_mgr",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "后台任务服务授权及数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2024/2024-03.md",
+      "advisory_line": 10,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2024/2024-03.md#L10",
+      "advisory_blob_sha256": "0e1e4e9a54ae56e8c733f41acc91109cb6b5fc724ba9c4a943f395d79fae8cfa",
+      "advisory_row_sha256": "0893d493f91d8151342e78e3b16836e7c5382235a3572afd8b991ba93beab723",
+      "advisory_date_text": {
+        "发布于": "2024.03.04",
+        "最后更新于": "2024.03.04"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/resourceschedule_background_task_mgr/pulls/470"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2024-38382",
+      "cve_ids": [
+        "CVE-2024-38382"
+      ],
+      "component_as_advised": "ability_ability_runtime",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "能力服务授权及数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2024/2024-09.md",
+      "advisory_line": 13,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2024/2024-09.md#L13",
+      "advisory_blob_sha256": "24b0e894a3dc8cb4b5a3913c3fe0e51c816127161a701b36c309913e57ea1d6b",
+      "advisory_row_sha256": "be8e85c7e076fac6c5059d478a186f349ea78b0991fc605f8f8c8a5b020f3121",
+      "advisory_date_text": {
+        "发布于": "2024.09.02",
+        "最后更新于": "2024.09.02"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/ability_ability_runtime/pulls/7767"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2024-39612",
+      "cve_ids": [
+        "CVE-2024-39612"
+      ],
+      "component_as_advised": "resourceschedule_background_task_mgr",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "后台任务服务授权；与 CVE-2024-21816 的补丁入口重合，待去重",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2024/2024-09.md",
+      "advisory_line": 14,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2024/2024-09.md#L14",
+      "advisory_blob_sha256": "24b0e894a3dc8cb4b5a3913c3fe0e51c816127161a701b36c309913e57ea1d6b",
+      "advisory_row_sha256": "934f8048835c70faf9aa8a5bb470c70ff020057e99960e7d474b6c28316b6823",
+      "advisory_date_text": {
+        "发布于": "2024.09.02",
+        "最后更新于": "2024.09.02"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/resourceschedule_background_task_mgr/pulls/470"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2024-39775",
+      "cve_ids": [
+        "CVE-2024-39775"
+      ],
+      "component_as_advised": "communication_netmanager_base",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "网络管理授权及信息访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2024/2024-09.md",
+      "advisory_line": 11,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2024/2024-09.md#L11",
+      "advisory_blob_sha256": "24b0e894a3dc8cb4b5a3913c3fe0e51c816127161a701b36c309913e57ea1d6b",
+      "advisory_row_sha256": "8bdb7109650b9a7332eabe607ff6e1709c24fac79fc879bd34de9ba98e635610",
+      "advisory_date_text": {
+        "发布于": "2024.09.02",
+        "最后更新于": "2024.09.02"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/communication_netmanager_base/pulls/2404",
+        "https://gitee.com/openharmony/communication_netmanager_base/pulls/2403"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2024-12082",
+      "cve_ids": [
+        "CVE-2024-12082"
+      ],
+      "component_as_advised": "ability_ability_runtime",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "能力服务授权及数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2024/2024-12.md",
+      "advisory_line": 44,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2024/2024-12.md#L44",
+      "advisory_blob_sha256": "a08e25c013ba3c5864d98becced01743525a2c30d930ab7c0e8c7c1fd09ea483",
+      "advisory_row_sha256": "d9aed48dc8d5441479708062d51c2566d07ec18a0a281d2a5d759f298f0f5ae0",
+      "advisory_date_text": {
+        "发布于": "2024.12.03",
+        "最后更新于": "2024.12.03"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/ability_ability_runtime/pulls/7776"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2025-26691",
+      "cve_ids": [
+        "CVE-2025-26691"
+      ],
+      "component_as_advised": "telephony_call_manager",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "电话服务授权及敏感数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2025/2025-06.md",
+      "advisory_line": 18,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2025/2025-06.md#L18",
+      "advisory_blob_sha256": "618bd902a93f12702e3b0c92599a17e914352a13c781b2e1caa914050fedb45e",
+      "advisory_row_sha256": "7fb8905e115adb198a0dbaa46609db85abc5ebd3efd2842990244ee1453b4ecc",
+      "advisory_date_text": {
+        "发布于": "2025.06.03",
+        "最后更新于": "2025.06.03"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/telephony_call_manager/pulls/2071"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2025-26693",
+      "cve_ids": [
+        "CVE-2025-26693"
+      ],
+      "component_as_advised": "security_access_token",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "AccessToken 服务授权及敏感数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2025/2025-06.md",
+      "advisory_line": 19,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2025/2025-06.md#L19",
+      "advisory_blob_sha256": "618bd902a93f12702e3b0c92599a17e914352a13c781b2e1caa914050fedb45e",
+      "advisory_row_sha256": "54030144cd8a11d395922e7ff72a571081c0a31d491c75592b13a4e005743512",
+      "advisory_date_text": {
+        "发布于": "2025.06.03",
+        "最后更新于": "2025.06.03"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/security_access_token/pulls/2962"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2025-27563",
+      "cve_ids": [
+        "CVE-2025-27563"
+      ],
+      "component_as_advised": "security_access_token",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "AccessToken 服务授权及敏感数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2025/2025-06.md",
+      "advisory_line": 20,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2025/2025-06.md#L20",
+      "advisory_blob_sha256": "618bd902a93f12702e3b0c92599a17e914352a13c781b2e1caa914050fedb45e",
+      "advisory_row_sha256": "1b5bb799ceec24eaeb28026b874a14f4216a78dc4b733491f94ee0453b2c0c36",
+      "advisory_date_text": {
+        "发布于": "2025.06.03",
+        "最后更新于": "2025.06.03"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/security_access_token/pulls/3203"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2025-27247",
+      "cve_ids": [
+        "CVE-2025-27247"
+      ],
+      "component_as_advised": "distributeddatamgr_pasteboard",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "剪贴板服务授权及敏感数据访问",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2025/2025-06.md",
+      "advisory_line": 22,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2025/2025-06.md#L22",
+      "advisory_blob_sha256": "618bd902a93f12702e3b0c92599a17e914352a13c781b2e1caa914050fedb45e",
+      "advisory_row_sha256": "7b5d69a3019d3b1d065e488b8002861dec7beb15d955ea1a2888ad807a821147",
+      "advisory_date_text": {
+        "发布于": "2025.06.03",
+        "最后更新于": "2025.06.03"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/distributeddatamgr_pasteboard/pulls/1106"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2025-6969",
+      "cve_ids": [
+        "CVE-2025-6969"
+      ],
+      "component_as_advised": "ability_ability_runtime",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "能力服务权限绕过；公告影响为 DoS",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2025/2025-09.md",
+      "advisory_line": 10,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2025/2025-09.md#L10",
+      "advisory_blob_sha256": "9b7e0050ae23e835be1f8d058c033b4f2175fc8ad8b9a46cc6d0e78b66783c41",
+      "advisory_row_sha256": "4df60e675ca93428eebab5a9e97d44b4328aa13d4b59db79db93d256109dd544",
+      "advisory_date_text": {
+        "发布于": "2025.09.02",
+        "最后更新于": "2025.09.02"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/ability_ability_runtime/pulls/15369",
+        "https://gitee.com/openharmony/ability_ability_runtime/pulls/15367"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2026-50001",
+      "cve_ids": [
+        "CVE-2026-50001"
+      ],
+      "component_as_advised": "communication_bluetooth",
+      "root_cause_family_candidate": "ipc_authorization",
+      "root_cause_instance_id": null,
+      "summary": "蓝牙服务权限绕过；具体服务仓库迁移待核验",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2026/2026-08.md",
+      "advisory_line": 10,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2026/2026-08.md#L10",
+      "advisory_blob_sha256": "a34d97ff162fb49ed1a3a22a4aa21435d23fbe7929372dda83c69f2e62216803",
+      "advisory_row_sha256": "10b652f133169a3c04368f2144ad454519ca9c6b7cd9f0615669d902d1ab8472",
+      "advisory_date_text": {
+        "发布于": "2026.08.04",
+        "最后更新于": "2026.08.04"
+      },
+      "fix_reference_urls": [
+        "https://gitcode.com/openharmony/communication_bluetooth_service/pull/601"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2022-43451",
+      "cve_ids": [
+        "CVE-2022-43451"
+      ],
+      "component_as_advised": "startup_appspawn",
+      "root_cause_family_candidate": "path_or_file_authorization",
+      "root_cause_instance_id": null,
+      "summary": "appspawn/nwebspawn 路径穿越与沙箱边界",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2022/2022-11.md",
+      "advisory_line": 7,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2022/2022-11.md#L7",
+      "advisory_blob_sha256": "6167edfeef8c0a0c86e8f062a26b39f814a5e8f8491281b3cb543de511feff12",
+      "advisory_row_sha256": "91c0d6f8a7dd0e39a876290f85071b1b0315ce29616c238e882dae6731bc18b8",
+      "advisory_date_text": {
+        "发布于": "2022.11.1",
+        "最后更新于": "2022.11.11"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/startup_appspawn/pulls/361"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    },
+    {
+      "sample_id": "cve-2022-43449",
+      "cve_ids": [
+        "CVE-2022-43449"
+      ],
+      "component_as_advised": "request_request",
+      "root_cause_family_candidate": "path_or_file_authorization",
+      "root_cause_instance_id": null,
+      "summary": "download_server 任意文件读取；路径或授权子根因待核验",
+      "verification_level": "S0",
+      "label_quality": "advisory_only_root_cause_unverified",
+      "advisory_source_repository": "openharmony/security",
+      "advisory_snapshot_commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+      "advisory_path": "zh/security-disclosure/2022/2022-11.md",
+      "advisory_line": 8,
+      "advisory_url": "https://github.com/openharmony/security/blob/ceaf1b4fbe38e46cd18bfcffd7353516bdc34227/zh/security-disclosure/2022/2022-11.md#L8",
+      "advisory_blob_sha256": "6167edfeef8c0a0c86e8f062a26b39f814a5e8f8491281b3cb543de511feff12",
+      "advisory_row_sha256": "778fdf051be664d04812af62c97e8e6d213cbecb99fac70decfd7922812fd09f",
+      "advisory_date_text": {
+        "发布于": "2022.11.1",
+        "最后更新于": "2022.11.11"
+      },
+      "fix_reference_urls": [
+        "https://gitee.com/openharmony/request_request/pulls/207"
+      ],
+      "repository": null,
+      "vulnerable_commit": null,
+      "fixed_commit": null,
+      "affected_files": [],
+      "affected_symbols": [],
+      "cwe_candidates": [],
+      "split": "unassigned_advisory_seen",
+      "benchmark_eligible": false,
+      "runtime_validation": "not_run",
+      "deduplication_status": "pending",
+      "missing_obligations": [
+        "verify_fix_commits_and_affected_snapshot",
+        "review_root_cause_and_policy",
+        "resolve_entry_subject_object_guard_sink",
+        "pin_source_hashes_and_analysis_scope",
+        "deduplicate_events_and_backports",
+        "establish_property_specific_safe_controls"
+      ],
+      "source_license": "Apache-2.0 (security repository); target source licenses not assessed"
+    }
+  ]
+}
