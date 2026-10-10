@@ -9,7 +9,7 @@
 > 更新日期：2026-10-10（政策对齐赛题交付；旧阶段实测记录仍保留原日期）
 > 当前分支：`main`  
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：历史静态 benchmark 基线已合并；下一阶段三线并行自研 OHScanner **处于文档规划状态**，插件运行时与专项检测器尚未实现。
+> 当前阶段：历史静态 benchmark 基线已合并；下一阶段三线并行自研 OHScanner 的 M0–M2 代码在 `feat/ohscanner-core`（PR #5）开发，**尚未并入 `main`**，`main` 上仍无插件运行时与专项检测器。性能与规模基线已先行实测并入本文（见 §8 性能数据）。
 > 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
 
 ---
@@ -171,7 +171,10 @@ Precision / Recall           —— 随标注样本积累持续计算并报告�
 CWE/CVE 映射                 —— 每个发现标注 CWE；有公开编号的映射 CVE，新发现走 OH 漏洞披露流程
 影响范围                     —— 受影响模块 + 版本/分支 + 漏洞/修复 commit 边界
 修复建议                     —— 具名补丁或 diff，附 guard/effect 关系理由
-性能数据                     —— 真实组件上的扫描耗时与规模
+性能数据                     —— ✅ 已完成首轮实测：11 个真实组件 / 9,508 源文件 / 261.8 万行，
+                                累计 113.6 s，单进程峰值 RSS 上界 265.7 MB
+                                （`docs/testing/ohscanner_performance_scale.md`；语料清单与复跑脚本同目录）
+                                注：复跑依赖 `ohscan-run` 子命令，该子命令位于 `feat/ohscanner-core`（PR #5），尚未并入 `main`
 漏洞报告                     —— src/report/vulnerability_report.py 产出
 ```
 
