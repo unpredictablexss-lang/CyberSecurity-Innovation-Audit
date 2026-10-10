@@ -408,3 +408,26 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 对可提交或可展示的实际漏洞结论，要求目标固定 commit、攻击前提、可达输入/权限边界、Guard/敏感操作、现实后果与可复核证据；缺失部分必须按 `EvidenceObligation` / `candidate` / `unknown` 处理。证据补齐到满足 Evidence gate 时**应当**升级为 `confirmed` / `reportable` 并记录证据等级（2026-10-10 政策，见 `AGENTS.md`）。
 - 修改范围：`docs/strategy/ohscanner_three_track_master_plan.md` §0.1、`AGENTS.md`、`README.md` 和 `docs/strategy/vulnerability_corpus_bakeoff_protocol.md`。**只有文档与开发约束发生改变，未新增检测算法、告警分级代码或已确认漏洞；任何功能落地都需后续独立代码和测试。**
 - 当前仍位于 `feat/ohscanner-core` / Draft PR #5；`main` 未合并，相关 CI 以最终当前提交最新记录为准。
+
+
+## 22. 2026-10-10 接口线 v0.2：源码派生的入口/分发索引（实测）
+
+- **动机（实测量出的短板）**：v0.1 的入口发现是硬编码名字白名单（`OnRemoteRequest` / `OnRemoteMessageRequest` / `*Inner` in `*Stub` / `models.py::service_entries`）。在 10 个真实组件的生产代码上，它只立起 **109** 个入口 root；其中 `*Inner` 命名假设在全语料几乎为空集。
+- **改动**：新增 `src/ohscanner/detectors/interface/entry_index.py`；修改 `analysis.py`（入口来源、跨文件 handler root、受限服务委托边、私有语法规范化）与 `detector.py`（证据档与 `dispatch_binding` 义务）。**未改** `contracts.py` / `runner.py` / `execution.py` / `catalog.py` / `frontend.py` / `facts.py` / `parser/ast.py`，未新增 CLI，无公共 schema 变更。
+- **入口发现**：按签名识别 dispatcher（含 `IPCObjectStub::SendRequest`——类名不含 `Stub`、函数名不叫 `OnRemoteRequest`，名字口径必然漏）；从成员函数指针表（构造函数内初始化）、`switch(code)`、`if (code==)` 恢复 code→handler 绑定；handler 可跨文件立为 root；服务委托边仅走**源码可证**的 `GetInstance()` 接收者且要求唯一定义。证据分档：`source_dispatch` / `source_dispatch_case_call` / `virtual_override` / `declaration_shape` / `unresolved_handler`；歧义与未解析事务一律显式记录，不猜。
+- **实测（`perf-corpus` 10 组件生产代码，5,270 文件；提交号与数据集 §3 锚点逐字符一致）**：dispatcher **135**（旧名字口径 70），分发绑定 **592**，源码分发 root **690**（旧谓词 **109**），未解析事务 **72**。报告 `docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`，脚本 `research/experiments/interface/ipc/measure_entry_coverage.py`。
+- **历史 S2 修复对（按历史修订建索引，验收口径）**：58 条「样本×修订」记录中**未触达 0**，其中**源码派生 33**、**仅靠硬编码白名单 25**（43%）——即历史样本覆盖率有近一半靠手写名字支撑，且 `TraceServerReceieve` 等条目在现行代码里已不存在。**不把「触达」写成可利用性结论。**
+- **端到端候选增量**：`update_updateservice` 0→2、`communication_ipc` 18→25、`telephony_call_manager` 2→3；`security_access_token` / `multimedia_camera_framework` 持平；`notification_common_event_service` 因组件内无 dispatcher 源码（IDL 生成）仍为 0。增量主要集中在「能看见」，不在「多报」。
+- **顺带修掉的真缺陷**：① `required_facts=()` 使一个 `.ts` 声明文件令整组件 `blocked` 且 findings 为空（真实组件因此**从未**产出候选）；② `ENGINE_CHECK(cond, return ret, …)` 的宏实参含 `return` 导致函数解析失败（等长规范化救回 2662 个 partial 中的 281 个）；③ `(this->*(iter->second))(...)` 无法解析，连旧谓词都立不起 `UpdateServiceStub::OnRemoteRequest`（旧谓词 root 1→2）；④ `_ALIAS_PATTERNS` 的 `^::?` 锚定错误使对象宏别名表恒为空。
+- **仍未做到**：3/10 组件的 dispatcher 是 IDL 生成物、不在仓库内；`multimedia_player_framework` 62 条事务码来自语料外枚举；成员函数指针目标无法从 AST 恢复（靠字节级 `->*` 确认）；无宏展开/重载解析/虚调用证明；服务委托边唯一绑定数百处但候选增量为 0。**本报告分母是入口数，不是漏洞数，不能反推召回率。**
+- **回归**：`python -m unittest discover -s tests` **236 项 OK**（218 既有 + 18 新增 `tests/test_ipc_entry_index.py`）。本轮改动**未推送**，等负责人授权。
+
+
+## 23. 2026-10-10 P0：PoC 模块与首个端到端触发（接口线）
+
+- **交付件 #3 从空白到打通**。新模块 `src/ohscanner/poc/`：`states.py`（生命周期状态机 + 重放标签 + 证据阶梯）、`sources.py`（从本地 git 对象库按固定提交物化组件源码并逐文件校验 SHA-256）、`runner.py`（隔离构建/运行/判定/稳定性重放/环境指纹）、`records.py`（机器可读记录 + Markdown）、`harnesses/<family>/`（家族模板 + `manifest.json`）。驱动：`research/experiments/interface/poc/run_poc.py`。**未新增 CLI、未新增 Finding 类型、未改公共契约**——符合契约要求「PoC 由独立模块承载，不在检测器单次静态执行里完成」。执行范围仅限本地隔离临时构建目录，不触碰线上服务。
+- **首个端到端触发：AUTH-01 SA 中继 / `cve-2023-0036`**（`openharmony/inputmethod_imf` PR !228，漏洞 `e663b470` → 修复 `5eaddcab`，S2）。两个修订的 `platform_callback_stub.cpp` **逐字节原样编译**，`Parcel` 用 **c_utils 真实实现**。结果：**不带任何接口 token 时，漏洞版 `messages_sent=1`（`msgId=5` MSG_ID_USER_LOCK、`userId=4242` 发送方自选），修复版 `ret=-74` 拒绝**；正确 token 的正对照在修复版仍正常投递（证明不是一律拒绝）。**状态 `stable_reproduced`（重放 3/3），证据 `stable_reproduced`。**
+- **首个负结果：DATA-01 / `cve-2024-0285`**（`HitraceInvoker::TraceServerReceieve`）。用真实 `Parcel` 编译漏洞版与修复版，ASan+UBSan 扫 7×4 组输入 → **零 sanitizer 故障**：当代 `Parcel::RewindRead`/`SetDataSize` 会拒绝下溢位置，`MessageParcel` 未覆写这两个方法。漏洞版与修复版唯一差异是**返回值翻转**，`dataSize` 不被破坏。**该历史修复对在当前基线下已不可复现为内存安全缺陷**，不能作为 PoC 交付件——这条已写入测试文档，避免重复投入。
+- **明确没有证明**：远端可达性（harness 直接调用 stub，仍是 `EvidenceObligation`）、影响范围（未跨版本扫描）、修复建议与「修复后原 PoC 失败」闭环（修复版能拒绝来自**上游既有补丁**，不是本模块产出的补丁）。故 `validated_vulnerability = 0`。
+- **数据一致性问题（需队伍核对）**：`ipc-research/pairs/cve-2023-0036/lineage.json` 标 `verification_level: S1`，而 `research/corpus/interface/ipc/verified_pairs.jsonl` 标 `S2 / patch_root_cause_review`。
+- **测试**：`python -m unittest discover -s tests` → **255 项 OK**（218 既有 + 18 入口索引 + 19 PoC，其中 2 项为真编译真运行的集成测试）。文档：`docs/testing/ipc_poc_auth01_descriptor_bypass.md`；harness 桩清单与来源：`src/ohscanner/poc/harnesses/auth01_descriptor_bypass/README.md`。本轮改动**未推送**，等负责人授权。
