@@ -129,6 +129,10 @@ class DetectorRun:
     analyzed_files: Tuple[str, ...] = ()
     findings: Tuple[DetectorFinding, ...] = ()
     limitations: Tuple[str, ...] = ()
+    # Optional per-file adapter metadata. A blocked run may still contain
+    # completed files and tentative candidates from partially analyzed files.
+    # Never reinterpret these as a fully completed ToolRunResult v1 scope.
+    file_outcomes: Tuple[Tuple[str, str], ...] = ()
 
     def __post_init__(self):
         if self.status not in ("completed", "failed", "blocked"):
@@ -139,6 +143,14 @@ class DetectorRun:
             raise ValueError("duplicate analyzed file")
         for path in self.analyzed_files:
             safe_relative_path(path)
+        seen = set()
+        for path, outcome in self.file_outcomes:
+            safe_relative_path(path)
+            if path in seen or outcome not in ("complete", "partial", "not_analyzed", "failed"):
+                raise ValueError("invalid or duplicate detector per-file outcome")
+            seen.add(path)
+        if self.status == "completed" and any(s != "complete" for _, s in self.file_outcomes):
+            raise ValueError("completed run cannot contain incomplete per-file outcomes")
 
 
 class Detector(Protocol):

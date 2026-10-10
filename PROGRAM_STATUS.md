@@ -408,3 +408,13 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 对可提交或可展示的实际漏洞结论，要求目标固定 commit、攻击前提、可达输入/权限边界、Guard/敏感操作、现实后果与可复核证据；缺失部分必须按 `EvidenceObligation` / `candidate` / `unknown` 处理，不得擅自升级确认状态。
 - 修改范围：`docs/strategy/ohscanner_three_track_master_plan.md` §0.1、`AGENTS.md`、`README.md` 和 `docs/strategy/vulnerability_corpus_bakeoff_protocol.md`。**只有文档与开发约束发生改变，未新增检测算法、告警分级代码或已确认漏洞；任何功能落地都需后续独立代码和测试。**
 - 当前仍位于 `feat/ohscanner-core` / Draft PR #5；`main` 未合并，相关 CI 以最终当前提交最新记录为准。
+
+
+## 22. 2026-10-11 M2-A 两个 C++ 自研候选检测器集成（提交前状态）
+
+- **范围**：把队友 A 整合分支 `40c2c66e` 的 `lifetime_detector.py` 与 `shared_ptr_race_detector.py` 及合成开发样例原样迁入核心 Catalog；适配层提供固定 Git 输入、M1.5 资格检查、文件级执行状态、证据义务和 JSON/Markdown。
+- 原始规则逻辑不改：`unique_ptr/raw alias/reset` 候选和 `shared_ptr` 非原子成员访问候选。前者对应待核实 CWE-416，后者首先是 CWE-362 候选；二者均不是确认漏洞。
+- `DetectorRun.file_outcomes` 为向后兼容的可选文件级元数据；旧 `ToolRunResult v1` 不改。对 `blocked` 的局部已完成文件、部分检查和候选证据在 Sidecar 分别存储，不能把未完整检查当成安全。
+- 新增 `tests/test_ohscanner_m2_a_integration.py` 的本地固定 Git 正负样例、跨文件 partial、工作区漂移和 Catalog 回归；旧 A 原算法测试一并携带。**CI / Ubuntu 真组件复测尚待执行**，不得提前宣布测试通过或漏洞命中。
+- 独立 holdout、当前组件攻击可达性、完整产品构建、PoC/TSan 自动关联、影响版本、修复重验和报告均不属于本次完成项。
+- 文档：`docs/testing/ohscanner_m2_a_integration.md`。PR #5 保持 Draft，不合并 main。
