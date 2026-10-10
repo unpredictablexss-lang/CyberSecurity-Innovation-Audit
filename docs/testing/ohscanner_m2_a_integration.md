@@ -47,3 +47,9 @@ python -m src.cli ohscan-run \
 3. **仍未完成**：独立历史保留集、真实产品 GN/Ninja 构建、C++ 漏洞通用语义解析、自动 PoC、ASan/TSan 与每条候选的联动、影响版本判断、补丁建议和完整比赛报告。它们不是这个 scoped M2 插件集成可宣称的能力。
 4. 独立 holdout 未执行前，不得宣称 Precision/Recall、零误报或零漏报。历史 TSan harness 是独立研究证据，不是此次候选检测自动运行的 PoC。
 5. **代码授权**：只在开发分支与 Draft PR，未经用户授权不合并 main。A 自研方法卡与历史实验留在 A 分支，本 PR 只登记经过审查的算法模块和确定性测试。
+
+## CI 已验证结果
+
+GitHub Actions [Run 38073903714](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38073903714)：Ubuntu CI / Python 3.10，`Ran 250 tests ... OK`。包含原 A 的开发 fixture 单测及新核心端到端对接测试。
+
+**这是合成/临时 Git 的功能回归，不是本地真实 OpenHarmony 组件扫描验收，更不是漏洞检测准确率。** 真实 `c_utils` 请由负责人按照上面 Ubuntu 命令复测，将报告交回进行范围审查。仍缺 A/B 整体 M2、独立 holdout、PoC 和 C-gate。
