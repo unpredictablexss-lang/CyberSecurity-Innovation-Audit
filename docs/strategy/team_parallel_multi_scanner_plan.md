@@ -32,7 +32,7 @@ Semgrep / CodeQL / Clang SA / Cppcheck
 
 两条线最终通过统一数据协议汇合，而不是直接拼接各工具实现。
 
-如果有第三位成员，可以单独承担动态与 Web/API/IPC 攻击面研究；但当前 historical-vuln-benchmark 分支的本轮工作只推进静态工具 benchmark 与结果归一化，不扩展漏洞触发或 PoC。
+如果有第三位成员，可以单独承担动态与 Web/API/IPC 攻击面研究。`historical-vuln-benchmark` 分支的本轮工作聚焦静态工具 benchmark 与结果归一化；漏洞触发、PoC 与动态验证作为**赛题必须交付**（2026-10-10 起），由后续接口/IPC 线与独立 PoC 模块承载，见 `AGENTS.md`。
 
 ## 2. 当前项目基线
 
@@ -194,7 +194,7 @@ reportable
 
 ### 4.5 RuntimeEvidence
 
-动态证据与静态 Candidate 分离存储。当前分支不会新增漏洞触发或 PoC 实现；这里只保留接口边界。
+动态证据与静态 Candidate 分离存储。本分支当前只定义接口边界；漏洞触发与 PoC 实现作为赛题交付由 `src/ohscanner/poc/` 与动态验证模块承载（见 `AGENTS.md`）。
 
 ### 4.6 VulnerabilityCase
 
@@ -389,6 +389,8 @@ Adapter 不负责：
 - 触发漏洞；
 - 判断 exploitability；
 - 把 warning 升级成 validated vulnerability。
+
+> 以上是 **Adapter 的职责边界**，不是项目边界。PoC 生成、漏洞触发、exploitability 判定与结论升级是本项目**必须的赛题交付**，由独立 PoC 模块 `src/ohscanner/poc/` 与 Review 记录承载，见 `AGENTS.md` 的 Competition deliverables 章节。
 
 主线以后只需要读取统一结果，不需要了解每种原生格式。
 
@@ -596,12 +598,15 @@ Cppcheck Adapter
 
 这些 Adapter 只进行结果格式归一化。
 
-本轮明确不做：
+Adapter / 归一化层不做的只有一件：
 
-- 漏洞触发；
-- PoC；
-- exploitability 自动判定；
-- 运行时攻击链；
 - 以扫描器投票代替漏洞验证。
 
-后续只有在 historical benchmark 与真实 Candidate Review 提供充分证据后，再决定下一层实现。
+下列则是**项目级必须交付**（2026-10-10 政策，见 `AGENTS.md`），由独立模块承载，不在 Adapter 内悄悄完成：
+
+- 漏洞触发与 PoC 生成（`src/ohscanner/poc/`）；
+- exploitability 判定；
+- 运行时攻击链与动态验证（本地隔离环境，ASan/UBSan/TSan）；
+- 结论升级并产出漏洞报告（`src/report/vulnerability_report.py`）。
+
+后续按此政策推进实现，而非等待"足够证据后才决定是否做"。

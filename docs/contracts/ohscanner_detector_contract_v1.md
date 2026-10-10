@@ -141,7 +141,7 @@ class Detector(Protocol):
 
 可选稳定关联键：`SHA256(repo|commit|profile|file|symbol|root_cause_family|normalized_location)`。多个工具警告在同一行不自动等于同一个根因；候选关联需要对象或路径证据。
 
-sidecar 保存 `snapshot_sha256, model_version, detector_id/version, profile_id, analyzed_files, parse_status, artifact_sha256, trace_ref, missing_obligations, review_status, reviewer, input_control, reachability, security_impact, runtime_validation` 等。默认 `runtime_validation=not_run`、`validated_vulnerability=0`，自研 Detector 无权变更为 confirmed/reportable。
+sidecar 保存 `snapshot_sha256, model_version, detector_id/version, profile_id, analyzed_files, parse_status, artifact_sha256, trace_ref, missing_obligations, review_status, reviewer, input_control, reachability, security_impact, runtime_validation` 等。初次产出时 `runtime_validation=not_run`、`validated_vulnerability=0` 只是**默认起点而非上限**：当运行时验证与 `AGENTS.md` 的 Evidence gate 满足时，升级为 `runtime_validation=validated`、`validated_vulnerability>0`，并在记录上写明证据等级（2026-10-10 政策）。升级仍不靠 Detector 自报——由 Review 记录 + 动态证据驱动。
 
 现有 `src/triage/review_store.py`、`src/core/evidence.py` 可以复用，但字段与数据格式不同，需由核心编写桥接和回归测试。
 
@@ -176,6 +176,6 @@ One ScanRequest
 
 ## 8. 权限与验收底线
 
-队友默认本地分支开发、交负责人审查 patch 和固定实验结果；主线负责人控制远端 push、PR 与 merge。Detector 不得写第三方源码、联网进行主动攻击、自动生成 PoC 或提升漏洞状态。每个 PR 包含复现命令、正负对照、覆盖、CI、失败/未知和许可证信息。
+队友默认本地分支开发、交负责人审查 patch 和固定实验结果；主线负责人控制远端 push、PR 与 merge。Detector 不得写第三方源码，也不得对线上真实服务发起主动攻击。PoC 生成与结论升级是本项目**必须的交付能力**，但由独立 PoC 模块（`src/ohscanner/poc/`）与 Review 记录承载，不在 Detector 的单次静态执行里悄悄完成。每个 PR 包含复现命令、正负对照、覆盖、CI、失败/未知和许可证信息。
 
 **本文件是设计契约，而不是现成可运行的实现说明。**

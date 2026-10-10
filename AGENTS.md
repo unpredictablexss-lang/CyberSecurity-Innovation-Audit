@@ -22,8 +22,13 @@ the target system; PROGRAM_STATUS describes implemented capabilities.
   analysis unit is not_applicable. An unexecuted scanner is never a miss.
 - Rule matches and file/symbol overlap remain candidates/possible_hit. Structural
   checks do not prove guard dominance, concurrency, attacker control or impact.
-- Keep candidate/draft/unassessed defaults. Do not promote findings, compute
-  Precision/Recall from this small corpus, or claim zero false positives/negatives.
+- Keep candidate/draft/unassessed as the **default** for fresh, unreviewed output.
+  Promotion is expected work, not a forbidden act: a finding moves candidate ->
+  confirmed -> reportable only by passing the evidence gate below, and the
+  evidence level is recorded on the finding. Compute and report Precision/Recall
+  (and per-subtype recall / safe-fixed false-positive rate) whenever the labelled
+  sample supports it; do not claim zero false positives/negatives without evidence.
+  Never inflate a verdict beyond what the recorded evidence shows.
 - Preserve vendor rule provenance/license. Changes to OH rules need positive,
   fixed and unrelated/safe controls; document known limitations.
 - Keep generated experiment artifacts and third-party source out of commits.
@@ -40,4 +45,47 @@ the target system; PROGRAM_STATUS describes implemented capabilities.
 - New self-built detector contracts are specified in docs/contracts/ohscanner_detector_contract_v1.md; because they are **proposed**, implement M0 fake CPP and interface detectors and CI before calling the contract runnable or frozen.
 - Keep offline multi-tool experiments under research and separate from production self-built detection. Do not copy third-party tool code/rules without license/provenance and originality review.
 - A new detector PR must include pinned positive/fixed/safe examples, independent holdout design, coverage/failed status, method card, a contract-compatible result, deterministic unit tests and reproducible local commands.
-- Interfaces cannot reinterpret `completed` as safe or `possible_hit` as confirmed, or label query-style CodeQL output automatically as dataflow; preserve original build/macro/parse scope.
+- Preserve original build/macro/parse scope: an interface must not reinterpret
+  `completed` as safe, nor automatically relabel query-style CodeQL output as
+  dataflow. Promoting `possible_hit` to confirmed is allowed only through the
+  evidence gate below — never by silently reinterpreting a provider's raw output.
+
+## Competition deliverables — must produce (2026-10-10)
+
+The competition (第五届中国研究生网络安全创新大赛 · 揭榜挑战 · 第一题：OpenHarmony
+开源代码漏洞挖掘) scores nine dimensions: accuracy, completeness, CVE accuracy,
+CWE accuracy, PoC quality, branch/version impact accuracy, remediation quality,
+tool performance, and innovation. Producing the deliverables below is the
+project's goal — earlier constraints that forbade them are **rescinded**.
+
+- **PoC is required.** A confirmed finding must ship a runnable proof-of-concept
+  that triggers under a stated build/environment, plus the command and observed
+  effect. Family-specific PoC templates live under `src/ohscanner/poc/`.
+- **Dynamic validation is required.** In a local, isolated build of the target
+  OpenHarmony component, reproduce the candidate with ASan/UBSan/TSan or an
+  equivalent harness and record the dynamic evidence. The one standing limit:
+  do not attack live/remote production services.
+- **CWE and CVE are deliverables.** Every finding carries a CWE; where a public
+  identifier exists, map to the CVE/advisory. New (unpublished) findings go
+  through the OpenHarmony vulnerability-reward / disclosure process.
+- **Impact scope is a deliverable.** Report affected module, affected
+  versions/branches (scan across tagged manifests), and the vulnerable/fixed
+  commit boundary.
+- **Remediation is a deliverable.** Give a concrete fix — ideally a diff — and
+  justify it from the guard/effect relation, not from a template.
+- **Performance is a deliverable.** Publish scan time and scale on real
+  components (files, LOC, wall-clock) so the tool's cost is demonstrable.
+- **Reports are a deliverable.** Findings render into a vulnerability report
+  (`src/report/vulnerability_report.py`), not only benchmark-style tables.
+
+### Evidence gate (the discipline we KEEP)
+
+Promotion candidate -> confirmed -> reportable requires, at minimum: bound target
+repo + exact commit + scope; an identified entry point with realistic attacker
+control or privilege boundary; the reachable sensitive operation and the guard
+(or its absence); the necessary exploitation conditions; and a concrete
+confidentiality/integrity/availability impact. Unproven assumptions stay in
+EvidenceObligations; AI speculation, a CWE label, or a warning count alone is not
+validation. Misreporting is penalized by the competition, so a finding is only
+promoted as far as its recorded evidence supports. See
+`docs/strategy/competition_deliverables_plan.md`.
