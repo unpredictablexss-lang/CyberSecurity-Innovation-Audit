@@ -419,4 +419,4 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **R2 review verifier 已修复**：`src/ohscanner/detectors/cpp/shared_ptr_race_review.py` 从可信 `ScanContext + DetectorRun + fixture manifest + manifest hash` 重建 expected record，拒绝顶层 evidence class、fixture category、parse_issues、finding analyzed scope、artifact 唯一性和 stale hash 篡改。
 - **负向回归**：错误 origin/commit、内容替换、vulnerable/fixed 调换、伪造 manifest、mixed evidence、清空 analyzed scope、finding 超范围、重复 artifact 均有确定性拒绝测试。
 - **CI/main**：push workflow 已扩展到 `codex/**`、`feat/**`、`experiment/**`；`origin/main` 性能基线已合入当前 merge candidate。全量本地回归 `241/241`、shared-ptr targeted `17/17`、OHScanner targeted `35/35`、`py_compile` 和 `git diff --check` 通过。
-- **边界**：远端最终 head CI、PR 创建、ready 和 merge 尚未执行；holdout 仍为 `designed_not_executed`；shared_ptr finding 仍是 `candidate/unassessed`，不构成 confirmed/reportable 漏洞。
+- **CI**：远端 Run [38043467633](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38043467633) 在 `50c1392` 成功；本次状态文档更新后的最终 head 需重新核验。PR 创建、ready 和 merge 尚未执行；holdout 仍为 `designed_not_executed`；shared_ptr finding 仍是 `candidate/unassessed`，不构成 confirmed/reportable 漏洞。

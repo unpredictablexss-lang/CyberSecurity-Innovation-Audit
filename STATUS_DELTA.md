@@ -11,7 +11,7 @@
 
 ## 仍未完成 / 不得误报
 
-- 远端 CI 尚未在最终 push head 上执行；本地测试不能替代 GitHub Actions。
+- 远端 CI Run `38043467633` 已在 `50c1392` 成功；本次文档更新后的最终 head 仍需重新核验，不能用旧 run 替代。
 - 尚未创建 PR、未标 ready、未合并 main；push、PR 和 merge 仍由项目负责人授权。
 - holdout 仍是 `designed_not_executed`，不得宣称 Precision/Recall、零误报或零漏报。
 - C-gate 尚未闭合：不把候选升级为 confirmed/reportable，不把 TSan harness 观测写成产品攻击链证明。

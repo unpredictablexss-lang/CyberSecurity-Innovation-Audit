@@ -55,9 +55,9 @@ git diff --check
 
 - `origin/main` 已 fetch 到 `1446e49`。
 - `origin/main` 的真实组件性能基线已合入当前 merge candidate；合并冲突只涉及 `AGENTS.md`、`PROGRAM_STATUS.md` 和 `competition_deliverables_plan.md`，已按“保留政策 + 采用最新性能事实”解决。
-- 当前候选相对 `origin/main` 为领先、非落后；最终 merge head 的远端 CI 仍需在 push 后核验。
+- 当前候选相对 `origin/main` 为领先、非落后；远端 CI Run [38043467633](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38043467633) 在 `50c1392` 上成功。本次状态文档更新会产生新 head，仍需对该最终 head 重新核验。
 - 本轮没有创建 PR、没有标 ready、没有合并 main。
 
 ## 结论边界
 
-当前结果证明的是 **M-gate 工程条件在本地闭环**：来源绑定、证据完整性、回归、契约兼容、main 同步和 CI 配置均已补齐。它不证明任何漏洞为 `confirmed/reportable`，也不替代 C-gate 的 PoC、动态验证、CWE/CVE、影响版本、修复重验和漏洞报告。
+当前结果证明的是 **M-gate 工程条件已闭环**：来源绑定、证据完整性、回归、契约兼容、main 同步、CI 配置和一次远端 CI 成功均有证据；最终文档 head 的 CI 以 GitHub Actions 为准。它不证明任何漏洞为 `confirmed/reportable`，也不替代 C-gate 的 PoC、动态验证、CWE/CVE、影响版本、修复重验和漏洞报告。

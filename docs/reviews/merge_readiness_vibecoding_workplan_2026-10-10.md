@@ -22,7 +22,7 @@
 | 空白检查 | `git diff --check` 通过，仅有 LF/CRLF 转换提示 | 仍需最终检查生成物、第三方源码、绝对路径、密钥 |
 | R1 来源绑定 | 已修复：native runner 绑定认可 origin + exact commit/tree/blob + 独立 binding manifest/hash | 本地 M-gate 已闭环 |
 | R2 verifier | 已修复：从可信 context/run/manifest 重建并拒绝类别、范围、parse、artifact、finding 篡改 | 本地 M-gate 已闭环 |
-| CI 触发 | 已扩展 `codex/**`、`feat/**`、`experiment/**` push 触发；PR 到 main 保持触发 | 远端最终 head CI 待 push 后核验 |
+| CI 触发 | 已扩展 `codex/**`、`feat/**`、`experiment/**` push 触发；PR 到 main 保持触发 | Run `38043467633` 已成功；最终文档 head 待复核 |
 | Holdout | `research/methods/cpp/shared_ptr_race_holdout_plan.md` 为 `designed_not_executed` | 不阻塞候选检测器合并；阻塞任何准确率/零误报/零漏报声明 |
 | PoC/动态 | 有历史 harness/记录，但当前交付不能声称本轮复现 | 不阻塞 scoped detector PR；阻塞 C-gate 和 `confirmed/reportable` |
 | CWE/CVE/影响/修复/性能/报告 | 部分或缺失 | 不阻塞 scoped detector PR；阻塞最终比赛交付 |
@@ -63,7 +63,7 @@
 ### M6 授权
 - 只有项目负责人可以决定 push、PR 创建、ready、merge。任务卡完成不等于授权合并。
 
-**M-gate 当前判定：本地技术条件已满足，远端 CI 和负责人 push/PR/merge 授权仍待完成。**
+**M-gate 当前判定：技术条件已满足，远端 CI 已在 `50c1392` 成功；最终文档 head 的 CI 与负责人 PR/merge 授权仍待完成。**
 
 ## 3. C-gate：最终比赛交付门槛
 
