@@ -16,7 +16,7 @@
 | # | 赛题交付件 | 对应评分项 | 现状 | 责任模块 | 补齐路径 |
 |---|---|---|---|---|---|
 | 1 | 工具源代码 | 准确性/完整性/创新性 | 已有：OHScanner core（漏斗 L0–L8）+ IPC 六家族 Detector | `src/ohscanner/` | 继续；补 Web 家族与跨文件边 |
-| 2 | 漏洞描述 + CWE/CVE | CVE/CWE 准确性 | `candidate_cwe` 已有；CVE 映射缺失 | `src/case/`、`src/report/` | 建 CWE→影响 映射表；有公开编号的映射 CVE，新发现走 OH 漏洞披露/奖励流程 |
+| 2 | 漏洞描述 + CWE/CVE | CVE/CWE 准确性 | 🟡 **机制 CWE + 后果维度已有（2026-10-11）**：`candidate_cwe` 表达机制，`consequence_*` 目录表达后果（只给有根据的 CWE：CWE-200/125/668），实测 88 条候选 0 条缺后果；**CVE 映射仍缺失**，后果只能从消息机读 | `src/ohscanner/detectors/interface/models.py`、`src/ohscanner/detectors/interface/detector.py`、`src/case/`、`src/report/` | 契约变更申请已提（`docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`，未实现）；待补：把后果字段落到 schema、有公开编号的映射 CVE，新发现走 OH 漏洞披露/奖励流程 |
 | 3 | **PoC 可执行代码** | PoC 质量 | 🟡 **已打通首条闭环（2026-10-10）**：`src/ohscanner/poc/` + AUTH-01 端到端 PoC（`cve-2023-0036`，漏洞版稳定触发、修复版拒绝、正对照通过） | `src/ohscanner/poc/` | 家族模板已建（AUTH-01）；隔离执行 + 稳定性重放 + 环境指纹已实现。待补：可达性证据、修复建议闭环、其余五个家族模板（见 §6 与 `docs/testing/ipc_poc_auth01_descriptor_bypass.md`） |
 | 4 | 影响范围（模块 + 版本分支） | 分支影响准确性 | 部分（仅固定 commit 对） | `src/report/`、跨版本 manifest 扫描 | 跨 tag/manifest 扫描同一根因，输出受影响版本区间与漏洞/修复 commit 边界 |
 | 5 | 修复建议/补丁 | 修复建议质量 | 空白 | `src/report/`、patch pattern 库 | 从 12+ 组历史修复对提炼 patch pattern，对新发现输出 diff 建议与理由 |

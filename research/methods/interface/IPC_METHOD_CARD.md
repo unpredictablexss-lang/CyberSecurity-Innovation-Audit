@@ -23,6 +23,48 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.3 — consequence dimension (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc`; model `oh-ipc-2026.10-v1` plus a versioned
+  **consequence catalogue** in `models.py`. No public contract, schema or CLI change.
+- **Why a second dimension.** The competition scores CWE accuracy and completeness
+  separately, and a candidate answers two different questions: *how* the trust
+  boundary failed (the mechanism) and *what it can expose* (the consequence). The
+  mechanism CWE alone cannot answer the second, and the second does not follow the
+  family. Of the 39 advisory records in the corpus, **15 name information disclosure
+  or an out-of-bounds read as the official impact**, spread over AUTH-02 (10),
+  DATA-01 (6), AUTH-03 (5) and AUTH-04 (1); **4 of the 12 verified S2 pairs** are in
+  that set.
+- **Classification.** `consequence_for(rule, calls)` promotes a finding to
+  `information_disclosure` when its modelled operation is one of the reviewed
+  read-type APIs (`DISCLOSURE_CALLS`), whatever the mechanism was; otherwise the
+  rule's baseline applies (`boundary_bypass`, `unauthorized_effect`,
+  `restricted_category_access`, `identity_confusion`, `cross_principal_effect`,
+  `out_of_bounds_read`, `capability_exposure`). The call that drove the promotion is
+  recorded, so the classification can be reviewed rather than trusted.
+- **A CWE only where the catalogue can justify one.** `information_disclosure` →
+  CWE-200, `out_of_bounds_read` → CWE-125, `capability_exposure` → CWE-668. The other
+  consequences are named without a number, because their CWE depends on what the path
+  reaches and asserting one would be over-claiming.
+- **The mechanism CWE is unchanged.** `candidate_cwe` still answers *how*; the
+  consequence is a second, different answer carried in the finding message and in a
+  dedicated `consequence` obligation, never a replacement.
+- Measured on production code of ten real components (5,270 files): 88 candidates,
+  **0 without a consequence**; `information_disclosure` appears on **two different
+  rules** (`ipc.auth.missing` 3, `ipc.relay.descriptor-boundary` 2), which is the
+  measured form of "disclosure is not confined to one family".
+  Report: `outputs/reports/consequence_dimension.md` (ignored artifact,
+  regenerate with `research/experiments/interface/ipc/measure_consequences.py`).
+- **A consequence is a possibility, not an established effect.** Calling a read API
+  does not show that anything was returned to an unauthorized caller; only the
+  evidence gate can promote it. The finding stays `candidate/unassessed`.
+- **Known gap, raised as a CCR:** the consequence is only machine-readable through
+  the message text, because `DetectorFinding` has a single CWE field. The measurement
+  treats a candidate with no recoverable consequence as a hard failure rather than
+  silently counting zero. See `docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`.
+
+---
+
 # IPC method card v0.2 — entry discovery (2026-10-10)
 
 - Detector: `ohscanner.interface.ipc` 0.2.0; model unchanged (`oh-ipc-2026.10-v1`). New module:

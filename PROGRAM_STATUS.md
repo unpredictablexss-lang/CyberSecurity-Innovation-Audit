@@ -430,4 +430,14 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **首个负结果：DATA-01 / `cve-2024-0285`**（`HitraceInvoker::TraceServerReceieve`）。用真实 `Parcel` 编译漏洞版与修复版，ASan+UBSan 扫 7×4 组输入 → **零 sanitizer 故障**：当代 `Parcel::RewindRead`/`SetDataSize` 会拒绝下溢位置，`MessageParcel` 未覆写这两个方法。漏洞版与修复版唯一差异是**返回值翻转**，`dataSize` 不被破坏。**该历史修复对在当前基线下已不可复现为内存安全缺陷**，不能作为 PoC 交付件——这条已写入测试文档，避免重复投入。
 - **明确没有证明**：远端可达性（harness 直接调用 stub，仍是 `EvidenceObligation`）、影响范围（未跨版本扫描）、修复建议与「修复后原 PoC 失败」闭环（修复版能拒绝来自**上游既有补丁**，不是本模块产出的补丁）。故 `validated_vulnerability = 0`。
 - **数据一致性问题（需队伍核对）**：`ipc-research/pairs/cve-2023-0036/lineage.json` 标 `verification_level: S1`，而 `research/corpus/interface/ipc/verified_pairs.jsonl` 标 `S2 / patch_root_cause_review`。
-- **测试**：`python -m unittest discover -s tests` → **255 项 OK**（218 既有 + 18 入口索引 + 19 PoC，其中 2 项为真编译真运行的集成测试）。文档：`docs/testing/ipc_poc_auth01_descriptor_bypass.md`；harness 桩清单与来源：`src/ohscanner/poc/harnesses/auth01_descriptor_bypass/README.md`。本轮改动**未推送**，等负责人授权。
+- **测试**：`python -m unittest discover -s tests` → **255 项 OK**（218 既有 + 18 入口索引 + 19 PoC，其中 2 项为真编译真运行的集成测试）。文档：`docs/testing/ipc_poc_auth01_descriptor_bypass.md`；harness 桩清单与来源：`src/ohscanner/poc/harnesses/auth01_descriptor_bypass/README.md`。已推送到 `origin/feat/interface-ipc-detector`（`f9e193b..07bcbb6`）。
+
+## 24. 2026-10-11 接口线：给候选加「后果维度」（信息泄露不属某一个子类）
+
+- **动机（实测）**：赛题把「CWE 准确性」与「完整性」分开计分，而一个候选要回答两个不同问题——**机制**（信任边界怎么失守，现有 `candidate_cwe`）与**后果**（失守后可能暴露什么）。后者不随家族走：39 条公告里 **15 条**官方影响是信息泄露/越界读，分布在 AUTH-02（10）、DATA-01（6）、AUTH-03（5）、AUTH-04（1）；**12 组已核 S2 修复对里有 4 组**属这一类。
+- **改动**：`models.py` 新增版本化的**已审查后果目录**（`DISCLOSURE_CALLS` / `IMPACT_BY_RULE` / `IMPACT_CWE` / `IMPACT_DESCRIPTION`）与 `consequence_for(rule, calls)`；`analysis.py` 的 `Observation` 带 `impact`/`impact_cwe`/`impact_basis`；`detector.py` 把后果写进 message 并新增 `consequence` 义务。**机制 CWE 不变**——后果是第二个、不同的答案，不覆盖机制。**未改公共契约、schema 或 CLI。**
+- **分类规则**：命中已审查的**读类 API** 就把后果提升为 `information_disclosure`（与机制无关）；否则取规则基线。**只有目录能给理由的后果才带 CWE**（CWE-200 / CWE-125 / CWE-668），其余只写后果名——硬编 CWE 属过度声称。驱动分类的调用名一并记录，供复核。
+- **实测（10 个真实组件生产代码，5,270 文件）**：88 条候选，**0 条取不到后果**；`information_disclosure` 出现在**两个不同规则**上（`ipc.auth.missing` 3、`ipc.relay.descriptor-boundary` 2）——这是「信息泄露不属某一个子类」的实测形态。分布：`boundary_bypass` 59、`capability_exposure` 13、`unauthorized_effect` 9、`information_disclosure` 5、`cross_principal_effect` 2。脚本 `research/experiments/interface/ipc/measure_consequences.py`。
+- **边界**：后果是**可能性**而非已证实暴露——调用读类 API 不证明真的把数据返回给了未授权调用者；只有 Evidence gate 通过才能升级。候选仍是 `candidate/unassessed`，`validated_vulnerability = 0`。
+- **已知缺口，已提 CCR**：后果目前只能从 finding 消息里机读，因为公共 `DetectorFinding` 只有一个 CWE 字段；实测脚本把「取不到后果的候选数非 0」当硬失败而不是静默归零。见 `docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`（`proposed / not implemented`，未擅自改契约）。
+- **测试**：新增 `tests/test_ipc_disclosure_consequence.py`（11 项）：同一后果类跨两种机制的提升、非读类调用不冒充泄露、越界读保留自己的后果、未知规则不发明后果、机制 CWE 不被覆盖。全量 **266 项 OK**。
