@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import urllib.parse
 
 from .contracts import safe_relative_path
 
@@ -159,3 +160,35 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
     if not sources:
         raise ValueError("no supported UTF-8 sources in selected Git scope")
     return pinned_commit, tree, tuple(sources), inventory
+
+def verify_repository_identity(repo: Path, repository: str) -> str:
+    """Verify that local ``origin`` names the declared public repository.
+
+    The repository identity is not inferred from caller text alone. This check
+    binds a pinned-object experiment to a recognized public host and an exact
+    owner/repository path; it does not prove host ownership or build identity.
+    """
+    if repo.is_symlink() or not repo.is_dir():
+        raise ValueError("source repository must be an existing non-symlink directory")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+        raise ValueError("invalid declared repository name")
+    raw = _git(repo, "remote", "get-url", "origin").decode("utf-8", "replace").strip()
+    if not raw or any(ord(char) < 32 for char in raw):
+        raise ValueError("Git origin URL is missing or invalid")
+    scp = re.fullmatch(r"(?:[^@/\s]+@)?([^:/\s]+):(.+)", raw)
+    if "://" not in raw and scp:
+        host, path = scp.group(1), scp.group(2)
+    else:
+        parsed = urllib.parse.urlparse(raw)
+        if parsed.scheme not in ("https", "ssh") or not parsed.hostname or parsed.query or parsed.fragment:
+            raise ValueError("Git origin must be an HTTPS or SSH public repository URL")
+        host, path = parsed.hostname, parsed.path
+    host = host.lower()
+    if host not in {"github.com", "gitee.com", "gitcode.com", "gitlab.com"}:
+        raise ValueError("Git origin host is not an accepted public repository host")
+    normalized_path = path.strip("/").lower()
+    if normalized_path.endswith(".git"):
+        normalized_path = normalized_path[:-4]
+    if normalized_path != repository.lower():
+        raise ValueError("Git origin repository does not match the declared repository identity")
+    return f"{host}:{normalized_path}"
