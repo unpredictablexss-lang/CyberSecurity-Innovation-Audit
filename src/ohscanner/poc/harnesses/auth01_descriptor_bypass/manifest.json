@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "family": "AUTH-01",
+  "family_name": "SA relay / confused deputy",
+  "candidate_cwe": "CWE-441",
+  "harness": "auth01_descriptor_bypass",
+  "root_cause_instance_id": "cve-2023-0036",
+  "external_ids": ["CVE-2023-0036", "OpenHarmony-SA-2023-0102"],
+  "repository": "openharmony/inputmethod_imf",
+  "pr_url": "https://gitee.com/openharmony/inputmethod_imf/pulls/228",
+  "reported_symbol": "PlatformCallbackStub::OnRemoteRequest",
+  "defect": "The stub dispatches a transaction without validating the interface descriptor, so a sender that presents no interface token at all still reaches the callback and the privileged action behind it.",
+  "fix": "Read the interface token and compare it against GetDescriptor() before the switch.",
+  "revisions": {
+    "vulnerable": {"commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "expected": "trigger"},
+    "fixed": {"commit": "5eaddcab19bc4b22544f4bee1e8894fc2d6505dc", "expected": "no_trigger"}
+  },
+  "sources": [
+    {"revision": "vulnerable", "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "path": "services/src/platform_callback_stub.cpp", "sha256": "59c980bf8923fe783ab1f02ac9d999b6eb0c6a3fbcf62a16b369000b5877e043"},
+    {"revision": "fixed", "commit": "5eaddcab19bc4b22544f4bee1e8894fc2d6505dc", "path": "services/src/platform_callback_stub.cpp", "sha256": "b6d7f66a909f23a92c7b38b5f6e6854480f464949d8e456733924af2e9b3c444"}
+  ],
+  "headers": [
+    {"commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "path": "services/include/platform_callback_stub.h", "sha256": "b18ba3c17c44e22baba503dc6d493f1d5538b2d2fe8a46204c01d5195e223650"},
+    {"commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "path": "services/include/i_platform_callback.h", "sha256": "5028701266b1e378f382de05bfc0a1dcdb0d734302ddb04d4dde63ec088d7b89"},
+    {"commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "path": "services/include/message_handler.h", "sha256": "4a2cf36bd67ef2a183746fe7f7373a221debd1957bb5fdd85982a61c53333cbd"},
+    {"commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "path": "services/include/message.h", "sha256": "07b811374827ee9baa281e64881f67df62720ce222646f189cdcaaf8ed49df69"},
+    {"commit": "e663b47013d534a56165ab7467fbb3e14bf7172b", "path": "services/include/global.h", "sha256": "068998c9153a724b45783b53ce6e1bd6dab6e64803adc9083b991569a714fbdf"}
+  ],
+  "support_sources": {
+    "parcel": {
+      "origin": "commonlibrary_c_utils",
+      "note": "the real Parcel implementation, compiled from the local checkout; it is what makes the observed behaviour attributable to the component rather than to a hand-written shim",
+      "files": ["base/src/parcel.cpp", "base/src/refbase.cpp", "base/src/string_ex.cpp", "base/src/unicode_ex.cpp"],
+      "include_dirs": ["base/include", "base/src"]
+    }
+  },
+  "cases": [
+    {"id": "no_token", "args": ["notoken"], "role": "attack",
+     "expect": {"vulnerable": "trigger", "fixed": "no_trigger"},
+     "note": "no interface token at all; a sender chooses its own token, including none"},
+    {"id": "correct_token", "args": ["token"], "role": "control",
+     "expect": {"vulnerable": "any", "fixed": "trigger"},
+     "note": "positive control: the fixed revision must still serve a well-formed request"},
+    {"id": "foreign_token", "args": ["wrongtoken"], "role": "attack",
+     "expect": {"vulnerable": "any", "fixed": "no_trigger"},
+     "note": "a token belonging to a different interface"}
+  ],
+  "observable": {
+    "field": "messages_sent",
+    "trigger_min": 1,
+    "meaning": "the stub executed the callback and queued a message for the service loop, carrying the sender-chosen user id and content"
+  },
+  "sanitizers": ["address", "undefined"],
+  "compile_flags": ["-std=c++17", "-g", "-O1", "-fno-omit-frame-pointer", "-no-pie"],
+  "known_limitations": [
+    "Not reachability: the harness calls the stub directly. That a remote caller can reach this stub over real IPC, and under which ability registration and permission state, is not established here and stays an EvidenceObligation.",
+    "The interface token methods are supplied by a shim over the real Parcel; the shim forwards to WriteString16/ReadString16 and adds no policy.",
+    "MessageHandler::SendMessage records the call instead of dispatching it; the recording is the observable.",
+    "poc_compat.h supplies the using-directive for ErrorCode enumerators, which the historical header set does not expose unqualified; it changes no behaviour."
+  ],
+  "source_origin": "local git object store: ~/openharmony-audit/ipc-research/repos/inputmethod_imf"
+}
