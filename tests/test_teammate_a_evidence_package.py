@@ -142,12 +142,12 @@ class TeammateAEvidencePackageTests(unittest.TestCase):
             "branch": "codex/teammate-a-fragment-consolidation-20261010",
             "head": "6afb7d0a589056bf68f0373c723678b7f5fd2275",
             "contract_path": "src/ohscanner/contracts.py",
-            "contract_sha256": "ff942f17f0be8e74504516ba2a5a3ed4310e6aa96c5d10b2d471845c47a728e8",
+            "contract_sha256": "47154a566d24402d5d5ab94ded5fb5776245861339669bd6c551607f7dc4b3f9",
         }
         self.assertEqual(self.package["interface_baseline"], expected)
         self.assertEqual(self.baseline["interface_baseline"], expected)
         self.assertEqual(
-            hashlib.sha256((REPO_ROOT / expected["contract_path"]).read_bytes()).hexdigest(),
+            hashlib.sha256((REPO_ROOT / expected["contract_path"]).read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
             expected["contract_sha256"],
         )
 
