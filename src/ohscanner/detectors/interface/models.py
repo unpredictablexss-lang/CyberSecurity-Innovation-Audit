@@ -8,6 +8,82 @@ from typing import FrozenSet, Tuple
 
 MODEL_VERSION = "oh-ipc-2026.10-v1"
 
+# ---------------------------------------------------------------------------
+# Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
+#
+# A mechanism rule says *how* a trust boundary fails. This says what the failure
+# can expose, which is scored separately (completeness, and CWE accuracy: the
+# mechanism CWE and the consequence CWE are different answers).
+#
+# Every entry is a possibility attached to a candidate, never a proven effect.
+# Calling a sensitive read API does not establish that an unauthorized caller
+# reached it, nor that anything was returned to anyone.
+# ---------------------------------------------------------------------------
+
+# Sensitive operations whose effect is to *return* data or capability to the
+# caller. A finding that reaches one of these may expose information whatever the
+# mechanism was, which is why the disclosure consequence is not tied to one
+# family: 15 of the 39 advisory records in the corpus name information disclosure
+# as the official impact, spread over AUTH-02, AUTH-03, AUTH-04 and DATA-01.
+DISCLOSURE_CALLS = frozenset({
+    "GetPasteData", "GetAllCallList", "GetCallState", "GetTokenInfo",
+    "GetRemoteHapTokenInfo", "GetReqPermissions", "GetPermissionUsedRecordsAsync",
+    "IsAllowedUsingPermission", "Dump", "ReadFile", "GetDisplaySnapshot",
+    "Capture", "GetImsConfig", "GetImsFeatureValue",
+    "GetUserData", "ReadUserData", "OpenUserFile",
+})
+
+# Baseline consequence per rule, for findings that do not reach a read API.
+IMPACT_BY_RULE = {
+    "ipc.relay.descriptor-boundary": "boundary_bypass",
+    "ipc.auth.missing": "unauthorized_effect",
+    "ipc.auth.guard-coverage": "unauthorized_effect",
+    "ipc.auth.caller-class": "restricted_category_access",
+    "ipc.auth.identity-domain": "identity_confusion",
+    "ipc.auth.request-identity": "identity_confusion",
+    "ipc.auth.service-identity": "identity_confusion",
+    "ipc.auth.object-owner": "cross_principal_effect",
+    "ipc.parcel.copy-range": "out_of_bounds_read",
+    "ipc.parcel.position-underflow": "out_of_bounds_read",
+    "ipc.capability.export": "capability_exposure",
+}
+
+# Only the consequences whose CWE the catalogue can actually justify carry one.
+# The rest are impacts whose CWE depends on what the path reaches, so asserting a
+# number would be over-claiming; they are named without a CWE instead.
+IMPACT_CWE = {
+    "information_disclosure": "CWE-200",
+    "out_of_bounds_read": "CWE-125",
+    "capability_exposure": "CWE-668",
+}
+
+IMPACT_DESCRIPTION = {
+    "information_disclosure": "data the caller is not entitled to read may be returned to it",
+    "out_of_bounds_read": "an out-of-bounds read may return adjacent memory to the caller",
+    "capability_exposure": "an object reference, file descriptor or service capability may leave the authorized owner",
+    "boundary_bypass": "a caller of one interface may reach behaviour reserved for another",
+    "unauthorized_effect": "an operation intended to require authorization may run without it",
+    "restricted_category_access": "an operation restricted to one caller category may run for another",
+    "identity_confusion": "an operation may be attributed to or performed as the wrong principal",
+    "cross_principal_effect": "an operation may act on another principal's resource or session",
+    "unknown": "the consequence is not modelled for this rule",
+}
+
+
+def consequence_for(rule, calls=()):
+    """`(impact, consequence_cwe, basis)` for a finding.
+
+    A read-type sensitive call promotes the consequence to information
+    disclosure regardless of which mechanism failed; otherwise the rule's
+    baseline consequence applies. `basis` names the call that drove the
+    promotion, so the classification can be reviewed rather than trusted.
+    """
+    for name in calls or ():
+        if name in DISCLOSURE_CALLS:
+            return "information_disclosure", IMPACT_CWE["information_disclosure"], name
+    impact = IMPACT_BY_RULE.get(rule, "unknown")
+    return impact, IMPACT_CWE.get(impact, ""), ""
+
 @dataclass(frozen=True)
 class IpcPolicy:
     sensitive_calls: FrozenSet[str] = frozenset({

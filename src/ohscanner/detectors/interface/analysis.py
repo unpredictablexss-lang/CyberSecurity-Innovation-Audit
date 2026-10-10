@@ -13,7 +13,7 @@ import tree_sitter_cpp
 import tree_sitter_c
 
 from .entry_index import EntryIndex
-from .models import IpcPolicy
+from .models import IpcPolicy, consequence_for
 
 
 def walk(node, kind=None):
@@ -92,6 +92,9 @@ class Observation:
     root_key: tuple
     entry_grade: str = "allowlist"   # "allowlist" | "dispatch"
     dispatch_note: str = ""
+    impact: str = ""                 # consequence class, e.g. information_disclosure
+    impact_cwe: str = ""             # consequence CWE; distinct from the mechanism CWE
+    impact_basis: str = ""           # the call that drove the classification
 
 
 def normalize_syntax(source):
@@ -341,10 +344,12 @@ class Interpreter:
                                 trace=((0, "conservative path join"),)))
         return result
 
-    def emit(self, family, rule, fn, node, state, message):
+    def emit(self, family, rule, fn, node, state, message, call=None):
+        impact, impact_cwe, basis = consequence_for(rule, (call,) if call else ())
         self.observations.append(Observation(family, rule, fn.file,
             node.start_point[0] + 1, fn.qualified, message, state.trace,
-            (self.root.file, self.root.qualified), self.root_grade, self.root_note))
+            (self.root.file, self.root.qualified), self.root_grade, self.root_note,
+            impact, impact_cwe, basis))
 
     def resolve(self, fn, name):
         # No arbitrary receiver or global name-only cross-class resolution.
@@ -389,7 +394,7 @@ class Interpreter:
         sensitive = name in self.policy.sensitive_calls or name in self.policy.object_sensitive_calls
         if sensitive:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
-                self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message)
+                self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
         if sensitive and not self.authorized(state, name):
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
@@ -398,26 +403,30 @@ class Interpreter:
                 self.emit("AUTH-04", "ipc.auth.guard-coverage", fn, node, state,
                           "Sensitive modeled call " + name + " has no matched caller authorization on "
                           "this path, but the dispatcher performs an authorization call before dispatch; "
-                          "its dominance over this transaction is not established.")
+                          "its dominance over this transaction is not established.", call=name)
             else:
                 self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
-                          "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization.")
+                          "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization.",
+                          call=name)
         if name in self.policy.caller_class_sensitive_calls and not state.caller_class:
             self.emit("AUTH-03","ipc.auth.caller-class",fn,node,state,
-                      "Sensitive token/privacy operation lacks a caller-class/system-application boundary: "+name)
+                      "Sensitive token/privacy operation lacks a caller-class/system-application boundary: "+name,
+                      call=name)
         if name in ("StartBackgroundRunningForInner","StopBackgroundRunningForInner") and args:
             if args[0].key not in state.owner:
                 self.emit("AUTH-03","ipc.auth.object-owner",fn,node,state,
-                          "Background-task target UID is not bound to calling UID.")
+                          "Background-task target UID is not bound to calling UID.", call=name)
         if name in self.policy.object_sensitive_calls:
             resources = {v.key for v in args if v.kind == "request"}
             if resources and not resources.issubset(state.owner):
                 self.emit("AUTH-03", "ipc.auth.object-owner", fn, node, state,
-                          "Caller/resource relation is not established for " + name + ": " + ", ".join(sorted(resources)))
+                          "Caller/resource relation is not established for " + name + ": " + ", ".join(sorted(resources)),
+                          call=name)
         if name in self.policy.capability_calls and not state.auth:
             if args and args[0].key not in ("nullptr", "NULL", "0"):
                 self.emit("CAP-01", "ipc.capability.export", fn, node, state,
-                          "Capability export " + name + " lacks a recognized caller authorization on this path.")
+                          "Capability export " + name + " lacks a recognized caller authorization on this path.",
+                          call=name)
         if name in self.policy.copy_calls and args:
             index = 3 if name in ("memcpy_s", "memmove_s") else 2
             if len(args) > index and args[index].kind == "request":
@@ -427,13 +436,15 @@ class Interpreter:
                             for key, bound in state.upper)
                 if not upper or length not in state.lower:
                     self.emit("DATA-01", "ipc.parcel.copy-range", fn, node, state,
-                              "Parcel-derived copy length " + length + " lacks matched nonnegative/destination-capacity bounds.")
+                              "Parcel-derived copy length " + length + " lacks matched nonnegative/destination-capacity bounds.",
+                              call=name)
         if self.root.name in self.policy.entry_names and name not in self.policy.entry_names and (sensitive or name.startswith("On")
                 or name in self.policy.capability_calls or name in self.policy.copy_calls):
             parcel_keys = {v.key for v in state.env.values() if v.kind == "parcel"}
             if parcel_keys and not parcel_keys.intersection(state.descriptor):
                 self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
-                          "IPC dispatch/callback reaches " + name + " without a matched interface-descriptor guard; relay/exposure still requires review.")
+                          "IPC dispatch/callback reaches " + name + " without a matched interface-descriptor guard; relay/exposure still requires review.",
+                          call=name)
 
     def value(self, fn, node, state, depth):
         if node is None:
