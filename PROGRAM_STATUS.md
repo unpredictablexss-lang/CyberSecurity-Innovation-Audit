@@ -6,10 +6,10 @@
 
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-10（政策对齐赛题交付；旧阶段实测记录仍保留原日期）
-> 当前分支：`codex/teammate-a-shared-ptr-race-migration`（用于 `main` 合并技术审查的 merge candidate；尚未推送）
+> 更新日期：2026-10-11（shared_ptr 审查修复已并入 teammate A fragment 候选）
+> 当前分支：`codex/teammate-a-fragment-consolidation-20261010`（基于 `codex/teammate-a-shared-ptr-race-migration` 的整合候选；含 review-fix 提交，准备推送）
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：origin/main 的真实组件性能基线已合入 merge candidate；OHScanner Core M0-M2、shared_ptr race 候选检测器及来源/证据校验已进入同一候选。远端 CI 与负责人合并授权仍待完成。
+> 当前阶段：OHScanner Core M0-M2、shared_ptr/lifetime 研究检测器、来源/证据校验与 teammate A 研究材料已整合到同一候选；shared_ptr P0 scope/lock 审查修复已并入，但这些模块尚未注册为 production detector。合并后 fragment 候选本地完整回归为 367 tests、2 skipped、OK；当前 head 的远端 CI 尚未核实。
 > 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
 
 ---
@@ -40,11 +40,11 @@ Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭�
 | PR | #4 |
 | PR 状态 | merged / closed（2026-10-09） |
 | mergeability | 已合并到 main，非待合并 PR |
-| 当前分支 | `main`（前历史分支记录见原 PR #4） |
-| 当前阶段 | 历史阶段完成合并；三线并行与自研 Detector 仍是计划 |
-| 最近确认的 GitHub Actions | 原代码 head `dd908f2` / Run #58：149 tests passed |
-| 当前本地回归 | 149 tests passed |
-| 最新阶段核验 | 历史 PR #4 合并前 CI 已成功；后续自研运行时尚无功能测试结果 |
+| 当前分支 | `codex/teammate-a-fragment-consolidation-20261010`（含 shared_ptr review fixes，准备推送） |
+| 当前阶段 | teammate A 整合候选已包含 M0-M2、shared_ptr/lifetime 研究检测器、scope/synchronization 修复和证据工具；production catalog 注册、C-gate 和 main 合并授权待完成 |
+| 最近确认的 GitHub Actions | Run [38043467633](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38043467633)：`50c1392` 成功；当前 fragment head 尚未核实 |
+| 当前本地回归 | `367 tests`、`2 skipped`、`OK`（2026-10-11） |
+| 最新阶段核验 | 当前 head 的远端 CI 需重新运行/核验；旧 Run 不得替代当前 head |
 | validated vulnerability | 0 |
 
 ---
@@ -429,3 +429,18 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - lifetime evidence package 的 interface baseline 已绑定 `6afb7d0` 和当前 `src/ohscanner/contracts.py` SHA-256；生成的 native run manifest 不提交，相关测试只在外部 artifact 存在时执行。
 - c_utils product/component 模块作为 research/reference-only 工具保留，不注册进 production detector catalog，不宣称真实产品构建或漏洞检测能力。
 - 详细分支状态、整合/取代/未完成分类见 `docs/reviews/teammate_a_branch_consolidation_2026-10-10.md`。
+
+## 24. 2026-10-11 当前分支/CI 事实核对
+
+- **分支关系**：当前 checkout 为 `codex/teammate-a-fragment-consolidation-20261010`；`codex/teammate-a-shared-ptr-race-migration` 的 `6afb7d0` 是共同基线。shared_ptr review-fix 分支的三个提交已 cherry-pick 到 fragment，保持公共 Contract/Runner/catalog 不变。
+- **远端同步**：本状态提交前，fragment 本地包含 review-fix 提交并领先原 `origin`；本次只准备 teammate A 分支的远端同步，不创建 PR、不标 ready、不合并 `main`。
+- **本地验证（2026-10-11）**：fragment 合并后 `wsl.exe -d Ubuntu-22.04 -- python3 -m unittest discover -s tests -q` 返回 `Ran 367 tests`、`2 skipped`、`OK`；`py_compile` 和 `git diff --check` 通过。2 个跳过项均因仓库未提交的 ignored native replay manifest 不存在，不是测试失败。
+- **CI 事实边界**：已核实的远端 CI Run [38043467633](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38043467633) 成功于较早提交 `50c1392`，不能代表当前 fragment head。推送后必须以远端最新 run 重新核验。
+- **结论边界**：`shared_ptr_race` 与 `lifetime` 目前仍是 candidate/unassessed 研究检测器；production catalog 尚未注册它们，PoC、动态验证、CWE/CVE、影响范围、修复重验和漏洞报告仍未闭合。
+
+## 25. 2026-10-11 shared_ptr 审查修复并入 fragment
+
+- `codex/teammate-a-shared-ptr-race-review-fixes-20261011` 基于 `6afb7d0` 修复 global/member 归属、local shadow、namespace/class/template qualifier、同名跨 translation unit、共同 mutex、不同 mutex、单侧锁、`try_to_lock`/`defer_lock` 和 mixed atomic/mutex 边界。
+- 修复提交已 cherry-pick 到 `codex/teammate-a-fragment-consolidation-20261010`，公共 `contracts.py`、Runner 和 detector catalog 未修改；shared_ptr detector 版本更新为 `0.2.0-proposed`。
+- 固定真实组件静态复测：`openharmony/commonlibrary_c_utils` vulnerable `bdfafdaafddb01ab7ae13354ce2ada9555d7935c` 产生 2 个 candidate binding，fixed `9a3f281120307ec7dcce17fae882dcc4e6a6f4d7` 产生 0 个。binding manifest 仍为 draft，尚未独立 pin，不构成 ground truth 或漏洞结论。
+- 仍未闭合：独立 holdout、TSan/ASan 动态验证、PoC、CWE/CVE 影响范围、修复重验、production catalog 注册和报告提升；所有 finding 仍为 candidate/unassessed。
