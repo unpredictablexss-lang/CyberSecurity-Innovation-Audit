@@ -449,3 +449,19 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **固定下来的关系链（`cve-2023-0036`，提交 `e663b470`）**：服务进程构造 stub（`services/src/platform.cpp:25`，sha256 `7ebe67fc…`）→ 把它作为 `IPlatformApi::registerCallback` 的实参传出（同文件 `:26`）；`registerCallback` 是 `IRemoteBroker` 接口上的纯虚方法（`services/include/i_platform_api.h:48`，sha256 `c2985b38…`），即 IPC 事务；proxy 侧 `data.WriteRemoteObject(cb->AsObject())`（`services/src/platform_api_proxy.cpp:47`，sha256 `8fc23c91…`）把它写进 Parcel。**结论：服务自己把 stub 导出到进程边界，持有该句柄的对端可向其发任意事务**——这正是接口描述符校验要约束的场景。
 - **仍未被证明（逐条写在记录里，状态 `partial`）**：无特权或无关进程能否拿到该句柄；对端的身份与权限；对端是否会把句柄再转出去。`SetPlatform` 的调用者在仓库外，因此「谁触发这条链」也不在本仓库证据范围内。**`validated_vulnerability` 仍为 0。**
 - **测试**：新增 6 项——`partial` 块必须对每条关系都写明「没有证明什么」、摘要/行号双重校验通过、无块即无声明、行号漂移必须失败、摘要不符必须失败、渲染结果必须出现「没有证明」。全量 **272 项 OK**。
+
+## 26. 2026-10-11 接口线 v0.4：有界宏展开（移植 round1，两个预期收益实测只兑现一个）
+
+- **动机**：round1 分支的 `cpp_macros.py` 是 v0.2 基线唯一没吸收的部分。移植它时预期同时改善两件事——① 补齐解析覆盖（宏实参含语句时 Tree-sitter 解析失败）；② 关掉「guard 藏在宏里」这个假阴性来源（`analysis.normalize_syntax` 能中和带语句的宏实参让文件解析过去，但**宏体内部**的 `return` 守卫仍然看不见，AUTH-02/AUTH-03 于是报告一条源码其实守住了的未授权路径——那是假阳性，赛题对误报负向扣分）。
+- **改动**：新增 `src/ohscanner/detectors/interface/cpp_macros.py`（token 级、显式目录、逐字符行溯源、歧义即拒绝）；`models.py` 增 `expand_macros` / `max_macro_sources` / `max_macro_source_bytes` 三个开关（默认开）；`analysis.py` 在规范化前展开，并用 `line_map` 把报告行号译回原文；`detector.py` 把过期的那句限制串换成如实描述。**未改** `contracts.py` / `runner.py` / `execution.py` / `catalog.py` / `frontend.py` / `facts.py` / `parser/ast.py`，未新增 CLI，无公共 schema 变更。
+- **与 round1 的两处刻意偏离**：① 整条调用（含实参表）替换——round1 只换宏名 token，于是 `#define CHECK(x) Allowed(x)` 被 `CHECK(c)` 调用时会变成 `Allowed(c)(c)`（对调用结果再调用）；② 拒绝拆成**致命**（无法分词或 `#undef` 使目录不可用，整个文件回退到未展开字节）与**拒绝**（单个宏原样保留）——round1 混为一类并封锁整个文件，一个歧义的 `LOG` 会赔掉该文件其余所有可展开的宏。
+- **防倒退闸门（实测逼出来的）**：一个在 A 上下文成立的宏在 B 上下文可能是胡话，实测有 14 个文件展开后反而解析不动。因此**展开若把一个原本可解析的文件变成 partial，该次展开被丢弃**（`expansion_worsened_the_parse`，全语料 29 次）；私有解析覆盖因此单调不减。
+- **实测（`perf-corpus` 10 组件生产代码，5,270 单元；脚本 `research/experiments/interface/ipc/measure_macro_expansion.py`，产物 `outputs/reports/macro_expansion.md`）**：
+  - **展开活跃度**：791 个文件应用了展开，**12,716** 次调用被展开，其中 **3,645** 次把控制流（`return` / `if`）带进了函数体。
+  - **解析覆盖确实改善，但幅度小**：完整解析 **4,384 → 4,467**（+83，+1.9%），0 个文件被拖坏。
+  - **候选集增量：恰好为 0**。10 个组件逐个以 `expand_macros=False/True` 各跑一遍解释器：**88 → 88**，无一条规则计数变化。归因是可直接测的：`expansions_introducing_a_modelled_guard = 0`——12,716 次展开里**没有一次**引入策略建模为授权守卫的被调函数。
+  - **这不是被我们自己的拒绝语义挡住的**：全语料 **314** 个被拒绝的宏定义中，**0 个**提到任何 modelled guard 被调函数（报告里 `refusal_cost` 一节单列）。即「宏里藏授权 guard」这个模式在语料里**确实不存在**，而不是藏在被拒绝的变参宏后面——OpenHarmony 的变参宏是日志与错误检查（`CHECK_AND_RETURN` 一类），其守卫条件是错误码而非权限。
+  - **与入口索引正交（实测，不是推断）**：`analysis.py` 解析的是展开后文本、`entry_index.py` 解析的是原始文本，二者若对类名/owner 不一致就会静默丢 root。探针 `research/experiments/interface/ipc/probe_entry_index_expansion.py` 在 10 个组件上同时建两份索引比对：**root 与分发边 0 增 0 减**（含展开 186 个文件的 `security_access_token`、497 条 root 的 `window_window_manager`）。
+- **结论（如实）**：移植的第二个预期收益在**本语料上落空**，第一个收益真实但只有 +1.9%。保留它的理由不是「找到了东西」，而是它把一个**会让源码已守住的路径被误报为未守卫**的假阳性类变成结构性不可能（测试证明机制在模式出现时有效：关闭时报、开启不报、去掉宏的对照组仍然报），并让解析覆盖单调不减。**`validated_vulnerability` 仍为 0；本轮没有产生任何新候选，也没有删掉任何旧候选。**
+- **仍未做到**：`#include` 从不跟随，条件定义只记录不选择，变参 / 字符串化 / token 粘连 / 冲突定义变体一律拒绝（91,189 次拒绝中变参类占绝对多数）；目录预算 400 源 / 6 MB，3 个组件因此截断；宏体内部的守卫若调用不在 `IpcPolicy.boolean_permissions | result_permissions` 内（例如自定义 `IsCallerValid`），展开后依旧不构成授权事实——那部分不确定性走既有的 `dispatch_binding` 义务，不假装已解决。
+- **测试**：新增 `tests/test_ipc_macros.py`（23 项：11 项扩展语义 + 5 项目录构建 + 6 项集成，含「控制组」与「展开不得发明 finding」）。全量 **295 项 OK**（272 既有 + 23 新增）。本轮改动**未推送**，等负责人授权。

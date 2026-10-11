@@ -80,7 +80,10 @@ class IpcInterfaceDetector:
         return DetectorRun(self.detector_id,self.version,status,tuple(u.path for u in applicable),findings,
             ("Model="+MODEL_VERSION+"; first-party bounded structured syntax interpretation, no external scanner execution.",
              "Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.",
-             "No compiler CFG, macro expansion, arbitrary virtual dispatch, alias analysis or full-program authorization proof.",
+             "No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. "
+             "Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is "
+             "never an #include resolution, and what the expander refused is counted in the macro-expansion "
+             "limitation rather than assumed away.",
              "Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.",
              "Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.",
              "Entry roots come from the name allowlist plus source-derived dispatch bindings (function-pointer tables, "

@@ -23,6 +23,51 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.4 — bounded macro expansion (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc` 0.2.0; model unchanged (`oh-ipc-2026.10-v1`). New module:
+  `src/ohscanner/detectors/interface/cpp_macros.py`. No public contract, schema or CLI change.
+- **What it is.** A token-level expander over `#define`s collected from the scan's own sources,
+  with a per-character map back to the original line. **What it is not:** a preprocessor.
+  `#include` is never followed; conditional definitions are recorded, never selected; variadic /
+  stringify / token-paste definitions and conflicting definition variants are refused, not guessed.
+- **Why it is here**, stated against the measurement rather than the intention: it was ported to
+  close two gaps at once, and on ten real components **one of them did not materialise**.
+  - Parse coverage: **+83 complete parses (4,384 → 4,467, +1.9%)**, gained only from expanding
+    statement-carrying macro arguments. Made **monotone** by a gate — an expansion that turns a
+    parseable file into a partial one is dropped (29 drops corpus-wide), so coverage can never
+    regress.
+  - The "guard hidden in a macro" false-negative source: **absent in this corpus.** 12,716
+    invocations expanded, 3,645 of them carrying control flow (`return` / `if`), and **zero**
+    introduced a call the policy models as an authorization guard — hence a candidate delta of
+    exactly **0** on all ten components (88 → 88, no rule changed count).
+  - The competing explanation was measured and excluded, not assumed away: of **314 refused**
+    macro definitions, **0** mention a modelled guard callee. So the pattern is genuinely not
+    there, not hidden behind the refusals. OpenHarmony's variadic macros are logging and
+    error-code checks (`CHECK_AND_RETURN`-style), whose guard is an error code, not a permission.
+- **Deviations from the ported source, both deliberate.** An invocation is replaced whole, argument
+  list included (round1 replaced only the macro-name token, so `#define CHECK(x) Allowed(x)`
+  invoked as `CHECK(c)` became `Allowed(c)(c)`). And refusals are split into *fatal* (the file
+  falls back to its unexpanded bytes) and *refused* (one macro left as written) — round1 collapsed
+  both and blocked the whole file, so a single ambiguous `LOG` cost the file every other expansion.
+- **Kept for a structural reason, not for a finding.** The mechanism is proven to work where the
+  pattern occurs: with expansion off the candidate is reported, with it on it is not, and the
+  control source with the macro removed still reports. That makes a class of false positive the
+  competition penalises — reporting an unguarded path that the source does guard — structurally
+  impossible. **No candidate was added or removed by this round.**
+- **Orthogonal to the entry index, measured.** `analysis` parses expanded text while `entry_index`
+  parses raw text; a probe builds both on all ten components and compares roots and dispatch edges
+  — **0 gained, 0 lost on every component**, including the 186-file, 6,126-invocation
+  `security_access_token` and the 497-root `window_window_manager`. The coupling remains a known
+  design point; it did not fire on this corpus.
+- Limits: the catalogue is the scan's visible sources, never an include resolution; 5 components
+  hit the 400-source / 6 MB budget; a guard inside a macro whose callee is outside
+  `IpcPolicy.boolean_permissions | result_permissions` (e.g. `IsCallerValid`) still creates no
+  authorization fact and stays a `dispatch_binding` obligation. Report:
+  `docs/research/ipc_scanner_v0_4_macro_expansion_2026-10-11.md`.
+
+---
+
 # IPC method card v0.3 — consequence dimension (2026-10-11)
 
 - Detector: `ohscanner.interface.ipc`; model `oh-ipc-2026.10-v1` plus a versioned

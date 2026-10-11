@@ -122,9 +122,19 @@ class IpcPolicy:
     max_paths: int = 96
     expected_permissions: Tuple[Tuple[str, str], ...] = ()
     object_sensitive_calls: FrozenSet[str] = frozenset({"OpenUserFile", "GetUserData", "DeleteUserData", "ReadUserData"})
+    # Bounded macro expansion (cpp_macros). It is a coverage/accuracy switch, not a
+    # verdict switch: every finding it changes is still a candidate, and what it
+    # refused is reported. Off means every unit is parsed exactly as written.
+    expand_macros: bool = True
+    max_macro_sources: int = 400
+    max_macro_source_bytes: int = 6_000_000
 
     def __post_init__(self):
         if self.max_call_depth < 0 or self.max_call_depth > 4:
             raise ValueError("max_call_depth must be between 0 and 4")
         if self.max_paths < 2 or self.max_paths > 1024:
             raise ValueError("max_paths must be between 2 and 1024")
+        if self.max_macro_sources < 0 or self.max_macro_sources > 100_000:
+            raise ValueError("max_macro_sources must be between 0 and 100000")
+        if self.max_macro_source_bytes < 0 or self.max_macro_source_bytes > 256_000_000:
+            raise ValueError("max_macro_source_bytes must be between 0 and 256000000")

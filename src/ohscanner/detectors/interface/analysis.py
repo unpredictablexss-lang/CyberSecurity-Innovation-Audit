@@ -2,7 +2,10 @@
 
 Private detector analysis, not a replacement shared IR. It reuses the project's
 Tree-sitter dependency to recover branches absent from the public AST outline.
-No compiler CFG, overload resolution, macro expansion or exploitability proof.
+No compiler CFG, overload resolution or exploitability proof. Macros are expanded
+by `cpp_macros` under an explicit catalogue: a guard written inside a macro body
+becomes real interpreted control flow, and everything the expander refused is
+reported rather than assumed.
 """
 from dataclasses import dataclass, field, replace
 import re
@@ -12,8 +15,19 @@ from tree_sitter import Language, Parser
 import tree_sitter_cpp
 import tree_sitter_c
 
+from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
 from .models import IpcPolicy, consequence_for
+
+
+def parses_clean(source, grammar):
+    """Whether the private pipeline -- normalization included -- parses this cleanly.
+
+    The normalization step is part of the pipeline, so the check has to run on the
+    same text the parser will actually see; comparing raw bytes would report a file
+    as unparseable that the pipeline handles.
+    """
+    return not Parser(Language(grammar)).parse(normalize_syntax(source)).root_node.has_error
 
 
 def walk(node, kind=None):
@@ -257,16 +271,35 @@ class Interpreter:
         self.root_grade = "allowlist"
         self.root_note = ""
         self.index = None
+        self.line_maps = {}
+        self.macro_sources = 0
+        self.macro_truncated = False
+        self.macro_expanded = 0
+        self.macro_control_flow = 0
+        self.macro_files_expanded = set()
+        self.macro_files_unexpanded = set()
+        self.macro_refusal_reasons = {}
+        self.macro_catalog = self._build_macro_catalog(units)
         for unit in units:
             grammar = tree_sitter_c.language() if unit.language == "c" else tree_sitter_cpp.language()
             raw=unit.text.encode("utf-8")
-            normalized=normalize_syntax(raw)
+            source=raw
+            if self.macro_catalog is not None:
+                expansion=expand_with_catalog(raw,self.macro_catalog)
+                # A macro written for one context can be nonsense in another, so an
+                # expansion that turns a parseable file into a partial one is
+                # dropped. This keeps private parse coverage monotone: expansion
+                # can add files the parser reaches, never remove any.
+                if expansion.applied and parses_clean(raw,grammar) and not parses_clean(expansion.source,grammar):
+                    expansion=Expansion(raw,{},(),expansion.refused,("expansion_worsened_the_parse",))
+                source=expansion.source
+                self._record_expansion(unit,expansion)
+            normalized=normalize_syntax(source)
             if normalized!=raw:
                 self.limitations.add("Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: "+unit.path)
             tree = Parser(Language(grammar)).parse(normalized)
             if tree.root_node.has_error:
                 self.limitations.add("Partial source: only error-free functions can be inspected in " + unit.path)
-            source = unit.text.encode("utf-8")
             for node in walk(tree.root_node, "function_definition"):
                 dec = node.child_by_field_name("declarator")
                 while dec is not None and dec.type not in ("function_declarator",):
@@ -305,6 +338,68 @@ class Interpreter:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
                                                    source, tuple(params), tuple(parcels[:1])))
         self._build_index(units)
+
+    def _build_macro_catalog(self, units):
+        """Catalogue the scan's own `#define`s, headers first.
+
+        Building the catalogue from the whole scan rather than from a hand-supplied
+        header list is what makes a source-local `#define` harmless: the file's own
+        definitions are already in it. Returns None when expansion is disabled, in
+        which case every unit is parsed exactly as it is written.
+        """
+        if not self.policy.expand_macros or self.policy.max_macro_sources <= 0:
+            return None
+        catalog, sources, total, truncated = catalog_for_units(
+            units, self.policy.max_macro_sources, self.policy.max_macro_source_bytes)
+        self.macro_sources = sources
+        self.macro_truncated = truncated
+        if truncated:
+            self.limitations.add(
+                "Macro catalogue truncated at " + str(sources) + " source(s): a macro defined only in a "
+                "file that was not catalogued stays unexpanded, and a guard inside it is not seen.")
+        return catalog
+
+    def _record_expansion(self, unit, expansion):
+        """Keep the line map and count what expansion did and did not do.
+
+        Nothing here decides a finding. It records how much of the source reached
+        the interpreter in expanded form, so the number can be reported rather than
+        assumed.
+        """
+        self.line_maps[unit.path] = expansion.line_map
+        if expansion.fatal:
+            self.macro_files_unexpanded.add(unit.path)
+            for reason in expansion.fatal:
+                self.macro_refusal_reasons[reason] = self.macro_refusal_reasons.get(reason, 0) + 1
+            return
+        for _, reason in expansion.refused:
+            self.macro_refusal_reasons[reason] = self.macro_refusal_reasons.get(reason, 0) + 1
+        if not expansion.applied:
+            return
+        self.macro_files_expanded.add(unit.path)
+        self.macro_expanded += len(expansion.expansions)
+        self.macro_control_flow += len(expansion.carried_control_flow)
+
+    def _macro_summary(self):
+        """One sentence saying what the expander was able to do, or None.
+
+        Counts only. The per-file detail belongs in the research report; the
+        detector result carries the shape of the limitation, not a coverage claim.
+        """
+        if self.macro_catalog is None:
+            return None
+        if not (self.macro_expanded or self.macro_files_unexpanded or self.macro_refusal_reasons):
+            return None
+        reasons = ",".join(name + "=" + str(count)
+                           for name, count in sorted(self.macro_refusal_reasons.items()))
+        return ("Macro expansion: " + str(self.macro_expanded) + " invocation(s) expanded in "
+                + str(len(self.macro_files_expanded)) + " file(s), " + str(self.macro_control_flow)
+                + " of them carrying control flow; " + str(len(self.macro_files_unexpanded))
+                + " file(s) left unexpanded"
+                + ((" (" + reasons + ")") if reasons else "")
+                + ". The catalogue is the scan's own sources, never #include; where a macro was expanded, "
+                  "quoted conditions come from the expanded form while a finding's line is mapped back to "
+                  "the original file.")
 
     def _build_index(self, units):
         """Source-derived entry/dispatch index. Never fatal: an index failure
@@ -346,8 +441,15 @@ class Interpreter:
 
     def emit(self, family, rule, fn, node, state, message, call=None):
         impact, impact_cwe, basis = consequence_for(rule, (call,) if call else ())
+        # node was read out of the expanded text; the reader needs the line the code
+        # was actually written on. `fn.file` may differ from the current root when a
+        # handler delegates into another file, so the map is chosen by file.
+        line_map = self.line_maps.get(fn.file) or {}
+        line = node.start_point[0] + 1
+        trace = state.trace if not line_map else tuple(
+            (line_map.get(step[0], step[0]),) + tuple(step[1:]) for step in state.trace)
         self.observations.append(Observation(family, rule, fn.file,
-            node.start_point[0] + 1, fn.qualified, message, state.trace,
+            line_map.get(line, line), fn.qualified, message, trace,
             (self.root.file, self.root.qualified), self.root_grade, self.root_note,
             impact, impact_cwe, basis))
 
@@ -814,6 +916,9 @@ class Interpreter:
                     revised.append(replace(obs,family="AUTH-04",rule="ipc.auth.guard-coverage",
                         message="Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. "+obs.message))
             revised.append(obs)
+        summary=self._macro_summary()
+        if summary is not None:
+            self.limitations.add(summary)
         unique={}
         for obs in revised:
             unique.setdefault((obs.file,obs.line,obs.rule,obs.symbol),obs)
