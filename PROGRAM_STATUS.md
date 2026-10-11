@@ -581,4 +581,45 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **测试**：组件审计单测 **45 项**（本轮 +12：闭合 4、跨报告合并 2、身份/变体 2、清单 2、CLI 计数 1、清单落位 1），全量 **375 项 OK**。既有测试无回归。
 - **仍未做到**：① 平台层的覆盖表达与义务保留**未改**（归负责人，B 只给反例与回归测试）；② 仍未注册 `catalog.py`、未做成 CLI 子命令（归负责人）；③ 15 条 partial-only 候选的义务是**驱动的标准问题**，不是跑出来的证据；④ 根因相交在组件审计里恒为 `not_measured`；⑤ 产物目录虽持久但**不入库**（按 AGENTS.md）。
 - **下一步（B 线，按负责人指定优先级）**：从 41 条里挑 **5–8 条**代表性候选（覆盖 complete 与 partial-only），逐条记录：原始代码与关键上下文、是否误报及原因、是否有上层检查/调用前提/配置限制、当前能确认到哪一步、能否做构建或运行验证。**目标是用核查结果指导算法改进，而不是继续增加候选数量。**
-- **动作**：本轮改动**未推送**（负责人未授权）；产物写入 `outputs/reports/*.json|.md|.manifest.json`（已忽略）。
+- **动作**：本轮改动**未推送**（负责人未授权）；产物写入 `outputs/reports/*.json|*.md|*.manifest.json`（已忽略）。
+
+## 32. 2026-10-11 首批候选核查：41 条逐条判定，五个误报机制定位到代码行
+
+- **做了什么**：按 §31 的下一步，把五组件 41 条候选**逐条核查**（不是抽样），产出
+  `docs/research/ipc_candidate_review_2026-10-11.md`，复核脚本入库到 `research/experiments/interface/ipc/review_*.py`。
+- **三个数分开报**：**测试 375 项 OK**（组件审计 45 项）/ **候选 41 条** / **确认漏洞 0 条**。
+  判定分布：**likely false positive 37 条、plausible but unproven 4 条、确认 0 条**。
+- **41 条里没有一条能过证据门**（缺入口可达性、缺攻击者控制、缺 C/I/A 影响），全部仍是 `evidence_type=syntax`、
+  `validated_vulnerability=0`。**本次核查不产生任何漏洞结论。**
+- **五个误报机制（都已定位到 file:line，两个有对照实验）**：
+
+  | 机制 | 位置 | 后果 |
+  |---|---|---|
+  | **M1** 描述符校验被限定条件挡掉 | `analysis.py:582-585`：`X::GetDescriptor()` 只在 `X == fn.owner` 时被认；真实 stub 实现的是接口 `I`，于是 `ITokenSyncCallback::GetDescriptor()` 判为 `UNKNOWN` | `security_access_token` 20 条 AUTH-01 的主因 |
+  | **M2** 描述符校验被委托给内层入口 | `screen_session_manager_stub.cpp:42` 只是转调，校验在同文件 `:50` | WWM 1 条 AUTH-01 |
+  | **M3** 授权谓词词表只认固定名字 | `models.py:130-135` + `analysis.py:596-601`；`IsRootCalling`/`IsNativeProcessCalling`/`IsCallerValid`/`IsSystemCalling`/`IsSACalling` 全不在表内 | AUTH-02/AUTH-04/CAP-01 多条；**反向**还把 guard 函数自己当 handler（`token_sync_manager_stub.cpp:83/110/127` 报的是 `IsRootCalling`） |
+  | **M4** 权限函数用项目错误码判成败 | `CheckPermission` 在词表内，但调用点写 `!= SOFTBUS_OK`，而 `SOFTBUS_OK = 0` 是**另一文件**的枚举成员（`softbus_error_code.h:1788`） | dsoftbus 2 条 CAP-01 |
+  | **M5** dispatcher 守卫支配性未证明 | `update_service_stub.cpp` 候选自述 `dispatcher-guard-observed` | 2 条 AUTH-04（**检测器自述诚实**，缺的是支配性证明，不是发现了缺失检查） |
+
+  另有 **M6**：守卫在实现类、实现类在另一个翻译单元（`window_manager_stub.cpp:389` → `window_manager_service.cpp:1608` 等），
+  属 file-local 分析的固有边界，不是 bug。
+- **M1 的对照实验（本仓库可复现）**：只把 `GetDescriptor` 的限定判据放宽，别的都不动——
+  `as shipped: candidates=6 / AUTH-01=6` → `qualifier relaxed: candidates=0 / AUTH-01=0`。
+  量：`security_access_token` 12 处描述符比较中 **9 处是接口限定形式**；而 **28 个 fixture 全部写成非限定形式**，
+  所以 29 个设计场景全绿、真实代码上的常见形式从未被测到——与 §22 入口发现的「命名假设在真实代码上接近空集」是同一类失效。
+  接口身份**可从源码派生**（基类实参 `IRemoteStub<ITokenSyncCallback>` / `IRemoteStub<OnPermissionUsedRecordCallback>`），
+  且**不能靠名字猜**（后者无 `I` 前缀）。
+- **同一组件内的自证**：`accesstoken_callback_stubs.cpp` 用 `IsAccessTokenCalling()`（**在**词表内）→ 该文件没有 AUTH-02；
+  `token_sync_manager_stub.cpp` 用 `IsRootCalling()`/`IsNativeProcessCalling()`（**不在**词表内）→ 同类位置出 3 条 AUTH-02。
+  「有检查但没被识别」≠「没有检查」。
+- **部分解析成因（实测，逐行 ERROR）**：不是 `#if` 嵌套，而是三类机械形状——格式宏字符串拼接（`PRIu64`/`PRIu32`/`SCNd64`）、
+  成员函数指针调用 `(this->*f)(...)`、**把 `return` 当宏实参**（`ENGINE_CHECK(cond, return ret, ...)`，该文件 20 个 ERROR）。
+  且这些 ERROR 行与本批候选行**不在同一处**：`update_service_stub.cpp` 的候选锚点是 `dispatch=map_member_ptr`，
+  说明入口索引在部分解析下**仍然**恢复了分发绑定与 dispatcher 守卫——**partial 影响的是覆盖口径与义务来源，不是本批候选的成因**。
+- **值得继续跟的 4 条（都不是漏洞结论）**：`screen_session_manager_stub.cpp:1778`（唯一一条导出前路径上找不到任何调用者检查的能力导出）、
+  `session_stub.cpp:592`、dsoftbus 的 `bus_center_ex_obj_stub.cpp:56` / `trans_spec_object_stub.cpp:62`
+  （stub 确实不校验描述符且绕过了 `IRemoteStub<T>` 默认校验，但强制点在**不在本仓库**的插件里）。
+  四条都卡在同一件事：**跨仓或运行时才能确定能力面**。
+- **没做**：**没有改任何检测器规则**（改规则会改变候选集合，须与它的正/反例一起单独落地并复跑五组件）；
+  没有升级任何候选；没有跑构建/运行时验证（各组件可行性已列入报告 §7）。
+- **动作**：本轮**未推送**。

@@ -23,6 +23,78 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.8 — the first candidate review moved the failure from the candidates to the rules (2026-10-11)
+
+Owner's next step was to stop widening the scan and to review the first representative candidates,
+so the review that follows is the deliverable, not more candidates. All 41 were reviewed (not
+sampled): **37 likely false positives, 4 plausible-but-unproven, 0 confirmed**. Full record:
+`docs/research/ipc_candidate_review_2026-10-11.md`; reproduction scripts:
+`research/experiments/interface/ipc/review_*.py`.
+
+- **No rule was changed by this review.** Changing a rule moves the candidate set, so it lands
+  separately with its own positive/fixed/safe controls and a five-component re-run. This card is a
+  record of *why* the rules misfire, with file:line, not a claim that they are fixed.
+- **M1 — the descriptor check is discarded by an identity test aimed at the wrong class.**
+  `analysis.py:582-585` accepts `X::GetDescriptor()` only when `X == fn.owner`. A real stub lives in
+  `TokenSyncCallbackStub` and implements the interface `ITokenSyncCallback`, so the qualifier never
+  matches and the guard becomes `UNKNOWN`. Control experiment (relax only that test, nothing else):
+  `security_access_token` goes from **6 AUTH-01 candidates to 0**. Measured: 9 of that component's
+  12 descriptor comparisons are interface-qualified — while **all 28 fixtures use the unqualified
+  form**, which is why 29 design scenarios passed and the corpus shape was never exercised. The
+  interface identity *is* source-derivable (the `IRemoteStub<I>` base-class argument:
+  `IRemoteStub<ITokenSyncCallback>`, `IRemoteStub<OnPermissionUsedRecordCallback>`), and a
+  name-based `FooStub -> IFoo` guess would **fail** — the second example has no `I` prefix.
+- **M2 — the check is delegated one call away.** `screen_session_manager_stub.cpp:42` is a relay;
+  the descriptor check is in `OnRemoteRequestInner:50` of the same file, so the root state has none.
+  Reproduced with a probe that prints the interpreter's own descriptor set.
+- **M3 — the authorization vocabulary is a fixed list of names.** `models.py:130-135` plus the
+  hard-coded names in `analysis.py:596-601` cover `CheckPermission`/`VerifyPermission`/
+  `VerifyAccessToken`/(`IsSystemAppCalling`, `IsPrivilegedCalling`, `IsAccessTokenCalling`, ...) but
+  none of `IsRootCalling`, `IsNativeProcessCalling`, `IsCallerValid`, `IsPermissionGranted`,
+  `IsSystemCalling`, `IsSACalling`. The component proves both directions of this in one repo:
+  `accesstoken_callback_stubs.cpp` uses `IsAccessTokenCalling()` (recognised) and produces no
+  AUTH-02; `token_sync_manager_stub.cpp` uses `IsRootCalling()`/`IsNativeProcessCalling()`
+  (unrecognised) and produces three. The rule also misfires *inversely*: AUTH-01 reports the guard
+  helper itself as the reached handler (`... reaches ... without interface-descriptor validation:
+  TokenSyncManagerStub::IsRootCalling`). "A check exists but was not recognised" is not "no check".
+- **M4 — a recognised permission function compared against a project error enum is not recognised.**
+  `CheckPermission(code)` is in the vocabulary, but the call site is `if (ret != SOFTBUS_OK)`, and
+  `SOFTBUS_OK = 0` is an enum member in *another file* (`softbus_error_code.h:1788`). The success
+  test only accepts `0`/`PERMISSION_GRANTED`/`true` literals.
+- **M5 — the dispatcher guard's dominance is unproven, and the rule says so.** The
+  `update_updateservice` candidates carry `dispatcher-guard-observed`: the detector *saw* the guard
+  and still emitted, because dominance over the transaction was not established. Checked by hand:
+  the guards really do dominate (`update_service_stub.cpp:421-426` precede the single dispatch at
+  `:432`, and the dispatch is a `map.find` + member-pointer call with no bypass). The improvement is
+  to *prove* dominance per dispatch shape and to record "dominates" separately from "exists,
+  dominance unknown" — not to drop the candidate.
+- **M6 — the guard lives in the implementation class, in another translation unit**
+  (`window_manager_stub.cpp:389` -> `window_manager_service.cpp:1608`). That is file-local analysis
+  behaving as designed, not a defect; the bounded improvement is one controlled hop from a stub
+  method to its same-named implementation, recorded with provenance like the alias table.
+- **Partial parses are caused by three mechanical shapes, not by `#if` nests.** Reproduced with the
+  project's own parser, printing every ERROR node: format-macro string concatenation
+  (`PRIu64`/`PRIu32`/`SCNd64`), the member-pointer call `(this->*f)(...)`, and **`return` used as a
+  macro argument** (`ENGINE_CHECK(cond, return ret, "...")` — 20 ERROR nodes in one file). None of
+  those lines is near the candidates in the same file, and `update_service_stub.cpp`'s candidates
+  are anchored on `dispatch=map_member_ptr`, i.e. the entry index recovered the dispatch binding and
+  the dispatcher guard *despite* the partial parse. **Partial affects the coverage counters and the
+  provenance of obligations; it is not the cause of these candidates.**
+- **What the review argues for, in cost order:** fix M1 (removes ~20 of 41 and *raises* accuracy,
+  since today it reads "checked" as "unchecked"); prove M5 dominance; extend M3 to local helper
+  predicates and record each predicate's own criterion, plus a "is this a dispatch target" test for
+  AUTH-01; normalise the three parse shapes; bounded cross-file constants for M4; one hop for M6.
+  What it argues against: deleting M1's qualifier test (that would also erase the stronger "compared
+  against the wrong interface" finding) and dropping M5's candidates (which are honest).
+- **The four candidates worth following — none is a vulnerability claim:** the only export with no
+  caller check anywhere on the path (`screen_session_manager_stub.cpp:1778`), `session_stub.cpp:592`,
+  and the two dsoftbus stubs that genuinely skip the descriptor check and bypass
+  `IRemoteStub<T>`'s default. All four stop at the same wall: the capability surface is outside this
+  repository (the dsoftbus plugin `.so`, `foundation/graphics`) and needs cross-repo source or a
+  runtime observation.
+
+---
+
 # IPC method card v0.7 — partial candidates carry obligations, identity is bound, counts close (2026-10-11)
 
 Owner decision that produced this card: accept the five-component round as a **real-component audit
