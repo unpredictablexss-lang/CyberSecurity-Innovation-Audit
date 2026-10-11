@@ -17,7 +17,7 @@ class SharedPtrRaceFixtureEvidenceTests(unittest.TestCase):
         self.assertEqual(len(payload["results"]), 1)
         result = payload["results"][0]
         self.assertEqual(result["tool"], "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(result["tool_version"], "0.1.0-proposed")
+        self.assertEqual(result["tool_version"], "0.2.0-proposed")
         self.assertEqual(result["schema_version"], 1)
         self.assertEqual(result["status"], "blocked")
 

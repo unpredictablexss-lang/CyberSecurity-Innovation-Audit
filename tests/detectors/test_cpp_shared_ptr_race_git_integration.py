@@ -75,7 +75,7 @@ class SharedPtrRaceGitIntegrationTests(unittest.TestCase):
         self.assertEqual(vulnerable_context.request.commit, vulnerable_commit)
         self.assertEqual(vulnerable_result.status, "completed")
         self.assertEqual(vulnerable_result.tool, "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(vulnerable_result.tool_version, "0.1.0-proposed")
+        self.assertEqual(vulnerable_result.tool_version, "0.2.0-proposed")
         self.assertGreater(vulnerable_result.diagnostic_count, 0)
         self.assertTrue(
             all(item.evidence_type == "syntax" for item in vulnerable_result.diagnostics)

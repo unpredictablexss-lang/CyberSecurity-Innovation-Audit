@@ -44,7 +44,7 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(self.detector.version, "0.1.0-proposed")
+        self.assertEqual(self.detector.version, "0.2.0-proposed")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
 
@@ -269,6 +269,286 @@ void Holder::Clear() {
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
 
+
+    def test_global_shared_ptr_is_explicitly_not_applicable(self) -> None:
+        text = """
+#include <memory>
+std::shared_ptr<int> instance_;
+void use_global() {
+    instance_.reset();
+}
+"""
+        unit = self.generated_unit("global_only", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(
+            any(
+                "not_applicable: global shared_ptr declaration 'instance_'" in item
+                for item in run.limitations
+            )
+        )
+
+    def test_global_and_member_same_name_bind_only_the_member_access(self) -> None:
+        text = """
+#include <memory>
+std::shared_ptr<int> instance_;
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static void Reset();
+};
+std::shared_ptr<int> Holder::instance_ = nullptr;
+void use_global() {
+    instance_.reset();
+}
+void Holder::Reset() {
+    instance_.reset();
+}
+"""
+        unit = self.generated_unit("global_and_member_same_name", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "instance_")
+        self.assertGreater(run.findings[0].line, text.splitlines().index("void Holder::Reset() {") + 1)
+
+    def test_namespace_qualified_access_is_bound_to_the_class_member(self) -> None:
+        text = """
+#include <memory>
+namespace sample {
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+};
+std::shared_ptr<int> Holder::instance_ = nullptr;
+void touch() {
+    Holder::instance_.reset();
+}
+}
+"""
+        unit = self.generated_unit("namespace_qualified", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("instance_", run.findings[0].message)
+
+    def test_templated_class_owner_is_bound_for_out_of_line_method(self) -> None:
+        text = """
+#include <memory>
+namespace sample {
+template<typename T>
+class Holder {
+public:
+    static std::shared_ptr<T> instance_;
+    static std::shared_ptr<T> Load();
+};
+
+template<typename T>
+std::shared_ptr<T> Holder<T>::instance_ = nullptr;
+
+template<typename T>
+std::shared_ptr<T> Holder<T>::Load()
+{
+    instance_.reset();
+}
+}
+"""
+        unit = self.generated_unit("templated_owner", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("instance_", run.findings[0].message)
+    def test_local_shadowing_does_not_replace_this_member_access(self) -> None:
+        text = """
+#include <memory>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    void Reset() {
+        std::shared_ptr<int> instance_;
+        instance_.reset();
+        this->instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("local_shadow", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("this->instance_", unit.text.splitlines()[run.findings[0].line - 1])
+
+    def test_same_name_in_different_translation_units_is_not_cross_bound(self) -> None:
+        text_a = """
+#include <memory>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    void Reset() { instance_.reset(); }
+};
+"""
+        text_b = text_a.replace("class Holder", "class Holder")
+        first = self.generated_unit("translation_unit_a", text_a)
+        second = self.generated_unit("translation_unit_b", text_b)
+        run = self.detector.detect(self.context, (first, second))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual({finding.file for finding in run.findings}, {first.path, second.path})
+        self.assertEqual(len(run.findings), 2)
+
+    def test_unresolved_object_member_access_is_unknown(self) -> None:
+        text = """
+#include <memory>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+};
+void touch(Holder& holder) {
+    holder.instance_.reset();
+}
+"""
+        unit = self.generated_unit("object_access", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "blocked")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(
+            any("unresolved object expression" in item for item in run.limitations)
+        )
+
+    def test_all_accesses_under_same_mutex_are_suppressed(self) -> None:
+        text = """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static void Reset() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        instance_.reset();
+    }
+    static int Load() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return instance_ ? 1 : 0;
+    }
+};
+"""
+        unit = self.generated_unit("same_mutex", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(any("share reliable lexical mutex 'mutex_'" in item for item in run.limitations))
+
+    def test_one_sided_mutex_reports_only_unprotected_access(self) -> None:
+        text = """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static void ResetGuarded() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        instance_.reset();
+    }
+    static void ResetUnguarded() {
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("one_sided_mutex", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertGreater(run.findings[0].line, text.splitlines().index("    static void ResetUnguarded() {") + 1)
+
+    def test_different_mutexes_do_not_get_suppressed(self) -> None:
+        text = """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_a_;
+    static std::mutex mutex_b_;
+    static void ResetA() {
+        std::lock_guard<std::mutex> lock(mutex_a_);
+        instance_.reset();
+    }
+    static void ResetB() {
+        std::lock_guard<std::mutex> lock(mutex_b_);
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("different_mutexes", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 2)
+        self.assertTrue(any("different, conditional or one-sided" in item for item in run.limitations))
+
+    def test_try_to_lock_is_unknown_and_not_suppressed(self) -> None:
+        text = """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static void Reset() {
+        std::unique_lock<std::mutex> lock(mutex_, std::try_to_lock);
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("try_to_lock", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "blocked")
+        self.assertEqual(len(run.findings), 1)
+        self.assertTrue(any("try_to_lock does not prove" in item for item in run.limitations))
+
+    def test_defer_lock_is_unknown_and_not_suppressed(self) -> None:
+        text = """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static void Reset() {
+        std::unique_lock<std::mutex> lock(mutex_, std::defer_lock);
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("defer_lock", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "blocked")
+        self.assertEqual(len(run.findings), 1)
+        self.assertTrue(any("defer_lock does not hold" in item for item in run.limitations))
+
+    def test_mixed_atomic_and_mutex_paths_are_separately_limited(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static void ResetGuarded() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        instance_.reset();
+    }
+    static void AtomicReset() {
+        std::atomic_store(&instance_, std::shared_ptr<int>(nullptr));
+    }
+};
+"""
+        unit = self.generated_unit("mixed_atomic_mutex", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(any("atomic_load/store and mutex paths are modeled separately" in item for item in run.limitations))
 
 if __name__ == "__main__":
     unittest.main()

@@ -32,7 +32,7 @@ def _case(stratum: str, index: int) -> dict:
         "snapshot_sha256": _sha(f"snapshot-{index}"),
         "profile_id": "light-ast",
         "tool_id": DETECTOR_ID,
-        "tool_version": "0.1.0-proposed",
+        "tool_version": "0.2.0-proposed",
         "development_participation": "not_participated",
         "label_visibility": "sealed_from_detector",
     }
@@ -45,7 +45,7 @@ def _manifest() -> dict:
         "status": DESIGNED_NOT_EXECUTED,
         "detector_freeze": {
             "detector_id": DETECTOR_ID,
-            "detector_version": "0.1.0-proposed",
+            "detector_version": "0.2.0-proposed",
             "detector_sha256": _sha("detector"),
             "rule_sha256": _sha("rule"),
             "method_sha256": _sha("method"),
