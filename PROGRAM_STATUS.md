@@ -441,6 +441,11 @@ blocked 计数归零或义务被过滤的说明。基线为核心分支 `e365465
   没有注册 `.complete-ast` 旁路身份；JS/TS/ArkTS 未被认领文件明确保存，不能从报告蒸发。
 - 本地 Ubuntu / Python 3.10.12 完整 discover：**334 项、全部通过**。基线 250，选择性迁入
   B 检测器/入口/宏/后果测试 72 项，新增负责人回归 12 项。不是 B 全分支的 375 项套件。
+- 功能提交 `84a8f1025ae06dfda30790cba684685aadcfd157` 的远程
+  [CI Run 38139283925](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38139283925)
+  已成功；直接核对 job 日志：**334 项，333 通过、1 skipped、0 失败**。
+  skipped 为可选真实 communication_ipc 本地 corpus 检查，CI 没有该目录；本地该项实际通过。
+  后续文档提交的 head 仍须看其对应 Actions，不复用上述功能提交的成功状态。
 - 五组件正式 CLI 复跑（最终稳定源码 hash 核验亦通过），与 B 持久化生产范围、固定 Git commit、源码 hash 下的候选集合
   逐条一致；没有为了凑 41 改规则或调整预期。所有 41 条候选都保留 runner 义务，包含原来的
   **15 条 partial-only 候选**。`validated_vulnerability=0`。
@@ -461,7 +466,8 @@ JSON/Markdown、精确命令、baseline manifest 与输出 hash 存在 ignored
 
 ### 未验证
 
-- 本节提交前尚未完成新分支最终 head 的远程 CI，推送后须单独确认；旧 CI 不能代替本次。
+- [Draft PR #8](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/8)
+  目标为 feat/ohscanner-core，尚未审查合并；没有改 main 或把 PR #5 标 Ready。
 - 未复核 B 的 PoC/历史 benchmark 全套；未完成独立 holdout、产品编译或真实漏洞确认。
 - 未开发通用生产排除/分片 CLI；正式命令仍使用明确 --include 路径/前缀。
 - 未修改 M1–M6 规则；描述符身份等误报修复继续由队友 B 单独提交。
