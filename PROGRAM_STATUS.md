@@ -679,3 +679,49 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 
 - `dlsym`/函数指针表的间接分发、别名基类、跨仓能力面仍为 `unknown`，保留候选不臆断。
 - M2～M6 修完后候选集合如何变化未知；本条不预测也不追求某个数字。
+
+## 34. 2026-10-12 M2 一跳同文件委托：被委托方就是守卫时才不算边界（队友 B 单独提交，未推送）
+
+### 已实现并复核
+
+- **缺陷**：AUTH-01 的中继谓词问的是「**入口自己的状态**里有没有确立描述符校验」。入口只把请求
+  原样转交给同文件另一个函数时，入口体内当然没有校验，于是**隔一次调用的守卫**被报成不存在。
+  真实例：`window_window_manager` `window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp`
+  候选 `:42`（`OnRemoteRequest` 转调 `OnRemoteRequestInner`），真守卫在其 `:50`。
+- **修复**：新增 `relay_guard()`，五个条件同时满足才把这一跳读成守卫——①被委托方**同文件**；
+  ②实参**逐字是入口自己的形参**（换成字面量即非转交）；③被委托方**顶层**存在
+  `ReadInterfaceToken()` 与描述符的比较（嵌套不算）；④比较身份 ∈ M1 的 `_DESCRIPTOR_ACCEPTED`；
+  ⑤不匹配分支**顶层 `return`/`throw`** 且该比较**早于 `switch`**。读到比较之前会**沿路绑定被委托方的
+  `init_declarator`**（`token = data.ReadInterfaceToken();` 这种常见写法）。三档返回
+  `guarded` / `seen`（保留候选，报文「present but not accepted」并列出两侧身份） / 不成立。
+  `action()` 与 `value()` 的委托分支**两处调用点用同一判定**，避免同一行出现两种说法。
+- **度量用正式执行路径**（`python -m src.cli ohscan-run --detector ohscanner.interface.ipc`），
+  范围逐条取自 M1 平台产物自己记录的 `--include` 路径集合，键为 `(file, line, rule_id, source_sha256)`：
+  `window_window_manager` **15 → 14**（1 条 AUTH-01 消失、0 新增、0 理由变化），
+  其余四组件逐条不变（3→3、4→4、2→2、0→0），**合计 24 → 23**。
+- **绑定未变**：前后两次运行 `commit` / `snapshot_sha256` / 该文件 `source_sha256` 完全相同，
+  只有 `detector_version` 0.4.0 → 0.5.0。**拓扑已写入报告**：`catalog.py` 是负责人维护的注册表且其
+  集成分支的 `interface/` 包是 M1 前快照，故 CLI 跑在该工作树的临时副本上并覆盖队友 B 的 `interface/` 包。
+- **不丢信息**：`OnRemoteRequestInner` 本就是入口 root，其自身观测保留——同文件仍报 2 次
+  （`:738` AUTH-02、`:1778` CAP-01）。
+- **对照实验有区分度**：同一批 8 个 fixture 跑在 M2 之前的引擎上，恰好两个 `_fixed`
+  与「另一个接口」的报文断言共 3 项失败，五个纯正例前后都通过。
+- 测试：接口线分支 **401 项 OK**（修复前 391；新增 10 项 + 8 个 fixture，manifest 40 → 48 行）。
+- 复现与产物：`docs/research/ipc_m2_relay_guard_2026-10-12.md`；
+  脚本 `research/experiments/interface/ipc/m2_platform_delta.py`；
+  产物在 ignored `outputs/reports/m2_relay_guard/`（不提交）。
+
+### 未验证
+
+- **`seen` 档与局部变量档只有 fixture 证据**：五组件里凡隔一次调用的守卫，比较身份都被接受，
+  真实语料没有行使这两档。不能据此认为它们已在真实源码上验证过。
+- **不做跨文件**：条件①硬性要求同文件；`DelayedSingleton<X>::GetInstance()->Method()` 那一跳
+  与 M6 的范围没有改动。
+- **不是支配性证明**：条件是结构规则（顶层 + 早于 switch + 不匹配分支离开），`goto`、异常、
+  宏展开改变控制流的情形未被覆盖——支配性本身属 M5。
+- **不校验被委托方的其它调用者**：判定按调用点逐处进行，不推断该函数是否还被别的入口调用。
+- 五组件本次 `coverage status` 都是 **partial**，仍带解析完整性义务；
+  只写「当前核查未发现直接关联」，不写「无影响」。
+- 本报告不给 Precision：没有独立标注集就不存在正式误报率。
+- **M2 未修 M3/M4/M5/M6**：授权谓词体未建模（M3）、常量域（M4）、有界支配性（M5）、
+  定向跨文件/跨仓（M6）都原样保留。
