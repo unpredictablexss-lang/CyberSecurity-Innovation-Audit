@@ -140,6 +140,12 @@ class Store:
         if status not in TERMINAL:
             raise ValueError("invalid terminal state")
         with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT cancel_requested FROM jobs WHERE id=? AND status='running'", (key,)).fetchone()
+            if row is None:
+                return
+            if row[0] and status in {"completed", "completed_with_limitations"}:
+                status, error, report_sha256 = "cancelled", "Cancelled before atomic result publication", None
             db.execute("UPDATE jobs SET status=?,stage=?,finished_at=?,error=?,report_sha256=?,elapsed_seconds=? WHERE id=? AND status='running'",
                        (status,status,now(),error,report_sha256,elapsed,key))
 

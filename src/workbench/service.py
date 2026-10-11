@@ -13,10 +13,11 @@ def sha(data):
 def engine_fingerprint():
     root = Path(__file__).resolve().parents[2]
     digest = hashlib.sha256()
-    for directory in ("ohscanner", "parser", "benchmark"):
-        for file in sorted((root / "src" / directory).rglob("*.py")):
-            digest.update(str(file.relative_to(root)).encode())
-            digest.update(file.read_bytes())
+    for file in sorted((root / "src").rglob("*.py")):
+        if "workbench" in file.relative_to(root / "src").parts:
+            continue
+        digest.update(str(file.relative_to(root)).encode())
+        digest.update(file.read_bytes())
     return digest.hexdigest()
 
 def check_repository(settings, path):
@@ -26,8 +27,11 @@ def check_repository(settings, path):
     resolved = raw.resolve(strict=True)
     if not any(resolved.is_relative_to(root) and resolved != root for root in settings.target_roots):
         raise ValueError("repository is outside configured target roots")
-    if _git(resolved,"rev-parse","--is-bare-repository").strip() not in (b"true",b"false"):
+    bare = _git(resolved,"rev-parse","--is-bare-repository").strip()
+    if bare not in (b"true",b"false"):
         raise ValueError("not a local Git repository")
+    if bare == b"false" and Path(_git(resolved,"rev-parse","--show-toplevel").decode().strip()).resolve() != resolved:
+        raise ValueError("register the repository root, not a subdirectory")
     # No network operations or working-tree source reads.
     return resolved
 
