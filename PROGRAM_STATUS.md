@@ -6,10 +6,10 @@
 
 > 项目：CyberSecurity-Innovation-Audit  
 > 赛题方向：2026 OpenHarmony 开源代码漏洞挖掘  
-> 更新日期：2026-10-11（shared_ptr 审查修复已并入 teammate A fragment 候选）
-> 当前分支：`codex/teammate-a-fragment-consolidation-20261010`（基于 `codex/teammate-a-shared-ptr-race-migration` 的整合候选；含 review-fix 提交，准备推送）
+> 更新日期：2026-10-11（DelayedSingleton PoC/动态验证/版本影响/报告闭环已实现）
+> 当前分支：`codex/teammate-a-shared-ptr-competition-loop-20261011`（基于 fragment `a4272ce` 的比赛闭环候选）
 > PR：#4 `feat: historical benchmark, scanner evidence chain, and multi-tool adapters`（2026-10-09 已合并）  
-> 当前阶段：OHScanner Core M0-M2、shared_ptr/lifetime 研究检测器、来源/证据校验与 teammate A 研究材料已整合到同一候选；shared_ptr P0 scope/lock 审查修复已并入，但这些模块尚未注册为 production detector。合并后 fragment 候选本地完整回归为 367 tests、2 skipped、OK；当前 head 的远端 CI 尚未核实。
+> 当前阶段：OHScanner Core M0-M2、shared_ptr/lifetime 研究检测器、来源/证据校验与 teammate A 研究材料已整合到同一候选；shared_ptr P0 scope/lock 审查修复已并入，但这些模块尚未注册为 production detector。当前候选本地完整回归为 379 tests、2 skipped、OK；DelayedSingleton PoC 3/3 TSan 稳定触发、fixed/patched 各 0/3 触发。
 > 交付目标：本项目以完成赛题为目标，必须产出 PoC、动态验证证据、CWE/CVE、影响范围、修复建议、性能数据与漏洞报告（见 `AGENTS.md` 的 Competition deliverables 章节）。`candidate` 是**默认起点**而非终点：证据满足门槛即升级为 `confirmed` / `reportable` 并记录证据等级。
 
 ---
@@ -40,10 +40,10 @@ Clang 其余目标缺依赖、kernel 部分解析、真实构建覆盖均未闭�
 | PR | #4 |
 | PR 状态 | merged / closed（2026-10-09） |
 | mergeability | 已合并到 main，非待合并 PR |
-| 当前分支 | `codex/teammate-a-fragment-consolidation-20261010`（含 shared_ptr review fixes，准备推送） |
+| 当前分支 | `codex/teammate-a-shared-ptr-competition-loop-20261011`（准备推送） |
 | 当前阶段 | teammate A 整合候选已包含 M0-M2、shared_ptr/lifetime 研究检测器、scope/synchronization 修复和证据工具；production catalog 注册、C-gate 和 main 合并授权待完成 |
 | 最近确认的 GitHub Actions | Run [38043467633](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38043467633)：`50c1392` 成功；当前 fragment head 尚未核实 |
-| 当前本地回归 | `367 tests`、`2 skipped`、`OK`（2026-10-11） |
+| 当前本地回归 | `379 tests`、`2 skipped`、`OK`（2026-10-11） |
 | 最新阶段核验 | 当前 head 的远端 CI 需重新运行/核验；旧 Run 不得替代当前 head |
 | validated vulnerability | 0 |
 
@@ -444,3 +444,12 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 修复提交已 cherry-pick 到 `codex/teammate-a-fragment-consolidation-20261010`，公共 `contracts.py`、Runner 和 detector catalog 未修改；shared_ptr detector 版本更新为 `0.2.0-proposed`。
 - 固定真实组件静态复测：`openharmony/commonlibrary_c_utils` vulnerable `bdfafdaafddb01ab7ae13354ce2ada9555d7935c` 产生 2 个 candidate binding，fixed `9a3f281120307ec7dcce17fae882dcc4e6a6f4d7` 产生 0 个。binding manifest 仍为 draft，尚未独立 pin，不构成 ground truth 或漏洞结论。
 - 仍未闭合：独立 holdout、TSan/ASan 动态验证、PoC、CWE/CVE 影响范围、修复重验、production catalog 注册和报告提升；所有 finding 仍为 candidate/unassessed。
+
+## 26. 2026-10-11 DelayedSingleton 比赛闭环
+
+- 新增 `src/ohscanner/poc/cpp_shared_ptr_race.py` 与参数化 Harness。运行器仅读取固定本地 Git 对象，在隔离目录中构建 vulnerable/fixed/patched 三个 revision，使用 WSL2 clang 14 + TSan 重复执行并绑定命令、日志和 hash。
+- 真实复现结果：vulnerable `stable_reproduced`（3/3 同时观察到 data race 与 heap-use-after-free）；fixed `patch_revalidation_passed`（0/3）；vulnerable 上套用 fixed `singleton.h` 的 patched revision 也为 `patch_revalidation_passed`（0/3）。clean fixed/patched 不解释为 safe。
+- PoC binding manifest SHA-256 为 `a1523ff051720917b4ceada335d54dd518ae05b6d33c75a8d508787ee01fc199`，当前仍为 `draft_unpinned`；Harness SHA-256 为 `49ae09d85ac7f881c8185e9b4f3928e443c7503e7d32379c9855ee6b03bc464f`。
+- 新增 `src/report/vulnerability_report.py` 和版本影响工具。对 58 个 Git refs 按 `singleton.h` exact blob 分类：`affected=24`、`fixed=3`、`unknown=31`；这不等于产品构建均受影响。修复 diff SHA-256 为 `cd0eabdad032efe54f0b87890b6b836c1b02626d5dce671a25ca3c23682f13b0`。
+- caller survey 在 `commonlibrary_c_utils` vulnerable commit 中找到 44 个测试/文档/示例匹配，但没有建立真实产品 IPC/低权限入口。报告因此保持 `dynamic_reproduced_component_issue`，不升为 `confirmed/reportable`；CVE 保持 `not_assigned`。
+- 证据门槛：target、敏感操作、必要并发条件、CIA 影响、动态复现已记录；`entry_controlled=false`。仍需产品级调用者/权限边界、独立 binding pin、产品构建 profile 和独立 holdout。

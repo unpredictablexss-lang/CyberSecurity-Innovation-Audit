@@ -35,3 +35,10 @@
 - 当前没有已确认漏洞；`shared_ptr_race` 与 `lifetime` 仍是 candidate/unassessed 研究检测器，尚未注册 production detector catalog。
 - shared_ptr 修复覆盖 global/member owner、template qualifier、local shadow、共同/不同/单侧 mutex、conditional lock 和 mixed atomic/mutex 边界；真实 `commonlibrary_c_utils` 固定 pair 静态复测为 vulnerable 2 candidate bindings / fixed 0，binding 仍是 draft，不能作为漏洞或准确率结论。
 - 独立 holdout、动态验证、PoC、CWE/CVE 影响范围、修复重验和 production registration 仍未闭合。
+
+## DelayedSingleton 比赛闭环（2026-10-11）
+
+- `src/ohscanner/poc/` 已实现固定 Git source + Harness + TSan 状态机；vulnerable 3/3 稳定触发 race/UAF，fixed 与 patched 各 0/3，patch revalidation passed。
+- `src/report/vulnerability_report.py` 已输出证据门槛控制的 JSON/Markdown；版本 refs 分类为 affected 24 / fixed 3 / unknown 31。
+- caller survey 未证明产品级攻击入口，报告状态为 `dynamic_reproduced_component_issue`，不是 confirmed/reportable；binding 仍为 draft_unpinned。
+- 完整回归 `379 tests`、`2 skipped`、`OK`；`py_compile` 和 `git diff --check` 通过。
