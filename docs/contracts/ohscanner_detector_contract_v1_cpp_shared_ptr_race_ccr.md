@@ -3,7 +3,7 @@
 - 状态：`proposed / not implemented`
 - 适用接口：`src/ohscanner/contracts.py` 的 M0 `DetectorFinding` / `DetectorRun`
   及 `src/benchmark/tool_result.py` 的 `ToolDiagnostic`
-- 关联 detector：`ohscanner.cpp.shared_ptr_race` `0.1.0-proposed`
+- 关联 detector：`ohscanner.cpp.shared_ptr_race` `0.2.0-proposed`
 - 接口基线：`codex/reviewed-a-integration-20261009` `b9203b2`
 - 处理原则：本文件只提出变更，不修改公共 contracts，也不把 proposed 字段写成已实现 API。
 
