@@ -27,7 +27,7 @@ from src.ohscanner.contracts import (
 
 _RULE_ID = "ohcpp-shared-ptr-race-candidate-001"
 _DETECTOR_ID = "ohscanner.cpp.shared_ptr_race"
-_DETECTOR_VERSION = "0.1.0-proposed"
+_DETECTOR_VERSION = "0.2.0-proposed"
 _SHA256_RE = re.compile(r"[a-f0-9]{64}")
 _SHA256_OR_OID_RE = re.compile(r"(?:[a-f0-9]{40}|[a-f0-9]{64})")
 _EVIDENCE_CLASS_ORDER = (
