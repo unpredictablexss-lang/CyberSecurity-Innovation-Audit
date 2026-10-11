@@ -4,7 +4,7 @@
     "kind": "self_authored_synthetic_fixture",
     "repository": "synthetic/fixture",
     "commit": "2222222222222222222222222222222222222222",
-    "snapshot_sha256": "a30276427ea23ffc4dcaf357a1ae3b926c341296be303fcf141637f9f16f13f6",
+    "snapshot_sha256": "e871cbea3b98eab73006e4bc4ec3f3636465865f6dd28f8b9e451557a28b2fca",
     "profile_id": "fixture-no-build",
     "note": "Fixture metadata only; not a public vulnerability benchmark."
   },
@@ -16,6 +16,15 @@
       "parse_issues": [],
       "fixture_category": "fixed",
       "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/not_applicable_global_shared_ptr.cpp",
+      "sha256": "2628641dd821a02f528695b85c202db1960000d5fb204daa4e0ad690cc9430d2",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "not_applicable_global_shared_ptr",
+      "expected_observation": "not_applicable_out_of_rule",
       "language": "cpp"
     },
     {
@@ -37,8 +46,26 @@
       "language": "cpp"
     },
     {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_mutex_mixed.cpp",
+      "sha256": "b41ee6e621230cc12eb792275cb5848a2036cd1d6640fea4cae95ad0703f4900",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe",
+      "expected_observation": "no_candidate_shape_with_mixed_limitation",
+      "language": "cpp"
+    },
+    {
       "path": "tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_only.cpp",
       "sha256": "16bbc2ad8997ef484b2f441783a6a94d2a7adb49b91c5259f663dbec9a33cd82",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/safe_same_mutex_shared_ptr.cpp",
+      "sha256": "b32643f01e686c1719d5f5fbc4dbbe0b9ec84f302baa1f37cd3c19616a6c1a14",
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "safe",
@@ -99,6 +126,15 @@
       "language": "cpp"
     },
     {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unknown_try_to_lock_shared_ptr.cpp",
+      "sha256": "40a7a5d75213cfd31c77a77f3078e763e222d695a973bf010459811926a84bcd",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "unknown_conditional_lock",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
       "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_plain_pointer.cpp",
       "sha256": "b4b25ff916b54f805d3f6fda9a8b83464063f73e23cabfb45d5fd3ccc27c68b0",
       "parse_status": "complete",
@@ -117,8 +153,26 @@
       "language": "cpp"
     },
     {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/vulnerable_different_mutexes.cpp",
+      "sha256": "8198660cef02fa902b020d95fc354c5944f9ab63881dbd969604a04d466a8fab",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    },
+    {
       "path": "tests/detectors/fixtures/cpp_shared_ptr_race/vulnerable_non_atomic_shared_ptr.cpp",
       "sha256": "55a0d57f1c308f5ee838e1a9d4f3c5dca00914b3500e15cdf62a2c8552cef564",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/vulnerable_one_sided_mutex.cpp",
+      "sha256": "cf42ae6dcb0c53c223af203b284bc557ff7bf2c05f9790fdfc363910af70e501",
       "parse_status": "complete",
       "parse_issues": [],
       "fixture_category": "vulnerable",
