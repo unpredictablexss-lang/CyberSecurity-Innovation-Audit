@@ -623,3 +623,59 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **没做**：**没有改任何检测器规则**（改规则会改变候选集合，须与它的正/反例一起单独落地并复跑五组件）；
   没有升级任何候选；没有跑构建/运行时验证（各组件可行性已列入报告 §7）。
 - **动作**：本轮**未推送**。
+
+## 33. 2026-10-11 M1 描述符身份修复（队友 B 单独提交，未推送）
+
+接口线 M1：把 IPC 描述符校验从「限定名必须是本类」的过滤器，改成**从类自己的基类子句读出的接口身份**，
+并按三档给结论。只改这一处，**M2～M6 未动**。
+
+- 提交：`3fe3537`（分支 `feat/interface-m1-descriptor-identity`，**基于负责人已本地验证并推送的
+  `feat/owner-ipc-platform-integration` 顶端 `86fbf99`**）；同一份树改动在接口线为 `3d88ffc`。
+  **两者均未推送、未合并**，是否推送/开 PR/合并由负责人决定。
+- 三档：身份一致（接受为守卫，报文注明来源）/ **明确不一致**（保留候选，同时列出比较的接口与类声明的接口
+  各自的 file:line）/ 无法判定（保持 `unknown`，既不当作校验成立，也不当作明确不一致——别名基类、
+  类声明不在本分片都属于这一档）。身份**永不从类名推断**：
+  `IRemoteStub<OnPermissionUsedRecordCallback>`（接口无 `I` 前缀）与
+  `TokenSyncCallbackStub : IRemoteStub<ITokenSyncCallback>`（类名与接口名不同）都被正确处理。
+- 规则身份随之移动：detector `0.4.0`、model `oh-ipc-2026.10-v2`，新增两条按观测级别的义务
+  `descriptor_identity_mismatch` / `descriptor_identity_unresolved`。
+- **另加 4 个「有比较但不成守卫」的对照**：只取回没比较、不匹配分支只记日志、守卫在目标操作之后、
+  只覆盖一个分支——四种情况下 AUTH-01 仍然产生，说明修复没有放宽路径语义。
+
+### 已验证
+
+- 按**正式执行路径**复跑五组件（`python -m src.cli ohscan-run --detector ohscanner.interface.ipc`，
+  同一批显式 `--include` 路径、同一 commit、比较键与既有回归脚本一致）：
+  `security_access_token` **20 → 3**（17 条 AUTH-01 消失、0 新增、0 理由变化），
+  另四个组件 **15/4/2/0 逐条不变**；合计 **41 → 24**，`validated_vulnerability=0`，
+  24 条候选全部带义务。
+- **17 条消失逐条有依据**：每条都定位到入口函数体内的守卫行、两侧身份、以及候选被到达的调用链
+  （如 `TokenSyncCallbackStub::OnRemoteRequest` 守卫 `:70` → 调用 `:78` → handler `:103`），
+  并逐条验证文件的 sha256 等于该候选被绑定到的 `source_sha256`。注意一个文件可能有多个 stub 类、
+  各带自己的守卫，取证必须取**候选所属入口**里的那一句。
+- 测试：接口线分支 **391 项 OK**（修复前 375；新增 16 项描述符身份测试 + 11 个 fixture，
+  manifest 29 → 40 行）；基于集成分支的分支 **350 项 OK**。
+- 复现命令、环境、产物哈希：`docs/research/ipc_m1_descriptor_identity_2026-10-11.md`；
+  产物在 ignored `outputs/reports/m1_descriptor_identity/`（不提交）；脚本入库到
+  `research/experiments/interface/ipc/m1_*.py`。`.gitignore` 按既有惯例增加一行该产物目录。
+
+### 未验证
+
+- **`mismatch` 与 `unresolved` 两档只有 fixture 证据**：本次语料新增 0、理由变化 0，
+  说明真实源码里没出现这两档。不能据此认为它们已在真实代码上验证过。
+- **M3 的缺陷没有修**：17 条里有 3 条（`token_sync_manager_stub.cpp:83/110/127`，报的是授权谓词
+  `IsRootCalling`）在核查文档里被判为 M3 机制；M1 让它们的 AUTH-01 观测消失，是因为入口守卫支配该路径，
+  **不等于**「guard 被当成 handler」这件事被修好。
+- 支配性只按同一套结构规则核对（守卫在入口体内、早于候选、不匹配分支 return）并逐条读过钉住 commit 的
+  源码；守卫**语义**之外的前提仍在义务里（token 是否可能为空、调用方能否控制、是否存在别的入口绕过）。
+- 五组件本次运行 `coverage status` 都是 **partial**，仍带解析完整性义务；
+  「解析错误不在候选附近」不足以证明没有影响，只写「当前核查未发现直接关联」。
+- 核查文档的 **37 条 likely false positive 不是正式误报率**：没有独立标注集就不存在 Precision，
+  本项工作不给出该数字。
+- M2（同文件一跳委托）、M5（有界支配性）、M3/M4、M6（定向跨文件/跨仓）**未开始**；
+  存活候选的机制见 `docs/research/ipc_m1_descriptor_identity_2026-10-11.md` §6。
+
+### unknown
+
+- `dlsym`/函数指针表的间接分发、别名基类、跨仓能力面仍为 `unknown`，保留候选不臆断。
+- M2～M6 修完后候选集合如何变化未知；本条不预测也不追求某个数字。
