@@ -3,9 +3,11 @@
 Every Git fixture is created locally in a temporary repository. No external
 scanner runs, nothing is claimed to be a vulnerability, and the assertions below
 pin the honest-reporting properties the driver exists for: an excluded file is
-named with its reason, a shard failure never becomes a clean result, and a
-candidate whose obligations were not recorded says so.
+named with its reason, a shard failure never becomes a clean result, the file
+accounting closes, and a candidate whose obligations the runner did not record
+carries the driver's standing questions at status unknown instead of a blank.
 """
+import hashlib
 import json
 from contextlib import redirect_stdout
 from io import StringIO
@@ -18,14 +20,19 @@ from unittest import mock
 
 from src.ohscanner.detectors.interface import audit as audit_module
 from src.ohscanner.detectors.interface.audit import (
+    CANDIDATE_IDENTITY_FIELDS,
     PASS_DETECTORS,
     PRODUCTION_EXCLUDED_SEGMENTS,
     TreeEntry,
     audit_component,
+    candidate_identity,
+    component_slug,
+    merge_audit_reports,
     plan_scope,
     plan_shards,
     render_markdown,
     shard_digest,
+    write_manifest,
 )
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -53,6 +60,10 @@ def git(repo, *args):
         capture_output=True, check=True, text=True, timeout=30,
     )
     return done.stdout.strip()
+
+
+def sha256_of(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 class ComponentAuditTestCase(unittest.TestCase):
@@ -251,6 +262,14 @@ class TwoPassAuditTests(ComponentAuditTestCase):
         self.assertEqual(view["unexamined_reasons"], {"incomplete_ast:partial": 1})
 
     def test_all_files_pass_keeps_recall_and_admits_the_zero_counter(self):
+        """The CCR counterexample: a blocked run zeroes scope and drops obligations.
+
+        See docs/contracts/ohscanner_blocked_run_coverage_ccr.md sections 1 and 3.2.
+        When the shared platform stops gating coverage counters and obligations on
+        the run status, THIS test is the one that must change: either scope_files
+        stops being 0, or the run status becomes an explicit partial that is still
+        counted as a coverage gap. Neither half may be fixed by hiding the other.
+        """
         view = self.pass_view("all-files")
         self.assertEqual(view["detector_status"], "blocked")
         self.assertEqual(view["diagnostics"], 4)
@@ -261,6 +280,14 @@ class TwoPassAuditTests(ComponentAuditTestCase):
         self.assertEqual(view["applicable_files"], 5)
         self.assertTrue(any("blocked run records" in note
                             for note in self.report["coverage"]["analysis_coverage"]["notes"]))
+        # Second half of the counterexample: this pass emitted candidates while
+        # the runner recorded no obligations for any of them.
+        blocked_only = [item for item in self.report["candidates"]
+                        if item["passes"] == ["all-files"]]
+        self.assertTrue(blocked_only)
+        for item in blocked_only:
+            self.assertEqual(item["obligations_by_source"], {})
+            self.assertFalse(item["obligations_recorded_by_runner"])
 
     def test_candidates_carry_binding_evidence_and_stay_candidates(self):
         self.assertGreaterEqual(len(self.report["candidates"]), 2)
@@ -273,33 +300,98 @@ class TwoPassAuditTests(ComponentAuditTestCase):
             self.assertIn(item["file_parse_status"], ("complete", "partial"))
         self.assertEqual(self.report["validated_vulnerability"], 0)
 
-    def test_partial_parse_candidate_is_kept_and_labelled_not_dropped(self):
+    def test_partial_candidate_carries_driver_synthesized_unknown_obligations(self):
         partial = [item for item in self.report["candidates"]
                    if item["file"] == "src/broken.cpp"]
         self.assertEqual(len(partial), 1)
         item = partial[0]
         self.assertEqual(item["file_parse_status"], "partial")
-        # Only the wider pass can see it; its obligations are therefore not
-        # recorded, and the row says so instead of implying none are needed.
+        # Only the wider pass can see it, so the shared runner recorded nothing.
+        # The obligations are NOT left blank: an empty list reads as "nothing to
+        # prove". The driver attaches its standing questions at status unknown and
+        # marks them as its own, and it asserts nothing about the file's AST.
         self.assertEqual(item["passes"], ["all-files"])
-        self.assertFalse(item["obligations_recorded"])
-        self.assertEqual(item["obligations"], [])
+        self.assertFalse(item["obligations_recorded_by_runner"])
+        self.assertEqual(item["obligations_source"], "driver_synthesized_unknown")
+        self.assertEqual(
+            [obligation["kind"] for obligation in item["obligations"]],
+            ["entry_reachability", "caller_identity_conditions", "guard_effectiveness",
+             "parse_completeness_impact", "configuration_path_existence"],
+        )
+        for obligation in item["obligations"]:
+            self.assertEqual(obligation["status"], "unknown")
+            self.assertEqual(obligation["origin"], "audit_driver")
+            self.assertTrue(obligation["reason"])
         markdown = render_markdown(self.report)
-        self.assertIn("not** shown to be absent", markdown)
+        self.assertIn("origin `audit_driver`", markdown)
+        self.assertIn("standing questions", markdown)
 
-    def test_candidate_seen_by_both_passes_is_counted_once_with_obligations(self):
+    def test_candidate_seen_by_both_passes_keeps_the_runner_obligations(self):
         complete = [item for item in self.report["candidates"]
                     if item["file_parse_status"] == "complete"]
         self.assertTrue(complete)
         for item in complete:
             self.assertEqual(item["passes"], ["all-files", "complete-ast"])
-            self.assertTrue(item["obligations_recorded"])
+            self.assertTrue(item["obligations_recorded_by_runner"])
+            self.assertEqual(item["obligations_source"], "shared_runner")
             self.assertGreaterEqual(len(item["obligations"]), 3)
             kinds = {obligation["kind"] for obligation in item["obligations"]}
             self.assertIn("entry_reachability", kinds)
             self.assertIn("security_impact", kinds)
+            for obligation in item["obligations"]:
+                self.assertEqual(obligation["origin"], "shared_runner")
+                self.assertIn(obligation["source_pass"], ("all-files", "complete-ast"))
+            # Per-source obligations are unioned, not overwritten: only the pass
+            # whose run completed has any, and both passes are on the record.
+            self.assertEqual(sorted(item["obligations_by_source"]), ["complete-ast"])
+            self.assertEqual(sorted(source["pass"] for source in item["sources"]),
+                             ["all-files", "complete-ast"])
         keys = {(item["file"], item["line"], item["rule_id"]) for item in self.report["candidates"]}
         self.assertEqual(len(keys), len(self.report["candidates"]))
+
+    def test_candidate_identity_binds_repository_commit_and_versions(self):
+        for item in self.report["candidates"]:
+            self.assertEqual(item["repository"], REPOSITORY)
+            self.assertEqual(item["commit"], self.commit)
+            self.assertEqual(item["detector_id"], "ohscanner.interface.ipc")
+            self.assertEqual(item["detector_version"], "0.3.0")
+            self.assertEqual(item["model_version"], "oh-ipc-2026.10-v1")
+            # The identity names the interpretation, not the pass variant: both
+            # passes apply the same rule set, so a rule change (not a scope
+            # change) is what moves this string.
+            self.assertEqual(item["interpretation_id"], "ohscanner.interface.ipc")
+            self.assertEqual(item["rule_version"],
+                             "ohscanner.interface.ipc@0.3.0+oh-ipc-2026.10-v1")
+            # One interpretation version (both passes apply the same rules), but
+            # two variant ids -- the split that must NOT reach the identity.
+            self.assertEqual(
+                item["observed_detector_versions"],
+                ["ohscanner.interface.ipc@0.3.0+oh-ipc-2026.10-v1"],
+            )
+            expected_ids = sorted({
+                "complete-ast": "ohscanner.interface.ipc.complete-ast",
+                "all-files": "ohscanner.interface.ipc",
+            }[name] for name in item["passes"])
+            self.assertEqual(item["observed_detector_ids"], expected_ids)
+            self.assertEqual(
+                candidate_identity(item),
+                (REPOSITORY, self.commit, item["rule_id"], item["rule_version"],
+                 item["file"], item["line"], item["source_sha256"]),
+            )
+
+    def test_two_passes_over_one_interpretation_keep_one_identity(self):
+        # A candidate seen by both passes must be ONE row. The variant detector
+        # ids differ; the interpretation must not, or the same finding splits in
+        # two and every count derived from the list is inflated.
+        seen_both = [item for item in self.report["candidates"]
+                     if item["passes"] == ["all-files", "complete-ast"]]
+        self.assertTrue(seen_both)
+        for item in seen_both:
+            self.assertEqual(item["interpretation_id"], "ohscanner.interface.ipc")
+            self.assertEqual(len(item["observed_detector_ids"]), 2)
+            self.assertEqual(len(item["observed_detector_versions"]), 1)
+        self.assertEqual(self.report["coverage"]["analysis_coverage"]["candidates"],
+                         len(self.report["candidates"]))
 
     def test_parse_depth_of_every_audited_file_is_reported(self):
         coverage = self.report["coverage"]["analysis_coverage"]
@@ -483,6 +575,164 @@ class CommandLineTests(ComponentAuditTestCase):
         self.assertEqual(PASS_DETECTORS["all-files"].required_facts, ())
         self.assertNotEqual(PASS_DETECTORS["complete-ast"].detector_id,
                             PASS_DETECTORS["all-files"].detector_id)
+
+    def test_manifest_lands_next_to_the_json_artifact(self):
+        out_dir = self.root / "elsewhere"
+        buffer = StringIO()
+        with redirect_stdout(buffer):
+            audit_module.main([
+                "--repo-dir", str(self.repo), "--repository", REPOSITORY,
+                "--commit", self.commit, "--json-out", str(out_dir / "audit.json"),
+                "--md-out", str(out_dir / "audit.md"),
+            ])
+        manifest = out_dir / (component_slug(REPOSITORY) + ".manifest.json")
+        self.assertTrue(manifest.exists())
+        self.assertEqual(
+            json.loads(manifest.read_text(encoding="utf-8"))
+                  ["artifacts"]["json"]["path"],
+            str(out_dir / "audit.json"),
+        )
+
+    def test_cli_reports_tests_candidates_and_confirmed_counts_separately(self):
+        buffer = StringIO()
+        with redirect_stdout(buffer):
+            audit_module.main([
+                "--repo-dir", str(self.repo), "--repository", REPOSITORY,
+                "--commit", self.commit, "--out-dir", str(self.root / "reports"),
+            ])
+        printed = buffer.getvalue()
+        self.assertIn("candidates: 4", printed)
+        self.assertIn("runner obligations", printed)
+        self.assertIn("driver-synthesized unknown obligations", printed)
+        self.assertIn("confirmed vulnerabilities: 0", printed)
+        self.assertIn("file accounting closed: True", printed)
+
+
+class FileAccountingClosureTests(ComponentAuditTestCase):
+    """Every planned file lands in exactly one named bucket, and a residual shows."""
+
+    def setUp(self):
+        super().setUp()
+        self.report = self.audit()
+
+    def test_accounting_closes_and_names_every_bucket(self):
+        closure = self.report["coverage"]["analysis_coverage"]["bucket_closure"]
+        self.assertTrue(closure["closed"])
+        self.assertEqual(closure["files_unaccounted"], 0)
+        self.assertEqual(closure["files_selected"], 5)
+        self.assertEqual(closure["parse_complete"], 4)
+        self.assertEqual(closure["parse_partial"], 1)
+        self.assertEqual(closure["parse_failed"], 0)
+        self.assertEqual(closure["unclaimed_by_detector"], 0)
+        self.assertEqual(closure["dropped_by_loader"], 0)
+        self.assertEqual(closure["not_run_files"], 0)
+        self.assertIn("files_selected =", closure["identity"])
+        self.assertIn("Closed: **True**", render_markdown(self.report))
+
+    def test_dropped_and_unclaimed_files_land_in_their_own_buckets(self):
+        (self.repo / "src" / "latin1.cpp").write_bytes(
+            b"// \xff\xfe not valid UTF-8\nint f() { return 1; }\n")
+        self.write("src/bridge.js", "function bridge() { return 1; }\n")
+        commit = self.commit_all("add a non-UTF8 file and a JS file")
+        report = audit_component(self.repo, REPOSITORY, commit, excerpt_context=0)
+        coverage = report["coverage"]["analysis_coverage"]
+        closure = coverage["bucket_closure"]
+        self.assertEqual(closure["files_selected"], 7)
+        self.assertEqual(closure["parse_complete"], 4)
+        self.assertEqual(closure["parse_partial"], 1)
+        self.assertEqual(closure["unclaimed_by_detector"], 1)  # the .js file
+        self.assertEqual(closure["dropped_by_loader"], 1)  # the non-UTF8 blob
+        self.assertEqual(closure["not_run_files"], 0)
+        self.assertTrue(closure["closed"])
+        self.assertEqual(closure["files_unaccounted"], 0)
+        # The dropped file is C++ -- a language a selected detector DOES declare --
+        # so it must not be reported as one nobody claims.
+        self.assertEqual(coverage["files_in_scope_without_a_claiming_detector"], {"js": 1})
+
+    def test_failed_shard_files_are_counted_as_not_run(self):
+        with mock.patch.object(audit_module, "_run_shard",
+                               side_effect=ValueError("shard exploded")):
+            report = self.audit()
+        closure = report["coverage"]["analysis_coverage"]["bucket_closure"]
+        self.assertEqual(closure["not_run_files"], 5)
+        self.assertEqual(closure["parse_complete"], 0)
+        self.assertEqual(closure["parse_partial"], 0)
+        self.assertTrue(closure["closed"])
+        self.assertEqual(closure["files_unaccounted"], 0)
+
+    def test_unaccounted_files_are_printed_instead_of_rounded_away(self):
+        merged = {"pass_runs": [], "parse_map": {}, "candidates": [], "shard_errors": []}
+        depth = audit_module.coverage_depth(merged, self.plan(),
+                                           ("complete-ast", "all-files"))
+        closure = depth["analysis_coverage"]["bucket_closure"]
+        self.assertFalse(closure["closed"])
+        self.assertEqual(closure["files_unaccounted"], 5)
+        self.assertTrue(any("does not close" in note
+                            for note in depth["analysis_coverage"]["notes"]))
+
+
+class MultiReportMergeTests(ComponentAuditTestCase):
+    """Cross-experiment persistence keeps provenance instead of overwriting it."""
+
+    def test_two_repositories_over_one_commit_do_not_fuse_into_one_row(self):
+        first = self.audit()
+        second = audit_component(self.repo, "other/owner", self.commit, excerpt_context=0)
+        merged = merge_audit_reports([first, second])
+        self.assertEqual(len(merged["candidates"]), 2 * len(first["candidates"]))
+        keys = {candidate_identity(item) for item in merged["candidates"]}
+        self.assertEqual(len(keys), len(merged["candidates"]))
+        self.assertEqual([item["candidates"] for item in merged["reports"]],
+                         [len(first["candidates"]), len(second["candidates"])])
+        self.assertEqual(merged["candidate_identity_fields"],
+                         list(CANDIDATE_IDENTITY_FIELDS))
+
+    def test_same_candidate_in_two_reports_is_repetition_not_corroboration(self):
+        first = self.audit()
+        second = self.audit()
+        merged = merge_audit_reports([first, second])
+        self.assertEqual(len(merged["candidates"]), len(first["candidates"]))
+        for item in merged["candidates"]:
+            self.assertEqual(sorted(seen["index"] for seen in item["seen_in_reports"]),
+                             [0, 1])
+            if item["obligations_source"] == "shared_runner":
+                self.assertIn("complete-ast", item["obligations_by_source"])
+        self.assertIn("not independent corroboration", merged["limitations"][0])
+
+
+class ManifestTests(ComponentAuditTestCase):
+    def test_manifest_records_provenance_and_artifact_hashes(self):
+        out_dir = self.root / "reports"
+        buffer = StringIO()
+        with redirect_stdout(buffer):
+            code = audit_module.main([
+                "--repo-dir", str(self.repo), "--repository", REPOSITORY,
+                "--commit", self.commit, "--out-dir", str(out_dir),
+            ])
+        self.assertEqual(code, 0)
+        slug = component_slug(REPOSITORY)
+        json_path = out_dir / (slug + ".json")
+        md_path = out_dir / (slug + ".md")
+        manifest_path = out_dir / (slug + ".manifest.json")
+        for path in (json_path, md_path, manifest_path):
+            self.assertTrue(path.exists(), path)
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["repository"], REPOSITORY)
+        self.assertEqual(manifest["commit"], self.commit)
+        self.assertTrue(manifest["plan_sha256"])
+        self.assertEqual(manifest["counts"]["confirmed_vulnerabilities"], 0)
+        self.assertTrue(manifest["bucket_closure"]["closed"])
+        self.assertIn("--out-dir", manifest["command"])
+        self.assertTrue(manifest["environment"]["python"])
+        self.assertEqual(manifest["environment"]["git"].split()[0], "git")
+        self.assertEqual(manifest["artifacts"]["json"]["sha256"], sha256_of(json_path))
+        self.assertEqual(manifest["artifacts"]["markdown"]["sha256"], sha256_of(md_path))
+        self.assertIn("Manifest:", buffer.getvalue())
+
+    def test_component_slug_is_filesystem_safe(self):
+        self.assertEqual(component_slug("openharmony/communication_dsoftbus"),
+                         "communication_dsoftbus")
+        self.assertEqual(component_slug("weird owner/re po"), "re_po")
+        self.assertEqual(component_slug(""), "component")
 
 
 if __name__ == "__main__":

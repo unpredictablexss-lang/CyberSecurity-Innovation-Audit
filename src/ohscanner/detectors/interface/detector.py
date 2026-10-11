@@ -48,6 +48,12 @@ def _finding_message(o):
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     version = "0.3.0"
+    # The interpretation model, recorded so a persisted candidate can name the
+    # rule set it came from, not only the code version. Read by the audit driver
+    # through getattr; it is not part of the shared Detector protocol.
+    model_version = MODEL_VERSION
+    # The interpretation this detector applies, independent of any scope variant.
+    interpretation_id = "ohscanner.interface.ipc"
     supported_languages = ("c", "cpp")
     required_facts = ()
     ast_scope = "per_file"
@@ -123,3 +129,7 @@ class IpcInterfaceCompleteAstDetector(IpcInterfaceDetector):
     """
     detector_id = "ohscanner.interface.ipc.complete-ast"
     required_facts = ("ast",)
+    # Same interpretation as the base detector, applied under a narrower scope.
+    # Declared explicitly so a candidate found by both passes keeps ONE identity
+    # instead of splitting into two rows over a variant id.
+    interpretation_id = "ohscanner.interface.ipc"

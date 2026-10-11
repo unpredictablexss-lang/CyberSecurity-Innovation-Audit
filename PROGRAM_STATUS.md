@@ -547,8 +547,38 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   | **合计** | | **4983 / 51,531,827** | | **41** | **15** |
 
   候选构成：`ipc.relay.descriptor-boundary` 20、`ipc.capability.export` 15、`ipc.auth.missing` 4、`ipc.auth.guard-coverage` 2。**41 条中 26 条两遍都看见（义务已记录）、15 条只在 partial 文件里出现（义务未记录，报告里逐条标注）。**`window_window_manager` 磁盘上 51 MiB，经生产排除后为 20.2 MiB 生产源码，落在核心 `MAX_TOTAL_BYTES = 32 MiB` 内，故单 shard 即可跑完。
-- **分片不变性在真实组件上验证过**（此前只有 fixture 级单测）：对 `window_window_manager` 用 `--max-files 600` 重跑 → **2 shard**，候选集合与 1 shard 时**逐条相同**（按 `file/line/rule_id/source_sha256` 比较：15 条，双向差集为 0），合并覆盖也相同（`files_selected` 1112 / 字节 / parse 811-268 / `files_analyzed` 811 / `candidate_files` 6），`plan_vs_load.mismatches == []`。只有 `plan_sha256` 与分片布局不同。
+- **一个真实组件的一组分片配置下候选集合一致**（此前只有 fixture 级单测）：对 `window_window_manager` 用 `--max-files 600` 重跑 → **2 shard**，候选集合与 1 shard 时**逐条相同**（按 `file/line/rule_id/source_sha256` 比较：15 条，双向差集为 0），合并覆盖也相同（`files_selected` 1112 / 字节 / parse 811-268 / `files_analyzed` 811 / `candidate_files` 6），`plan_vs_load.mismatches == []`。只有 `plan_sha256` 与分片布局不同。**这只证明该配置下一致，不声称任意分片都不影响结果**；跨文件/组件全局规则的分片语义见 §31。
 - **诚实性由构造与测试共同保证**：摘录 `_excerpt` 一律读 **pinned blob**（测试里把 worktree 改写并加标记 → 标记不出现在摘录里）；某个 shard 抛异常必须进 `shard_errors` 并**永不**被当成「无候选」；0 候选渲染为「不是安全的证明」；计划与实际读取数用 `plan_vs_load` 度量（非 UTF-8 blob 的丢弃可见）。
 - **测试**：新增 `tests/test_component_audit.py` **33 项**；全量 **363 项 OK**（330 既有 + 33 新增）。既有 330 项无回归。
 - **仍未做到 / 未做**：① `ohscanner.interface.ipc` 与 `complete-ast` 变体**没有**注册进 `catalog.py`，因此全局 CLI 目前**选不到**本线检测器——这是负责人的决定，我不代改；② 审计驱动**没有**做成 CLI 子命令，只能以模块方式调用；③ 真正「只在 partial 文件里」的 15 条候选，其义务仍只能靠人工（`complete-ast` 那遍看不见它们）；④ 两遍带来约一倍墙钟时间，且**一个解释对应两个 detector ID**（`diagnostic_id` 因 detector_id 不同而不同）；⑤ 根因相交一栏在组件审计里恒为 `not_measured`（无标注根因集绑定到该组件），既有 12 组历史对仍由 `measure_entry_coverage.py` 度量。
 - **产物与动作**：审计 JSON/MD 全部留在 `/tmp/audit_*.json|.md`，**不入库**（AGENTS.md：生成产物与第三方源码不进提交）；**本轮未推送**，等负责人授权。本分支现领先 `origin/feat/interface-ipc-detector` 3 个提交（`4fda320`、`89401fb`、`3feb5bc`），本轮改动尚未提交。
+- **本轮之后的修正**：负责人 2026-10-11 认可本轮为「真实组件审计实验成果」，但要求暂停扩规则、先修平台表达，并对本节的若干说法做了收紧（分片不变性口径、候选身份的完整绑定、partial 候选的空白义务、统计闭合、产物归档）。这些修正与随之落地的改动记在 **§31**，本节其余事实保留原样。
+
+## 31. 2026-10-11 按负责人决定收紧审计链路：义务不再留空、身份绑定完整、统计闭合、产物归档
+
+- **收到的决定**（负责人，2026-10-11）：① 接受本轮为**真实组件审计实验成果**，纳入待审交付，**不**认定检测器已正式集成；② **暂停扩规则**，下一步优先修平台对「部分分析结果」的表达，再接入正式入口；③ 负责人修公共执行结果的覆盖表达与义务保留，**队友 B 提供 partial 候选义务与对应回归测试**；④ 两遍方案**降为对照实验**，不作为长期正式执行路径；⑤ 测试数、候选数、确认漏洞数**分别报告**；⑥ 实验产物从 `/tmp` 转存**持久目录**并附提交/命令/环境/产物哈希；⑦ 分片口径收紧为「某真实组件的一组分片配置下集合一致」，不得宣称任意分片不变。
+- **落地改动（全部属于 B 线，未动公共契约）**：
+  1. **partial 候选不再留空白义务**：共享 runner 只为 `completed` 的 run 记录义务，blocked 那遍的候选义务为空。现在驱动对**没有** runner 义务的候选补 5 条**标准问题**——`entry_reachability` / `caller_identity_conditions` / `guard_effectiveness` / `parse_completeness_impact` / `configuration_path_existence`——状态一律 `unknown`，标 `origin: audit_driver`，并写明「空列表从来不代表无需验证」。**义务是问题不是断言**，因此 partial 文件也能带；驱动**不伪造任何 AST 事实**。
+  2. **候选身份绑定完整**：身份键由 `(file, line, rule_id, source_sha256)` 扩为 **`(repository, 完整 commit, rule_id, 规则版本, file, line, source_sha256)`**，候选上同时记 `rule_version` / `model_version` / `observed_detector_versions` / `observed_detector_ids` / `sources`。新增 `merge_audit_reports()`：跨实验按该键合并，**按来源并集保留义务**（后一遍不再覆盖前一遍）。
+  3. **修掉一处身份分裂**：把「规则版本」放进身份后，两个 pass 因 `detector_id` 不同（`…ipc` 与 `…ipc.complete-ast`）导致同一候选**裂成两行**（fixture 上候选 4 → 7）。角色归属应是**解释**而非**变体**，故引入 `interpretation_id`（两个变体都声明为 `ohscanner.interface.ipc`）：同一解释的不同作用域限制合并为一行，**算法不同的实现必须声明不同 `interpretation_id`** 才不会被混同。这正是负责人点出的「身份分裂」风险，实测被抓到并修正。
+  4. **统计闭合**：新增 `bucket_closure`，把计划文件分入**六个桶**——`parse_complete` / `parse_partial` / `parse_failed` / `unclaimed_by_detector` / `dropped_by_loader` / `not_run_files`——残差进 `files_unaccounted` 并单独打印（不四舍五入进别的桶）。顺带修一个**真实归属 bug**：被共享 loader 丢弃的非 UTF-8 `.cpp` 原会被算成「无 detector 认领」（它其实是 `cpp`，有 detector 声明），现在按**声明语言**判定，该文件落进 `dropped_by_loader`。
+  5. **报告 schema v2 + 三数分离**：报告顶层 `counts` 分开给 `source_files_audited` / `candidates` / `candidates_with_runner_obligations` / `candidates_with_driver_synthesized_obligations` / `confirmed_vulnerabilities` / `false_positives_reviewed`，控制台也分行打印。**测试数、候选数、确认漏洞数不混为一个数。**
+  6. **产物归档**：默认写入 `outputs/reports/`（`.gitignore:226-227` 已忽略），并为每个组件写 `*.manifest.json`——提交 / git tree / snapshot / plan sha、`plansha`、命令 argv、cwd、环境（Python / platform / git 版本）、计数、闭合结果、以及 **JSON 与 MD 的 sha256**。清单与它描述的 JSON 写在同一目录，不会漂移。
+  7. **口径收紧**：报告与限制里写明「**两遍都看见 = 同一解释在同一文件上跑两遍的重复，不是独立佐证**」；分片只声称「一组配置下一致」，并注明「组件全局规则需要整体求值，本链路不做」。
+  8. **CCR 更新**：`docs/contracts/ohscanner_blocked_run_coverage_ccr.md` 增 §3.1/§3.2/§6——记录负责人已批准的语义（**先 sidecar 后 status**；执行 `completed` 而覆盖 `partial` 是允许的；已产出候选与义务**不得**因整体状态被丢弃；保留候选仍须**校验文件范围/源码哈希/位置/来源**；「已检查但分析未完成」与「完全未分析」分开记录），并列出 B 提供的**反例与回归测试清单**（平台修好后哪条断言该翻转）。反例本身：`communication_dsoftbus @ 652f88e0…` 4 条候选、义务为空。
+- **五组件实数（最终代码，schema v2，1 shard/组件，`validated_vulnerability` 全部 0）**：
+
+  | 组件 | commit | 文件 | parse 完/部分 | 未被认领 | 候选 | runner 义务 / 驱动补 |
+  |---|---|---|---:|---:|---:|---:|---:|
+  | update_updateservice | `e4942a33` | 219 | 187 / 31 | 1 | 2 | 0 / 2 |
+  | security_access_token | `17d88bfb` | 550 | 489 / 56 | 5 | 20 | 20 / 0 |
+  | distributeddatamgr_kv_store | `acfb22aa` | 1446 | 1134 / 310 | 2 | 0 | 0 / 0 |
+  | window_window_manager | `8b0d8fe1` | 1112 | 811 / 268 | 33 | 15 | 4 / 11 |
+  | communication_dsoftbus | `652f88e0` | 1656 | 729 / 927 | 0 | 4 | 2 / 2 |
+  | **合计** | | **4983** | | | **41** | **26 / 15** |
+
+  五个组件的文件账**全部闭合**（`files_unaccounted == 0`，`parse_failed` / `dropped_by_loader` / `not_run_files` 均为 0）；这三类桶目前为 0 是**实测**，不是「没统计」。
+- **测试**：组件审计单测 **45 项**（本轮 +12：闭合 4、跨报告合并 2、身份/变体 2、清单 2、CLI 计数 1、清单落位 1），全量 **375 项 OK**。既有测试无回归。
+- **仍未做到**：① 平台层的覆盖表达与义务保留**未改**（归负责人，B 只给反例与回归测试）；② 仍未注册 `catalog.py`、未做成 CLI 子命令（归负责人）；③ 15 条 partial-only 候选的义务是**驱动的标准问题**，不是跑出来的证据；④ 根因相交在组件审计里恒为 `not_measured`；⑤ 产物目录虽持久但**不入库**（按 AGENTS.md）。
+- **下一步（B 线，按负责人指定优先级）**：从 41 条里挑 **5–8 条**代表性候选（覆盖 complete 与 partial-only），逐条记录：原始代码与关键上下文、是否误报及原因、是否有上层检查/调用前提/配置限制、当前能确认到哪一步、能否做构建或运行验证。**目标是用核查结果指导算法改进，而不是继续增加候选数量。**
+- **动作**：本轮改动**未推送**（负责人未授权）；产物写入 `outputs/reports/*.json|.md|.manifest.json`（已忽略）。

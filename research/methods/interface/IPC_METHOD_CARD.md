@@ -23,6 +23,81 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.7 — partial candidates carry obligations, identity is bound, counts close (2026-10-11)
+
+Owner decision that produced this card: accept the five-component round as a **real-component audit
+experiment**, into pending review — **not** as a formally integrated detector. **Stop expanding
+rules.** The owner fixes the shared platform's expression of partial coverage and its retention of
+obligations; this branch supplies the counterexamples, the obligations for partial candidates, and
+the regression tests. The two-pass scheme is demoted to a **control experiment**, not the long-term
+path. Also required: report test count / candidate count / confirmed count **separately**.
+
+- **Partial-only candidates no longer carry a blank obligation list.** The shared runner emits
+  obligations only for a `completed` run, so the `blocked` pass's candidates had none — and the CCR
+  measured that an empty list reads as "nothing needs proving". The driver now synthesises five
+  **standard questions** for any candidate the runner recorded no obligation for:
+  `entry_reachability`, `caller_identity_conditions`, `guard_effectiveness`,
+  `parse_completeness_impact`, `configuration_path_existence`. Status is `unknown`, origin is
+  `audit_driver`, and each is a **question, not an assertion** — which is why a partial file may
+  legitimately carry it. The driver fabricates no AST fact. An empty list is never "nothing to
+  verify"; `parse_completeness_impact` says so explicitly (a partial AST can hide statements, so
+  the candidate is **kept, not cleared**).
+- **Candidate identity is now bound to repository, full commit and rule version.** Key:
+  `(repository, commit, rule_id, rule_version, file, line, source_sha256)`. `merge_shard_runs`
+  records `rule_version` / `model_version` / `observed_detector_versions` / `observed_detector_ids`
+  / `sources` per candidate, and `merge_audit_reports()` merges **across reports** on the same key.
+  Obligations are **unioned per source** and never overwritten by a later pass.
+- **A real identity split, caught by the fixture.** Putting `rule_version` (built from
+  `detector_id@version`) into the key split every both-pass candidate into two rows — the fixture
+  went 4 → 7 candidates — because the two passes had different detector IDs. The distinction that
+  matters is the **interpretation**, not the variant: both passes now declare
+  `interpretation_id = "ohscanner.interface.ipc"`, so one interpretation at two scope limits stays
+  **one row**, with the variant id kept as recorded metadata. Corollary, and the reason this is
+  written down: **a genuinely different algorithm must declare a different `interpretation_id`**,
+  or it will be silently merged with this one.
+- **File accounting closes, and it is displayed.** `bucket_closure` splits planned files into six
+  named buckets — `parse_complete`, `parse_partial`, `parse_failed`, `unclaimed_by_detector`,
+  `dropped_by_loader`, `not_run_files` — with the residual in `files_unaccounted` printed
+  separately rather than folded into another bucket. Building this found a **real attribution
+  bug**: a non-UTF-8 `.cpp` dropped by the shared loader was being counted as "no detector claims
+  it" although `cpp` is a declared language; the unclaimed bucket is now **declared-language**
+  based and that file lands in `dropped_by_loader`. Across the five components every bucket total
+  closes (`files_unaccounted == 0`); `parse_failed` / `dropped_by_loader` / `not_run_files` are 0
+  by measurement, not by omission.
+- **Report schema v2 counts three things separately.** `counts` gives `source_files_audited`,
+  `candidates`, `candidates_with_runner_obligations`,
+  `candidates_with_driver_synthesized_obligations`, `confirmed_vulnerabilities`,
+  `false_positives_reviewed`; the console prints them on separate lines. Test count, candidate
+  count and confirmed count are never collapsed into one number.
+- **Artifacts are persisted, with provenance.** Default out-dir `outputs/reports/` (gitignored),
+  plus a `*.manifest.json` per component: commit / git tree / snapshot / plan sha, argv, cwd,
+  Python + platform + git versions, counts, bucket closure, and the **sha256 of the JSON and MD
+  artifacts**. The manifest is written next to the JSON it describes.
+- **Shard wording, corrected.** v0.6 said shard invariance "is verified on real code", which reads
+  as a general claim. What was actually shown is: **one component under one alternative shard
+  configuration yields a consistent candidate set** (`window_window_manager`, `--max-files 600`,
+  2 shards vs 1 shard, same 15 candidates, both deltas empty). That is a statement about **that
+  configuration**, not a claim that arbitrary sharding is invariant. Component-global rules need
+  whole-component evaluation, which this pipeline does not do, and cross-file detection needs an
+  explicit **file-local vs component-global** rule-execution semantics that is not yet defined.
+  This is the correction to the v0.6 bullet below.
+- **Test count and candidate count, stated apart.** `tests/test_component_audit.py` **45 items**
+  (+12 this round: 4 closure, 2 cross-report merge, 2 identity/variant, 2 manifest, 1 CLI counts,
+  1 manifest placement); full suite **375 OK**. Five components: 4983 files, **41 candidates**
+  (26 with runner obligations, 15 driver-synthesised), **0 confirmed**.
+- **Still not done:** the platform change itself is the owner's (this branch only files the CCR and
+  the regression tests that must flip); the detector is still not in `catalog.py` and has no CLI
+  subcommand; the 15 partial-only obligations are **standard questions, not runner evidence**;
+  root-cause intersection is `not_measured` in a component audit; artifacts are persisted but
+  **not committed**.
+- **Next work, per owner priority:** review 5–8 representative candidates (covering complete and
+  partial-only) — original code and key context, false positive or not and why, upstream checks /
+  call preconditions / configuration limits, how far confirmation goes, whether build or runtime
+  validation is feasible. The goal is to **use review results to steer the algorithm**, not to add
+  more candidates.
+
+---
+
 # IPC method card v0.6 — auditing a whole component, not just a fixture (2026-10-11)
 
 - Detector: `ohscanner.interface.ipc` unchanged, plus a scope-restricted variant
@@ -56,7 +131,8 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
   mock/sample/example/demo/benchmark/fuzz/third_party/...`. A substring rule misses `/tests/`; the
   segment rule is pinned by a regression test. Sharding is deterministic (sorted paths, greedy
   split under the byte/file bounds, sha256 per shard, `plan_sha256`), and shard invariance is
-  verified on real code, not only on the fixture: `window_window_manager` at `--max-files 600`
+  verified on real code, not only on the fixture **(scope of this claim corrected in v0.7: it is
+  "one component under one configuration", not arbitrary sharding)**: `window_window_manager` at `--max-files 600`
   gives 2 shards and the **identical candidate set** (15, both directions empty) and identical
   merged coverage as the 1-shard run.
 - **Files no selected detector claims are counted, not lost.** `.js/.ts/.ets` are in

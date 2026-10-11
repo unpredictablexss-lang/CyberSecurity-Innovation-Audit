@@ -40,37 +40,61 @@ from the report. Each shard is therefore run twice:
   * `all-files`   - partial trees included, so recall is kept; the run is
     `blocked`, which is reported as such and never as "nothing was analyzed".
 
-The merge keys candidates on (file, line, rule_id, source_sha256) and records
-which passes saw each one, so a candidate visible in both is counted once and
-keeps the obligations the completed pass did record. Nothing is promoted: every
-row stays a candidate, `validated_vulnerability` stays 0, and a candidate whose
-obligations the runner did not record says so instead of implying none are
-needed.
+The merge keys candidates on `CANDIDATE_IDENTITY_FIELDS` -- repository, commit,
+rule id, rule version, file, line, source hash -- and records which passes saw
+each one, so a candidate visible in both is counted once. Seeing a candidate in
+both passes is the same interpretation applied twice to the same file, not two
+independent sources of evidence; the report says so rather than calling it
+corroboration. Per-source obligations are unioned, never overwritten by a later
+pass, so a second analysis adds evidence instead of replacing the first.
+
+A candidate whose run was blocked has no obligation recorded by the shared
+runner (it emits obligations only for a completed run). Rather than printing an
+empty list -- which reads as "nothing left to prove" -- the driver attaches the
+standing questions for that rule with status `unknown` and marks each one
+`origin: audit_driver`. An obligation is a question, not a claim, so a partial
+file's candidate can carry one; the driver never invents an AST fact for it.
+
+Nothing is promoted: every row stays a candidate, `validated_vulnerability`
+stays 0.
 
 Honest boundaries this driver keeps
 -----------------------------------
 - Excluded, oversize, non-UTF8, symlink, submodule and unreadable entries are
   counted with their reasons and never counted as examined.
+- Planned files are accounted for in closed buckets (complete / partial / failed
+  / unclaimed-by-detector / dropped-by-loader / not-run). A residual is printed
+  as `files_unaccounted` instead of being rounded into another bucket.
 - A shard that raises is reported `not_analyzed` for that shard and pass; other
   shards still run. A failure is never converted into "no candidates".
 - Zero candidates prints as "not proof of safety", never as clean.
 - Source excerpts are read from the pinned Git blob, never from the working tree.
+- Sharding is deterministic, and one component was checked under one alternative
+  shard configuration. Invariance under arbitrary sharding is NOT claimed: a rule
+  with a component-global view would have to be evaluated on the whole component.
+
+Report format is `schema_version` 2 (was 1): candidates carry their source
+binding, rule/detector version and per-source obligations.
 
 Usage:
   .venv/bin/python -m src.ohscanner.detectors.interface.audit \
       --repo-dir ~/openharmony-audit/perf-corpus/communication_dsoftbus \
       --repository openharmony/communication_dsoftbus \
       --commit 652f88e0261ce4d0610f73cc451c26b84d2597af \
-      --json-out outputs/reports/audit_dsoftbus.json \
-      --md-out outputs/reports/audit_dsoftbus.md
+      --out-dir outputs/reports
 """
 import argparse
 import hashlib
 import json
+import os
+import platform
+import re
 import subprocess
+import sys
 import time
 from collections import Counter
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
 from ...contracts import safe_relative_path
@@ -112,6 +136,105 @@ COUNT_KEYS = (
     "symlinks", "submodules", "oversize", "unreadable",
     "selected_files", "selected_bytes", "shards",
 )
+
+SCHEMA_VERSION = 2
+
+# The identity of a candidate for de-duplication. Within one audit the first two
+# fields are constant, so this is the same decision the earlier four-field key
+# made; across persisted audits they are what keeps two candidates from different
+# experiments apart instead of silently fusing them by file path. The rule
+# version is in the key because a rule change can move a finding without moving
+# the file.
+CANDIDATE_IDENTITY_FIELDS = (
+    "repository", "commit", "rule_id", "rule_version",
+    "file", "line", "source_sha256",
+)
+
+# Obligations a candidate carries when the shared runner recorded none for it
+# (it emits obligations only for a completed run, so a `blocked` pass leaves its
+# candidates bare). These state what still has to be proven, at status
+# `unknown`: an obligation is a question, not a claim, so a candidate from a
+# partially parsed file can carry one. They are marked `origin: audit_driver`
+# and are never rendered as runner evidence, and no AST fact is invented for the
+# file they describe.
+PARTIAL_ONLY_OBLIGATIONS = (
+    ("entry_reachability",
+     "Verify the entry is reachable by a caller and under which product build and "
+     "macro conditions."),
+    ("caller_identity_conditions",
+     "Establish the caller identity and the permission conditions the modelled "
+     "operation requires."),
+    ("guard_effectiveness",
+     "Establish whether an effective check protects the modelled operation on the "
+     "reaching path."),
+    ("parse_completeness_impact",
+     "Establish whether the partial parse of this file affects the judgement this "
+     "candidate rests on. A partial AST can hide statements, so the candidate is "
+     "kept, not cleared."),
+    ("configuration_path_existence",
+     "Establish whether a corresponding path exists under the current, unexpanded "
+     "preprocessor configuration."),
+)
+
+DRIVER_OBLIGATION_ORIGIN = "audit_driver"
+RUNNER_OBLIGATION_ORIGIN = "shared_runner"
+
+# The bucket identity every planned file must satisfy. A residual is reported,
+# never folded into another bucket.
+BUCKET_IDENTITY = (
+    "files_selected = parse_complete + parse_partial + parse_failed "
+    "+ unclaimed_by_detector + dropped_by_loader + not_run_files"
+)
+
+
+def _detector_meta(pass_name):
+    """Identity of the detector behind a pass, read off the class, never guessed.
+
+    `interpretation_id` is what a candidate's identity uses, and it is NOT the
+    variant's `detector_id`: two passes that apply the same interpretation at
+    different scope limits are one interpretation, and giving them separate
+    identities would split one candidate into two rows (the failure mode this
+    avoids). A pass that used a genuinely different algorithm must declare a
+    different `interpretation_id` so the driver keeps them apart instead of
+    fusing them.
+    """
+    cls = PASS_DETECTORS[pass_name]
+    detector_version = getattr(cls, "version", None)
+    model_version = getattr(cls, "model_version", None)
+    interpretation_id = (getattr(cls, "interpretation_id", None)
+                         or getattr(cls, "detector_id", None))
+    return {
+        "detector_id": getattr(cls, "detector_id", None),
+        "detector_version": detector_version,
+        "model_version": model_version,
+        "interpretation_id": interpretation_id,
+        "interpretation_version": "+".join(
+            part for part in (detector_version, model_version) if part) or "unversioned",
+    }
+
+
+def _rule_version(meta):
+    """The interpretation revision a candidate's identity is bound to."""
+    interpretation = meta.get("interpretation_id") or "unknown"
+    return interpretation + "@" + (meta.get("interpretation_version") or "unversioned")
+
+
+def candidate_identity(item):
+    """The de-duplication key, including the fields that survive persistence."""
+    return tuple(item.get(field) for field in CANDIDATE_IDENTITY_FIELDS)
+
+
+def _driver_obligations(reason):
+    return [
+        {
+            "kind": kind,
+            "description": description,
+            "status": "unknown",
+            "origin": DRIVER_OBLIGATION_ORIGIN,
+            "reason": reason,
+        }
+        for kind, description in PARTIAL_ONLY_OBLIGATIONS
+    ]
 
 
 @dataclass(frozen=True)
@@ -455,8 +578,12 @@ def _pass_view(shard_run, pass_name):
     }
 
 
-def merge_shard_runs(shard_runs, passes):
-    """Merge shard results into one audit view without double counting."""
+def merge_shard_runs(shard_runs, passes, repository=None, commit=None):
+    """Merge shard results into one audit view without double counting.
+
+    Candidates keep per-source provenance and per-source obligations; a later
+    pass adds to them rather than replacing them.
+    """
     runs = []
     parse_map = {}
     candidates = {}
@@ -510,7 +637,10 @@ def merge_shard_runs(shard_runs, passes):
                     reasons[0] if reasons else "",
                 )
             for diagnostic in run["diagnostics"]:
-                key = (diagnostic["file"], diagnostic["line"], diagnostic["rule_id"],
+                meta = _detector_meta(pass_name)
+                rule_version = _rule_version(meta)
+                key = (repository, commit, diagnostic["rule_id"], rule_version,
+                       diagnostic["file"], diagnostic["line"],
                        diagnostic.get("source_sha256", ""))
                 entry = candidates.get(key)
                 if entry is None:
@@ -519,6 +649,12 @@ def merge_shard_runs(shard_runs, passes):
                         "file": diagnostic["file"],
                         "line": diagnostic["line"],
                         "rule_id": diagnostic["rule_id"],
+                        "repository": repository,
+                        "commit": commit,
+                        "rule_version": rule_version,
+                        "interpretation_id": meta["interpretation_id"],
+                        "observed_detector_versions": [],
+                        "observed_detector_ids": [],
                         "symbol": diagnostic.get("symbol"),
                         "severity": diagnostic.get("severity"),
                         "confidence": diagnostic.get("confidence"),
@@ -531,8 +667,11 @@ def merge_shard_runs(shard_runs, passes):
                         "message": diagnostic.get("message", ""),
                         "shard_id": shard_run["shard_id"],
                         "passes": [],
+                        "sources": [],
                         "obligations": [],
-                        "obligations_recorded": False,
+                        "obligations_by_source": {},
+                        "obligations_source": None,
+                        "obligations_recorded_by_runner": False,
                         "file_parse_status": parsed.get("status", "unknown"),
                         "file_analysis_status": parsed.get("analysis_status", "unknown"),
                         "file_analysis_reason": parsed.get("analysis_reason", ""),
@@ -541,14 +680,64 @@ def merge_shard_runs(shard_runs, passes):
                 if pass_name not in entry["passes"]:
                     entry["passes"].append(pass_name)
                 obligations = extra["obligations"].get(diagnostic["diagnostic_id"])
-                if obligations and not entry["obligations_recorded"]:
-                    entry["obligations"] = obligations
-                    entry["obligations_recorded"] = True
+                source = {
+                    "pass": pass_name,
+                    "shard_id": shard_run["shard_id"],
+                    "diagnostic_id": diagnostic.get("diagnostic_id"),
+                    "source_binding": diagnostic.get("source_binding"),
+                    "obligations_recorded": bool(obligations),
+                    "detector_id": meta["detector_id"],
+                    "detector_version": meta["detector_version"],
+                    "model_version": meta["model_version"],
+                }
+                if source not in entry["sources"]:
+                    entry["sources"].append(source)
+                if rule_version not in entry["observed_detector_versions"]:
+                    entry["observed_detector_versions"].append(rule_version)
+                if meta["detector_id"] and meta["detector_id"] not in entry["observed_detector_ids"]:
+                    entry["observed_detector_ids"].append(meta["detector_id"])
+                if obligations:
+                    # Union, never overwrite: a second pass's obligations are added
+                    # to the first pass's, so no evidence source replaces another.
+                    entry["obligations_by_source"][pass_name] = obligations
+                    entry["obligations_recorded_by_runner"] = True
+                    for obligation in obligations:
+                        marker = (obligation.get("kind"), obligation.get("description"),
+                                  obligation.get("status"))
+                        if not any(
+                            (kept.get("kind"), kept.get("description"), kept.get("status"))
+                            == marker for kept in entry["obligations"]
+                        ):
+                            entry["obligations"].append(dict(
+                                obligation,
+                                origin=RUNNER_OBLIGATION_ORIGIN,
+                                source_pass=pass_name,
+                            ))
 
     ordered = sorted(candidates.values(),
                      key=lambda item: (item["file"], item["line"], item["rule_id"]))
     for entry in ordered:
         entry["passes"].sort()
+        entry["sources"].sort(key=lambda item: item["pass"])
+        entry["observed_detector_versions"].sort()
+        entry["observed_detector_ids"].sort()
+        # The variant named here is the primary (first by pass name) one; every
+        # variant that saw the candidate is listed in observed_detector_ids.
+        primary = entry["sources"][0]
+        entry["detector_id"] = primary["detector_id"]
+        entry["detector_version"] = primary["detector_version"]
+        entry["model_version"] = primary["model_version"]
+        if not entry["obligations"]:
+            entry["obligations_source"] = "driver_synthesized_unknown"
+            entry["obligations"] = _driver_obligations(
+                "No obligation was recorded by the shared runner for this candidate: it "
+                "comes from a pass whose run was blocked, and the runner emits obligations "
+                "only for a completed run. The items below are the audit driver's standing "
+                "questions for this rule, initialised to unknown. An empty list was never a "
+                "statement that nothing needs proving."
+            )
+        else:
+            entry["obligations_source"] = RUNNER_OBLIGATION_ORIGIN
     return {
         "pass_runs": runs,
         "parse_map": parse_map,
@@ -565,20 +754,28 @@ def coverage_depth(merged, plan, passes):
     parse" and "this file was never opened".
     """
     parse_distribution = Counter(item["status"] for item in merged["parse_map"].values())
-    # A planned file missing from the parse map was either never read (an errored
-    # shard, counted separately) or is in a language no selected detector
-    # declares. The second case is easy to miss and must not be: such a file is
-    # in scope, no detector claims it, and it is neither a miss nor a clean read.
+    # A planned file can be missing from the parse map for two very different
+    # reasons: no selected detector declares its language, or the file was never
+    # read. Only the first is "unclaimed"; the second belongs in
+    # dropped_by_loader / not_run_files. Naming the declared languages keeps the
+    # two apart instead of counting a dropped C++ file as one nobody claims --
+    # which would double-count it and break the closure identity below.
     errored_shards = {item["shard_id"] for item in merged["shard_errors"]}
     reachable = set()
     for index, entries in enumerate(plan.shards):
         if index not in errored_shards:
             reachable.update(item.path for item in entries)
+    declared_languages = set()
+    for pass_name in passes:
+        declared_languages.update(
+            getattr(PASS_DETECTORS[pass_name], "supported_languages", ()))
     outside_language = Counter()
     outside_language_files = []
     for entry in plan.selected:
         if entry.path in reachable and entry.path not in merged["parse_map"]:
             language = SOURCE_LANGUAGES.get(Path(entry.path).suffix.lower(), "unknown")
+            if language in declared_languages:
+                continue  # claimed but not parsed: a load/run gap, not an unclaimed file
             outside_language[language] += 1
             if len(outside_language_files) < SKIPPED_EXAMPLE_LIMIT:
                 outside_language_files.append({"file": entry.path, "language": language})
@@ -631,6 +828,52 @@ def coverage_depth(merged, plan, passes):
             + "). They were in scope and no detector claims them, so they are neither a miss "
             "nor an examined clean file."
         )
+    # Closure of the file accounting. Every planned file must land in exactly one
+    # bucket. A residual means the report does not add up, and it is printed
+    # rather than folded into whichever bucket is nearest.
+    planned_by_shard = Counter()
+    loaded_by_shard = {}
+    for view in merged["pass_runs"]:
+        shard_id = view["shard_id"]
+        planned_by_shard[shard_id] = max(planned_by_shard[shard_id], view["planned_files"])
+        if view["run_state"] == "ran":
+            loaded_by_shard[shard_id] = max(loaded_by_shard.get(shard_id, 0),
+                                            view["loaded_files"])
+    not_run_files = 0
+    dropped_by_loader = 0
+    for shard_id, planned in planned_by_shard.items():
+        if shard_id not in loaded_by_shard:
+            not_run_files += planned
+        else:
+            dropped_by_loader += planned - loaded_by_shard[shard_id]
+    parse_failed = sum(count for status, count in parse_distribution.items()
+                       if status not in ("complete", "partial"))
+    bucket_closure = {
+        "identity": BUCKET_IDENTITY,
+        "files_selected": plan.counts["selected_files"],
+        "parse_complete": parse_distribution.get("complete", 0),
+        "parse_partial": parse_distribution.get("partial", 0),
+        "parse_failed": parse_failed,
+        "unclaimed_by_detector": sum(outside_language.values()),
+        "dropped_by_loader": dropped_by_loader,
+        "not_run_files": not_run_files,
+    }
+    bucket_closure["files_unaccounted"] = plan.counts["selected_files"] - sum(
+        bucket_closure[key] for key in (
+            "parse_complete", "parse_partial", "parse_failed",
+            "unclaimed_by_detector", "dropped_by_loader", "not_run_files",
+        )
+    )
+    bucket_closure["closed"] = bucket_closure["files_unaccounted"] == 0
+    if not bucket_closure["closed"]:
+        notes.append(
+            f"The file accounting does not close: {bucket_closure['files_unaccounted']} of "
+            f"{plan.counts['selected_files']} planned file(s) fall in no bucket. That is a "
+            "reporting defect, not a coverage claim; treat these coverage numbers as "
+            "unverified until it is explained."
+        )
+    runner_obligations = sum(1 for item in merged["candidates"]
+                             if item["obligations_recorded_by_runner"])
     return {
         "run_state": {
             "shards": len(plan.shards),
@@ -651,6 +894,10 @@ def coverage_depth(merged, plan, passes):
             "candidates": len(merged["candidates"]),
             "candidate_files": len({item["file"] for item in merged["candidates"]}),
             "candidates_by_file_parse_status": dict(candidate_parse),
+            "candidates_with_runner_obligations": runner_obligations,
+            "candidates_with_driver_synthesized_obligations":
+                len(merged["candidates"]) - runner_obligations,
+            "bucket_closure": bucket_closure,
             "plan_vs_load": plan_vs_load,
             "notes": notes,
         },
@@ -705,7 +952,7 @@ def audit_component(
         production_only=production_only, max_files=max_files, max_bytes=max_bytes,
     )
     shard_runs = run_audit(repo_dir, repository, commit, plan, passes=passes)
-    merged = merge_shard_runs(shard_runs, passes)
+    merged = merge_shard_runs(shard_runs, passes, repository=repository, commit=commit)
     by_path = {item.path: item for item in plan.selected}
     if excerpt_context > 0:
         for entry in merged["candidates"]:
@@ -721,8 +968,9 @@ def audit_component(
                 break
         if snapshot:
             break
+    analysis = depth["analysis_coverage"]
     return {
-        "schema_version": 1,
+        "schema_version": SCHEMA_VERSION,
         "experiment_kind": "component_audit",
         "repository": repository,
         "commit": commit,
@@ -732,6 +980,19 @@ def audit_component(
         "provenance": "local_git_objects",
         "elapsed_seconds": round(time.monotonic() - started, 3),
         "validated_vulnerability": 0,
+        # Three different counts, kept apart on purpose: a passing test suite says
+        # nothing about detection quality, and a candidate count is not a finding
+        # count. Confirmed vulnerabilities stays 0 until the evidence gate is met.
+        "counts": {
+            "source_files_audited": analysis["files_selected"],
+            "candidates": len(merged["candidates"]),
+            "candidates_with_runner_obligations":
+                analysis["candidates_with_runner_obligations"],
+            "candidates_with_driver_synthesized_obligations":
+                analysis["candidates_with_driver_synthesized_obligations"],
+            "confirmed_vulnerabilities": 0,
+            "false_positives_reviewed": 0,
+        },
         "scope": plan.to_dict(),
         "passes": list(passes),
         "coverage": depth,
@@ -749,7 +1010,76 @@ def audit_component(
             "Candidates from a partially parsed file carry a partial AST; the finding is "
             "kept but its parse depth is reported per row.",
             "A candidate whose run was blocked has no obligations recorded by the shared "
-            "runner; that is a gap in the recorded evidence, not an absence of obligations.",
+            "runner; the driver attaches its standing questions at status unknown and marks "
+            "them origin: audit_driver. That is a gap in the recorded evidence, not an "
+            "absence of obligations, and not runner-produced evidence.",
+            "A candidate seen by both passes is one interpretation applied twice to the same "
+            "file, not two independent sources of evidence.",
+            "Sharding is deterministic and the candidate set matched on one component under "
+            "one alternative shard configuration. Invariance under arbitrary sharding is not "
+            "claimed: a rule with a component-global view would need whole-component "
+            "evaluation, which no pass here performs.",
+        ],
+    }
+
+
+def merge_audit_reports(reports):
+    """Merge persisted audit reports into one candidate view.
+
+    Candidates are merged on `CANDIDATE_IDENTITY_FIELDS` -- repository, commit,
+    rule id and version, file, line and source hash -- so two experiments over the
+    same file at different revisions stay separate rows instead of fusing by path
+    alone. Per-source obligations are unioned, so a second experiment adds
+    evidence rather than replacing the first.
+
+    `seen_in_reports` records every report a candidate appeared in. That is
+    repetition of the same interpretation, NOT independent corroboration, and it
+    is not a promotion: the merged view still holds candidates only.
+    """
+    merged = {}
+    for index, report in enumerate(reports):
+        for item in report.get("candidates", []):
+            key = candidate_identity(item)
+            entry = merged.get(key)
+            if entry is None:
+                entry = json.loads(json.dumps(item))
+                entry["seen_in_reports"] = []
+                merged[key] = entry
+            entry["seen_in_reports"].append({
+                "index": index,
+                "repository": report.get("repository"),
+                "commit": report.get("commit"),
+                "passes": list(item.get("passes", [])),
+            })
+            target = entry.setdefault("obligations_by_source", {})
+            for source_pass, obligations in (item.get("obligations_by_source") or {}).items():
+                kept = target.setdefault(source_pass, [])
+                for obligation in obligations:
+                    if obligation not in kept:
+                        kept.append(obligation)
+    return {
+        "experiment_kind": "component_audit_merge",
+        "reports": [
+            {
+                "index": index,
+                "repository": report.get("repository"),
+                "commit": report.get("commit"),
+                "plan_sha256": report.get("plan_sha256"),
+                "candidates": len(report.get("candidates", [])),
+            }
+            for index, report in enumerate(reports)
+        ],
+        "candidate_identity_fields": list(CANDIDATE_IDENTITY_FIELDS),
+        "candidates": sorted(
+            merged.values(),
+            key=lambda item: (item.get("file", ""), item.get("line", 0),
+                              item.get("rule_id", "")),
+        ),
+        "limitations": [
+            "A candidate present in several reports is one interpretation repeated, "
+            "not independent corroboration.",
+            "Merging candidates does not merge coverage: each report's coverage stands "
+            "for its own scope and commit.",
         ],
     }
 
@@ -830,10 +1160,34 @@ def render_markdown(report):
         f"- Candidates: {analysis['candidates']} in {analysis['candidate_files']} files",
         "- Candidates by the parse status of their file: "
         f"`{json.dumps(analysis['candidates_by_file_parse_status'], sort_keys=True)}`",
+        f"- Candidates with runner-recorded obligations: "
+        f"{analysis['candidates_with_runner_obligations']}",
+        f"- Candidates with driver-synthesized unknown obligations: "
+        f"{analysis['candidates_with_driver_synthesized_obligations']}",
+        "",
+        "### File accounting (must close)",
+        "",
+    ])
+    closure = analysis["bucket_closure"]
+    lines.extend([
+        f"- {closure['files_selected']} selected = {closure['parse_complete']} complete "
+        f"+ {closure['parse_partial']} partial + {closure['parse_failed']} failed "
+        f"+ {closure['unclaimed_by_detector']} unclaimed-by-detector "
+        f"+ {closure['dropped_by_loader']} dropped-by-loader "
+        f"+ {closure['not_run_files']} not-run",
+        f"- Identity: `{closure['identity']}`",
+        f"- Closed: **{closure['closed']}**"
+        + ("" if closure["closed"]
+           else f" — {closure['files_unaccounted']} file(s) fall in no bucket"),
     ])
     for note in analysis["notes"]:
         lines.append(f"- NOTE: {note}")
-    lines.extend(["", "## 3. Candidates for review", ""])
+    lines.extend([
+        "", "## 3. Candidates for review", "",
+        "> A candidate seen by both passes is one interpretation applied twice to the same",
+        "> file — repetition, not independent corroboration, and not a promotion.",
+        "",
+    ])
     if not report["candidates"]:
         lines.extend([
             "No candidate was reported. **This is not proof of safety**: the parse depth",
@@ -849,10 +1203,7 @@ def render_markdown(report):
             consequence = item["consequence_impact"] or "—"
             if item["consequence_cwe"]:
                 consequence += " " + item["consequence_cwe"]
-            obligations = (
-                str(len(item["obligations"])) if item["obligations_recorded"]
-                else "not recorded (blocked run)"
-            )
+            obligations = f"{len(item['obligations'])} ({item['obligations_source']})"
             lines.append(
                 f"| {index} | `{item['file']}:{item['line']}` | `{item['symbol']}` "
                 f"| `{item['rule_id']}` | {item['candidate_cwe'] or '—'} | {consequence} "
@@ -889,20 +1240,21 @@ def render_markdown(report):
                     marker = ">" if row["candidate"] else " "
                     lines.append(f"  {marker} {row['number']:>6}  {row['text']}")
                 lines.extend(["  ```", ""])
-            if item["obligations_recorded"]:
-                lines.extend(["  Still unproven before any claim:", ""])
-                for obligation in item["obligations"]:
-                    lines.append(
-                        f"  - `{obligation['kind']}` [{obligation['status']}] — "
-                        f"{obligation['description']}"
-                    )
-            else:
+            lines.extend(["  Still unproven before any claim:", ""])
+            for obligation in item["obligations"]:
                 lines.append(
-                    "  The shared runner records obligations only for a completed run, so "
-                    "this candidate (from a `blocked` pass) has none recorded here. Its "
-                    "unproven obligations were **not** shown to be absent; look for the "
-                    "same location in the `complete-ast` pass before relying on this row."
+                    f"  - `{obligation['kind']}` [{obligation['status']}] "
+                    f"(origin `{obligation.get('origin', 'unknown')}`) — "
+                    f"{obligation['description']}"
                 )
+            if item["obligations_source"] == "driver_synthesized_unknown":
+                lines.extend([
+                    "",
+                    "  NOTE: these are the driver's standing questions for this rule at "
+                    "status `unknown`, attached because the shared runner recorded none for "
+                    "this candidate (its pass was `blocked`). They are not runner-produced "
+                    "evidence, and they assert nothing about this file's AST.",
+                ])
             lines.append("")
     lines.extend([
         "## 4. Not audited",
@@ -940,6 +1292,87 @@ def render_markdown(report):
     return "\n".join(lines)
 
 
+def component_slug(repository):
+    """A filesystem-safe component name derived from the repository declaration."""
+    name = (repository or "component").rstrip("/").split("/")[-1]
+    slug = re.sub(r"[^A-Za-z0-9_.-]", "_", name)
+    return slug or "component"
+
+
+def _file_sha256(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _git_version(repo_dir):
+    try:
+        result = subprocess.run(
+            ["git", "version"], cwd=str(repo_dir), capture_output=True, text=True,
+            timeout=30, check=False,
+        )
+        return result.stdout.strip() or "unknown"
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+
+
+def write_manifest(out_dir, report, json_path, md_path, argv, repo_dir):
+    """Provenance for one persisted audit: what was run, where, on what, and hashes.
+
+    Written next to the JSON artifact it describes, so the manifest and the report
+    it covers cannot drift apart. The artifact lives outside Git (outputs/reports
+    is ignored), so this manifest is what keeps a later review from having to
+    guess the command, the source revision or the environment that produced it.
+    """
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    analysis = report["coverage"]["analysis_coverage"]
+    manifest = {
+        "experiment_kind": "component_audit_manifest",
+        "schema_version": report["schema_version"],
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "repository": report["repository"],
+        "commit": report["commit"],
+        "git_tree": report["git_tree"],
+        "snapshot_sha256": report["snapshot_sha256"],
+        "plan_sha256": report["plan_sha256"],
+        "passes": report["passes"],
+        "source_repo_path": str(repo_dir),
+        "command": list(argv),
+        "working_directory": os.getcwd(),
+        "environment": {
+            "python": sys.version.split()[0],
+            "platform": platform.platform(),
+            "git": _git_version(repo_dir),
+        },
+        "counts": report["counts"],
+        "bucket_closure": analysis["bucket_closure"],
+        "coverage": {
+            "files_selected": analysis["files_selected"],
+            "bytes_selected": analysis["bytes_selected"],
+            "parse_complete": analysis["parse_complete"],
+            "parse_partial": analysis["parse_partial"],
+            "files_analyzed": analysis["files_analyzed"],
+        },
+        "artifacts": {
+            "json": {"path": str(json_path), "sha256": _file_sha256(json_path)},
+            "markdown": {"path": str(md_path), "sha256": _file_sha256(md_path)},
+        },
+        "limitations": [
+            "The artifact is a single run's output; regenerating it at the same commit "
+            "with the same command should reproduce the plan and candidate digests.",
+            "The declared repository is a declaration, not a verified identity; the "
+            "verified identity is the pinned commit and the local Git objects.",
+        ],
+    }
+    manifest_path = out_dir / (component_slug(report["repository"]) + ".manifest.json")
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return manifest_path
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Audit one pinned component: scope, shards, coverage, candidates."
@@ -958,15 +1391,21 @@ def main(argv=None):
     parser.add_argument("--max-bytes", type=int, default=MAX_TOTAL_BYTES)
     parser.add_argument("--passes", default="complete-ast,all-files")
     parser.add_argument("--excerpt-context", type=int, default=4)
-    parser.add_argument("--json-out", default="outputs/reports/component_audit.json")
-    parser.add_argument("--md-out", default="outputs/reports/component_audit.md")
+    parser.add_argument("--out-dir", default="outputs/reports",
+                        help="Persistent artifact directory (default: outputs/reports)")
+    parser.add_argument("--json-out", default=None,
+                        help="Override the JSON path (default: <out-dir>/<component>.json)")
+    parser.add_argument("--md-out", default=None,
+                        help="Override the Markdown path (default: <out-dir>/<component>.md)")
     parser.add_argument("--plan-only", action="store_true",
                         help="Derive and print the scope plan without running detectors")
     args = parser.parse_args(argv)
 
     passes = tuple(item.strip() for item in args.passes.split(",") if item.strip())
-    json_out = Path(args.json_out)
-    md_out = Path(args.md_out)
+    out_dir = Path(args.out_dir)
+    slug = component_slug(args.repository)
+    json_out = Path(args.json_out) if args.json_out else out_dir / (slug + ".json")
+    md_out = Path(args.md_out) if args.md_out else out_dir / (slug + ".md")
     if json_out.resolve() == md_out.resolve():
         raise SystemExit("JSON and Markdown output paths must differ")
 
@@ -992,18 +1431,32 @@ def main(argv=None):
     json_out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n",
                         encoding="utf-8")
     md_out.write_text(render_markdown(report), encoding="utf-8")
+    manifest_path = write_manifest(
+        json_out.parent, report, json_out, md_out,
+        [Path(sys.argv[0]).name] + list(argv if argv is not None else sys.argv[1:]),
+        args.repo_dir,
+    )
     analysis = report["coverage"]["analysis_coverage"]
+    closure = analysis["bucket_closure"]
+    counts = report["counts"]
     print("[OK] component audit; candidates are unverified evidence, NOT vulnerabilities")
     print(f"[OK] commit: {report['commit']}")
     print(f"[OK] audited files: {analysis['files_selected']} "
           f"({analysis['bytes_selected']} bytes, "
           f"{report['scope']['counts'].get('shards', 0)} shards)")
     print(f"[OK] parse: {json.dumps(analysis['parse_status'], sort_keys=True)}")
-    print(f"[OK] candidates: {analysis['candidates']} (by file parse status "
-          f"{json.dumps(analysis['candidates_by_file_parse_status'], sort_keys=True)})")
-    print("[OK] validated vulnerabilities: 0")
+    print(f"[OK] file accounting closed: {closure['closed']} "
+          f"(unaccounted {closure['files_unaccounted']})")
+    # Three counts, reported apart: tests passing, candidates found and
+    # vulnerabilities confirmed are three different statements.
+    print(f"[OK] candidates: {counts['candidates']} "
+          f"(runner obligations {counts['candidates_with_runner_obligations']}, "
+          f"driver-synthesized unknown obligations "
+          f"{counts['candidates_with_driver_synthesized_obligations']})")
+    print(f"[OK] confirmed vulnerabilities: {counts['confirmed_vulnerabilities']}")
     print(f"[OK] JSON report: {json_out}")
     print(f"[OK] Markdown report: {md_out}")
+    print(f"[OK] Manifest: {manifest_path}")
     return 0
 
 
