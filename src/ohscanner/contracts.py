@@ -110,6 +110,10 @@ class DetectorFinding:
     candidate_cwe: Optional[str] = None
     symbol: Optional[str] = None
     evidence_obligations: Tuple[EvidenceObligation, ...] = ()
+    # Optional candidate consequence, carried by the coverage sidecar only.
+    # ToolDiagnostic/ToolRunResult v1 remain unchanged.
+    consequence_impact: Optional[str] = None
+    consequence_cwe: Optional[str] = None
 
     def __post_init__(self):
         safe_relative_path(self.file)
@@ -119,6 +123,9 @@ class DetectorFinding:
             raise ValueError("invalid line number")
         if not self.rule_id or not self.message:
             raise ValueError("finding requires a rule and explanation")
+        for value in (self.consequence_impact, self.consequence_cwe):
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ValueError("candidate consequence must be nonempty when provided")
 
 
 @dataclass(frozen=True)
@@ -149,8 +156,8 @@ class DetectorRun:
             if path in seen or outcome not in ("complete", "partial", "not_analyzed", "failed"):
                 raise ValueError("invalid or duplicate detector per-file outcome")
             seen.add(path)
-        if self.status == "completed" and any(s != "complete" for _, s in self.file_outcomes):
-            raise ValueError("completed run cannot contain incomplete per-file outcomes")
+        # Execution completion and per-file analysis depth are independent.
+        # The runner validates these outcomes against supplied source units.
 
 
 class Detector(Protocol):

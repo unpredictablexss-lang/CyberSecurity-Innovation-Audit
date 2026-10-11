@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feat/ohscanner-core
+      - feat/owner-ipc-platform-integration
       - feat/openharmony-target-onboarding
   pull_request:
     branches:

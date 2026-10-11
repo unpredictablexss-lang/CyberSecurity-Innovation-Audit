@@ -58,11 +58,16 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
     paths = {unit.path: unit for unit in selected}
     if not set(run.analyzed_files).issubset(paths):
         raise ValueError("reported scope includes unprovided files")
-    if run.status == "completed" and set(run.analyzed_files) != set(paths):
-        raise ValueError("completed detector skipped a selected source unit")
     per_file = dict(run.file_outcomes)
     if not set(per_file).issubset(paths):
         raise ValueError("per-file outcome outside supplied scope")
+    if per_file and set(per_file) != set(paths):
+        raise ValueError("per-file outcomes must account for every selected source unit")
+    if not per_file and run.status == "completed" and set(run.analyzed_files) != set(paths):
+        raise ValueError("completed detector skipped a selected source unit")
+    if any(state == "complete" and paths[path].parse_status != "complete"
+           for path, state in per_file.items()):
+        raise ValueError("incomplete source parse cannot claim complete analysis")
     inspected = {path for path, state in per_file.items() if state in ("complete", "partial")}
     if not inspected.issubset(run.analyzed_files):
         raise ValueError("per-file completed/partial units must be in analyzed_files")
@@ -110,13 +115,22 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
     if run.status == "failed":
         limitations.append("Detector failed; unexamined scope is unknown.")
 
-    # Legacy detectors preserve their old blocked=>zero-coverage semantics.
-    # Reviewed M2 adapters may report explicit file-level outcomes instead.
+    # A legacy blocked run's analyzed_files proves inspection, not completeness.
+    # Explicit outcomes distinguish complete analysis from partial inspection.
     completed = (
         {path for path, state in per_file.items() if state == "complete"}
         if per_file else set(run.analyzed_files) if run.status == "completed" else set()
     )
-    partly_inspected = {path for path, state in per_file.items() if state == "partial"}
+    partly_inspected = (
+        {path for path, state in per_file.items() if state == "partial"}
+        if per_file else set(run.analyzed_files) - completed
+    )
+    # Even legacy successful detectors cannot upgrade an incomplete source parse.
+    source_incomplete = {p for p in completed if paths[p].parse_status != "complete"}
+    completed -= source_incomplete
+    partly_inspected |= source_incomplete
+    if partly_inspected and not any("INCOMPLETE COVERAGE" in value for value in limitations):
+        limitations.append("INCOMPLETE COVERAGE: inspected source includes partial/unknown analysis; no safety inference.")
     def analysis_state(path):
         if path in skipped:
             return "not_analyzed"
@@ -144,9 +158,8 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         schema_version=1, run_id=context.request.request_id + ":" + detector.detector_id,
         tool=detector.detector_id, tool_version=detector.version,
         target_id=context.request.target_id, commit=context.request.commit,
-        scope_files=len(run.analyzed_files) if run.status == "completed" else 0,
-        scope_loc=sum(len(paths[p].text.splitlines()) for p in run.analyzed_files)
-                  if run.status == "completed" else 0,
+        scope_files=len(completed | partly_inspected),
+        scope_loc=sum(len(paths[p].text.splitlines()) for p in completed | partly_inspected),
         status=run.status, elapsed_seconds=elapsed, diagnostics=findings,
         limitations=limitations, parsing=parsing,
     )
@@ -246,6 +259,14 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                  "analysis_status": item["analysis_status"]}
                 for item in report.parsing if item["analysis_status"] != "analyzed"
             ],
+            "inspected_files": sorted(analyzed | partial),
+            "not_analyzed_files": [item["file"] for item in report.parsing
+                                   if item["analysis_status"] == "not_analyzed"],
+            "coverage_counts": {
+                "complete": len(analyzed), "partial": len(partial),
+                "not_analyzed": len(applicable) - len(analyzed) - len(partial),
+            },
+            "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
             "evidence_obligations": (
                 [
                     {"diagnostic_id": _diagnostic_id(detector.detector_id, finding),
@@ -254,13 +275,27 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                      "analysis_status": (
                          "partial" if finding.file in partial else "analyzed"
                      ),
+                     "source_binding": {
+                         "repository": context.request.repository,
+                         "commit": context.request.commit,
+                         "snapshot_sha256": context.request.snapshot_sha256,
+                         "profile_id": context.request.profile_id,
+                         "detector_id": detector.detector_id,
+                         "detector_version": detector.version,
+                         "rule_id": finding.rule_id,
+                         "file": finding.file,
+                         "source_sha256": next(u.sha256 for u in applicable if u.path == finding.file),
+                     },
+                     "consequence_impact": finding.consequence_impact,
+                     "consequence_cwe": finding.consequence_cwe,
+                     "model_version": getattr(detector, "model_version", None),
                      "obligations": [
                          {"kind": obligation.kind, "description": obligation.description,
                           "status": obligation.status}
                          for obligation in finding.evidence_obligations
                      ]}
-                    for finding in run.findings if finding.evidence_obligations
-                ] if run is not None and report.status in ("completed", "blocked") else []
+                    for finding in run.findings
+                ] if run is not None and error is None else []
             ),
         }
     return reports, sidecar

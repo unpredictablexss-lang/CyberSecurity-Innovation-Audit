@@ -5,8 +5,14 @@ licenses; then explicitly register the imported factory in this file.
 """
 from .example import CppCopyCallExampleDetector
 from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
+from .interface.m2_adapter import M2IpcInterfaceDetector
 
 _APPROVED = {
+    "ohscanner.interface.ipc": {
+        "factory": M2IpcInterfaceDetector,
+        "kind": "research_candidate",
+        "summary": "B: bounded IPC trust-boundary candidates; partial syntax is unknown, not safe",
+    },
     CppCopyCallExampleDetector.detector_id: {
         "factory": CppCopyCallExampleDetector,
         "kind": "example",

@@ -420,3 +420,54 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 文档：`docs/testing/ohscanner_m2_a_integration.md`。PR #5 保持 Draft，不合并 main。
 
 - **CI 过程纠错**：首次开启 push CI 的 `d6943589` 运行 `38073772285` 为 249/250，通过日志定位为 M2-A 集成测试强求所有语义模型文件 `completed`；在 `f64c5b5d` 修正测试为承认真实 `blocked/partial`，没有放宽安全证据门槛或重写队友 A 原算法。后续 CI `38073903714` 全绿。
+
+## 23. 2026-10-11 负责人平台修复与 IPC 正式入口（独立集成分支）
+
+本节覆盖 `feat/owner-ipc-platform-integration` 的最新状态，优先于旧阶段关于 Catalog 未接入 B、
+blocked 计数归零或义务被过滤的说明。基线为核心分支 `e365465`，不是直接重构 main。
+队友 B 的检测模块选择性取自本地固定提交 `52b2cd5fbbb4a40efdf2089fa0a4c67c36b22ef5`，
+未整体合并 B 的分支历史，未迁入其双遍 audit 驱动、公共 v2 格式或 PoC 执行代码。
+
+### 已验证
+
+- 公共 runner 保留经过范围、位置、snapshot 验证的候选及义务；不再因 run 为 blocked/failed
+  而删除已产出的有效证据。异常或非法结果仍失败并丢弃该无效结果，不放宽证据门。
+- scope 计数改为实际完整/部分检查之和；sidecar 分开列 complete/partial/not_analyzed，
+  计数闭合。没有 file_outcomes 的 legacy blocked 自报检查只记 partial，不提升为完整分析。
+- 保持 ToolDiagnostic/ToolRunResult v1 与三种 run status；completed 执行可有部分语义覆盖。
+  可选 consequence 字段仅在插件 Finding 和 sidecar 保存，均为未证实候选后果。
+- `ohscanner.interface.ipc` 已注册为 research_candidate，正式 `ohscan-run` 可显式选择。
+  单次解释所有 eligible C/C++ 单元，partial 保留候选并附 unknown 的解析影响义务。
+  没有注册 `.complete-ast` 旁路身份；JS/TS/ArkTS 未被认领文件明确保存，不能从报告蒸发。
+- 本地 Ubuntu / Python 3.10.12 完整 discover：**334 项、全部通过**。基线 250，选择性迁入
+  B 检测器/入口/宏/后果测试 72 项，新增负责人回归 12 项。不是 B 全分支的 375 项套件。
+- 五组件正式 CLI 复跑（最终稳定源码 hash 核验亦通过），与 B 持久化生产范围、固定 Git commit、源码 hash 下的候选集合
+  逐条一致；没有为了凑 41 改规则或调整预期。所有 41 条候选都保留 runner 义务，包含原来的
+  **15 条 partial-only 候选**。`validated_vulnerability=0`。
+
+| 组件 | commit 前缀（完整 SHA 在产物） | 索引文件 | 完整/部分检查 | 未被插件认领 | 候选 | partial 候选带义务 |
+|---|---|---:|---|---:|---:|---:|
+| update_updateservice | e4942a33 | 219 | 187 / 31 | 1 | 2 | 2 |
+| security_access_token | 17d88bfb | 550 | 489 / 56 | 5 | 20 | 0 |
+| distributeddatamgr_kv_store | acfb22aa | 1446 | 1134 / 310 | 2 | 0 | 0 |
+| window_window_manager | 8b0d8fe1 | 1112 | 811 / 268 | 33 | 15 | 11 |
+| communication_dsoftbus | 652f88e0 | 1656 | 729 / 927 | 0 | 4 | 2 |
+
+以上五组件没有 C/C++ not_analyzed 文件；部分检查不算完整覆盖，也不算安全。
+JSON/Markdown、精确命令、baseline manifest 与输出 hash 存在 ignored
+`outputs/reports/owner_ipc_integration/`，不提交第三方源码或生成的大型实验报告。
+复现脚本：`scripts/verify_owner_ipc_components.py`；指南：
+`docs/testing/ohscanner_owner_ipc_platform_integration.md`。
+
+### 未验证
+
+- 本节提交前尚未完成新分支最终 head 的远程 CI，推送后须单独确认；旧 CI 不能代替本次。
+- 未复核 B 的 PoC/历史 benchmark 全套；未完成独立 holdout、产品编译或真实漏洞确认。
+- 未开发通用生产排除/分片 CLI；正式命令仍使用明确 --include 路径/前缀。
+- 未修改 M1–M6 规则；描述符身份等误报修复继续由队友 B 单独提交。
+
+### unknown
+
+- partial 对具体路径、权限守卫和结论的影响仍未知；远离候选的解析错误也不能默认无影响。
+- 当前组件的真实 Precision/Recall、攻击者可达性、影响版本与安全性未知。
+- 本分支以核心开发分支为目标提交审查，不表示 PR #5 已 Ready 或 main 已合并。

@@ -129,8 +129,10 @@ class M2AIntegrationTests(unittest.TestCase):
         self.assertTrue(details["evidence_obligations"])
 
     def test_per_file_state_rejects_unsupported_fake_scope(self):
-        with self.assertRaises(ValueError):
-            DetectorRun("ohscanner.fake", "v1", "completed", file_outcomes=(("x.cpp", "partial"),))
+        # Normal execution may finish with only partial semantic coverage.
+        run = DetectorRun("ohscanner.fake", "v1", "completed",
+                          analyzed_files=("x.cpp",), file_outcomes=(("x.cpp", "partial"),))
+        self.assertEqual(run.file_outcomes, (("x.cpp", "partial"),))
         with self.assertRaises(ValueError):
             DetectorRun("ohscanner.fake", "v1", "blocked", file_outcomes=(("../x.cpp", "partial"),))
 

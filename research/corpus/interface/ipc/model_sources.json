@@ -1,0 +1,26 @@
+[
+  {
+    "repository": "openharmony/telephony_core_service",
+    "commit": "b2ddf49ab0fc21f0d7f3628c702913c5d18e7977",
+    "path": "utils/common/src/telephony_permission.cpp",
+    "url": "https://raw.githubusercontent.com/openharmony/telephony_core_service/b2ddf49ab0fc21f0d7f3628c702913c5d18e7977/utils/common/src/telephony_permission.cpp",
+    "exit": 0,
+    "sha256": "3ead60a37b3e50bad9c2175e2dbf6b130b47e5be0574298f786a36d49ea21611"
+  },
+  {
+    "repository": "openharmony/security_access_token",
+    "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+    "path": "interfaces/innerkits/accesstoken/include/access_token.h",
+    "url": "https://raw.githubusercontent.com/openharmony/security_access_token/17d88bfb36bea6c9370ba919ac41a22d16dd66b3/interfaces/innerkits/accesstoken/include/access_token.h",
+    "exit": 0,
+    "sha256": "457a708399a90c5659b0d4f2952afe6824fc0a3ba85a05abd3d6e0ea017af627"
+  },
+  {
+    "repository": "openharmony/security_access_token",
+    "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+    "path": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+    "url": "https://raw.githubusercontent.com/openharmony/security_access_token/17d88bfb36bea6c9370ba919ac41a22d16dd66b3/interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+    "exit": 0,
+    "sha256": "b8d11e866ba619aa13841408898b4df81dbdb9fed1f463c9ebe2efbed3161abb"
+  }
+]
