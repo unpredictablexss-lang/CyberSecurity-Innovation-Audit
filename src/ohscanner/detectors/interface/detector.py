@@ -59,7 +59,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.4.0"
+    version = "0.5.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
