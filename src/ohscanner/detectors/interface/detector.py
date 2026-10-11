@@ -16,6 +16,18 @@ _DISPATCH_OBLIGATION = EvidenceObligation(
     "Handler was admitted as an entry from a source-derived dispatch binding. Verify dispatcher-level "
     "guards (e.g. IsCallerValid/IsPermissionGranted), their dominance over this transaction code, and the "
     "overload/receiver binding.")
+_DESCRIPTOR_OBLIGATIONS = {
+    "mismatch": EvidenceObligation(
+        "descriptor_identity_mismatch",
+        "A descriptor comparison is present but targets an interface other than the one this class "
+        "states it implements. Verify which interface this transaction actually carries and whether the "
+        "caller the candidate assumes can present that descriptor."),
+    "unresolved": EvidenceObligation(
+        "descriptor_identity_unresolved",
+        "A descriptor comparison is present but the source does not state which interface this class "
+        "implements, so neither a working guard nor a mismatch is established. Verify the interface and "
+        "the descriptor its caller writes before treating the comparison as a guard."),
+}
 _CONSEQUENCE_OBLIGATION = EvidenceObligation(
     "consequence",
     "Establish what the modeled path can actually expose: which data, capability or state the caller "
@@ -47,7 +59,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.3.0"
+    version = "0.4.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -87,6 +99,7 @@ class IpcInterfaceDetector:
             consequence_cwe=o.impact_cwe or None,
             evidence_obligations=_BASE_OBLIGATIONS
                 +((_DISPATCH_OBLIGATION,) if o.entry_grade=="dispatch" else ())
+                +((_DESCRIPTOR_OBLIGATIONS[o.descriptor_identity],) if o.descriptor_identity else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
             ) for o in observations)
         status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"
@@ -98,6 +111,10 @@ class IpcInterfaceDetector:
              "never an #include resolution, and what the expander refused is counted in the macro-expansion "
              "limitation rather than assumed away.",
              "Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.",
+             "Interface-descriptor identity is read from the class's own base clause: a comparison is counted "
+             "as this transaction's guard only when the source names the interface the class implements. A "
+             "comparison against another interface, or one whose identity the analysed sources do not state, "
+             "is reported with that reason instead of counting as a guard or as a proven mismatch.",
              "Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.",
              "Entry roots come from the name allowlist plus source-derived dispatch bindings (function-pointer tables, "
              "switch/if code dispatch, and source-declared virtual overrides). Entry discovery is not reachability: "
