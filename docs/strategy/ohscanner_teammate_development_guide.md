@@ -22,7 +22,7 @@
 |---|---|---|
 | `Detector.detect(context, units) -> DetectorRun` | M0 已实现的 Protocol | 按签名编写、返回 DetectorRun |
 | `DetectorRegistry` / `run_all` | M0 已实现 | 可在测试代码中手工注册；**无自动发现插件机制** |
-| `ToolRunResult(schema_version=1)` | 已有 | Runner 转换，队友不应自行修改旧 schema |
+| `ToolRunResult`（自研 detector 产物为 `schema_version=2`） | 已有 | Runner 转换，队友不应自行修改公共 schema；**契约 v2 已把 source 绑定改为产出物必填**，见 `docs/contracts/ohscanner_detector_contract_v2.md`（v1 payload 仍可加载，标 `unbound`） |
 | 完整 Git commit + blob 来源 | M1 已实现 | `prepare_git_context()` 从本地 Git 对象构造上下文 |
 | `shared_facts["ast"]` | M1 C/C++ 已实现轻量索引 | 每个路径有 parse_status/functions/calls/variables；**非完整 AST 节点/CFG/类型/路径分析** |
 | JS/TS/ETS / ArkTS 解析 | 仅识别源文件，`parse_status=not_run` | B 不得宣称已有 JS/ArkTS AST；需要时申请 Frontend 扩展 |
@@ -167,7 +167,8 @@ registry.register(MockInterfaceDetector())
 results = run_all(context, registry)
 for result in results:
     print(result.tool, result.status, result.diagnostic_count, result.scope_files)
-    assert result.schema_version == 1
+    assert result.schema_version == 2  # contract v2; v1 payloads still load
+    assert all(d.source_binding == "bound" for d in result.diagnostics)
     assert all(d.confidence == "unassessed" for d in result.diagnostics)
 PY
 ```

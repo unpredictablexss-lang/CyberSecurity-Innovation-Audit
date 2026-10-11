@@ -1,6 +1,12 @@
 # Contract Change Request: a machine-readable consequence on a finding
 
-- 状态：`proposed / not implemented`
+- 状态：`accepted / implemented in contract v2`（2026-10-11）
+- 实现：`docs/contracts/ohscanner_detector_contract_v2.md` §3；字段为
+  `consequence_impact` / `consequence_cwe`（`DetectorFinding` 与 `ToolDiagnostic` 同名）。
+  回归测试：`tests/test_contract_v2_source_binding.py`（`ConsequenceFieldTests`、
+  `CrossVersionCompareTests`）与 `tests/test_ipc_disclosure_consequence.py`
+  （`MachineReadableConsequenceTests`）。本文 §1-§6 的请求文字保留为历史记录，
+  不再改动；v2 §3 是生效条款。
 - 适用接口：`src/ohscanner/contracts.py` 的 `DetectorFinding`，以及 `src/benchmark/tool_result.py` 的 `ToolDiagnostic`
 - 关联 detector：`ohscanner.interface.ipc`
 - 处理原则：本文只提出变更，**不修改公共 contracts**，也不把 proposed 字段写成已实现 API。

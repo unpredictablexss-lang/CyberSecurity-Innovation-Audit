@@ -23,6 +23,47 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.5 — contract v2: source binding and the consequence field (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc` **0.3.0** (was 0.2.0); model unchanged
+  (`oh-ipc-2026.10-v1`). Contract: **v2**, absorbing three CCRs in one version bump.
+- **What changed for a consumer of the output.** Every diagnostic from a first-party detector now
+  carries `source_sha256` and a derived `source_binding` (`bound` / `unbound`), and diagnostic IDs
+  changed value because the hash is part of their input. The consequence dimension added in v0.3
+  is now a **field**, not only message text: `consequence_impact` / `consequence_cwe`.
+- **Required vs optional, and why the split is where it is.** The source binding is required *in
+  the produced schema*, not at the detector call site: the runner already holds the
+  `SourceUnit.sha256` and binds the finding to it, so a detector has nothing to copy and no way to
+  copy it wrong. A detector that *does* declare a hash must agree with the unit — a disagreeing
+  hash **fails the run**; it is neither rewritten nor downgraded to `unbound`. Correcting a hash is
+  forging evidence, whichever direction it is "fixed". The consequence fields stay optional and
+  coexist with `candidate_cwe`: mechanism (how the boundary failed) and consequence (what it can
+  expose) are two different answers, and neither overwrites the other.
+- **`unbound` means unknown, never "passed".** A v1 payload has no hash, loads with
+  `source_binding="unbound"`, and must not be handed a hash it never had. The field proves **text
+  binding** only: not reachability, not guard dominance, not attacker control, not impact.
+- **The catalogue is still the detector's, not the schema's.** `reviewed_consequence()` returns an
+  impact only if this detector's versioned catalogue reviewed it, and maps the catalogue's own
+  `unknown` sentinel to `None` so no consumer can sort an unclassified consequence as a category.
+  The catalogue's internal consistency is asserted at import time, not at the first finding.
+- **Cross-version comparison is named, not silently allowed** (`compare.py`): a v1-vs-v2
+  comparison runs, records `schema_versions`, and adds a `CROSS-VERSION COMPARISON` limitation —
+  row counts and locations stay comparable, IDs do not.
+- **What did not change.** Every status semantic of v0.4/v0.3 is restated in contract v2 §4:
+  `completed` is not safe, an empty finding list is not proof of safety, an unsupported language is
+  `not_applicable` rather than a miss, and a consequence is a possibility until the Evidence gate
+  is met. Providers (`src/providers/*`) stay at `schema_version=1`: a third-party tool's raw output
+  cannot be claimed as bound to a source revision by us.
+- **Tests**: `tests/test_contract_v2_source_binding.py` (25 items covering each bullet of contract
+  v2 §7), plus machine-readable assertions in `tests/test_ipc_disclosure_consequence.py`. Full
+  suite **323 OK**.
+- Limits: a v1 payload still has no binding, and can only be labelled `unbound`; the comparison
+  names a version split without blocking it; `source_sha256` binds the *scanned* text and does not
+  by itself prove which upstream commit that text came from (the Git-side chain is M1's
+  `git_source.py`, not yet joined to this one). Contract: `docs/contracts/ohscanner_detector_contract_v2.md`.
+
+---
+
 # IPC method card v0.4 — bounded macro expansion (2026-10-11)
 
 - Detector: `ohscanner.interface.ipc` 0.2.0; model unchanged (`oh-ipc-2026.10-v1`). New module:

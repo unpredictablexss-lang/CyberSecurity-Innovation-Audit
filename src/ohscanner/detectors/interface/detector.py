@@ -2,7 +2,7 @@
 from typing import Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
 from .analysis import Interpreter
-from .models import IMPACT_DESCRIPTION, IpcPolicy, MODEL_VERSION
+from .models import IMPACT_DESCRIPTION, IpcPolicy, MODEL_VERSION, reviewed_consequence
 
 _CWE = {"AUTH-01":"CWE-441", "AUTH-02":"CWE-862", "AUTH-03":"CWE-863", "AUTH-04":"CWE-863", "DATA-01":"CWE-20", "CAP-01":"CWE-926"}
 
@@ -47,7 +47,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.2.0"
+    version = "0.3.0"
     supported_languages = ("c", "cpp")
     required_facts = ()
     ast_scope = "per_file"
@@ -72,6 +72,13 @@ class IpcInterfaceDetector:
             file=o.file,line=o.line,symbol=o.symbol,rule_id=o.rule,
             message=_finding_message(o),
             evidence_type="syntax",candidate_cwe=_CWE[o.family],
+            # Contract v2 §3: mechanism CWE above, consequence here. Both are
+            # optional and neither overwrites the other; the message keeps the
+            # same content for readers. `reviewed_consequence` drops the
+            # catalogue's "unknown" to None so an unclassified consequence never
+            # travels as a value that looks classified.
+            consequence_impact=reviewed_consequence(o.impact),
+            consequence_cwe=o.impact_cwe or None,
             evidence_obligations=_BASE_OBLIGATIONS
                 +((_DISPATCH_OBLIGATION,) if o.entry_grade=="dispatch" else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),

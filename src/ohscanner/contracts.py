@@ -110,6 +110,17 @@ class DetectorFinding:
     candidate_cwe: Optional[str] = None
     symbol: Optional[str] = None
     evidence_obligations: Tuple[EvidenceObligation, ...] = ()
+    # Contract v2. The binding is REQUIRED in the produced schema and is filled by
+    # the runner from the matching SourceUnit, so a detector that has nothing to
+    # say about source revisions need not carry the hash itself. A detector that
+    # does supply one must agree with the unit -- the runner refuses a mismatch
+    # rather than rewriting it, because correcting a hash is forging evidence.
+    source_sha256: str = ""
+    # The consequence is a second, different answer from the mechanism in
+    # `candidate_cwe`: how the boundary failed vs what it can expose. Optional,
+    # and neither field overwrites the other.
+    consequence_impact: Optional[str] = None
+    consequence_cwe: Optional[str] = None
 
     def __post_init__(self):
         safe_relative_path(self.file)
@@ -119,6 +130,13 @@ class DetectorFinding:
             raise ValueError("invalid line number")
         if not self.rule_id or not self.message:
             raise ValueError("finding requires a rule and explanation")
+        if self.source_sha256 and not re.fullmatch(r"[a-f0-9]{64}", self.source_sha256):
+            raise ValueError("invalid finding source SHA-256")
+        if self.consequence_impact is not None and (
+                not isinstance(self.consequence_impact, str) or not self.consequence_impact.strip()):
+            raise ValueError("consequence impact must be non-empty when given")
+        if self.consequence_cwe is not None and not re.fullmatch(r"CWE-[0-9]+", self.consequence_cwe):
+            raise ValueError("invalid consequence CWE identifier")
 
 
 @dataclass(frozen=True)

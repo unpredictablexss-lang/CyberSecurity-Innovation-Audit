@@ -84,6 +84,32 @@ def consequence_for(rule, calls=()):
     impact = IMPACT_BY_RULE.get(rule, "unknown")
     return impact, IMPACT_CWE.get(impact, ""), ""
 
+
+def reviewed_consequence(impact):
+    """Return `impact` only if this catalogue reviewed it, else `None`.
+
+    A consequence that reaches the public schema has to come from an explicit,
+    reviewed list -- never from a message string or a name heuristic (contract v2
+    §3). `"unknown"` is the catalogue's own way of saying "this rule has no
+    modelled consequence", so it becomes `None` rather than travelling as a value
+    a downstream consumer could mistake for a classified category.
+    """
+    if impact is None or impact == "unknown":
+        return None
+    if impact not in IMPACT_DESCRIPTION:
+        raise ValueError("unreviewed consequence class: " + str(impact))
+    return impact
+
+
+# The catalogue must be internally consistent: a rule may not map to an impact
+# that IMPACT_DESCRIPTION does not describe, and no CWE may be attached to an
+# impact the catalogue never names. This fails at import rather than at the first
+# finding, which is where a typo would otherwise surface as a KeyError mid-scan.
+assert set(IMPACT_BY_RULE.values()) <= set(IMPACT_DESCRIPTION), sorted(
+    set(IMPACT_BY_RULE.values()) - set(IMPACT_DESCRIPTION))
+assert set(IMPACT_CWE) <= set(IMPACT_DESCRIPTION), sorted(
+    set(IMPACT_CWE) - set(IMPACT_DESCRIPTION))
+
 @dataclass(frozen=True)
 class IpcPolicy:
     sensitive_calls: FrozenSet[str] = frozenset({

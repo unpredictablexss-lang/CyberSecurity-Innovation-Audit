@@ -18,6 +18,7 @@ from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
 from src.ohscanner.detectors.interface.models import (
     DISCLOSURE_CALLS,
     IMPACT_BY_RULE,
+    IMPACT_DESCRIPTION,
     consequence_for,
 )
 from src.ohscanner.fixture import snapshot_digest
@@ -144,6 +145,35 @@ class DetectorConsequenceTests(unittest.TestCase):
         run = run_snippet(self.ENTRY % "return GetPasteData();")
         finding = finding_for(run, "ipc.auth.missing")
         self.assertIn("not established", finding.message)
+
+
+class MachineReadableConsequenceTests(unittest.TestCase):
+    """Contract v2 §3: the consequence is a field now, not only message text."""
+
+    ENTRY = DetectorConsequenceTests.ENTRY
+
+    def test_a_read_consequence_is_machine_readable_and_keeps_the_mechanism_cwe(self):
+        run = run_snippet(self.ENTRY % "return GetPasteData();")
+        finding = finding_for(run, "ipc.auth.missing")
+        self.assertEqual(finding.consequence_impact, "information_disclosure")
+        self.assertEqual(finding.consequence_cwe, "CWE-200")
+        # The mechanism is a different answer and is not overwritten by it.
+        self.assertEqual(finding.candidate_cwe, "CWE-862")
+
+    def test_a_baseline_consequence_carries_no_cwe_the_catalogue_cannot_justify(self):
+        run = run_snippet(self.ENTRY % "OnCallback();\nreturn 0;")
+        finding = finding_for(run, "ipc.relay.descriptor-boundary")
+        self.assertEqual(finding.consequence_impact, IMPACT_BY_RULE["ipc.relay.descriptor-boundary"])
+        self.assertIsNone(finding.consequence_cwe)
+
+    def test_the_catalogue_never_emits_its_own_unknown_sentinel(self):
+        # `unknown` means "no modelled consequence"; it must leave as None so a
+        # consumer cannot sort it as a classified category.
+        run = run_snippet(self.ENTRY % "return GetPasteData();")
+        for finding in run.findings:
+            self.assertNotEqual(finding.consequence_impact, "unknown")
+            if finding.consequence_impact is not None:
+                self.assertIn(finding.consequence_impact, IMPACT_DESCRIPTION)
 
 
 if __name__ == "__main__":

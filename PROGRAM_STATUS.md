@@ -465,3 +465,34 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **结论（如实）**：移植的第二个预期收益在**本语料上落空**，第一个收益真实但只有 +1.9%。保留它的理由不是「找到了东西」，而是它把一个**会让源码已守住的路径被误报为未守卫**的假阳性类变成结构性不可能（测试证明机制在模式出现时有效：关闭时报、开启不报、去掉宏的对照组仍然报），并让解析覆盖单调不减。**`validated_vulnerability` 仍为 0；本轮没有产生任何新候选，也没有删掉任何旧候选。**
 - **仍未做到**：`#include` 从不跟随，条件定义只记录不选择，变参 / 字符串化 / token 粘连 / 冲突定义变体一律拒绝（91,189 次拒绝中变参类占绝对多数）；目录预算 400 源 / 6 MB，3 个组件因此截断；宏体内部的守卫若调用不在 `IpcPolicy.boolean_permissions | result_permissions` 内（例如自定义 `IsCallerValid`），展开后依旧不构成授权事实——那部分不确定性走既有的 `dispatch_binding` 义务，不假装已解决。
 - **测试**：新增 `tests/test_ipc_macros.py`（23 项：11 项扩展语义 + 5 项目录构建 + 6 项集成，含「控制组」与「展开不得发明 finding」）。全量 **295 项 OK**（272 既有 + 23 新增）。本轮改动**未推送**，等负责人授权。
+
+## 27. 2026-10-11 契约 v2：source 绑定必填 + 后果字段转正（一次版本吸收三份 CCR）
+
+- **动机**：三份 CCR 要的是同一件事的两半——A 的两份（`cpp_lifetime_source_binding` / `cpp_shared_ptr_race`，内容逐段重合）要求 finding 能机器证明「我对应哪一版源码」，并固定「机制 CWE vs 可能后果 CWE」的语义；接口线的 `..._consequence_ccr.md` 要求后果可机读。合并为**一次**版本变更，不分别破两次。
+- **为什么是 v2 而不是 v1.1**：① `DetectorFinding` 新增**必填**（产出物层面）的 source 绑定；② `diagnostic_id` 的**取值变了**（identity 纳入 `source_sha256`）——按 ID 存储、去重或比对的既有消费者，其键值与 v1 不再相同。v1 §7 自己规定破坏性变更必须提 contract-v2，故照办；v1 文档未删，作为 v1 语义的历史记录保留。
+- **必填落在产出物而不是调用点**：`DetectorFinding.source_sha256` 构造函数层可为空，由 Runner 从对应 `SourceUnit.sha256` 绑定（detector 不必自己抄一遍，少一处能抄错的地方）；**detector 自己填了且与 unit 不一致时直接失败**——不改写、也不降级为 unbound（纠正或伪造 hash 都是伪造证据）。`source_binding` 是派生字段：`bound` / `unbound`；`unbound` 表示**未知**，不是「已核对通过」，v1 迁移过来的 payload 一律落这一档且不得补 hash。
+- **选择性吸收**：`consequence_impact` / `consequence_cwe` 保持**可选**，与 `candidate_cwe` 并存且互不覆盖（机制 = 怎么失守，后果 = 可能暴露什么）。不填新字段的既有 detector 与 payload 不受影响（纯增量）。
+- **落地位置**：`src/ohscanner/contracts.py`（新字段与校验）、`src/ohscanner/runner.py`（绑定 / 拒绝 / ID 纳入 hash / 后果透传 / `schema_version=2`）、`src/benchmark/tool_result.py`（新字段、接受 v1 与 v2、`to_dict` 输出 `source_sha256` 与派生 `source_binding`、v2 缺 hash 直接拒绝）、`src/benchmark/compare.py`（两版都接受，**版本不同必须在输出里点名**：`schema_versions` + `CROSS-VERSION COMPARISON` 限制条目 + 汇总表多一列 Schema）、`models.py`（`reviewed_consequence()`——只放目录审查过的后果类，目录自己的 `unknown` 哨兵出口转 `None`；目录内部一致性在 import 时断言）。实测**无需改动**：`report_inputs.py`（按 `__dataclass_fields__` 过滤键，新键自动兼容）、`tool_matrix.py`（不读 ID）。
+- **接口线 detector 版本 0.2.0 → 0.3.0**（输出多了机读字段，版本必须跟着动）。
+- **未改状态语义（逐条重申，v2 §4）**：`completed` 不是 safe；空 findings 不是安全证明；`unbound` 不是已核对；hash 只证明**文本绑定**，不证明可达性、守卫支配、攻击者控制或影响；后果仍是**可能性**，只有过 Evidence gate 才升级。**`validated_vulnerability` 仍为 0。**
+- **测试**：新增 `tests/test_contract_v2_source_binding.py`（25 项：绑定 / 拒绝 / ID 随源码变化 / 行越界 / v1 unbound 不补 hash / 状态映射不变 / 后果字段向后兼容 / 机制与后果不互相覆盖 / `None` 与空串区分 / 未审查后果类由目录拒绝 / 跨版本比较必须点名 / v2 存档可加载 / 修订组不合并）；`tests/test_ipc_disclosure_consequence.py` 增 3 项机读断言；`tests/test_ohscanner_contract.py` 的版本断言由 v1 改为 v2 并加验 hash 绑定。全量 **323 项 OK**。
+- **仍未做到**：v1 payload 加载后仍然没有源码绑定（只能标 `unbound`，这是事实不是缺陷）；跨版本比较只**点名**差异，不阻断；`source_sha256` 绑定的是扫描时的文本，**不证明**该文本来自某个 upstream 提交（Git 侧证据在 M1 的 `git_source.py`，两条链尚未合并）。
+
+## 28. 2026-10-11 远端分支删除的保全核对（以线上 10 个 head 为准重测）
+
+- **背景**：远端有 9 个分支被删除（`codex/cutils-component-pilot`、`codex/reviewed-a-integration-20261009`、`codex/teammate-a-cpp-detectors`、`codex/teammate-a-lifetime-evidence-next`、`codex/teammate-a-oh-vuln-corpus`、`codex/teammate-a-oh-vuln-corpus-next`、`codex/teammate-a-shared-ptr-race-evidence`、`codex/vulnerability-dataset-survey-20261009`、`experiment/cutils-product-scan`）。核对要回答的是：有没有内容**只**存在于这些分支上，删了就没了。
+- **判据（不用 ancestry）**：squash/rebase 会重写 patch-id，`git cherry` 与 merge-base 判定在这里都给不出有意义的答案。改用**逐文件 blob 比对**：拿每个被删分支 tip 的每个 `(path, blob)`，与线上全部 head 的并集比。
+- **做法**：线上 head 列表以 `git ls-remote --heads origin` 为准——本地 remote-tracking 里还留着已删分支的陈旧引用，**不能**当线上用；被删分支的 tip 已备份在 `refs/backup-deleted/*`（主克隆）。
+- **结果**：9 个分支各有 197–275 个文件与线上某个 head **逐字节相同**（这些分支多是同一棵树的旧快照）；**只有 4 个文件在线上任何 head 都不存在**：
+
+  | 文件 | 载体分支数 |
+  |---|---:|
+  | `docs/reviews/branch_integration_review_2026-10-09.md` | 3 |
+  | `tests/test_reviewed_integration.py` | 3 |
+  | `research/corpus/native/lifetime_uaf_native_run_2026-10-10.json`（17 KB 原生运行证据记录） | 2 |
+  | `docs/reviews/local_delivery_review_2026-10-10.md` | 1 |
+
+  这四个在 `refs/backup-deleted/*` 里都在，随时可恢复。
+- **更正本轮之前的一条结论**：先前一次核对（用的是陈旧的 remote-tracking 引用）称 `docs/testing/数据集调研报告.md` 的内容「在任何地方都不存在」。以线上 head 重测后：该文件 blob `973972f7de52` 与 `codex/teammate-a-fragment-consolidation-20261010`、`codex/teammate-a-shared-ptr-competition-loop-20261011` 上的**逐字节相同**，即已被吸收，**没有丢**。那个结论作废。
+- **待定项**：另有每分支 10–42 个文件属「路径在线上、但这一版修订不在线上」——多为 main 自己继续演进造成的旧版本，需人工 diff 才能判断分支改动是否已被吸收，本轮**不下结论**。
+- **动作**：是否重推这 9 个分支由负责人决定；本轮只提供核对结果，**未推任何分支**。

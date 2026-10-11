@@ -29,7 +29,7 @@ def context_for(units):
 
 
 class DetectorContractTests(unittest.TestCase):
-    def test_two_mock_detectors_normalize_to_existing_v1_schema(self):
+    def test_two_mock_detectors_normalize_to_v2_schema_with_a_source_binding(self):
         context = load_fixture(FIXTURE)
         registry = DetectorRegistry()
         registry.register(MockCppDetector())
@@ -38,13 +38,19 @@ class DetectorContractTests(unittest.TestCase):
         self.assertEqual(len(reports), 2)
         self.assertEqual([r.status for r in reports], ["completed", "completed"])
         self.assertEqual([r.diagnostic_count for r in reports], [1, 1])
+        by_path = {unit.path: unit for unit in context.units}
         for report in reports:
             data = report.to_dict()
-            self.assertEqual(data["schema_version"], 1)
+            # Contract v2: the source revision is part of every diagnostic, bound
+            # by the runner from the unit the finding was reported in.
+            self.assertEqual(data["schema_version"], 2)
             self.assertEqual(data["target_id"], context.request.target_id)
             self.assertEqual(data["commit"], context.request.commit)
             self.assertEqual(data["diagnostics"][0]["confidence"], "unassessed")
             self.assertEqual(data["diagnostics"][0]["severity"], "unassessed")
+            self.assertEqual(data["diagnostics"][0]["source_binding"], "bound")
+            self.assertEqual(data["diagnostics"][0]["source_sha256"],
+                             by_path[data["diagnostics"][0]["file"]].sha256)
             self.assertEqual(data["parsing"][0]["status"], "not_run")
             self.assertEqual(report.scope_files, 1)
 

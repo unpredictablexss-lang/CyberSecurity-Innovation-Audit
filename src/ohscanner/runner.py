@@ -37,10 +37,37 @@ class DetectorRegistry:
         return [self._detectors[key] for key in sorted(self._detectors)]
 
 
-def _diagnostic_id(detector_id, finding):
-    digest = sha256(("|".join((finding.file, str(finding.line),
+def _diagnostic_id(detector_id, finding, source_sha256):
+    """Stable identity of one finding, bound to the exact source revision.
+
+    The source hash is part of the input on purpose: two runs over the same path
+    and line but a different revision must not produce the same ID (contract v2).
+    """
+    digest = sha256(("|".join((source_sha256, finding.file, str(finding.line),
                                finding.rule_id, finding.message))).encode("utf-8")).hexdigest()[:16]
     return f"{detector_id}:{digest}"
+
+
+def _bind_source(finding, unit):
+    """Resolve a finding's source binding against the unit it was reported in.
+
+    An unset hash is filled from the unit. A *disagreeing* hash is refused rather
+    than corrected: the runner has no standing to decide which of the two is the
+    real text, and silently preferring either would manufacture the binding this
+    field exists to prove.
+    """
+    if not finding.source_sha256:
+        return unit.sha256
+    if finding.source_sha256 != unit.sha256:
+        raise ValueError("finding source hash does not match the analyzed source")
+    return unit.sha256
+
+
+def _source_bindings(run, selected):
+    """Map a run's findings to the source hash each one is actually bound to."""
+    paths = {unit.path: unit for unit in selected}
+    return {finding: _bind_source(finding, paths[finding.file])
+            for finding in run.findings if finding.file in paths}
 
 
 def _normalized(context, detector, selected, run, elapsed, error=None,
@@ -69,7 +96,8 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         unit = paths[finding.file]
         if finding.line > len(unit.text.splitlines()):
             raise ValueError("finding location outside source")
-        diagnostic_id = _diagnostic_id(detector.detector_id, finding)
+        source_sha256 = _bind_source(finding, unit)
+        diagnostic_id = _diagnostic_id(detector.detector_id, finding, source_sha256)
         if diagnostic_id in seen_ids:
             raise ValueError("duplicate finding identity")
         seen_ids.add(diagnostic_id)
@@ -78,7 +106,10 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             evidence_type=finding.evidence_type, file=finding.file, line=finding.line,
             column=finding.column, rule_id=finding.rule_id, severity="unassessed",
             message=finding.message, candidate_cwe=finding.candidate_cwe,
-            confidence="unassessed", symbol=finding.symbol))
+            confidence="unassessed", symbol=finding.symbol,
+            source_sha256=source_sha256,
+            consequence_impact=finding.consequence_impact,
+            consequence_cwe=finding.consequence_cwe))
     findings.sort(key=lambda item: (item.file, item.line or 0, item.rule_id or "", item.diagnostic_id))
     limitations = list(run.limitations)
     provenance_limitation = (
@@ -114,7 +145,8 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         for unit in applicable
     ]
     return ToolRunResult(
-        schema_version=1, run_id=context.request.request_id + ":" + detector.detector_id,
+        # v2: every diagnostic below carries the source hash it was reported against.
+        schema_version=2, run_id=context.request.request_id + ":" + detector.detector_id,
         tool=detector.detector_id, tool_version=detector.version,
         target_id=context.request.target_id, commit=context.request.commit,
         scope_files=len(run.analyzed_files) if run.status == "completed" else 0,
@@ -128,9 +160,11 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
 def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
     """Return normalized reports plus per-detector coverage and obligations.
 
-    The ToolRunResult v1 schema is unchanged. In particular, 'completed'
-    describes successful work on ELIGIBLE files, not whole-component safety.
-    A file in partial AST is not counted as a miss, even if other files ran.
+    Emits contract v2 (see docs/contracts/ohscanner_detector_contract_v2.md):
+    every diagnostic is bound to the source revision it was reported against.
+    In particular, 'completed' describes successful work on ELIGIBLE files, not
+    whole-component safety. A file in partial AST is not counted as a miss, even
+    if other files ran.
     """
     from .fixture import snapshot_digest
 
@@ -199,6 +233,9 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
         reports.append(report)
         analyzed = {item["file"] for item in report.parsing
                     if item["analysis_status"] == "analyzed"}
+        # The sidecar must name the same diagnostics as the report, so it resolves
+        # each finding's binding the same way the report did.
+        bindings = _source_bindings(run, selected) if run is not None else {}
         sidecar["detectors"][detector.detector_id] = {
             "scope_mode": getattr(detector, "ast_scope", "per_file"),
             "status": (
@@ -216,7 +253,8 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
             ],
             "evidence_obligations": (
                 [
-                    {"diagnostic_id": _diagnostic_id(detector.detector_id, finding),
+                    {"diagnostic_id": _diagnostic_id(detector.detector_id, finding,
+                                                     bindings[finding]),
                      "obligations": [
                          {"kind": obligation.kind, "description": obligation.description,
                           "status": obligation.status}
