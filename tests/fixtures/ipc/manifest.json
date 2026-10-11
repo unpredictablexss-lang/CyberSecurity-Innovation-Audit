@@ -260,5 +260,104 @@
     "split": "design",
     "variant": "safe",
     "notes": "VerifyAccessToken has a reviewed binary PERMISSION_GRANTED/PERMISSION_DENIED result domain; complement is valid for this API only."
+  },
+  {
+    "sample_id": "descriptor_interface_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "descriptor_interface_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "descriptor_no_prefix_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "descriptor_no_prefix_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "descriptor_inherited_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "descriptor_inherited_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "descriptor_wrong_interface_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_wrong_interface_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_unrelated_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_unrelated_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_alias_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_alias_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_unresolved_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_unresolved_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_call_only_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_call_only_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_no_reject_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_no_reject_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_after_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_after_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_one_branch_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_one_branch_positive.cpp",
+    "split": "design",
+    "variant": "positive"
   }
 ]
