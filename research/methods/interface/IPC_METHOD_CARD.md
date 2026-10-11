@@ -31,6 +31,54 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.10 — M2: a one-hop same-file relay is not an unguarded boundary unless the callee is the guard (2026-10-12)
+
+v0.9 changed how one comparison is *read*. This changes whether a path is read as
+*guarded at all*, in one place: the entry that only forwards the request.
+Full record: `docs/research/ipc_m2_relay_guard_2026-10-12.md`; reproducer:
+`research/experiments/interface/ipc/m2_platform_delta.py`.
+
+- **What was wrong.** The AUTH-01 relay predicate asked whether *this entry's own state* had
+  established a descriptor check. `OnRemoteRequest` that only hands the request to
+  `OnRemoteRequestInner(code, data, reply, option)` has no check in its own body by construction, so
+  the guard one call away was reported as absent
+  (`screen_session_manager_stub.cpp:42`, guard at `OnRemoteRequestInner:50`).
+- **What a relay has to satisfy to count.** Five conditions, all structural, all with a fixture that
+  breaks exactly one: the callee is in the **same file**; **every argument is one of the caller's own
+  parameters** (a substituted literal is a different transaction); the callee has a **top-level**
+  comparison of `ReadInterfaceToken()` against a descriptor identity — a nested one does not dominate
+  the dispatch; the identity is one M1 **accepts**; and the mismatch branch **leaves** (top-level
+  `return`/`throw`) **before** the `switch`. Locals on the way to the comparison are bound
+  (`token = data.ReadInterfaceToken();`), so the common two-statement form is read the same way.
+- **Three outcomes, M1's vocabulary.** Guarded → the call site is not a boundary and nothing is
+  reported. Comparison present but identity not accepted → the candidate is **kept**, its message
+  says *present but not accepted*, and both identities are cited with the same obligations M1 added.
+  Anything else → the call site stays a candidate.
+- **Measured through the official path**, over exactly the scope the M1 platform reports persisted,
+  at the same commits: `window_window_manager` **15 → 14** (one AUTH-01 removed, 0 added, 0 reworded);
+  the other four components identical item by item (3 → 3, 4 → 4, 2 → 2, 0 → 0). The removed candidate
+  is the one M1's report §6 attributed to M2. `commit`, `snapshot_sha256` and the file's
+  `source_sha256` are unchanged between the two runs; only the detector version moved 0.4.0 → 0.5.0.
+- **Nothing is lost by removing it.** `OnRemoteRequestInner` is already an entry root in its own right
+  (`*Inner` in a `*Stub`), so its own observations survive: the file still reports twice
+  (`:738` AUTH-02, `:1778` CAP-01).
+- **Controls are discriminating, not decorative.** Run the same eight fixtures against the pre-M2
+  engine and exactly the two `_fixed` cases plus the wrong-interface message assertion fail, while the
+  five pure positives pass both before and after.
+- **What is not established.** The corpus exercised only the *guarded* outcome: every real one-hop
+  guard compares an identity M1 accepts, so the "present but not accepted" branch and the
+  local-variable binding rest on fixtures alone. Cross-file delegation is untouched (that is M6), and
+  "top-level + before the switch + the mismatch branch leaves" is a structural rule, not a bounded
+  dominance proof (that is M5) — `goto`, exceptions and macro-expanded control flow are not covered.
+  A callee reached from other entries is judged per call site, not inferred globally.
+- **Rule identity moved:** detector `0.5.0`, model `oh-ipc-2026.10-v3`. Tests: 401 in the interface
+  line (10 new, 8 fixtures added to the semantic matrix, manifest 40 → 48 rows).
+- **Next, in the owner's order:** M5 (bounded dominance) → M3/M4 → M6.
+
+> **2026-10-12 状态**：M2 由队友 B 单独提交，未推送、未合并；M3–M6 仍待做。
+
+---
+
 # IPC method card v0.9 — M1 landed alone: the descriptor guard is read as an interface identity (2026-10-11)
 
 v0.8 diagnosed M1 but changed no rule. This is M1, as one commit that touches no other family.
