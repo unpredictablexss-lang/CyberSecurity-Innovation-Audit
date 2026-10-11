@@ -97,3 +97,29 @@ class IpcInterfaceDetector:
              "switch/if code dispatch, and source-declared virtual overrides). Entry discovery is not reachability: "
              "dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.",
              "Entry-coverage measurements are published in the interface research report, not in this result.")+extra)
+
+
+class IpcInterfaceCompleteAstDetector(IpcInterfaceDetector):
+    """The same interpretation, restricted by the shared runner to complete AST.
+
+    ``IpcInterfaceDetector`` walks partial and complete parses alike, so one
+    partial file in a real component makes the whole run ``blocked``. The shared
+    runner then records neither scope counters nor evidence obligations for that
+    run: ``runner.py`` reports ``scope_files``/``scope_loc`` as 0 unless the
+    status is ``completed``, and the coverage sidecar lists per-candidate
+    obligations only for a completed run. The candidates are still emitted, so a
+    blocked run hands the reviewer a finding list with the proof obligations
+    stripped from it -- the one thing the evidence gate needs.
+
+    Declaring ``ast`` as a required fact makes the runner select only units whose
+    parse is complete and record the rest as ``unexamined`` with an explicit
+    ``incomplete_ast:<status>`` reason. The run then completes over a scope it
+    can name, with real counters and recorded obligations.
+
+    This is a scope restriction, not a recall claim. Candidates visible only in
+    partial trees are not claimed here; an audit runs both scopes and reports
+    which pass saw each candidate. Neither pass promotes anything: every
+    diagnostic stays ``candidate`` with its obligations attached.
+    """
+    detector_id = "ohscanner.interface.ipc.complete-ast"
+    required_facts = ("ast",)

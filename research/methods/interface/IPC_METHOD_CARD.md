@@ -23,6 +23,69 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.6 — auditing a whole component, not just a fixture (2026-10-11)
+
+- Detector: `ohscanner.interface.ipc` unchanged, plus a scope-restricted variant
+  `ohscanner.interface.ipc.complete-ast` (same interpretation, `required_facts = ("ast",)`).
+  New module: `src/ohscanner/detectors/interface/audit.py`. **No public contract, schema, catalog
+  or CLI change.**
+- **What it is.** A driver that takes a component at a pinned commit and produces one reviewable
+  audit: a deterministic scope plan, an explicit list of what was read and what was not, the
+  candidates with the code excerpt they were found in, and the coverage table. It answers
+  "what did this component yield, and what did we not look at", for any component — not the
+  question "is this component safe", which it refuses to answer.
+- **Why two passes.** `ohscanner.interface.ipc` returns `blocked` on any partial parse, and the
+  shared runner then does three things at once: `scope_files`/`scope_loc` become 0, every
+  applicable file is marked `not_analyzed`, and `evidence_obligations` are not emitted (they are
+  gated on `report.status == "completed"`). Measured on `communication_dsoftbus`: 4 candidates
+  were still produced while their obligations were an **empty list**. A conservatism that drops
+  the proof obligations of findings it did produce is not conservative — it removes the review
+  chain. The driver therefore runs the same shard twice: a `complete-ast` pass that *completes*
+  (real scope counters, obligations recorded, incomplete files declared `unexamined:
+  incomplete_ast:<status>`) and an `all-files` pass that keeps recall from partial trees but is
+  `blocked`. Candidates are merged on `(file, line, rule_id, source_sha256)` and each records
+  which passes saw it. The blocked pass's zero is printed **next to that pass's real
+  applicable/analyzed counts**, with the reason, never alone.
+- **The fix belongs to the owner, and is filed as a request, not applied.**
+  `docs/contracts/ohscanner_blocked_run_coverage_ccr.md` proposes (c) a third run status
+  (`partial`/`completed_with_gaps`, counted as a gap so the overall report stays
+  `completed_with_limitations`) plus (b) emitting obligations from the findings rather than
+  filtering them by run status. This branch changed none of `contracts.py`, `runner.py`,
+  `execution.py`, `catalog.py` or the CLI.
+- **Production scope is excluded by whole path segment**, not substring: `test/tests/unittest/
+  mock/sample/example/demo/benchmark/fuzz/third_party/...`. A substring rule misses `/tests/`; the
+  segment rule is pinned by a regression test. Sharding is deterministic (sorted paths, greedy
+  split under the byte/file bounds, sha256 per shard, `plan_sha256`), and shard invariance is
+  verified on real code, not only on the fixture: `window_window_manager` at `--max-files 600`
+  gives 2 shards and the **identical candidate set** (15, both directions empty) and identical
+  merged coverage as the 1-shard run.
+- **Files no selected detector claims are counted, not lost.** `.js/.ts/.ets` are in
+  `SOURCE_LANGUAGES` but outside this detector's `("c","cpp")`, so
+  `files_selected` can exceed the parse map. `files_in_scope_without_a_claiming_detector` records
+  them — in scope, claimed by nobody, hence neither a miss nor an examined clean file.
+- **Measured (five real components, final code, 4983 files / 51,531,827 B, all
+  `validated_vulnerability: 0`, one shard each):** `security_access_token` 20 candidates
+  (all complete), `window_window_manager` 15 (4 complete / 11 partial-only),
+  `communication_dsoftbus` 4 (2/2), `update_updateservice` 2 (both partial-only),
+  `distributeddatamgr_kv_store` **0**. Of the 41 total, **26 were seen by both passes
+  (obligations recorded) and 15 appear only in partial files (obligations not recorded — flagged
+  per candidate in the report)**.
+- **Honesty by construction.** Excerpts are read from the pinned blob, never the worktree (a test
+  rewrites the worktree and asserts the marker is absent). A shard that raises is reported in
+  `shard_errors` and never rendered as "no candidates". Zero candidates renders as "not proof of
+  safety". Planned-vs-actually-read is measured (`plan_vs_load`), so a dropped non-UTF-8 blob is
+  visible rather than silent.
+- **Tests**: `tests/test_component_audit.py` (33 items: scope/exclusion/sharding determinism,
+  the two-pass merge, blocked-vs-completed counters, pinned-blob excerpts, shard failure
+  reporting, the language gap). Full suite **363 OK**.
+- **Not done, stated:** the detector is not registered in `catalog.py`, so the global CLI cannot
+  select it (owner's decision); the driver is not a CLI subcommand; the 15 partial-only candidates
+  still need manual obligations; the driver costs ~2× wall clock and one interpretation now
+  carries two detector IDs (so `diagnostic_id` differs between passes); root-cause intersection is
+  `not_measured` in a component audit (no labelled set is bound to a component).
+
+---
+
 # IPC method card v0.5 — contract v2: source binding and the consequence field (2026-10-11)
 
 - Detector: `ohscanner.interface.ipc` **0.3.0** (was 0.2.0); model unchanged

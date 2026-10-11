@@ -522,3 +522,33 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **测试**：A 的 PoC 单测 7 项 OK（构建与运行全程 mock，不需 repo）；全量 **330 项 OK**（323 既有 + 7 新增）。
 - **明确未做**：没有改 `benchmarks/historical/c_utils_singleton_uaf.json`（其 `runtime_replay_status` 仍是 `not_run`——要不要改成已复现由负责人决定，我不代填）；运行产物（JSON/MD/日志/二进制，vulnerable 日志每份约 95 KB）留在 `/tmp/poc_a_run`，**不入库**（AGENTS.md：生成产物与第三方源码不进提交）；`/tmp/cutils_pinned` 是临时对象库，不入库、不连接任何线上服务。
 - **本轮改动未推送**，等负责人授权。
+
+## 30. 2026-10-11 组件代码审计能力：把检测器指向任意组件跑一次可复核的审计
+
+- **任务来源**：负责人「反正要做到能很好的对组件代码进行代码审计找出漏洞点」。目标是让接口线能对**任意一个组件**（给定 repo/commit/include）出一份可复核的审计报告，而不是只能跑既有 fixture。
+- **先解决的核心 blocker（不是推演，是实测出来的）**：`ohscanner.interface.ipc` 在任一处 parse 不完整时返回 `blocked`，而共享 runner 对 `blocked` 的处理是**三件事同时发生**——`scope_files`/`scope_loc` 归 0、所有 applicable 文件记 `not_analyzed`、`evidence_obligations` 因 `report.status != "completed"` 而不生成。实测 `communication_dsoftbus`：检测器仍产出 **4 条候选**，但义务列表是**空的**。即一次「保守」的 run 同时**低报**了做过的工作、并**抹掉**了每条候选的证明义务（AGENTS.md 的证据门要求义务必须随候选存在）。
+- **绕法（不改共享语义，共享 bridge/runner/CLI/报告归负责人）**：
+  - 新增同解释、窄范围的 detector `ohscanner.interface.ipc.complete-ast`，只加一行 `required_facts = ("ast",)`；runner 于是只把 complete 文件交给它，其余记 `unexamined: incomplete_ast:<status>`。这次 run `completed`：`scope_files`/`scope_loc` 是真实数字且**义务被记录**。
+    （过程中一个真实 bug：先只写了 docstring 忘了那个属性，导致 strict 那遍仍然是 `blocked`——测试与 scope 计数一起把它抓出来。）
+  - 审计驱动对同一 shard **跑两遍**（`complete-ast` + `all-files`），按 `(file, line, rule_id, source_sha256)` 合并候选并记录 `passes`（哪几遍看见它）。blocked 那遍的候选在报告里显式写「义务未被 runner 记录，**不等于**没有义务」，并把那个 0 连同该遍真实的 `applicable/analyzed` 计数一起打印。
+  - 把这条真实缺陷写成 **CCR 提案**（不改任何共享文件）：`docs/contracts/ohscanner_blocked_run_coverage_ccr.md`，建议 **(c) 增加第三个 run status + (b) 义务不再按 status 过滤**；本文明确列出该分支**没有**改 `contracts.py`/`runner.py`/`execution.py`/`catalog.py`/CLI。
+- **新模块** `src/ohscanner/detectors/interface/audit.py`（**detector-agnostic**，只有 pass 表点了本线的两个 detector）：`plan_scope`（按 include 前缀 + 排除规则圈定 scope）、`plan_shards`（确定性分片，按排序后的路径贪心切分，附 sha256 分片摘要与 `plan_sha256`）、`run_audit`（逐 shard 跑两遍，单 shard 抛异常被捕获并进 `shard_errors`）、`merge_shard_runs`（按文件合并，parse 状态取两遍中较差者）、`coverage_depth`、`audit_component`、`render_markdown` 与 `main`（`--repo-dir/--repository/--commit/--include/--exclude/--include-tests/--max-files/--max-bytes/--passes/--json-out/--md-out/--plan-only`）。
+- **生产代码排除按整路径段**（`PRODUCTION_EXCLUDED_SEGMENTS`：`test/tests/mock/sample/example/demo/benchmark/fuzz/third_party/...`）。此前一套**子串** SKIP 规则会漏掉 `/tests/`，这次改成整段匹配并加了回归测试钉死。
+- **修掉一个真实报告缺口**：`files_selected` 可能大于 parse 映射（`window_window_manager` 1112 vs 1079），因为 `.js/.ts/.ets` 在 `SOURCE_LANGUAGES` 内但不在本检测器的 `("c","cpp")` 内。新增 `files_in_scope_without_a_claiming_detector` 计数 + 示例 + 说明：「这些文件在 scope 内、但没有任何被选中的 detector 声明它们，因此既不是漏检也不是已检查的干净文件」。五个组件的数字均由**最终代码**重跑得到。
+- **五个真实组件端到端实测**（`validated_vulnerability` 全部 0；单 shard）：
+
+  | 组件 | commit | 文件 / 字节 | parse complete/partial | 候选 | 其中仅 partial 文件可见 |
+  |---|---|---:|---:|---:|---:|
+  | update_updateservice | `e4942a33` | 219 / 851,345 | 187 / 31 | 2 | 2 |
+  | security_access_token | `17d88bfb` | 550 / 3,484,891 | 489 / 56 | 20 | 0 |
+  | distributeddatamgr_kv_store | `acfb22aa` | 1446 / 11,765,303 | 1134 / 310 | 0 | 0 |
+  | window_window_manager | `8b0d8fe1` | 1112 / 20,206,691 | 811 / 268 | 15 | 11 |
+  | communication_dsoftbus | `652f88e0` | 1656 / 15,243,597 | 729 / 927 | 4 | 2 |
+  | **合计** | | **4983 / 51,531,827** | | **41** | **15** |
+
+  候选构成：`ipc.relay.descriptor-boundary` 20、`ipc.capability.export` 15、`ipc.auth.missing` 4、`ipc.auth.guard-coverage` 2。**41 条中 26 条两遍都看见（义务已记录）、15 条只在 partial 文件里出现（义务未记录，报告里逐条标注）。**`window_window_manager` 磁盘上 51 MiB，经生产排除后为 20.2 MiB 生产源码，落在核心 `MAX_TOTAL_BYTES = 32 MiB` 内，故单 shard 即可跑完。
+- **分片不变性在真实组件上验证过**（此前只有 fixture 级单测）：对 `window_window_manager` 用 `--max-files 600` 重跑 → **2 shard**，候选集合与 1 shard 时**逐条相同**（按 `file/line/rule_id/source_sha256` 比较：15 条，双向差集为 0），合并覆盖也相同（`files_selected` 1112 / 字节 / parse 811-268 / `files_analyzed` 811 / `candidate_files` 6），`plan_vs_load.mismatches == []`。只有 `plan_sha256` 与分片布局不同。
+- **诚实性由构造与测试共同保证**：摘录 `_excerpt` 一律读 **pinned blob**（测试里把 worktree 改写并加标记 → 标记不出现在摘录里）；某个 shard 抛异常必须进 `shard_errors` 并**永不**被当成「无候选」；0 候选渲染为「不是安全的证明」；计划与实际读取数用 `plan_vs_load` 度量（非 UTF-8 blob 的丢弃可见）。
+- **测试**：新增 `tests/test_component_audit.py` **33 项**；全量 **363 项 OK**（330 既有 + 33 新增）。既有 330 项无回归。
+- **仍未做到 / 未做**：① `ohscanner.interface.ipc` 与 `complete-ast` 变体**没有**注册进 `catalog.py`，因此全局 CLI 目前**选不到**本线检测器——这是负责人的决定，我不代改；② 审计驱动**没有**做成 CLI 子命令，只能以模块方式调用；③ 真正「只在 partial 文件里」的 15 条候选，其义务仍只能靠人工（`complete-ast` 那遍看不见它们）；④ 两遍带来约一倍墙钟时间，且**一个解释对应两个 detector ID**（`diagnostic_id` 因 detector_id 不同而不同）；⑤ 根因相交一栏在组件审计里恒为 `not_measured`（无标注根因集绑定到该组件），既有 12 组历史对仍由 `measure_entry_coverage.py` 度量。
+- **产物与动作**：审计 JSON/MD 全部留在 `/tmp/audit_*.json|.md`，**不入库**（AGENTS.md：生成产物与第三方源码不进提交）；**本轮未推送**，等负责人授权。本分支现领先 `origin/feat/interface-ipc-detector` 3 个提交（`4fda320`、`89401fb`、`3feb5bc`），本轮改动尚未提交。
