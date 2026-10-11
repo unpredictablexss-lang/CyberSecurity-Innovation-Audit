@@ -59,6 +59,12 @@ UNKNOWN = Value()
 # ("mismatch", "unresolved") are recorded as seen but never as a guard.
 _DESCRIPTOR_ACCEPTED = frozenset({"unqualified", "self", "interface"})
 
+# How a mismatch branch has to end before the check it belongs to counts as a
+# guard: `relay_guard()` accepts a one-hop same-file relay only when the callee's
+# token comparison leaves the transaction on mismatch. A branch that merely logs
+# falls through to the dispatcher the check was supposed to protect.
+_RELAY_LEAVES = ("return_statement", "throw_statement")
+
 
 @dataclass
 class State:
@@ -511,7 +517,7 @@ class Interpreter:
             return bool(state.auth or state.caller_class.intersection({"TOKEN_NATIVE"}))
         return bool(state.auth)
 
-    def action(self, fn, node, state, name, args):
+    def action(self, fn, node, state, name, args, depth=0):
         if self.root is None:
             return
         root_key = (self.root.file, self.root.qualified)
@@ -566,9 +572,19 @@ class Interpreter:
                 or name in self.policy.capability_calls or name in self.policy.copy_calls):
             parcel_keys = {v.key for v in state.env.values() if v.kind == "parcel"}
             if parcel_keys and not parcel_keys.intersection(state.descriptor):
-                self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
-                          "IPC dispatch/callback reaches " + name + " without a matched interface-descriptor guard; relay/exposure still requires review.",
-                          call=name)
+                helper = self.resolve(fn, name)
+                relay = self.relay_guard(fn, node, args, helper, state, depth) if helper else None
+                if relay is None:
+                    self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
+                              "IPC dispatch/callback reaches " + name + " without a matched interface-descriptor guard; relay/exposure still requires review.",
+                              call=name)
+                elif relay[0] == "seen":
+                    issue = relay[1]
+                    if issue not in state.descriptor_issues:
+                        state.descriptor_issues = state.descriptor_issues + (issue,)
+                    self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
+                              "IPC dispatch/callback reaches " + name + ", whose interface-descriptor comparison is present but not accepted for this transaction; relay/exposure still requires review.",
+                              call=name)
 
     def interface_of(self, name):
         """The declaration of a written class name, or "" when the shard lacks it."""
@@ -638,6 +654,75 @@ class Interpreter:
                   "determined (" + item[2] + "; " + item[3] + ")" for item in unresolved]
         return ("mismatch" if mismatch else "unresolved"), "Guard seen, not accepted: " + "; ".join(parts) + "."
 
+    def relay_guard(self, fn, node, args, helper, state, depth):
+        """What a one-hop same-file relay out of an entry lands on.
+
+        `OnRemoteRequest` handing the request to `OnRemoteRequestInner(code, data,
+        reply, option)` proves nothing by itself: that callee may not compare the
+        token at all, may compare another interface, may compare and carry on, or
+        may compare only after it already routed the request. The relay is read as
+        guarded only when
+
+        * every argument is one of this entry's own parameters, so the request is
+          handed over rather than replaced;
+        * a top-level statement of the callee compares `ReadInterfaceToken()`
+          against an accepted descriptor identity and *leaves* on mismatch;
+        * that statement precedes the `switch` that routes the request.
+
+        Returns ``("guarded", where)``, ``("seen", issue)`` when a comparison is
+        present but not accepted for this transaction, or None when nothing here
+        establishes a guard -- and then the call site stays a candidate.
+        """
+        if helper.body is None or helper.file != fn.file:
+            return None
+        passed = node.child_by_field_name("arguments")
+        carried = [fn.text(item) for item in passed.named_children] if passed else []
+        if not carried or any(name not in fn.params for name in carried):
+            return None
+        statements = list(helper.body.named_children)
+        probe = state.fork()
+        probe.env.update(dict(zip(helper.params, args)))
+        check = index = comparison = None
+        for position, item in enumerate(statements):
+            # Locals hold the token as often as the call site does, so bind the
+            # declarations met on the way to the check the way the body walk binds
+            # them: `token = data.ReadInterfaceToken(); if (token != ...)`.
+            for declaration in (item.named_children if item.type == "declaration" else ()):
+                if declaration.type != "init_declarator":
+                    continue
+                declarator = declaration.child_by_field_name("declarator")
+                names = list(walk(declarator, "identifier")) if declarator else []
+                self.assign(probe, helper.text(names[-1] if names else declarator),
+                            self.value(helper, declaration.child_by_field_name("value"), probe, depth))
+            if item.type != "if_statement":
+                continue
+            read = self.value(helper, item.child_by_field_name("condition"), probe, depth)
+            if read.kind == "predicate" and read.predicate[:1] == ("descriptor",):
+                check, index, comparison = item, position, read
+                break
+        if check is None:
+            return None
+        expected = comparison.predicate[3]
+        line_map = self.line_maps.get(helper.file) or {}
+        line = check.start_point[0] + 1
+        where = helper.qualified + " at " + helper.file + ":" + str(line_map.get(line, line))
+        if expected.subject not in _DESCRIPTOR_ACCEPTED:
+            return ("seen", (expected.subject, expected.key) + tuple(expected.terms))
+        # The predicate is true when the operands are equal, so on an equality
+        # test it is the `else` branch that sees the mismatch, and on `!=` the
+        # consequence. That branch has to leave for the check to be a guard.
+        mismatch = (check.child_by_field_name("alternative") if comparison.predicate[2]
+                    else check.child_by_field_name("consequence"))
+        if mismatch is not None and mismatch.type == "else_clause":
+            mismatch = mismatch.named_children[-1] if mismatch.named_children else None
+        block = mismatch if mismatch is not None and mismatch.type == "compound_statement" else None
+        leaving = block.named_children if block is not None else ([mismatch] if mismatch is not None else [])
+        if not any(item.type in _RELAY_LEAVES for item in leaving):
+            return None
+        if not any(item.type == "switch_statement" for item in statements[index + 1:]):
+            return None
+        return ("guarded", where)
+
     def value(self, fn, node, state, depth):
         if node is None:
             return UNKNOWN
@@ -701,10 +786,19 @@ class Interpreter:
             helper = self.resolve(fn, callee)
             if helper is None:
                 helper = self.delegated(callee)
-            self.action(fn, node, state, name, args)
+            self.action(fn, node, state, name, args, depth)
             if helper and self.root.name in self.policy.entry_names and not state.descriptor:
-                self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
-                    "IPC entry reaches a locally resolved handler without interface-descriptor validation: "+helper.qualified)
+                relay = self.relay_guard(fn, node, args, helper, state, depth)
+                if relay is None:
+                    self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
+                        "IPC entry reaches a locally resolved handler without interface-descriptor validation: "+helper.qualified)
+                elif relay[0] == "seen":
+                    if relay[1] not in state.descriptor_issues:
+                        state.descriptor_issues = state.descriptor_issues + (relay[1],)
+                    self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
+                        "IPC entry relays to "+helper.qualified+", whose interface-descriptor comparison is present but not accepted for this transaction.")
+                # relay[0] == "guarded": the relayed-to function is the guard, so
+                # this call site is not itself an unguarded boundary.
             if helper and depth < self.policy.max_call_depth and helper not in self.active:
                 local = state.fork();local.env = dict(zip(helper.params, args))
                 old = self.active;self.active = old + (helper,)

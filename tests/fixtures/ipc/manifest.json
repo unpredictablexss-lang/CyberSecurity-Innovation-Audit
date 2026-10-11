@@ -359,5 +359,77 @@
     "file": "descriptor_one_branch_positive.cpp",
     "split": "design",
     "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_guard_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_inner_guard_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "relay_inner_local_guard_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_inner_local_guard_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "relay_inner_no_guard_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_no_guard_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_after_dispatch_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_after_dispatch_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_no_reject_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_no_reject_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_nested_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_nested_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_substituted_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_substituted_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_wrong_interface_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_wrong_interface_positive.cpp",
+    "split": "design",
+    "variant": "positive"
   }
 ]
