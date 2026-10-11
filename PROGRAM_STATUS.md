@@ -496,3 +496,29 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **更正本轮之前的一条结论**：先前一次核对（用的是陈旧的 remote-tracking 引用）称 `docs/testing/数据集调研报告.md` 的内容「在任何地方都不存在」。以线上 head 重测后：该文件 blob `973972f7de52` 与 `codex/teammate-a-fragment-consolidation-20261010`、`codex/teammate-a-shared-ptr-competition-loop-20261011` 上的**逐字节相同**，即已被吸收，**没有丢**。那个结论作废。
 - **待定项**：另有每分支 10–42 个文件属「路径在线上、但这一版修订不在线上」——多为 main 自己继续演进造成的旧版本，需人工 diff 才能判断分支改动是否已被吸收，本轮**不下结论**。
 - **动作**：是否重推这 9 个分支由负责人决定；本轮只提供核对结果，**未推任何分支**。
+
+## 29. 2026-10-11 把 A 的 shared_ptr race PoC 摘进 B 仓库并真跑通（真 pinned 对象，3/3 触发）
+
+- **任务来源**：负责人指示「A 出源码放我的 poc 里面跑」。目标是先把 A 的 PoC 落到 B 仓库、**在本机跑出真实结果**；等 A 最后一版推上来后再删重合部分。
+- **摘取范围（只加不删，4 个文件，与 A 分支逐字节相同）**：`src/ohscanner/poc/cpp_shared_ptr_race.py`、`src/ohscanner/poc/templates/cpp_shared_ptr_race_harness.cpp`、`tests/test_shared_ptr_race_poc.py`，以及 `src/ohscanner/git_source.py` 上 A 的补丁（`import urllib.parse` + `verify_repository_identity`）。用 `git hash-object` 逐一比对四个路径：**四个都 IDENTICAL**。**没有**动 A 的 detector（`detectors/cpp/*`）、A 的实验脚本与其 fixtures——那条线归 A。
+- **先把「重合部分」定义清楚**：A 的分支从早期 main 切出，它**删除**了接口线整套 PoC（`src/ohscanner/poc/{reachability,records,runner,sources,states}.py`、`harnesses/auth01_descriptor_bypass/*`、`research/experiments/interface/poc/run_poc.py`）与接口线 fixtures/tests。所以重合就是**同名 `poc/` 包与若干 tests**；本轮**一个都没删**，等 A 最后一版落地再按负责人指示裁。
+- **blocker 与解除（本轮最关键的事实）**：A 的 PoC **拒绝任何替代源码**——`build_poc_binding()` 核对本地 repo 的 origin 身份、commit、tree、blob oid 与文件 sha256，任一不符即失败（这正是防伪造证据的设计，不该绕过）。而本机：唯一 c_utils 克隆是浅克隆，**两个 pinned commit 都不在**；`_research_sync/github_payload.json` 是仓库自身 198 个文件的快照（那两个 commit 只作为**文本**出现在 ground-truth JSON/MD 里，源码不在）；全盘扫描所有本地对象库，**那 4 个 oid 一个都没有**。github.com 不通（`git ls-remote` 超时、curl 无响应、宿主网关常见代理端口全关）。
+  **实测解除：`gitcode.com` 通（HTTP 200）**——OpenHarmony 的镜像站，A 引用的 issue 也在那儿。git 对象内容寻址，从镜像取回的字节必然与 GitHub 一致，所以按 sha 取即可拿到与 A 的 pin **逐字节相同**的对象：`git init /tmp/cutils_pinned` + `git fetch --depth=1 <gitcode url> bdfafdaa… 9a3f2811…`。核对**全中**：
+  - `bdfafdaa…` tree = `b3ec65d247c4ca1ff07318fa72c0daa368128563` ✓（= A 的 pin）
+  - `9a3f2811…` tree = `69fbea434f22e2174a4dd79dff6ad25833e0ea49` ✓
+  - `base/include/nocopyable.h` @ vuln sha256 = `388f5c50…` ✓
+  - `base/include/singleton.h` @ vuln sha256 = `ce04ace5…` ✓；@ fixed sha256 = `9ed18694…` ✓
+- **实跑**（clang++ 14，`-fsanitize=thread -O1 -g -pthread`，`setarch x86_64 -R`，`TSAN_OPTIONS=halt_on_error=0:exitcode=66:history_size=7`，`--repeats 3`）：
+
+  | revision | 源码组成 | build | 3 次运行 | status |
+  |---|---|---|---|---|
+  | vulnerable | vuln 两文件 | success | **3/3 触发**（exit 66，data race + heap-use-after-free） | `stable_reproduced` |
+  | fixed | fixed 两文件 | success | 3/3 clean（exit 0） | `patch_revalidation_passed` |
+  | patched | vuln `nocopyable.h` + fixed `singleton.h` | success | 3/3 clean | `patch_revalidation_passed` |
+
+  `poc_state = stable_reproduced`；`patch_revalidation = passed`；`binding_manifest_sha256 = a1523ff051720917b4ceada335d54dd518ae05b6d33c75a8d508787ee01fc199`；`harness_sha256 = 6af69e2d4c469be21ae04b3ee003ad31d1ef8de52f57fa23aef660466992e7db`。
+- **栈顶就是被指认的那个符号**（不是「某处有竞争」这种泛泛之词）：race 栈为 `OHOS::DelayedSingleton<Payload>::DestroyInstance()` @ `singleton.h:141:19` → `__shared_ptr::reset()` → `__shared_ptr::swap()` 的 8 字节写，对读侧 `GetInstance()` 的读；同一次运行还报 `heap-use-after-free` @ `cpp_shared_ptr_race_harness.cpp:41`（读侧解引用 `ptr->value_`）。这同时坐实了 `rules/cpp/oh_shared_ptr_uaf.yaml` 注释里写的根因（`DestroyInstance()` 非原子 `reset()` vs `GetInstance()` 非原子读，修复改为 `atomic_store`/`atomic_load`）。
+- **这套证据的边界（照抄 A 的条款，不改写）**：`binding_status = draft_unpinned`（绑定哈希需独立评估者 pin 才算定稿）；**API 级并发复现，不证明产品入口可达、不证明攻击者控制、不证明权限边界**；fixed/patched 干净是 patch 复核证据，**不是**普适安全证明。**`validated_vulnerability` 仍为 0**。
+- **测试**：A 的 PoC 单测 7 项 OK（构建与运行全程 mock，不需 repo）；全量 **330 项 OK**（323 既有 + 7 新增）。
+- **明确未做**：没有改 `benchmarks/historical/c_utils_singleton_uaf.json`（其 `runtime_replay_status` 仍是 `not_run`——要不要改成已复现由负责人决定，我不代填）；运行产物（JSON/MD/日志/二进制，vulnerable 日志每份约 95 KB）留在 `/tmp/poc_a_run`，**不入库**（AGENTS.md：生成产物与第三方源码不进提交）；`/tmp/cutils_pinned` 是临时对象库，不入库、不连接任何线上服务。
+- **本轮改动未推送**，等负责人授权。
