@@ -1,3 +1,4 @@
+> **2026-10-12 本地工作台更新**：负责人基线 `86fbf995` 上完成工作台第一、二轮；当前有效状态见本文 §24。旧章节保留历史，不代表最新测试数或 GitHub 合并状态。
 > **2026-10-10 政策更新（优先于本文所有历史措辞）**：项目对齐赛题交付。本文 2026-10-08/10-09 各节为**历史记录**，其中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**。当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE 映射、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物；保留的只有"证据到哪一步、结论才到哪一步"的防误报纪律。目标对齐文档见 `docs/strategy/competition_deliverables_plan.md`。
 >
 > **2026-10-09 状态提醒**：本文件 2026-10-08 的细节章节按时间记录历史试验，可能保留当时的 draft/待验收措辞；主线真实状态是 PR #4 已合入 `main`。下一阶段文档见 [三线并行总方案](docs/strategy/ohscanner_three_track_master_plan.md)、[Detector Contract v1](docs/contracts/ohscanner_detector_contract_v1.md)、[漏洞库与工具实验协议](docs/strategy/vulnerability_corpus_bakeoff_protocol.md)、[Web/IPC 专项任务书](docs/strategy/oh_web_interface_track.md)。它们均属**拟开发方案而非已实现软件**。
@@ -477,3 +478,59 @@ JSON/Markdown、精确命令、baseline manifest 与输出 hash 存在 ignored
 - partial 对具体路径、权限守卫和结论的影响仍未知；远离候选的解析错误也不能默认无影响。
 - 当前组件的真实 Precision/Recall、攻击者可达性、影响版本与安全性未知。
 - 本分支以核心开发分支为目标提交审查，不表示 PR #5 已 Ready 或 main 已合并。
+
+## 24. 2026-10-12 本地工作台第一、二轮（尚未推送）
+
+基于 `feat/owner-ipc-platform-integration` 的固定 head
+`86fbf9951967aaab879d24748a8231744d6977aa`，未覆盖原工作区修改，未合并 main。
+本次已 fetch 核对 GitHub 引用；完整来源见 `docs/workbench/upstream_refs_20261012.txt`。
+A/B 新分支的开发记录已阅读，但新算法和验证器没有自动迁入或冒充本轮验证。
+
+### 已验证
+
+- 第一轮：SQLite 持久化、固定 Git commit/tree、Catalog 选择、任务队列、独立 Worker、
+  扫描子进程、整任务硬截止/取消/重试/中断恢复；React 页面实际提交并执行任务。
+- 第二轮：固定 Git blob 源码阅读、unknown 义务、追加复核与并发冲突检查、
+  人工案例关联/追加、固定源码摘录及来源 hash、原报告/manifest/审计包导出。
+- Windows 浏览器访问 WSL localhost:8765；实际创建 c_utils 任务，看到执行到完成。
+  对 update 候选保存复核、调查分组、源码摘录，服务重启后记录保留；下载审计包包含
+  原 commit/tree、报告 hash、两条候选、一条复核、一份摘录及一个调查分组。
+  上述人工记录明确标为交互验收，未替代独立漏洞核查。
+- Ubuntu 22.04 / Python 3.10，安装 `requirements-web.txt`：**370 项，370 通过，0 失败、0 跳过**。
+  原基线 334 项，新增工作台 36 项。只安装原 `requirements.txt` 的独立环境：
+  **370 项发现，334 通过、36 明确跳过、0 失败**；工作台依赖保持可选。
+- Node 22.23.3：前端 TypeScript 检查与 esbuild 构建；Python 编译、ruff F 检查、
+  git diff --check 通过。FastAPI TestClient 有上游 httpx 弃用提示，非本轮测试失败。
+- 两个真实组件均经 API/Worker 执行，并与原 CLI 入口函数的独立结果比较：
+  candidate、coverage、scope、parse、snapshot 一致；update 两条候选源码 hash 核验通过。
+
+| 组件 / 纳入范围 | 完整 commit | 文件 | parse 完整/部分/未运行 | 候选 | 确认漏洞 |
+|---|---|---:|---|---:|---:|
+| c_utils / . | b807d3dadb7dbb7639fe85b3a5f72da18d318da2 | 123 | 93 / 30 / 0 | 0 | 0 |
+| update_updateservice / services, interfaces, frameworks | e4942a33cc5ed29040e5c720bea3b2a8e4a79221 | 220 | 187 / 32 / 1 | 2 | 0 |
+
+update 220 与此前 219 的范围不同，本次是三个明确路径前缀，不能混用统计口径。
+0 候选不证明安全，2 候选不证明漏洞。规则没有为匹配旧数字而修改。
+
+### 分支与复现
+
+模块依赖顺序：`feat/workbench-foundation` → `feat/workbench-jobs-api` →
+`feat/workbench-ui` → `feat/workbench-evidence-review` → `feat/workbench-integration`。
+本次由一个会话依次实现，并非多个代理同时开发。最终本地工作目录：
+`/home/audit/ohscanner-workbench/worktrees/integration`。
+运行说明：`docs/workbench/README.md`；开发与实验口径：`docs/workbench/development_20261012.md`。
+数据库与真实扫描产物位于仓库外 `/home/audit/ohscanner-workbench/verification-data`；不提交源码副本。
+
+### 未验证 / 未实现
+
+- 本轮未 push、未创建/合并 PR、未改 main；新增 Actions 配置尚无对应远程 CI 结果。
+- Agent/模型、提交区间、影响版本、多仓 Manifest、隔离动态验证、修复重验、
+  自动确认门、独立 holdout、准确率评估均未实现。能力页明确显示该边界。
+- 整任务超时不发布残缺报告；逐 Detector 检查点和隔离不是本轮能力。
+- 没有完整产品编译、开发板运行、真实漏洞确认或正式性能评估。
+
+### unknown
+
+- partial 对权限/路径证明的影响、候选攻击可达性与真实影响范围仍未知。
+- Windows 睡眠、WSL shutdown、断电和磁盘满未实机演练。
+- 子进程资源限额不等于运行恶意源码/PoC 的沙箱；数据库和主机被控制后的完整性不在此保证内。

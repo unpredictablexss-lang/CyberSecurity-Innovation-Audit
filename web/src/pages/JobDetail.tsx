@@ -42,6 +42,7 @@ import {
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
+import SourceEvidence from "../SourceEvidence";
 const { Text, Title, Paragraph } = Typography;
 export default function JobDetail({ id }: { id: string }) {
   const [job, setJob] = useState<any>(null);
@@ -59,6 +60,14 @@ export default function JobDetail({ id }: { id: string }) {
   const [caseOpen, setCaseOpen] = useState(false);
   const [caseForm] = Form.useForm();
   const [reviewForm] = Form.useForm();
+  const [cases, setCases] = useState<any[]>([]);
+  const existingCase = Form.useWatch("case_id", caseForm);
+  useEffect(() => {
+    if (caseOpen)
+      api("/cases")
+        .then(setCases)
+        .catch((e) => setError(String(e)));
+  }, [caseOpen]);
   async function loadFindings() {
     try {
       const r = await api(
@@ -79,6 +88,7 @@ export default function JobDetail({ id }: { id: string }) {
   }
   useEffect(() => {
     let live = true;
+    let timer: ReturnType<typeof setInterval> | undefined;
     async function load() {
       try {
         const [j, e] = await Promise.all([
@@ -92,12 +102,13 @@ export default function JobDetail({ id }: { id: string }) {
           const r = await api("/scans/" + id + "/report");
           if (live) setReport(r);
         }
+        if (terminal.has(j.status) && timer) clearInterval(timer);
       } catch (e) {
         if (live) setError(String(e));
       }
     }
     void load();
-    const timer = setInterval(() => void load(), 2000);
+    timer = setInterval(() => void load(), 2000);
     return () => {
       live = false;
       clearInterval(timer);
@@ -485,6 +496,7 @@ export default function JobDetail({ id }: { id: string }) {
                   </Paragraph>
                   <Space wrap>
                     {[
+                      "manifest.json",
                       "report.json",
                       "report.md",
                       "review.json",
@@ -545,6 +557,12 @@ export default function JobDetail({ id }: { id: string }) {
               description={detail.message}
             />
             <CodeView source={detail.source} line={detail.line} />
+            <SourceEvidence
+              key={detail.id}
+              jobId={id}
+              detail={detail}
+              reload={() => open(detail)}
+            />
             <Row gutter={20} className="section-gap">
               <Col span={12}>
                 <Card title="证据义务">
@@ -658,14 +676,19 @@ export default function JobDetail({ id }: { id: string }) {
           layout="vertical"
           onFinish={async (values) => {
             try {
-              await api("/cases", {
-                title: values.title,
-                links: selected.map((candidate_id) => ({
-                  job_id: id,
-                  candidate_id,
-                  rationale: values.rationale,
-                })),
-              });
+              await api(
+                values.case_id
+                  ? "/cases/" + values.case_id + "/links"
+                  : "/cases",
+                {
+                  ...(values.case_id ? {} : { title: values.title }),
+                  links: selected.map((candidate_id) => ({
+                    job_id: id,
+                    candidate_id,
+                    rationale: values.rationale,
+                  })),
+                },
+              );
               setCaseOpen(false);
               setSelected([]);
               caseForm.resetFields();
@@ -675,7 +698,18 @@ export default function JobDetail({ id }: { id: string }) {
             }
           }}
         >
-          <Form.Item name="title" label="案例标题" rules={[{ required: true }]}>
+          <Form.Item name="case_id" label="关联已有案例（不选则创建）">
+            <Select
+              allowClear
+              options={cases.map((c) => ({ value: c.id, label: c.title }))}
+            />
+          </Form.Item>
+          <Form.Item
+            name="title"
+            label="案例标题"
+            hidden={Boolean(existingCase)}
+            rules={[{ required: !existingCase }]}
+          >
             <Input />
           </Form.Item>
           <Form.Item
