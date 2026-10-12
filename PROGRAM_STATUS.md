@@ -534,3 +534,12 @@ update 220 与此前 219 的范围不同，本次是三个明确路径前缀，�
 - partial 对权限/路径证明的影响、候选攻击可达性与真实影响范围仍未知。
 - Windows 睡眠、WSL shutdown、断电和磁盘满未实机演练。
 - 子进程资源限额不等于运行恶意源码/PoC 的沙箱；数据库和主机被控制后的完整性不在此保证内。
+### 2026-10-12 Draft PR 推送准备
+
+队长已授权推送工作台集成分支并创建 Draft PR。推送前重新 fetch：负责人依赖分支仍为
+`86fbf9951967aaab879d24748a8231744d6977aa`；工作台功能 head 为
+`9ce2aecbee36bc7dda03f72bddb1f10a0b78e618`。重新执行完整 unittest：370 项全部通过。
+本次 Draft 以 `feat/owner-ipc-platform-integration` 为 base，避免把尚未合入 main 的
+Core/平台修复全部混入工作台差异。依赖 PR 收口后再核对并调整目标分支。
+不标 Ready、不合并 main。远端 CI 的结果以本次 push 对应 Actions 为准，本文不预报成功。
+此前“未 push”描述为当时状态，本小节记录本次授权后的发布准备。
