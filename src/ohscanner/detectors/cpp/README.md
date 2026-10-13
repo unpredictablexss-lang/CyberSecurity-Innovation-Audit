@@ -77,3 +77,34 @@ generated outputs.
 
 All fixtures are self-authored synthetic development inputs, not real
 OpenHarmony vulnerability samples.
+
+## Revision analysis modes
+
+The teammate A module keeps one deterministic detector path and reuses its
+results for three analysis plans:
+
+- `snapshot`: one frozen repository/commit/scope/profile;
+- `revision_range`: matched baseline and endpoint runs plus stable finding
+  identities (`new`, `persistent`, `disappeared`, `unknown`);
+- `cross_version`: the same root instance across frozen revisions, recorded as
+  `possibly_affected`, `not_present` or `unknown`.
+
+`src/ohscanner/analysis.py` stores the mode, revision role, build/TU profile,
+include completeness and source/query hashes in a sidecar. It does not modify
+`ToolRunResult v1`. A missing detector run or incomplete analysis always yields
+`unknown`; an empty detector result never becomes `safe`.
+
+Cross-version `possibly_affected` is a static observation, not confirmed
+product impact. `affected` and `fixed` still require patch evidence, realistic
+entry/impact review and, for reportable claims, controlled runtime validation.
+
+## Patch obligations and Agent-facing facts
+
+`src/ohscanner/patch_obligations.py` binds reviewed vulnerable/fixed patch
+shapes to explicit guard/effect obligations without rewriting historical
+labels. `src/ohscanner/readonly_facts.py` exposes only source, syntax facts,
+detector results and coverage already present in `ScanContext`; absent call
+graphs, guard dominance and reachability return `unknown`.
+
+No model API or Agent loop is implemented here. External scanner experiments,
+including Infer/Pulse, remain research-only and are not Detector dependencies.

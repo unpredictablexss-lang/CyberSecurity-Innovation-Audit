@@ -7,6 +7,7 @@ from src.providers.base import AdapterContext, ToolAdapter
 from src.providers.clang_sa import ClangSAAdapter
 from src.providers.codeql import CodeQLAdapter
 from src.providers.cppcheck import CppcheckAdapter
+from src.providers.infer import InferAdapter
 from src.providers.joern import JoernAdapter
 from src.providers.semgrep import SemgrepAdapter
 
@@ -18,6 +19,8 @@ _ADAPTERS: Dict[str, ToolAdapter] = {
     "clang_sa": ClangSAAdapter(),
     "clang-static-analyzer": ClangSAAdapter(),
     "cppcheck": CppcheckAdapter(),
+    "infer": InferAdapter(),
+    "infer-pulse": InferAdapter(),
     "joern": JoernAdapter(),
     "joern-cpg": JoernAdapter(),
 }

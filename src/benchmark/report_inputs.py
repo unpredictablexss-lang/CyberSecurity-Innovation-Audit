@@ -43,8 +43,14 @@ def _locations(diagnostics: list) -> list:
         symbol = item.get("symbol", item.get("function"))
         if symbol is not None and (not isinstance(symbol, str) or not symbol.strip()):
             raise ValueError("candidate symbol must be a non-empty string or null")
+        match_basis = item.get("match_basis")
+        if match_basis is not None and match_basis not in {
+            "file_overlap", "symbol_overlap", "patch_region", "guard_relation", "path_evidence",
+        }:
+            raise ValueError("candidate has unsupported match_basis")
         candidates.append(ToolCandidate(
             file=_relative_file(item.get("file", "")), symbol=symbol, line=line,
+            match_basis=match_basis,
         ))
     return candidates
 

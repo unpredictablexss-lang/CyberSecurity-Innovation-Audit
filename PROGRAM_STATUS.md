@@ -453,3 +453,19 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 新增 `src/report/vulnerability_report.py` 和版本影响工具。对 58 个 Git refs 按 `singleton.h` exact blob 分类：`affected=24`、`fixed=3`、`unknown=31`；这不等于产品构建均受影响。修复 diff SHA-256 为 `cd0eabdad032efe54f0b87890b6b836c1b02626d5dce671a25ca3c23682f13b0`。
 - caller survey 在 `commonlibrary_c_utils` vulnerable commit 中找到 44 个测试/文档/示例匹配，但没有建立真实产品 IPC/低权限入口。报告因此保持 `dynamic_reproduced_component_issue`，不升为 `confirmed/reportable`；CVE 保持 `not_assigned`。
 - 证据门槛：target、敏感操作、必要并发条件、CIA 影响、动态复现已记录；`entry_controlled=false`。仍需产品级调用者/权限边界、独立 binding pin、产品构建 profile 和独立 holdout。
+
+## 27. 2026-10-13 队友 A 静态模块与三模式分析侧整合
+
+- 从队友 A 整合候选分支建立 `codex/teammate-a-static-module-20261013`，并合入
+  `origin/feat/historical-vuln-benchmark@35eee72` 的静态 benchmark、路径安全和
+  工具实验改进；未改动 production Detector Catalog。
+- 新增 RevisionAnalysis/AnalysisRunContext sidecar，支持快照、baseline/endpoint
+  差异和多 revision 静态观察；`ToolRunResult/ToolDiagnostic v1` 未改变。
+- 新增 patch obligation sidecar、只读事实接口、root-cause `match_basis`、
+  vulnerable/fixed/safe/unrelated 差异分类，以及 Infer/Pulse Adapter 和隔离研究脚本。
+- CVE-2025-0587、CVE-2025-27536、CVE-2025-21098 仅完成公告/PR 定位，因未绑定
+  exact merged commit/parent/blob/symbol，记录为 `excluded_unverified`，不进入指标。
+- WSL Ubuntu 22.04 / Python 3.10.12 完整回归 **391 tests、2 skipped、OK**；新增
+  静态模块定向测试 12/12。2 个跳过仍为依赖 ignored native replay manifest 的可选项。
+- 本轮未运行 Infer/扩展 Joern 查询，未实现 Web/任务队列/Agent/PoC 平台，未推送、
+  未创建 PR、未标 ready、未合并 main；production Catalog 是否注册仍待负责人审查。

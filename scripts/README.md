@@ -74,3 +74,46 @@ python scripts/perf_scale_scan.py \
 目前只存在于 `feat/ohscanner-core`（Draft PR #5），尚未并入 `main`。在 `main` 上直接
 运行本脚本会因缺少该子命令而失败；`main` 上保留的是脚本、语料清单与实测报告，
 报告中的数字来自 `feat/ohscanner-core` 分支上的实测，可复核但不能在 `main` 上原地复跑。
+
+## run_infer_experiments.py
+
+研究用 Infer/Pulse 执行器。要求调用者先准备本仓库之外的隔离 checkout，脚本只通过
+参数数组执行 Infer 和指定构建命令，不经过 Shell，并将版本、命令、日志、耗时和
+原始 JSON 哈希写入 `outputs/reports/**/execution.json`：
+
+```sh
+python3 -m scripts.run_infer_experiments \
+  --infer /path/to/infer \
+  --work-root /path/to/isolated-checkout \
+  --output-dir outputs/reports/infer-sample-001 \
+  --target-id sample-001 \
+  --commit <full-lowercase-sha> \
+  --scope-files 1 --scope-loc 120 \
+  --build-command make target
+```
+
+`--compile-commands compile_commands.json` 可替代 `--build-command`，此时执行
+`infer capture` + `infer analyze`。没有完整构建/TU 覆盖时，空报告不能解释为 miss
+或安全。生产 Detector 和 `ohscan-run` 不依赖 Infer。
+
+## collect_build_context.py
+
+读取 `compile_commands.json`，计算 TU 数、文件范围、编译命令哈希和宏 profile 哈希，
+生成 Clang SA / CodeQL 公平比较所需的 run-context sidecar。脚本不编译、不运行扫描器，
+也不把输入的 `include_status` 自动提升为完整覆盖：
+
+```sh
+python3 -m scripts.collect_build_context \
+  --compile-commands /path/to/compile_commands.json \
+  --source-root /path/to/pinned-snapshot \
+  --analysis-mode snapshot --revision-role target \
+  --analysis-unit translation_unit \
+  --build-profile linux-host --include-status complete \
+  --output outputs/reports/build_context_sample.json
+```
+
+## joern_queries/root_cause_queries.json
+
+记录 `oob_write`、`integer_overflow`、`lifetime_uaf` 和 `concurrency_race`
+四类 Joern 查询规格、证据边界和限制。当前状态为 `designed_not_executed`，不是已经
+运行的查询或 benchmark 结果。

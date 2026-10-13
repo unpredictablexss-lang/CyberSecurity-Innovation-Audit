@@ -67,3 +67,11 @@
 3. **不做 PoC / exploitability**：本候选清单只服务 benchmark，不服务漏洞触发。
 4. **不计算 Precision / Recall**：当前 4 条正样本只能报告 raw hit / miss / unknown / not_applicable。
 5. **避免重复根因**：优先补当前缺失的 integer_overflow、type_confusion、permission/information-leak、stack_overflow，而不是继续堆 UAF。
+
+## 2026-10-13 核验记录
+
+已定位 CVE-2025-0587、CVE-2025-27536、CVE-2025-21098 的官方公告和修复 PR，但在
+本轮实现中尚未把 merged commit、vulnerable parent、blob hash 与 affected symbol
+绑定到本地 Git 对象，因此**未加入正式 benchmark**。排除记录见
+`benchmarks/historical/research/candidate_exclusions_2026-10-13.json`，不参与任何
+hit/miss 或指标统计。

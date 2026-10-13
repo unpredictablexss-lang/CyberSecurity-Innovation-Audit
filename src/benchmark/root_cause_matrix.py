@@ -14,6 +14,16 @@ from src.benchmark.historical import HistoricalSample
 
 
 ALLOWED_STATUSES = {"possible_hit", "miss", "unknown", "not_applicable"}
+ALLOWED_MATCH_BASES = {
+    "file_overlap", "symbol_overlap", "patch_region", "guard_relation", "path_evidence",
+}
+_MATCH_BASIS_RANK = {
+    "file_overlap": 1,
+    "symbol_overlap": 2,
+    "patch_region": 3,
+    "guard_relation": 4,
+    "path_evidence": 5,
+}
 
 
 class _NotApplicable:
@@ -41,6 +51,11 @@ class ToolCandidate:
     file: str
     symbol: Optional[str] = None
     line: Optional[int] = None
+    match_basis: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        if self.match_basis is not None and self.match_basis not in ALLOWED_MATCH_BASES:
+            raise ValueError(f"unsupported match_basis: {self.match_basis}")
 
 
 @dataclass(frozen=True)
@@ -51,6 +66,7 @@ class RootCauseHit:
     tool: str
     status: str
     evidence_count: int
+    match_basis: Optional[str] = None
     revision: str = "vulnerable"
     commit: Optional[str] = None
     run_id: Optional[str] = None
@@ -108,14 +124,19 @@ class RootCauseMatrix:
         }
 
 
-def _hit_affected(sample: HistoricalSample, candidate: ToolCandidate) -> bool:
+def _candidate_match_basis(
+    sample: HistoricalSample,
+    candidate: ToolCandidate,
+) -> Optional[str]:
     if candidate.file not in sample.affected_files:
-        return False
+        return None
     if not sample.affected_symbols:
-        return True
+        return candidate.match_basis or "file_overlap"
     if candidate.symbol is None:
-        return False
-    return candidate.symbol in sample.affected_symbols
+        return None
+    if candidate.symbol not in sample.affected_symbols:
+        return None
+    return candidate.match_basis or "symbol_overlap"
 
 
 def classify_tool_hit(
@@ -130,6 +151,7 @@ def classify_tool_hit(
     (e.g. a build-dependent analyser on an unbuildable single file) ->
     not_applicable. Anything else must be a list of ToolCandidate.
     """
+    hits = []
     if candidates is NOT_APPLICABLE:
         status = "not_applicable"
         count = 0
@@ -141,13 +163,22 @@ def classify_tool_hit(
             raise ValueError(
                 "tool candidates must be a list, None (not run) or NOT_APPLICABLE"
             )
-        hits = [c for c in candidates if _hit_affected(sample, c)]
+        for candidate in candidates:
+            basis = _candidate_match_basis(sample, candidate)
+            if basis is not None:
+                hits.append((candidate, basis))
         unresolved = any(
             c.file in sample.affected_files and sample.affected_symbols
             and c.symbol is None for c in candidates
         )
         status = "possible_hit" if hits else "unknown" if unresolved else "miss"
         count = len(hits)
+    match_basis = None
+    if count:
+        match_basis = max(
+            (basis for _, basis in hits),
+            key=lambda value: _MATCH_BASIS_RANK[value],
+        )
     return RootCauseHit(
         sample_id=sample.sample_id,
         root_cause_group=sample.root_cause_group,
@@ -155,6 +186,7 @@ def classify_tool_hit(
         tool=tool,
         status=status,
         evidence_count=count,
+        match_basis=match_basis,
     )
 
 

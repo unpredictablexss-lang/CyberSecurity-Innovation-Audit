@@ -83,6 +83,11 @@ Root-cause overlap is descriptive: it means a tool touched a known affected
 file / symbol region. It is not a TP, not proof of exploitability, and not a
 reportable vulnerability.
 
+Saved candidate metadata may additionally record `match_basis`:
+`file_overlap`, `symbol_overlap`, `patch_region`, `guard_relation` or
+`path_evidence`. The basis explains why a historical region was touched; it
+does not change `possible_hit/miss/unknown/not_applicable` semantics.
+
 ## Adapter implementation
 
 The current branch provides five format-only adapters:
@@ -92,6 +97,7 @@ The current branch provides five format-only adapters:
 - `src/providers/clang_sa.py`: existing Clang baseline JSON -> ToolRunResult
 - `src/providers/cppcheck.py`: Cppcheck XML -> ToolRunResult
 - `src/providers/joern.py`: saved project query JSON -> ToolRunResult
+- `src/providers/infer.py`: saved Infer/Pulse JSON -> ToolRunResult
 - `src/providers/registry.py`: one `normalize_tool_output(...)` entry point
 
 All adapters receive an `AdapterContext` containing the pinned target, commit,
@@ -100,6 +106,10 @@ scope, time, and memory metadata.
 Adapters do not execute scanners and do not perform runtime validation. Their
 only responsibility is to preserve native diagnostics while translating them
 into the common schema.
+
+Infer and expanded Joern queries are research experiments. Infer is the only
+new engine added in this iteration; Opengrep remains a Semgrep-compatible
+engine substitution and is not counted as an independent capability.
 
 ## Commands
 

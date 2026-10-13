@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+  "root_instance_id": "arkcompiler-jsarray-sort-oob-001",
+  "root_cause_group": "oob_write",
+  "obligations": [
+    {
+      "obligation_id": "stable-array-check-before-element-access",
+      "statement": "Every direct element read or write must first establish that the JSArray is stable and the index is below the current element length.",
+      "guard_relation": "IsStableJSArray and index < GetElementsLength dominate ElementAccessor::Get/Set",
+      "effect": "prevents stale or shrinking backing-store indices from causing out-of-bounds access",
+      "evidence_refs": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11012"
+      ],
+      "status": "verified",
+      "limitations": [
+        "Obligation is derived from the reviewed fix shape and does not prove exploitability."
+      ]
+    },
+    {
+      "obligation_id": "comparator-mutation-is-revalidated",
+      "statement": "A comparator that can execute arbitrary JavaScript must not allow later element access to reuse stale array length or backing-store assumptions.",
+      "guard_relation": "array stability and length are revalidated after callback-capable operations",
+      "effect": "prevents a resize or backing-store replacement from invalidating the access bound",
+      "evidence_refs": [
+        "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11012"
+      ],
+      "status": "proposed",
+      "limitations": [
+        "Full callback and alias semantics require separate program analysis."
+      ]
+    }
+  ],
+  "development_participation": true,
+  "holdout_eligible": false,
+  "notes": "Sidecar for patch-discrimination evaluation; historical labels remain unchanged."
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "sample_id": "c_utils-singleton-uaf-2026-01",
+  "root_instance_id": "cutils-singleton-uaf-001",
+  "root_cause_group": "lifetime_uaf",
+  "obligations": [
+    {
+      "obligation_id": "singleton-lifetime-transition-is-synchronized",
+      "statement": "Concurrent access and lifetime transition of the singleton instance must be protected by a consistent synchronization policy.",
+      "guard_relation": "all instance publication, reset and use paths share a proven synchronization boundary",
+      "effect": "prevents an instance reset from racing with a stale instance use",
+      "evidence_refs": [],
+      "status": "proposed",
+      "limitations": [
+        "The historical sample does not by itself prove product reachability or a particular lock policy."
+      ]
+    },
+    {
+      "obligation_id": "no-stale-alias-after-reset",
+      "statement": "A pointer or reference obtained before reset must not be dereferenced after the owned instance is destroyed.",
+      "guard_relation": "lifetime ownership and alias use are ordered and rebinding is proven when required",
+      "effect": "prevents use-after-free of the previous singleton instance",
+      "evidence_refs": [],
+      "status": "proposed",
+      "limitations": [
+        "Static candidate shape is not runtime concurrency proof."
+      ]
+    }
+  ],
+  "development_participation": true,
+  "holdout_eligible": false,
+  "notes": "Sidecar for patch-discrimination evaluation; historical labels remain unchanged."
+}

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "designed_not_executed",
+  "purpose": "Root-cause query expansion plan for saved Joern CPG experiments.",
+  "queries": [
+    {
+      "query_id": "oob-index-length-guard",
+      "root_cause_group": "oob_write",
+      "evidence_type": "syntax",
+      "required_shape": "index/cursor read or write plus an object-length relation; report absent or mismatched guard as a candidate",
+      "limitations": [
+        "Structural query does not prove capacity, alias updates, callback mutation or reachability.",
+        "Must record Joern parse problems and parsed/CPG coverage per affected file."
+      ]
+    },
+    {
+      "query_id": "integer-arithmetic-allocation-size",
+      "root_cause_group": "integer_overflow",
+      "evidence_type": "syntax",
+      "required_shape": "unchecked arithmetic result feeds allocation size, offset, count or copy length",
+      "limitations": [
+        "Requires type/range facts before promotion; source-level arithmetic alone is not overflow proof."
+      ]
+    },
+    {
+      "query_id": "lifetime-reset-stale-alias",
+      "root_cause_group": "lifetime_uaf",
+      "evidence_type": "syntax",
+      "required_shape": "owner reset/assignment and stale alias use in a consistent symbol scope",
+      "limitations": [
+        "Object identity, rebinding, ownership transfer and path ordering need independent facts."
+      ]
+    },
+    {
+      "query_id": "shared-access-synchronization-context",
+      "root_cause_group": "concurrency_race",
+      "evidence_type": "syntax",
+      "required_shape": "same object accesses across threads with absent or inconsistent synchronization context",
+      "limitations": [
+        "A mutex mention is not lock coverage; dominance and thread interleavings remain unknown."
+      ]
+    }
+  ],
+  "interpretation": "Query specifications only. No Joern execution or benchmark result is claimed."
+}
