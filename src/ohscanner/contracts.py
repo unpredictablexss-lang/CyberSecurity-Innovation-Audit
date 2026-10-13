@@ -114,18 +114,23 @@ class DetectorFinding:
     # ToolDiagnostic/ToolRunResult v1 remain unchanged.
     consequence_impact: Optional[str] = None
     consequence_cwe: Optional[str] = None
+    source_sha256: str = ""
 
     def __post_init__(self):
         safe_relative_path(self.file)
+        if self.source_sha256 and not re.fullmatch(r"[a-f0-9]{64}", self.source_sha256):
+            raise ValueError("invalid finding source SHA-256")
         if not all(isinstance(item, EvidenceObligation) for item in self.evidence_obligations):
             raise ValueError("invalid evidence obligation")
         if isinstance(self.line, bool) or not isinstance(self.line, int) or self.line < 1:
             raise ValueError("invalid line number")
         if not self.rule_id or not self.message:
             raise ValueError("finding requires a rule and explanation")
+        if self.consequence_cwe is not None and not re.fullmatch(r"CWE-[0-9]+", self.consequence_cwe):
+            raise ValueError("invalid consequence CWE identifier")
         for value in (self.consequence_impact, self.consequence_cwe):
             if value is not None and (not isinstance(value, str) or not value.strip()):
-                raise ValueError("candidate consequence must be nonempty when provided")
+                raise ValueError("candidate consequence must be non-empty when provided")
 
 
 @dataclass(frozen=True)

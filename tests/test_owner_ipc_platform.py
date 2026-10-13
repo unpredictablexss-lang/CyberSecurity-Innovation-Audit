@@ -71,7 +71,7 @@ class CoverageEvidenceTests(unittest.TestCase):
         self.assertEqual(report.status, 'blocked')
         self.assertEqual(report.scope_files, 2)
         self.assertEqual(report.scope_loc, 2)
-        self.assertEqual(data['coverage_counts'], {'complete': 1, 'partial': 1, 'not_analyzed': 1})
+        self.assertEqual(data['coverage_counts'], {'complete': 1, 'partial': 1, 'not_analyzed': 1, 'failed': 0})
         self.assertEqual(data['partially_inspected_files'], ['b.cpp'])
         self.assertEqual(data['not_analyzed_files'], ['c.cpp'])
         proof = data['evidence_obligations'][0]
@@ -147,7 +147,7 @@ class IpcSinglePassTests(unittest.TestCase):
         self.assertEqual(calls, [('a.cpp', 'b.cpp')])
         data = sidecar['detectors'][ID]
         self.assertEqual(reports[0].status, 'completed')
-        self.assertEqual(data['coverage_counts'], {'complete': 1, 'partial': 1, 'not_analyzed': 1})
+        self.assertEqual(data['coverage_counts'], {'complete': 1, 'partial': 1, 'not_analyzed': 1, 'failed': 0})
         partial = [p for p in data['evidence_obligations'] if p['file'] == 'b.cpp']
         self.assertTrue(partial)
         self.assertTrue(all(any(o['kind'] == 'parse_completeness_impact' and o['status'] == 'unknown'
@@ -197,7 +197,7 @@ class FormalCliTests(unittest.TestCase):
             self.assertEqual(actual['files_in_scope_without_a_claiming_detector'], ['bridge.ets'])
             self.assertEqual(actual['status'], 'completed_with_limitations')
             self.assertEqual(actual['validated_vulnerability'], 0)
-            self.assertEqual(actual['detector_runs'][0]['schema_version'], 1)
+            self.assertEqual(actual['detector_runs'][0]['schema_version'], 2)
             rendered = markdown.read_text()
             self.assertIn('Complete | Partial | Not analyzed', rendered)
             self.assertIn('parse_completeness_impact=unknown', rendered)

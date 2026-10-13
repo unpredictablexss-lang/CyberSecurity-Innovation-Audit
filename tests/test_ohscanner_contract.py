@@ -40,7 +40,7 @@ class DetectorContractTests(unittest.TestCase):
         self.assertEqual([r.diagnostic_count for r in reports], [1, 1])
         for report in reports:
             data = report.to_dict()
-            self.assertEqual(data["schema_version"], 1)
+            self.assertEqual(data["schema_version"], 2)
             self.assertEqual(data["target_id"], context.request.target_id)
             self.assertEqual(data["commit"], context.request.commit)
             self.assertEqual(data["diagnostics"][0]["confidence"], "unassessed")

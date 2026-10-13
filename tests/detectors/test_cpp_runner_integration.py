@@ -71,7 +71,7 @@ class RunnerIntegrationTests(unittest.TestCase):
         registry = DetectorRegistry()
         registry.register(LifetimeOwnershipGuardDetector())
         result = run_all(self.context, registry)[0]
-        self.assertEqual(result.schema_version, 1)
+        self.assertEqual(result.schema_version, 2)
         self.assertEqual(
             result.run_id,
             self.context.request.request_id + ":ohscanner.cpp.lifetime",
@@ -96,7 +96,7 @@ class RunnerIntegrationTests(unittest.TestCase):
             ],
         )
         payload = result.to_dict()
-        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["schema_version"], 2)
         self.assertIn("interpretation", payload)
         self.assertNotIn("validation_status", payload["diagnostics"][0])
 

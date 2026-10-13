@@ -37,8 +37,8 @@ class DetectorRegistry:
         return [self._detectors[key] for key in sorted(self._detectors)]
 
 
-def _diagnostic_id(detector_id, finding):
-    digest = sha256(("|".join((finding.file, str(finding.line),
+def _diagnostic_id(detector_id, finding, source_sha256):
+    digest = sha256(("|".join((source_sha256, finding.file, str(finding.line),
                                finding.rule_id, finding.message))).encode("utf-8")).hexdigest()[:16]
     return f"{detector_id}:{digest}"
 
@@ -83,7 +83,9 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         unit = paths[finding.file]
         if finding.line > len(unit.text.splitlines()):
             raise ValueError("finding location outside source")
-        diagnostic_id = _diagnostic_id(detector.detector_id, finding)
+        if finding.source_sha256 and finding.source_sha256 != unit.sha256:
+            raise ValueError("finding source hash does not match the analyzed source")
+        diagnostic_id = _diagnostic_id(detector.detector_id, finding, unit.sha256)
         if diagnostic_id in seen_ids:
             raise ValueError("duplicate finding identity")
         seen_ids.add(diagnostic_id)
@@ -92,7 +94,9 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             evidence_type=finding.evidence_type, file=finding.file, line=finding.line,
             column=finding.column, rule_id=finding.rule_id, severity="unassessed",
             message=finding.message, candidate_cwe=finding.candidate_cwe,
-            confidence="unassessed", symbol=finding.symbol))
+            confidence="unassessed", symbol=finding.symbol,
+            source_sha256=unit.sha256, consequence_impact=finding.consequence_impact,
+            consequence_cwe=finding.consequence_cwe))
     findings.sort(key=lambda item: (item.file, item.line or 0, item.rule_id or "", item.diagnostic_id))
     limitations = list(run.limitations)
     provenance_limitation = (
@@ -138,7 +142,7 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             return "analyzed"
         if path in partly_inspected:
             return "partial"
-        return "not_analyzed"
+        return "failed" if per_file.get(path) == "failed" else "not_analyzed"
 
     parsing = [
         {
@@ -155,7 +159,7 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         for unit in applicable
     ]
     return ToolRunResult(
-        schema_version=1, run_id=context.request.request_id + ":" + detector.detector_id,
+        schema_version=2, run_id=context.request.request_id + ":" + detector.detector_id,
         tool=detector.detector_id, tool_version=detector.version,
         target_id=context.request.target_id, commit=context.request.commit,
         scope_files=len(completed | partly_inspected),
@@ -168,7 +172,7 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
 def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
     """Return normalized reports plus per-detector coverage and obligations.
 
-    The ToolRunResult v1 schema is unchanged. In particular, 'completed'
+    First-party results emit v2; historical v1 results remain readable. In particular, 'completed'
     describes successful work on ELIGIBLE files, not whole-component safety.
     A file in partial AST is not counted as a miss, even if other files ran.
     """
@@ -264,12 +268,14 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
                                    if item["analysis_status"] == "not_analyzed"],
             "coverage_counts": {
                 "complete": len(analyzed), "partial": len(partial),
-                "not_analyzed": len(applicable) - len(analyzed) - len(partial),
+                "not_analyzed": sum(i["analysis_status"] == "not_analyzed" for i in report.parsing),
+                "failed": sum(i["analysis_status"] == "failed" for i in report.parsing),
             },
             "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
             "evidence_obligations": (
                 [
-                    {"diagnostic_id": _diagnostic_id(detector.detector_id, finding),
+                    {"diagnostic_id": _diagnostic_id(detector.detector_id, finding,
+                        next(u.sha256 for u in applicable if u.path == finding.file)),
                      "file": finding.file,
                      "source_sha256": next(u.sha256 for u in applicable if u.path == finding.file),
                      "analysis_status": (

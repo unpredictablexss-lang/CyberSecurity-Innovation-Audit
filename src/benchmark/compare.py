@@ -6,7 +6,7 @@ verdicts.
 """
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import combinations
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Sequence, Set, Tuple
@@ -19,6 +19,9 @@ Location = Tuple[str, int]
 class ToolComparisonSummary:
     tool: str
     tool_version: str
+    # Named per tool because contract v2 changed diagnostic_id values: two runs
+    # carrying different versions are not carrying the same kind of ID.
+    schema_version: int
     run_id: str
     diagnostic_count: int
     location_count: int
@@ -47,6 +50,12 @@ class MultiToolComparison:
     pairwise_overlaps: List[PairwiseOverlap]
     locations_by_tool: Dict[str, List[Dict[str, Any]]]
     limitations: List[str]
+    # tool -> schema_version of the transcript it contributed. Mixed values mean the
+    # comparison crosses a schema change and the output has to say so.
+    schema_versions: Dict[str, int] = field(default_factory=dict)
+
+    def schema_versions_mixed(self) -> bool:
+        return len(set(self.schema_versions.values())) > 1
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -54,10 +63,13 @@ class MultiToolComparison:
             "commit": self.commit,
             "scope_files": self.scope_files,
             "scope_loc": self.scope_loc,
+            "schema_versions": self.schema_versions,
+            "schema_versions_mixed": self.schema_versions_mixed(),
             "tools": [
                 {
                     "tool": item.tool,
                     "tool_version": item.tool_version,
+                    "schema_version": item.schema_version,
                     "run_id": item.run_id,
                     "diagnostic_count": item.diagnostic_count,
                     "location_count": item.location_count,
@@ -112,7 +124,7 @@ def load_normalized_report(path: Path) -> Dict[str, Any]:
         raise ValueError(
             f"normalized report missing fields ({path}): {', '.join(missing)}"
         )
-    if data["schema_version"] != 1:
+    if data["schema_version"] not in (1, 2):
         raise ValueError(
             f"unsupported normalized report schema_version ({path}): "
             f"{data['schema_version']}"
@@ -173,13 +185,40 @@ def _location_rows(
                 "severity": diagnostic.get("severity"),
                 "evidence_type": diagnostic.get("evidence_type"),
                 "candidate_cwe": diagnostic.get("candidate_cwe"),
+                # Mechanism and consequence stay separate columns here too.
+                "consequence_impact": diagnostic.get("consequence_impact"),
+                "consequence_cwe": diagnostic.get("consequence_cwe"),
+                "source_binding": diagnostic.get("source_binding"),
             }
         )
     return rows
 
 
+def _cross_version_note(versions: Mapping[str, int]) -> str | None:
+    """Name a schema split instead of letting the comparison look homogeneous.
+
+    Contract v2 moved `diagnostic_id` to include the source hash, so a v1 and a v2
+    transcript use ID spaces that are not interchangeable. The comparison still
+    runs -- refusing it would just push people to compare by hand -- but the output
+    must record which tool spoke which version.
+    """
+    distinct = sorted(set(versions.values()))
+    if len(distinct) < 2:
+        return None
+    rendered = ", ".join(f"{tool}=v{version}" for tool, version in sorted(versions.items()))
+    return (
+        f"CROSS-VERSION COMPARISON: schema versions differ ({rendered}); diagnostic_id "
+        "values are not exchangeable across versions because v2 IDs include the source "
+        "hash. Row counts and locations remain comparable, IDs do not."
+    )
+
+
 def validate_comparable_runs(runs: Sequence[Mapping[str, Any]]) -> None:
-    """One analysis unit: same target, commit, scope and one run per tool."""
+    """One analysis unit: same target, commit, scope and one run per tool.
+
+    Schema versions are deliberately *not* a comparability condition: v1 and v2
+    transcripts are compared, and the version split is named in the output.
+    """
     if not runs:
         raise ValueError("at least one normalized tool report is required")
     reference = runs[0]
@@ -221,6 +260,7 @@ def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
     summaries: List[ToolComparisonSummary] = []
     location_sets: Dict[str, Set[Location]] = {}
     locations_by_tool: Dict[str, List[Dict[str, Any]]] = {}
+    schema_versions = {str(run["tool"]): int(run["schema_version"]) for run in runs}
 
     for run in runs:
         tool = str(run["tool"])
@@ -235,6 +275,7 @@ def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
             ToolComparisonSummary(
                 tool=tool,
                 tool_version=str(run["tool_version"]),
+                schema_version=int(run["schema_version"]),
                 run_id=str(run["run_id"]),
                 diagnostic_count=len(diagnostics),
                 location_count=len(locations),
@@ -267,11 +308,15 @@ def compare_normalized_reports(paths: Sequence[Path]) -> MultiToolComparison:
         summaries=sorted(summaries, key=lambda item: item.tool),
         pairwise_overlaps=overlaps,
         locations_by_tool=dict(sorted(locations_by_tool.items())),
+        schema_versions=schema_versions,
         limitations=[
-            "Exact file/line overlap is descriptive and does not equal root-cause overlap.",
-            "A diagnostic unique to one tool is not automatically a false positive or false negative.",
-            "No Precision/Recall is computed without an adequate labeled ground-truth set.",
-            "No runtime triggering, exploitability analysis, or vulnerability voting is performed.",
+            item for item in (
+                _cross_version_note(schema_versions),
+                "Exact file/line overlap is descriptive and does not equal root-cause overlap.",
+                "A diagnostic unique to one tool is not automatically a false positive or false negative.",
+                "No Precision/Recall is computed without an adequate labeled ground-truth set.",
+                "No runtime triggering, exploitability analysis, or vulnerability voting is performed.",
+            ) if item is not None
         ],
     )
 
@@ -289,11 +334,12 @@ def render_markdown(result: MultiToolComparison) -> str:
         f"- Commit: {result.commit}",
         f"- Files: {result.scope_files}",
         f"- LOC: {result.scope_loc}",
+        f"- Schema versions: {', '.join(f'{tool}=v{v}' for tool, v in sorted(result.schema_versions.items())) or 'unknown'}",
         "",
         "## Tool summary",
         "",
-        "| Tool | Version | Diagnostics | Locations | Seconds | Peak MB | Evidence types |",
-        "|---|---|---:|---:|---:|---:|---|",
+        "| Tool | Version | Schema | Diagnostics | Locations | Seconds | Peak MB | Evidence types |",
+        "|---|---|---|---:|---:|---:|---:|---|",
     ]
 
     for item in result.summaries:
@@ -302,7 +348,8 @@ def render_markdown(result: MultiToolComparison) -> str:
             f"{key}:{value}" for key, value in item.evidence_type_counts.items()
         ) or "(none)"
         lines.append(
-            f"| {item.tool} | {item.tool_version} | {item.diagnostic_count} | "
+            f"| {item.tool} | {item.tool_version} | v{item.schema_version} | "
+            f"{item.diagnostic_count} | "
             f"{item.location_count} | {item.elapsed_seconds:.6f} | {peak} | "
             f"{evidence} |"
         )
