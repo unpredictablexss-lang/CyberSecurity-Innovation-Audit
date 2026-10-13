@@ -49,7 +49,7 @@ Commands run in WSL2 Ubuntu 22.04, Python 3.10.12:
 
 ```text
 python3 -m unittest discover -s tests -q
-Ran 391 tests in 49.656s
+Ran 391 tests in 54.175s
 OK (skipped=2)
 ```
 
