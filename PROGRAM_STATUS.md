@@ -447,7 +447,7 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 
 ## 26. 2026-10-11 DelayedSingleton 比赛闭环
 
-- 新增 `src/ohscanner/poc/cpp_shared_ptr_race.py` 与参数化 Harness。运行器仅读取固定本地 Git 对象，在隔离目录中构建 vulnerable/fixed/patched 三个 revision，使用 WSL2 clang 14 + TSan 重复执行并绑定命令、日志和 hash。
+- 新增 `src/ohscanner/poc/cpp_shared_ptr_race.py` 与参数化 Harness。（该 PoC 与 Harness 自 2026-10-13 起归口接口线 `feat/interface-ipc-detector` 的 `src/ohscanner/poc/`，本分支不再保留副本；下文为当时的实测记录，内容未改。）运行器仅读取固定本地 Git 对象，在隔离目录中构建 vulnerable/fixed/patched 三个 revision，使用 WSL2 clang 14 + TSan 重复执行并绑定命令、日志和 hash。
 - 真实复现结果：vulnerable `stable_reproduced`（3/3 同时观察到 data race 与 heap-use-after-free）；fixed `patch_revalidation_passed`（0/3）；vulnerable 上套用 fixed `singleton.h` 的 patched revision 也为 `patch_revalidation_passed`（0/3）。clean fixed/patched 不解释为 safe。
 - PoC binding manifest SHA-256 为 `a1523ff051720917b4ceada335d54dd518ae05b6d33c75a8d508787ee01fc199`，当前仍为 `draft_unpinned`；Harness SHA-256 为 `49ae09d85ac7f881c8185e9b4f3928e443c7503e7d32379c9855ee6b03bc464f`。
 - 新增 `src/report/vulnerability_report.py` 和版本影响工具。对 58 个 Git refs 按 `singleton.h` exact blob 分类：`affected=24`、`fixed=3`、`unknown=31`；这不等于产品构建均受影响。修复 diff SHA-256 为 `cd0eabdad032efe54f0b87890b6b836c1b02626d5dce671a25ca3c23682f13b0`。
