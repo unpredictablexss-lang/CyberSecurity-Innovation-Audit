@@ -543,3 +543,32 @@ update 220 与此前 219 的范围不同，本次是三个明确路径前缀，�
 Core/平台修复全部混入工作台差异。依赖 PR 收口后再核对并调整目标分支。
 不标 Ready、不合并 main。远端 CI 的结果以本次 push 对应 Actions 为准，本文不预报成功。
 此前“未 push”描述为当时状态，本小节记录本次授权后的发布准备。
+## 25. 2026-10-13 本机规范工作区与团队集成盘点
+
+### 已验证
+
+- 新建 `/home/audit/ohscanner/app` Git worktree，分支 `chore/workspace-standardization`，
+  基于远端工作台 `fe85edd6431b09e01131608fa649286264ca2c2e`。并非第二个扫描项目。
+- 用明确的 sources/data/research/envs/worktrees 入口归类旧目录；仅链接大数据和环境，
+  不移动旧 clone、数据库、venv 或固定源码库。完整本机清单见 records/2026-10-13。
+- 读取三份 Windows 导向方案；目录名为建议，保留现有 src/workbench 与统一引擎。
+- fetch 后 A 最新远端 `e9563f9`、B `48bce9e`，负责人 PR #8 / Core PR #5 / 工作台 PR #9
+  均仍 Draft 未合并。PR #9 当前 fe85edd 的 CI Run 38195475780 success。
+- 新 app 执行 `~/ohscanner/bin/oh check`：370 tests 全通过；build（npm ci、tsc、esbuild）
+  通过；doctor 配置无缺失；Windows HTTP health ok、Worker 在运行。
+- 原演示 3 个任务保留；update 审计包 2 候选/1 复核/1 摘录/1 案例可读，确认漏洞0。
+  重复启动返回 Already running，不重复创建 Worker。
+- 组织说明与任务入口：docs/development/WORKSPACE.md、TEAM_STATE.md、ROADMAP.md、
+  handoff_template.md；本地配置在仓库外，不把机器数据目录纳入版本控制。
+
+### 未验证 / 待负责人决策
+
+- A/B 新远端整条树未复跑，不重复认领其 391/451 项为本轮结果。
+- B 结果 v2 与公共 v1、runner 覆盖/义务语义仍须契约决策与兼容回归；不直接合并全树。
+- A RevisionAnalysis 等研究模块尚未变成 Web 的提交区间/影响版本产品入口。
+- 本轮未 push、未新建 PR、未修改既有 PR 状态或合并 main。
+
+### unknown
+
+- 新 A/B 算法整合后的真实准确率、整体覆盖和兼容性未知。
+- 目录整理不新增 Agent、PoC 沙箱、版本影响或漏洞结论。

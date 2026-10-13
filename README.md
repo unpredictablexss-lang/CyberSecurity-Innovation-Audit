@@ -1,3 +1,5 @@
+> **开发入口（2026-10-13）**：本机负责人日常目录为 `/home/audit/ohscanner/app`。目录与命令见 [工作区说明](docs/development/WORKSPACE.md)，当前团队状态见 [TEAM_STATE](docs/development/TEAM_STATE.md)，后续验收见 [ROADMAP](docs/development/ROADMAP.md)。历史章节与研究分支的自述不代表整个产品已实现。
+
 # CyberSecurity-Innovation-Audit
 
 面向网络安全创新大赛的自动化源代码安全审计系统。
