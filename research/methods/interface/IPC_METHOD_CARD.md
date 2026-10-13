@@ -1,4 +1,4 @@
-> Historical method/evidence record; current public implementation and decisions: [STATUS](../../../docs/STATUS.md), [ARCHITECTURE](../../../docs/ARCHITECTURE.md). Fixed historical links are evidence, not the active contract.
+> Historical method/evidence record; current public implementation and decisions: [项目现状与下一步](../../../docs/项目现状与下一步.md), [架构与公共协议](../../../docs/架构与公共协议.md). Fixed historical links are evidence, not the active contract.
 
 # IPC method card v0.1
 

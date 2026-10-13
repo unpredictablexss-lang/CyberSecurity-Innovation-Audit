@@ -6,12 +6,12 @@
 
 ## 先读这三份，再动代码
 
-1. [STATUS](STATUS.md)：当前分支、已验证结果、各模块进度、阻塞与下一项。
-2. [ARCHITECTURE](ARCHITECTURE.md)：系统边界、实际契约、v2 迁移目标、证据门。
-3. [DEVELOPMENT](DEVELOPMENT.md)：本机目录、启动测试、团队职责、交付与打包。
+1. [项目现状与下一步](项目现状与下一步.md)：当前分支、已验证结果、各模块进度、阻塞与下一项。
+2. [架构与公共协议](架构与公共协议.md)：系统边界、实际契约、v2 迁移目标、证据门。
+3. [开发协作与交付指南](开发协作与交付指南.md)：本机目录、启动测试、团队职责、交付与打包。
 
-产品和研究任务再读 [PRODUCT](PRODUCT.md)、[AGENT_EXPERIMENTS](AGENT_EXPERIMENTS.md)。
-根目录 AGENTS.md 是执行约束；PROGRAM_STATUS.md 只指向 STATUS，不再维护第二份状态表。
+产品和研究任务再读 [面板功能与验收](面板功能与验收.md)、[Agent方案与对照实验](Agent方案与对照实验.md)。
+根目录 AGENTS.md 是执行约束；PROGRAM_STATUS.md 只指向项目现状文档，不再维护第二份状态表。
 
 ## 最终交付目标
 
