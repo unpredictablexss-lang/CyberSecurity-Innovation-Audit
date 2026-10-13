@@ -29,6 +29,8 @@
 **新增项目准则：高价值、真实危害、可复核证据优先。** 我们优先研究具有实际越权、敏感信息泄露、代码执行、内存安全、严重拒绝服务或信任边界突破后果的漏洞；对单纯版本信息、公开静态资源、无证据的配置提示等低价值告警只作研究线索，不包装成“已验证漏洞”。优先对照真实公开漏洞、官方修复前后与相似安全代码，查找根因变体；AI 猜测和规则命中永远不能代替可达性、攻击前提和实际影响的证明。完整门槛见 [三线并行总方案 §0.1 高价值漏洞原则](docs/strategy/ohscanner_three_track_master_plan.md#01-高价值真实危害与历史根因优先团队统一准则)。
 
 - [2026 总体架构：docs/architecture_2026.md](docs/architecture_2026.md)
+- [Teammate A 静态扫描技术指南](docs/teammate_a_static_scan_tech_guide.md)
+- [技术文档索引](docs/technical_documentation_index.md)
 - **[下一阶段三线并行总方案：自研 OHScanner 架构 / 分工 / 集成 / 验收](docs/strategy/ohscanner_three_track_master_plan.md)**（计划）
 - **[自研检测器插件 Contract v1：队友必须遵守的输入/输出接口](docs/contracts/ohscanner_detector_contract_v1.md)**（拟实施、尚未在代码冻结）
 - **[OHScanner 队友开发接入指南（M0/M1 实际可运行代码）](docs/strategy/ohscanner_teammate_development_guide.md)**（A/B 首先阅读）
