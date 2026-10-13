@@ -12,8 +12,7 @@ Verify actual checkout, full SHA, remote and dirty files; branch claims are not 
 - Owner maintains contracts/runner/catalog, Git/version services, API/Worker/storage, CI,
   shared validation orchestration and reports. A owns C/C++ detectors; B owns IPC/interface detectors.
 - Public contract changes are separate from detector fixes and need compatibility tests.
-- Current public result is v1 + sidecars; v2 is the target migration with v1 input compatibility,
-  not an already-completed public upgrade. Read current code, not a teammate branch's assumptions.
+- First-party diagnostics emit source-bound schema v2; legacy v1 inputs remain readable. Do not rewrite historical reports, IDs, or reviews; verify Git objects before calling source provenance verified. Read current code, not a teammate branch's assumptions.
 - Production detectors do not silently depend on external scanner execution or historical verdicts.
   Providers normalize saved tool outputs; historical bake-off stays under research/benchmark.
 - Source sync is explicit and separate; scan local pinned Git objects without implicit fetch.
