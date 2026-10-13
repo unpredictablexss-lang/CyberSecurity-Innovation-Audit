@@ -1,10 +1,12 @@
+> Historical method/evidence record; current public implementation and decisions: [STATUS](../../../docs/STATUS.md), [ARCHITECTURE](../../../docs/ARCHITECTURE.md). Fixed historical links are evidence, not the active contract.
+
 # IPC method card v0.1
 
 > **Owner integration 2026-10-11**: this file preserves B's historical method/experiment
 > records from commit `52b2cd5`. This branch integrates the interpretation only, through
 > a single-pass M2 adapter and the official `ohscan-run` catalog. Historical audit-driver,
 > PoC and baseline counts below are not new validations on this branch. Current coverage
-> semantics and verified tests are in `docs/testing/ohscanner_owner_ipc_platform_integration.md`
+> semantics and verified tests are in `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/testing/ohscanner_owner_ipc_platform_integration.md`
 > and the latest PROGRAM_STATUS section. M1–M6 rule improvements remain pending.
 > **政策更新 2026-10-10**：本文为历史记录（记录某时点实际做了什么），事实性内容保留原样。文中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**；当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物。
 
@@ -26,7 +28,7 @@
 - Limits: no macro expansion/full compiler CFG, arbitrary virtual/indirect target binding, cross-file alias ownership, full permission policy, complete runtime reachability or satisfiability proof. Names/API models are assumptions, not security judgments.
 - Next work: parser/build context, dispatcher/cross-file relation summaries, requestedUID relationship precision, then targeted SMT constraints and independent historical holdout. No target recall guarantee yet.
 
-Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner_v0_1_2026-10-10.md.
+Detailed Chinese methods and per-root/tool comparison: https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_1_2026-10-10.md.
 
 ---
 
@@ -35,7 +37,7 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 Owner's next step was to stop widening the scan and to review the first representative candidates,
 so the review that follows is the deliverable, not more candidates. All 41 were reviewed (not
 sampled): **37 likely false positives, 4 plausible-but-unproven, 0 confirmed**. Full record:
-`docs/research/ipc_candidate_review_2026-10-11.md`; reproduction scripts:
+`https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/research/ipc_candidate_review_2026-10-11.md`; reproduction scripts:
 `research/experiments/interface/ipc/review_*.py`.
 
 - **No rule was changed by this review.** Changing a rule moves the candidate set, so it lands
@@ -201,7 +203,7 @@ path. Also required: report test count / candidate count / confirmed count **sep
   which passes saw it. The blocked pass's zero is printed **next to that pass's real
   applicable/analyzed counts**, with the reason, never alone.
 - **The fix belongs to the owner, and is filed as a request, not applied.**
-  `docs/contracts/ohscanner_blocked_run_coverage_ccr.md` proposes (c) a third run status
+  `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/contracts/ohscanner_blocked_run_coverage_ccr.md` proposes (c) a third run status
   (`partial`/`completed_with_gaps`, counted as a gap so the overall report stays
   `completed_with_limitations`) plus (b) emitting obligations from the findings rather than
   filtering them by run status. This branch changed none of `contracts.py`, `runner.py`,
@@ -278,7 +280,7 @@ path. Also required: report test count / candidate count / confirmed count **sep
 - Limits: a v1 payload still has no binding, and can only be labelled `unbound`; the comparison
   names a version split without blocking it; `source_sha256` binds the *scanned* text and does not
   by itself prove which upstream commit that text came from (the Git-side chain is M1's
-  `git_source.py`, not yet joined to this one). Contract: `docs/contracts/ohscanner_detector_contract_v2.md`.
+  `git_source.py`, not yet joined to this one). Contract: `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/contracts/ohscanner_detector_contract_v2.md`.
 
 ---
 
@@ -323,7 +325,7 @@ path. Also required: report test count / candidate count / confirmed count **sep
   hit the 400-source / 6 MB budget; a guard inside a macro whose callee is outside
   `IpcPolicy.boolean_permissions | result_permissions` (e.g. `IsCallerValid`) still creates no
   authorization fact and stays a `dispatch_binding` obligation. Report:
-  `docs/research/ipc_scanner_v0_4_macro_expansion_2026-10-11.md`.
+  `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_4_macro_expansion_2026-10-11.md`.
 
 ---
 
@@ -365,7 +367,7 @@ path. Also required: report test count / candidate count / confirmed count **sep
 - **Known gap, raised as a CCR:** the consequence is only machine-readable through
   the message text, because `DetectorFinding` has a single CWE field. The measurement
   treats a candidate with no recoverable consequence as a hard failure rather than
-  silently counting zero. See `docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`.
+  silently counting zero. See `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/contracts/ohscanner_detector_contract_v1_consequence_ccr.md`.
 
 ---
 
@@ -406,4 +408,4 @@ path. Also required: report test count / candidate count / confirmed count **sep
 - Limits: no macro expansion, overload resolution or virtual-dispatch proof; `->*` targets are
   confirmed textually because they are error nodes; entries are not reachability; three components
   have no dispatcher source in-repo (IDL-generated). Report:
-  `docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`.
+  `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`.

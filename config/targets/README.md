@@ -63,7 +63,7 @@ build:
 
 ## 当前流程
 
-1. 先在 `docs/targets/target_selection.md` 中筛选 3 个候选组件；
+1. 按 docs/DEVELOPMENT.md 登记本地目标，并固定 repository / commit / tree / scope；
 2. 选出主目标后，复制 `template.yaml` 为 `<component>.yaml`；
 3. 填入 repo、commit、source paths、build/test 命令；
 4. 本地真实执行构建和扫描；

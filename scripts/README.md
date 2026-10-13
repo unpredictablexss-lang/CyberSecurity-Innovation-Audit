@@ -41,4 +41,4 @@ python -m src.cli normalize-tool-output --provider joern \
     --json-out outputs/reports/joern.json --md-out outputs/reports/joern.md
 ```
 
-详见 `PROGRAM_STATUS.md` 第 6b.11 节。
+当前运行/验证见 [DEVELOPMENT](../docs/DEVELOPMENT.md)；原阶段记录可用 `git show 143fa63:PROGRAM_STATUS.md` 查阅。

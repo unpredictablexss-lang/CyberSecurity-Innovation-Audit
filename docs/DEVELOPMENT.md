@@ -1,0 +1,117 @@
+# 开发、协作、复现与最终打包
+
+更新：2026-10-13。当前本机使用 Ubuntu 22.04 WSL2，Python3.10、Node22。
+一个 GitHub 项目；app 是实际源码，外围目录是管理入口，不整体当交付源码包。
+
+## 新环境安装
+
+```bash
+git clone git@github.com:unpredictablexss-lang/CyberSecurity-Innovation-Audit.git
+cd CyberSecurity-Innovation-Audit
+git switch feat/workbench-integration
+bash scripts/setup_workbench.sh
+bash scripts/start_workbench.sh --port 8765
+```
+
+先安装 Python venv/pip、Git、Node22/npm；setup 锁定前端依赖并构建。
+默认 .venv-web；OHSCANNER_VENV 可覆盖。
+Windows 浏览器 http://localhost:8765，同源 API 文档 /docs。
+原生 Ubuntu 部署需要重建环境并复测；Docker/公网/多人身份仍非当前完成能力。
+
+## 当前本机统一入口
+
+```bash
+cd ~/ohscanner/app
+../bin/oh doctor
+../bin/oh check
+../bin/oh build
+../bin/oh start
+```
+
+| 目录 | 职责 |
+|---|---|
+| app | 负责人真实 Git worktree，日常开发 |
+| worktrees | PR/队友/历史版本入口；review-a-static 是固定审查快照，不是 A 本人工作树 |
+| sources | 组件、性能、IPC 三组已有源码库 |
+| data/runtime | 链接既有 SQLite/artifacts/复核，未移动物理数据 |
+| data/experiments | 真实组件独立复现产物 |
+| research | 研究工具/公告/样本，不属于核心运行必需依赖 |
+| envs、tools | 原 venv/Node 复用，不能直接搬 venv |
+| config/local.json | 本机绝对路径配置，不入 Git、不放 Key |
+| bin/oh | doctor/check/build/start；不隐式 fetch/merge/delete |
+| records/日期 | 本机盘点与有限恢复材料，不是完整备份 |
+
+Windows：\\wsl.localhost\Ubuntu-22.04\home\audit\ohscanner\app。
+大目录为符号链接兼容层；不要删除指向的旧目录。
+共享 worktree 的 Git 管理目录仍在原 clone：
+/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit/.git。
+物理迁移用 git worktree move 并核验绑定，不用复制目录或直接 mv。
+
+配置：OHSCANNER_DATA 保存 DB/artifacts；OHSCANNER_TARGET_ROOTS 是允许登记仓库的父目录；
+浏览器只用已登记 repository_id。端口与根路径在本机 local.json。
+单 Worker；start 发现已有健康服务不会重复启动。Ctrl+C 停止，重新 start 保留数据。
+重启后旧 running 记 interrupted，重试保持原 SHA，不假装续跑中间阶段。
+
+## 每轮验证
+
+```bash
+python -m pip install -r requirements-web.txt
+python -m unittest discover -s tests -q
+git diff --check
+cd web
+npm ci
+npm run build
+```
+
+只安装 requirements.txt 时工作台测试明确 skipped，是可选依赖而非偷偷忽略失败。
+真实组件对照（必须使用独立 data-dir，避免与正在运行的 Worker 争锁）：
+```bash
+python -m scripts.verify_workbench \
+  --repo-dir /home/audit/openharmony-targets/commonlibrary_c_utils \
+  --repository openharmony/commonlibrary_c_utils \
+  --commit b807d3dadb7dbb7639fe85b3a5f72da18d318da2 \
+  --data-dir /tmp/ohscanner-verify-new-run
+```
+它实际创建 API 任务、执行 Worker 子进程并独立调用 CLI 执行函数，比较
+候选/覆盖/scope/parse/snapshot 并核验候选源码。data-dir 需使用新目录。
+旧详细试验用 git show 143fa63:<原路径> 追溯，不把历史结果写成当前新运行。
+
+## 团队职责与交付
+
+负责人维护 contracts/runner/catalog、Git/版本、Web/Worker/存储、CI、统一验证/报告。
+A 维护 C/C++ 检测器/对照/方法卡/家族 Harness；
+B 维护 IPC/接口检测器/对照/方法卡/授权边界与 Harness。
+公共 API/schema 变更独立提交，不能混进算法修复；验证编排归公共层，
+家族 Harness 暂存在谁的分支不等于整个验证系统由该线独占。
+
+队友交付一项最小单元时填写：
+- branch + full head/base SHA、迁入提交/文件、公共接口是否改变；
+- exact argv/环境、通过/失败/skipped及原因、日志/manifest/hash；
+- target repo/full commit/tree/scope/profile/Detector version；
+- candidate/根因案例/confirmed、complete/partial/not_analyzed与义务；
+- positive/fixed/safe/unrelated，holdout是否独立执行；
+- 已验证 / 未验证 / unknown，依赖冲突和下一项。
+
+负责人用独立 worktree 验收，选择性迁入，保留负例和已知误报。
+不覆盖整仓，不让 A/B 各建第二套平台，不强制旧分支 reset。
+公共开发基线用完整 SHA 发布，详细算法记录放 research，当前状态只更新 STATUS。
+先审查 Core PR#5 → 负责人平台PR#8 → 工作台PR#9；
+依赖合入后 retarget 并重跑，不现在一并合 main。
+
+## 打包交付
+
+从最终验收 Git commit 导出源码，不直接压缩 ~/ohscanner：
+```bash
+git archive --format=tar.gz --output=/tmp/ohscanner-source.tar.gz HEAD
+```
+HEAD 必须已验收、已提交；archive 不含未提交文件、Git历史或忽略的前端构建。
+源码包包含代码/锁定依赖/配置示例/安装脚本/六份文档，安装时重建前端与环境。
+演示数据/固定源码对象清单/报告另包，逐项核对许可与分发范围；
+不混入 .git、venv、node_modules、Key、本机数据库或全部研究缓存。
+当前支持本机安装，不承诺“完整原生Ubuntu/离线交付已验收”。
+
+## 文档维护规则
+
+docs 只保留 README/ARCHITECTURE/PRODUCT/AGENT_EXPERIMENTS/STATUS/DEVELOPMENT 六份方案。
+来源审查 JSON 保留；方法卡和实验脚本在 research，有固定历史链接时是证据而非当前决策。
+新增功能同步更新状态、协议/产品和验证命令，避免重建十份互相冲突的路线图。

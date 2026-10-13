@@ -116,7 +116,7 @@ triage:
   likely_safe_candidates: 5
   needs_context_candidates: 3
   scanner_quality_issues: 0
-  notes: "See docs/targets/target_selection.md. No validated vulnerability."
+  notes: "See https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/targets/target_selection.md. No validated vulnerability."
 
 runtime_validation:
   status: not_started
