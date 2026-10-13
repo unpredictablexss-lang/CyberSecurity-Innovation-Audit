@@ -73,6 +73,11 @@ def run_reviewed_detectors(
         "validated_vulnerability": 0,
         "detector_runs": [result.to_dict() for result in reports],
         "detector_coverage": sidecar,
+        "files_in_scope_without_a_claiming_detector": sorted(
+            unit.path for unit in context.units
+            if not any(unit.language in detector.supported_languages
+                       for detector in registry.detectors())
+        ),
         "limitations": [
             "Diagnostics are candidates/evidence only, not proof of security impact.",
             "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
@@ -80,6 +85,11 @@ def run_reviewed_detectors(
             "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.",
         ],
     }
+    if report["files_in_scope_without_a_claiming_detector"]:
+        report["status"] = "completed_with_limitations"
+        report["limitations"].append(
+            "Some indexed source files have no claiming detector; their security analysis is unknown."
+        )
     return report
 
 
@@ -116,14 +126,16 @@ def run_fixed_commit_scan(
         "",
         "## Per-detector results",
         "",
-        "| Detector | Status | Scanned files | Diagnostics | Coverage |",
-        "|---|---|---:|---:|---|",
+        "| Detector | Execution | Inspected files | Complete | Partial | Not analyzed | Diagnostics | Coverage |",
+        "|---|---|---:|---:|---:|---:|---:|---|",
     ]
     for result in report["detector_runs"]:
         coverage = report["detector_coverage"]["detectors"][result["tool"]]
         lines.append(
             f"| `{result['tool']}` | {result['status']} | "
-            f"{result['scope_files']} | {result['diagnostic_count']} | "
+            f"{result['scope_files']} | {len(coverage['analyzed_files'])} | "
+            f"{len(coverage['partially_inspected_files'])} | {len(coverage['not_analyzed_files'])} | "
+            f"{result['diagnostic_count']} | "
             f"{coverage['status']} |"
         )
     lines.extend([
@@ -146,6 +158,12 @@ def run_fixed_commit_scan(
     if not report["diagnostic_count"]:
         lines.append("| — | — | — | — | No reported candidate; NOT proof of safety |")
     lines.extend(["", "## Coverage gaps", ""])
+    lines.append("Scope counts source inspection, not complete semantic coverage; partial remains unknown.")
+    lines.append(
+        "Files without a claiming detector: "
+        + str(len(report["files_in_scope_without_a_claiming_detector"]))
+    )
+    lines.extend("- `" + path + "`" for path in report["files_in_scope_without_a_claiming_detector"])
     for detector, info in report["detector_coverage"]["detectors"].items():
         lines.append(
             f"- `{detector}`: {info['status']}, "

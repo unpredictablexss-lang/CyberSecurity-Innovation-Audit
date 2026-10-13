@@ -162,7 +162,7 @@ def main() -> None:
     m2_parser.add_argument("--include", action="append", default=None,
                            help="Repository-relative path or prefix; repeatable")
     m2_parser.add_argument("--detector", action="append", required=True,
-                           help="Explicit first-party detector ID; repeatable. Not an import path.")
+                           help="Explicit first-party detector ID (e.g. ohscanner.interface.ipc); repeatable. Not an import path.")
     m2_parser.add_argument("--allow-example-detectors", action="store_true",
                            help="Acknowledge that 'ohscanner.example.*' is a non-security demonstration")
     m2_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m2.json")

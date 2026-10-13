@@ -79,7 +79,9 @@ class RunnerIntegrationTests(unittest.TestCase):
         self.assertEqual(result.tool, "ohscanner.cpp.lifetime")
         self.assertEqual(result.tool_version, "0.2.0-proposed")
         self.assertEqual(result.status, "blocked")
-        self.assertEqual(result.scope_files, 0)
+        # M2 records files that completed or were partly inspected even when
+        # whole-scope coverage is blocked by other partial/failed units.
+        self.assertEqual(result.scope_files, 8)
         self.assertEqual(result.diagnostic_count, 3)
         self.assertTrue(all(item.evidence_type == "syntax" for item in result.diagnostics))
         self.assertTrue(all(item.severity == "unassessed" for item in result.diagnostics))

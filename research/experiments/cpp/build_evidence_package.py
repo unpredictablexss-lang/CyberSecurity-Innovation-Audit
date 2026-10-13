@@ -19,10 +19,10 @@ EVIDENCE_PATH = OUTPUT_DIR / "evidence_units.json"
 BASELINE_PATH = OUTPUT_DIR / "baseline_status.json"
 
 INTERFACE_BASELINE = {
-    "branch": "codex/teammate-a-fragment-consolidation-20261010",
-    "head": "6afb7d0a589056bf68f0373c723678b7f5fd2275",
+    "branch": "feat/workbench-integration",
+    "head": "fe85edd6431b09e01131608fa649286264ca2c2e",
     "contract_path": "src/ohscanner/contracts.py",
-    "contract_sha256": "47154a566d24402d5d5ab94ded5fb5776245861339669bd6c551607f7dc4b3f9",
+    "contract_sha256": "b50fce29acdb4a22e79abdc0b96039d6823bc0cdb2a281c7d40cde0cfc06c408",
 }
 
 TOOLS = ["own_text", "own_ast", "semgrep", "semgrep_oh", "cppcheck", "clang_sa", "codeql", "joern"]

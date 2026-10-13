@@ -22,10 +22,10 @@ EVIDENCE_PATH = OUTPUT_DIR / "evidence_units.json"
 BASELINE_PATH = OUTPUT_DIR / "baseline_status.json"
 
 INTERFACE_BASELINE = {
-    "branch": "codex/teammate-a-fragment-consolidation-20261010",
-    "head": "6afb7d0a589056bf68f0373c723678b7f5fd2275",
+    "branch": "feat/workbench-integration",
+    "head": "fe85edd6431b09e01131608fa649286264ca2c2e",
     "contract_path": "src/ohscanner/contracts.py",
-    "contract_sha256": "47154a566d24402d5d5ab94ded5fb5776245861339669bd6c551607f7dc4b3f9",
+    "contract_sha256": "b50fce29acdb4a22e79abdc0b96039d6823bc0cdb2a281c7d40cde0cfc06c408",
 }
 
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -124,7 +124,7 @@ def _require_string(record: dict, field: str, where: str) -> str:
 def _validate_interface_baseline(package: dict, root: Path, where: str) -> None:
     baseline = package.get("interface_baseline")
     if baseline != INTERFACE_BASELINE:
-        raise ValueError(f"{where} interface_baseline must bind pinned integration head 6afb7d0a589056bf68f0373c723678b7f5fd2275")
+        raise ValueError(f"{where} interface_baseline must bind pinned integration head fe85edd6431b09e01131608fa649286264ca2c2e")
     contract_path = root / INTERFACE_BASELINE["contract_path"]
     try:
         contract_sha256 = hashlib.sha256(contract_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
