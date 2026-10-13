@@ -30,15 +30,16 @@ all remain `run_reviewed_detectors`. Generated artifacts belong outside Git.
 Two passes per shard
 --------------------
 `IpcInterfaceDetector` walks partial and complete parses alike and reports the
-whole run as `blocked` when any unit's parse is incomplete. For a blocked run
-the shared runner records `scope_files`/`scope_loc` as 0 and lists no evidence
-obligations -- the candidates are emitted with the proof obligations stripped
-from the report. Each shard is therefore run twice:
+whole run as `blocked` when any unit's parse is incomplete. A blocked run still
+records `scope_files`/`scope_loc` as 0, so each shard is run twice:
 
   * `complete-ast` - the runner selects complete-AST units only, so the run
     completes: real counters, and per-candidate obligations recorded;
   * `all-files`   - partial trees included, so recall is kept; the run is
-    `blocked`, which is reported as such and never as "nothing was analyzed".
+    `blocked` and its two scope counters read 0, which is reported as such and
+    never as "nothing was analyzed". Its per-candidate obligations are recorded
+    as for any other run, so a candidate only this pass can see keeps its proof
+    obligations instead of losing them along with the counters.
 
 The merge keys candidates on `CANDIDATE_IDENTITY_FIELDS` -- repository, commit,
 rule id, rule version, file, line, source hash -- and records which passes saw
@@ -48,12 +49,13 @@ independent sources of evidence; the report says so rather than calling it
 corroboration. Per-source obligations are unioned, never overwritten by a later
 pass, so a second analysis adds evidence instead of replacing the first.
 
-A candidate whose run was blocked has no obligation recorded by the shared
-runner (it emits obligations only for a completed run). Rather than printing an
-empty list -- which reads as "nothing left to prove" -- the driver attaches the
+A candidate whose obligations the shared runner did not record is not printed as
+an empty list -- which reads as "nothing left to prove". The driver attaches the
 standing questions for that rule with status `unknown` and marks each one
-`origin: audit_driver`. An obligation is a question, not a claim, so a partial
-file's candidate can carry one; the driver never invents an AST fact for it.
+`origin: audit_driver`, and it does so only where the record is absent: an
+obligation the runner did record is never duplicated or replaced by the driver's
+own. An obligation is a question, not a claim, so a partial file's candidate can
+carry one; the driver never invents an AST fact for it.
 
 Nothing is promoted: every row stays a candidate, `validated_vulnerability`
 stays 0.
@@ -150,14 +152,15 @@ CANDIDATE_IDENTITY_FIELDS = (
     "file", "line", "source_sha256",
 )
 
-# Obligations a candidate carries when the shared runner recorded none for it
-# (it emits obligations only for a completed run, so a `blocked` pass leaves its
-# candidates bare). These state what still has to be proven, at status
-# `unknown`: an obligation is a question, not a claim, so a candidate from a
-# partially parsed file can carry one. They are marked `origin: audit_driver`
-# and are never rendered as runner evidence, and no AST fact is invented for the
-# file they describe.
-PARTIAL_ONLY_OBLIGATIONS = (
+# Obligations a candidate carries when the shared runner recorded none for it.
+# These state what still has to be proven, at status `unknown`: an obligation is
+# a question, not a claim, so a candidate from a partially parsed file can carry
+# one. They are marked `origin: audit_driver` and are never rendered as runner
+# evidence, and no AST fact is invented for the file they describe. They are not
+# attached to a candidate the runner did record, so they never duplicate
+# recorded evidence. The old name was `PARTIAL_ONLY_OBLIGATIONS`, from when the
+# only way to reach this branch was a pass that could see partial files.
+DRIVER_STANDING_OBLIGATIONS = (
     ("entry_reachability",
      "Verify the entry is reachable by a caller and under which product build and "
      "macro conditions."),
@@ -233,7 +236,7 @@ def _driver_obligations(reason):
             "origin": DRIVER_OBLIGATION_ORIGIN,
             "reason": reason,
         }
-        for kind, description in PARTIAL_ONLY_OBLIGATIONS
+        for kind, description in DRIVER_STANDING_OBLIGATIONS
     ]
 
 
@@ -730,11 +733,11 @@ def merge_shard_runs(shard_runs, passes, repository=None, commit=None):
         if not entry["obligations"]:
             entry["obligations_source"] = "driver_synthesized_unknown"
             entry["obligations"] = _driver_obligations(
-                "No obligation was recorded by the shared runner for this candidate: it "
-                "comes from a pass whose run was blocked, and the runner emits obligations "
-                "only for a completed run. The items below are the audit driver's standing "
-                "questions for this rule, initialised to unknown. An empty list was never a "
-                "statement that nothing needs proving."
+                "No obligation was recorded by the shared runner for this candidate: the "
+                "coverage sidecar returned for its pass names none for this diagnostic. The "
+                "items below are the audit driver's standing questions for this rule, "
+                "initialised to unknown. An empty list was never a statement that nothing "
+                "needs proving."
             )
         else:
             entry["obligations_source"] = RUNNER_OBLIGATION_ORIGIN
@@ -793,10 +796,9 @@ def coverage_depth(merged, plan, passes):
     notes = []
     if blocked_with_candidates:
         notes.append(
-            "A blocked run records scope_files and scope_loc as 0 and lists no evidence "
-            "obligations (shared runner semantics for status != completed) even though it "
-            "emitted candidates. Read the applicable/analyzed counts for those shards, "
-            "not the zero."
+            "A blocked run records scope_files and scope_loc as 0 even though it emitted "
+            "candidates; its per-candidate evidence obligations are recorded as for any "
+            "other run. Read the applicable/analyzed counts for those shards, not the zero."
         )
     # The plan and the loader are two independent decisions. Where they disagree,
     # a planned file was not read, and saying so is the difference between a
@@ -1009,10 +1011,11 @@ def audit_component(
             "proof. Preprocessor-conditional code is parsed as written.",
             "Candidates from a partially parsed file carry a partial AST; the finding is "
             "kept but its parse depth is reported per row.",
-            "A candidate whose run was blocked has no obligations recorded by the shared "
-            "runner; the driver attaches its standing questions at status unknown and marks "
-            "them origin: audit_driver. That is a gap in the recorded evidence, not an "
-            "absence of obligations, and not runner-produced evidence.",
+            "Where the shared runner recorded no obligations for a candidate, the driver "
+            "attaches its standing questions at status unknown and marks them "
+            "origin: audit_driver. That is a gap in the recorded evidence, not an absence of "
+            "obligations, and not runner-produced evidence. Where the record is present the "
+            "driver adds nothing of its own.",
             "A candidate seen by both passes is one interpretation applied twice to the same "
             "file, not two independent sources of evidence.",
             "Sharding is deterministic and the candidate set matched on one component under "
@@ -1251,8 +1254,8 @@ def render_markdown(report):
                 lines.extend([
                     "",
                     "  NOTE: these are the driver's standing questions for this rule at "
-                    "status `unknown`, attached because the shared runner recorded none for "
-                    "this candidate (its pass was `blocked`). They are not runner-produced "
+                    "status `unknown`, attached because the shared runner recorded no "
+                    "obligation for this candidate. They are not runner-produced "
                     "evidence, and they assert nothing about this file's AST.",
                 ])
             lines.append("")

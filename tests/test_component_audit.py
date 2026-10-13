@@ -262,13 +262,16 @@ class TwoPassAuditTests(ComponentAuditTestCase):
         self.assertEqual(view["unexamined_reasons"], {"incomplete_ast:partial": 1})
 
     def test_all_files_pass_keeps_recall_and_admits_the_zero_counter(self):
-        """The CCR counterexample: a blocked run zeroes scope and drops obligations.
+        """The CCR counterexample, half fixed: the obligations survive, the zero does not.
 
         See docs/contracts/ohscanner_blocked_run_coverage_ccr.md sections 1 and 3.2.
-        When the shared platform stops gating coverage counters and obligations on
-        the run status, THIS test is the one that must change: either scope_files
-        stops being 0, or the run status becomes an explicit partial that is still
-        counted as a coverage gap. Neither half may be fixed by hiding the other.
+        The CCR recorded a blocked run doing two things at once: zeroing the scope
+        counters *and* dropping the per-candidate proof obligations. The shared
+        runner now records obligations for a blocked run, so the second half is
+        closed and is asserted below. The first half is still open -- scope_files
+        is 0 even though the pass read and interpreted files -- so this test pins
+        that the zero is shown together with the counts that say what was actually
+        done, and that closing one half never happens by hiding the other.
         """
         view = self.pass_view("all-files")
         self.assertEqual(view["detector_status"], "blocked")
@@ -280,14 +283,15 @@ class TwoPassAuditTests(ComponentAuditTestCase):
         self.assertEqual(view["applicable_files"], 5)
         self.assertTrue(any("blocked run records" in note
                             for note in self.report["coverage"]["analysis_coverage"]["notes"]))
-        # Second half of the counterexample: this pass emitted candidates while
-        # the runner recorded no obligations for any of them.
+        # Second half of the counterexample, now closed: the pass that emitted
+        # these candidates is the one that recorded their obligations, so keeping
+        # recall no longer costs the review chain.
         blocked_only = [item for item in self.report["candidates"]
                         if item["passes"] == ["all-files"]]
         self.assertTrue(blocked_only)
         for item in blocked_only:
-            self.assertEqual(item["obligations_by_source"], {})
-            self.assertFalse(item["obligations_recorded_by_runner"])
+            self.assertEqual(sorted(item["obligations_by_source"]), ["all-files"])
+            self.assertTrue(item["obligations_recorded_by_runner"])
 
     def test_candidates_carry_binding_evidence_and_stay_candidates(self):
         self.assertGreaterEqual(len(self.report["candidates"]), 2)
@@ -300,29 +304,78 @@ class TwoPassAuditTests(ComponentAuditTestCase):
             self.assertIn(item["file_parse_status"], ("complete", "partial"))
         self.assertEqual(self.report["validated_vulnerability"], 0)
 
-    def test_partial_candidate_carries_driver_synthesized_unknown_obligations(self):
+    def test_partial_candidate_keeps_the_obligations_the_runner_recorded(self):
+        """A candidate only the blocked pass can see no longer loses its evidence.
+
+        CCR section 1 recorded the opposite: the blocked run dropped the proof
+        obligations along with the counters, so a partial file's candidate was the
+        one row nobody could review. The shared runner now records obligations for
+        a blocked run, so this row carries its rule's own obligations instead of
+        the driver's standing questions.
+        """
         partial = [item for item in self.report["candidates"]
                    if item["file"] == "src/broken.cpp"]
         self.assertEqual(len(partial), 1)
         item = partial[0]
         self.assertEqual(item["file_parse_status"], "partial")
-        # Only the wider pass can see it, so the shared runner recorded nothing.
-        # The obligations are NOT left blank: an empty list reads as "nothing to
-        # prove". The driver attaches its standing questions at status unknown and
-        # marks them as its own, and it asserts nothing about the file's AST.
         self.assertEqual(item["passes"], ["all-files"])
-        self.assertFalse(item["obligations_recorded_by_runner"])
-        self.assertEqual(item["obligations_source"], "driver_synthesized_unknown")
+        self.assertTrue(item["obligations_recorded_by_runner"])
+        self.assertEqual(item["obligations_source"], "shared_runner")
+        self.assertEqual(sorted(item["obligations_by_source"]), ["all-files"])
         self.assertEqual(
             [obligation["kind"] for obligation in item["obligations"]],
-            ["entry_reachability", "caller_identity_conditions", "guard_effectiveness",
-             "parse_completeness_impact", "configuration_path_existence"],
+            ["entry_reachability", "callee_and_policy", "security_impact", "consequence"],
         )
         for obligation in item["obligations"]:
             self.assertEqual(obligation["status"], "unknown")
-            self.assertEqual(obligation["origin"], "audit_driver")
-            self.assertTrue(obligation["reason"])
-        markdown = render_markdown(self.report)
+            self.assertEqual(obligation["origin"], "shared_runner")
+            self.assertEqual(obligation["source_pass"], "all-files")
+        # The driver added nothing of its own: its standing questions are for a
+        # candidate with no runner record, which the control below exercises.
+        self.assertEqual(
+            self.report["coverage"]["analysis_coverage"]
+            ["candidates_with_driver_synthesized_obligations"], 0)
+
+    def test_driver_standing_questions_appear_only_without_a_runner_record(self):
+        """The control the flipped assertions need: the driver's fallback survives.
+
+        Stripping the runner's per-candidate obligation record puts every candidate
+        back in the state the blocked pass used to leave them in. The driver must
+        then attach its own standing questions rather than print an empty list, and
+        it must mark them as its own at status unknown. Without this control,
+        "the driver recorded nothing of its own" would be indistinguishable from
+        "the driver's fallback was deleted".
+        """
+        real = audit_module._run_shard
+
+        def without_obligations(*args, **kwargs):
+            record = real(*args, **kwargs)
+            coverage_by_tool = (record.get("report") or {}).get(
+                "detector_coverage", {}).get("detectors", {})
+            for coverage in coverage_by_tool.values():
+                coverage["evidence_obligations"] = []
+            return record
+
+        with mock.patch.object(audit_module, "_run_shard", side_effect=without_obligations):
+            report = self.audit()
+        self.assertTrue(report["candidates"])
+        analysis = report["coverage"]["analysis_coverage"]
+        self.assertEqual(analysis["candidates_with_runner_obligations"], 0)
+        self.assertEqual(analysis["candidates_with_driver_synthesized_obligations"],
+                         len(report["candidates"]))
+        for item in report["candidates"]:
+            self.assertFalse(item["obligations_recorded_by_runner"])
+            self.assertEqual(item["obligations_source"], "driver_synthesized_unknown")
+            self.assertEqual(
+                [obligation["kind"] for obligation in item["obligations"]],
+                ["entry_reachability", "caller_identity_conditions", "guard_effectiveness",
+                 "parse_completeness_impact", "configuration_path_existence"],
+            )
+            for obligation in item["obligations"]:
+                self.assertEqual(obligation["status"], "unknown")
+                self.assertEqual(obligation["origin"], "audit_driver")
+                self.assertTrue(obligation["reason"])
+        markdown = render_markdown(report)
         self.assertIn("origin `audit_driver`", markdown)
         self.assertIn("standing questions", markdown)
 
@@ -341,9 +394,11 @@ class TwoPassAuditTests(ComponentAuditTestCase):
             for obligation in item["obligations"]:
                 self.assertEqual(obligation["origin"], "shared_runner")
                 self.assertIn(obligation["source_pass"], ("all-files", "complete-ast"))
-            # Per-source obligations are unioned, not overwritten: only the pass
-            # whose run completed has any, and both passes are on the record.
-            self.assertEqual(sorted(item["obligations_by_source"]), ["complete-ast"])
+            # Per-source obligations are unioned, not overwritten: both passes
+            # recorded a set for this candidate, and the union names both rather
+            # than letting the later pass replace the earlier one.
+            self.assertEqual(sorted(item["obligations_by_source"]),
+                             ["all-files", "complete-ast"])
             self.assertEqual(sorted(source["pass"] for source in item["sources"]),
                              ["all-files", "complete-ast"])
         keys = {(item["file"], item["line"], item["rule_id"]) for item in self.report["candidates"]}
@@ -694,8 +749,11 @@ class MultiReportMergeTests(ComponentAuditTestCase):
         for item in merged["candidates"]:
             self.assertEqual(sorted(seen["index"] for seen in item["seen_in_reports"]),
                              [0, 1])
-            if item["obligations_source"] == "shared_runner":
-                self.assertIn("complete-ast", item["obligations_by_source"])
+            # A pass that emitted a candidate recorded obligations for it, so the
+            # union names exactly the passes that saw the candidate -- not only the
+            # pass whose run completed.
+            self.assertTrue(item["obligations_recorded_by_runner"])
+            self.assertEqual(sorted(item["obligations_by_source"]), sorted(item["passes"]))
         self.assertIn("not independent corroboration", merged["limitations"][0])
 
 

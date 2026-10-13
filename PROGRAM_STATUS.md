@@ -737,3 +737,31 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 文档：`docs/testing/ohscanner_m2_a_integration.md`。PR #5 保持 Draft，不合并 main。
 
 - **CI 过程纠错**：首次开启 push CI 的 `d6943589` 运行 `38073772285` 为 249/250，通过日志定位为 M2-A 集成测试强求所有语义模型文件 `completed`；在 `f64c5b5d` 修正测试为承认真实 `blocked/partial`，没有放宽安全证据门槛或重写队友 A 原算法。后续 CI `38073903714` 全绿。
+
+
+## 36. 2026-10-13 接口线并入 core，并按 blocked-run CCR §3.2 完成翻转（队友 B）
+
+- **范围**：把 `origin/feat/ohscanner-core`（`e365465`，含 M2-A 集成 `022c022`）并入
+  `feat/interface-ipc-detector`。冲突 2 处，均为取并集：`runner.py`（core 的 `file_outcomes`、
+  sidecar 五档状态 + 接口线的契约 v2 身份、`_bind_source`、逐来源义务）与 `PROGRAM_STATUS.md`
+  （接口线 §22–34 保留，core 的 §22 追加为 §35）。合并后的 `runner.py` 与 core 的差集**只有接口线
+  自己那部分**，core 的义务门 `report.status in ("completed", "blocked")` 完整保留。
+- **合并后 5 项红，全部是预先声明过的语义碰撞，不是合并缺陷**：4 项是
+  `docs/contracts/ohscanner_blocked_run_coverage_ccr.md` §3.2 **预先点名**的接口线断言，1 项是
+  core 的 v1 契约断言。逐条结果记在该文件 §3.3。**merge commit 单独看是红的**，翻转紧随其后。
+- **驱动的逻辑未改，也不该改**：合成门本来就是 `if not entry["obligations"]`（只在 runner 确实
+  没记录时才补 `origin: audit_driver` 的 standing questions）。本次只改描述旧平台行为的文字，
+  并把该兜底路径的回归测试改成**对照测试**（`mock.patch` 抹掉 sidecar 的义务记录，断言驱动仍补）。
+- **实测（合并后的树，fixture 组件）**：`all-files` 那遍 detector run 仍 `blocked`、`scope_files`
+  仍 `0`，但 4 条候选全部 `obligations_source == shared_runner`，
+  `candidates_with_driver_synthesized_obligations == 0`；整体 report 状态为
+  `completed_with_limitations`。**候选集合与身份未变**——义务是元数据，翻转不改变报出哪些候选，
+  因此不引入新的误报或漏报。
+- **`scope_files` 仍是 0**（CCR (a)/(c) 未做）：报告继续把 0 与 `applicable/analyzed` 计数一起
+  打印并附原因说明，不把 0 当覆盖，也不因义务修好而提升任何结论等级——候选仍是候选，
+  `validated_vulnerability` 仍是 0。
+- **跨线待办**：core 的 `tests/detectors/test_cpp_runner_integration.py` 在本分支已改为 v2；core
+  线自身仍是 v1，由负责人决定何时重基线。core 的 §35 写着「旧 `ToolRunResult v1` 不改」，本分支
+  按已批准的契约 v2（§27）取 `schema_version=2`，两者需要在合并进 main 前对齐。
+- **测试**：合并后的树 `Ran 451 tests ... OK`（本次运行无跳过项）。合并前同一条线的基线为
+  450 项（其中 5 项红），本轮净增 1 项（对照测试）。
