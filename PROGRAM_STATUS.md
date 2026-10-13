@@ -467,5 +467,21 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   exact merged commit/parent/blob/symbol，记录为 `excluded_unverified`，不进入指标。
 - WSL Ubuntu 22.04 / Python 3.10.12 完整回归 **391 tests、2 skipped、OK**；新增
   静态模块定向测试 12/12。2 个跳过仍为依赖 ignored native replay manifest 的可选项。
+- 完整测试命令与输出：
+
+  ```text
+  wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc "cd /mnt/e/网安/CyberSecurity-Innovation-Audit && python3 -m unittest discover -s tests -q"
+  [OK] wrote /tmp/tmppf5fwvdx/fixture_evidence.json
+  [OK] shared_ptr_race fixture evidence matches
+  [OK] wrote /tmp/tmp1b0r_d8m/evidence.json and /tmp/tmp1b0r_d8m/evidence.md
+  [OK] wrote /tmp/tmp1b0r_d8m/evidence.json and /tmp/tmp1b0r_d8m/evidence.md
+  [OK] wrote /tmp/tmpr9u0ei26/evidence.json and /tmp/tmpr9u0ei26/evidence.md
+  [OK] shared_ptr_race native evidence outputs match
+  [OK] wrote draft binding manifest /tmp/tmpkcjjvd44/prepared-binding.json with SHA-256 1647e456f6465eb5a4ac6910fd823969065686d529f0912eacd09209128d6bc4
+  ----------------------------------------------------------------------
+  Ran 391 tests in 51.713s
+
+  OK (skipped=2)
+  ```
 - 本轮未运行 Infer/扩展 Joern 查询，未实现 Web/任务队列/Agent/PoC 平台，未推送、
   未创建 PR、未标 ready、未合并 main；production Catalog 是否注册仍待负责人审查。

@@ -45,11 +45,25 @@ sync, Web/jobs/storage, deployment and Agent orchestration remain Core-owned.
 
 ## Verification
 
-Commands run in WSL2 Ubuntu 22.04, Python 3.10.12:
+Command run in WSL2 Ubuntu 22.04, Python 3.10.12:
 
 ```text
-python3 -m unittest discover -s tests -q
-Ran 391 tests in 54.175s
+wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc "cd /mnt/e/网安/CyberSecurity-Innovation-Audit && python3 -m unittest discover -s tests -q"
+```
+
+Output:
+
+```text
+[OK] wrote /tmp/tmppf5fwvdx/fixture_evidence.json
+[OK] shared_ptr_race fixture evidence matches
+[OK] wrote /tmp/tmp1b0r_d8m/evidence.json and /tmp/tmp1b0r_d8m/evidence.md
+[OK] wrote /tmp/tmp1b0r_d8m/evidence.json and /tmp/tmp1b0r_d8m/evidence.md
+[OK] wrote /tmp/tmpr9u0ei26/evidence.json and /tmp/tmpr9u0ei26/evidence.md
+[OK] shared_ptr_race native evidence outputs match
+[OK] wrote draft binding manifest /tmp/tmpkcjjvd44/prepared-binding.json with SHA-256 1647e456f6465eb5a4ac6910fd823969065686d529f0912eacd09209128d6bc4
+----------------------------------------------------------------------
+Ran 391 tests in 51.713s
+
 OK (skipped=2)
 ```
 
