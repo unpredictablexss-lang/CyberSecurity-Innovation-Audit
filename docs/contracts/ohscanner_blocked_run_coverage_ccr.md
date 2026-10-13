@@ -1,11 +1,7 @@
 # Contract Change Request: a blocked detector run must not hide its own coverage and obligations
 
-> **负责人实施记录（2026-10-11）**：本分支已采用 §3.1 的 sidecar 优先方案，未增加
-> run status；IPC 正式路径使用单次适配器，保留 partial 义务及来源绑定。
-> 验证与兼容说明见 `docs/testing/ohscanner_owner_ipc_platform_integration.md`。
-> 下文是队友提交时的原始问题和旁路记录，不代表本集成分支仍有相同缺陷。
-
-- 状态：`proposed / not implemented`（2026-10-11）
+- 状态：`proposed`，其中 **(b) 已落地**（core 线 M2-A 集成提交 `022c022`，2026-10-11）；
+  (a)/(c) 待负责人决定。2026-10-13 接口线并入 core 后按 §3.2 完成翻转，落地记录见 §3.3。
 - 适用接口：`src/ohscanner/runner.py`（`_normalized`、`run_all_with_coverage`）、
   `src/ohscanner/execution.py`（`coverage_has_gaps`）
 - 关联 detector：`ohscanner.interface.ipc`
@@ -52,8 +48,10 @@ shared facts；③ 检测器自己判定覆盖不完整。②的 `limitations` �
   这次 run 会 `completed`：`scope_files`/`scope_loc` 是真实数字，且**义务被记录**。
 - 审计驱动（`src/ohscanner/detectors/interface/audit.py`）对同一 shard **跑两遍**
   （`complete-ast` + `all-files`），按 `(file, line, rule_id, source_sha256)` 合并候选并记录
-  「哪几遍看见它」；blocked 那遍的候选在报告里写明「义务未被 runner 记录，不等于没有义务」，
-  并把那个 0 连同 `applicable/analyzed` 计数一起打印、附原因说明。
+  「哪几遍看见它」；并把 blocked 那遍的 0 连同 `applicable/analyzed` 计数一起打印、附原因说明。
+  驱动另有一条**兜底**：只有当 runner 确实没为某条候选记录义务时，才补上该规则的 standing
+  questions（`status=unknown`、`origin=audit_driver`）。写这条旁路时它是 blocked 那遍的常态；
+  (b) 落地后它退为对照路径（§3.3）。
 - 测试：`tests/test_component_audit.py`（33 项）钉死上述性质，包括「blocked 那遍的 0 必须
   与真实计数同时出现」。
 
@@ -61,7 +59,8 @@ shared facts；③ 检测器自己判定覆盖不完整。②的 `limitations` �
 
 1. **两倍墙钟时间**（同一 shard 跑两遍），以及**一个解释对应两个 detector ID**
    （ID 空间多出一个名字，且候选的 `diagnostic_id` 因 detector_id 不同而不同）。
-2. 真正「只在 partial 文件里」的候选，其义务**仍然只能靠人工**（`complete-ast` 那遍看不见它）。
+2. ~~真正「只在 partial 文件里」的候选，其义务仍然只能靠人工（`complete-ast` 那遍看不见它）。~~
+   **2026-10-13 由 (b) 关闭**：runner 现在为 blocked 那遍也记录义务，这类候选不再依赖人工合成。
 3. 这是绕路：共享报告本身仍然是「blocked ⇒ 0 / 无义务」。
 
 ## 3. 请求的变更（未实现，三选一）
@@ -108,14 +107,42 @@ shared facts；③ 检测器自己判定覆盖不完整。②的 `limitations` �
 
 负责人改动公共平台后，下面这些断言就是必须翻转/保持的判据（都在 B 仓库，可直接跑）：
 
-| 判据 | 位置 | 现在钉住的事实（改平台前） | 平台修好后应当是 |
-|---|---|---|---|
-| blocked 遍的 scope 计数是 0 | `tests/test_component_audit.py::TwoPassAuditTests::test_all_files_pass_keeps_recall_and_admits_the_zero_counter` | `scope_files == 0` 且同一遍 `applicable_files == 5`、`diagnostics > 0` | scope 不再是 0，或整体状态变成显式的 `partial` |
-| blocked 遍的候选义务为空 | 同上 + `tests/test_ohscanner_m2.py` / `tests/test_ohscanner_m15.py` 的 sidecar 断言 | `evidence_obligations` 为空列表 | 义务随 finding 一并保留 |
-| 驱动必须自己补 unknown 义务 | `TwoPassAuditTests::test_partial_candidate_carries_driver_synthesized_unknown_obligations` | 5 条 `origin: audit_driver` 的义务被合成出来 | 若平台保留义务，这一条仍应成立（驱动只在**确实没有**义务时才补），可作为「没有重复造证据」的对照 |
-| 归因计数闭合 | `FileAccountingClosureTests`（4 项） | `files_unaccounted == 0`，「已解析/部分/失败/未被认领/被丢弃/未运行」六桶闭合 | 不因新状态而破桶；新增状态必须能落进某一桶 |
+| 判据 | 位置 | 现在钉住的事实（改平台前） | 平台修好后应当是 | 2026-10-13 接口线并入 core 后的结果 |
+|---|---|---|---|---|
+| blocked 遍的 scope 计数是 0 | `tests/test_component_audit.py::TwoPassAuditTests::test_all_files_pass_keeps_recall_and_admits_the_zero_counter` | `scope_files == 0` 且同一遍 `applicable_files == 5`、`diagnostics > 0` | scope 不再是 0，或整体状态变成显式的 `partial` | **未变，仍是 0**（(a)/(c) 未做）。断言保留，说明文字改为「义务已随 run 一并记录」 |
+| blocked 遍的候选义务为空 | 同上 + `tests/test_ohscanner_m2.py` / `tests/test_ohscanner_m15.py` 的 sidecar 断言 | `evidence_obligations` 为空列表 | 义务随 finding 一并保留 | **已翻转**：`src/broken.cpp` 那条候选现在 `obligations_recorded_by_runner == True`、`obligations_by_source == ["all-files"]`、4 条 `origin: shared_runner`。测试改名 `test_partial_candidate_keeps_the_obligations_the_runner_recorded` |
+| 驱动必须自己补 unknown 义务 | `TwoPassAuditTests::test_partial_candidate_carries_driver_synthesized_unknown_obligations` | 5 条 `origin: audit_driver` 的义务被合成出来 | 若平台保留义务，这一条仍应成立（驱动只在**确实没有**义务时才补），可作为「没有重复造证据」的对照 | **保留为对照**：测试改名 `test_driver_standing_questions_appear_only_without_a_runner_record`，用 `mock.patch` 去掉 sidecar 的义务记录后断言驱动仍补出那 5 条 `origin: audit_driver`；同一套 fixture 的真实运行里 `candidates_with_driver_synthesized_obligations == 0` |
+| 归因计数闭合 | `FileAccountingClosureTests`（4 项） | `files_unaccounted == 0`，「已解析/部分/失败/未被认领/被丢弃/未运行」六桶闭合 | 不因新状态而破桶；新增状态必须能落进某一桶 | **未破**：4 项全绿，`files_unaccounted == 0` |
 
 这个反例是可复现的：`communication_dsoftbus @ 652f88e0…`，4 条候选、义务列表为空（见 §1）。
+
+### 3.3 落地记录（2026-10-13，接口线并入 core）
+
+- **(b) 的落地方是 core 线，不是接口线。** 负责人在 M2-A 集成提交 `022c022` 做了三件事：
+  sidecar 的 `evidence_obligations` 门从 `report.status == "completed"` 放宽为
+  `report.status in ("completed", "blocked")`；新增 `DetectorRun.file_outcomes`；
+  报告状态不再是「只要一个文件没解析完就 `blocked`」（`"blocked" if report.status == "blocked"
+  and not (analyzed or partial) else ...`）。后两条让「已检查但分析未完成」与「完全未分析」分开
+  记录，正是 §3.1 第 3 条的两项要求，且按 §3.1 的「先 sidecar、后 status」落在 sidecar 上：
+  sidecar 自己的 `status` 现在是 `not_applicable / failed / blocked / partial / complete` 五档，
+  并带 `partially_inspected_files`。
+- **接口线的动作**：把 `origin/feat/ohscanner-core`（`e365465`）并入
+  `feat/interface-ipc-detector`，然后按上表逐条翻转/保留，并同步驱动里**描述旧平台行为**的文字
+  ——模块 docstring、`DRIVER_STANDING_OBLIGATIONS`（原 `PARTIAL_ONLY_OBLIGATIONS`）的注释、
+  合成义务的 `reason`、coverage `notes`、`limitations`、markdown 的 NOTE。
+- **驱动的逻辑没有改动，也不该有**：合成门本来就是 `if not entry["obligations"]`，即 §3.2 第 3
+  行要求的那条不变式在文本落地之前就已经成立。本次改的是**文字与断言**，不是行为。
+- **实测（合并后的树）**：`all-files` 那遍的 detector run 状态仍是 `blocked`、`scope_files`
+  仍是 `0`，但 4 条候选全部 `obligations_source == shared_runner`，
+  `candidates_with_driver_synthesized_obligations == 0`；整体 report 状态是
+  `completed_with_limitations`（`coverage_has_gaps` 把这次 run 计为 gap，符合 §3.1 第 1 条）。
+- **一并修的项目（跨线待办）**：core 的
+  `tests/detectors/test_cpp_runner_integration.py::test_maps_current_detector_run_to_toolrun_v1`
+  断言 `schema_version == 1`，而本仓库的契约 v2（`PROGRAM_STATUS.md` §27）规定是 `2`。合并后的
+  树只能发出一个号，所以**改测试不改契约**：测试改名为 `..._toolrun_v2` 并断言 `2`。
+  **core 线自己那条分支上这个断言仍是 `1`**，需要负责人决定何时一并重基线。
+- **本次合并的 merge commit 单独看是红的**（5 项），红的原因就是本节要处理的碰撞；翻转是紧跟在
+  其后的一个提交。若有人按 commit 二分，请从这里读。
 
 ## 4. 对赛题计分的影响
 

@@ -1,0 +1,10 @@
+{
+  "timestamp_utc": "2026-10-09T17:30:59.632049+00:00",
+  "purpose": "Freeze before generated metamorphic holdout; not an independent real-world historical test set",
+  "source_sha256": {
+    "src/ohscanner/detectors/interface/__init__.py": "2fe479e14bd6ebff4550e5897978f1a83989a2f40a1615aa5e3966ca898991a9",
+    "src/ohscanner/detectors/interface/analysis.py": "501240b538ea716a2b7f0b22b2008945c9ae43ac05b99ec356e4a97454c43a44",
+    "src/ohscanner/detectors/interface/detector.py": "b88ebb56a4e1d29d04a96accedf4a35e308abad69a36d736afd063f91f5c831c",
+    "src/ohscanner/detectors/interface/models.py": "71a0bd09f423135f98bb0de19315c75a872df469d8599622d37599f05d1bc901"
+  }
+}

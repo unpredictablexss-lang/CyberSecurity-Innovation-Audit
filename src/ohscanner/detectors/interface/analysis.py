@@ -55,6 +55,16 @@ class Value:
 
 UNKNOWN = Value()
 
+# Descriptor-comparison outcomes that do establish the guard. The other two
+# ("mismatch", "unresolved") are recorded as seen but never as a guard.
+_DESCRIPTOR_ACCEPTED = frozenset({"unqualified", "self", "interface"})
+
+# How a mismatch branch has to end before the check it belongs to counts as a
+# guard: `relay_guard()` accepts a one-hop same-file relay only when the callee's
+# token comparison leaves the transaction on mismatch. A branch that merely logs
+# falls through to the dispatcher the check was supposed to protect.
+_RELAY_LEAVES = ("return_statement", "throw_statement")
+
 
 @dataclass
 class State:
@@ -67,6 +77,11 @@ class State:
     size_lower: frozenset = frozenset()
     caller_class: frozenset = frozenset()
     identity_issues: tuple = ()
+    # Descriptor comparisons seen on this path whose interface identity could not
+    # be accepted as this transaction's guard: ((outcome, name, where_compared,
+    # what_the_stub_states), ...). A record of what was seen, so a candidate can
+    # say "present but mismatched/unresolved" instead of "absent".
+    descriptor_issues: tuple = ()
     reset: bool = False
     trace: tuple = ()
     flow: str = "normal"
@@ -109,6 +124,10 @@ class Observation:
     impact: str = ""                 # consequence class, e.g. information_disclosure
     impact_cwe: str = ""             # consequence CWE; distinct from the mechanism CWE
     impact_basis: str = ""           # the call that drove the classification
+    # "" | "mismatch" | "unresolved". Set only on descriptor-boundary findings
+    # where a comparison was seen but its interface identity was not accepted, so
+    # the finding carries the matching proof obligation.
+    descriptor_identity: str = ""
 
 
 def normalize_syntax(source):
@@ -435,12 +454,21 @@ class Interpreter:
                                 descriptor=intersection("descriptor"), owner=intersection("owner"),
                                 lower=intersection("lower"), upper=intersection("upper"), size_lower=intersection("size_lower"), caller_class=intersection("caller_class"),
                                 identity_issues=tuple(issue for s in group for issue in s.identity_issues),
+                                descriptor_issues=tuple(dict.fromkeys(
+                                    issue for s in group for issue in s.descriptor_issues)),
                                 reset=any(s.reset for s in group), flow=flow,
                                 trace=((0, "conservative path join"),)))
         return result
 
     def emit(self, family, rule, fn, node, state, message, call=None):
         impact, impact_cwe, basis = consequence_for(rule, (call,) if call else ())
+        # A descriptor-boundary candidate that saw a comparison it could not accept
+        # says so here, in the finding and in its obligations, rather than reading
+        # as though no comparison existed.
+        descriptor_identity = ""
+        if rule == "ipc.relay.descriptor-boundary" and state.descriptor_issues:
+            descriptor_identity, note = self.descriptor_note(state.descriptor_issues)
+            message = message + " " + note
         # node was read out of the expanded text; the reader needs the line the code
         # was actually written on. `fn.file` may differ from the current root when a
         # handler delegates into another file, so the map is chosen by file.
@@ -451,7 +479,7 @@ class Interpreter:
         self.observations.append(Observation(family, rule, fn.file,
             line_map.get(line, line), fn.qualified, message, trace,
             (self.root.file, self.root.qualified), self.root_grade, self.root_note,
-            impact, impact_cwe, basis))
+            impact, impact_cwe, basis, descriptor_identity))
 
     def resolve(self, fn, name):
         # No arbitrary receiver or global name-only cross-class resolution.
@@ -489,7 +517,7 @@ class Interpreter:
             return bool(state.auth or state.caller_class.intersection({"TOKEN_NATIVE"}))
         return bool(state.auth)
 
-    def action(self, fn, node, state, name, args):
+    def action(self, fn, node, state, name, args, depth=0):
         if self.root is None:
             return
         root_key = (self.root.file, self.root.qualified)
@@ -544,9 +572,156 @@ class Interpreter:
                 or name in self.policy.capability_calls or name in self.policy.copy_calls):
             parcel_keys = {v.key for v in state.env.values() if v.kind == "parcel"}
             if parcel_keys and not parcel_keys.intersection(state.descriptor):
-                self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
-                          "IPC dispatch/callback reaches " + name + " without a matched interface-descriptor guard; relay/exposure still requires review.",
-                          call=name)
+                helper = self.resolve(fn, name)
+                relay = self.relay_guard(fn, node, args, helper, state, depth) if helper else None
+                if relay is None:
+                    self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
+                              "IPC dispatch/callback reaches " + name + " without a matched interface-descriptor guard; relay/exposure still requires review.",
+                              call=name)
+                elif relay[0] == "seen":
+                    issue = relay[1]
+                    if issue not in state.descriptor_issues:
+                        state.descriptor_issues = state.descriptor_issues + (issue,)
+                    self.emit("AUTH-01", "ipc.relay.descriptor-boundary", fn, node, state,
+                              "IPC dispatch/callback reaches " + name + ", whose interface-descriptor comparison is present but not accepted for this transaction; relay/exposure still requires review.",
+                              call=name)
+
+    def interface_of(self, name):
+        """The declaration of a written class name, or "" when the shard lacks it."""
+        info = self.index.resolve_class(name) if self.index is not None else None
+        if info is None:
+            return "declaration not in the analysed sources"
+        return "declared at " + info.file + ":" + str(info.line)
+
+    def descriptor_expectation(self, fn, callee, state):
+        """Which interface a `GetDescriptor()` call names, and whether it is this one.
+
+        `X::GetDescriptor()` yields the descriptor of interface X, so X's identity
+        decides whether the comparison guards *this* transaction. The qualifier is
+        evidence, not a filter -- discarding it as UNKNOWN is what made a real
+        check look absent, and accepting any qualifier would let a guard against
+        an unrelated interface count as one.
+
+        Four outcomes, each recorded with the source it came from:
+
+        * ``unqualified``/``self``  -- the stub's own descriptor; every design
+          fixture is written this way and stays accepted.
+        * ``interface``  -- X is named by the enclosing class's own base clause as
+          the interface it implements (`IRemoteStub<X>`). Source-derived; the class
+          name is never used to guess an interface.
+        * ``mismatch``  -- the base clause states an interface and X is another
+          one, so the guard validates a different interface than this transaction.
+        * ``unresolved``  -- the sources do not state which interface this class
+          implements. Unknown, which is neither a working guard nor a mismatch.
+        """
+        qualifier = callee.rsplit("::", 1)[0].strip() if "::" in callee else ""
+        owner_name = terminal(fn.owner)
+        if not qualifier:
+            return Value("descriptor_expected", fn.owner, subject="unqualified",
+                         terms=("unqualified call", "no interface named"))
+        inner = qualifier[qualifier.find("<") + 1:qualifier.rfind(">")] if qualifier.endswith(">") else ""
+        name = terminal(inner if inner else qualifier)
+        if name in (owner_name, "IRemoteStub", "IPCObjectStub"):
+            return Value("descriptor_expected", name, subject="self",
+                         terms=("qualified with " + name, "the enclosing class"))
+        interfaces = (self.index.implemented_interfaces(fn.owner)
+                      if self.index is not None and fn.owner else ())
+        stated = ", ".join(sorted(item.name + " (stated at " + item.file + ":" + str(item.line) + ")"
+                                  for item in interfaces))
+        where = name + " " + self.interface_of(name)
+        if any(item.name == name for item in interfaces):
+            return Value("descriptor_expected", name, subject="interface",
+                         terms=(where, "this class implements " + stated))
+        if interfaces:
+            return Value("descriptor_expected", name, subject="mismatch",
+                         terms=(where, "this class implements " + stated))
+        return Value("descriptor_expected", name, subject="unresolved",
+                     terms=(where, "no interface is stated for " + (owner_name or "this function")))
+
+    def descriptor_note(self, issues):
+        """Why a comparison that was read does not count as a guard.
+
+        A descriptor candidate claims no matched interface-descriptor guard was
+        found. When a comparison *is* present but targets another interface, or its
+        identity is not in the analysed sources, the reason belongs in the finding;
+        otherwise the message reads as if no comparison existed at all.
+        """
+        mismatch = sorted({item for item in issues if item[0] == "mismatch"})
+        unresolved = sorted({item for item in issues if item[0] != "mismatch"})
+        parts = ["a comparison against " + item[1] + " is present but mismatched (" + item[2]
+                 + "; " + item[3] + ")" for item in mismatch]
+        parts += ["a comparison against " + item[1] + " is present but its interface identity is not "
+                  "determined (" + item[2] + "; " + item[3] + ")" for item in unresolved]
+        return ("mismatch" if mismatch else "unresolved"), "Guard seen, not accepted: " + "; ".join(parts) + "."
+
+    def relay_guard(self, fn, node, args, helper, state, depth):
+        """What a one-hop same-file relay out of an entry lands on.
+
+        `OnRemoteRequest` handing the request to `OnRemoteRequestInner(code, data,
+        reply, option)` proves nothing by itself: that callee may not compare the
+        token at all, may compare another interface, may compare and carry on, or
+        may compare only after it already routed the request. The relay is read as
+        guarded only when
+
+        * every argument is one of this entry's own parameters, so the request is
+          handed over rather than replaced;
+        * a top-level statement of the callee compares `ReadInterfaceToken()`
+          against an accepted descriptor identity and *leaves* on mismatch;
+        * that statement precedes the `switch` that routes the request.
+
+        Returns ``("guarded", where)``, ``("seen", issue)`` when a comparison is
+        present but not accepted for this transaction, or None when nothing here
+        establishes a guard -- and then the call site stays a candidate.
+        """
+        if helper.body is None or helper.file != fn.file:
+            return None
+        passed = node.child_by_field_name("arguments")
+        carried = [fn.text(item) for item in passed.named_children] if passed else []
+        if not carried or any(name not in fn.params for name in carried):
+            return None
+        statements = list(helper.body.named_children)
+        probe = state.fork()
+        probe.env.update(dict(zip(helper.params, args)))
+        check = index = comparison = None
+        for position, item in enumerate(statements):
+            # Locals hold the token as often as the call site does, so bind the
+            # declarations met on the way to the check the way the body walk binds
+            # them: `token = data.ReadInterfaceToken(); if (token != ...)`.
+            for declaration in (item.named_children if item.type == "declaration" else ()):
+                if declaration.type != "init_declarator":
+                    continue
+                declarator = declaration.child_by_field_name("declarator")
+                names = list(walk(declarator, "identifier")) if declarator else []
+                self.assign(probe, helper.text(names[-1] if names else declarator),
+                            self.value(helper, declaration.child_by_field_name("value"), probe, depth))
+            if item.type != "if_statement":
+                continue
+            read = self.value(helper, item.child_by_field_name("condition"), probe, depth)
+            if read.kind == "predicate" and read.predicate[:1] == ("descriptor",):
+                check, index, comparison = item, position, read
+                break
+        if check is None:
+            return None
+        expected = comparison.predicate[3]
+        line_map = self.line_maps.get(helper.file) or {}
+        line = check.start_point[0] + 1
+        where = helper.qualified + " at " + helper.file + ":" + str(line_map.get(line, line))
+        if expected.subject not in _DESCRIPTOR_ACCEPTED:
+            return ("seen", (expected.subject, expected.key) + tuple(expected.terms))
+        # The predicate is true when the operands are equal, so on an equality
+        # test it is the `else` branch that sees the mismatch, and on `!=` the
+        # consequence. That branch has to leave for the check to be a guard.
+        mismatch = (check.child_by_field_name("alternative") if comparison.predicate[2]
+                    else check.child_by_field_name("consequence"))
+        if mismatch is not None and mismatch.type == "else_clause":
+            mismatch = mismatch.named_children[-1] if mismatch.named_children else None
+        block = mismatch if mismatch is not None and mismatch.type == "compound_statement" else None
+        leaving = block.named_children if block is not None else ([mismatch] if mismatch is not None else [])
+        if not any(item.type in _RELAY_LEAVES for item in leaving):
+            return None
+        if not any(item.type == "switch_statement" for item in statements[index + 1:]):
+            return None
+        return ("guarded", where)
 
     def value(self, fn, node, state, depth):
         if node is None:
@@ -580,9 +755,7 @@ class Interpreter:
                 rv = state.env.get(receiver, UNKNOWN)
                 return Value("descriptor_read", rv.key) if rv.kind == "parcel" else UNKNOWN
             if name == "GetDescriptor":
-                if "::" in callee and callee.rsplit("::",1)[0] != fn.owner:
-                    return UNKNOWN
-                return Value("descriptor_expected", fn.owner)
+                return self.descriptor_expectation(fn, callee, state)
             if name in ("GetTokenTypeFlag", "GetTokenType") and args and args[0].kind=="caller" and args[0].subject=="token":
                 return Value("caller_type",args[0].key)
             if name=="GetNativeTokenInfo" and len(args)>1 and args[0].kind=="caller" and args[0].subject=="token":
@@ -613,10 +786,19 @@ class Interpreter:
             helper = self.resolve(fn, callee)
             if helper is None:
                 helper = self.delegated(callee)
-            self.action(fn, node, state, name, args)
+            self.action(fn, node, state, name, args, depth)
             if helper and self.root.name in self.policy.entry_names and not state.descriptor:
-                self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
-                    "IPC entry reaches a locally resolved handler without interface-descriptor validation: "+helper.qualified)
+                relay = self.relay_guard(fn, node, args, helper, state, depth)
+                if relay is None:
+                    self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
+                        "IPC entry reaches a locally resolved handler without interface-descriptor validation: "+helper.qualified)
+                elif relay[0] == "seen":
+                    if relay[1] not in state.descriptor_issues:
+                        state.descriptor_issues = state.descriptor_issues + (relay[1],)
+                    self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
+                        "IPC entry relays to "+helper.qualified+", whose interface-descriptor comparison is present but not accepted for this transaction.")
+                # relay[0] == "guarded": the relayed-to function is the guard, so
+                # this call site is not itself an unguarded boundary.
             if helper and depth < self.policy.max_call_depth and helper not in self.active:
                 local = state.fork();local.env = dict(zip(helper.params, args))
                 old = self.active;self.active = old + (helper,)
@@ -663,8 +845,9 @@ class Interpreter:
             if op in ("==", "!=", "<", "<=", ">", ">="):
                 if left.kind == "descriptor_read" and right.kind == "descriptor_expected" or right.kind == "descriptor_read" and left.kind == "descriptor_expected":
                     rd = left if left.kind == "descriptor_read" else right
+                    expected = right if left.kind == "descriptor_read" else left
                     if op in ("==","!="):
-                        return Value("predicate",predicate=("descriptor",rd.key,op=="=="))
+                        return Value("predicate",predicate=("descriptor",rd.key,op=="==",expected))
                 pv,cv = (left,right) if left.kind in ("permission_bool","permission_result") else (right,left)
                 if pv.kind in ("permission_bool","permission_result") and op in ("==","!="):
                     success = cv.key in ("0", "PERMISSION_GRANTED", "AccessTokenKit::PERMISSION_GRANTED", "true") or terminal(cv.key)=="PERMISSION_GRANTED"
@@ -783,8 +966,18 @@ class Interpreter:
         pred=val.predicate
         if val.kind=="permission_bool" and val.subject=="caller":pred=("auth",val.permission,True)
         if pred:
-            kind,key,when=pred
-            if truth==when:
+            kind,key,when=pred[0],pred[1],pred[2]
+            # A descriptor comparison against an identity that is not this
+            # transaction's interface is recorded as seen, on both branches: it is
+            # why no guard was accepted here. Accepting it would let an unrelated
+            # interface's descriptor stand in for this one.
+            accepted=True
+            if kind=="descriptor" and len(pred)>3 and pred[3].subject not in _DESCRIPTOR_ACCEPTED:
+                accepted=False
+                issue=(pred[3].subject,pred[3].key)+tuple(pred[3].terms)
+                if issue not in out.descriptor_issues:
+                    out.descriptor_issues=out.descriptor_issues+(issue,)
+            if truth==when and accepted:
                 attr={"auth":"auth","descriptor":"descriptor","owner":"owner","lower":"lower","upper":"upper","size_lower":"size_lower","caller_class":"caller_class"}[kind]
                 setattr(out,attr,getattr(out,attr)|{key})
         out.trace=(out.trace+((node.start_point[0]+1,fn.text(node)+" => "+str(truth)),))[-20:]

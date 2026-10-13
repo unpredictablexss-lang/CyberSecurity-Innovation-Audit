@@ -197,7 +197,7 @@ class FormalCliTests(unittest.TestCase):
             self.assertEqual(actual['files_in_scope_without_a_claiming_detector'], ['bridge.ets'])
             self.assertEqual(actual['status'], 'completed_with_limitations')
             self.assertEqual(actual['validated_vulnerability'], 0)
-            self.assertEqual(actual['detector_runs'][0]['schema_version'], 1)
+            self.assertEqual(actual['detector_runs'][0]['schema_version'], 2)
             rendered = markdown.read_text()
             self.assertIn('Complete | Partial | Not analyzed', rendered)
             self.assertIn('parse_completeness_impact=unknown', rendered)

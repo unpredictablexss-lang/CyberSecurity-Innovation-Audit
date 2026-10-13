@@ -1,0 +1,21 @@
+{
+  "platform": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "packages": {
+    "tree-sitter": "0.26.0",
+    "tree-sitter-c": "0.24.2",
+    "tree-sitter-cpp": "0.23.4"
+  },
+  "semgrep": {
+    "version": "1.180.0",
+    "variant": "native OSS core",
+    "rule_sha256": "2c5aa4b5c11efb5e59e8fa3fb790121d73675768c7e662011a4d4e6ce2250502"
+  },
+  "joern": "4.0.652",
+  "jdk": "Temurin21.0.12.1+1",
+  "codeql_cli": "2.27.2",
+  "codeql_cpp_all": "12.2.0",
+  "clang": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+  "analysis_scope": "Fixed Git source / pinned blobs, no OpenHarmony product build, no S3 runtime",
+  "raw_artifacts": "/home/audit/openharmony-audit/ipc-research/artifacts"
+}

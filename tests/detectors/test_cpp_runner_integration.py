@@ -67,11 +67,18 @@ class RunnerIntegrationTests(unittest.TestCase):
         self.context = lifetime_context()
         self.units = load_lifetime_units()
 
-    def test_maps_current_detector_run_to_toolrun_v1(self) -> None:
+    def test_maps_current_detector_run_to_toolrun_v2(self) -> None:
+        """Contract v2: the ToolRun envelope, not only the v1 schema, is v2.
+
+        The ratified contract v2 (PROGRAM_STATUS section 27) binds every diagnostic
+        to the source revision it was reported against and raises schema_version to
+        2. A tree that carries both contracts can only emit one number, and the
+        ratified one wins, so this test pins v2 to stop the envelope drifting back.
+        """
         registry = DetectorRegistry()
         registry.register(LifetimeOwnershipGuardDetector())
         result = run_all(self.context, registry)[0]
-        self.assertEqual(result.schema_version, 1)
+        self.assertEqual(result.schema_version, 2)
         self.assertEqual(
             result.run_id,
             self.context.request.request_id + ":ohscanner.cpp.lifetime",
@@ -95,7 +102,7 @@ class RunnerIntegrationTests(unittest.TestCase):
             ],
         )
         payload = result.to_dict()
-        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["schema_version"], 2)
         self.assertIn("interpretation", payload)
         self.assertNotIn("validation_status", payload["diagnostics"][0])
 

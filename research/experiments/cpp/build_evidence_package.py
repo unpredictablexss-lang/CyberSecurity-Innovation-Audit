@@ -19,10 +19,10 @@ EVIDENCE_PATH = OUTPUT_DIR / "evidence_units.json"
 BASELINE_PATH = OUTPUT_DIR / "baseline_status.json"
 
 INTERFACE_BASELINE = {
-    "branch": "feat/workbench-integration",
-    "head": "fe85edd6431b09e01131608fa649286264ca2c2e",
+    "branch": "feat/interface-ipc-detector",
+    "head": "48bce9eab77fdf22acbb708cd9bf481ca32e7667",
     "contract_path": "src/ohscanner/contracts.py",
-    "contract_sha256": "b50fce29acdb4a22e79abdc0b96039d6823bc0cdb2a281c7d40cde0cfc06c408",
+    "contract_sha256": "cf0fa3e4eb725d5504499493d01e0131a9dd328a06ab5e78a493cfb7b3493446",
 }
 
 TOOLS = ["own_text", "own_ast", "semgrep", "semgrep_oh", "cppcheck", "clang_sa", "codeql", "joern"]

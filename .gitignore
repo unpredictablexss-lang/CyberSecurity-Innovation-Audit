@@ -230,6 +230,8 @@ outputs/bin/
 outputs/reports/static_baselines/
 outputs/reports/perf_scale/
 outputs/reports/owner_ipc_integration/
+outputs/reports/m1_descriptor_identity/
+outputs/reports/m2_relay_guard/
 .tmp/
 .cache/
 

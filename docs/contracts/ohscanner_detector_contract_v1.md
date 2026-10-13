@@ -1,10 +1,10 @@
 # OHScanner 自研 Detector Plugin Contract v1（设计稿）
 
-> **负责人覆盖语义修订（2026-10-11）**：`feat/owner-ipc-platform-integration` 保持
-> ToolRunResult v1，不新增 run status。scope 统计实际完整/部分检查；sidecar 区分完整分析、
-> 部分检查与未分析，候选义务在验证范围/位置/snapshot 后独立于整体 status 保留。
-> completed 执行可含 partial 文件结果；不等于语义完整。详见
-> `docs/testing/ohscanner_owner_ipc_platform_integration.md`。后文旧阶段记录按本修订解释。
+> **已由 v2 取代，本文件保留为 v1 语义的历史记录（2026-10-11）**：按 §7 自己的规定，
+> 「任何破坏性变更必须提出 contract-v2（含迁移说明）」——新增**必填**的 source 绑定并改变
+> `diagnostic_id` 取值即属此类，因此变更落在
+> [`ohscanner_detector_contract_v2.md`](ohscanner_detector_contract_v2.md)（含 §5 迁移说明）。
+> v1 本文未改动，其状态语义（§4 一类的边界）在 v2 §4 中逐条重申。
 
 > **开发分支实施说明（2026-10-09）**：在 `feat/ohscanner-core` / PR #5 已有 M0 最小 Python `ScanRequest/SourceUnit/ScanContext/DetectorRun/Detector` 和注册器/Bridge；M1 新增 `ohscan-index`，从本地固定 Git commit 读取源码并对 C/C++ 形成轻量 AST。下文包含 M2+ 仍未实现的目标字段（如 budget/可取消任务、独立进程硬超时、权限/Bridge 的 IR）；因此仍是逐步落地的协议草案，**不能认为全部字段、完整安全沙箱或真实漏洞算法已实现**。现有真实字段以 `src/ohscanner/contracts.py` 为准。
 

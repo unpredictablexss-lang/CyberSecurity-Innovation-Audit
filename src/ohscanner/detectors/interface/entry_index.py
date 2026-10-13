@@ -129,12 +129,31 @@ def _last_identifier(source, node):
 
 
 @dataclass(frozen=True)
+class InterfaceRef:
+    """An interface a class states it implements, and the source that states it.
+
+    `expression` is the template argument exactly as written; `name` is its
+    terminal component. Both come from the base clause, so a caller can cite the
+    declaration it relied on instead of inferring the interface from a class name.
+    """
+    name: str
+    expression: str
+    file: str
+    line: int
+
+
+@dataclass(frozen=True)
 class ClassInfo:
     name: str
     qualified: str
     file: str
     line: int
     direct_bases: tuple[str, ...]
+    # (terminal base name, first template argument as written) in clause order.
+    # Kept beside `direct_bases` rather than replacing it: the ancestry walk that
+    # decides whether this is a stub must not change because identity needs the
+    # argument, and the two answers are read at different call sites.
+    base_specs: tuple = ()
     stub_ancestor: str = ""      # terminal name of the stub/object base, or ""
 
     @property
@@ -281,14 +300,16 @@ class EntryIndex:
                     namespace.append(outer)
         qualified = "::".join(list(reversed(namespace)) + [name])
         clause = next((c for c in node.named_children if c.type == "base_class_clause"), None)
-        bases = []
+        bases, specs = [], []
         if clause is not None:
             for child in clause.named_children:
                 if child.type in ("type_identifier", "template_type", "qualified_identifier"):
                     base = _base_terminal(source, child)
                     if base:
                         bases.append(base)
-        info = ClassInfo(name, qualified, path, node.start_point[0] + 1, tuple(bases))
+                        specs.append((base, _template_argument(source, child)))
+        info = ClassInfo(name, qualified, path, node.start_point[0] + 1, tuple(bases),
+                         tuple(specs))
         self._classes[qualified] = info
         self._classes_by_terminal.setdefault(name, info)
 
@@ -465,6 +486,47 @@ class EntryIndex:
             for base in info.direct_bases:
                 derived.setdefault(base, []).append(info)
         return derived
+
+    # ------------------------------------------------------------------ identity
+
+    def resolve_class(self, name):
+        """The class a written name refers to, or None. Never guesses across names."""
+        if not name:
+            return None
+        return (self._classes.get(name)
+                or self._classes_by_terminal.get(_last_component(name)))
+
+    def implemented_interfaces(self, qualified):
+        """Interfaces a class states it implements, with the declaration that says so.
+
+        Only the argument of `IRemoteStub<T>` names an interface: the class is
+        then a stub *for* T, and T's descriptor is the one its caller writes. The
+        walk follows bases' bases, so an intermediate `FooBase` between the stub
+        and `IRemoteStub<T>` still yields T.
+
+        An empty result means the analysed sources do not state an interface for
+        this class -- a bare `IPCObjectStub`, a declaration outside the shard, or
+        a name that is not a class at all. Callers must read that as unknown, not
+        as "this class implements nothing".
+        """
+        found, seen, frontier = [], set(), [(qualified, 0)]
+        while frontier:
+            current, depth = frontier.pop(0)
+            info = self.resolve_class(current)
+            if info is None or info.qualified in seen:
+                continue
+            seen.add(info.qualified)
+            if depth > self._max_class_depth:
+                self.limitations.add("Interface identity depth budget reached at " + info.qualified)
+                continue
+            for terminal, argument in info.base_specs:
+                if terminal == "IRemoteStub" and argument:
+                    found.append(InterfaceRef(_last_component(argument), argument,
+                                              info.file, info.line))
+                parent = self._classes_by_terminal.get(terminal)
+                if parent is not None:
+                    frontier.append((parent.qualified, depth + 1))
+        return tuple(found)
 
     # -------------------------------------------------------------- dispatchers
 
@@ -881,6 +943,24 @@ def _base_terminal(source, node):
             return _last_component(_text(source, inner.child_by_field_name("name")))
         return _last_component(_text(source, inner if inner is not None else node))
     return _last_component(_text(source, node))
+
+
+def _template_argument(source, node):
+    """The first template argument of a base specifier, as written, or "".
+
+    `IRemoteStub<IFoo>` -> "IFoo"; `NS::IRemoteStub<NS::IFoo>` -> "NS::IFoo";
+    a non-template base has no argument. Only the first argument is read: no
+    stub shape in scope carries a second one that changes the identity.
+    """
+    holder = node
+    if node.type == "qualified_identifier":
+        inner = node.child_by_field_name("name")
+        if inner is not None and inner.type == "template_type":
+            holder = inner
+    arguments = holder.child_by_field_name("arguments")
+    if arguments is None or not arguments.named_children:
+        return ""
+    return _text(source, arguments.named_children[0]).strip()
 
 
 def _map_item(item, source):

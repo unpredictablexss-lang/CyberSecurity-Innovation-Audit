@@ -1,11 +1,4 @@
 # IPC method card v0.1
-
-> **Owner integration 2026-10-11**: this file preserves B's historical method/experiment
-> records from commit `52b2cd5`. This branch integrates the interpretation only, through
-> a single-pass M2 adapter and the official `ohscan-run` catalog. Historical audit-driver,
-> PoC and baseline counts below are not new validations on this branch. Current coverage
-> semantics and verified tests are in `docs/testing/ohscanner_owner_ipc_platform_integration.md`
-> and the latest PROGRAM_STATUS section. M1–M6 rule improvements remain pending.
 > **政策更新 2026-10-10**：本文为历史记录（记录某时点实际做了什么），事实性内容保留原样。文中"不做 PoC / 不做动态验证 / 不升级结论状态 / 不计算 Precision-Recall"等限制已于 2026-10-10 **废除**；当前生效政策见 `AGENTS.md` 的 **Competition deliverables — must produce** 章节：PoC、动态验证、CWE/CVE、影响范围、修复建议、性能数据、漏洞报告均为**必须产出**的交付物。
 
 - Detector: `ohscanner.interface.ipc` 0.1.0; model: `oh-ipc-2026.10-v1`.
@@ -27,6 +20,112 @@
 - Next work: parser/build context, dispatcher/cross-file relation summaries, requestedUID relationship precision, then targeted SMT constraints and independent historical holdout. No target recall guarantee yet.
 
 Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner_v0_1_2026-10-10.md.
+
+---
+
+# IPC method card v0.10 — M2: a one-hop same-file relay is not an unguarded boundary unless the callee is the guard (2026-10-12)
+
+v0.9 changed how one comparison is *read*. This changes whether a path is read as
+*guarded at all*, in one place: the entry that only forwards the request.
+Full record: `docs/research/ipc_m2_relay_guard_2026-10-12.md`; reproducer:
+`research/experiments/interface/ipc/m2_platform_delta.py`.
+
+- **What was wrong.** The AUTH-01 relay predicate asked whether *this entry's own state* had
+  established a descriptor check. `OnRemoteRequest` that only hands the request to
+  `OnRemoteRequestInner(code, data, reply, option)` has no check in its own body by construction, so
+  the guard one call away was reported as absent
+  (`screen_session_manager_stub.cpp:42`, guard at `OnRemoteRequestInner:50`).
+- **What a relay has to satisfy to count.** Five conditions, all structural, all with a fixture that
+  breaks exactly one: the callee is in the **same file**; **every argument is one of the caller's own
+  parameters** (a substituted literal is a different transaction); the callee has a **top-level**
+  comparison of `ReadInterfaceToken()` against a descriptor identity — a nested one does not dominate
+  the dispatch; the identity is one M1 **accepts**; and the mismatch branch **leaves** (top-level
+  `return`/`throw`) **before** the `switch`. Locals on the way to the comparison are bound
+  (`token = data.ReadInterfaceToken();`), so the common two-statement form is read the same way.
+- **Three outcomes, M1's vocabulary.** Guarded → the call site is not a boundary and nothing is
+  reported. Comparison present but identity not accepted → the candidate is **kept**, its message
+  says *present but not accepted*, and both identities are cited with the same obligations M1 added.
+  Anything else → the call site stays a candidate.
+- **Measured through the official path**, over exactly the scope the M1 platform reports persisted,
+  at the same commits: `window_window_manager` **15 → 14** (one AUTH-01 removed, 0 added, 0 reworded);
+  the other four components identical item by item (3 → 3, 4 → 4, 2 → 2, 0 → 0). The removed candidate
+  is the one M1's report §6 attributed to M2. `commit`, `snapshot_sha256` and the file's
+  `source_sha256` are unchanged between the two runs; only the detector version moved 0.4.0 → 0.5.0.
+- **Nothing is lost by removing it.** `OnRemoteRequestInner` is already an entry root in its own right
+  (`*Inner` in a `*Stub`), so its own observations survive: the file still reports twice
+  (`:738` AUTH-02, `:1778` CAP-01).
+- **Controls are discriminating, not decorative.** Run the same eight fixtures against the pre-M2
+  engine and exactly the two `_fixed` cases plus the wrong-interface message assertion fail, while the
+  five pure positives pass both before and after.
+- **What is not established.** The corpus exercised only the *guarded* outcome: every real one-hop
+  guard compares an identity M1 accepts, so the "present but not accepted" branch and the
+  local-variable binding rest on fixtures alone. Cross-file delegation is untouched (that is M6), and
+  "top-level + before the switch + the mismatch branch leaves" is a structural rule, not a bounded
+  dominance proof (that is M5) — `goto`, exceptions and macro-expanded control flow are not covered.
+  A callee reached from other entries is judged per call site, not inferred globally.
+- **Rule identity moved:** detector `0.5.0`, model `oh-ipc-2026.10-v3`. Tests: 401 in the interface
+  line (10 new, 8 fixtures added to the semantic matrix, manifest 40 → 48 rows).
+- **Next, in the owner's order:** M5 (bounded dominance) → M3/M4 → M6.
+
+> **2026-10-12 状态**：M2 由队友 B 单独提交，未推送、未合并；M3–M6 仍待做。
+
+---
+
+# IPC method card v0.9 — M1 landed alone: the descriptor guard is read as an interface identity (2026-10-11)
+
+v0.8 diagnosed M1 but changed no rule. This is M1, as one commit that touches no other family.
+Full record: `docs/research/ipc_m1_descriptor_identity_2026-10-11.md`; reproducers:
+`research/experiments/interface/ipc/m1_platform_delta.py`, `m1_removal_basis.py`, `m1_record.py`.
+
+- **What changed.** `descriptor_expectation()` reads the comparison as one of four subjects:
+  `unqualified`/`self` (accepted), `interface` (accepted, and the message says where the class
+  states it), `mismatch` (kept as a candidate that cites *both* sides), `unresolved` (stays
+  `unknown` — neither a working guard nor a proven mismatch). The identity comes from the class's
+  own `IRemoteStub<T>` base clause, collected recursively by `implemented_interfaces()`, **never
+  from the class name**: `IRemoteStub<OnPermissionUsedRecordCallback>` has no `I` prefix, and
+  `TokenSyncCallbackStub` implements `ITokenSyncCallback`, not an eponymous interface. An alias base
+  yields `unresolved` rather than a guess. `refine()` no longer records an unaccepted comparison as
+  a guard; it records it as a `descriptor_issue` so "seen but not established" survives.
+- **A correct call is still not a guard.** Four controls pin that M1 did not loosen the path
+  semantics: fetch-without-compare, a mismatch branch that only logs, a guard after the operation,
+  and a guard on one branch only. All four still report AUTH-01.
+- **Measured through the official path**, not a private harness: `python -m src.cli ohscan-run
+  --detector ohscanner.interface.ipc` over exactly the baseline's explicit `--include` paths, at the
+  same commits, keyed the way the project's own regression script keys candidates
+  (file, line, rule_id, source_sha256 — deliberately excluding `rule_version`, with reworded reasons
+  reported separately). `security_access_token` **20 → 3** (17 AUTH-01 removed, 0 added, 0 reworded);
+  `window_window_manager` 15 → 15, `communication_dsoftbus` 4 → 4, `update_updateservice` 2 → 2,
+  `distributeddatamgr_kv_store` 0 → 0 — the other four components are identical item by item, so the
+  change is surgical and its boundary is visible.
+- **Every removal cites the guard that removed it.** A file can hold several stub classes
+  (`accesstoken_callback_stubs.cpp` holds two, each with its own guard), so the citation must come
+  from the entry the candidate was reported under, not from the first comparison in the file:
+  `TokenSyncCallbackStub::OnRemoteRequest` guard at `:70` → `GetRemoteHapTokenInfoInner` called at
+  `:78` → handler body at `:103`; `token_sync_manager_stub.cpp` guard `:42`; privacy's guard `:35`,
+  against an interface with no `I` prefix. All 17 verified: identity agrees on both sides, guard
+  precedes the candidate, the mismatch branch returns, and the file's bytes match the checksum the
+  candidate was bound to.
+- **Three of the 17 were M3's mechanism, not M1's.** `token_sync_manager_stub.cpp:83/110/127`
+  reported `IsRootCalling` — the authorization predicate — as a handler. M1 removes their AUTH-01
+  observation because the entry's guard dominates that path; **M3's defect is not fixed**, and the
+  disappearance of the symptom must not be read as the fix.
+- **What is not established.** Zero candidates *added* and zero *reworded* means the corpus never
+  exercised the new `mismatch`/`unresolved` message branches — those two outcomes rest on fixtures
+  only. The 24 survivors are the ones M1 cannot address: a check delegated one call away (M2,
+  `screen_session_manager_stub.cpp:42` → `OnRemoteRequestInner:50`), an unmodeled authorization
+  predicate (M3), indirect `dlsym` dispatch with no comparison in the analysed file
+  (`bus_center_ex_obj_stub.cpp`, `trans_spec_object_stub.cpp`), and dominance (M5). Dominance is
+  checked by the same structural rule for all 17, so what a guard *means* beyond identity — whether
+  the token could be empty, whether the caller controls it, whether another entry bypasses the
+  function — stays in EvidenceObligations.
+- **Rule identity moved:** detector `0.4.0`, model `oh-ipc-2026.10-v2`; two new per-observation
+  obligations, `descriptor_identity_mismatch` and `descriptor_identity_unresolved`. Tests: 391 in
+  the interface line (16 new descriptor-identity tests, 11 fixtures in the semantic matrix,
+  manifest 29 → 40 rows); 350 on the integration-based branch.
+- **Next, in the owner's order:** M2 (same-file one-hop delegation) → M5 (bounded dominance) →
+  M3/M4 → M6. Not started here.
+
+> **2026-10-11 状态**：M1 由队友 B 单独提交，未推送、未合并；M2–M6 仍待做。
 
 ---
 
