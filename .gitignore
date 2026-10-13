@@ -228,6 +228,7 @@ outputs/reports/*.md
 outputs/logs/
 outputs/bin/
 outputs/reports/static_baselines/
+outputs/reports/static_module_20261013/
 outputs/reports/perf_scale/
 outputs/reports/owner_ipc_integration/
 outputs/reports/m1_descriptor_identity/

@@ -14,7 +14,9 @@
 | `communication_dsoftbus_null_deref_001` | `communication_dsoftbus` | `null_deref` | CWE-476 | CVE-2025-26690 | metadata + static replay；text scanner miss 记录为盲区 |
 | `arkcompiler_ets_runtime-jsarray-sort-oob-2025-02` | `arkcompiler_ets_runtime` | `oob_write` | CWE-787 | CVE-2025-23420 | metadata + static replay；用于检验 oob_write pattern 覆盖 |
 
-当前样本覆盖 `lifetime_uaf` / `concurrency_race` / `null_deref` / `oob_write` 四类 root-cause group。样本量仍不足以计算正式 Precision / Recall。
+当前 7 条样本覆盖 `lifetime_uaf` / `concurrency_race` / `null_deref` /
+`oob_write` / `integer_overflow` / `type_confusion` / `permission_bypass`
+七类 root-cause group。样本量仍不足以计算正式 Precision / Recall。
 
 ---
 
@@ -65,13 +67,17 @@
 1. **先定 metadata**：公开来源、fixed commit、vulnerable parent、affected file、affected symbol、CWE、root-cause group 必须可追溯。
 2. **再做 static replay**：只记录 commit 存在性、direct parent、changed files、symbol presence、candidate overlap。
 3. **不做 PoC / exploitability**：本候选清单只服务 benchmark，不服务漏洞触发。
-4. **不计算 Precision / Recall**：当前 4 条正样本只能报告 raw hit / miss / unknown / not_applicable。
+4. **不计算 Precision / Recall**：当前 7 条正样本只能报告 raw hit / miss / unknown / not_applicable。
 5. **避免重复根因**：优先补当前缺失的 integer_overflow、type_confusion、permission/information-leak、stack_overflow，而不是继续堆 UAF。
 
 ## 2026-10-13 核验记录
 
-已定位 CVE-2025-0587、CVE-2025-27536、CVE-2025-21098 的官方公告和修复 PR，但在
-本轮实现中尚未把 merged commit、vulnerable parent、blob hash 与 affected symbol
-绑定到本地 Git 对象，因此**未加入正式 benchmark**。排除记录见
-`benchmarks/historical/research/candidate_exclusions_2026-10-13.json`，不参与任何
-hit/miss 或指标统计。
+CVE-2025-0587、CVE-2025-27536、CVE-2025-21098 已补齐 official advisory、merged
+fix commit、vulnerable parent、affected file、vulnerable/fixed Git blob SHA-1、
+source SHA-256、affected symbol 与 PR patch SHA-256。对应 manifest 已进入
+`benchmarks/historical/`，逐项绑定位于 `benchmarks/historical/source_bindings/`，
+可通过 `python -m scripts.verify_historical_source_bindings` 重新核验。
+
+这三组记录是 historical benchmark evidence，不是新漏洞发现；其 patch-obligation
+sidecar 在阅读修复后创建，因此标记 `development_participation=true`，不得伪装成
+独立 holdout。

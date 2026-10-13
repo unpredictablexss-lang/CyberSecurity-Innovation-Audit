@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "sample_id": "kernel_liteos_a-os-copy-user-param-bypass-2025-03",
+  "title": "OsCopyUserParam kernel-space filename restriction fix",
+  "repository": "openharmony/kernel_liteos_a",
+  "repo_url": "https://gitee.com/openharmony/kernel_liteos_a",
+  "vulnerable_commit": "f83c7205e7d685a999e5de360423c13db1886453",
+  "fixed_commit": "e6eb21f55e4768f6cfbf09cedb0b35259bafcb4b",
+  "weakness": "CWE-284",
+  "affected_files": ["kernel/extended/dynload/src/los_exec_elf.c"],
+  "affected_symbols": ["OsCopyUserParam"],
+  "root_cause": "The published permission-bypass fix limits the kernel-address filename path to the first kernel-created user process, preventing later kernel-space filenames from bypassing the user-copy path.",
+  "cve": "CVE-2025-21098",
+  "source_refs": [
+    "https://gitee.com/openharmony/security/raw/master/zh/security-disclosure/2025/2025-03.md",
+    "https://gitee.com/openharmony/kernel_liteos_a/pulls/1267"
+  ],
+  "notes": "Historical benchmark evidence only. The advisory describes permission bypass with information-disclosure impact; exploitability and product reachability are not inferred here.",
+  "label_status": "advisory_confirmed",
+  "root_cause_group": "permission_bypass",
+  "evidence_level": "patch_and_advisory",
+  "runtime_replay_status": "not_run"
+}

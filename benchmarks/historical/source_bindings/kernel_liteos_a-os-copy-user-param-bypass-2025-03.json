@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "sample_id": "kernel_liteos_a-os-copy-user-param-bypass-2025-03",
+  "repository": "openharmony/kernel_liteos_a",
+  "cve": "CVE-2025-21098",
+  "pr_number": 1267,
+  "pr_url": "https://gitee.com/openharmony/kernel_liteos_a/pulls/1267",
+  "patch_sha256": "3bb7a79aea1ba12cc092ae675a50a56f83889f9998c189abb56686dc580bec0d",
+  "vulnerable_commit": "f83c7205e7d685a999e5de360423c13db1886453",
+  "fixed_commit": "e6eb21f55e4768f6cfbf09cedb0b35259bafcb4b",
+  "affected_file": "kernel/extended/dynload/src/los_exec_elf.c",
+  "affected_symbol": "OsCopyUserParam",
+  "vulnerable_blob_sha1": "57d8969b92041e93b7dc74c43c6a88a704b5d2b3",
+  "fixed_blob_sha1": "90bd24b9ed8668470eb8f154259af4fa627f1640",
+  "vulnerable_sha256": "02cf9c442349e6e6280edf5c9bfc0c97ef749440a87632a5d4c50e1bb1c0a312",
+  "fixed_sha256": "051f484a585d01ccc99e992342774203b64f8b59035cfc6849372bfb8fd40e6b"
+}

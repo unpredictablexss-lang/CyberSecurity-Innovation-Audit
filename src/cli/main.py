@@ -311,7 +311,7 @@ def main() -> None:
     normalize_parser.add_argument(
         "--provider",
         required=True,
-        choices=["semgrep", "codeql", "clang", "clang_sa", "cppcheck", "joern"],
+        choices=["semgrep", "codeql", "clang", "clang_sa", "cppcheck", "joern", "infer", "infer-pulse"],
         help="External tool provider adapter",
     )
     normalize_parser.add_argument("--input", required=True, help="Tool-native report file")
@@ -321,6 +321,7 @@ def main() -> None:
     normalize_parser.add_argument("--scope-loc", type=int, required=True, help="Scanned LOC")
     normalize_parser.add_argument("--elapsed-seconds", type=float, required=True, help="Tool run time")
     normalize_parser.add_argument("--peak-memory-mb", type=float, default=None, help="Tool peak memory")
+    normalize_parser.add_argument("--tool-version", default=None, help="Override normalized tool version")
     normalize_parser.add_argument("--run-id", default=None, help="Override run id")
     normalize_parser.add_argument(
         "--json-out",
@@ -678,6 +679,7 @@ def main() -> None:
             scope_loc=args.scope_loc,
             elapsed_seconds=args.elapsed_seconds,
             peak_memory_mb=args.peak_memory_mb,
+            tool_version=args.tool_version,
         )
         try:
             result = normalize_tool_output(args.provider, payload, context)

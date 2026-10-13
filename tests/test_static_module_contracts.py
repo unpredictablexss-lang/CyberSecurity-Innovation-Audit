@@ -323,13 +323,14 @@ class ArtifactContractTests(unittest.TestCase):
             (root / "benchmarks/historical/research/candidate_exclusions_2026-10-13.json")
             .read_text(encoding="utf-8")
         )
-        self.assertEqual(exclusions["status"], "excluded_unverified")
+        self.assertEqual(exclusions["status"], "resolved_into_benchmark")
         self.assertTrue(exclusions["candidates"])
 
         queries = json.loads(
             (root / "scripts/joern_queries/root_cause_queries.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(queries["status"], "designed_not_executed")
+        self.assertEqual(queries["status"], "partially_executed")
+        self.assertIn("lifetime-reset-stale-alias", queries["executed"])
         self.assertGreaterEqual(len(queries["queries"]), 4)
 
     def test_infer_research_commands_do_not_use_a_shell(self) -> None:

@@ -485,3 +485,23 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   ```
 - 本轮未运行 Infer/扩展 Joern 查询，未实现 Web/任务队列/Agent/PoC 平台，未推送、
   未创建 PR、未标 ready、未合并 main；production Catalog 是否注册仍待负责人审查。
+
+## 28. 2026-10-13 剩余限制收敛与真实工具复测
+
+- 已合入 Core/接口线/工作台最新本地远端引用。A 线 `lifetime`、`shared_ptr_race`
+  已登记为 `research_candidate`；shared_ptr PoC 归接口线维护，不在 A 线保留副本。
+- c_utils pinned host profile 完成 Clang SA、CodeQL 2.27.2、Infer 1.2.0 实跑：
+  Clang 21/21 TU，CodeQL 183-query suite completed/11 diagnostics，Infer
+  completed/7 issues。两者均为 reconstructed host profile，不是产品 GN build。
+- Joern 4.0.654 实跑 nothrow 与 lifetime-reset-stale-alias 查询；查询为 0 findings，
+  但 123 个 C/C++ scope 文件仅 62 个有 parsed/CPG row，整体保持 blocked/unknown。
+- CVE-2025-0587、CVE-2025-27536、CVE-2025-21098 已绑定 fix commit、vulnerable
+  parent、blob SHA-1、source SHA-256、symbol 与 patch SHA-256，并由
+  `scripts/verify_historical_source_bindings.py` 复核为 verified。
+- Workbench `verify_workbench.py` 对 pinned c_utils 返回 `completed_with_limitations`、
+  `cli_parity=true`、123 files、parse complete 93/partial 30、candidate 0、
+  `validated_vulnerability=0`。Web/Worker/SQLite/RepositoryManager 由负责人平台分支承载。
+- 最终本地回归 **640 tests、11 skipped、OK**；`compileall`、`git diff --check`、
+  Node 22.23.3 `npm ci`/`npm run build`、3/3 source-binding verifier 通过。
+- 仍未实现 A 线 Agent loop、产品构建 profile、Joern 全 scope 覆盖、独立 holdout
+  Precision/Recall；所有 finding 仍为 candidate/unassessed/unknown。

@@ -170,7 +170,7 @@ git status --short
 
 For PR #4 closure, also check the PR description and `PROGRAM_STATUS.md` agree on:
 
-- 4 historical samples;
+- 7 historical samples;
 - root-cause matrix complete;
 - benchmark-report CLI present;
 - no Precision / Recall from 4 positive samples;

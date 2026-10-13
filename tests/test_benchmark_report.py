@@ -19,7 +19,7 @@ def _samples():
 class BenchmarkReportTests(unittest.TestCase):
     def test_build_report_with_bundled_samples(self) -> None:
         samples = _samples()
-        self.assertEqual(len(samples), 4)
+        self.assertEqual(len(samples), 7)
         report = build_benchmark_report(
             samples,
             {
@@ -31,14 +31,17 @@ class BenchmarkReportTests(unittest.TestCase):
                 "cppcheck": None,
             },
         )
-        self.assertEqual(report.sample_count, 4)
+        self.assertEqual(report.sample_count, 7)
         self.assertEqual(
             set(report.root_cause_group_distribution),
-            {"lifetime_uaf", "concurrency_race", "null_deref", "oob_write"},
+            {
+                "lifetime_uaf", "concurrency_race", "null_deref", "oob_write",
+                "integer_overflow", "type_confusion", "permission_bypass",
+            },
         )
         self.assertEqual(
             set(report.cwe_distribution),
-            {"CWE-416", "CWE-125", "CWE-476", "CWE-787"},
+            {"CWE-416", "CWE-125", "CWE-476", "CWE-787", "CWE-190", "CWE-843", "CWE-284"},
         )
         self.assertEqual(report.validated_vulnerability, 0)
 

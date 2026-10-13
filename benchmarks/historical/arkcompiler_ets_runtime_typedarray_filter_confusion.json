@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-typedarray-filter-confusion-2025-09",
+  "title": "TypedArray filter detached-buffer/type validation ordering fix",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "repo_url": "https://gitee.com/openharmony/arkcompiler_ets_runtime",
+  "vulnerable_commit": "8299f560e7c51b2b988180fed44457dca63c4a54",
+  "fixed_commit": "0e2a01bba2345e5650e09bae36092237b010f254",
+  "weakness": "CWE-843",
+  "affected_files": ["ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"],
+  "affected_symbols": ["BuiltinsTypedArrayStubBuilder::Filter"],
+  "root_cause": "The published type-confusion fix moves the viewed-buffer detached check after object and fast-typed-array type validation in BuiltinsTypedArrayStubBuilder::Filter.",
+  "cve": "CVE-2025-27536",
+  "source_refs": [
+    "https://gitee.com/openharmony/security/raw/master/zh/security-disclosure/2025/2025-09.md",
+    "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11423"
+  ],
+  "notes": "Historical benchmark evidence only. The fix adds a typed-array-filter regression test; this manifest binds the primary stub-builder source and symbol.",
+  "label_status": "advisory_confirmed",
+  "root_cause_group": "type_confusion",
+  "evidence_level": "patch_and_advisory",
+  "runtime_replay_status": "not_run"
+}

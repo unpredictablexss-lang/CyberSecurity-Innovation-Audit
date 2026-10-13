@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-atomic-index-overflow-2025-03",
+  "title": "TypedArray atomic access index and length overflow fix",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "repo_url": "https://gitee.com/openharmony/arkcompiler_ets_runtime",
+  "vulnerable_commit": "cae11f121c030a90ba41d8e4d866f91292f25892",
+  "fixed_commit": "5aa9c035e98911ec7ed28065a2138c2709792a42",
+  "weakness": "CWE-190",
+  "affected_files": ["ecmascript/base/atomic_helper.cpp"],
+  "affected_symbols": ["AtomicHelper::ValidateAtomicAccess"],
+  "root_cause": "The published integer-overflow fix replaces signed typed-array length/index conversion and unchecked access arithmetic with unsigned conversion and an index-before-length guard in AtomicHelper::ValidateAtomicAccess.",
+  "cve": "CVE-2025-0587",
+  "source_refs": [
+    "https://gitee.com/openharmony/security/raw/master/zh/security-disclosure/2025/2025-03.md",
+    "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/10937"
+  ],
+  "notes": "Historical benchmark evidence only. The fix commit is a multi-file cherry-pick; this manifest binds the primary atomic-helper source and symbol named by the verified patch.",
+  "label_status": "advisory_confirmed",
+  "root_cause_group": "integer_overflow",
+  "evidence_level": "patch_and_advisory",
+  "runtime_replay_status": "not_run"
+}

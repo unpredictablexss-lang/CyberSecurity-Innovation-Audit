@@ -112,6 +112,18 @@ python3 -m scripts.collect_build_context \
   --output outputs/reports/build_context_sample.json
 ```
 
+## verify_historical_source_bindings.py
+
+核验 historical manifest 与 source binding sidecar 的 fix commit、vulnerable
+parent、affected file、blob SHA-1、source SHA-256、symbol 和 patch SHA-256：
+
+```sh
+python3 -m scripts.verify_historical_source_bindings \
+  --json-out outputs/reports/historical_source_bindings.json
+```
+
+该脚本只验证历史证据绑定，不产生漏洞结论或 Precision/Recall。
+
 ## joern_queries/root_cause_queries.json
 
 记录 `oob_write`、`integer_overflow`、`lifetime_uaf` 和 `concurrency_race`

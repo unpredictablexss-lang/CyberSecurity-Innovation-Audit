@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "recorded_at": "2026-10-13T00:00:00+08:00",
-  "status": "excluded_unverified",
+  "status": "resolved_into_benchmark",
   "candidates": [
     {
       "cve": "CVE-2025-0587",
@@ -9,7 +9,9 @@
       "root_cause_group": "integer_overflow",
       "official_source": "https://gitee.com/openharmony/security/raw/master/zh/security-disclosure/2025/2025-03.md",
       "fix_pr": "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/10937",
-      "exclusion_reason": "Advisory and fix PR were located, but exact merged commit, vulnerable parent, blob hash and affected symbol were not independently bound to local Git objects during this implementation."
+      "sample_id": "arkcompiler_ets_runtime-atomic-index-overflow-2025-03",
+      "binding_path": "benchmarks/historical/source_bindings/arkcompiler_ets_runtime-atomic-index-overflow-2025-03.json",
+      "resolution": "Exact merged commit, vulnerable parent, affected file/blob SHA-1, source SHA-256, symbol and patch SHA-256 verified on 2026-10-13."
     },
     {
       "cve": "CVE-2025-27536",
@@ -17,7 +19,9 @@
       "root_cause_group": "type_confusion",
       "official_source": "https://gitee.com/openharmony/security/raw/master/zh/security-disclosure/2025/2025-09.md",
       "fix_pr": "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11423",
-      "exclusion_reason": "Advisory and fix PR were located, but exact merged commit, vulnerable parent, blob hash and affected symbol were not independently bound to local Git objects during this implementation."
+      "sample_id": "arkcompiler_ets_runtime-typedarray-filter-confusion-2025-09",
+      "binding_path": "benchmarks/historical/source_bindings/arkcompiler_ets_runtime-typedarray-filter-confusion-2025-09.json",
+      "resolution": "Exact merged commit, vulnerable parent, affected file/blob SHA-1, source SHA-256, symbol and patch SHA-256 verified on 2026-10-13."
     },
     {
       "cve": "CVE-2025-21098",
@@ -25,8 +29,10 @@
       "root_cause_group": "permission_bypass",
       "official_source": "https://gitee.com/openharmony/security/raw/master/zh/security-disclosure/2025/2025-03.md",
       "fix_pr": "https://gitee.com/openharmony/kernel_liteos_a/pulls/1267",
-      "exclusion_reason": "Advisory and fix PR were located, but exact merged commit, vulnerable parent, blob hash and affected symbol were not independently bound to local Git objects during this implementation."
+      "sample_id": "kernel_liteos_a-os-copy-user-param-bypass-2025-03",
+      "binding_path": "benchmarks/historical/source_bindings/kernel_liteos_a-os-copy-user-param-bypass-2025-03.json",
+      "resolution": "Exact merged commit, vulnerable parent, affected file/blob SHA-1, source SHA-256, symbol and patch SHA-256 verified on 2026-10-13."
     }
   ],
-  "interpretation": "These candidates are not benchmark samples and contribute no hit/miss counts."
+  "interpretation": "The three former exclusions are now exact-bound benchmark samples; their source-binding verifier output is evidence, not a vulnerability verdict."
 }

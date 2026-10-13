@@ -1,6 +1,10 @@
 {
   "schema_version": 1,
-  "status": "designed_not_executed",
+  "status": "partially_executed",
+  "executed": [
+    "lifetime-reset-stale-alias"
+  ],
+  "executed_note": "Lifetime query ran on the pinned c_utils snapshot with Joern 4.0.654; coverage remained blocked/unknown because 62 source files lacked parsed/CPG rows.",
   "purpose": "Root-cause query expansion plan for saved Joern CPG experiments.",
   "queries": [
     {
@@ -24,6 +28,7 @@
     },
     {
       "query_id": "lifetime-reset-stale-alias",
+      "script": "scripts/joern_lifetime_reset_stale_alias.sc",
       "root_cause_group": "lifetime_uaf",
       "evidence_type": "syntax",
       "required_shape": "owner reset/assignment and stale alias use in a consistent symbol scope",

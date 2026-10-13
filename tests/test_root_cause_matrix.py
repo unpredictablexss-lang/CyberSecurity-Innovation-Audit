@@ -114,7 +114,7 @@ class RootCauseMatrixTests(unittest.TestCase):
             load_sample(path)
             for path in sorted((REPO_ROOT / "benchmarks" / "historical").glob("*.json"))
         ]
-        self.assertEqual(len(samples), 4)
+        self.assertEqual(len(samples), 7)
         tool_candidates = {
             "own_text": [],
             "own_ast": [],

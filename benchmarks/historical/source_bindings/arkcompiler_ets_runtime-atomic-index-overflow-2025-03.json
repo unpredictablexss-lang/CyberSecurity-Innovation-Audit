@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-atomic-index-overflow-2025-03",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "cve": "CVE-2025-0587",
+  "pr_number": 10937,
+  "pr_url": "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/10937",
+  "patch_sha256": "da0daa40bbea4ad0a5407b91d4271e718f839e14fd97f7a0dd3e923310355b65",
+  "vulnerable_commit": "cae11f121c030a90ba41d8e4d866f91292f25892",
+  "fixed_commit": "5aa9c035e98911ec7ed28065a2138c2709792a42",
+  "affected_file": "ecmascript/base/atomic_helper.cpp",
+  "affected_symbol": "AtomicHelper::ValidateAtomicAccess",
+  "vulnerable_blob_sha1": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+  "fixed_blob_sha1": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+  "vulnerable_sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541",
+  "fixed_sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+}

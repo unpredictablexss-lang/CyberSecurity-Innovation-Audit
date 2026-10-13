@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-atomic-index-overflow-2025-03",
+  "root_instance_id": "arkcompiler-atomic-index-overflow-001",
+  "root_cause_group": "integer_overflow",
+  "obligations": [
+    {
+      "obligation_id": "index-range-before-access",
+      "statement": "Convert the requested index without signed truncation and require index < current typed-array length before computing an access offset.",
+      "guard_relation": "unsigned index/length validation dominates the element-size and byte-offset arithmetic",
+      "effect": "prevents overflow or wraparound from turning an invalid index into an in-range access offset",
+      "evidence_refs": ["https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/10937"],
+      "status": "verified",
+      "limitations": ["Primary-file binding; the published fix also touches related runtime and stub paths."]
+    }
+  ],
+  "development_participation": true,
+  "holdout_eligible": false,
+  "notes": "Created after reading the fix patch; not an independent holdout."
+}

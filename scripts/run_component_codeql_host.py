@@ -4,7 +4,6 @@ import argparse
 import hashlib
 import json
 import os
-import shlex
 from pathlib import Path
 
 from scripts.run_component_clang_host import host_sources
@@ -34,15 +33,19 @@ def run(snapshot, dependency, output, codeql, suite):
     database = output / 'database'
     native = output / 'results.sarif'
     native.unlink(missing_ok=True)
-    compile_command = shlex.join(['python3', '-m', 'scripts.run_component_clang_host',
-        '--snapshot', str(snapshot), '--dependency', str(dependency), '--output-dir', str(output / 'build'), '--compile-only'])
+    # CodeQL's manual-build command splitter retains shell quotes in argv on
+    # some Linux builds. These experiment paths are already space-free, so emit
+    # a plain argv string rather than shell quoting.
+    compile_command = ' '.join(['python3', '-m', 'scripts.run_component_clang_host',
+        '--snapshot', str(snapshot), '--dependency', str(dependency),
+        '--output-dir', str(output / 'build'), '--compile-only'])
     commands = [[str(codeql), 'database', 'create', str(database), '--language=cpp', '--build-mode=manual',
                  '--source-root=' + str(root), '--command=' + compile_command, '--overwrite'],
                 [str(codeql), 'database', 'analyze', str(database), str(suite), '--format=sarifv2.1.0',
                  '--output=' + str(native), '--threads=2', '--ram=2048']]
     steps = []
     for command in commands:
-        step = execute(command, PROJECT, env, 300)
+        step = execute(command, PROJECT, env, 1200)
         steps.append(step)
         (output / 'execution.json').write_text(json.dumps(dict(commit=manifest['commit'],
             dependency_commit=dep['commit'], analyzed_files=files, tool_version=version, steps=steps,

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-typedarray-filter-confusion-2025-09",
+  "root_instance_id": "arkcompiler-typedarray-filter-confusion-001",
+  "root_cause_group": "type_confusion",
+  "obligations": [
+    {
+      "obligation_id": "validate-object-type-before-viewed-buffer",
+      "statement": "Validate that the receiver is an object and a fast typed array before reading its viewed ArrayBuffer during Filter.",
+      "guard_relation": "object and fast-typed-array type guards dominate GetViewedArrayBuffer and the detached-buffer check",
+      "effect": "prevents an incompatible receiver from being interpreted as a typed-array view",
+      "evidence_refs": ["https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11423"],
+      "status": "verified",
+      "limitations": ["Historical patch shape only; runtime exploitability is not established here."]
+    }
+  ],
+  "development_participation": true,
+  "holdout_eligible": false,
+  "notes": "Created after reading the fix patch and regression test."
+}

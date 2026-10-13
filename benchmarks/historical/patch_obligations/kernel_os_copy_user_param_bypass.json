@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "sample_id": "kernel_liteos_a-os-copy-user-param-bypass-2025-03",
+  "root_instance_id": "kernel-os-copy-user-param-bypass-001",
+  "root_cause_group": "permission_bypass",
+  "obligations": [
+    {
+      "obligation_id": "kernel-filename-only-first-init",
+      "statement": "Allow a kernel-address filename only for the first kernel-created user process and force later callers through the user-address copy path.",
+      "guard_relation": "first-init state guard dominates the kernel-address memcpy_s branch",
+      "effect": "prevents later kernel-space filenames from bypassing the user-copy restriction",
+      "evidence_refs": ["https://gitee.com/openharmony/kernel_liteos_a/pulls/1267"],
+      "status": "verified",
+      "limitations": ["Advisory impact is recorded; product reachability and exploit conditions remain separate evidence obligations."]
+    }
+  ],
+  "development_participation": true,
+  "holdout_eligible": false,
+  "notes": "Created after reading the fix patch; not an independent holdout."
+}

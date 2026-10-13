@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "sample_id": "arkcompiler_ets_runtime-typedarray-filter-confusion-2025-09",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "cve": "CVE-2025-27536",
+  "pr_number": 11423,
+  "pr_url": "https://gitee.com/openharmony/arkcompiler_ets_runtime/pulls/11423",
+  "patch_sha256": "3b8a072bc53e9dc35e8ee794a6e59a9665bd3e93306c1804e893faa6d7173024",
+  "vulnerable_commit": "8299f560e7c51b2b988180fed44457dca63c4a54",
+  "fixed_commit": "0e2a01bba2345e5650e09bae36092237b010f254",
+  "affected_file": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+  "affected_symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+  "vulnerable_blob_sha1": "a436ec1076bf46ffe8b8fa947c9fdcfb928678a0",
+  "fixed_blob_sha1": "e543029d309969d117a423b31c3b0404dabc060f",
+  "vulnerable_sha256": "57b9e733c7e9f0cf7adf39569158ce87aac981fb0867f139f798f0d76501784e",
+  "fixed_sha256": "a5e161066c2ace8ce4a8d1ac5f14a95a09df8ef5c0d3aea0ed81af8c7135abc3"
+}
