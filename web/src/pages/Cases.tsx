@@ -51,6 +51,19 @@ export default function Cases() {
       .then(setCases)
       .catch((e) => setError(String(e)));
   }, []);
+  const downloadReport = async (caseId: string, kind: "json" | "md") => {
+    try {
+      const response = await fetch("/api/v1/cases/" + caseId + "/report." + kind);
+      if (!response.ok) throw new Error(await response.text());
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "ohscanner-case-" + caseId + "." + kind;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (e) { message.error(String(e)); }
+  };
   return (
     <>
       <Header
@@ -66,6 +79,7 @@ export default function Cases() {
             { title: "案例", dataIndex: "title" },
             { title: "状态", render: () => <Tag>调查中 · 未确认</Tag> },
             { title: "关联观测", render: (_: any, c: any) => c.links.length },
+            { title: "报告", render: (_: any, c: any) => <Space><Button size="small" onClick={() => void downloadReport(c.id, "json")}>JSON</Button><Button size="small" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button></Space> },
             {
               title: "创建时间",
               dataIndex: "created_at",
@@ -82,6 +96,7 @@ export default function Cases() {
                     </a>
                     <Paragraph>{l.rationale}</Paragraph>
                     <Text code>{l.candidate_id}</Text>
+                    <div><Button type="link" onClick={() => go("/operations")}>打开源码与验证操作</Button></div>
                   </div>
                 ))}
               </>

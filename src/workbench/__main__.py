@@ -34,6 +34,10 @@ def main():
                 start_new_session=True,
             )
         )
+        processes.append(subprocess.Popen(
+            [sys.executable, "-m", "src.workbench.operation_worker"], cwd=root, start_new_session=True))
+        processes.append(subprocess.Popen(
+            [sys.executable, "-m", "src.workbench.operation_worker", "--validation"], cwd=root, start_new_session=True))
         processes.append(
             subprocess.Popen(
                 [
@@ -53,7 +57,7 @@ def main():
             )
         )
         print(
-            f"OHScanner: http://localhost:{args.port} (API + persistent Worker)",
+            f"OHScanner: http://localhost:{args.port} (API + scan, operation and validation Workers)",
             flush=True,
         )
         while all(p.poll() is None for p in processes):

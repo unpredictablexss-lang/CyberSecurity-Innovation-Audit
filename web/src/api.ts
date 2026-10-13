@@ -1,6 +1,7 @@
 export const terminal = new Set([
   "completed",
   "completed_with_limitations",
+  "blocked",
   "failed",
   "cancelled",
   "interrupted",

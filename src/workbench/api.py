@@ -148,6 +148,10 @@ def create_app(settings=None):
             "target_roots": [str(p) for p in settings.target_roots],
             "capabilities": {
                 "snapshot_scan": True,
+                "operations_framework": True,
+                "source_sync": True,
+                "revision_range": True,
+                "read_only_investigation": True,
                 "manual_review": True,
                 "case_linking": True,
                 "agent": False,
@@ -384,6 +388,9 @@ def create_app(settings=None):
             media_type="application/json" if kind.endswith("json") else "text/plain",
             headers={"Content-Disposition": f'attachment; filename="{key}_{kind}"'},
         )
+
+    from .operations_api import install_routes
+    app.state.operations = install_routes(app, settings, store)
 
     web = Path(__file__).resolve().parents[2] / "web" / "dist"
     if web.is_dir():

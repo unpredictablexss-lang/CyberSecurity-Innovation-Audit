@@ -49,6 +49,7 @@ import NewScan from "./pages/NewScan";
 import JobDetail from "./pages/JobDetail";
 import Cases from "./pages/Cases";
 import Capabilities from "./pages/Capabilities";
+import OperationsPage from "./pages/Operations";
 const { Text, Title, Paragraph } = Typography;
 function App() {
   const route = useRoute();
@@ -123,6 +124,7 @@ function App() {
   else if (route === "/new")
     content = <NewScan repos={repos} detectors={detectors} refresh={refresh} />;
   else if (route === "/cases") content = <Cases />;
+  else if (route === "/operations") content = <OperationsPage />;
   else if (route === "/capabilities")
     content = <Capabilities detectors={detectors} />;
   else if (route === "/tasks")
@@ -280,6 +282,7 @@ function App() {
               label: "任务与候选",
             },
             { key: "/cases", icon: <BranchesOutlined />, label: "调查案例" },
+            { key: "/operations", icon: <CodeOutlined />, label: "源码与验证操作" },
             {
               key: "/capabilities",
               icon: <ExperimentOutlined />,

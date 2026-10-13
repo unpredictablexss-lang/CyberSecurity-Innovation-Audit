@@ -330,3 +330,5 @@ li {
     width: 96vw !important;
   }
 }
+
+.json-view { max-height: 520px; overflow: auto; padding: 14px; border-radius: 8px; background: #101923; color: #d7e0e7; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }

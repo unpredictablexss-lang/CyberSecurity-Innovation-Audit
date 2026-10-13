@@ -22,13 +22,12 @@ class Settings:
                 )
             ),
         )
-        return cls(
-            Path(
-                os.environ.get("OHSCANNER_DATA", str(home / "ohscanner-workbench/data"))
-            ).resolve(),
-            tuple(Path(p).expanduser().resolve() for p in roots.split(os.pathsep) if p),
-        )
+        data = Path(os.environ.get("OHSCANNER_DATA", str(home / "ohscanner-workbench/data"))).resolve()
+        configured = tuple(Path(p).expanduser().resolve() for p in roots.split(os.pathsep) if p)
+        managed_cache = data / "repo-cache"
+        return cls(data, configured + (managed_cache,))
 
     def initialize(self):
         self.data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         (self.data_dir / "artifacts").mkdir(exist_ok=True)
+        (self.data_dir / "repo-cache").mkdir(exist_ok=True, mode=0o700)
