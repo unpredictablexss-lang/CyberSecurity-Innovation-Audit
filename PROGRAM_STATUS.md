@@ -725,3 +725,15 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - 本报告不给 Precision：没有独立标注集就不存在正式误报率。
 - **M2 未修 M3/M4/M5/M6**：授权谓词体未建模（M3）、常量域（M4）、有界支配性（M5）、
   定向跨文件/跨仓（M6）都原样保留。
+
+
+## 35. 2026-10-11 M2-A 两个 C++ 自研候选检测器集成（GitHub CI 验证）
+
+- **范围**：把队友 A 整合分支 `40c2c66e` 的 `lifetime_detector.py` 与 `shared_ptr_race_detector.py` 及合成开发样例原样迁入核心 Catalog；适配层提供固定 Git 输入、M1.5 资格检查、文件级执行状态、证据义务和 JSON/Markdown。
+- 原始规则逻辑不改：`unique_ptr/raw alias/reset` 候选和 `shared_ptr` 非原子成员访问候选。前者对应待核实 CWE-416，后者首先是 CWE-362 候选；二者均不是确认漏洞。
+- `DetectorRun.file_outcomes` 为向后兼容的可选文件级元数据；旧 `ToolRunResult v1` 不改。对 `blocked` 的局部已完成文件、部分检查和候选证据在 Sidecar 分别存储，不能把未完整检查当成安全。
+- 新增 `tests/test_ohscanner_m2_a_integration.py` 的本地固定 Git 正负样例、跨文件 partial、工作区漂移和 Catalog 回归；旧 A 原算法测试一并携带。**GitHub Actions 已在 2026-10-11 最新功能提交 `f64c5b5d` 完成 250/250 项测试通过**（[Run 38073903714](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38073903714)）；**Ubuntu 上对真实 c_utils 当前 commit 的两检测器执行仍未复测**，不得宣布真实新漏洞命中。
+- 独立 holdout、当前组件攻击可达性、完整产品构建、PoC/TSan 自动关联、影响版本、修复重验和报告均不属于本次完成项。
+- 文档：`docs/testing/ohscanner_m2_a_integration.md`。PR #5 保持 Draft，不合并 main。
+
+- **CI 过程纠错**：首次开启 push CI 的 `d6943589` 运行 `38073772285` 为 249/250，通过日志定位为 M2-A 集成测试强求所有语义模型文件 `completed`；在 `f64c5b5d` 修正测试为承认真实 `blocked/partial`，没有放宽安全证据门槛或重写队友 A 原算法。后续 CI `38073903714` 全绿。

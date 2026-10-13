@@ -87,6 +87,15 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         raise ValueError("reported scope includes unprovided files")
     if run.status == "completed" and set(run.analyzed_files) != set(paths):
         raise ValueError("completed detector skipped a selected source unit")
+    per_file = dict(run.file_outcomes)
+    if not set(per_file).issubset(paths):
+        raise ValueError("per-file outcome outside supplied scope")
+    inspected = {path for path, state in per_file.items() if state in ("complete", "partial")}
+    if not inspected.issubset(run.analyzed_files):
+        raise ValueError("per-file completed/partial units must be in analyzed_files")
+    if per_file and not set(run.analyzed_files).issubset(inspected):
+        raise ValueError("unverified per-file outcome marked as analyzed")
+
 
     findings = []
     seen_ids = set()
@@ -125,21 +134,39 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             f"INCOMPLETE COVERAGE: {len(skipped)} applicable files not analyzed; "
             "inspect parsing.analysis_status and the coverage sidecar."
         )
+    if per_file and any(s != "complete" for s in per_file.values()):
+        limitations.append("INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.")
     if run.status == "blocked":
         limitations.append("Coverage incomplete or unsupported; do not infer safety.")
     if run.status == "failed":
         limitations.append("Detector failed; unexamined scope is unknown.")
 
-    examined = set(run.analyzed_files) if run.status == "completed" else set()
+    # Legacy detectors preserve their old blocked=>zero-coverage semantics.
+    # Reviewed M2 adapters may report explicit file-level outcomes instead.
+    completed = (
+        {path for path, state in per_file.items() if state == "complete"}
+        if per_file else set(run.analyzed_files) if run.status == "completed" else set()
+    )
+    partly_inspected = {path for path, state in per_file.items() if state == "partial"}
+    def analysis_state(path):
+        if path in skipped:
+            return "not_analyzed"
+        if path in completed:
+            return "analyzed"
+        if path in partly_inspected:
+            return "partial"
+        return "not_analyzed"
+
     parsing = [
         {
             "file": unit.path,
             "status": unit.parse_status,
             "issues": list(unit.parse_issues),
-            "analysis_status": "analyzed" if unit.path in examined else "not_analyzed",
+            "analysis_status": analysis_state(unit.path),
             "analysis_reason": (
-                "" if unit.path in examined else
-                skipped.get(unit.path, run.status if run.status != "completed" else "not_examined")
+                "" if analysis_state(unit.path) == "analyzed" else
+                "detector_model_incomplete" if analysis_state(unit.path) == "partial" else
+                skipped.get(unit.path, per_file.get(unit.path, run.status if run.status != "completed" else "not_examined"))
             ),
         }
         for unit in applicable
@@ -236,32 +263,42 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
         # The sidecar must name the same diagnostics as the report, so it resolves
         # each finding's binding the same way the report did.
         bindings = _source_bindings(run, selected) if run is not None else {}
+        partial = {item["file"] for item in report.parsing
+                   if item["analysis_status"] == "partial"}
         sidecar["detectors"][detector.detector_id] = {
             "scope_mode": getattr(detector, "ast_scope", "per_file"),
             "status": (
                 "not_applicable" if not applicable else
                 "failed" if report.status == "failed" else
-                "blocked" if report.status == "blocked" else
-                "partial" if len(analyzed) != len(applicable) else "complete"
+                "blocked" if report.status == "blocked" and not (analyzed or partial) else
+                "partial" if len(analyzed) != len(applicable) or partial else "complete"
             ),
             "applicable_files": len(applicable),
             "analyzed_files": sorted(analyzed),
+            "partially_inspected_files": sorted(partial),
+            "source_sha256": {u.path: u.sha256 for u in applicable},
             "unexamined": [
                 {"file": item["file"], "parse_status": item["status"],
-                 "reason": item["analysis_reason"]}
+                 "reason": item["analysis_reason"],
+                 "analysis_status": item["analysis_status"]}
                 for item in report.parsing if item["analysis_status"] != "analyzed"
             ],
             "evidence_obligations": (
                 [
                     {"diagnostic_id": _diagnostic_id(detector.detector_id, finding,
-                                                     bindings[finding]),
+                                                 bindings[finding]),
+                     "file": finding.file,
+                     "source_sha256": next(u.sha256 for u in applicable if u.path == finding.file),
+                     "analysis_status": (
+                         "partial" if finding.file in partial else "analyzed"
+                     ),
                      "obligations": [
                          {"kind": obligation.kind, "description": obligation.description,
                           "status": obligation.status}
                          for obligation in finding.evidence_obligations
                      ]}
                     for finding in run.findings if finding.evidence_obligations
-                ] if run is not None and report.status == "completed" else []
+                ] if run is not None and report.status in ("completed", "blocked") else []
             ),
         }
     return reports, sidecar

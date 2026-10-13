@@ -98,3 +98,6 @@ B 的 JS/ArkTS 和 IPC 检测器应使用**同一 Detector 协议**，通过 `So
 ## 6. Git 分支与合并策略
 
 可继续将本 PR #5 保持 Draft，以便目前集中开发。但**不推荐等 M0～M4 全部结束再合并一个超级 PR**；长期积累会导致难以审查和分支漂移，队友也要同步旧接口。最佳节奏是在底座单独审查稳定后合并 core PR，之后 A/B 分别以小 PR 集成，再用独立 PR 添加高级分析与报告。按负责人的明确授权执行 Ready/Merge，不自动合并。
+
+
+> **2026-10-11 M2-A 追加**：两个来自队友 A 的第一方 C++ 研究候选插件现已登记在 Catalog，可用 `ohscan-run --detector ohscanner.cpp.lifetime --detector ohscanner.cpp.shared_ptr_race` 在固定 Git 提交执行。原文“唯一 Catalog 项是 example”指 M2 初始状态，请以 [M2-A 接入验收文档](ohscanner_m2_a_integration.md) 为准。尚未完成独立保留集、动态确认和比赛交付闭环。

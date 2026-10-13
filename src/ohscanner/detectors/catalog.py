@@ -4,12 +4,23 @@ To ship teammate detectors: review code, tests, sample provenance and
 licenses; then explicitly register the imported factory in this file.
 """
 from .example import CppCopyCallExampleDetector
+from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
 
 _APPROVED = {
     CppCopyCallExampleDetector.detector_id: {
         "factory": CppCopyCallExampleDetector,
         "kind": "example",
         "summary": "C/C++ AST call-site inventory; no vulnerability verdict",
+    },
+    "ohscanner.cpp.lifetime": {
+        "factory": M2LifetimeDetector,
+        "kind": "research_candidate",
+        "summary": "A: narrow unique_ptr owner-reset/raw-alias candidate; not a proven UAF",
+    },
+    "ohscanner.cpp.shared_ptr_race": {
+        "factory": M2SharedPtrRaceDetector,
+        "kind": "research_candidate",
+        "summary": "A: narrow non-atomic shared_ptr member candidate (CWE-362); not confirmed",
     },
 }
 
