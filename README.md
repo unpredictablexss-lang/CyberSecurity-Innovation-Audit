@@ -27,10 +27,20 @@
 核心变化：不再把“规则命中”当成最终结果，而是采用 **漏斗式候选发现 → 程序分析 → 多证据误报抑制 → PoC/动态验证 → 跨版本影响 → Patch 重验** 的闭环架构。
 
 - [2026 总体架构：docs/architecture_2026.md](docs/architecture_2026.md)
+- **[下一阶段三线并行总方案：自研 OHScanner 架构 / 分工 / 集成 / 验收](docs/strategy/ohscanner_three_track_master_plan.md)**（计划）
+- **[自研检测器插件 Contract v1：队友必须遵守的输入/输出接口](docs/contracts/ohscanner_detector_contract_v1.md)**（拟实施、尚未在代码冻结）
+- [2021–2026 OpenHarmony 历史漏洞数据集与多扫描器实验协议](docs/strategy/vulnerability_corpus_bakeoff_protocol.md)（研究计划）
+- [Web / ArkTS / IPC 方向专项开发任务书](docs/strategy/oh_web_interface_track.md)（队友 B）
 - [系统设计：docs/design.md](docs/design.md)
 - [开发路线：docs/roadmap.md](docs/roadmap.md)
 - [赛题要求拆解：docs/competition_requirements.md](docs/competition_requirements.md)
 - [评价指标：docs/evaluation_criteria.md](docs/evaluation_criteria.md)
+
+## 当前建议的研发组织（规划）
+
+正式核心产品以**自主实现的 OpenHarmony 专用检测器**为主：历史漏洞公开修复对用于离线评测成熟扫描器的根因识别、修复区分、误报与覆盖能力，并据此提炼、改造检测算法；正式扫描阶段不是根据漏洞类型自动调用 Semgrep/CodeQL 等外部工具。
+
+由负责人建设统一的 SourceUnit/ScanContext/Detector 契约、引擎调度、证据链、Review/Report；队友 A 建 C/C++ 漏洞实验和检测器；队友 B 建 Web/ArkTS/IPC 权限与接口安全实验和检测器。**目前这套自研插件契约是设计稿，不代表 main 已具备该能力。** 已实现模块和待完成项仍以 [PROGRAM_STATUS.md](PROGRAM_STATUS.md) 为准。
 
 ## 总体技术路线
 
