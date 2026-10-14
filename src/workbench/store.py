@@ -2,6 +2,7 @@
 
 from contextlib import contextmanager
 from datetime import datetime, timezone
+import fcntl
 import json
 from pathlib import Path
 import sqlite3
@@ -26,46 +27,52 @@ class Store:
         self.root = data_dir
         data_dir.mkdir(parents=True, exist_ok=True)
         self.path = data_dir / "workbench.sqlite3"
-        with self.connect() as db:
-            db.executescript("""
-            CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY);
-            INSERT OR IGNORE INTO schema_migrations VALUES(1);
-            CREATE TABLE IF NOT EXISTS repositories(
-              id TEXT PRIMARY KEY, name TEXT NOT NULL, path TEXT UNIQUE NOT NULL, created_at TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS jobs(
-              id TEXT PRIMARY KEY, repository_id TEXT NOT NULL REFERENCES repositories(id),
-              spec TEXT NOT NULL, status TEXT NOT NULL, stage TEXT NOT NULL,
-              created_at TEXT NOT NULL, started_at TEXT, finished_at TEXT,
-              cancel_requested INTEGER NOT NULL DEFAULT 0, error TEXT, worker_pid INTEGER,
-              report_sha256 TEXT, elapsed_seconds REAL);
-            CREATE TABLE IF NOT EXISTS events(
-              id INTEGER PRIMARY KEY AUTOINCREMENT, job_id TEXT NOT NULL REFERENCES jobs(id),
-              created_at TEXT NOT NULL, stage TEXT NOT NULL, message TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS reviews(
-              id INTEGER PRIMARY KEY AUTOINCREMENT, job_id TEXT NOT NULL REFERENCES jobs(id),
-              candidate_id TEXT NOT NULL, status TEXT NOT NULL, reviewer TEXT NOT NULL,
-              notes TEXT NOT NULL, created_at TEXT NOT NULL);
-            CREATE INDEX IF NOT EXISTS review_lookup ON reviews(job_id, candidate_id, id);
-            CREATE TABLE IF NOT EXISTS cases(
-              id TEXT PRIMARY KEY, title TEXT NOT NULL, created_at TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS case_links(
-              case_id TEXT NOT NULL REFERENCES cases(id), job_id TEXT NOT NULL REFERENCES jobs(id),
-              candidate_id TEXT NOT NULL, rationale TEXT NOT NULL,
-              PRIMARY KEY(case_id,job_id,candidate_id));
-            CREATE INDEX IF NOT EXISTS job_queue ON jobs(status, created_at);
-            CREATE TABLE IF NOT EXISTS source_evidence(
-              id TEXT PRIMARY KEY, job_id TEXT NOT NULL REFERENCES jobs(id),
-              candidate_id TEXT NOT NULL, record TEXT NOT NULL, created_at TEXT NOT NULL);
-            CREATE INDEX IF NOT EXISTS evidence_lookup ON source_evidence(job_id,candidate_id);
-            INSERT OR IGNORE INTO schema_migrations VALUES(2);
-            """)
+        # The API and three Worker processes can start together. Serialize first
+        # schema/WAL initialization before any process begins polling the queues.
+        with (data_dir / "store-init.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            with self.connect() as db:
+                journal_mode = db.execute("PRAGMA journal_mode").fetchone()[0].lower()
+                if journal_mode != "wal":
+                    db.execute("PRAGMA journal_mode=WAL")
+                db.executescript("""
+                CREATE TABLE IF NOT EXISTS schema_migrations(version INTEGER PRIMARY KEY);
+                INSERT OR IGNORE INTO schema_migrations VALUES(1);
+                CREATE TABLE IF NOT EXISTS repositories(
+                  id TEXT PRIMARY KEY, name TEXT NOT NULL, path TEXT UNIQUE NOT NULL, created_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS jobs(
+                  id TEXT PRIMARY KEY, repository_id TEXT NOT NULL REFERENCES repositories(id),
+                  spec TEXT NOT NULL, status TEXT NOT NULL, stage TEXT NOT NULL,
+                  created_at TEXT NOT NULL, started_at TEXT, finished_at TEXT,
+                  cancel_requested INTEGER NOT NULL DEFAULT 0, error TEXT, worker_pid INTEGER,
+                  report_sha256 TEXT, elapsed_seconds REAL);
+                CREATE TABLE IF NOT EXISTS events(
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, job_id TEXT NOT NULL REFERENCES jobs(id),
+                  created_at TEXT NOT NULL, stage TEXT NOT NULL, message TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS reviews(
+                  id INTEGER PRIMARY KEY AUTOINCREMENT, job_id TEXT NOT NULL REFERENCES jobs(id),
+                  candidate_id TEXT NOT NULL, status TEXT NOT NULL, reviewer TEXT NOT NULL,
+                  notes TEXT NOT NULL, created_at TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS review_lookup ON reviews(job_id, candidate_id, id);
+                CREATE TABLE IF NOT EXISTS cases(
+                  id TEXT PRIMARY KEY, title TEXT NOT NULL, created_at TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS case_links(
+                  case_id TEXT NOT NULL REFERENCES cases(id), job_id TEXT NOT NULL REFERENCES jobs(id),
+                  candidate_id TEXT NOT NULL, rationale TEXT NOT NULL,
+                  PRIMARY KEY(case_id,job_id,candidate_id));
+                CREATE INDEX IF NOT EXISTS job_queue ON jobs(status, created_at);
+                CREATE TABLE IF NOT EXISTS source_evidence(
+                  id TEXT PRIMARY KEY, job_id TEXT NOT NULL REFERENCES jobs(id),
+                  candidate_id TEXT NOT NULL, record TEXT NOT NULL, created_at TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS evidence_lookup ON source_evidence(job_id,candidate_id);
+                INSERT OR IGNORE INTO schema_migrations VALUES(2);
+                """)
 
     @contextmanager
     def connect(self):
         db = sqlite3.connect(self.path, timeout=15)
         db.row_factory = sqlite3.Row
         db.execute("PRAGMA foreign_keys=ON")
-        db.execute("PRAGMA journal_mode=WAL")
         try:
             with db:
                 yield db

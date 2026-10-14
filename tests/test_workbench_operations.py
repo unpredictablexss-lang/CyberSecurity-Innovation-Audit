@@ -1,6 +1,8 @@
 import json
 import tempfile
+import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest.mock import patch
 
@@ -27,6 +29,24 @@ class OperationsStoreTests(unittest.TestCase):
 
     def tearDown(self):
         self.temp.cleanup()
+
+    def test_first_start_store_schema_initialization_is_serialized(self):
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory) / "fresh-data"
+            barrier = threading.Barrier(8)
+
+            def construct():
+                barrier.wait()
+                return Store(data_dir)
+
+            with ThreadPoolExecutor(max_workers=8) as pool:
+                stores = list(pool.map(lambda _: construct(), range(8)))
+            self.assertEqual(len(stores), 8)
+            with stores[0].connect() as db:
+                self.assertEqual(
+                    db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0],
+                    2,
+                )
 
     def test_operation_and_endpoint_scans_are_committed_together(self):
         spec = {"commit": "a" * 40, "repository": "openharmony/sample"}
