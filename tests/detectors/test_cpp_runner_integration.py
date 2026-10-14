@@ -77,7 +77,7 @@ class RunnerIntegrationTests(unittest.TestCase):
             self.context.request.request_id + ":ohscanner.cpp.lifetime",
         )
         self.assertEqual(result.tool, "ohscanner.cpp.lifetime")
-        self.assertEqual(result.tool_version, "0.2.0-proposed")
+        self.assertEqual(result.tool_version, LifetimeOwnershipGuardDetector.version)
         self.assertEqual(result.status, "blocked")
         # Legacy blocked scope reports inspection, never complete analysis.
         self.assertGreater(result.scope_files, 0)

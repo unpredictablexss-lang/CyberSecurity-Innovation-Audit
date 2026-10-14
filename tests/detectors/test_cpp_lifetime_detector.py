@@ -32,7 +32,7 @@ class LifetimeDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.lifetime")
-        self.assertEqual(self.detector.version, "0.2.0-proposed")
+        self.assertEqual(self.detector.version, "0.3.0")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
         self.assertEqual(self.context.shared_facts, {})
@@ -56,6 +56,60 @@ class LifetimeDetectorTests(unittest.TestCase):
         self.assertIn("not proof of UAF", candidate.message)
         self.assertTrue(any("not proof of safety" in item for item in run.limitations))
 
+    def test_owner_null_assignment_invalidates_raw_alias(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void null_assignment() {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = owner.get();
+    owner = nullptr;
+    alias->Use();
+}
+"""
+        unit = self.generated_unit("owner_null_assignment", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("owner assignment", run.findings[0].message)
+        self.assertIn("not proof of UAF", run.findings[0].message)
+
+    def test_owner_replacement_invalidates_previous_object(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void owner_replacement() {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = owner.get();
+    owner = std::make_unique<Widget>();
+    alias->Use();
+}
+"""
+        unit = self.generated_unit("owner_replacement", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("owner assignment", run.findings[0].message)
+
+    def test_move_from_owner_invalidates_transferred_object_alias(self) -> None:
+        text = """
+#include <memory>
+#include <utility>
+struct Widget { void Use() const {} };
+void move_from_owner() {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = owner.get();
+    {
+        std::unique_ptr<Widget> next = std::move(owner);
+    }
+    alias->Use();
+}
+"""
+        unit = self.generated_unit("move_from_owner", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("move transfer", run.findings[0].message)
     def test_mutex_scope_is_recorded_without_suppressing_candidate(self) -> None:
         unit = unit_by_path(self.units, "vulnerable_inside_mutex.cpp")
         run = self.detector.detect(self.context, (unit,))

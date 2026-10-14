@@ -44,6 +44,10 @@ _POINTER_BINDING_RE = re.compile(
     r"(?P<alias>[A-Za-z_]\w*)\s*(?P<decl_end>=|;|\()"
 )
 _RESET_RE = re.compile(r"\b(?P<owner>[A-Za-z_]\w*)\s*\.\s*reset\s*\(")
+_OWNER_ASSIGN_RE = re.compile(r"\b(?P<owner>[A-Za-z_]\w*)\s*=(?!=)")
+_MOVE_TRANSFER_RE = re.compile(
+    r"\b(?P<target>[A-Za-z_]\w*)\s*=\s*std\s*::\s*move\s*\(\s*(?P<owner>[A-Za-z_]\w*)\s*\)"
+)
 _REBIND_RE = re.compile(
     r"\b(?P<alias>[A-Za-z_]\w*)\s*=\s*(?:"
     r"(?P<owner>[A-Za-z_]\w*)\s*\.\s*get\s*\(\s*\)"
@@ -118,6 +122,9 @@ class _ResetShape:
     position: int
     call_end: int
     span: _Span
+    invalidation_kind: str
+    description: str
+    transfer_scope_end: Optional[int] = None
 
 
 @dataclass(frozen=True)
@@ -577,6 +584,74 @@ def _analyze_unit(
                 position=match.start(),
                 call_end=closing + 1,
                 span=_innermost_span(function_spans, match.start()) or _Span(0, len(masked)),
+                invalidation_kind="reset",
+                description=f"'{match.group('owner')}.reset()' invalidated the unique_ptr-owned object",
+                transfer_scope_end=None,
+            )
+        )
+
+    for match in _OWNER_ASSIGN_RE.finditer(masked):
+        owner_name = match.group("owner")
+        if not _is_plain_identifier_at(masked, match.start("owner")):
+            continue
+        if any(owner.name_position == match.start("owner") for owner in owners):
+            continue
+        if _resolve_owner(owners, owner_name, match.start("owner")) is None:
+            continue
+        statement_end = masked.find(";", match.end())
+        if statement_end < 0:
+            limitations.append(
+                f"Owner assignment '{owner_name}' had no modeled statement end and remains unknown."
+            )
+            analysis_complete = False
+            continue
+        resets.append(
+            _ResetShape(
+                owner=owner_name,
+                position=match.start("owner"),
+                call_end=statement_end + 1,
+                span=_innermost_span(function_spans, match.start())
+                or _Span(0, len(masked)),
+                invalidation_kind="owner assignment",
+                description=(
+                    f"owner assignment to '{owner_name}' replaced or cleared the "
+                    "unique_ptr-owned object"
+                ),
+                transfer_scope_end=None,
+            )
+        )
+
+    for match in _MOVE_TRANSFER_RE.finditer(masked):
+        owner_name = match.group("owner")
+        if not _is_plain_identifier_at(masked, match.start("owner")):
+            continue
+        if _resolve_owner(owners, owner_name, match.start("owner")) is None:
+            continue
+        opening = masked.find("(", match.start())
+        closing = _call_end(masked, opening) if opening >= 0 else None
+        if closing is None:
+            limitations.append(
+                f"Move transfer from owner '{owner_name}' had unbalanced parentheses."
+            )
+            analysis_complete = False
+            continue
+        resets.append(
+            _ResetShape(
+                owner=owner_name,
+                position=match.start("owner"),
+                call_end=closing + 1,
+                span=_innermost_span(function_spans, match.start())
+                or _Span(0, len(masked)),
+                invalidation_kind="move transfer",
+                description=(
+                    f"std::move transfer from owner '{owner_name}' changed ownership; "
+                    "the raw alias remains live until the destination owner scope ends"
+                ),
+                transfer_scope_end=(
+                    _innermost_span(spans, match.start("target")).end
+                    if _innermost_span(spans, match.start("target")) is not None
+                    else None
+                ),
             )
         )
 
@@ -672,6 +747,12 @@ def _analyze_unit(
                 for use_position in use_positions:
                     if use_position <= reset.call_end or use_position <= alias.position:
                         continue
+                    if (
+                        reset.invalidation_kind == "move transfer"
+                        and reset.transfer_scope_end is not None
+                        and use_position <= reset.transfer_scope_end
+                    ):
+                        continue
                     if _resolve_binding(
                         pointer_bindings, alias.alias, use_position
                     ) != binding:
@@ -721,7 +802,7 @@ def _analyze_unit(
                     constraints = (
                         "same_function_explicit_unique_ptr_owner",
                         "raw_alias_bound_with_owner_get",
-                        "owner_reset_precedes_alias_dereference",
+                        f"owner_{reset.invalidation_kind}_precedes_alias_dereference",
                         (
                             "lexical_binding_identity="
                             f"owner-{owner.binding_id[:12]}:alias-{binding.binding_id[:12]}"
@@ -742,7 +823,7 @@ def _analyze_unit(
                         extra = None
                     message = (
                         f"Candidate only: raw alias '{alias.alias}' is dereferenced after "
-                        f"'{owner.owner}.reset()' invalidated the unique_ptr-owned object and "
+                        f"{reset.description} and "
                         f"without a later unconditional straight-line 'alias = owner.get()' "
                         f"rebinding; syntax evidence; "
                         f"sync_scope={sync_context}; not proof of UAF. "
@@ -774,7 +855,7 @@ class LifetimeOwnershipGuardDetector:
     """M0-compatible narrow detector; v1 remains unfrozen."""
 
     detector_id = "ohscanner.cpp.lifetime"
-    version = "0.2.0-proposed"
+    version = "0.3.0"
     supported_languages = ("cpp",)
     # Source path/text/hash/parse status and request provenance are mandatory
     # SourceUnit/ScanRequest fields. No synthetic shared-fact names are required.
