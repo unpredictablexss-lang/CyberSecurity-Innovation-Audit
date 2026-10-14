@@ -76,6 +76,14 @@ HEAD：`34dbe374e2703466069ef719c95c9a527dd16971`
 
 `stream_manager.h:67` 的候选把构造函数初始化标为 `read`，但 `stream_manager.cpp:175` 还有 `streamListener_ = recvListener`。这意味着单文件诊断不是完整访问集合，不能据此判安全，也不能把该条简单归入“不可变指针”组。需要把跨文件 setter 写入纳入同一成员访问汇总。
 
+### 3.6 第二轮调用点复核：优先级需要再分层
+
+- `JSProxy::instance_` 是高优先级：`SetInstance` 在 NAPI async work 的 execute 阶段写入，`GetInstance` 在多个同步/异步回调中读取；当前未见锁。需要验证 `NapiQueue` 是否提供串行/发布边界。
+- `JsKVStoreResultSet` 暴露出跨文件动态转移：async 完成时 `SetInstance(kvResultSet)`，`Create()` 先 `GetInstance()` 再 `SetInstance(nullptr)`，`CloseResultSet` 也执行 get-then-clear。该形状比当前单条 `resultSet_` 候选更完整，属于高优先级候选。
+- `RemoteCommandExecutor::ptrChannel_` 的仓库内调用点均在 `RemoteCommandManager::mutex_` 下：`NotifyDeviceOnline` 在锁内 get/set，`GetExecutorChannel` 在锁内 get 并按值返回。首轮可标为 `candidate / narrow external synchronization observed`，但 `GetChannel()` 返回成员引用的 API 边界仍需审查。
+- PIP controller 的 getter/setter 只在 `ani_pip_utils.cpp` 的两个顺序字段转移函数中成对出现；当前仓库内未见并发调用，优先级降低，但缺少产品线程/事件队列证明。
+- `StreamManager::msgManager_` 在 factory 返回对象前只设置一次，仓库内未发现 `GetStreamMsgManager()` 调用；`streamListener_` 则在 channel 创建路径中再次写入且无锁。两者应拆开评估，不能合并成同一根因。
+
 ## 4. Detector/范围勘误项
 
 1. **构造初始化语义**：`member(param)` 应记录为 `initialization/write`，不能记录为 `read`。

@@ -152,6 +152,38 @@
     "exclude or separately label kvstoremock and previewer/mock paths",
     "retain unknown pointee-thread-safety and safe-publication obligations"
   ],
+  "second_pass_call_site_review": [
+    {
+      "member": "JSProxy::instance_",
+      "priority": "high",
+      "finding": "SetInstance occurs in NAPI async execute phases; GetInstance is called by multiple sync/async result methods; no lock observed",
+      "required_evidence": "NapiQueue serialization and publication boundary"
+    },
+    {
+      "member": "JsKVStoreResultSet::instance_",
+      "priority": "high",
+      "finding": "cross-file set/get/clear lifecycle includes async SetInstance and Create/CloseResultSet get-then-clear",
+      "required_evidence": "object lifetime, async ordering and concurrent access proof"
+    },
+    {
+      "member": "RemoteCommandExecutor::ptrChannel_",
+      "priority": "medium",
+      "finding": "all repository get/set call sites are under RemoteCommandManager::mutex_; GetChannel returns a member reference",
+      "required_evidence": "confirm no external callers and review reference-return lifetime"
+    },
+    {
+      "member": "PictureInPictureController XComponentController members",
+      "priority": "low-medium",
+      "finding": "repository call sites are sequential field transfers in ani_pip_utils.cpp",
+      "required_evidence": "product event-loop/thread ownership"
+    },
+    {
+      "member": "StreamManager::msgManager_ and streamListener_",
+      "priority": "split",
+      "finding": "msgManager_ is set before factory return and getter is unused in-repo; streamListener_ is reassigned in channel creation without a lock",
+      "required_evidence": "separate lifecycle and concurrency review"
+    }
+  ],
   "evidence_gate": {
     "candidate_unassessed": true,
     "validated_vulnerability": 0,
