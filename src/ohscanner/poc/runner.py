@@ -127,13 +127,13 @@ def _expectation_met(case, revision, verdict):
 
 
 def run_poc(manifest_path, git_dir, work_dir, compiler="clang++", cutils_dir=None,
-            repeats=3, build_timeout=300, run_timeout=60):
+            harness_dir=None, repeats=3, build_timeout=300, run_timeout=60):
     """Build every revision and run it only inside the dedicated Docker worker."""
     if os.environ.get("OHSCANNER_VALIDATION_CONTAINER") != "1" or not Path("/.dockerenv").is_file():
         raise RuntimeError("PoC execution is restricted to the Docker validation container")
     manifest_path = Path(manifest_path)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    harness_dir = manifest_path.parent
+    harness_dir = Path(harness_dir) if harness_dir is not None else manifest_path.parent
     cutils_dir = Path(cutils_dir or DEFAULT_CUTILS)
     work_dir = Path(work_dir)
     binary_dir = work_dir / "bin"

@@ -5,6 +5,7 @@ with which compiler and sanitizers, what each case did, how the replay behaved,
 and what the result does not establish.
 """
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 from typing import Mapping, Optional, Tuple
 
 from .reachability import ReachabilityEvidence, render_markdown as render_reachability
@@ -26,7 +27,7 @@ class BuildRecord:
 
     @property
     def ok(self):
-        return self.returncode == 0
+        return self.returncode == 0 and Path(self.binary).is_file()
 
 
 @dataclass(frozen=True)

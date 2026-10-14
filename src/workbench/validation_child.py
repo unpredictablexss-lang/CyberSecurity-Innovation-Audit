@@ -23,9 +23,12 @@ def patched_target(repo, work, manifest):
     source = next(x for x in manifest["sources"] if x["revision"] == "vulnerable")
     path = source["path"]
     clone = work / "patched-target"
-    subprocess.run(["git", "clone", "--quiet", "--no-hardlinks", "--local", str(repo), str(clone)], check=True)
+    subprocess.run(["git", "init", "--quiet", str(clone)], check=True)
+    git(clone, "remote", "add", "origin", str(repo))
+    for commit in (vulnerable, fixed):
+        git(clone, "fetch", "--quiet", "--depth", "1", "origin", commit)
     git(clone, "checkout", "--quiet", "--detach", vulnerable)
-    patch = git(clone, "diff", "--binary", vulnerable, fixed, "--", path)
+    patch = git(repo, "diff", "--binary", vulnerable, fixed, "--", path)
     if not patch:
         raise ValueError("pinned upstream fix produces an empty patch")
     patch_file = work / "auth01-upstream-fix.patch"
@@ -90,7 +93,8 @@ def main():
     local_manifest = work / "auth01-manifest.json"
     local_manifest.write_text(json.dumps(manifest, indent=2) + "\n")
     result = run_poc(local_manifest, clone, work / "poc", compiler="clang++", cutils_dir=args.cutils,
-                     repeats=args.repeats, build_timeout=300, run_timeout=60).to_dict()
+                     harness_dir=manifest_path.parent, repeats=args.repeats,
+                     build_timeout=300, run_timeout=60).to_dict()
     passed, reason = gate(result)
     output = {"status": "completed_with_limitations", "case_id": None,
         "validation_gate": "passed" if passed else "not_passed", "gate_reason": reason,

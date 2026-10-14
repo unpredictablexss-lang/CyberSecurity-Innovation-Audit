@@ -47,6 +47,20 @@ def run_record(
     )
 
 
+class ValidationImageContractTests(unittest.TestCase):
+    def test_dockerfile_uses_packages_present_in_ubuntu_2204(self) -> None:
+        dockerfile = (
+            Path(__file__).resolve().parents[1]
+            / "docker"
+            / "validation"
+            / "Dockerfile"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("clang-14", dockerfile)
+        self.assertIn("libclang-common-14-dev", dockerfile)
+        self.assertNotIn("libclang-rt-14-dev", dockerfile)
+
+
 class RuntimeValidationTests(unittest.TestCase):
     def test_detects_sanitizer_markers(self) -> None:
         self.assertTrue(detect_sanitizer("ERROR: AddressSanitizer: SEGV"))
