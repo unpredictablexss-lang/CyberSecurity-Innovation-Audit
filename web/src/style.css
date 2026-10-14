@@ -1,0 +1,334 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: #1c283a;
+  background: #f4f6f9;
+}
+.app {
+  min-height: 100vh;
+}
+.sidebar {
+  background: #101a2d !important;
+  position: fixed !important;
+  inset: 0 auto 0 0;
+  z-index: 20;
+}
+.sidebar + .ant-layout {
+  margin-left: 228px;
+}
+.brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 33px 23px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.brand > .anticon {
+  font-size: 33px;
+  color: #66c7b5;
+}
+.brand small {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  color: #92a3bb;
+  margin-top: 4px;
+}
+.nav-caption {
+  color: #7387a5;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 14px 26px;
+}
+.sidebar .ant-menu {
+  background: transparent !important;
+  padding: 0 10px;
+}
+.sidebar .ant-menu-item {
+  margin-bottom: 8px;
+  height: 45px;
+  line-height: 45px;
+}
+.sidebar .ant-menu-item-selected {
+  background: #203c46 !important;
+  color: #a4e9d7 !important;
+}
+.sidebar-bottom {
+  position: absolute;
+  bottom: 28px;
+  left: 26px;
+  color: #b4c1d3;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.sidebar-bottom div {
+  margin: 9px 0;
+  color: #7488a5;
+  letter-spacing: 0;
+}
+.sidebar-bottom small {
+  color: #7488a5;
+  letter-spacing: 0;
+}
+.local-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #67c6af;
+  margin-right: 7px;
+}
+.topbar {
+  height: 64px;
+  background: #fff !important;
+  padding: 0 32px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6ebf0;
+}
+.workspace-chip {
+  border: 1px solid #dce7e3;
+  color: #216c62;
+  background: #f4faf7;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 4px 8px;
+}
+.main {
+  padding: 30px 34px 22px;
+  max-width: 1800px;
+  width: 100%;
+  margin: auto;
+}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 21px;
+  gap: 20px;
+}
+.page-header h2 {
+  margin-top: 7px !important;
+  margin-bottom: 9px !important;
+  font-size: 28px !important;
+  letter-spacing: -0.5px;
+}
+.page-header .ant-typography {
+  margin-bottom: 0;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #5c8a84;
+}
+.muted {
+  font-size: 12px;
+  color: #8692a3;
+  margin-top: 8px;
+}
+.stat-card .ant-statistic-content {
+  font-size: 32px;
+  font-weight: 650;
+  margin-top: 8px;
+}
+.stat-card {
+  border-top: 3px solid #84b8aa !important;
+}
+.section-gap {
+  margin-top: 20px;
+}
+.ant-card {
+  box-shadow: 0 3px 15px rgba(20, 35, 55, 0.025);
+}
+.hash {
+  font-size: 12px;
+  font-family: Consolas, monospace;
+  white-space: nowrap;
+}
+.workflow {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+}
+.workflow div {
+  flex: 1;
+  border-right: 1px solid #e8edf0;
+}
+.workflow div:last-child {
+  border: 0;
+}
+.workflow span {
+  display: block;
+  color: #76a89d;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.workflow strong {
+  font-size: 13px;
+}
+.detector-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.detector-options .ant-checkbox-wrapper {
+  padding: 15px;
+  border: 1px solid #e3e9ef;
+  border-radius: 8px;
+}
+.detector-options span span {
+  display: block;
+  font-size: 12px;
+  color: #7d899a;
+  margin-top: 6px;
+}
+.toolbar {
+  margin-bottom: 18px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.source-meta {
+  padding: 16px 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.source-meta .ant-space {
+  font-size: 11px;
+  color: #7e8a9b;
+}
+.code-editor {
+  height: 440px;
+  border: 1px solid #e3e9ef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.candidate-line {
+  background: #fff2d8;
+}
+.obligation {
+  padding: 14px 0;
+  border-bottom: 1px solid #eef1f4;
+}
+.obligation:last-child {
+  border: 0;
+}
+.obligation p {
+  margin-top: 8px;
+  margin-bottom: 5px;
+}
+.raw {
+  background: #f7f9fb;
+  border: 1px solid #e5ebf0;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  max-height: 280px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.footer {
+  background: transparent !important;
+  color: #94a0af;
+  font-size: 11px;
+  text-align: center;
+  padding: 20px !important;
+}
+.ant-table-cell {
+  overflow-wrap: anywhere;
+}
+li {
+  margin-top: 7px;
+}
+@media (max-width: 1100px) {
+  .main {
+    padding: 24px 20px;
+  }
+  .stat-card .muted {
+    font-size: 10px;
+  }
+  .page-header h2 {
+    font-size: 23px !important;
+  }
+}
+
+@media (max-width: 800px) {
+  .sidebar {
+    width: 64px !important;
+    min-width: 64px !important;
+    max-width: 64px !important;
+  }
+  .sidebar + .ant-layout {
+    margin-left: 64px;
+  }
+  .brand {
+    padding: 24px 16px;
+  }
+  .brand div,
+  .nav-caption,
+  .sidebar-bottom,
+  .sidebar .ant-menu-title-content {
+    display: none;
+  }
+  .sidebar .ant-menu {
+    padding: 0 3px;
+  }
+  .main {
+    padding: 20px 12px;
+  }
+  .main .ant-row > .ant-col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 12px;
+  }
+  .topbar {
+    padding: 0 12px !important;
+  }
+  .topbar .ant-typography-secondary {
+    display: none;
+  }
+  .page-header {
+    display: block;
+  }
+  .page-header > .ant-space,
+  .page-header > .ant-btn {
+    margin-top: 12px;
+  }
+  .page-header h2 {
+    overflow-wrap: anywhere;
+  }
+  .ant-table-content {
+    overflow: auto;
+  }
+  .ant-table {
+    min-width: 650px;
+  }
+  .source-meta {
+    font-size: 11px;
+  }
+  .ant-descriptions-view {
+    overflow: auto;
+  }
+  .workflow {
+    gap: 8px;
+  }
+  .workflow strong {
+    font-size: 11px;
+  }
+  .ant-drawer-content-wrapper {
+    width: 96vw !important;
+  }
+}
+
+.json-view { max-height: 520px; overflow: auto; padding: 14px; border-radius: 8px; background: #101923; color: #d7e0e7; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; }

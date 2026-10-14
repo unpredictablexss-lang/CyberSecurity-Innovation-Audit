@@ -7,9 +7,15 @@ trigger logic.
 
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional
+import re
 
 
 _ALLOWED_STATUSES = {"completed", "failed", "blocked"}
+# v2 requires every diagnostic to name its source revision; v1 payloads had no
+# such field, so they load with an empty hash and are reported as `unbound`.
+_SUPPORTED_SCHEMA_VERSIONS = (1, 2)
+_SOURCE_HASH = re.compile(r"[a-f0-9]{64}")
+_CWE = re.compile(r"CWE-[0-9]+")
 _ALLOWED_EVIDENCE_TYPES = {
     "pattern",
     "syntax",
@@ -39,6 +45,13 @@ class ToolDiagnostic:
     candidate_cwe: Optional[str] = None
     confidence: str = "unassessed"
     symbol: Optional[str] = None
+    # Contract v2. Required in v2 output, empty only on payloads migrated from v1
+    # (which are then reported as `unbound` -- unknown, never "verified").
+    source_sha256: str = ""
+    # The mechanism CWE above answers *how* the boundary failed; these answer *what*
+    # it can expose. Both optional, and neither replaces the other.
+    consequence_impact: Optional[str] = None
+    consequence_cwe: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.diagnostic_id.strip():
@@ -53,9 +66,27 @@ class ToolDiagnostic:
             raise ValueError("column must be >= 1 when provided")
         if self.symbol is not None and (not isinstance(self.symbol, str) or not self.symbol.strip()):
             raise ValueError("symbol must be non-empty when provided")
+        if self.source_sha256 and not _SOURCE_HASH.fullmatch(self.source_sha256):
+            raise ValueError("invalid source SHA-256")
+        if self.consequence_impact is not None and (
+                not isinstance(self.consequence_impact, str) or not self.consequence_impact.strip()):
+            raise ValueError("consequence_impact must be non-empty when provided")
+        if self.consequence_cwe is not None and not _CWE.fullmatch(self.consequence_cwe):
+            raise ValueError("invalid consequence CWE identifier")
+
+    @property
+    def source_binding(self) -> str:
+        """`bound` when the diagnostic names a source revision, else `unbound`.
+
+        `unbound` is unknown binding, not a passed check: a payload migrated from
+        v1 carries no hash and must never be dressed up with one.
+        """
+        return "bound" if self.source_sha256 else "unbound"
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        data["source_binding"] = self.source_binding
+        return data
 
 
 @dataclass
@@ -76,7 +107,7 @@ class ToolRunResult:
     parsing: List[dict] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        if self.schema_version != 1:
+        if self.schema_version not in _SUPPORTED_SCHEMA_VERSIONS:
             raise ValueError(f"unsupported schema_version: {self.schema_version}")
         if not self.run_id.strip():
             raise ValueError("run_id must not be empty")
@@ -96,6 +127,16 @@ class ToolRunResult:
             raise ValueError("peak_memory_mb must be >= 0 when provided")
         if self.status not in _ALLOWED_STATUSES:
             raise ValueError(f"unsupported status: {self.status}")
+        if self.schema_version == 2:
+            unbound = [item.diagnostic_id for item in self.diagnostics if not item.source_sha256]
+            if unbound:
+                # A v2 producer must bind every diagnostic to a source revision.
+                # Failing here is the point: the alternative is emitting an ID that
+                # looks versioned while standing for no particular source.
+                raise ValueError(
+                    "schema_version 2 requires a source SHA-256 on every diagnostic: "
+                    + ", ".join(sorted(unbound)[:5])
+                )
 
     @property
     def diagnostic_count(self) -> int:
@@ -151,13 +192,17 @@ def render_markdown(result: "ToolRunResult") -> str:
     if not result.diagnostics:
         lines.append("(none)")
     else:
-        lines.append("| ID | File | Line | Severity | CWE | Message |")
-        lines.append("|---|---|---:|---|---|---|")
+        # Mechanism CWE and consequence are separate columns on purpose: they answer
+        # different questions and one must not be read as the other.
+        lines.append("| ID | File | Line | Severity | CWE (mechanism) | Consequence | Consequence CWE | Source | Message |")
+        lines.append("|---|---|---:|---|---|---|---|---|---|")
         for item in result.diagnostics:
+            consequence = item.consequence_impact or "-"
             lines.append(
                 f"| {item.diagnostic_id} | {item.file} | "
                 f"{item.line if item.line is not None else '-'} | {item.severity} | "
-                f"{item.candidate_cwe or '-'} | {item.message} |"
+                f"{item.candidate_cwe or '-'} | {consequence} | "
+                f"{item.consequence_cwe or '-'} | {item.source_binding} | {item.message} |"
             )
     lines.extend(["", "## Limitations", ""])
     for limitation in result.limitations:

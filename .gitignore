@@ -229,5 +229,13 @@ outputs/logs/
 outputs/bin/
 outputs/reports/static_baselines/
 outputs/reports/perf_scale/
+outputs/reports/owner_ipc_integration/
 .tmp/
 .cache/
+
+# Local workbench dependencies and build artifacts
+web/node_modules/
+web/dist/
+*.sqlite3
+*.sqlite3-*
+outputs/reports/workbench/

@@ -27,7 +27,7 @@ Usage
     python scripts/perf_scale_scan.py \
         --manifest benchmarks/perf_scale_corpus_2026-10-10.json \
         --json-out outputs/reports/perf_scale_scan.json \
-        --md-out docs/testing/ohscanner_performance_scale.md
+        --md-out benchmarks/组件性能规模实测.md
 """
 
 from __future__ import annotations
@@ -128,7 +128,7 @@ def run_measured(cmd: list[str], cwd: str, log_path: pathlib.Path):
 
 
 def benchmark_one(project_root: str, python: str, entry: dict,
-                  report_dir: pathlib.Path) -> dict:
+                  report_dir: pathlib.Path, targets_root: pathlib.Path) -> dict:
     """Run one manifest entry and return an aggregated measurement row.
 
     An entry may carry ``include`` — a list of repository-relative path
@@ -138,7 +138,10 @@ def benchmark_one(project_root: str, python: str, entry: dict,
     recorded so a sharded row is never mistaken for a single whole-tree run.
     """
     label = entry["label"]
-    repo_dir, commit = entry["repo_dir"], entry["commit"]
+    repo_dir = pathlib.Path(entry["repo_dir"])
+    if not repo_dir.is_absolute():
+        repo_dir = targets_root / repo_dir
+    repo_dir, commit = str(repo_dir), entry["commit"]
 
     sources = git_sources(repo_dir, commit)
     loc = git_loc(repo_dir, commit, sources)
@@ -292,7 +295,7 @@ def render_markdown(rows: list[dict], manifest_path: str) -> str:
         "python scripts/perf_scale_scan.py \\",
         f"  --manifest {manifest_path} \\",
         "  --json-out outputs/reports/perf_scale_scan.json \\",
-        "  --md-out docs/testing/ohscanner_performance_scale.md",
+        "  --md-out benchmarks/组件性能规模实测.md",
         "```",
         "",
         "测量方式：每个组件在独立子进程中执行 `python -m src.cli ohscan-run`，由一个**最小的**"
@@ -326,8 +329,10 @@ def main(argv: list[str] | None = None) -> int:
                     help="JSON corpus manifest with full commit SHAs")
     ap.add_argument("--project-root", default=str(here),
                     help="OHScanner project root (default: script's repo)")
-    ap.add_argument("--python", default=str(here / ".venv/bin/python"),
+    ap.add_argument("--python", default=sys.executable,
                     help="interpreter used to run the CLI")
+    ap.add_argument("--targets-root", default=str(pathlib.Path.home()),
+                    help="root used to resolve relative repo_dir entries in the manifest")
     ap.add_argument("--json-out", required=True)
     ap.add_argument("--md-out", required=True)
     ap.add_argument("--only", nargs="*",
@@ -345,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
     rows = []
     for entry in entries:
         print(f"[run] {entry['label']} @ {entry['commit'][:12]} ...", flush=True)
-        row = benchmark_one(args.project_root, args.python, entry, report_dir)
+        row = benchmark_one(args.project_root, args.python, entry, report_dir, pathlib.Path(args.targets_root))
         state = "ok" if row.get("exit_code") == 0 else f"FAIL({row['exit_code']})"
         print(f"      {state}  {row['wall_seconds']}s  "
               f"{row['peak_rss_kb'] / 1024:.1f} MB  "
