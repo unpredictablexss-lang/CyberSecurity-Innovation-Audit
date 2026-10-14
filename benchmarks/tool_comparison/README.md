@@ -223,7 +223,7 @@ overlap only.
 
 The consolidated implementation plan is documented in:
 
-- `docs/strategy/team_parallel_multi_scanner_plan.md`
+- `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/strategy/team_parallel_multi_scanner_plan.md`
 
 It combines the vertical real-case workflow with the horizontal multi-scanner
 benchmark line and fixes the merge point at the normalized Candidate / Evidence

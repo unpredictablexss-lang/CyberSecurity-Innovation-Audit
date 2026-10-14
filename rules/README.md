@@ -20,7 +20,7 @@ rules/cpp/
 两条 OH 规则目前都是待人工审查的结构候选：shared_ptr 规则实际匹配所有
 `.reset()`，未判断接收者类型、并发访问或锁；nothrow 规则未证明判空分支终止
 失败路径或支配解引用。历史修复前后结果仅说明对应样本上的区分效果。
-限制与后续开发约束见 `docs/reviews/architecture_rules_review_2026-10-08.md`。
+限制与后续开发约束见 `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/143fa63fa479be79fa80ca5f8322c74afecc273c/docs/reviews/architecture_rules_review_2026-10-08.md`。
 
 ## 规则来源策略
 

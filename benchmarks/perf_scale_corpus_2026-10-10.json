@@ -5,7 +5,7 @@
   "entries": [
     {
       "label": "communication_ipc",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/communication_ipc",
+      "repo_dir": "openharmony-audit/perf-corpus/communication_ipc",
       "repository": "openharmony/communication_ipc",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
@@ -13,7 +13,7 @@
     },
     {
       "label": "inputmethod_imf",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/inputmethod_imf",
+      "repo_dir": "openharmony-audit/perf-corpus/inputmethod_imf",
       "repository": "openharmony/inputmethod_imf",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "7777cba9eb19085af8e7b90088531028d2937460",
@@ -21,7 +21,7 @@
     },
     {
       "label": "multimedia_camera_framework",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/multimedia_camera_framework",
+      "repo_dir": "openharmony-audit/perf-corpus/multimedia_camera_framework",
       "repository": "openharmony/multimedia_camera_framework",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
@@ -29,7 +29,7 @@
     },
     {
       "label": "multimedia_player_framework",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/multimedia_player_framework",
+      "repo_dir": "openharmony-audit/perf-corpus/multimedia_player_framework",
       "repository": "openharmony/multimedia_player_framework",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
@@ -37,7 +37,7 @@
     },
     {
       "label": "notification_common_event_service",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/notification_common_event_service",
+      "repo_dir": "openharmony-audit/perf-corpus/notification_common_event_service",
       "repository": "openharmony/notification_common_event_service",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
@@ -45,7 +45,7 @@
     },
     {
       "label": "resourceschedule_background_task_mgr",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
+      "repo_dir": "openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
       "repository": "openharmony/resourceschedule_background_task_mgr",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
@@ -53,7 +53,7 @@
     },
     {
       "label": "security_access_token",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/security_access_token",
+      "repo_dir": "openharmony-audit/perf-corpus/security_access_token",
       "repository": "openharmony/security_access_token",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
@@ -61,7 +61,7 @@
     },
     {
       "label": "telephony_call_manager",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/telephony_call_manager",
+      "repo_dir": "openharmony-audit/perf-corpus/telephony_call_manager",
       "repository": "openharmony/telephony_call_manager",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
@@ -69,7 +69,7 @@
     },
     {
       "label": "update_updateservice",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/update_updateservice",
+      "repo_dir": "openharmony-audit/perf-corpus/update_updateservice",
       "repository": "openharmony/update_updateservice",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
@@ -77,7 +77,7 @@
     },
     {
       "label": "window_window_manager",
-      "repo_dir": "/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+      "repo_dir": "openharmony-audit/perf-corpus/window_window_manager",
       "repository": "openharmony/window_window_manager",
       "ref": "depth=1 clone @ pinned commit",
       "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
@@ -116,7 +116,7 @@
     },
     {
       "label": "c_utils_pinned_m2",
-      "repo_dir": "/home/audit/openharmony-targets/commonlibrary_c_utils",
+      "repo_dir": "openharmony-targets/commonlibrary_c_utils",
       "repository": "openharmony/commonlibrary_c_utils",
       "ref": "explicit pinned commit",
       "commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",

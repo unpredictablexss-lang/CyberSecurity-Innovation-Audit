@@ -1,5 +1,6 @@
 import argparse
 import json
+import subprocess
 from pathlib import Path
 
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
@@ -128,6 +129,44 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", required=True)
     scan_parser = _configure_scan_parser(subparsers)
     baseline_parser = _configure_clang_baseline_parser(subparsers)
+
+    ohscan_parser = subparsers.add_parser(
+        "ohscan", help="M0 self-built mock detector contract smoke test (synthetic fixtures only)"
+    )
+    ohscan_parser.add_argument("--fixture-root", required=True,
+                               help="Directory of synthetic C/C++ and JS/ArkTS test fixtures")
+    ohscan_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m0.json")
+    ohscan_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m0.md")
+
+    ohscan_index_parser = subparsers.add_parser(
+        "ohscan-index", help="M1: index pinned local Git source objects (no vulnerability scan)"
+    )
+    ohscan_index_parser.add_argument("--repo-dir", required=True,
+                                     help="Local checked-out Git repository; source read from commit objects")
+    ohscan_index_parser.add_argument("--repository", required=True,
+                                     help="Declared repository identity such as openharmony/commonlibrary_c_utils")
+    ohscan_index_parser.add_argument("--commit", required=True,
+                                     help="Complete immutable Git commit SHA, not HEAD/branch/tag")
+    ohscan_index_parser.add_argument("--include", action="append", default=None,
+                                     help="Repository-relative source path or directory prefix (repeatable)")
+    ohscan_index_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m1_index.json")
+    ohscan_index_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m1_index.md")
+
+    m2_parser = subparsers.add_parser(
+        "ohscan-run",
+        help="M2: run explicitly allowlisted first-party detector(s) on pinned local Git sources",
+    )
+    m2_parser.add_argument("--repo-dir", required=True, help="Local Git repository with full pinned objects")
+    m2_parser.add_argument("--repository", required=True, help="Owner/repository declaration")
+    m2_parser.add_argument("--commit", required=True, help="Complete immutable Git commit SHA")
+    m2_parser.add_argument("--include", action="append", default=None,
+                           help="Repository-relative path or prefix; repeatable")
+    m2_parser.add_argument("--detector", action="append", required=True,
+                           help="Explicit first-party detector ID (e.g. ohscanner.interface.ipc); repeatable. Not an import path.")
+    m2_parser.add_argument("--allow-example-detectors", action="store_true",
+                           help="Acknowledge that 'ohscanner.example.*' is a non-security demonstration")
+    m2_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m2.json")
+    m2_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m2.md")
 
     historical_parser = subparsers.add_parser(
         "benchmark-historical",
@@ -319,6 +358,70 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+
+    if args.command == "ohscan-run":
+        from src.ohscanner.execution import run_fixed_commit_scan
+
+        try:
+            report = run_fixed_commit_scan(
+                repo_dir=Path(args.repo_dir),
+                repository=args.repository,
+                commit=args.commit,
+                includes=tuple(args.include or ["."]),
+                detector_ids=tuple(args.detector),
+                json_out=Path(args.json_out),
+                md_out=Path(args.md_out),
+                allow_examples=args.allow_example_detectors,
+            )
+        except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
+            m2_parser.error(str(error))
+        print("[OK] M2 pinned-source candidate evidence run; NOT validated vulnerabilities")
+        print(f"[OK] source commit: {report['commit']}")
+        print(f"[OK] first-party detectors: {report['detector_count']}")
+        print(f"[OK] unverified diagnostics: {report['diagnostic_count']}")
+        print(f"[OK] run coverage: {report['status']}")
+        print(f"[OK] JSON report: {args.json_out}")
+        print(f"[OK] Markdown report: {args.md_out}")
+        return
+
+    if args.command == "ohscan-index":
+        from src.ohscanner.indexing import run_git_index
+
+        try:
+            report = run_git_index(
+                repo_dir=Path(args.repo_dir),
+                repository=args.repository,
+                commit=args.commit,
+                includes=tuple(args.include or ["."]),
+                json_out=Path(args.json_out),
+                md_out=Path(args.md_out),
+            )
+        except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
+            ohscan_index_parser.error(str(error))
+        print("[OK] M1 pinned Git source index; no vulnerability detection performed")
+        print(f"[OK] commit: {report['commit']}")
+        print(f"[OK] scanned source files: {report['scope']['selected_source_files']}")
+        print(f"[OK] language coverage: {report['coverage']['languages']}")
+        print(f"[OK] parsing coverage: {report['coverage']['parsing_status']}")
+        print(f"[OK] json index: {args.json_out}")
+        print(f"[OK] markdown index: {args.md_out}")
+        return
+
+    if args.command == "ohscan":
+        from src.ohscanner.smoke import run_mock_smoke
+
+        try:
+            result = run_mock_smoke(Path(args.fixture_root),
+                                    Path(args.json_out).resolve(),
+                                    Path(args.md_out).resolve())
+        except (ValueError, OSError, UnicodeError) as error:
+            ohscan_parser.error(str(error))
+        print("[OK] M0 synthetic contract smoke; NOT a real vulnerability scan")
+        print(f"[OK] normalized first-party detector runs: {len(result['runs'])}")
+        print(f"[OK] target provenance: {result['provenance']}")
+        print(f"[OK] json report: {args.json_out}")
+        print(f"[OK] markdown report: {args.md_out}")
+        return
 
     if args.command == "scan":
         target = Path(args.target).resolve()

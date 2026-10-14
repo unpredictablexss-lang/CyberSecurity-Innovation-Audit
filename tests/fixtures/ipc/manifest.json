@@ -1,0 +1,435 @@
+[
+  {
+    "sample_id": "relay_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "relay_read_only_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_read_only_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "auth_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "auth_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "auth_ignored_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "file": "auth_ignored_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "identity_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.service-identity",
+    "file": "identity_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "identity_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "identity_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "request_identity_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.request-identity",
+    "file": "request_identity_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "coverage_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "file": "coverage_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "coverage_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": null,
+    "file": "coverage_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "coverage_late_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "file": "coverage_late_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": "ipc.parcel.copy-range",
+    "file": "parcel_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": null,
+    "file": "parcel_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_unrelated_bound_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-01",
+    "expected_rule": "ipc.parcel.copy-range",
+    "file": "parcel_unrelated_bound_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "capability_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "capability_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "capability_fixed",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": null,
+    "file": "capability_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "capability_null_safe",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": null,
+    "file": "capability_null_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "owner_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.object-owner",
+    "file": "owner_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "owner_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "owner_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "helper_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "helper_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "helper_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "helper_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "comments_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "comments_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "dead_path_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "dead_path_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "wrong_parcel_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "wrong_parcel_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "reset_identity_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.service-identity",
+    "file": "reset_identity_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "cached_caller_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "cached_caller_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "switch_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": "ipc.auth.guard-coverage",
+    "file": "switch_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "denied_complement_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-04",
+    "expected_rule": null,
+    "file": "denied_complement_positive.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "VerifyAccessToken has a reviewed binary PERMISSION_GRANTED/PERMISSION_DENIED result domain; complement is valid for this API only."
+  },
+  {
+    "sample_id": "descriptor_interface_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "descriptor_interface_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "descriptor_no_prefix_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "descriptor_no_prefix_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "descriptor_inherited_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "descriptor_inherited_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "descriptor_wrong_interface_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_wrong_interface_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_unrelated_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_unrelated_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_alias_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_alias_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_unresolved_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_unresolved_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_call_only_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_call_only_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_no_reject_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_no_reject_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_after_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_after_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "descriptor_one_branch_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "descriptor_one_branch_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_guard_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_inner_guard_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "relay_inner_local_guard_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": null,
+    "file": "relay_inner_local_guard_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "relay_inner_no_guard_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_no_guard_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_after_dispatch_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_after_dispatch_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_no_reject_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_no_reject_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_nested_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_nested_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_substituted_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_substituted_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "relay_inner_wrong_interface_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-01",
+    "expected_rule": "ipc.relay.descriptor-boundary",
+    "file": "relay_inner_wrong_interface_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  }
+]

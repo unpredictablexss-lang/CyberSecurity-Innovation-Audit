@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "kind": "self_authored_synthetic_fixture",
+    "repository": "synthetic/fixture",
+    "commit": "2222222222222222222222222222222222222222",
+    "snapshot_sha256": "a30276427ea23ffc4dcaf357a1ae3b926c341296be303fcf141637f9f16f13f6",
+    "profile_id": "fixture-no-build",
+    "note": "Fixture metadata only; not a public vulnerability benchmark."
+  },
+  "units": [
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/fixed_atomic_shared_ptr.cpp",
+      "sha256": "dedbf2cdc506d3262f4c1e94ecf0a83d2107b91df4409626f42265d10e245cd7",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "fixed",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/not_applicable_no_matching_language.js",
+      "sha256": "da6c44024c6c30079a0c108ff6f4754102da4f5db504613b07cdb24c20587245",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "not_applicable_no_matching_language",
+      "expected_observation": "not_applicable_no_matching_language",
+      "language": "js"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_helper.cpp",
+      "sha256": "d926f320f00f130f6af3bc182b2ab381b67b3e0012e10934b837f641a9b171af",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_only.cpp",
+      "sha256": "16bbc2ad8997ef484b2f441783a6a94d2a7adb49b91c5259f663dbec9a33cd82",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unknown_failed_parse.cpp",
+      "sha256": "c17a9934cd12a72d9fb282f8c36e10d77a3db18d1a0c16f313f9c33ee1939d0d",
+      "parse_status": "failed",
+      "parse_issues": [
+        "Synthetic failed parse state; no parser execution is claimed."
+      ],
+      "fixture_category": "unknown_failed_parse",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unknown_incomplete_scope.cpp",
+      "sha256": "8f39586f4354e5ccaf8071fd667015a7dcd23095ee16717514f0e36d75f8fc34",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "unknown_incomplete_scope",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unknown_macro_shared_ptr.cpp",
+      "sha256": "f422bf0017dae79b89caf15fbec4b715c955631e2ccbb6a1236c2816f99ec981",
+      "parse_status": "partial",
+      "parse_issues": [
+        "Macro-controlled shared_ptr reset context is not expanded."
+      ],
+      "fixture_category": "unknown_macro_shared_ptr",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unknown_not_run.cpp",
+      "sha256": "c17a9934cd12a72d9fb282f8c36e10d77a3db18d1a0c16f313f9c33ee1939d0d",
+      "parse_status": "not_run",
+      "parse_issues": [
+        "Synthetic pending parse state; no parser was executed."
+      ],
+      "fixture_category": "unknown_not_run",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unknown_partial_parse.cpp",
+      "sha256": "c17a9934cd12a72d9fb282f8c36e10d77a3db18d1a0c16f313f9c33ee1939d0d",
+      "parse_status": "partial",
+      "parse_issues": [
+        "Synthetic macro-controlled shared_ptr context is not expanded."
+      ],
+      "fixture_category": "unknown_partial_parse",
+      "expected_observation": "unknown_incomplete_analysis",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_plain_pointer.cpp",
+      "sha256": "b4b25ff916b54f805d3f6fda9a8b83464063f73e23cabfb45d5fd3ccc27c68b0",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "unrelated",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_shared_ptr_local.cpp",
+      "sha256": "5c70db76bba6038af7708911280d8f1c2982d7ba3623209a9d43656c44cfc1e5",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "unrelated",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/vulnerable_non_atomic_shared_ptr.cpp",
+      "sha256": "55a0d57f1c308f5ee838e1a9d4f3c5dca00914b3500e15cdf62a2c8552cef564",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    }
+  ]
+}
