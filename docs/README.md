@@ -22,6 +22,12 @@
 当前可运行快照扫描、证据复核、源码同步/区间/版本/只读调查操作；Docker 运行时受当前环境阻塞，完整竞赛漏洞证据闭环尚未收口。
 有价值的真实缺陷优先于告警数量、空菜单或把所有语言/工具列进能力清单。
 
+## IPC/接口分析双层边界
+
+`src/investigation` 将 IPC/接口候选拆成两条隔离工作流：确定性层只生成固定报告、Git 对象、
+Detector 事实、覆盖、义务与证据门矩阵；LLM/Agent 层只保存 `draft_only` 假设、缺失证据和
+调查建议。草稿必须引用 `fact_id` 或持久化 evidence ID，不能修改候选、义务、复核、案例或漏洞状态。
+本轮不接入模型，不把 AST/模式匹配当成所有权、支配性、攻击者控制或 CIA 影响证明。
 ## 两个容易混淆的维度
 
 | 审计对象 | 发现/调查策略 |
@@ -36,6 +42,7 @@ Core-only / 单次 LLM review / 工具型 Agent 是另一个实验比较维度�
 
 - src/ohscanner：固定 Git、索引、Detector 契约、Runner 和统一执行。
 - src/ohscanner/detectors/cpp、interface：A/B 自研检测器。
+- src/investigation：IPC/接口确定性事实包与非升级调查草案契约。
 - src/workbench + web：API/存储/Worker + React 面板；调用同一核心。
 - src/benchmark、src/providers、research：历史研究/对照，不是生产检测依赖。
 - tests、samples、benchmarks：回归/开发样本/实验定义，不能自动当独立 holdout。
