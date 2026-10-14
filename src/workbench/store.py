@@ -1,6 +1,7 @@
 """Transactional single-machine queue and append-only review history."""
 
 from contextlib import contextmanager
+from hashlib import sha256
 from datetime import datetime, timezone
 import fcntl
 import json
@@ -65,8 +66,34 @@ class Store:
                   id TEXT PRIMARY KEY, job_id TEXT NOT NULL REFERENCES jobs(id),
                   candidate_id TEXT NOT NULL, record TEXT NOT NULL, created_at TEXT NOT NULL);
                 CREATE INDEX IF NOT EXISTS evidence_lookup ON source_evidence(job_id,candidate_id);
+
                 INSERT OR IGNORE INTO schema_migrations VALUES(2);
                 """)
+
+    def migrate_investigation_drafts(self):
+        """Apply investigation schema v4 only after operations schema v3 exists."""
+        with (self.root / "migration.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            with self.connect() as db:
+                version = (
+                    db.execute("SELECT max(version) FROM schema_migrations")
+                    .fetchone()[0]
+                    or 0
+                )
+                if version < 3:
+                    raise RuntimeError("operations schema v3 must migrate first")
+                if version < 4:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS investigation_drafts(
+                      id TEXT PRIMARY KEY, job_id TEXT NOT NULL REFERENCES jobs(id),
+                      candidate_id TEXT NOT NULL, fact_bundle_sha256 TEXT NOT NULL,
+                      draft_sha256 TEXT NOT NULL, supersedes_draft_id TEXT,
+                      record TEXT NOT NULL, created_at TEXT NOT NULL,
+                      UNIQUE(job_id,candidate_id,draft_sha256));
+                    CREATE INDEX IF NOT EXISTS investigation_draft_lookup
+                      ON investigation_drafts(job_id,candidate_id,id);
+                    INSERT OR IGNORE INTO schema_migrations VALUES(4);
+                    """)
 
     @contextmanager
     def connect(self):
@@ -326,6 +353,68 @@ class Store:
                     (job_id, candidate_id),
                 )
             return [json.loads(row[0]) for row in rows]
+
+    def add_investigation_draft(
+        self, job_id, candidate_id, fact_bundle_sha256, draft
+    ):
+        """Append one immutable investigation draft; no update/delete path exists."""
+        self.migrate_investigation_drafts()
+        record = json.dumps(draft, ensure_ascii=False, sort_keys=True)
+        digest = sha256(record.encode("utf-8")).hexdigest()
+        key = draft["draft_id"]
+        created_at = draft.get("created_at") or now()
+        item = {
+            "id": key,
+            "job_id": job_id,
+            "candidate_id": candidate_id,
+            "fact_bundle_sha256": fact_bundle_sha256,
+            "draft_sha256": digest,
+            "supersedes_draft_id": draft.get("supersedes_draft_id"),
+            "record": draft,
+            "created_at": created_at,
+        }
+        with self.connect() as db:
+            if db.execute("SELECT 1 FROM jobs WHERE id=?", (job_id,)).fetchone() is None:
+                raise KeyError("job not found")
+            if db.execute(
+                "SELECT 1 FROM investigation_drafts WHERE id=?", (key,)
+            ).fetchone():
+                raise ValueError("draft_id already exists")
+            if db.execute(
+                "SELECT 1 FROM investigation_drafts "
+                "WHERE job_id=? AND candidate_id=? AND draft_sha256=?",
+                (job_id, candidate_id, digest),
+            ).fetchone():
+                raise ValueError("identical investigation draft already exists")
+            previous = item["supersedes_draft_id"]
+            if previous:
+                row = db.execute(
+                    "SELECT candidate_id FROM investigation_drafts WHERE id=?",
+                    (previous,),
+                ).fetchone()
+                if row is None or row["candidate_id"] != candidate_id:
+                    raise ValueError("superseded draft not found for this candidate")
+            db.execute(
+                "INSERT INTO investigation_drafts("
+                "id,job_id,candidate_id,fact_bundle_sha256,draft_sha256,"
+                "supersedes_draft_id,record,created_at"
+                ") VALUES(?,?,?,?,?,?,?,?)",
+                (
+                    key, job_id, candidate_id, fact_bundle_sha256, digest,
+                    previous, json.dumps(item, ensure_ascii=False), created_at,
+                ),
+            )
+        return item
+
+    def investigation_drafts(self, job_id, candidate_id):
+        self.migrate_investigation_drafts()
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT record FROM investigation_drafts "
+                "WHERE job_id=? AND candidate_id=? ORDER BY created_at,id",
+                (job_id, candidate_id),
+            )
+            return [json.loads(row["record"]) for row in rows]
 
     def link_case(self, case_id, links):
         with self.connect() as db:

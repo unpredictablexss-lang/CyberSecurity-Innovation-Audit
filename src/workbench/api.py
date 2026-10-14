@@ -13,6 +13,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .settings import Settings
 from .store import Store, TERMINAL
 from . import service
+from . import investigation as investigation_service
 from .service import MAX_INCLUDE_PATHS
 
 
@@ -344,6 +345,46 @@ def create_app(settings=None):
             body.start_line,
             body.end_line,
             body.note,
+        )
+
+    @app.get("/api/v1/scans/{key}/findings/{identity}/investigation")
+    def investigation(key: str, identity: str):
+        return investigation_service.investigation_bundle(
+            settings, store, store.job(key), identity
+        )
+
+    @app.post(
+        "/api/v1/scans/{key}/findings/{identity}/investigation/drafts",
+        status_code=201,
+    )
+    def investigation_draft(key: str, identity: str, body: dict):
+        return investigation_service.save_draft(
+            settings, store, store.job(key), identity, body
+        )
+
+    @app.get(
+        "/api/v1/scans/{key}/findings/{identity}/investigation/artifacts/{kind}"
+    )
+    def investigation_artifact(key: str, identity: str, kind: str):
+        bundle = investigation_service.investigation_bundle(
+            settings, store, store.job(key), identity
+        )
+        if kind == "investigation.json":
+            data = json.dumps(bundle, indent=2, ensure_ascii=False)
+            media_type = "application/json"
+        elif kind == "investigation.md":
+            data = investigation_service.investigation_markdown(bundle)
+            media_type = "text/plain"
+        else:
+            raise KeyError("unknown investigation artifact")
+        return Response(
+            data,
+            media_type=media_type,
+            headers={
+                "Content-Disposition": (
+                    f'attachment; filename="{key}_{identity}_{kind}"'
+                )
+            },
         )
 
     @app.get("/api/v1/cases")

@@ -434,6 +434,167 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(self.store.job(job["id"])["status"], "cancelled")
         self.assertIsNotNone(processes[0].poll())
 
+    @staticmethod
+    def investigation_draft_payload(data, fact_id, supersedes=None):
+        payload = {
+            "schema_version": "ohscanner.investigation-draft-v1",
+            "candidate_id": data["candidate_id"],
+            "producer": {"kind": "human"},
+            "input_context": {
+                "fact_bundle_sha256": data["fact_bundle_sha256"],
+                "report_sha256": data["report_sha256"],
+                "tool_call_ids": [],
+                "tool_result_evidence_ids": [],
+                "budget": {
+                    "input_tokens": 0,
+                    "output_tokens": 0,
+                    "tool_calls": 0,
+                    "wall_clock_seconds": 0,
+                },
+                "model_parameters": {},
+            },
+            "claims": [{
+                "claim_id": "claim-1",
+                "kind": "hypothesis",
+                "text": "Caller reachability remains an open obligation.",
+                "evidence_refs": [fact_id],
+                "status": "draft",
+            }],
+            "assumptions": ["Only the pinned report and source objects were used."],
+            "missing_evidence": [],
+            "recommended_probes": [],
+            "limitations": ["No runtime or product-entry proof is included."],
+            "review_recommendations": ["Review the caller permission boundary."],
+            "status": "draft_only",
+            "can_promote": False,
+        }
+        if supersedes is not None:
+            payload["supersedes_draft_id"] = supersedes
+        return payload
+
+    def test_investigation_bundle_separates_facts_and_drafts(self):
+        job = self.completed()
+        report = service.read_report(self.settings, job)
+        item = next(
+            x for x in service.findings(report)
+            if x["detector_id"] == "ohscanner.interface.ipc"
+        )
+        path = f"/api/v1/scans/{job['id']}/findings/{item['id']}/investigation"
+        r = self.client.get(path)
+        self.assertEqual(r.status_code, 200, r.text)
+        data = r.json()
+        self.assertEqual(data["candidate_id"], item["id"])
+        self.assertEqual(data["drafts"], [])
+        self.assertEqual(data["validated_vulnerability"], 0)
+        self.assertFalse(data["draft_policy"]["can_promote"])
+        facts = data["fact_bundle"]["facts"]
+        self.assertTrue(facts)
+        gates = {
+            x["name"]: x["status"]
+            for x in data["fact_bundle"]["gate_checks"]
+        }
+        self.assertEqual(gates["candidate_identity"], "met")
+        self.assertEqual(gates["source_integrity"], "met")
+        self.assertEqual(gates["entry_reachability"], "unknown")
+        self.assertEqual(gates["security_impact"], "unknown")
+        self.assertEqual(job["report_sha256"], data["fact_bundle"]["source_binding"]["report_sha256"])
+        self.assertEqual(
+            self.store.job(job["id"])["report_sha256"], job["report_sha256"]
+        )
+
+    def test_investigation_draft_is_append_only_and_non_promoting(self):
+        job = self.completed()
+        report = service.read_report(self.settings, job)
+        item = next(
+            x for x in service.findings(report)
+            if x["detector_id"] == "ohscanner.interface.ipc"
+        )
+        base = f"/api/v1/scans/{job['id']}/findings/{item['id']}/investigation"
+        bundle = self.client.get(base).json()
+        fact_id = bundle["fact_bundle"]["facts"][0]["fact_id"]
+        data = {
+            "candidate_id": item["id"],
+            "fact_bundle_sha256": bundle["fact_bundle"]["fact_bundle_sha256"],
+            "report_sha256": job["report_sha256"],
+        }
+        first_body = self.investigation_draft_payload(data, fact_id)
+        first = self.client.post(
+            base + "/drafts", json=first_body, headers=HEADERS
+        )
+        self.assertEqual(first.status_code, 201, first.text)
+        first_id = first.json()["id"]
+
+        mutating = dict(first_body)
+        mutating["candidate_status"] = "confirmed"
+        self.assertEqual(
+            self.client.post(
+                base + "/drafts", json=mutating, headers=HEADERS
+            ).status_code,
+            409,
+        )
+        assigned = dict(first_body)
+        assigned["draft_id"] = "caller-chosen"
+        self.assertEqual(
+            self.client.post(
+                base + "/drafts", json=assigned, headers=HEADERS
+            ).status_code,
+            409,
+        )
+        self.assertEqual(
+            self.client.patch(
+                base + "/drafts/" + first_id,
+                json=first_body,
+                headers=HEADERS,
+            ).status_code,
+            405,
+        )
+        self.assertEqual(len(self.client.get(base).json()["drafts"]), 1)
+
+        second_body = self.investigation_draft_payload(
+            data, fact_id, supersedes=first_id
+        )
+        second_body["claims"][0]["claim_id"] = "claim-2"
+        second = self.client.post(
+            base + "/drafts", json=second_body, headers=HEADERS
+        )
+        self.assertEqual(second.status_code, 201, second.text)
+        self.assertEqual(len(self.client.get(base).json()["drafts"]), 2)
+
+        missing = self.investigation_draft_payload(
+            data, fact_id, supersedes="missing-draft"
+        )
+        self.assertEqual(
+            self.client.post(
+                base + "/drafts", json=missing, headers=HEADERS
+            ).status_code,
+            409,
+        )
+        self.assertEqual(len(self.client.get(base).json()["drafts"]), 2)
+
+    def test_investigation_artifacts_are_draft_only(self):
+        job = self.completed()
+        report = service.read_report(self.settings, job)
+        item = next(
+            x for x in service.findings(report)
+            if x["detector_id"] == "ohscanner.interface.ipc"
+        )
+        base = (
+            f"/api/v1/scans/{job['id']}/findings/{item['id']}"
+            "/investigation/artifacts"
+        )
+        json_data = self.client.get(base + "/investigation.json")
+        markdown = self.client.get(base + "/investigation.md")
+        self.assertEqual(json_data.status_code, 200, json_data.text)
+        self.assertEqual(markdown.status_code, 200, markdown.text)
+        payload = json_data.json()
+        self.assertEqual(payload["validated_vulnerability"], 0)
+        self.assertEqual(payload["draft_policy"]["status"], "draft_only")
+        self.assertIn("draft_only", markdown.text)
+        self.assertIn("Confirmed/reportable: 0", markdown.text)
+        self.assertEqual(
+            self.client.get(base + "/other.json").status_code, 404
+        )
+
     def test_source_evidence_binds_original_blob_and_survives_restart(self):
         job = self.completed()
         item = service.findings(service.read_report(self.settings, job))[0]

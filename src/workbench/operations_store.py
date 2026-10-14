@@ -37,6 +37,7 @@ class Operations:
                       record TEXT NOT NULL, created_at TEXT NOT NULL);
                     INSERT OR IGNORE INTO schema_migrations VALUES(3);
                     """)
+        self.store.migrate_investigation_drafts()
 
     def directory(self, key):
         if len(key) != 32 or any(c not in "0123456789abcdef" for c in key):
