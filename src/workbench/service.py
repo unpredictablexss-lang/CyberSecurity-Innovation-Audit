@@ -8,6 +8,8 @@ from src.ohscanner.contracts import safe_relative_path
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata
 from src.ohscanner.git_source import _git, resolve_commit, MAX_BLOB_BYTES
 
+MAX_INCLUDE_PATHS = 2000
+
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
@@ -99,8 +101,14 @@ def detector_metadata():
 
 
 def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
-    if not includes or len(includes) > 100 or len(set(includes)) != len(includes):
-        raise ValueError("select 1..100 distinct include paths")
+    if (
+        not includes
+        or len(includes) > MAX_INCLUDE_PATHS
+        or len(set(includes)) != len(includes)
+    ):
+        raise ValueError(
+            f"select 1..{MAX_INCLUDE_PATHS} distinct include paths"
+        )
     for path in includes:
         if path != ".":
             safe_relative_path(path)

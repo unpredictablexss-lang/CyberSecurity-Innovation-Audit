@@ -13,6 +13,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .settings import Settings
 from .store import Store, TERMINAL
 from . import service
+from .service import MAX_INCLUDE_PATHS
 
 
 class StrictModel(BaseModel):
@@ -30,7 +31,9 @@ class ScanInput(StrictModel):
     repository_id: str
     revision: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(
-        default_factory=lambda: ["."], min_length=1, max_length=100
+        default_factory=lambda: ["."],
+        min_length=1,
+        max_length=MAX_INCLUDE_PATHS,
     )
     detector_ids: list[str] = Field(min_length=1, max_length=10)
     timeout_seconds: int = Field(default=300, ge=1, le=3600)
