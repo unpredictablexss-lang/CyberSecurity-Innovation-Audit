@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "kind": "cpp_shared_ptr_review_verification",
+  "status": "passed",
+  "checks": {
+    "candidate_count_208": true,
+    "diagnostic_ids_unique": true,
+    "workbench_ids_unique": true,
+    "review_total_208": true,
+    "case_links_208": true,
+    "all_statuses_allowed": true,
+    "no_confirmed_reviews": true,
+    "groups_cover_all": true,
+    "holdout_no_overlap": true,
+    "five_completed_workbench_jobs": true,
+    "all_report_comparisons_exact": true,
+    "source_excerpt_hashes_verified": true,
+    "baseline_individual_ids_explicitly_unavailable": true
+  },
+  "candidate_status_counts": {
+    "likely_false_positive": 194,
+    "plausible_unproven": 11,
+    "refuted": 3
+  },
+  "component_counts": {
+    "update_updateservice": 1,
+    "security_access_token": 10,
+    "distributeddatamgr_kv_store": 167,
+    "window_window_manager": 27,
+    "communication_dsoftbus": 3
+  },
+  "group_count": 9,
+  "holdout": {
+    "holdout_candidate_count": 34,
+    "development_candidate_count": 174,
+    "leakage_checks": {
+      "same_file_symbol_source_hash_overlap": false,
+      "root_cause_group_disjoint": true
+    }
+  },
+  "workbench_job_status_counts": {
+    "completed_with_limitations": 5,
+    "interrupted": 1
+  },
+  "workbench_review_status_counts": {
+    "likely_false_positive": 194,
+    "plausible_unproven": 11,
+    "refuted": 3
+  },
+  "workbench_case_links": 208,
+  "source_excerpt_hashes_verified": 18,
+  "test_results": {
+    "full_suite": "543 passed / 8 skipped",
+    "cpp_detector_poc": "75 passed"
+  },
+  "validated_vulnerability": 0,
+  "precision_recall": "not computed"
+}

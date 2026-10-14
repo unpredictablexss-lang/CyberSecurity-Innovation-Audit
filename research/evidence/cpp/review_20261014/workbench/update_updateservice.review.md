@@ -1,0 +1,145 @@
+# OHScanner 审计复核包
+
+候选与复核记录；不是已确认漏洞报告。
+
+- Commit: e4942a33cc5ed29040e5c720bea3b2a8e4a79221
+- 原始报告 SHA-256: da4402db30218c5e5d6351354ada56ec75d3942ab1a24058cd638bb01d31e750
+- 候选: 1
+- 确认漏洞: 0
+
+## 复核记录（结构化原文）
+
+~~~~json
+{
+  "schema_version": 1,
+  "kind": "workbench_review_bundle",
+  "job_id": "e91c15b566f24582b76caa9083ef598a",
+  "repository": "openharmony/update_updateservice",
+  "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+  "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+  "snapshot_sha256": "3eac699e183d0c08368ce18374ba039fbf4a165cb6f9ac56e43f65a9a774c6c3",
+  "scanner_report_sha256": "da4402db30218c5e5d6351354ada56ec75d3942ab1a24058cd638bb01d31e750",
+  "findings": [
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8c59bff727467c96",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "line": 27,
+      "column": 67,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''timeUtilsProxy_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "timeUtilsProxy_",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8c59bff727467c96",
+        "file": "services/core/ability/status_cache/include/status_cache.h",
+        "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/update_updateservice",
+          "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+          "snapshot_sha256": "3eac699e183d0c08368ce18374ba039fbf4a165cb6f9ac56e43f65a9a774c6c3",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "services/core/ability/status_cache/include/status_cache.h",
+          "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "job_id": "e91c15b566f24582b76caa9083ef598a",
+      "candidate_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review constructor or single lexical access noise. file=services/core/ability/status_cache/include/status_cache.h:27 symbol=timeUtilsProxy_ operation=read. Hypothesis: The observed access is initialization or a single lexical access, not a proven conflicting pair. Remaining unknown: Cross-file mutation, publication and pointee thread safety remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T15:51:06.747755+00:00"
+    }
+  ],
+  "supplemental_evidence": [
+    {
+      "id": "21b607fbeb944af7a475cbb81f2c1ff6",
+      "job_id": "e91c15b566f24582b76caa9083ef598a",
+      "candidate_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679",
+      "kind": "source_excerpt",
+      "interpretation": "human_selected_context_not_path_or_runtime_proof",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "snapshot_sha256": "3eac699e183d0c08368ce18374ba039fbf4a165cb6f9ac56e43f65a9a774c6c3",
+      "report_sha256": "da4402db30218c5e5d6351354ada56ec75d3942ab1a24058cd638bb01d31e750",
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "blob": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "start_line": 19,
+      "end_line": 35,
+      "text": "#include <cstdint>\n\n#include \"time_utils_proxy.h\"\n\nnamespace OHOS {\nnamespace UpdateEngine {\nclass StatusCache {\npublic:\n    StatusCache(std::shared_ptr<TimeUtilsProxy> timeUtilsProxy) : timeUtilsProxy_(timeUtilsProxy) {}\n    ~StatusCache() = default;\n\n    bool IsChecking();\n    void SetIsChecking(bool isChecking);\n\nprivate:\n    int64_t GetCurrentTime();\n\n",
+      "excerpt_sha256": "abb679d274be3e0e7d561f0e7e90f1a53d8034a52fc9ad5ba28eebb56670c7f9",
+      "note": "constructor or single lexical access noise; representative fixed-source context.",
+      "created_at": "2026-10-14T15:51:07.611648+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "id": "dd0fcf3147f2427eb56e662e8dbd8efb",
+      "title": "update_updateservice: constructor or single lexical access noise",
+      "created_at": "2026-10-14T15:51:07.911199+00:00",
+      "status": "investigation",
+      "links": [
+        {
+          "case_id": "dd0fcf3147f2427eb56e662e8dbd8efb",
+          "job_id": "e91c15b566f24582b76caa9083ef598a",
+          "candidate_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679",
+          "rationale": "Review group RC-CONSTRUCTOR-NOISE; candidate-level hypothesis only, not a shared root-cause proof."
+        }
+      ]
+    }
+  ],
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Manual annotations and case links are not vulnerability confirmation.",
+    "No runtime validation or product impact gate implemented in workbench v1."
+  ]
+}
+~~~~

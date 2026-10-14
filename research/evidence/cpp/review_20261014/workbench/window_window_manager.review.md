@@ -1,0 +1,2296 @@
+# OHScanner 审计复核包
+
+候选与复核记录；不是已确认漏洞报告。
+
+- Commit: 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7
+- 原始报告 SHA-256: 48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4
+- 候选: 27
+- 确认漏洞: 0
+
+## 复核记录（结构化原文）
+
+~~~~json
+{
+  "schema_version": 1,
+  "kind": "workbench_review_bundle",
+  "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+  "repository": "openharmony/window_window_manager",
+  "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+  "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+  "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+  "scanner_report_sha256": "48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4",
+  "findings": [
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ddc2f2c8ccefa542",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "line": 220,
+      "column": 37,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''animationConfig''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "animationConfig",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ddc2f2c8ccefa542",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/innerkits/wm/wm_animation_common.h",
+          "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:88adf81778a285a9",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "line": 261,
+      "column": 37,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''animationParams''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "animationParams",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:88adf81778a285a9",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/innerkits/wm/wm_animation_common.h",
+          "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ed042de13472f105",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "line": 265,
+      "column": 37,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''animationSystemParams''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "animationSystemParams",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ed042de13472f105",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/innerkits/wm/wm_animation_common.h",
+          "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:506ce95217f58cdd",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "line": 273,
+      "column": 52,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''needAnimation''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "needAnimation",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:506ce95217f58cdd",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/innerkits/wm/wm_animation_common.h",
+          "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:36fc4a9919ef311c",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "line": 289,
+      "column": 54,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''excludeFromDock''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "excludeFromDock",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:36fc4a9919ef311c",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/innerkits/wm/wm_animation_common.h",
+          "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:da37107a72040100",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "line": 297,
+      "column": 56,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''excludeFromRecent''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "excludeFromRecent",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:da37107a72040100",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/innerkits/wm/wm_animation_common.h",
+          "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:efd72e030c5373be",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+      "line": 32,
+      "column": 22,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''jsCallBack_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "jsCallBack_",
+      "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:efd72e030c5373be",
+        "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+        "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+          "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2b72311e39c5ba9c",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+      "line": 33,
+      "column": 22,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''jsCallBack_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "jsCallBack_",
+      "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2b72311e39c5ba9c",
+        "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+        "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+          "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c086123c9d41ee3e",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+      "line": 32,
+      "column": 22,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''jsCallBack_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "jsCallBack_",
+      "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c086123c9d41ee3e",
+        "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+        "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+          "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:71fa65325123bf8b",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "previewer/include/wm_animation_common.h",
+      "line": 214,
+      "column": 37,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''animationConfig''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "animationConfig",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:71fa65325123bf8b",
+        "file": "previewer/include/wm_animation_common.h",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "previewer/include/wm_animation_common.h",
+          "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:893564c6130e3cac",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "previewer/include/wm_animation_common.h",
+      "line": 253,
+      "column": 37,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''animationParams''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "animationParams",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:893564c6130e3cac",
+        "file": "previewer/include/wm_animation_common.h",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "previewer/include/wm_animation_common.h",
+          "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d5124f0862a6e7c7",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "previewer/include/wm_animation_common.h",
+      "line": 257,
+      "column": 37,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''animationSystemParams''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "animationSystemParams",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d5124f0862a6e7c7",
+        "file": "previewer/include/wm_animation_common.h",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "previewer/include/wm_animation_common.h",
+          "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c51749733cd5316e",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "previewer/include/wm_animation_common.h",
+      "line": 265,
+      "column": 52,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''needAnimation''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "needAnimation",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c51749733cd5316e",
+        "file": "previewer/include/wm_animation_common.h",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "previewer/include/wm_animation_common.h",
+          "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6b315ae8b49a0cb4",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "previewer/include/wm_animation_common.h",
+      "line": 281,
+      "column": 54,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''excludeFromDock''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "excludeFromDock",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6b315ae8b49a0cb4",
+        "file": "previewer/include/wm_animation_common.h",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "previewer/include/wm_animation_common.h",
+          "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d2e5434b329e803c",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "previewer/include/wm_animation_common.h",
+      "line": 289,
+      "column": 56,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''excludeFromRecent''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "excludeFromRecent",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d2e5434b329e803c",
+        "file": "previewer/include/wm_animation_common.h",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "analysis_status": "partial",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "previewer/include/wm_animation_common.h",
+          "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:10da51cf3210aac9",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "utils/include/surface_capture_future.h",
+      "line": 73,
+      "column": 29,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''hdrPixelMap_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "hdrPixelMap_",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:10da51cf3210aac9",
+        "file": "utils/include/surface_capture_future.h",
+        "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "utils/include/surface_capture_future.h",
+          "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9d52151c77a1c9f8",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "utils/include/surface_capture_future.h",
+      "line": 73,
+      "column": 18,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''pixelMap_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "pixelMap_",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9d52151c77a1c9f8",
+        "file": "utils/include/surface_capture_future.h",
+        "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "utils/include/surface_capture_future.h",
+          "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c39b27e5285d882f",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "line": 53,
+      "column": 16,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''backgroundFilter_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "backgroundFilter_",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c39b27e5285d882f",
+        "file": "utils/include/ui_effect_controller_common.h",
+        "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "utils/include/ui_effect_controller_common.h",
+          "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ef9b55edb54ffcea",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "line": 53,
+      "column": 48,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''effect_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "effect_",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ef9b55edb54ffcea",
+        "file": "utils/include/ui_effect_controller_common.h",
+        "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "utils/include/ui_effect_controller_common.h",
+          "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:120564aa8b3e5e0e",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "line": 50,
+      "column": 16,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''mainWindowXComponentController_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "mainWindowXComponentController_",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:120564aa8b3e5e0e",
+        "file": "wm/include/picture_in_picture_controller.h",
+        "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wm/include/picture_in_picture_controller.h",
+          "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:dbb5f947830c529b",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "line": 54,
+      "column": 9,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''mainWindowXComponentController_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "mainWindowXComponentController_",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:dbb5f947830c529b",
+        "file": "wm/include/picture_in_picture_controller.h",
+        "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wm/include/picture_in_picture_controller.h",
+          "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3b7de515ce92c047",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "line": 53,
+      "column": 16,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''mainWindowXComponentController_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "mainWindowXComponentController_",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3b7de515ce92c047",
+        "file": "wm/include/picture_in_picture_controller_ani.h",
+        "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wm/include/picture_in_picture_controller_ani.h",
+          "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8aa8bf0d35097509",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "line": 57,
+      "column": 9,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''mainWindowXComponentController_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "mainWindowXComponentController_",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8aa8bf0d35097509",
+        "file": "wm/include/picture_in_picture_controller_ani.h",
+        "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wm/include/picture_in_picture_controller_ani.h",
+          "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:182861cbf5065462",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "line": 141,
+      "column": 16,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''pipXComponentController_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "pipXComponentController_",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:182861cbf5065462",
+        "file": "wm/include/picture_in_picture_controller_base.h",
+        "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wm/include/picture_in_picture_controller_base.h",
+          "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a9e99a7e0a6f4146",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "line": 145,
+      "column": 9,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''pipXComponentController_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "pipXComponentController_",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a9e99a7e0a6f4146",
+        "file": "wm/include/picture_in_picture_controller_base.h",
+        "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wm/include/picture_in_picture_controller_base.h",
+          "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4d4fc419b2328830",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wmserver/include/drag_controller.h",
+      "line": 68,
+      "column": 9,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''vsyncCallback_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "vsyncCallback_",
+      "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4d4fc419b2328830",
+        "file": "wmserver/include/drag_controller.h",
+        "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wmserver/include/drag_controller.h",
+          "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    },
+    {
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d31f8237b87d720d",
+      "provider": "ohscanner.cpp.shared_ptr_race",
+      "evidence_type": "syntax",
+      "file": "wmserver/include/window_common_event.h",
+      "line": 41,
+      "column": 64,
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "severity": "unassessed",
+      "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''eventHandler_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety.",
+      "candidate_cwe": "CWE-362",
+      "confidence": "unassessed",
+      "symbol": "eventHandler_",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "consequence_impact": null,
+      "consequence_cwe": null,
+      "source_binding": "bound",
+      "id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "evidence": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d31f8237b87d720d",
+        "file": "wmserver/include/window_common_event.h",
+        "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+        "analysis_status": "analyzed",
+        "source_binding": {
+          "repository": "openharmony/window_window_manager",
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+          "profile_id": "light-ast",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "detector_version": "0.4.0",
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "file": "wmserver/include/window_common_event.h",
+          "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af"
+        },
+        "consequence_impact": null,
+        "consequence_cwe": null,
+        "model_version": null,
+        "obligations": [
+          {
+            "kind": "synchronization_proof",
+            "description": "Resolve lock and atomic semantics across all accesses.",
+            "status": "unknown"
+          },
+          {
+            "kind": "thread_interleaving",
+            "description": "Demonstrate feasible concurrent accesses to the same object.",
+            "status": "unknown"
+          },
+          {
+            "kind": "product_build_context",
+            "description": "Establish real build and template instantiation context.",
+            "status": "unknown"
+          },
+          {
+            "kind": "security_impact",
+            "description": "Verify reachable trigger and concrete CIA impact independently.",
+            "status": "unknown"
+          }
+        ]
+      },
+      "review_status": "unassessed",
+      "evidence_level": "candidate"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 179,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/innerkits/wm/wm_animation_common.h:220 symbol=animationConfig operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:02:58.946680+00:00"
+    },
+    {
+      "id": 180,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/innerkits/wm/wm_animation_common.h:261 symbol=animationParams operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:02:59.529143+00:00"
+    },
+    {
+      "id": 181,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/innerkits/wm/wm_animation_common.h:265 symbol=animationSystemParams operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:00.063720+00:00"
+    },
+    {
+      "id": 182,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/innerkits/wm/wm_animation_common.h:273 symbol=needAnimation operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:00.598086+00:00"
+    },
+    {
+      "id": 183,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/innerkits/wm/wm_animation_common.h:289 symbol=excludeFromDock operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:00.946861+00:00"
+    },
+    {
+      "id": 184,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/innerkits/wm/wm_animation_common.h:297 symbol=excludeFromRecent operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:01.409758+00:00"
+    },
+    {
+      "id": 185,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/kits/napi/float_view_napi/js_float_view_listener.h:32 symbol=jsCallBack_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:01.921628+00:00"
+    },
+    {
+      "id": 186,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h:33 symbol=jsCallBack_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:02.325971+00:00"
+    },
+    {
+      "id": 187,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h:32 symbol=jsCallBack_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:02.888069+00:00"
+    },
+    {
+      "id": 188,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=previewer/include/wm_animation_common.h:214 symbol=animationConfig operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:03.338141+00:00"
+    },
+    {
+      "id": 189,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=previewer/include/wm_animation_common.h:253 symbol=animationParams operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:03.845602+00:00"
+    },
+    {
+      "id": 190,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=previewer/include/wm_animation_common.h:257 symbol=animationSystemParams operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:04.343225+00:00"
+    },
+    {
+      "id": 191,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=previewer/include/wm_animation_common.h:265 symbol=needAnimation operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:04.805570+00:00"
+    },
+    {
+      "id": 192,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=previewer/include/wm_animation_common.h:281 symbol=excludeFromDock operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:05.297714+00:00"
+    },
+    {
+      "id": 193,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=previewer/include/wm_animation_common.h:289 symbol=excludeFromRecent operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:05.861935+00:00"
+    },
+    {
+      "id": 194,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=utils/include/surface_capture_future.h:73 symbol=hdrPixelMap_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:06.387636+00:00"
+    },
+    {
+      "id": 195,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=utils/include/surface_capture_future.h:73 symbol=pixelMap_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:06.858248+00:00"
+    },
+    {
+      "id": 196,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=utils/include/ui_effect_controller_common.h:53 symbol=backgroundFilter_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:07.369469+00:00"
+    },
+    {
+      "id": 197,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=utils/include/ui_effect_controller_common.h:53 symbol=effect_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:07.836579+00:00"
+    },
+    {
+      "id": 198,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8",
+      "status": "plausible_unproven",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review PIP controller owner transfer pair. file=wm/include/picture_in_picture_controller.h:50 symbol=mainWindowXComponentController_ operation=read. Hypothesis: Getter/setter call sites are sequential field transfers, but product event-loop ownership is not proven. Remaining unknown: Thread ownership, publication order and reachable trigger conditions remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:08.284751+00:00"
+    },
+    {
+      "id": 199,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d",
+      "status": "plausible_unproven",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review PIP controller owner transfer pair. file=wm/include/picture_in_picture_controller.h:54 symbol=mainWindowXComponentController_ operation=write. Hypothesis: Getter/setter call sites are sequential field transfers, but product event-loop ownership is not proven. Remaining unknown: Thread ownership, publication order and reachable trigger conditions remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:08.707335+00:00"
+    },
+    {
+      "id": 200,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81",
+      "status": "plausible_unproven",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review PIP controller owner transfer pair. file=wm/include/picture_in_picture_controller_ani.h:53 symbol=mainWindowXComponentController_ operation=read. Hypothesis: Getter/setter call sites are sequential field transfers, but product event-loop ownership is not proven. Remaining unknown: Thread ownership, publication order and reachable trigger conditions remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:09.221748+00:00"
+    },
+    {
+      "id": 201,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c",
+      "status": "plausible_unproven",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review PIP controller owner transfer pair. file=wm/include/picture_in_picture_controller_ani.h:57 symbol=mainWindowXComponentController_ operation=write. Hypothesis: Getter/setter call sites are sequential field transfers, but product event-loop ownership is not proven. Remaining unknown: Thread ownership, publication order and reachable trigger conditions remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:09.634016+00:00"
+    },
+    {
+      "id": 202,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652",
+      "status": "plausible_unproven",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review PIP controller owner transfer pair. file=wm/include/picture_in_picture_controller_base.h:141 symbol=pipXComponentController_ operation=read. Hypothesis: Getter/setter call sites are sequential field transfers, but product event-loop ownership is not proven. Remaining unknown: Thread ownership, publication order and reachable trigger conditions remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:10.203285+00:00"
+    },
+    {
+      "id": 203,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af",
+      "status": "plausible_unproven",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review PIP controller owner transfer pair. file=wm/include/picture_in_picture_controller_base.h:145 symbol=pipXComponentController_ operation=write. Hypothesis: Getter/setter call sites are sequential field transfers, but product event-loop ownership is not proven. Remaining unknown: Thread ownership, publication order and reachable trigger conditions remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:10.627625+00:00"
+    },
+    {
+      "id": 204,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=wmserver/include/drag_controller.h:68 symbol=vsyncCallback_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:11.029512+00:00"
+    },
+    {
+      "id": 205,
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d",
+      "status": "likely_false_positive",
+      "reviewer": "teammate-A / static review",
+      "notes": "Static review single lexical owner read shape. file=wmserver/include/window_common_event.h:41 symbol=eventHandler_ operation=read. Hypothesis: Only one bound lexical access was observed for this owner member in the selected source scope. Remaining unknown: Cross-file mutation, product threading and pointee behavior remain unknown. Evidence obligations: [{\"description\": \"Resolve lock and atomic semantics across all accesses.\", \"kind\": \"synchronization_proof\", \"status\": \"unknown\"}, {\"description\": \"Demonstrate feasible concurrent accesses to the same object.\", \"kind\": \"thread_interleaving\", \"status\": \"unknown\"}, {\"description\": \"Establish real build and template instantiation context.\", \"kind\": \"product_build_context\", \"status\": \"unknown\"}, {\"description\": \"Verify reachable trigger and concrete CIA impact independently.\", \"kind\": \"security_impact\", \"status\": \"unknown\"}]. This review is candidate-level analysis, not confirmed/reportable evidence.",
+      "created_at": "2026-10-14T16:03:11.455440+00:00"
+    }
+  ],
+  "supplemental_evidence": [
+    {
+      "id": "0c68aa7fc9b34d6daa7ca1c2947862fa",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8",
+      "kind": "source_excerpt",
+      "interpretation": "human_selected_context_not_path_or_runtime_proof",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+      "report_sha256": "48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "blob": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "start_line": 42,
+      "end_line": 58,
+      "text": "    std::shared_ptr<NativeReference> GetCustomNodeController() override;\n    std::shared_ptr<NativeReference> GetTypeNode() const override;\n    bool IsTypeNodeEnabled() const override;\n    bool IsPullPiPAndHandleNavigation();\n    std::string GetPiPNavigationId() const override;\n    \n    inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n    {\n        return mainWindowXComponentController_;\n    }\n    inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n    {\n        mainWindowXComponentController_ = controller;\n    }\n    inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n    inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n\n",
+      "excerpt_sha256": "3bb1202de0f0cfa4094f6a3759ecea1cfe23c88f56f44dc88507a4067af2f08e",
+      "note": "PIP controller owner transfer pair; representative fixed-source context.",
+      "created_at": "2026-10-14T16:03:12.360234+00:00"
+    },
+    {
+      "id": "04a74c78231f4ad5bdd5e3730c4bce75",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af",
+      "kind": "source_excerpt",
+      "interpretation": "human_selected_context_not_path_or_runtime_proof",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+      "report_sha256": "48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "blob": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "start_line": 137,
+      "end_line": 153,
+      "text": "    inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n    inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n    inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n    {\n        return pipXComponentController_;\n    }\n    inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n    {\n        pipXComponentController_ = controller;\n    }\n    inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n    inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n    inline int32_t GetHandleId() const { return handleId_; }\n    inline void SetHandleId(int32_t id) { handleId_ = id; }\n    inline sptr<Window> GetMainWindow() const { return mainWindow_; }\n\n    // diffrent between normal and web\n",
+      "excerpt_sha256": "812539a72a99141c4ec0c21052ea09ab8201e70c7f7f6ff973fd1ec4ec2b650f",
+      "note": "PIP controller owner transfer pair; representative fixed-source context.",
+      "created_at": "2026-10-14T16:03:13.306086+00:00"
+    },
+    {
+      "id": "884a2faa36bd49159bc62b83a187832c",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba",
+      "kind": "source_excerpt",
+      "interpretation": "human_selected_context_not_path_or_runtime_proof",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+      "report_sha256": "48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "blob": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "start_line": 212,
+      "end_line": 228,
+      "text": "    std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n\n    // LCOV_EXCL_START\n    bool Marshalling(Parcel& parcel) const override\n    {\n        if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n            return false;\n        }\n        if (!parcel.WriteParcelable(animationConfig.get())) {\n            return false;\n        }\n        return true;\n    }\n    // LCOV_EXCL_STOP\n\n    static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n    {\n",
+      "excerpt_sha256": "122b05368379d01cacfa988a9b10c6b01012907230cc88e12144907dcc561f14",
+      "note": "single lexical owner read shape; representative fixed-source context.",
+      "created_at": "2026-10-14T16:03:14.168341+00:00"
+    },
+    {
+      "id": "93e4dff5ca054332909b3b6a90435d9f",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "candidate_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d",
+      "kind": "source_excerpt",
+      "interpretation": "human_selected_context_not_path_or_runtime_proof",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+      "report_sha256": "48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4",
+      "file": "wmserver/include/window_common_event.h",
+      "blob": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "start_line": 33,
+      "end_line": 49,
+      "text": "    void UnSubscriberEvent();\n    void OnReceiveEvent(const EventFwk::CommonEventData& data);\n\nprivate:\n    class EventSubscriber : public EventFwk::CommonEventSubscriber {\n    public:\n        EventSubscriber(const EventFwk::CommonEventSubscribeInfo& subscriberInfo,\n            const std::shared_ptr<WindowCommonEvent>& eventHandler)\n            : EventFwk::CommonEventSubscriber(subscriberInfo), eventHandler_(eventHandler) {};\n        ~EventSubscriber() = default;\n        void OnReceiveEvent(const EventFwk::CommonEventData& data) override\n        {\n            eventHandler_->OnReceiveEvent(data);\n        }\n        \n    private:\n        std::shared_ptr<WindowCommonEvent> eventHandler_;\n",
+      "excerpt_sha256": "453c9fe7ed1937072eb91e327852e4522e4fde50e233cca3acea6f1a1bfa2427",
+      "note": "single lexical owner read shape; representative fixed-source context.",
+      "created_at": "2026-10-14T16:03:14.953230+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "id": "6fa2e81c99d44208aa93f78fe576f775",
+      "title": "window_window_manager: single lexical owner read shape",
+      "created_at": "2026-10-14T16:03:15.568307+00:00",
+      "status": "investigation",
+      "links": [
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "6fa2e81c99d44208aa93f78fe576f775",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3",
+          "rationale": "Review group RC-WINDOW-SINGLE; candidate-level hypothesis only, not a shared root-cause proof."
+        }
+      ]
+    },
+    {
+      "id": "bec17147d2d54bc7a502ef5e7cd57c23",
+      "title": "window_window_manager: PIP controller owner transfer pair",
+      "created_at": "2026-10-14T16:03:15.281859+00:00",
+      "status": "investigation",
+      "links": [
+        {
+          "case_id": "bec17147d2d54bc7a502ef5e7cd57c23",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81",
+          "rationale": "Review group RC-PIP-CONTROLLERS; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "bec17147d2d54bc7a502ef5e7cd57c23",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c",
+          "rationale": "Review group RC-PIP-CONTROLLERS; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "bec17147d2d54bc7a502ef5e7cd57c23",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652",
+          "rationale": "Review group RC-PIP-CONTROLLERS; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "bec17147d2d54bc7a502ef5e7cd57c23",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d",
+          "rationale": "Review group RC-PIP-CONTROLLERS; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "bec17147d2d54bc7a502ef5e7cd57c23",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af",
+          "rationale": "Review group RC-PIP-CONTROLLERS; candidate-level hypothesis only, not a shared root-cause proof."
+        },
+        {
+          "case_id": "bec17147d2d54bc7a502ef5e7cd57c23",
+          "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+          "candidate_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8",
+          "rationale": "Review group RC-PIP-CONTROLLERS; candidate-level hypothesis only, not a shared root-cause proof."
+        }
+      ]
+    }
+  ],
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Manual annotations and case links are not vulnerability confirmation.",
+    "No runtime validation or product impact gate implemented in workbench v1."
+  ]
+}
+~~~~
