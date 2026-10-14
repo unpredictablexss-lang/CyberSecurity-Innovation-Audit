@@ -272,6 +272,35 @@ def create_app(settings=None):
         ]
         return {"total": len(items), "items": items[offset : offset + limit]}
 
+    @app.get("/api/v1/scans/{key}/clusters")
+    def clusters(
+        key: str, offset: int = 0, limit: int = 50, q: str = "", detector: str = ""
+    ):
+        if offset < 0 or not 1 <= limit <= 200:
+            raise ValueError("invalid pagination")
+        report = service.read_report(settings, store.job(key))
+        items = service.finding_clusters(report)
+        latest = {}
+        for entry in store.reviews(key):
+            latest[entry["candidate_id"]] = entry
+        for group in items:
+            for candidate in group["candidates"]:
+                review = latest.get(candidate["id"])
+                candidate["review_status"] = review["status"] if review else "unassessed"
+        items = [
+            group for group in items
+            if (not detector or group["detector_id"] == detector)
+            and (not q or q.lower() in json.dumps(group, ensure_ascii=False).lower())
+        ]
+        return {
+            "total": len(items),
+            "items": items[offset : offset + limit],
+            "semantics": (
+                "review grouping only; cluster membership is not a root-cause "
+                "or vulnerability conclusion"
+            ),
+        }
+
     @app.get("/api/v1/scans/{key}/findings/{identity}")
     def finding(key: str, identity: str):
         job = store.job(key)

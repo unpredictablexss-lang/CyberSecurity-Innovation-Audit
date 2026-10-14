@@ -244,6 +244,21 @@ class WorkbenchTests(unittest.TestCase):
             all(x["evidence"].get("obligations") for x in service.findings(web))
         )
 
+    def test_candidate_clusters_keep_each_line_identity(self):
+        job = self.completed()
+        report = service.read_report(self.settings, job)
+        original = service.findings(report)
+        response = self.client.get(f"/api/v1/scans/{job['id']}/clusters")
+        self.assertEqual(response.status_code, 200, response.text)
+        data = response.json()
+        self.assertIn("not a root-cause", data["semantics"])
+        group = next(x for x in data["items"] if x["file"] == "race.cpp" and x["symbol"] == "instance_")
+        members = group["candidates"]
+        self.assertGreaterEqual(group["observation_count"], 2)
+        self.assertEqual(len({x["id"] for x in members}), len(members))
+        self.assertTrue(all(x["id"] in {f["id"] for f in original} for x in members))
+        self.assertEqual(group["root_cause_conclusion"], "not_inferred")
+
     def test_viewer_uses_git_not_worktree(self):
         job = self.completed()
         expected = (self.repo / "lifetime.cpp").read_text()

@@ -177,6 +177,58 @@ def findings(report):
     return result
 
 
+def finding_clusters(report):
+    """Review-only grouping; this does not infer that observations share a root cause."""
+    groups = {}
+    for item in findings(report):
+        bound = bool(item.get("source_sha256") and item.get("symbol"))
+        key = (
+            report["repository"], report["commit"], report["snapshot_sha256"],
+            item["detector_id"], item["detector_version"], item["rule_id"],
+            item["file"], item.get("symbol") or "", item.get("source_sha256") or "",
+            "bound" if bound else item["id"],
+        )
+        group = groups.setdefault(key, {
+            "repository": report["repository"], "commit": report["commit"],
+            "snapshot_sha256": report["snapshot_sha256"],
+            "detector_id": item["detector_id"], "detector_version": item["detector_version"],
+            "rule_id": item["rule_id"], "file": item["file"], "symbol": item.get("symbol"),
+            "source_sha256": item.get("source_sha256") or None,
+            "grouping_basis": (
+                "same detector/version, rule, file, symbol, and source hash"
+                if bound else "unbound or symbol-less observation; kept separate"
+            ),
+            "root_cause_conclusion": "not_inferred", "candidates": [],
+        })
+        message = item.get("message", "")
+        if "member write" in message:
+            operation = "write"
+        elif "member read" in message:
+            operation = "read"
+        else:
+            operation = None
+        group["candidates"].append({
+            "id": item["id"], "line": item["line"], "column": item.get("column"),
+            "operation": operation,
+        })
+
+    result = []
+    for key, group in groups.items():
+        group["candidates"].sort(key=lambda x: (x["line"], x.get("column") or 0, x["id"]))
+        identity = json.dumps(
+            ["candidate-cluster-v1", *key],
+            ensure_ascii=False,
+            separators=(",", ":"),
+        ).encode()
+        group["cluster_id"] = hashlib.sha256(identity).hexdigest()
+        group["observation_count"] = len(group["candidates"])
+        result.append(group)
+    return sorted(
+        result,
+        key=lambda x: (x["file"], x["symbol"] or "", x["rule_id"], x["cluster_id"]),
+    )
+
+
 def finding(report, identity):
     for item in findings(report):
         if item["id"] == identity:

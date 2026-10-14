@@ -51,6 +51,9 @@ export default function JobDetail({ id }: { id: string }) {
   const [error, setError] = useState("");
   const [items, setItems] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
+  const [clusters, setClusters] = useState<any[]>([]);
+  const [clusterTotal, setClusterTotal] = useState(0);
+  const [clusterPage, setClusterPage] = useState(1);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
@@ -114,9 +117,23 @@ export default function JobDetail({ id }: { id: string }) {
       clearInterval(timer);
     };
   }, [id]);
+  async function loadClusters() {
+    try {
+      const r = await api(
+        "/scans/" + id + "/clusters?offset=" + (clusterPage - 1) * 20 + "&limit=20",
+      );
+      setClusters(r.items);
+      setClusterTotal(r.total);
+    } catch (e) {
+      setError(String(e));
+    }
+  }
   useEffect(() => {
     if (report) void loadFindings();
   }, [report?.snapshot_sha256, page, query, filter]);
+  useEffect(() => {
+    if (report) void loadClusters();
+  }, [report?.snapshot_sha256, clusterPage]);
   async function open(f: any) {
     try {
       const d = await api("/scans/" + id + "/findings/" + f.id);
@@ -352,6 +369,73 @@ export default function JobDetail({ id }: { id: string }) {
                 </>
               ) : (
                 <Empty description="无已提交结果；不能判断候选或组件安全性" />
+              ),
+            },
+            {
+              key: "clusters",
+              label: "候选聚类（非根因结论）",
+              children: report ? (
+                <>
+                  <Alert
+                    type="info"
+                    message="这是减少重复浏览的候选分组，不是根因归并或漏洞结论。"
+                    description="仅按同一仓库快照、Detector 版本、规则、文件、符号和源码 SHA 分组；未绑定来源或缺少符号的候选保持独立。组内每条原始候选身份和源码位置都保留。"
+                  />
+                  <Table<any>
+                    className="section-gap"
+                    rowKey="cluster_id"
+                    dataSource={clusters}
+                    pagination={{
+                      current: clusterPage,
+                      pageSize: 20,
+                      total: clusterTotal,
+                      onChange: setClusterPage,
+                      showSizeChanger: false,
+                    }}
+                    expandable={{
+                      expandedRowRender: (group: any) => (
+                        <Space wrap>
+                          {group.candidates.map((candidate: any) => (
+                            <Button
+                              key={candidate.id}
+                              onClick={() => void open({ id: candidate.id })}
+                            >
+                              {group.file}:{candidate.line} · {candidate.operation || "observation"} · {labels[candidate.review_status] || candidate.review_status}
+                            </Button>
+                          ))}
+                        </Space>
+                      ),
+                    }}
+                    columns={[
+                      {
+                        title: "文件 / 符号",
+                        render: (_: any, group: any) => (
+                          <>
+                            <Text code>{group.symbol || "(no symbol)"}</Text>
+                            <div className="muted">{group.file}</div>
+                          </>
+                        ),
+                      },
+                      {
+                        title: "规则 / Detector",
+                        render: (_: any, group: any) => (
+                          <>
+                            <Text code>{group.rule_id}</Text>
+                            <div className="muted">
+                              {group.detector_id} · {group.detector_version}
+                            </div>
+                          </>
+                        ),
+                      },
+                      { title: "原始候选数", dataIndex: "observation_count" },
+                      { title: "分组依据", dataIndex: "grouping_basis" },
+                      { title: "根因结论", render: () => "未推断" },
+                    ]}
+                    locale={{ emptyText: "当前报告没有可分组的候选观测。" }}
+                  />
+                </>
+              ) : (
+                <Empty description="无已提交结果" />
               ),
             },
             {
