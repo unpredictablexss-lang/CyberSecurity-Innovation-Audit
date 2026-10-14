@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_source_sync_record",
+  "generated": "2026-10-14 Asia/Shanghai",
+  "recovery": [
+    {
+      "selected_bytes": 15243597,
+      "mirror_api": "https://api.github.com/repos/eclipse-oniro-mirrors/communication_dsoftbus/git/commits/652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "fsck": "passed",
+      "component": "communication_dsoftbus",
+      "target_commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "gitcode_url": "https://gitcode.com/openharmony/communication_dsoftbus.git",
+      "selected_files": 1656,
+      "blob_verification": "all selected blobs local and SHA-256 recorded in manifest",
+      "gitcode_ref": "refs/keep-around/652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "local_repo": "E:\\网安\\audit-sources-20261014\\home\\audit\\openharmony-audit\\perf-corpus\\communication_dsoftbus",
+      "target_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057"
+    },
+    {
+      "selected_bytes": 11765303,
+      "mirror_api": "https://api.github.com/repos/eclipse-oniro-mirrors/distributeddatamgr_kv_store/git/commits/acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "fsck": "passed",
+      "component": "distributeddatamgr_kv_store",
+      "target_commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "gitcode_url": "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git",
+      "selected_files": 1446,
+      "blob_verification": "all selected blobs local and SHA-256 recorded in manifest",
+      "gitcode_ref": "refs/keep-around/acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "local_repo": "E:\\网安\\audit-sources-20261014\\home\\audit\\openharmony-audit\\perf-corpus\\distributeddatamgr_kv_store",
+      "target_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023"
+    }
+  ],
+  "notes": [
+    "Official GitHub/Gitee refs did not expose the two historical commits.",
+    "GitCode advertised keep-around refs containing the exact commits.",
+    "Eclipse Oniro mirror API independently returned the same commit and tree SHA.",
+    "No source repository or third-party tree is committed into the project."
+  ]
+}
