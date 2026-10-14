@@ -44,7 +44,7 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(self.detector.version, "0.2.0-proposed")
+        self.assertEqual(self.detector.version, "0.4.0")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
 
@@ -73,15 +73,21 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
             any("completed covers only" in item for item in run.limitations)
         )
 
-    def test_fixed_and_safe_shapes_have_no_findings(self) -> None:
+    def test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe(self) -> None:
         fixed = unit_by_path(self.units, "fixed_atomic_shared_ptr.cpp")
         safe = unit_by_path(self.units, "safe_atomic_only.cpp")
-        for unit in (fixed, safe):
-            with self.subTest(unit=unit.path):
-                run = self.detector.detect(self.context, (unit,))
-                self.assertEqual(run.status, "completed")
-                self.assertEqual(run.findings, ())
-                self.assertEqual(run.analyzed_files, (unit.path,))
+
+        fixed_run = self.detector.detect(self.context, (fixed,))
+        self.assertEqual(fixed_run.status, "completed")
+        self.assertGreater(len(fixed_run.findings), 0)
+        self.assertEqual(fixed_run.analyzed_files, (fixed.path,))
+        for finding in fixed_run.findings:
+            self.assert_synchronization_proof_unknown(finding)
+
+        safe_run = self.detector.detect(self.context, (safe,))
+        self.assertEqual(safe_run.status, "completed")
+        self.assertEqual(safe_run.findings, ())
+        self.assertEqual(safe_run.analyzed_files, (safe.path,))
 
     def test_unrelated_shape_has_no_findings(self) -> None:
         unit = unit_by_path(self.units, "unrelated_plain_pointer.cpp")
@@ -460,6 +466,8 @@ public:
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 1)
         self.assertGreater(run.findings[0].line, text.splitlines().index("    static void ResetUnguarded() {") + 1)
+        self.assertIn("candidate/unknown", run.findings[0].message)
+        self.assert_synchronization_proof_unknown(run.findings[0], "one-sided")
 
     def test_different_mutexes_do_not_get_suppressed(self) -> None:
         text = """
@@ -484,7 +492,9 @@ public:
         run = self.detector.detect(self.context, (unit,))
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
-        self.assertTrue(any("different, conditional or one-sided" in item for item in run.limitations))
+        self.assertTrue(any("different or one-sided mutexes" in item for item in run.limitations))
+        for finding in run.findings:
+            self.assert_synchronization_proof_unknown(finding, "different mutex")
 
     def test_try_to_lock_is_unknown_and_not_suppressed(self) -> None:
         text = """
@@ -504,6 +514,8 @@ public:
         run = self.detector.detect(self.context, (unit,))
         self.assertEqual(run.status, "blocked")
         self.assertEqual(len(run.findings), 1)
+        self.assertIn("candidate/unknown", run.findings[0].message)
+        self.assert_synchronization_proof_unknown(run.findings[0], "try_to_lock")
         self.assertTrue(any("try_to_lock does not prove" in item for item in run.limitations))
 
     def test_defer_lock_is_unknown_and_not_suppressed(self) -> None:
@@ -524,9 +536,184 @@ public:
         run = self.detector.detect(self.context, (unit,))
         self.assertEqual(run.status, "blocked")
         self.assertEqual(len(run.findings), 1)
+        self.assertIn("candidate/unknown", run.findings[0].message)
+        self.assert_synchronization_proof_unknown(run.findings[0], "defer_lock")
         self.assertTrue(any("defer_lock does not hold" in item for item in run.limitations))
 
-    def test_mixed_atomic_and_mutex_paths_are_separately_limited(self) -> None:
+    def assert_synchronization_proof_unknown(
+        self, finding, description_fragment: str = "mixed atomic/non-atomic"
+    ) -> None:
+        matching = [
+            obligation
+            for obligation in finding.evidence_obligations
+            if obligation.kind == "synchronization_proof"
+        ]
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(matching[0].status, "unknown")
+        self.assertIn(description_fragment, matching[0].description)
+
+    def test_atomic_read_and_mutex_protected_write_is_candidate_unknown(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static std::shared_ptr<int> AtomicRead() {
+        return std::atomic_load(&instance_);
+    }
+    static void GuardedWrite() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("atomic_read_guarded_write", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].evidence_type, "syntax")
+        self.assertIn("instance_", unit.text.splitlines()[run.findings[0].line - 1])
+        self.assert_synchronization_proof_unknown(run.findings[0])
+
+    def test_atomic_write_and_mutex_protected_read_is_candidate_unknown(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static void AtomicWrite() {
+        std::atomic_store(&instance_, std::shared_ptr<int>(nullptr));
+    }
+    static bool GuardedRead() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return static_cast<bool>(instance_);
+    }
+};
+"""
+        unit = self.generated_unit("atomic_write_guarded_read", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("instance_", unit.text.splitlines()[run.findings[0].line - 1])
+        self.assert_synchronization_proof_unknown(run.findings[0])
+
+    def test_mixed_atomic_and_non_atomic_with_different_mutexes_is_candidate(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_a_;
+    static std::mutex mutex_b_;
+    static void AtomicWrite() {
+        std::atomic_store(&instance_, std::shared_ptr<int>(nullptr));
+    }
+    static void GuardedA() {
+        std::lock_guard<std::mutex> lock(mutex_a_);
+        instance_.reset();
+    }
+    static bool GuardedB() {
+        std::lock_guard<std::mutex> lock(mutex_b_);
+        return static_cast<bool>(instance_);
+    }
+};
+"""
+        unit = self.generated_unit("mixed_atomic_different_mutexes", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 2)
+        self.assertEqual({finding.line for finding in run.findings}, {
+            text.splitlines().index("        instance_.reset();") + 1,
+            text.splitlines().index("        return static_cast<bool>(instance_);") + 1,
+        })
+        for finding in run.findings:
+            self.assert_synchronization_proof_unknown(finding)
+
+    def test_explicit_atomic_api_is_atomic_and_mixed_with_ordinary_write(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static std::shared_ptr<int> AtomicRead() {
+        return std::atomic_load_explicit(&instance_, std::memory_order_acquire);
+    }
+    static void GuardedWrite() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("explicit_atomic_mixed", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("instance_", unit.text.splitlines()[run.findings[0].line - 1])
+        self.assert_synchronization_proof_unknown(run.findings[0])
+
+    def test_atomic_exchange_and_compare_exchange_are_modeled_as_atomic_writes(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static void Exchange() {
+        std::atomic_exchange(&instance_, std::shared_ptr<int>(nullptr));
+    }
+    static bool CompareExchange() {
+        std::shared_ptr<int> expected;
+        return std::atomic_compare_exchange_strong(
+            &instance_, &expected, std::shared_ptr<int>(nullptr));
+    }
+    static bool OrdinaryRead() {
+        return static_cast<bool>(instance_);
+    }
+};
+"""
+        unit = self.generated_unit("atomic_exchange_compare_exchange", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("instance_", unit.text.splitlines()[run.findings[0].line - 1])
+        self.assert_synchronization_proof_unknown(run.findings[0])
+
+    def test_mixed_atomic_and_ordinary_access_under_same_reliable_mutex_is_suppressed(self) -> None:
+        text = """
+#include <atomic>
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    static std::shared_ptr<int> instance_;
+    static std::mutex mutex_;
+    static std::shared_ptr<int> AtomicRead() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return std::atomic_load(&instance_);
+    }
+    static void OrdinaryWrite() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        instance_.reset();
+    }
+};
+"""
+        unit = self.generated_unit("mixed_same_reliable_mutex", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(any("all potential conflicting access pairs" in item for item in run.limitations))
+    def test_mixed_atomic_and_mutex_paths_are_candidate_unknown_not_safe(self) -> None:
         text = """
 #include <atomic>
 #include <memory>
@@ -547,8 +734,12 @@ public:
         unit = self.generated_unit("mixed_atomic_mutex", text)
         run = self.detector.detect(self.context, (unit,))
         self.assertEqual(run.status, "completed")
-        self.assertEqual(run.findings, ())
-        self.assertTrue(any("atomic_load/store and mutex paths are modeled separately" in item for item in run.limitations))
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("candidate/unknown", run.findings[0].message)
+        self.assert_synchronization_proof_unknown(run.findings[0])
+        self.assertTrue(
+            any("mixed atomic/non-atomic synchronization protocol" in item for item in run.limitations)
+        )
 
 if __name__ == "__main__":
     unittest.main()

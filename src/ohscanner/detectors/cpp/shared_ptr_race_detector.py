@@ -26,6 +26,7 @@ from typing import Dict, FrozenSet, Iterable, List, Optional, Sequence, Set, Tup
 
 from src.ohscanner.contracts import (
     DetectorFinding,
+    EvidenceObligation,
     DetectorRun,
     ScanContext,
     SourceUnit,
@@ -58,7 +59,8 @@ _QUALIFIER_RE = re.compile(
     r"((?:[A-Za-z_]\w*(?:<[^;{}()\s<>]+>)?\s*::\s*)+)\s*$"
 )
 _ATOMIC_PREFIX_RE = re.compile(
-    r"\b(?:std\s*::\s*)?atomic_(?:load|store)\s*\(\s*&\s*"
+    r"\b(?:std\s*::\s*)?atomic_(?P<operation>load|store|exchange|"
+    r"compare_exchange_strong|compare_exchange_weak)(?:_explicit)?\s*\(\s*&\s*"
     r"(?:this\s*->\s*)?(?:[A-Za-z_]\w*\s*::\s*)*$"
 )
 _THIS_PREFIX_RE = re.compile(r"\bthis\s*->\s*$")
@@ -125,6 +127,9 @@ class _MemberAccess:
     operation: str
     atomic: bool
     held_mutexes: FrozenSet[str]
+    unreliable_lock_reasons: FrozenSet[str]
+    function_name: str
+    function_span: Optional[_Span]
 
 
 def _mask_comments_and_literals(text: str) -> str:
@@ -393,11 +398,37 @@ def _local_bindings(
     return tuple(found)
 
 
-def _mutex_names(arguments: str) -> FrozenSet[str]:
-    cleaned = _MUTEX_QUALIFIER_RE.sub("", arguments)
-    names = set(_MUTEX_ARGUMENT_RE.findall(cleaned))
-    names -= {"std", "defer_lock", "try_to_lock", "adopt_lock"}
-    return frozenset(names)
+def _mutex_identity(expression: str) -> Optional[str]:
+    compact = re.sub(r"\s+", "", expression)
+    if re.fullmatch(
+        r"(?:this->)?(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*",
+        compact,
+    ):
+        return compact
+    return None
+
+
+def _mutex_lock_state(arguments: str) -> Tuple[FrozenSet[str], bool, str]:
+    reason = ""
+    if re.search(r"\b(?:std\s*::\s*)?defer_lock\b", arguments):
+        reason = "defer_lock does not hold the mutex at declaration"
+    elif re.search(r"\b(?:std\s*::\s*)?try_to_lock\b", arguments):
+        reason = "try_to_lock does not prove the mutex is held"
+    elif re.search(r"\b(?:std\s*::\s*)?adopt_lock\b", arguments):
+        reason = "adopt_lock ownership cannot be proven lexically"
+
+    without_policies = re.sub(
+        r"\b(?:std\s*::\s*)?(?:defer_lock|try_to_lock|adopt_lock)\b",
+        "",
+        arguments,
+    )
+    expressions = [item.strip() for item in without_policies.split(",") if item.strip()]
+    identities = [_mutex_identity(item) for item in expressions]
+    if not expressions or any(item is None for item in identities):
+        identity_reason = "lock identity is unresolved"
+        return frozenset(), False, reason or identity_reason
+    held = frozenset(item for item in identities if item is not None)
+    return held, not bool(reason), reason
 
 
 def _lock_scopes(masked: str, block_spans: Sequence[_Span]) -> Tuple[_LockScope, ...]:
@@ -407,22 +438,7 @@ def _lock_scopes(masked: str, block_spans: Sequence[_Span]) -> Tuple[_LockScope,
         if span is None:
             continue
         arguments = match.group("args")
-        held = _mutex_names(arguments)
-        reason = ""
-        if "defer_lock" in arguments:
-            reliable = False
-            reason = "defer_lock does not hold the mutex at declaration"
-        elif "try_to_lock" in arguments:
-            reliable = False
-            reason = "try_to_lock does not prove the mutex is held"
-        elif "adopt_lock" in arguments:
-            reliable = False
-            reason = "adopt_lock ownership cannot be proven lexically"
-        elif not held:
-            reliable = False
-            reason = "lock identity is unresolved"
-        else:
-            reliable = True
+        held, reliable, reason = _mutex_lock_state(arguments)
         scopes.append(
             _LockScope(
                 declaration_position=match.start(),
@@ -436,18 +452,21 @@ def _lock_scopes(masked: str, block_spans: Sequence[_Span]) -> Tuple[_LockScope,
     return tuple(scopes)
 
 
-def _held_mutexes(
+def _access_lock_state(
     scopes: Sequence[_LockScope], position: int
-) -> FrozenSet[str]:
+) -> Tuple[FrozenSet[str], FrozenSet[str]]:
     held: Set[str] = set()
+    unreliable: Set[str] = set()
     for scope in scopes:
         if (
-            scope.reliable
-            and scope.declaration_position <= position
+            scope.declaration_position <= position
             and scope.span.contains(position)
         ):
-            held.update(scope.held_mutexes)
-    return frozenset(held)
+            if scope.reliable:
+                held.update(scope.held_mutexes)
+            elif scope.reason:
+                unreliable.add(scope.reason)
+    return frozenset(held), frozenset(unreliable)
 
 
 def _is_plain_identifier_at(masked: str, position: int) -> bool:
@@ -467,8 +486,13 @@ def _looks_like_write(masked: str, position: int, name: str) -> bool:
     return False
 
 
+def _atomic_access_kind(masked: str, position: int) -> Optional[str]:
+    match = _ATOMIC_PREFIX_RE.search(masked[:position])
+    return match.group("operation") if match else None
+
+
 def _is_atomic_access(masked: str, position: int) -> bool:
-    return _ATOMIC_PREFIX_RE.search(masked[:position]) is not None
+    return _atomic_access_kind(masked, position) is not None
 
 
 def _stable_unique(findings: Iterable[DetectorFinding]) -> Tuple[DetectorFinding, ...]:
@@ -561,18 +585,230 @@ def _is_shadowed(
     )
 
 
-def _common_mutex(
+def _potential_conflict_pairs(
     accesses: Sequence[_MemberAccess],
-) -> Optional[str]:
-    if not accesses:
-        return None
-    common: Optional[Set[str]] = None
+) -> Tuple[Tuple[int, int], ...]:
+    pairs: List[Tuple[int, int]] = []
+    for left_index, left in enumerate(accesses):
+        for right_index in range(left_index + 1, len(accesses)):
+            right = accesses[right_index]
+            if left.atomic and right.atomic:
+                continue
+            if (
+                not left.atomic
+                and not right.atomic
+                and left.operation == "read"
+                and right.operation == "read"
+            ):
+                continue
+            pairs.append((left_index, right_index))
+    return tuple(pairs)
+
+
+def _candidate_finding(
+    unit: SourceUnit,
+    access: _MemberAccess,
+    reasons: Iterable[str],
+) -> DetectorFinding:
+    line, column = _line_col(unit.text, access.position)
+    explanation = "; ".join(sorted(set(reasons))) or (
+        "a synchronization proof is unavailable for the potential conflicting access"
+    )
+    return DetectorFinding(
+        file=unit.path,
+        line=line,
+        column=column,
+        rule_id=_RULE_ID,
+        message=(
+            f"Candidate only: candidate/unknown {access.atomic and 'atomic' or 'non-atomic'} "
+            f"shared_ptr member {access.operation} of ''{access.member.name}''. "
+            "Primary candidate root cause is a possible race condition (CWE-362); "
+            "CWE-416/use-after-free is only a possible consequence. This syntax "
+            "evidence does not prove UAF, guard dominance, concurrent interleaving, "
+            "attacker control, or security impact; it is not proof of safety."
+        ),
+        evidence_type="syntax",
+        candidate_cwe="CWE-362",
+        symbol=access.member.name,
+        evidence_obligations=(
+            EvidenceObligation(
+                kind="synchronization_proof",
+                description=(
+                    "Synchronization proof is unknown: "
+                    f"{explanation}. Prove the complete access protocol, lock "
+                    "identity/dominance and cross-function ordering before promotion."
+                ),
+                status="unknown",
+            ),
+        ),
+        source_sha256=unit.sha256,
+    )
+
+
+def _analyze_member_accesses(
+    unit: SourceUnit,
+    key: str,
+    accesses: Sequence[_MemberAccess],
+) -> Tuple[Tuple[DetectorFinding, ...], Tuple[str, ...], bool]:
+    if accesses and all(access.atomic for access in accesses):
+        return (
+            (),
+            (
+                f"{unit.path}: modeled accesses to '{key}' use only the "
+                "atomic_load/atomic_store shared_ptr API; this narrow atomic-only "
+                "shape is not a concurrency proof.",
+            ),
+            True,
+        )
+
+    conflict_pairs = _potential_conflict_pairs(accesses)
+    if len(accesses) > 1 and not conflict_pairs:
+        return (
+            (),
+            (
+                f"{unit.path}: modeled non-atomic accesses to '{key}' are read-only "
+                "and do not form a potential conflicting pair in this narrow model.",
+            ),
+            True,
+        )
+
+    candidate_indices: Set[int] = set()
+    reasons_by_index: Dict[int, Set[str]] = {}
+    covered_pairs: List[str] = []
+    unreliable_reasons: Set[str] = set()
     for access in accesses:
-        current = set(access.held_mutexes)
-        common = current if common is None else common & current
-    if not common:
-        return None
-    return sorted(common)[0]
+        unreliable_reasons.update(access.unreliable_lock_reasons)
+
+    def add_candidate(index: int, reason: str) -> None:
+        candidate_indices.add(index)
+        reasons_by_index.setdefault(index, set()).add(reason)
+
+    if len(accesses) == 1 and not accesses[0].atomic:
+        add_candidate(
+            0,
+            "a single same-unit lexical access cannot prove external or "
+            "cross-function synchronization",
+        )
+        for reason in accesses[0].unreliable_lock_reasons:
+            add_candidate(0, reason)
+
+    for left_index, right_index in conflict_pairs:
+        left = accesses[left_index]
+        right = accesses[right_index]
+        unreliable_reasons.update(left.unreliable_lock_reasons)
+        unreliable_reasons.update(right.unreliable_lock_reasons)
+        cross_function = (
+            left.function_span is not None
+            and right.function_span is not None
+            and left.function_span != right.function_span
+        )
+        cross_function_reason = (
+            "; cross-function synchronization protocol is unknown"
+            if cross_function
+            else ""
+        )
+
+        if left.atomic != right.atomic:
+            shared = left.held_mutexes & right.held_mutexes
+            if (
+                shared
+                and not left.unreliable_lock_reasons
+                and not right.unreliable_lock_reasons
+            ):
+                covered_pairs.append("/".join(sorted(shared)))
+                continue
+            non_atomic_indices = [
+                index
+                for index, access in ((left_index, left), (right_index, right))
+                if not access.atomic
+            ]
+            for index in non_atomic_indices:
+                add_candidate(
+                    index,
+                    "mixed atomic/non-atomic access pair has no proven common "
+                    f"synchronization protocol{cross_function_reason}",
+                )
+            for index, access in ((left_index, left), (right_index, right)):
+                for reason in access.unreliable_lock_reasons:
+                    add_candidate(index, reason)
+            continue
+
+        shared = left.held_mutexes & right.held_mutexes
+        if (
+            shared
+            and not left.unreliable_lock_reasons
+            and not right.unreliable_lock_reasons
+        ):
+            covered_pairs.append("/".join(sorted(shared)))
+            continue
+
+        implicated = {
+            index
+            for index, access in ((left_index, left), (right_index, right))
+            if access.unreliable_lock_reasons
+        }
+        if left.unreliable_lock_reasons or right.unreliable_lock_reasons:
+            if not implicated:
+                implicated = {left_index, right_index}
+            pair_reason = (
+                "conditional, deferred or unresolved lock identity prevents a "
+                f"reliable synchronization proof{cross_function_reason}"
+            )
+        elif bool(left.held_mutexes) != bool(right.held_mutexes):
+            unprotected = (
+                right_index if left.held_mutexes else left_index
+            )
+            implicated = {unprotected}
+            pair_reason = (
+                f"one-sided mutex leaves one access unprotected{cross_function_reason}"
+            )
+        elif left.held_mutexes and right.held_mutexes:
+            implicated = {left_index, right_index}
+            pair_reason = (
+                f"different mutex identities do not synchronize the pair{cross_function_reason}"
+            )
+        else:
+            implicated = {left_index, right_index}
+            pair_reason = (
+                f"no reliable mutex covers the pair{cross_function_reason}"
+            )
+
+        for index in implicated:
+            access_reasons = {pair_reason}
+            access_reasons.update(accesses[index].unreliable_lock_reasons)
+            add_candidate(index, "; ".join(sorted(access_reasons)))
+
+    limitations: List[str] = []
+    if conflict_pairs and len(covered_pairs) == len(conflict_pairs):
+        labels = ", ".join(f"'{item}'" for item in sorted(set(covered_pairs)))
+        limitations.append(
+            f"{unit.path}: all potential conflicting access pairs to '{key}' "
+            f"share reliable lexical mutex {labels}; pairwise suppression is "
+            "limited to this translation unit and lexical lock model."
+        )
+    elif covered_pairs:
+        labels = ", ".join(f"'{item}'" for item in sorted(set(covered_pairs)))
+        limitations.append(
+            f"{unit.path}: {len(covered_pairs)} potential conflicting pair(s) "
+            f"for '{key}' share reliable lexical mutex {labels}; remaining pairs "
+            "were not suppressed."
+        )
+
+    if candidate_indices:
+        limitations.append(
+            f"{unit.path}: pairwise analysis of '{key}' leaves synchronization "
+            "unproven for the mixed atomic/non-atomic synchronization protocol, "
+            "different or one-sided mutexes, conditional/deferred locks, unresolved "
+            "lock aliases or cross-function paths."
+        )
+    for reason in sorted(unreliable_reasons):
+        limitations.append(f"{unit.path}: {reason}; candidate suppression was not applied.")
+
+    findings = tuple(
+        _candidate_finding(unit, accesses[index], reasons_by_index[index])
+        for index in sorted(candidate_indices)
+    )
+    return findings, tuple(limitations), not unreliable_reasons
 
 
 def _analyze_unit(
@@ -686,15 +922,38 @@ def _analyze_unit(
             continue
 
         key = selected.qualified_class_name + "::" + selected.name
+        held_mutexes, unreliable_lock_reasons = _access_lock_state(
+            lock_scopes, token.start()
+        )
+        atomic_operation = _atomic_access_kind(masked, token.start())
         accesses_by_member[key].append(
             _MemberAccess(
                 member=selected,
                 position=token.start(),
-                operation="write"
-                if _looks_like_write(masked, token.start(), name)
-                else "read",
-                atomic=_is_atomic_access(masked, token.start()),
-                held_mutexes=_held_mutexes(lock_scopes, token.start()),
+                operation=(
+                    "write"
+                    if atomic_operation
+                    in {
+                        "store",
+                        "exchange",
+                        "compare_exchange_strong",
+                        "compare_exchange_weak",
+                    }
+                    or (
+                        atomic_operation is None
+                        and _looks_like_write(masked, token.start(), name)
+                    )
+                    else "read"
+                ),
+                atomic=atomic_operation is not None,
+                held_mutexes=held_mutexes,
+                unreliable_lock_reasons=unreliable_lock_reasons,
+                function_name=(
+                    f"{function.owner_class}::{function.name}"
+                    if function and function.owner_class
+                    else function.name if function else "<lexical>"
+                ),
+                function_span=function.span if function else None,
             )
         )
 
@@ -704,57 +963,12 @@ def _analyze_unit(
         )
         if not accesses:
             continue
-        non_atomic = [access for access in accesses if not access.atomic]
-        if not non_atomic:
-            continue
-        common_mutex = _common_mutex(non_atomic)
-        if common_mutex is not None:
-            limitations.append(
-                f"{unit.path}: all modeled non-atomic accesses to '{key}' share "
-                f"reliable lexical mutex '{common_mutex}' in this translation unit; "
-                "atomic_load/store and mutex paths are modeled separately, and this "
-                "is a narrow suppression rather than a cross-function concurrency proof."
-            )
-            continue
-
-        unprotected = [
-            access for access in non_atomic if not access.held_mutexes
-        ]
-        candidate_accesses = unprotected or non_atomic
-        unreliable_locks = [
-            scope.reason
-            for scope in lock_scopes
-            if not scope.reliable and scope.reason
-        ]
-        for access in candidate_accesses:
-            line, column = _line_col(unit.text, access.position)
-            findings.append(
-                DetectorFinding(
-                    file=unit.path,
-                    line=line,
-                    column=column,
-                    rule_id=_RULE_ID,
-                    message=(
-                        f"Candidate only: non-atomic shared_ptr member {access.operation} "
-                        f"of ''{access.member.name}''. Primary candidate root cause is a "
-                        "possible race condition (CWE-362); CWE-416/use-after-free is only "
-                        "a possible consequence. This syntax evidence does not prove UAF, "
-                        "guard dominance, concurrent interleaving, attacker control, or "
-                        "security impact; it is not proof of safety."
-                    ),
-                    evidence_type="syntax",
-                    candidate_cwe="CWE-362",
-                    symbol=access.member.name,
-                )
-            )
-        limitations.append(
-            f"{unit.path}: accesses to '{key}' do not share one reliable lexical "
-            "mutex across all modeled atomic and non-atomic operations; mixed, "
-            "different, conditional or one-sided synchronization remains unproven."
+        member_findings, member_limitations, member_complete = (
+            _analyze_member_accesses(unit, key, accesses)
         )
-        for reason in sorted(set(unreliable_locks)):
-            limitations.append(f"{unit.path}: {reason}; candidate suppression was not applied.")
-        if unreliable_locks:
+        findings.extend(member_findings)
+        limitations.extend(member_limitations)
+        if not member_complete:
             coverage_complete = False
 
     if not members and not any("shared_ptr" in line for line in unit.text.splitlines()):
@@ -764,10 +978,9 @@ def _analyze_unit(
         )
     return _stable_unique(findings), tuple(sorted(set(limitations))), coverage_complete
 
-
 class SharedPtrRaceDetector:
     detector_id = "ohscanner.cpp.shared_ptr_race"
-    version = "0.2.0-proposed"
+    version = "0.4.0"
     supported_languages = ("cpp",)
     required_facts = ()
 
@@ -811,6 +1024,7 @@ class SharedPtrRaceDetector:
             (
                 "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
                 "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+                "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
                 "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
             )
         )
