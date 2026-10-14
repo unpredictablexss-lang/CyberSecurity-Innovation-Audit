@@ -18,6 +18,12 @@ def context(text, path='sample.cpp'):
     request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:fixture/ipc')
     return ScanContext(request,(unit,),{'ast':{path:index.to_dict()}})
 
+def parses_raw(text, grammar):
+    """The bytes as written, with no normalization. `parses_clean` cannot serve
+    here: it normalizes first, so it can only state the after condition."""
+    from tree_sitter import Language, Parser
+    return not Parser(Language(grammar)).parse(text).root_node.has_error
+
 class IpcDetectorTests(unittest.TestCase):
     def test_synthetic_semantic_matrix(self):
         for item in json.loads((BASE/'manifest.json').read_text()):
@@ -66,6 +72,54 @@ class IpcDetectorTests(unittest.TestCase):
         self.assertEqual(raw.count(b'\n'),normalized.count(b'\n'))
         self.assertIn(b'// PRIu64',normalized)
         self.assertIn(b'(this-> handler)',normalized)
+
+    def test_format_macro_that_ends_a_literal_sequence_parses(self):
+        """The dominant OpenHarmony spelling: the width macro is the last token
+        of the literal sequence, because the next thing is the comma.
+
+        Requiring a string literal on both sides left `"count=%{public}" PRIu32,`
+        -- and every `SCNd64`, whose width family was not matched at all -- as a
+        bare identifier between literals. tree-sitter then dropped the whole
+        translation unit to `partial`, and the complete-ast pass skips partial
+        files, so no obligation was ever recorded for candidates carried by them.
+        """
+        import tree_sitter_cpp
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax, parses_clean
+        grammar=tree_sitter_cpp.language()
+        shapes=(
+            b'void f(MessageParcel& data, uint32_t n){ COMM_LOGE(TAG, "count=%{public}" PRIu32, n); }\n',
+            b'void g(void){ if (sscanf_s(p, "pkg_%" SCNd64 "_%" SCNd64, &pid, &uid) != 2) { return; } }\n',
+            b'void h(intmax_t n){ char buf[32]; sprintf_s(buf, 32, "%" PRIdMAX "\\n", n); }\n',
+        )
+        for raw in shapes:
+            with self.subTest(shape=raw[:44]):
+                self.assertFalse(parses_raw(raw,grammar),
+                                 'this shape must not already parse, or the test proves nothing')
+                self.assertTrue(parses_clean(raw,grammar),
+                                'normalization must make this shape parse')
+
+    def test_format_rule_leaves_non_format_identifiers_alone(self):
+        """Controls. The rule must only fire on a real width macro that follows a
+        string literal; anything else is returned byte-identical."""
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax
+        untouched=(
+            b'#include <inttypes.h>\n',              # a directive, no literal
+            b'int x = (int)PRIu32;\n',               # no literal before it
+            b'void f(void){ g("a" PRIORITY); }\n',   # PRI-prefixed, not a width macro
+            b'void f(void){ g(SCANNER); }\n',        # SCN-prefixed, not a width macro
+        )
+        for raw in untouched:
+            with self.subTest(shape=raw[:32]):
+                self.assertEqual(normalize_syntax(raw),raw)
+
+    def test_format_extension_preserves_offsets(self):
+        from src.ohscanner.detectors.interface.analysis import normalize_syntax
+        raw=(b'if (sscanf_s(pkgName, "pkg_%" SCNd64 "_%" SCNd64, &pid, &uid) != '
+             b'GET_UID_PID_CNT) {\n    COMM_LOGE(COMM_SVC, "read invalid qosCount=%{public}" PRIu32, '
+             b'param.qosCount);\n}\n')
+        normalized=normalize_syntax(raw)
+        self.assertEqual(len(raw),len(normalized))
+        self.assertEqual(raw.count(b'\n'),normalized.count(b'\n'))
 
     def test_transport_position_bound_pair(self):
         before='bool HitraceInvoker::TraceServerReceieve(int h, uint32_t c, Parcel &data, uint32_t &flags){ data.RewindRead(data.GetDataSize()-PAD); auto n=data.ReadUint8(); data.RewindRead(data.GetDataSize()-PAD-n); return true; }'

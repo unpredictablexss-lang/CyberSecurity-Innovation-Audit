@@ -137,14 +137,28 @@ def normalize_syntax(source):
     Byte lengths/newlines remain unchanged. Original source is retained for
     evidence. This is not macro expansion or resolution of member pointers.
     """
-    pattern = rb'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|\x27(?:\\.|[^\x27\\])*\x27|(?P<fmt>\bPRI[diouxX](?:8|16|32|64|MAX|PTR)\b)'
+    pattern = (rb'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|\x27(?:\\.|[^\x27\\])*\x27'
+               rb'|(?P<fmt>\b(?:PRI|SCN)[diouxX](?:LEAST|FAST)?(?:8|16|32|64|MAX|PTR)\b)')
     def fmt(match):
         token=match.group('fmt')
-        if token is not None:
-            before=source[:match.start()].rstrip();after=source[match.end():].lstrip()
-            if before.endswith(b'"') and after.startswith(b'"'):
-                return b'"'+b' '*(len(token)-2)+b'"'
-        return match.group(0)
+        if token is None:
+            return match.group(0)
+        # A format macro only means anything next to a string literal: it is the
+        # width token that completes `"%{public}" PRIu32`. Requiring a literal on
+        # both sides, as this rule first did, misses the commonest spelling in
+        # OpenHarmony -- the macro *ends* the literal sequence, because it sits
+        # last before the comma: `COMM_LOGE(TAG, "count=%{public}" PRIu32, n)`.
+        # `SCNd64` in `sscanf_s(p, "pkg_%" SCNd64 "_%" SCNd64, ...)` was missed
+        # twice over: the width family was not matched at all, and the first
+        # occurrence ends its sequence. Either way tree-sitter sees a bare
+        # identifier between/after string literals and drops the whole
+        # translation unit to partial, which the complete-ast pass then skips.
+        index=match.start()-1
+        while index>=0 and source[index] in b" \t\r\n":
+            index-=1
+        if index<0 or source[index:index+1]!=b'"':
+            return match.group(0)
+        return b'""'+b' '*(len(token)-2)
     normalized=re.sub(pattern,fmt,source,flags=re.S)
     # `(this->*Ident)(args)` parses once the member-pointer operator is read as a
     # plain member access, which keeps the receiver visible.
