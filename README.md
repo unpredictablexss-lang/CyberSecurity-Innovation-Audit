@@ -26,7 +26,7 @@ Windows 浏览器 http://localhost:8765。
 
 Web 与 CLI 共用 src/ohscanner；src/workbench 提供 API/存储/Worker，web 为 React。
 A/B 代码是按模块选择性迁入；五组件候选变化与 229 条 A 诊断均不是漏洞真值。
-候选、人工调查案例和确认漏洞分别记录，0 findings 不证明安全。
+候选、只读审查聚类、人工调查案例和确认漏洞分别记录；聚类不改原始身份、不推断根因，0 findings 不证明安全。
 代码与生成报告/数据库/第三方源码分开，源代码交付从验收的 Git commit 导出。
 
 历史路线图和阶段教程已从当前 docs 删除，历史证据通过固定 Git 提交追溯。
