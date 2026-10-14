@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_component_scan_manifest_index",
+  "generated": "2026-10-14 Asia/Shanghai",
+  "manifests": [
+    {
+      "component": "update_updateservice",
+      "manifest": "research/evidence/cpp/component_scans/update_updateservice.manifest.json",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "selected_files": 219,
+      "selected_bytes": 851345,
+      "plan_sha256": "e5903393e19b8e7bb4aa97daf20b7fa089c10af38c5ef42163bfdbf00aa43cd6"
+    },
+    {
+      "component": "security_access_token",
+      "manifest": "research/evidence/cpp/component_scans/security_access_token.manifest.json",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "selected_files": 550,
+      "selected_bytes": 3484891,
+      "plan_sha256": "90a5094eae710d1156538e34e7c9e1a6f2bd974abc762422a1bb78109ca9634b"
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "manifest": "research/evidence/cpp/component_scans/distributeddatamgr_kv_store.manifest.json",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "selected_files": 1446,
+      "selected_bytes": 11765303,
+      "plan_sha256": "72e9afdda3619eed13f21adba4e473fb5bb34823657c4dec05d9c3df05468f4e"
+    },
+    {
+      "component": "window_window_manager",
+      "manifest": "research/evidence/cpp/component_scans/window_window_manager.manifest.json",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "selected_files": 1112,
+      "selected_bytes": 20206691,
+      "plan_sha256": "1cb74d9ae1297c48e5fc0c98eb87b5f47fd70053f83d4abf5ad146b76737ef96"
+    },
+    {
+      "component": "communication_dsoftbus",
+      "manifest": "research/evidence/cpp/component_scans/communication_dsoftbus.manifest.json",
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "selected_files": 1656,
+      "selected_bytes": 15243597,
+      "plan_sha256": "a0852581a198882d8c0cd87eb42425a350ba0b520561fc3d5b0271d15862e71e"
+    }
+  ],
+  "source_object_note": "Exact commits were fetched from GitCode refs/keep-around and cross-checked against eclipse-oniro-mirrors commit/tree metadata. Source repositories remain outside Git.",
+  "validated_vulnerability": 0
+}
