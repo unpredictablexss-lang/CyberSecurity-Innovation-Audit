@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "kind": "a_shared_ptr_229_erratum_and_first_pass_triage",
+  "generated": "2026-10-14 Asia/Shanghai",
+  "checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "34dbe374e2703466069ef719c95c9a527dd16971",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "corrections": [
+    {
+      "id": "ERR-001",
+      "incorrect": "229 vulnerabilities or root causes",
+      "corrected": "229 historical per-access syntax candidate diagnostics",
+      "validated_vulnerability": 0
+    },
+    {
+      "id": "ERR-002",
+      "incorrect": "48 root-cause clusters",
+      "corrected": "48 review-only observation groups; root cause remains not_inferred"
+    },
+    {
+      "id": "ERR-003",
+      "incorrect": "historical 229 and current 208 are accuracy-comparable",
+      "corrected": "229 is an older detector snapshot and 208 is shared_ptr_race 0.4.0 on verified equivalent scope"
+    },
+    {
+      "id": "ERR-004",
+      "incorrect": "constructor member initializer is a read",
+      "corrected": "constructor member initializer is initialization/write; current messages misclassify several such observations"
+    },
+    {
+      "id": "ERR-005",
+      "incorrect": "kvstoremock candidates belong to the production component",
+      "corrected": "kvstoremock is non-production; exact path-segment exclusion missed it"
+    },
+    {
+      "id": "ERR-006",
+      "incorrect": "single-file diagnostics are complete member access sets",
+      "corrected": "cross-file setters can exist; StreamManager::streamListener_ has a write in stream_manager.cpp"
+    }
+  ],
+  "scope_verified": {
+    "status": true,
+    "manifest_index": "research/evidence/cpp/component_scans/index.json",
+    "manifest_index_sha256": "b2d8ccead40e25eaa52c96f40b9a9c2eae71518ffc61c778899e1a3b4b064a4f",
+    "source_sync": "research/evidence/cpp/source_sync_20261014.json",
+    "source_sync_sha256": "5ce1b62598dd6cd08500544b5c81556d75192e188565aeef62a59458c518db8d4"
+  },
+  "historical_baseline": {
+    "source": "outputs/unified-development/algorithm-integration-summary.json",
+    "source_sha256": "2c4846f4bf00b410212f71e81b41a73f11b2bdc172bbcf36fc274e9591210efe",
+    "shared_ptr_diagnostics": 229,
+    "components": {
+      "update_updateservice": 3,
+      "security_access_token": 12,
+      "distributeddatamgr_kv_store": 180,
+      "window_window_manager": 31,
+      "communication_dsoftbus": 3
+    }
+  },
+  "current_exact_scope": {
+    "detector_id": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.4.0",
+    "shared_ptr_diagnostics": 208,
+    "review_clusters": 44,
+    "read_diagnostics": 189,
+    "write_diagnostics": 19,
+    "components": {
+      "update_updateservice": 1,
+      "security_access_token": 10,
+      "distributeddatamgr_kv_store": 167,
+      "window_window_manager": 27,
+      "communication_dsoftbus": 3
+    },
+    "report_sha256": {
+      "update_updateservice": "f14587ff09978136fb96dfa5a6753bed909634afb02e26e270c3022ac5c4e6f1",
+      "security_access_token": "412c49972fce82f8e39cc230b2a6b3877792d12ccd0ddd15a03a89d53a4a5590",
+      "distributeddatamgr_kv_store": "70e351017dcffc114f37ebfdd275bb318a8ae0bd3031e614810fbc205730863c",
+      "window_window_manager": "a4da71d36c1e733641e0c1d938de2b26a54583811ff399148877110ba387441c",
+      "communication_dsoftbus": "d77718d72403f8cae0a3a1a5cd4a7cb95174623d4f165d02b2d405226b8be4f1"
+    }
+  },
+  "first_pass_triage": [
+    {
+      "id": "TRIAGE-001",
+      "title": "stable owner pointer shape in kv_store",
+      "observations": 161,
+      "members": {
+        "nativeStore_": 69,
+        "nativeQueryPtr_": 45,
+        "nativeResultSet_": 28,
+        "kvDataManager_": 17,
+        "proxy_": 2
+      },
+      "assessment": "candidate/unassessed",
+      "working_hypothesis": "constructor initialization is paired with later stable pointer reads, overcounting shared_ptr owner races",
+      "remaining_unknown": "safe publication and thread safety of the pointees"
+    },
+    {
+      "id": "TRIAGE-002",
+      "title": "non-production kvstoremock scope error",
+      "observations": 3,
+      "assessment": "unrelated/non-production",
+      "working_hypothesis": "production exclusion matched mock/mocks but not kvstoremock",
+      "required_action": "exclude explicitly or retain as unrelated control"
+    },
+    {
+      "id": "TRIAGE-003",
+      "title": "mutable setter/getter owner pairs",
+      "observations_at_least": 13,
+      "members": [
+        "JSProxy::instance_",
+        "ResultSetProxy::resultSet_",
+        "StreamManager::msgManager_",
+        "RemoteCommandExecutor::ptrChannel_",
+        "PictureInPictureController::mainWindowXComponentController_",
+        "PictureInPictureController::pipXComponentController_",
+        "PictureInPictureControllerAni::mainWindowXComponentController_"
+      ],
+      "assessment": "candidate/unassessed-high-priority",
+      "remaining_unknown": "call sites, thread/event-queue ownership, publication order and triggering interleaving"
+    },
+    {
+      "id": "TRIAGE-004",
+      "title": "constructor-only and single-lexical-access observations",
+      "observations_at_least": 9,
+      "members": [
+        "StatusCache::timeUtilsProxy_",
+        "AuthorizationResult::data_",
+        "RequestAsyncContextHandle::asyncContextPtr"
+      ],
+      "assessment": "candidate/unassessed-low-priority",
+      "working_hypothesis": "operation classification and single-access policy inflate review load",
+      "required_action": "record constructor_only or unknown rather than a proven conflict"
+    },
+    {
+      "id": "TRIAGE-005",
+      "title": "cross-file access-set gap",
+      "observations": 1,
+      "member": "StreamManager::streamListener_",
+      "assessment": "candidate/unassessed",
+      "evidence": "constructor initialization in stream_manager.h and assignment in stream_manager.cpp:175",
+      "required_action": "aggregate cross-file member accesses before judging synchronization"
+    }
+  ],
+  "detector_corrections": [
+    "classify constructor member initialization as initialization/write",
+    "separate immutable-after-construction owner pointers from later owner mutation",
+    "avoid presenting a pure constructor-only observation as a conflicting access pair",
+    "aggregate member accesses across header and implementation files",
+    "exclude or separately label kvstoremock and previewer/mock paths",
+    "retain unknown pointee-thread-safety and safe-publication obligations"
+  ],
+  "evidence_gate": {
+    "candidate_unassessed": true,
+    "validated_vulnerability": 0,
+    "confirmed": 0,
+    "reportable": 0,
+    "precision_recall": "not computed",
+    "cwe": "CWE-362 candidate; CWE-416 only possible consequence"
+  }
+}
