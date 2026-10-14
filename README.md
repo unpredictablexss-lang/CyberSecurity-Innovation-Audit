@@ -16,7 +16,7 @@
 
 ## 运行
 
-Python3.10+、Git、Node22/npm；从 Draft 分支 feat/unified-audit-v2 开始；该分支基于 feat/workbench-integration：
+Python3.10+、Git、Node22/npm；从已合入统一工作台的 main 开始：
 ```bash
 bash scripts/setup_workbench.sh
 bash scripts/start_workbench.sh --port 8765
