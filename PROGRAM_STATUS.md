@@ -1319,3 +1319,29 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - **该目录其实不被 `.gitignore` 覆盖**（第 226–227 行的 `outputs/reports/*.json` / `*.md` 不跨 `/`，
   只匹配顶层）；`git check-ignore` 对 15 个文件全部返回「未忽略」。它们只是**未跟踪**，
   不提交靠的是 `git add` 时的手工选择，不是规则兜底。
+
+## 43. 2026-10-15 交付件 #6（报告渲染）的移植申请已提交，等 owner 决定
+
+**状态：B 未动共享面任何一行。** 申请书写在
+`docs/research/owner_request_vulnerability_report_port_2026-10-15.md`。
+
+- **为何要批**：`src/report/`、`src/case/` 属 owner 共享面；而路径 `src/report/vulnerability_report.py`
+  是 `AGENTS.md` 的 Competition deliverables **逐字点名**的交付要求，B 仓库里该文件**不存在**
+  （`src/report/` 只有 `benchmark_report.py`，`src/case/` 只有 `assembler.py`）。
+- **待移植对象已核实**：A 线该文件 249 行 / 9,514 字节，**只 import 标准库**（argparse/json/pathlib/typing），
+  **零项目依赖** → 不会在 owner 的共享桥上新增耦合面。
+- **必须改的一处已查实**：第 56–57 行硬断言 `root_cwe == "CWE-362" and consequence_cwe == "CWE-416"`，
+  是 A 线竞态/UAF 家族专用。**AUTH-01 是 `CWE-441`，在该行会直接 raise** —— 不放开则渲染器对非 A 家族不可用。
+- **适配层必要性的依据**：`src/core/case.py:VulnerabilityCase` 缺渲染器要的 8 个键
+  （`consequence_cwe`、`evidence_gate`、`entry_point`、`attacker_control`、`impact`、
+  `performance`、`patch_summary`、`why_it_fixes`）。B 用新增的
+  `src/case/vulnerability_case_view.py` 做投影，**不改 owner 的 dataclass**。
+- **诚实预期（申请里已写明）**：用 AUTH-01 现有证据跑，六门字段只有
+  `target_bound` 与 `dynamic_reproduced` 为 True；`entry_controlled` 为 False 的直接依据是
+  harness manifest 的 `reachability.status = "partial"` 与「whether an unprivileged process can
+  obtain the handle ... **is NOT established here**」。故渲染状态是
+  **`dynamic_reproduced_component_issue`，不是 `reportable`** —— 批准移植**不等于**把未定候选
+  包装成已确认漏洞。
+- **计划第 2 步（`patch_revalidation` 提到共享 PoC 层）已随 `9f968c5` 落地**，无需再申请：
+  它现于 `src/ohscanner/poc/records.py` 的 `PatchRevalidation` / `patch_state` 与
+  `runner.py` 的 `patch_revalidation_state()`，且 `src/ohscanner/poc/` 属 B 自有面。
