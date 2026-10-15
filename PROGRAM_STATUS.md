@@ -1345,3 +1345,44 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - **计划第 2 步（`patch_revalidation` 提到共享 PoC 层）已随 `9f968c5` 落地**，无需再申请：
   它现于 `src/ohscanner/poc/records.py` 的 `PatchRevalidation` / `patch_state` 与
   `runner.py` 的 `patch_revalidation_state()`，且 `src/ohscanner/poc/` 属 B 自有面。
+
+## 44. 2026-10-16 AUTH-01：62 条 `unknown` ref 追查（38 结案 / 24 仍未知）
+
+记录写入 `docs/research/ipc_auth01_unknown_refs_triage_2026-10-16.md`。
+这是交付件 #4 遗留问题的收尾：**`version_impact.py` 一字未改**，改的是对那 62 条的解释。
+
+- **方法**：全离线。所有 git 调用经 `src/ohscanner/git_source.py:_git`（promisor / lazy fetch /
+  全部 transport 关闭），本次**没有任何 fetch**，也**没有**在共享研究克隆上做写操作。
+  代价是 6 个 blob 里只有 1 个本地有内容 —— 如实记录，不假装读到了。
+- **fixture 自检**：manifest 钉住的 vulnerable / fixed 两份源码 sha256 现场重算 **双双 MATCH**
+  （vulnerable 103 行、fixed 108 行），确保后续比对是在正确对象上做的。
+- **结果一**：`vulnerable → fixed` 的差异**只有 4 行**，就是描述符校验
+  （`ReadInterfaceToken()` → 比对 `GetDescriptor()` → 否则 `ERROR_STATUS_UNKNOWN_TRANSACTION`）。
+  即缺陷是**这个前置根本没写**，与 harness manifest 的 `defect`/`fix` 及 B 自撰补丁的 guard 论证一致。
+- **结果二（结案 38 条）**：`fixed` 与 3.2 线 blob `f34e8ff7d7a9` 的差异**只有 4 行改动，
+  且全在文件末尾的两个 namespace 注释**（`} // namespace MiscServices` / `// namespace OHOS`）。
+  即这 38 个 ref 上的文件与修复版**逐字节相同（仅注释差异）**，第 34–43 行的校验在位
+  → **不携带 AUTH-01 缺陷**。构成：3 tag + 3 Beta 分支 + 26 weekly + 3 monthly
+  + 2 `filemanager_develop` + 1 `feature_IDL`（由 #4 产物统计，非估算）。
+- **结果三（仍未知 24 条）**：`022e5d44f76f`(3)、`352b006d2405`(7)、`7d45b1f09d98`(4)、
+  `866c0b6a5825`(7)、`14a849f73d0e`(3) —— 内容不在离线对象库，**维持 `unknown`**。
+- **必须一起记的禁令**：后四个 blob 的 `fixed_commit_reachable = False` **不能读成「没有修」**。
+  反例就在本次结果里：3.2 线带着校验，而修复提交本来就不在它的祖先链上。
+  「修复提交不可达」既不是漏洞证据也不是安全证据。
+- **未改四态**：`affected / fixed / not_present / unknown` 里没有「内容不同但前置在位」这一格，
+  而本次那 38 条的最终判定**仍写 `unknown`**（判 `fixed` 会篡改判定语义、判 `affected` 是误报），
+  只是把解释从「未读」升级为「已读且不含缺陷」。是否加第五态属 owner 的契约决定，B 未动。
+- **顺带查实**：`ipc-research/repos/inputmethod_imf` 的 HEAD（`7777cba9eb19`，master）上
+  `services/src/platform_callback_stub.cpp` **已不存在**（`rev-parse HEAD:<path>` 直接报不存在，
+  `services/src/` 已换成 20 个完全不同的文件）。最新 ref 不在 `affected` 里**不是被修掉，
+  是文件被重构掉了**。
+- **本节检查**：全部命令在文档 §8 可复现；`git diff --cached --name-only` 自检共享面零命中。
+
+## 45. 本日尚未闭环的事项（B 视角）
+
+- 交付件 **#6 报告渲染**：等 owner 对 §43 申请的答复，B 未动共享面。
+- **24 条 `unknown` ref**：要读内容必须显式取 blob（github 不通、gitcode 通）。
+  在共享研究克隆上做显式 fetch 会改动别的会话依赖的对象库 → 由 owner 决定，B 不单方面做。
+- **S1 vs S2 数据不一致**（2026-10-10 起未解）：`ipc-research/pairs/cve-2023-0036/lineage.json`
+  标 `verification_level: S1`，而 `research/corpus/interface/ipc/verified_pairs.jsonl` 标
+  `S2 / patch_root_cause_review` —— 需队伍核对哪一份为准，B 不擅自改任一份。
