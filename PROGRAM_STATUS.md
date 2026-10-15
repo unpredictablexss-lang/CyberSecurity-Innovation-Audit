@@ -806,6 +806,8 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   的守卫只查窗型（特定会话变体连 `IsNeedRecover` 都跳过）；`Session::Reconnect:1873-1875` 会接管
   stage/eventChannel 并**改写会话的 pid/uid**。仍判 `plausible but unproven`，**不写成漏洞**：
   可达性（第三方应用能否自备 property/事务）与影响均未证。候选集**不按严重度排序**这一点已记入报告 §7.3。
+  ⚠️ 本bullet 里「按调用者 id 取回任意活会话」这一句**已被 §38 更正为不成立**（`GetSceneSessionBySessionInfo:3751`
+  对恢复请求早退），原文保留以记录当时的判断。
 
 ### 未验证 / unknown（本轮的诚实边界）
 
@@ -819,3 +821,129 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - **未跑动态验证**：本轮全部为静态复核；7/8 若要推进，先钉 `isPersistentRecover_` 分支与可达性论证。
 - 未修改任何检测器规则或契约；报告 §7.1 的 `object_ownership` 义务是**新契约建议**，须单独落地并带
   正例/反例/无关对照。
+
+## 38. 2026-10-15 WWM 恢复路径可达性调查（候选 7/8，队友 B）
+
+### 历史（上一轮，真实历史，保留）：提交 `b2d9885` 的推送
+
+- 该提交的内容是 §37 的 14 条候选复核，**与本节的恢复路径调查不是同一件事**。
+- 推送前核对：分支 `feat/interface-ipc-detector`，HEAD `b2d9885`，工作树干净，`git diff --check` 干净，
+  领先远端**恰好 1 个提交**（`b2d9885`，改 `PROGRAM_STATUS.md` +54、新增
+  `docs/research/ipc_wwm_deep_review_2026-10-15.md` 354 行），`merge-base --is-ancestor` 判定可快进、
+  远端当时 `f2456815…`。推送后远端 = **`b2d98853c282e55c2079fef0579a27b99d03d8da`**，无 force-push，
+  仍为 Draft PR，未标 Ready、未合并。
+
+### 本轮推送状态（先记录，勿与前一段混淆）
+
+- 本轮先形成本地提交 `6852b1c`（**仅文档**：`PROGRAM_STATUS.md` 与
+  `docs/research/ipc_wwm_recover_reachability_2026-10-15.md`），**当前未推送**；
+  分支 `feat/interface-ipc-detector` **领先 `origin/feat/interface-ipc-detector` 恰好 1 个提交**，
+  远端仍为 `b2d98853c282e55c2079fef0579a27b99d03d8da`。
+- **提交 `6852b1c` 上从未跑过 unittest。** 本文件旧版本记的 `Ran 454 tests … OK` 是
+  **父提交 `b2d9885`** 上的结果（本轮改动只有 Markdown，不进入 Python 测试输入），
+  不得读作「已在 `6852b1c` 验证」。重跑结果见「本轮检查」。
+- 按负责人 2026-10-15 的判定修正文档结论后，`6852b1c` 于推送前被 **amend** 为分支当前 HEAD
+  （该提交即**本文件所在提交**；哈希以 `git rev-parse HEAD` 或推送后的远端
+  `origin/feat/interface-ipc-detector` 为准，本文件不写自身哈希以免自我指涉失效）；
+  `6852b1c` 本身**从未推送**，远端历史不受影响。
+
+### 本轮已完成：回答「普通应用能否控制恢复请求并取回/接管其他会话」
+
+- **报告**：`docs/research/ipc_wwm_recover_reachability_2026-10-15.md`（本节事实来源，含逐文件 blob+sha256）。
+  固定对象 `openharmony/window_window_manager` @ `8b0d8fe1b973d865904c942c286b3d2a3b9b08e7`
+  （tree `24e60146ba2fe4af3aaef20b306a1e306df44617`），全部证据经 `git show <commit>:<path>` 读取。
+- **输入可控性**：`persistentId` 随 `WindowSessionProperty` 序列化（`window_session_property.cpp:1676`），
+  **调用者可控**；`isPersistentRecover_` **不是** property 字段（该文件全文无此标识符），
+  且 `MarshallingSessionInfo:1338-1369` 不往返它 —— 它由服务端在 `RecoverSessionInfo:5963` **无条件置 true**。
+- **更正前序线索**：`GetSceneSessionBySessionInfo:3751` 在 `isPersistentRecover_` 为真时**直接返回 nullptr**，
+  而该位置在查表前已被置位 → 两条候选**都不会复用活会话**，必然走 `CreateSceneSession`；
+  §37 那条「按调用者 id 取回任意活会话」对本组候选**不成立**。另：`GeneratePersistentId:5219` 只在
+  id 未被 `g_persistentIdSet`（只增不删）占用时才采纳调用者的值 → **在用的 id 不可抢占**。
+- **守卫缺口（本组候选真正的差异）**：`CheckSessionPropertyOnRecovery:6010-6026` 是唯一守卫 —
+  候选 7（`:421`）连 `IsNeedRecover` 都跳过**且没有 `recoveringFinished_` 门**（`:6039` 只查回调非空），
+  候选 8（`:462`）两者都有（`:6021` / `:6185`）；两条都不调用创建路径才有的
+  `CheckModalSubWindowPermission:5818` 与 `CheckSubWindowCallingProcess:5918`（父进程 pid 比对 `:5937-5942`）。
+- **实际效果**：`Session::Reconnect:1868-1875` 绑定调用者自己的 stage/eventChannel/abilityToken、
+  整块覆盖 property、并把会话 pid/uid 改写为**调用者自己的真实 pid/uid**；该路径**不**做
+  `CheckPidIfMatched` / `CheckIdentityTokenIfMatched`（只出现在 `scene_session.cpp:531/:634/:837`）。
+  返回给调用者的对象是它自己刚建的那个会话，**不是**他人的会话。
+- **可达性**：仓库内**找不到**任何限制普通应用发这两个事务的检查（`scene_session_manager_stub.cpp`
+  全文无权限/uid/pid 检查，proxy 的两个方法无权限检查，`sa_profile/4606.json` 无 `permission` 字段）；
+  但**也证不出**可达（需 SAMGR 取回 4606 对象 + 构造 property parcel，均在本仓之外）。
+  应用侧入口是系统恢复通知驱动的单次回调（`window_scene_session_impl.cpp:1129-1167` →
+  `window_adapter.cpp:615/690-714/887-896`），非应用可随时调用的 API；innerkit 的
+  `Window::Recover()` 系列（`interfaces/innerkits/wm/window.h:3295` 等）经 `ExecuteRecover:5105`
+  只做取消最小化，**不触达**这两个事务（负结果）。
+- **JS/napi 面（本轮检索完毕）**：两个事务在 `interfaces/kits/napi/` 下**无任何绑定**；
+  唯一相关 JS 面是 `notifySessionRecoverStatus`（绑定 `js_scene_session_manager.cpp:268-269`，
+  实现 `:4400-4437`，**函数体内无权限检查**），它恰恰是候选 8 两道门
+  （`IsNeedRecover(alivePersistentIds_)` `:6021`、`recoveringFinished_` `:6185`）的数据来源，
+  且是 `alivePersistentIds_` 全仓唯一写入端；但 `git grep sceneSessionManager -- "*.d.ts" "*.ts"` **为空**
+  → 该模块（`libscenesessionmanager_napi.so`）不在本仓声明式 API 清单内，调用方在仓外。
+  应用侧 `window.recover`（`js_window.cpp:12338` → `OnRecover:2060` → `window_impl.cpp:2744-2766`）
+  只取消最小化，**不触达**这两个事务（与 innerkit 结论互相印证）。
+
+### 判定：两层，各有独立的对象与计数口径（按负责人 2026-10-15 判定）
+
+| 层 | 结论对象 | 判定 | 计数口径 |
+|---|---|---|---|
+| 7.A | 「用调用者给的 `persistentId` **取回并接管已有会话**」这一**子假设** | **refuted / likely false positive** | 子假设被删项，**候选记录不减**（负结果保留） |
+| 7.B | 候选 7/8 作为一条 finding 的**整体安全结论** | **未决（plausible but unproven）** | 仍是**同一条**共享机制记录，**不另立**新漏洞、**不重复计数** |
+
+- **7.A —— 子假设已证伪（只能这样读，不得外推为候选整体误报）。** 三条**源码级确定性**事实
+  各自独立否掉「取回/接管已有会话」：
+  (1) `RecoverSessionInfo:5963` 在查表前置 `isPersistentRecover_=true` → 复用分支 `:3756-3762` 不可达，
+  `GetSceneSessionBySessionInfo:3751` 必返 nullptr；
+  (2) `GeneratePersistentId:5219` 只在 id 未被只增不删的 `g_persistentIdSet` 占用时才采纳调用者值 → 在用 id 不可抢占；
+  (3) id 不一致时 `:6052-6061`/`:6202-6208` 擦除新建会话并返回 `SESSION_NOT_RECONNECT`。
+  这是 in-repo 可证伪的**负结果**（带固定提交 `8b0d8fe1` 与行号），**不是**「本地没搜到限制」的推测；
+  负结果与原始候选记录**保留、不删除**，**detector 规则不改**。
+- **7.B —— 整体 finding 维持未决，承载尚未判定的 broader capability / ownership 风险。** 7.A 只删掉
+  「接管已有会话」一条路径；这两条事务**仍然**能以调用者自备的 property 新建 sub/系统类型会话，
+  `bundleName_`/`abilityName_`/`moduleName_` 任填且服务端不与调用者 UID 比对，且该路径**缺**
+  创建路径才有的 `CheckModalSubWindowPermission:5818`、`CheckSubWindowCallingProcess:5918`
+  （父进程比对 `:5937-5942`）与 sub-window 层级上限 `:5295-5300`；叠加 §3.5 的跨会话 DIALOG 绑定。
+  判定它所需的两项证据都缺：(a) 普通应用能否取回 SA 4606 对象并发事务；(b) 冒名会话与跨会话
+  DIALOG 绑定在 scene board/AMS 侧的具体 C/I/A 影响。缺证据的两项记为 **unresolved external
+  dependency**（指向缺失的**外部证据**，**不是**一条已成立的新漏洞）。
+  → **既不升 confirmed/reportable，也不因 7.A 定为 false positive，也不因本地未搜到限制就断言无限制。**
+- **计数**：`:421` 与 `:462` 是**同一条共享机制**的两次触发点，按**一条**记录计，**不重复计为两个独立漏洞**；
+  7.A 删的是子假设**不减候选计数**，7.B 的残余是**同一条记录**里未判定的部分、**不另立候选**
+  → 本轮结论**不产出、也不折算进 Precision/准确率**。`confirmed` 仍为 **0**、
+  `validated_vulnerability` 仍为 **0**。
+- 跨会话 DIALOG 父子绑定（`UpdateParentSessionForDialog:2590-2613`，无属主校验）**同样存在于创建路径**
+  （`RequestSceneSession:5396`），属 7.B 未判定的**同一机制**的一部分，不重复计数，仅作影响面待查项。
+
+### 未验证 / unknown（本节的诚实边界）
+
+- 缺外部证据：SAMGR 对 SA 4606 的取回策略；普通 app 能否加载 `libwindow_scene_common.so`
+  （`innerapi_tags = ["platformsdk_indirect"]`）与 `libwm(z).so` 的 `WindowAdapter` 符号；
+  描述符提取 + 手搓 parcel 的可行性；`libscenesessionmanager_napi.so`（`nm_modname = "sceneSessionManager"`）
+  由哪个进程加载、是否要求系统身份；下游 scene board/AMS 对新建冒名会话与跨会话 DIALOG 绑定的处理。
+  以上**既不判成漏洞也不判成安全**。
+- **是否进入受控运行时验证：当前不建议**为 7/8 立项做 PoC。7.A 的三条证伪是源码级确定性结论，
+  运行时只能重复同一负结果；7.B 缺的是宿主访问控制与下游影响证据（取证/跨仓审计问题，非 PoC 能补）。
+  **重新评估门槛（三条同时有证据后再议）**：(i) 普通应用能取回 SA 4606 远程对象；
+  (ii) 普通应用能调用这两个恢复事务；(iii) 由此造成**具体的越权影响**。在此之前保持 unresolved/unknown。
+- **下一步研究优先级**（只读、绑定固定仓库与 SHA）：① SAMGR 对 SA 4606 的访问控制；
+  ② 普通应用可用的库/API 边界；③ 下游 scene board/AMS 对冒名会话与跨会话 DIALOG 绑定的处理。
+  逐条记录所查仓库、commit/blob SHA 与源码位置；若仍不能证明可达性或具体影响，**保持 unresolved/unknown 并停止**。
+- 运行时验证所需条件已列（完整 `out/` 构建、可运行 WMS/SCB 的设备或模拟器、普通应用样本、可复现恢复时序）；
+  **本轮未做动态验证**，未扩大规则或结论，未新增检测能力，未改公共契约。
+
+### 本轮检查（命令 / 结果 / HEAD）
+
+- 一致性自查：`grep -n "false positive\|plausible\|unproven\|confirmed\|未决\|refuted\|不重复\|Precision"`
+  同时扫报告与本 §38，确认「子假设 refuted」与「整体未决」两处表述一致（脚本
+  `/home/audit/wtmp/w38_consistency.sh`，在仓库之外）。
+- 证据读取：`git -C <perf-corpus/window_window_manager> show <commit>:<path>`，脚本
+  `/home/audit/wtmp/w38_c1.sh … w38_c28.sh`、`w38_hashes.sh`（均在仓库之外，不入库）。
+- `git diff --check`（工作区与暂存区）→ 均干净。
+- 文档结构：`ipc_wwm_recover_reachability_2026-10-15.md` 行数/围栏/`## `/`### ` 标题计数自查，
+  编号 §1–§9 连续，新增 §4.6 / §7.A–C / §8.1。
+- 回归：`.venv/bin/python -m unittest discover -s tests` → **Ran 454 tests … OK**，
+  运行于**本轮文档提交（分支 `feat/interface-ipc-detector` 的 HEAD，`git rev-parse HEAD` 可核）**。
+  本轮改动**只有 Markdown**，不进入 Python 测试输入；**父提交 `b2d9885` 上的同名结果不构成
+  「已在 `6852b1c` 验证」**，故按负责人要求在新判定落地后重跑。
+- 顺带记录：`docs/research/` 与本文件之外**无**代码改动；`sa_profile/4606.json`、检测规则、
+  公共契约均未触碰。
