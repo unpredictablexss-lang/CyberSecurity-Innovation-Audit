@@ -807,7 +807,9 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   stage/eventChannel 并**改写会话的 pid/uid**。仍判 `plausible but unproven`，**不写成漏洞**：
   可达性（第三方应用能否自备 property/事务）与影响均未证。候选集**不按严重度排序**这一点已记入报告 §7.3。
   ⚠️ 本bullet 里「按调用者 id 取回任意活会话」这一句**已被 §38 更正为不成立**（`GetSceneSessionBySessionInfo:3751`
-  对恢复请求早退），原文保留以记录当时的判断。
+  对恢复请求早退），原文保留以记录当时的判断。**注意口径**：被删掉的是这条**子假设**，
+  候选 7/8 的**整体判定不变** —— 仍为 `plausible but unproven`（§38 判定表），
+  不得把本行读成「候选 7/8 已降级 / 已判为误报」。
 
 ### 未验证 / unknown（本轮的诚实边界）
 
@@ -833,19 +835,24 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   远端当时 `f2456815…`。推送后远端 = **`b2d98853c282e55c2079fef0579a27b99d03d8da`**，无 force-push，
   仍为 Draft PR，未标 Ready、未合并。
 
-### 本轮推送状态（先记录，勿与前一段混淆）
+### 本轮推送记录（两段，勿与前一段的 `b2d9885` 混淆）
 
-- 本轮先形成本地提交 `6852b1c`（**仅文档**：`PROGRAM_STATUS.md` 与
-  `docs/research/ipc_wwm_recover_reachability_2026-10-15.md`），**当前未推送**；
-  分支 `feat/interface-ipc-detector` **领先 `origin/feat/interface-ipc-detector` 恰好 1 个提交**，
-  远端仍为 `b2d98853c282e55c2079fef0579a27b99d03d8da`。
-- **提交 `6852b1c` 上从未跑过 unittest。** 本文件旧版本记的 `Ran 454 tests … OK` 是
-  **父提交 `b2d9885`** 上的结果（本轮改动只有 Markdown，不进入 Python 测试输入），
-  不得读作「已在 `6852b1c` 验证」。重跑结果见「本轮检查」。
-- 按负责人 2026-10-15 的判定修正文档结论后，`6852b1c` 于推送前被 **amend** 为分支当前 HEAD
-  （该提交即**本文件所在提交**；哈希以 `git rev-parse HEAD` 或推送后的远端
-  `origin/feat/interface-ipc-detector` 为准，本文件不写自身哈希以免自我指涉失效）；
-  `6852b1c` 本身**从未推送**，远端历史不受影响。
+**第一段——已推送。** 本轮先形成本地提交 `6852b1c`（**仅文档**：`PROGRAM_STATUS.md` 与
+`docs/research/ipc_wwm_recover_reachability_2026-10-15.md`），**从未推送**。按负责人 2026-10-15 的
+判定修正文档结论后，`6852b1c` 于推送前被 **amend** 为 `ddcdb7d…`。在 `ddcdb7d` 上复跑通过
+（`Ran 454 tests … OK`，见「本轮检查」），随后以 `git push origin feat/interface-ipc-detector`
+**快进**推送 `b2d9885..ddcdb7d`（退出码 0，无 force）；推送后远端 = 本地 =
+**`ddcdb7d5a2b82453b7cb2e85778676ce6643c7d7`**（ahead/behind 0/0），Draft PR **未标 Ready、未合并**。
+
+**第二段——本次。** 按 B 线建议追加三处修正：(1) §7.A 子假设层**只用 `refuted`**，不并列
+`likely false positive`（理由见报告 §7.A 脚注）；(2) §8.1 重评门槛改为 **(i)+(ii)**，(iii) 越权影响
+降为**运行时阶段要产出的结果**而非进入前提；(3) §37 补口径注（子假设被删 ≠ 候选降级）。
+本次提交即**本文件所在提交**，哈希以 `git rev-parse HEAD` 或推送后的远端
+`origin/feat/interface-ipc-detector` 为准（不写自身哈希，以免自我指涉失效）。
+
+**测试归属（勿误读）**：`6852b1c` 上**从未跑过** unittest，旧记的 `Ran 454 tests … OK` 是**父提交
+`b2d9885`** 上的结果（改动只有 Markdown，不进入 Python 测试输入）；`ddcdb7d` 与本次提交上各复跑一次，
+结果见「本轮检查」。
 
 ### 本轮已完成：回答「普通应用能否控制恢复请求并取回/接管其他会话」
 
@@ -887,7 +894,7 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 
 | 层 | 结论对象 | 判定 | 计数口径 |
 |---|---|---|---|
-| 7.A | 「用调用者给的 `persistentId` **取回并接管已有会话**」这一**子假设** | **refuted / likely false positive** | 子假设被删项，**候选记录不减**（负结果保留） |
+| 7.A | 「用调用者给的 `persistentId` **取回并接管已有会话**」这一**子假设** | **refuted** | 子假设被删项，**候选记录不减**（负结果保留） |
 | 7.B | 候选 7/8 作为一条 finding 的**整体安全结论** | **未决（plausible but unproven）** | 仍是**同一条**共享机制记录，**不另立**新漏洞、**不重复计数** |
 
 - **7.A —— 子假设已证伪（只能这样读，不得外推为候选整体误报）。** 三条**源码级确定性**事实
@@ -898,6 +905,8 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   (3) id 不一致时 `:6052-6061`/`:6202-6208` 擦除新建会话并返回 `SESSION_NOT_RECONNECT`。
   这是 in-repo 可证伪的**负结果**（带固定提交 `8b0d8fe1` 与行号），**不是**「本地没搜到限制」的推测；
   负结果与原始候选记录**保留、不删除**，**detector 规则不改**。
+  **用词**：子假设层只用 `refuted`，**不并列** `likely false positive`——后者是本项目 **finding 级**判定词
+  （§37 四类互斥分布的分母用的就是它），在子假设层并列会被读成对候选整体的判定；原始措辞与理由见报告 §7.A 脚注。
 - **7.B —— 整体 finding 维持未决，承载尚未判定的 broader capability / ownership 风险。** 7.A 只删掉
   「接管已有会话」一条路径；这两条事务**仍然**能以调用者自备的 property 新建 sub/系统类型会话，
   `bundleName_`/`abilityName_`/`moduleName_` 任填且服务端不与调用者 UID 比对，且该路径**缺**
@@ -923,8 +932,11 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   以上**既不判成漏洞也不判成安全**。
 - **是否进入受控运行时验证：当前不建议**为 7/8 立项做 PoC。7.A 的三条证伪是源码级确定性结论，
   运行时只能重复同一负结果；7.B 缺的是宿主访问控制与下游影响证据（取证/跨仓审计问题，非 PoC 能补）。
-  **重新评估门槛（三条同时有证据后再议）**：(i) 普通应用能取回 SA 4606 远程对象；
-  (ii) 普通应用能调用这两个恢复事务；(iii) 由此造成**具体的越权影响**。在此之前保持 unresolved/unknown。
+  **重新评估门槛**：(i) 普通应用能取回 SA 4606 远程对象；(ii) 普通应用能调用这两个恢复事务。
+  **二者有证据即重新评估是否进运行时；(iii) 具体越权影响不设为前提**——其消费者在 scene board/AMS，
+  很可能只有运行时才能确立，它是运行时阶段要**产出**的结果而非进入条件（报告的 §8.1 附操作提示：
+  一旦有可用设备，(i) 用几行的非系统 UID 应用几分钟即可定论，比跨仓读 samgr 策略更确定）。
+  在此之前保持 unresolved/unknown。
 - **下一步研究优先级**（只读、绑定固定仓库与 SHA）：① SAMGR 对 SA 4606 的访问控制；
   ② 普通应用可用的库/API 边界；③ 下游 scene board/AMS 对冒名会话与跨会话 DIALOG 绑定的处理。
   逐条记录所查仓库、commit/blob SHA 与源码位置；若仍不能证明可达性或具体影响，**保持 unresolved/unknown 并停止**。
@@ -941,9 +953,9 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
 - `git diff --check`（工作区与暂存区）→ 均干净。
 - 文档结构：`ipc_wwm_recover_reachability_2026-10-15.md` 行数/围栏/`## `/`### ` 标题计数自查，
   编号 §1–§9 连续，新增 §4.6 / §7.A–C / §8.1。
-- 回归：`.venv/bin/python -m unittest discover -s tests` → **Ran 454 tests … OK**，
-  运行于**本轮文档提交（分支 `feat/interface-ipc-detector` 的 HEAD，`git rev-parse HEAD` 可核）**。
-  本轮改动**只有 Markdown**，不进入 Python 测试输入；**父提交 `b2d9885` 上的同名结果不构成
-  「已在 `6852b1c` 验证」**，故按负责人要求在新判定落地后重跑。
+- 回归：`.venv/bin/python -m unittest discover -s tests` → **Ran 454 tests … OK**，在两处 HEAD 上各跑一次：
+  ① **`ddcdb7d`**（第一段推送的提交，`Ran 454 tests in 53.111s`）；② **本次提交（即本文件所在提交，
+  分支 HEAD，`git rev-parse HEAD` 可核）**。本轮改动**只有 Markdown**，不进入 Python 测试输入；
+  **父提交 `b2d9885` 上的同名结果不构成「已在 `6852b1c` 验证」**（`6852b1c` 上从未跑过）。
 - 顺带记录：`docs/research/` 与本文件之外**无**代码改动；`sa_profile/4606.json`、检测规则、
   公共契约均未触碰。
