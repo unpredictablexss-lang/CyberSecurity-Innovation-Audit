@@ -129,7 +129,7 @@
   "source_checkout_sha256": "e417eb614183e090fe9390e3c5842bfa8ff1bacb382b191e6560d4591cc6d050",
   "source_hash_semantics": "sha256 is the canonical Git blob payload hash; checkout_sha256 is the raw local working-tree byte hash",
   "poc_runner_path": "src/ohscanner/poc/cpp_shared_ptr_jsproxy.py",
-  "poc_runner_sha256": "72dd5b44a65db18bf100338d4bb4e9ccf5fc1d02a9f93cce8900333b4d2b1f0d",
+  "poc_runner_sha256": "413e442fe3bf500a88b744c8a514b9271184dd219a0448205c2387efd97a407c",
   "product_build_status": "not_available_in_current_component_checkout",
   "product_build_blockers": [
     "component checkout lacks the OpenHarmony //build tree and complete external dependency closure",

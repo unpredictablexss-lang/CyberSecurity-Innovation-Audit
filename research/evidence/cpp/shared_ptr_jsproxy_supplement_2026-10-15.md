@@ -63,9 +63,9 @@ SHA-256 口径：
 | rule | `ohcpp-shared-ptr-race-candidate-001` |
 | Detector implementation | `70197fb273054a20e2e6de82aa4eaa6bdeeaf4951ead6d5076b0e9832c65e230` |
 | Harness | `67e4eb8bb832b57ce224bae4d3cb020be348c84424d3c8791ce9504efa9d6b59` |
-| PoC runner | `72dd5b44a65db18bf100338d4bb4e9ccf5fc1d02a9f93cce8900333b4d2b1f0d` |
-| manifest | `d503621783eb96372571d4f62fb7315387a779c50654c01618c719a8b0d58f46` |
-| tests | `6cf47c039692e28a0551c89ec11dd92a4651025629d91dcf79f328c6c2779695` |
+| PoC runner | `413e442fe3bf500a88b744c8a514b9271184dd219a0448205c2387efd97a407c` |
+| manifest | `9bfd1891d2100a4cb1006addbd75f83683a4aa9e0ccc687ebd8ee35fcb7c473b` |
+| tests | `3fbe6ea5bafbe034d52c3d166a491505501acc177771f7a28560d60ed25acb83` |
 | canonical `poc.json` | `f7a150fe071afd09723a90f1f9806f6c7effc59d808173ce4abeca737aa076d2` |
 | evidence bundle | `d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f` |
 

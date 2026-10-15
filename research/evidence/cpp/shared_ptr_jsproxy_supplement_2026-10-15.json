@@ -247,7 +247,7 @@
   "artifacts": [
     {
       "path": "src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json",
-      "sha256": "d503621783eb96372571d4f62fb7315387a779c50654c01618c719a8b0d58f46"
+      "sha256": "9bfd1891d2100a4cb1006addbd75f83683a4aa9e0ccc687ebd8ee35fcb7c473b"
     },
     {
       "path": "src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp",
@@ -255,7 +255,7 @@
     },
     {
       "path": "src/ohscanner/poc/cpp_shared_ptr_jsproxy.py",
-      "sha256": "72dd5b44a65db18bf100338d4bb4e9ccf5fc1d02a9f93cce8900333b4d2b1f0d"
+      "sha256": "413e442fe3bf500a88b744c8a514b9271184dd219a0448205c2387efd97a407c"
     },
     {
       "path": "src/ohscanner/detectors/cpp/shared_ptr_race_detector.py",
@@ -263,7 +263,7 @@
     },
     {
       "path": "tests/test_shared_ptr_jsproxy_poc.py",
-      "sha256": "6cf47c039692e28a0551c89ec11dd92a4651025629d91dcf79f328c6c2779695"
+      "sha256": "3fbe6ea5bafbe034d52c3d166a491505501acc177771f7a28560d60ed25acb83"
     },
     {
       "path": "outputs/poc/shared-ptr-jsproxy-supplement-20261015/run-002/poc.json",
