@@ -1,0 +1,302 @@
+{
+  "schema_version": "ohscanner.readonly-fact-view-contract-v0",
+  "change_request_id": "A-CCR-04",
+  "status": "proposed",
+  "approval_required": true,
+  "public_implementation_changed": false,
+  "compatibility": {
+    "detector_contract": "additive read-only adapter; Detector.detect(context, units) remains unchanged",
+    "detector_schema": "ToolRunResult/ToolDiagnostic schema v1 read compatibility and first-party schema v2 source binding remain unchanged",
+    "candidate_identity": "existing candidate_id and diagnostic_id values are returned verbatim and are never rewritten",
+    "evidence_obligations": "returned as immutable records; a query never changes unknown/missing/satisfied/not_applicable",
+    "coverage": "complete/partial/not_analyzed/failed and parse_status remain independent; partial is never promoted to complete",
+    "historical_reports": "historical JSON, report hashes, reviews and source evidence are read-only",
+    "external_tools": "saved external outputs may be normalized as observations but cannot provide production semantic proof",
+    "mutation": "no public IR, runner, frontend, catalog, report or review mutation before owner approval"
+  },
+  "status_semantics": {
+    "observed": "A direct immutable record was recovered and source/evidence-bound; it is not a semantic proof.",
+    "proven": "A semantic claim is supported by a complete, auditable proof for the declared analysis scope only.",
+    "unknown": "The requested claim is not established because evidence, capability, identity, coverage or budget is insufficient.",
+    "failed": "The query or provider failed, including invalid input or integrity mismatch; this proves neither absence nor safety."
+  },
+  "status_values": [
+    "observed",
+    "proven",
+    "unknown",
+    "failed"
+  ],
+  "response_envelope": {
+    "required_fields": [
+      "schema_version",
+      "change_request_id",
+      "method",
+      "request_id",
+      "status",
+      "proof_ref",
+      "analysis_scope",
+      "budget",
+      "failure_reason",
+      "facts",
+      "coverage",
+      "limitations"
+    ],
+    "conditional_fields": {
+      "unknown_reason": "required and non-null exactly when status=unknown",
+      "failure_reason": "required and non-null exactly when status=failed; null otherwise"
+    },
+    "facts_policy": {
+      "observed": "non-null direct observations only",
+      "proven": "non-null claim plus proof witness",
+      "unknown": "null; missing evidence may be listed in unknown_reason but no guessed result is allowed",
+      "failed": "null"
+    },
+    "proof_ref_policy": {
+      "field_type": "array",
+      "observed": "non-empty source/evidence-bound references",
+      "proven": "non-empty references whose verified=true and which include a proof certificate or complete analysis record",
+      "unknown": "may be empty, but the field must exist",
+      "failed": "may be empty, but the field must exist"
+    }
+  },
+  "proof_ref": {
+    "required_fields": [
+      "evidence_id",
+      "kind",
+      "authority",
+      "object_sha256",
+      "verified"
+    ],
+    "authorities": [
+      "git_object",
+      "source_blob",
+      "detector_report",
+      "build_artifact",
+      "analysis_output",
+      "runtime",
+      "human"
+    ],
+    "kinds": [
+      "source_sha256",
+      "blob",
+      "tree",
+      "snapshot",
+      "report_sha256",
+      "diagnostic_id",
+      "candidate_id",
+      "coverage_sidecar",
+      "compilation_database",
+      "cfg_certificate",
+      "dataflow_witness",
+      "guard_certificate",
+      "lock_certificate"
+    ]
+  },
+  "analysis_scope": {
+    "required_fields": [
+      "repository",
+      "commit",
+      "git_tree",
+      "snapshot_sha256",
+      "profile_id",
+      "files",
+      "functions",
+      "detector",
+      "build_context_id"
+    ],
+    "file_fields": [
+      "path",
+      "blob",
+      "source_sha256"
+    ],
+    "rules": [
+      "scope is explicit and smaller than or equal to the pinned ScanContext",
+      "paths are canonical source-relative POSIX paths",
+      "git_object source binding requires a full commit SHA",
+      "a semantic claim may only cover listed files/functions and declared build context",
+      "unlisted or partially analyzed regions remain outside the proof"
+    ]
+  },
+  "budget": {
+    "required_fields": [
+      "requested",
+      "used",
+      "exhausted",
+      "reason"
+    ],
+    "limit_fields": [
+      "wall_time_ms",
+      "memory_mb",
+      "files",
+      "source_bytes",
+      "call_depth",
+      "cfg_nodes",
+      "paths",
+      "dataflow_steps",
+      "macro_rounds"
+    ],
+    "rules": [
+      "every request and response carries requested and used budgets",
+      "valid analysis requests use positive integer requested limits",
+      "valid used values are non-negative integers no greater than requested limits",
+      "invalid zero, negative, missing or contradictory budgets return failed with failure_reason.code=invalid_budget and no facts",
+      "budget exhaustion returns unknown with unknown_reason.code=budget_exhausted",
+      "budget exhaustion never emits a truncated path or partial flow as a complete result"
+    ]
+  },
+  "unknown_reason": {
+    "required_fields": [
+      "code",
+      "message",
+      "missing_facts"
+    ],
+    "codes": [
+      "required_fact_missing",
+      "analysis_partial",
+      "budget_exhausted",
+      "identity_unresolved",
+      "candidate_not_found",
+      "coverage_not_recorded",
+      "build_context_unavailable",
+      "source_not_in_scope"
+    ]
+  },
+  "failure_reason": {
+    "required_fields": [
+      "code",
+      "message",
+      "retryable"
+    ],
+    "codes": [
+      "invalid_request",
+      "invalid_budget",
+      "integrity_mismatch",
+      "provider_error",
+      "unsupported_method"
+    ]
+  },
+  "methods": [
+    {
+      "name": "get_symbol",
+      "signature": "get_symbol(path, position, scope, budget)",
+      "purpose": "Resolve a source position to a stable symbol identity without inferring missing type or linkage semantics.",
+      "observed_fact": "syntax/token identity at the exact source hash",
+      "proven_claim": "fully resolved declaration/definition identity within the declared build context",
+      "proof_required": [
+        "source_sha256",
+        "analysis_output"
+      ],
+      "missing_behavior": "unknown(identity_unresolved); never return a nearest-name guess"
+    },
+    {
+      "name": "get_cfg_path",
+      "signature": "get_cfg_path(function, source_node, sink_node, scope, budget)",
+      "purpose": "Return one auditable feasible control-flow path or a proven no-path result.",
+      "observed_fact": "recorded node/function identities and raw CFG edges when available",
+      "proven_claim": "a feasible source-to-sink path, or no path after complete CFG search in scope",
+      "proof_required": [
+        "source_sha256",
+        "cfg_certificate"
+      ],
+      "missing_behavior": "unknown(required_fact_missing|analysis_partial|budget_exhausted); facts=null and no guessed path"
+    },
+    {
+      "name": "get_dataflow",
+      "signature": "get_dataflow(source, sink, budget)",
+      "purpose": "Return a bounded, auditable source-to-sink value-flow witness or a complete no-flow result.",
+      "observed_fact": "recorded def/use and alias observations",
+      "proven_claim": "a concrete flow witness, or no flow after complete analysis within budget and scope",
+      "proof_required": [
+        "source_sha256",
+        "dataflow_witness"
+      ],
+      "missing_behavior": "unknown(required_fact_missing|analysis_partial|budget_exhausted); facts=null and no synthetic path"
+    },
+    {
+      "name": "get_guard_proof",
+      "signature": "get_guard_proof(node, guard, scope, budget)",
+      "purpose": "Prove guard dominance, negation and early-exit semantics for one sink node.",
+      "observed_fact": "syntax-level guard expression and node identity",
+      "proven_claim": "guard dominance and required branch outcome for the sink",
+      "proof_required": [
+        "source_sha256",
+        "cfg_certificate",
+        "guard_certificate"
+      ],
+      "missing_behavior": "unknown(required_fact_missing|analysis_partial); a nearby if statement is never proof"
+    },
+    {
+      "name": "get_lock_state",
+      "signature": "get_lock_state(function, location, scope, budget)",
+      "purpose": "Establish held/not-held lock state and synchronization identity at a location.",
+      "observed_fact": "recorded lexical lock syntax or annotations",
+      "proven_claim": "held/not-held state under resolved lock alias, RAII, try-lock and thread context",
+      "proof_required": [
+        "source_sha256",
+        "cfg_certificate",
+        "lock_certificate"
+      ],
+      "missing_behavior": "unknown(required_fact_missing|analysis_partial); lexical proximity is only observed"
+    },
+    {
+      "name": "get_build_context",
+      "signature": "get_build_context(commit, file, scope, budget)",
+      "purpose": "Bind a file to compilation database, TU, macros, includes, target and generated inputs.",
+      "observed_fact": "recorded build configuration fragments",
+      "proven_claim": "the exact build context used for a semantic claim",
+      "proof_required": [
+        "git_object",
+        "build_artifact",
+        "compilation_database"
+      ],
+      "missing_behavior": "unknown(build_context_unavailable); never substitute host defaults or generic flags"
+    },
+    {
+      "name": "get_source_context",
+      "signature": "get_source_context(path, range, scope, budget)",
+      "purpose": "Return exact source bytes/text for a bounded range with Git and source hashes.",
+      "observed_fact": "exact source range bound to blob and source_sha256",
+      "proven_claim": "not applicable in v0; source text is evidence, not semantic proof",
+      "proof_required": [
+        "blob",
+        "source_sha256"
+      ],
+      "missing_behavior": "unknown(source_not_in_scope|budget_exhausted); hash mismatch is failed(integrity_mismatch)"
+    },
+    {
+      "name": "get_detector_results",
+      "signature": "get_detector_results(candidate_id, scope, budget)",
+      "purpose": "Read existing candidate diagnostics, limitations and EvidenceObligations without promotion.",
+      "observed_fact": "verbatim v2 record or explicitly unbound v1 record plus source binding state",
+      "proven_claim": "not applicable to vulnerability truth in v0; record identity may be verified but findings remain candidates",
+      "proof_required": [
+        "report_sha256",
+        "diagnostic_id",
+        "candidate_id"
+      ],
+      "missing_behavior": "unknown(candidate_not_found); retrieval/integrity failure is failed"
+    },
+    {
+      "name": "get_coverage",
+      "signature": "get_coverage(detector_id, path, scope, budget)",
+      "purpose": "Read per-file detector/parse coverage and preserve partial and failed outcomes.",
+      "observed_fact": "coverage sidecar and parse_status records",
+      "proven_claim": "complete coverage only when the recorded sidecar closes the exact declared scope",
+      "proof_required": [
+        "coverage_sidecar",
+        "source_sha256"
+      ],
+      "missing_behavior": "unknown(coverage_not_recorded|analysis_partial); never infer complete from task completion or zero findings"
+    }
+  ],
+  "required_unknown_fallbacks": [
+    "missing CFG",
+    "missing dataflow graph or alias model",
+    "missing guard dominance proof",
+    "missing lock/RAII/thread model",
+    "missing build context",
+    "partial parse or partial analysis",
+    "budget exhaustion",
+    "unresolved symbol/call target"
+  ]
+}

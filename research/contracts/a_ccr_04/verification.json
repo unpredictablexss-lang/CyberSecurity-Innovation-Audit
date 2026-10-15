@@ -1,0 +1,59 @@
+{
+  "schema_version": "ohscanner.a-ccr-04-verification-v1",
+  "change_request_id": "A-CCR-04",
+  "generated_at": "2026-10-15T12:45:33+08:00",
+  "checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "base_head": "38b93d30ed4be71af4a8245ed18198d999c3ee18",
+    "base_tree": "5be00bf65cd330e7a0309567a51be3a67c066c8c",
+    "remote": "origin/codex/full-runtime-performance-audit-20261014",
+    "remote_head": "38b93d30ed4be71af4a8245ed18198d999c3ee18"
+  },
+  "public_implementation_changed": false,
+  "files": {
+    "research\\contracts\\a_ccr_04\\A-CCR-04-ReadOnlyFactView.md": "94c9f6616b7d715aa0a154655b95b29e58567aa3b91d78320f9681ad6cec99d1",
+    "research\\contracts\\a_ccr_04\\contract.json": "ee2dba0d64d0fcbfdefe864e1433bb1ee110fb395ef0f0412335ee4ef7824feb",
+    "research\\contracts\\a_ccr_04\\conformance.py": "ab05f49d404e16fc24ab169a8aee8a63eaa81017d08a70519c70510a218efa83",
+    "tests\\test_a_ccr_04_contract.py": "66f0d359fdb72ce1b70d4c58e561f4ace3491df128ce15d52022016a83804c23",
+    "tests\\test_a_ccr_04_budget.py": "908cbd7adda09c4581587f61d8cef4f77da91595c62a54137a55c62f9f4bbb85"
+  },
+  "verification": [
+    {
+      "command": "python -m unittest tests.test_a_ccr_04_contract tests.test_a_ccr_04_budget -q",
+      "status": "passed",
+      "tests": 22,
+      "skipped": 0
+    },
+    {
+      "command": "python -m unittest discover -s tests -q",
+      "status": "passed",
+      "tests": 619,
+      "skipped": 8,
+      "wall_seconds": 117.25
+    },
+    {
+      "command": "python -m json.tool research/contracts/a_ccr_04/contract.json",
+      "status": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed"
+    },
+    {
+      "command": "git archive HEAD + python -m unittest discover -s tests -q",
+      "status": "limited",
+      "tests": 598,
+      "failures": 3,
+      "errors": 8,
+      "skipped": 9,
+      "note": "Source archive excludes ignored/generated historical evidence required by several PoC tests; targeted A-CCR-04 tests passed in the same clean archive."
+    }
+  ],
+  "limitations": [
+    "No public IR, Detector contract, runner, frontend, catalog or historical report was changed.",
+    "The conformance module is proposal/test support and is not a public runtime implementation.",
+    "A clean git archive cannot rerun every historical PoC test because some tests depend on ignored/generated evidence outside the source package.",
+    "Owner approval remains required before implementation or merge."
+  ],
+  "approval_state": "awaiting_owner_approval"
+}
