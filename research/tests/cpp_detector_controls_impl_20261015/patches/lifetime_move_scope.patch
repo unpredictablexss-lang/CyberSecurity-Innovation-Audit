@@ -1,0 +1,15 @@
+diff --git a/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp b/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp
+index ab13961..62d4c42 100644
+--- a/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp
++++ b/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp
+@@ -15,8 +15,8 @@ int main()
+     Widget* alias = owner.get();
+     {
+         std::unique_ptr<Widget> next = std::move(owner);
++        alias->Touch();
+         (void)next;
+     }
+-    alias->Touch();
+     return 0;
+ }
+\ No newline at end of file

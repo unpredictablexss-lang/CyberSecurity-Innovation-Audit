@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "kind": "cpp_implementation_bound_control_verification",
+  "generated_at": "2026-10-15T12:06:11+08:00",
+  "package_id": "cpp-detector-four-class-controls-impl-20261015-shared-ptr-0.5.0-lifetime-0.4.0",
+  "candidate_status": "candidate/unassessed",
+  "validated_vulnerability": 0,
+  "is_independent_holdout": false,
+  "accuracy_metrics_permitted": false,
+  "checkout": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head_commit": "0dd71fd78baa01283df081f9bd02fe4b7f2df326",
+    "head_tree": "20ec92e835803f486d088eef183c7db08564926b",
+    "implementation_commit": null,
+    "implementation_state": "uncommitted dirty worktree source hashes; dirty files preserved",
+    "public_contract_diff": "none for contracts/runner/catalog/registry"
+  },
+  "implementation_scheme": {
+    "baseline_manifest_path": "research/tests/cpp_detector_controls/manifest.json",
+    "baseline_manifest_sha256": "8065687ef494a26762af05c3e91828648365a88205481e41d5cf78088f23e9f2",
+    "baseline_detector_versions": {
+      "ohscanner.cpp.shared_ptr_race": "0.4.0",
+      "ohscanner.cpp.lifetime": "0.3.0"
+    },
+    "implementation_manifest_path": "research/tests/cpp_detector_controls_impl_20261015/manifest.json",
+    "implementation_manifest_sha256": "b12711b567fa59c2b562fa1f353fd1bd1ee31d2780ad6f6cb597e4e9cb70eb3a",
+    "implementation_detector_versions": {
+      "ohscanner.cpp.shared_ptr_race": "0.5.0",
+      "ohscanner.cpp.lifetime": "0.4.0"
+    },
+    "separation": "baseline manifest preserved unchanged; implementation-bound manifest records current source hashes and scope/profile"
+  },
+  "control_results": {
+    "path": "research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json",
+    "sha256": "2be497117214f5dd060d3e4f15cf68d3ebecdc025a3c03ee6ee3af4dff7345cc",
+    "detector_controls_passed": 20,
+    "detector_controls_failed": 0,
+    "patch_revalidation_passed": 6,
+    "patch_revalidation_not_applicable": 14,
+    "native_controls_passed": 20,
+    "native_runs": 60,
+    "repeats": 3,
+    "categories": {
+      "unrelated": 2,
+      "fixed": 6,
+      "vulnerable": 7,
+      "safe": 5
+    },
+    "per_control_record_fields": [
+      "exact build argv",
+      "exact run argv",
+      "compiler",
+      "sanitizer",
+      "repeat index/count",
+      "source SHA-256",
+      "binary SHA-256",
+      "build/run log SHA-256",
+      "expected result",
+      "observed result",
+      "status"
+    ]
+  },
+  "family_poc": {
+    "shared_ptr_delayed_singleton_json": "research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json",
+    "shared_ptr_delayed_singleton_sha256": "9271b75ce78be5df11f715081a57b99d47d366f9ce8e9bccc5aa693793367794",
+    "lifetime_unique_ptr_alias_json": "research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json",
+    "lifetime_unique_ptr_alias_sha256": "43076ca2ad15970acdd0d3544b44619f30d89293f5c4b7f08b8dbe18b2615b2c"
+  },
+  "regressions": [
+    {
+      "command": ".venv-web/bin/python -m unittest discover -s tests -q",
+      "executed": 577,
+      "passed": 569,
+      "skipped": 8,
+      "failed": 0,
+      "status": "passed"
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed",
+      "note": "Git emitted line-ending normalization warnings only; no whitespace errors."
+    }
+  ],
+  "interpretation_boundary": [
+    "safe/unrelated zero findings are narrow negative controls only and are not safety proof",
+    "fixed controls use authored remediation patches and are not claimed as upstream product patches",
+    "synthetic development controls are not an independent labelled holdout",
+    "no Precision/Recall, zero-FP/FN, product reachability, attacker control, CIA impact, confirmed or reportable claim is made",
+    "historical reports, IDs, reviews and the baseline control manifest remain unchanged"
+  ]
+}

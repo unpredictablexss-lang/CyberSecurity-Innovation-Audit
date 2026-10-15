@@ -2,13 +2,56 @@
   "schema_version": 1,
   "package_id": "cpp-shared-ptr-delayed-singleton-20261014",
   "detector_id": "ohscanner.cpp.shared_ptr_race",
-  "detector_version": "0.4.0",
+  "detector_version": "0.5.0",
   "rule_id": "ohcpp-shared-ptr-race-candidate-001",
   "sample_id": "c_utils-singleton-uaf-2026-01",
   "repository": "openharmony/commonlibrary_c_utils",
   "candidate_cwe": "CWE-362",
   "possible_consequence_cwe": "CWE-416",
   "source_binding_status": "preserved_artifact_hash_verified",
+  "harness_files": [
+    {
+      "path": "harness.cpp",
+      "sha256": "d90914115fbc4f682a2863e44eb6985ca195f6952e1e9923081ce4fdeb47cb89"
+    },
+    {
+      "path": "nocopyable.h",
+      "sha256": "7aff44c75bbee99d699c0c91a05c7352e664d983d72c28472521b804f092b841"
+    }
+  ],
+  "execution": {
+    "canonical_argv": [
+      ".venv-web/bin/python",
+      "-m",
+      "src.ohscanner.poc.cpp_shared_ptr_race",
+      "--manifest",
+      "src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/manifest.json",
+      "--harness",
+      "src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/harness.cpp",
+      "--output",
+      "outputs/poc/detector-enhancement-20261015/shared_ptr",
+      "--compiler",
+      "clang++",
+      "--repeats",
+      "3"
+    ],
+    "compiler": "clang++",
+    "sanitizer": "thread",
+    "repeat_count": 3,
+    "race_modes": ["single", "race"],
+    "environment": {
+      "TSAN_OPTIONS": "halt_on_error=1:second_deadlock_stack=1"
+    },
+    "required_result_fields": [
+      "build command argv",
+      "run command argv",
+      "compiler and version",
+      "sanitizer outcome",
+      "repeat index",
+      "source and output hashes",
+      "observed and expected result"
+    ]
+  },
   "revisions": {
     "vulnerable": {
       "commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",

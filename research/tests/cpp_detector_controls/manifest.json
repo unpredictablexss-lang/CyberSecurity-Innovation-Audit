@@ -1,0 +1,1244 @@
+{
+  "schema_version": 1,
+  "package_id": "cpp-detector-four-class-controls-20261015",
+  "evidence_scope": "synthetic_development_controls",
+  "is_independent_holdout": false,
+  "accuracy_metrics_permitted": false,
+  "purpose": "Repeatable positive/fixed/safe/unrelated controls for A-line shared_ptr and lifetime detectors; not real vulnerability truth.",
+  "provenance": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "authoring_checkout": {
+      "head": "0dd71fd78baa01283df081f9bd02fe4b7f2df326",
+      "tree": "20ec92e835803f486d088eef183c7db08564926b"
+    },
+    "snapshot_sha256": "d4333621872fcd3d135d08b95fae32d4d7035fc88735bcf90a36236a255d28b7",
+    "source_identity_policy": "Each source binds repository-relative path, byte length, SHA-256 and Git blob SHA-1; run reports bind final checkout HEAD/tree."
+  },
+  "detectors": {
+    "ohscanner.cpp.shared_ptr_race": {
+      "version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "candidate_cwe": "CWE-362"
+    },
+    "ohscanner.cpp.lifetime": {
+      "version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "candidate_cwe": "CWE-416"
+    }
+  },
+  "controls": [
+    {
+      "id": "shared-vulnerable-delayed-singleton-plain",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "vulnerable",
+      "patterns": [
+        "DelayedSingleton",
+        "shared_ptr",
+        "reset",
+        "mixed lock/plain read"
+      ],
+      "expected_root_cause": "unprotected shared_ptr copy races with guarded reset",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+        "bytes": 1724,
+        "sha256": "828181240b4a8dfda6124f5f840a66321eb6ae25f02b013d249774f91ba2cc7f",
+        "git_blob_sha1": "a17cc68358f93941cc0ca56a0ddd5ad88f429e44"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "candidate/unknown"
+        ],
+        "unknown_obligation_kinds": [
+          "synchronization_proof"
+        ],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "shared-vulnerable-atomic-exchange-mixed",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "vulnerable",
+      "patterns": [
+        "atomic exchange",
+        "mixed atomic/non-atomic"
+      ],
+      "expected_root_cause": "atomic exchange races with ordinary shared_ptr read",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+        "bytes": 1110,
+        "sha256": "5631b27b265ae1e3eae6f3d3ba6870c7081b2ab6274460ef090af92dac94a9a3",
+        "git_blob_sha1": "27ecbe104a94324ad741e0d6a3c56c1291c6f620"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "candidate/unknown"
+        ],
+        "unknown_obligation_kinds": [
+          "synchronization_proof"
+        ],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "shared-vulnerable-compare-exchange-mixed",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "vulnerable",
+      "patterns": [
+        "atomic compare-exchange",
+        "mixed atomic/non-atomic"
+      ],
+      "expected_root_cause": "atomic compare-exchange races with ordinary shared_ptr read",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp",
+        "bytes": 1218,
+        "sha256": "f52c6cb811a5942797a9203c9d7b884ca733af981c769bafbab6e9dae8b78d6d",
+        "git_blob_sha1": "3fbac944eb1936fa50e773b1ebb50425795637c8"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "candidate/unknown"
+        ],
+        "unknown_obligation_kinds": [
+          "synchronization_proof"
+        ],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "shared-fixed-delayed-singleton-explicit-lock",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "fixed",
+      "patterns": [
+        "DelayedSingleton",
+        "explicit lock",
+        "reset"
+      ],
+      "expected_root_cause": "remediation moves every conflicting access under one mutex",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+        "bytes": 1576,
+        "sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+        "git_blob_sha1": "b702fc14dfbd8bc49ab53737380b74ed1fbe7857"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      },
+      "patch": {
+        "path": "research/tests/cpp_detector_controls/patches/shared_delayed_singleton_explicit_lock.patch",
+        "sha256": "5ea97796aadd3503051fe556908a95994e34d5b94735d87e8bae67dee03a9d02",
+        "kind": "authored_control_remediation_patch",
+        "upstream_status": "not_claimed_as_upstream_product_patch",
+        "base_source": {
+          "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+          "bytes": 1724,
+          "sha256": "828181240b4a8dfda6124f5f840a66321eb6ae25f02b013d249774f91ba2cc7f",
+          "git_blob_sha1": "a17cc68358f93941cc0ca56a0ddd5ad88f429e44"
+        },
+        "fixed_source": {
+          "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+          "bytes": 1576,
+          "sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+          "git_blob_sha1": "b702fc14dfbd8bc49ab53737380b74ed1fbe7857"
+        },
+        "base_sha256": "828181240b4a8dfda6124f5f840a66321eb6ae25f02b013d249774f91ba2cc7f",
+        "fixed_sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+        "application_policy": "patch -p1 --fuzz=0 and exact fixed-byte comparison"
+      }
+    },
+    {
+      "id": "shared-fixed-atomic-exchange-protocol",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "fixed",
+      "patterns": [
+        "atomic exchange",
+        "atomic compare-exchange",
+        "atomic load"
+      ],
+      "expected_root_cause": "remediation removes every mixed ordinary access",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+        "bytes": 1363,
+        "sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+        "git_blob_sha1": "ab9d98fe74204b2e872b442729680ced311db540"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      },
+      "patch": {
+        "path": "research/tests/cpp_detector_controls/patches/shared_atomic_protocol.patch",
+        "sha256": "e8583d66552d06800685fae3922248b462ac02957d722c34adad9172afa362f8",
+        "kind": "authored_control_remediation_patch",
+        "upstream_status": "not_claimed_as_upstream_product_patch",
+        "base_source": {
+          "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+          "bytes": 1110,
+          "sha256": "5631b27b265ae1e3eae6f3d3ba6870c7081b2ab6274460ef090af92dac94a9a3",
+          "git_blob_sha1": "27ecbe104a94324ad741e0d6a3c56c1291c6f620"
+        },
+        "fixed_source": {
+          "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+          "bytes": 1363,
+          "sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+          "git_blob_sha1": "ab9d98fe74204b2e872b442729680ced311db540"
+        },
+        "base_sha256": "5631b27b265ae1e3eae6f3d3ba6870c7081b2ab6274460ef090af92dac94a9a3",
+        "fixed_sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+        "application_policy": "patch -p1 --fuzz=0 and exact fixed-byte comparison"
+      }
+    },
+    {
+      "id": "shared-safe-explicit-lock-common-fp",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "safe",
+      "patterns": [
+        "explicit lock",
+        "common false-positive shape",
+        "reset"
+      ],
+      "expected_root_cause": "all conflicting accesses share a reliable lexical mutex",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp",
+        "bytes": 1130,
+        "sha256": "00e610d1aef2a05676d41f4b55d2799e79ef72fa95fa7df233f743162a26c09f",
+        "git_blob_sha1": "68af0db7041806548622bcd608c9737763d5055a"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "shared-safe-cross-class-same-member-name",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "safe",
+      "patterns": [
+        "same member name",
+        "different class",
+        "common false-positive shape"
+      ],
+      "expected_root_cause": "same member name is not cross-class ownership",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp",
+        "bytes": 923,
+        "sha256": "3e15889c0a5ec5a29f8b7a65c101bbb3ce4e84eff7cbdb88fb67393e305727f8",
+        "git_blob_sha1": "a770a62d52f60cee9f8ade81bb2fe5755b257d76"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "shared-unrelated-plain-pointer",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "category": "unrelated",
+      "patterns": [
+        "stable raw pointer",
+        "unrelated ownership"
+      ],
+      "expected_root_cause": "no shared_ptr member ownership shape exists",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/shared_ptr/shared_unrelated_plain_pointer.cpp",
+        "bytes": 501,
+        "sha256": "a5b69f618655bc9dfb72589260f074216ef0fb7cb1f77c50ab8cebf1e3b2a079",
+        "git_blob_sha1": "d457ed7e70e64f476acab10a781705370cbf9721"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "thread",
+        "environment": {
+          "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-vulnerable-reset-raw-alias",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "vulnerable",
+      "patterns": [
+        "reset",
+        "raw alias"
+      ],
+      "expected_root_cause": "raw alias is dereferenced after unique_ptr reset",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+        "bytes": 295,
+        "sha256": "524ce9c678151acb7948f32ecc05677af28a07d0c22c57750416777deaa48821",
+        "git_blob_sha1": "4b8693f4e5ccced2571a7291e8251b8984d1fe5d"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "not proof of UAF"
+        ],
+        "unknown_obligation_kinds": [],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-vulnerable-owner-null-assignment",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "vulnerable",
+      "patterns": [
+        "owner assignment",
+        "raw alias"
+      ],
+      "expected_root_cause": "raw alias is dereferenced after owner null assignment",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+        "bytes": 297,
+        "sha256": "a1a5bb8469b762e5215a8c6dbac6c7217986739a9120462ceb104fcab8c29282",
+        "git_blob_sha1": "3c2a89e13454bee3bfff3a54a3a997d13f39924e"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "owner assignment",
+          "not proof of UAF"
+        ],
+        "unknown_obligation_kinds": [],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-vulnerable-owner-replacement",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "vulnerable",
+      "patterns": [
+        "owner replacement",
+        "raw alias"
+      ],
+      "expected_root_cause": "raw alias retains the previous object after owner replacement",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+        "bytes": 316,
+        "sha256": "a73d7dcf4a5a55139913953d4c3bac05677df559b83df9d0561539e989031012",
+        "git_blob_sha1": "669a05e2f720b4a045bfc82d89319a05a42faf67"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "owner assignment",
+          "not proof of UAF"
+        ],
+        "unknown_obligation_kinds": [],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-vulnerable-restricted-move-transfer",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "vulnerable",
+      "patterns": [
+        "restricted move transfer",
+        "destination scope",
+        "raw alias"
+      ],
+      "expected_root_cause": "destination owner scope ends before stale alias use",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+        "bytes": 384,
+        "sha256": "fad07a93bfa9db30f6b88a4aa449500db368aff59d6dcea446cea01582dfe4b3",
+        "git_blob_sha1": "ab13961fa7c62b88cf55c08e650ce6c1a7e19fc7"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 1,
+        "message_contains": [
+          "move transfer",
+          "not proof of UAF"
+        ],
+        "unknown_obligation_kinds": [],
+        "interpretation": "candidate/unassessed"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "sanitizer_triggered",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-fixed-reset-rebind-patch",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "fixed",
+      "patterns": [
+        "reset",
+        "unconditional rebinding",
+        "raw alias"
+      ],
+      "expected_root_cause": "patch rebinds the alias to the current owner state before use",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+        "bytes": 332,
+        "sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+        "git_blob_sha1": "2ca375d68290c9c56ffcb8bc23e2d7b1929bf138"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      },
+      "patch": {
+        "path": "research/tests/cpp_detector_controls/patches/lifetime_reset_rebind.patch",
+        "sha256": "9fa9e762b8c91be200a90221e0d7353f9e815239b3a77039cea6699c2ebff0dd",
+        "kind": "authored_control_remediation_patch",
+        "upstream_status": "not_claimed_as_upstream_product_patch",
+        "base_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+          "bytes": 295,
+          "sha256": "524ce9c678151acb7948f32ecc05677af28a07d0c22c57750416777deaa48821",
+          "git_blob_sha1": "4b8693f4e5ccced2571a7291e8251b8984d1fe5d"
+        },
+        "fixed_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+          "bytes": 332,
+          "sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+          "git_blob_sha1": "2ca375d68290c9c56ffcb8bc23e2d7b1929bf138"
+        },
+        "base_sha256": "524ce9c678151acb7948f32ecc05677af28a07d0c22c57750416777deaa48821",
+        "fixed_sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+        "application_policy": "patch -p1 --fuzz=0 and exact fixed-byte comparison"
+      }
+    },
+    {
+      "id": "lifetime-fixed-owner-null-rebind-patch",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "fixed",
+      "patterns": [
+        "owner assignment",
+        "unconditional rebinding",
+        "raw alias"
+      ],
+      "expected_root_cause": "patch clears or refreshes the alias after null assignment",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+        "bytes": 341,
+        "sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+        "git_blob_sha1": "d7e9606584a4508d21b81a498264e98ba4829489"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      },
+      "patch": {
+        "path": "research/tests/cpp_detector_controls/patches/lifetime_owner_null_rebind.patch",
+        "sha256": "32824f3547c06ae0058a9c2c622714cc5d806519198abce59f7bdbcabb993983",
+        "kind": "authored_control_remediation_patch",
+        "upstream_status": "not_claimed_as_upstream_product_patch",
+        "base_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+          "bytes": 297,
+          "sha256": "a1a5bb8469b762e5215a8c6dbac6c7217986739a9120462ceb104fcab8c29282",
+          "git_blob_sha1": "3c2a89e13454bee3bfff3a54a3a997d13f39924e"
+        },
+        "fixed_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+          "bytes": 341,
+          "sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "git_blob_sha1": "d7e9606584a4508d21b81a498264e98ba4829489"
+        },
+        "base_sha256": "a1a5bb8469b762e5215a8c6dbac6c7217986739a9120462ceb104fcab8c29282",
+        "fixed_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+        "application_policy": "patch -p1 --fuzz=0 and exact fixed-byte comparison"
+      }
+    },
+    {
+      "id": "lifetime-fixed-owner-replacement-rebind-patch",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "fixed",
+      "patterns": [
+        "owner replacement",
+        "unconditional rebinding",
+        "raw alias"
+      ],
+      "expected_root_cause": "patch refreshes the alias to the replacement object",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+        "bytes": 341,
+        "sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+        "git_blob_sha1": "d7e9606584a4508d21b81a498264e98ba4829489"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      },
+      "patch": {
+        "path": "research/tests/cpp_detector_controls/patches/lifetime_owner_replacement_rebind.patch",
+        "sha256": "05f544f505604b757a227a04e80c555b334899307a799ece7ff361cc4a37444c",
+        "kind": "authored_control_remediation_patch",
+        "upstream_status": "not_claimed_as_upstream_product_patch",
+        "base_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+          "bytes": 316,
+          "sha256": "a73d7dcf4a5a55139913953d4c3bac05677df559b83df9d0561539e989031012",
+          "git_blob_sha1": "669a05e2f720b4a045bfc82d89319a05a42faf67"
+        },
+        "fixed_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+          "bytes": 341,
+          "sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "git_blob_sha1": "d7e9606584a4508d21b81a498264e98ba4829489"
+        },
+        "base_sha256": "a73d7dcf4a5a55139913953d4c3bac05677df559b83df9d0561539e989031012",
+        "fixed_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+        "application_policy": "patch -p1 --fuzz=0 and exact fixed-byte comparison"
+      }
+    },
+    {
+      "id": "lifetime-fixed-move-scope-patch",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "fixed",
+      "patterns": [
+        "restricted move transfer",
+        "destination scope",
+        "raw alias"
+      ],
+      "expected_root_cause": "patch keeps destination ownership alive through alias use",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+        "bytes": 388,
+        "sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+        "git_blob_sha1": "62d4c42e9c206843a8e46526797ed4a3ed1a59f0"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      },
+      "patch": {
+        "path": "research/tests/cpp_detector_controls/patches/lifetime_move_scope.patch",
+        "sha256": "a472be2612922a6e96acf75621c8c2a212a27f5f49ba908b8f92eb97d8fabc9a",
+        "kind": "authored_control_remediation_patch",
+        "upstream_status": "not_claimed_as_upstream_product_patch",
+        "base_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+          "bytes": 384,
+          "sha256": "fad07a93bfa9db30f6b88a4aa449500db368aff59d6dcea446cea01582dfe4b3",
+          "git_blob_sha1": "ab13961fa7c62b88cf55c08e650ce6c1a7e19fc7"
+        },
+        "fixed_source": {
+          "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+          "bytes": 388,
+          "sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+          "git_blob_sha1": "62d4c42e9c206843a8e46526797ed4a3ed1a59f0"
+        },
+        "base_sha256": "fad07a93bfa9db30f6b88a4aa449500db368aff59d6dcea446cea01582dfe4b3",
+        "fixed_sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+        "application_policy": "patch -p1 --fuzz=0 and exact fixed-byte comparison"
+      }
+    },
+    {
+      "id": "lifetime-safe-stable-owner-pointer",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "safe",
+      "patterns": [
+        "stable owner pointer",
+        "use-before-reset",
+        "raw alias"
+      ],
+      "expected_root_cause": "alias use precedes invalidation while owner is stable",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_safe_stable_owner_pointer.cpp",
+        "bytes": 295,
+        "sha256": "58974f4a31b7d01e376452335d7a6321ddde32fbc1d0be3d638472b3612ac807",
+        "git_blob_sha1": "db20f167b722fabb7dbb83f1cd5c3f068e7430cb"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-safe-shadowed-bindings",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "safe",
+      "patterns": [
+        "scope shadowing",
+        "common false-positive shape",
+        "raw alias"
+      ],
+      "expected_root_cause": "same names denote distinct lexical bindings",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_safe_shadowed_bindings.cpp",
+        "bytes": 478,
+        "sha256": "892f453ba1a65b146ed5b876a45f7d706debd20c7ce8abf9bba243a9310b749e",
+        "git_blob_sha1": "0cdf4b8dfae42d215b57775205cdd39dea309dd1"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-safe-comment-false-positive",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "safe",
+      "patterns": [
+        "comments and literals",
+        "common false-positive shape",
+        "raw alias"
+      ],
+      "expected_root_cause": "invalidation and dereference occur only in comment/string data",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_safe_comment_false_positive.cpp",
+        "bytes": 432,
+        "sha256": "61eef20c87f98c9b9f7ae98a25c221d21bb8848e26768f41ead3ac0b7401b3b7",
+        "git_blob_sha1": "ff700857133973a91124d201096dc5adca21f1d8"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    },
+    {
+      "id": "lifetime-unrelated-raw-pointer",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.3.0",
+      "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+      "category": "unrelated",
+      "patterns": [
+        "stable raw pointer",
+        "unrelated ownership"
+      ],
+      "expected_root_cause": "no unique_ptr owner/raw-alias invalidation shape exists",
+      "source": {
+        "path": "research/tests/cpp_detector_controls/samples/lifetime/lifetime_unrelated_raw_pointer.cpp",
+        "bytes": 208,
+        "sha256": "983a3d6994fd2e4a6c69ea49684c7507835c8d7c44cca4f39d2590e01a4f3b86",
+        "git_blob_sha1": "cbc622b4db843c30d8a2617dcad80ba09c452054"
+      },
+      "expected_detector": {
+        "status": "completed",
+        "finding_count": 0,
+        "message_contains": [],
+        "unknown_obligation_kinds": [],
+        "interpretation": "negative control only; not a safe verdict"
+      },
+      "build": {
+        "compiler": "clang++",
+        "language_standard": "c++17",
+        "arguments": [
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-pthread",
+          "-no-pie"
+        ],
+        "sanitizer": "address",
+        "environment": {
+          "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+        },
+        "timeout_seconds": 60
+      },
+      "run": {
+        "arguments": [],
+        "repeats": 3,
+        "timeout_seconds": 45
+      },
+      "expected_dynamic": {
+        "outcome": "clean",
+        "classification_boundary": "controlled synthetic workload"
+      }
+    }
+  ],
+  "family_poc_harnesses": [
+    {
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "module": "src.ohscanner.poc.cpp_shared_ptr_race",
+      "scope": "DelayedSingleton preserved-source family harness"
+    },
+    {
+      "detector_id": "ohscanner.cpp.lifetime",
+      "module": "src.ohscanner.poc.cpp_lifetime_uaf",
+      "scope": "unique_ptr/raw-alias ASan family harness"
+    }
+  ],
+  "metric_policy": {
+    "prohibited": [
+      "precision",
+      "recall",
+      "false_positive_rate",
+      "false_negative_rate"
+    ],
+    "reason": "Synthetic development controls are not independent labelled holdout data.",
+    "negative_control_rule": "safe/unrelated zero findings is an expected narrow negative control, not a global safe or miss verdict."
+  },
+  "limitations": [
+    "所有样本为自编 synthetic development controls，不是独立 holdout，也不能计算 Precision/Recall。",
+    "fixed 项绑定可执行、零 fuzz 的 authored_control_remediation_patch，并要求 Detector 稳定拒绝；不冒充上游产品补丁。",
+    "TSan/ASan 只证明受控 workload 中的局部内存/并发行为，不证明真实产品入口、攻击者控制、CIA 影响或可利用性。",
+    "shared_ptr Detector 的原子 API 和互斥身份仍是窄词法模型，跨函数协议、锁别名、模板实例化和真实构建配置保持 unknown。",
+    "lifetime Detector 不建模完整 CFG、异常、析构时序、跨函数 alias 或真实所有权图；0 告警不是安全证明。",
+    "sanitizer 结果受编译器、调度、迭代数和 allocator 影响；必须记录 exact argv、版本、重复次数和全部运行。"
+  ]
+}

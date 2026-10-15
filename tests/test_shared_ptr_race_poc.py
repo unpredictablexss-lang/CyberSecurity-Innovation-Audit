@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import unittest
@@ -19,6 +20,7 @@ from src.ohscanner.poc.cpp_shared_ptr_race import (
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/manifest.json"
+HARNESS_DIR = MANIFEST.parent
 
 
 def run_record(revision: str, mode: str, outcome: str) -> RunRecord:
@@ -57,7 +59,7 @@ class SharedPtrRacePocTests(unittest.TestCase):
     def test_manifest_binds_detector_rule_and_historical_revisions(self) -> None:
         manifest = load_manifest(MANIFEST)
         self.assertEqual(manifest["detector_id"], "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(manifest["detector_version"], "0.4.0")
+        self.assertEqual(manifest["detector_version"], "0.5.0")
         self.assertEqual(
             manifest["revisions"]["vulnerable"]["commit"],
             "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
@@ -66,6 +68,15 @@ class SharedPtrRacePocTests(unittest.TestCase):
             manifest["revisions"]["upstream_fix"]["commit"],
             "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
         )
+        self.assertEqual(manifest["execution"]["compiler"], "clang++")
+        self.assertEqual(manifest["execution"]["sanitizer"], "thread")
+        self.assertEqual(manifest["execution"]["repeat_count"], 3)
+        self.assertEqual(len(manifest["execution"]["canonical_argv"]), 13)
+        for entry in manifest["harness_files"]:
+            self.assertEqual(
+                hashlib.sha256((HARNESS_DIR / entry["path"]).read_bytes()).hexdigest(),
+                entry["sha256"],
+            )
 
     def test_source_hashes_and_quotes_are_verified(self) -> None:
         manifest = load_manifest(MANIFEST)
@@ -133,7 +144,7 @@ class SharedPtrRacePocTests(unittest.TestCase):
         result = SharedPtrRacePoCResult(
             package_id="cpp-shared-ptr-delayed-singleton-20261014",
             detector_id="ohscanner.cpp.shared_ptr_race",
-            detector_version="0.4.0",
+            detector_version="0.5.0",
             source_binding_status="preserved_artifact_hash_verified",
             builds=(
                 BuildRecord(

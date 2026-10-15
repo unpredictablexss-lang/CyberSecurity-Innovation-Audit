@@ -1,0 +1,24 @@
+diff --git a/research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp b/research/tests/cpp_detector_controls/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp
+index a17cc68..b702fc1 100644
+--- a/research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp
++++ b/research/tests/cpp_detector_controls/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp
+@@ -13,15 +13,11 @@ class DelayedSingletonControl {
+ public:
+     static std::shared_ptr<Widget> GetInstance()
+     {
+-        std::shared_ptr<Widget> instance = instance_;
+-        if (instance == nullptr) {
+-            std::lock_guard<std::mutex> lock(mutex_);
+-            if (instance_ == nullptr) {
+-                instance_ = std::make_shared<Widget>();
+-            }
+-            instance = instance_;
++        std::lock_guard<std::mutex> lock(mutex_);
++        if (instance_ == nullptr) {
++            instance_ = std::make_shared<Widget>();
+         }
+-        return instance;
++        return instance_;
+     }
+ 
+     static void DestroyInstance()

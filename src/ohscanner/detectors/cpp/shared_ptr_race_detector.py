@@ -2,9 +2,14 @@
 
 This detector recognizes class or static data members declared as
 ``std::shared_ptr<T> name;`` and non-atomic accesses that can be attributed to
-the same owning class. Global shared_ptr objects, aliases, object-member
-access through an unresolved expression, template instantiation and cross
-translation-unit identity are outside this rule and are not silently promoted.
+the same owning class. Global shared_ptr objects, unresolved object-member
+access, template instantiation and identity outside the selected source units
+are outside this rule and are not silently promoted. The detector aggregates
+modeled accesses to the same qualified class/member across selected translation
+units, resolves simple intra-function object aliases, and distinguishes
+constructor initialization from later owner mutation. Cross-unit access sets
+remain bounded by the selected units and do not prove a complete product access
+protocol.
 
 The synchronization model is deliberately narrow. Pure ``atomic_load`` /
 ``atomic_store`` access sets are accepted as the atomic shared_ptr API path.
@@ -65,6 +70,13 @@ _ATOMIC_PREFIX_RE = re.compile(
 )
 _THIS_PREFIX_RE = re.compile(r"\bthis\s*->\s*$")
 _OBJECT_PREFIX_RE = re.compile(r"(?:\.|->)\s*$")
+_OBJECT_ALIAS_DECL_RE = re.compile(
+    r"\b(?:(?P<type>[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*|auto\s+)"
+    r"(?P<alias>[A-Za-z_]\w*)\s*=\s*(?:&\s*)?(?P<target>[A-Za-z_]\w*)\s*(?:;|=)"
+)
+_OBJECT_ALIAS_TOKEN_RE = re.compile(
+    r"(?P<alias>[A-Za-z_]\w*)\s*(?:\.|->)\s*$"
+)
 _MUTEX_ARGUMENT_RE = re.compile(r"[A-Za-z_]\w*")
 _MUTEX_QUALIFIER_RE = re.compile(r"(?:[A-Za-z_]\w*\s*::\s*)+$")
 
@@ -94,6 +106,7 @@ class _MemberShape:
     declaration_span: _Span
     class_name: str
     qualified_class_name: str
+    source_path: str = "<lexical>"
 
 
 @dataclass(frozen=True)
@@ -101,6 +114,14 @@ class _FunctionShape:
     name: str
     owner_class: Optional[str]
     span: _Span
+
+
+@dataclass(frozen=True)
+class _ObjectBinding:
+    name: str
+    target_class: str
+    declaration_position: int
+    scope: _Span
 
 
 @dataclass(frozen=True)
@@ -122,6 +143,7 @@ class _LockScope:
 
 @dataclass(frozen=True)
 class _MemberAccess:
+    unit: SourceUnit
     member: _MemberShape
     position: int
     operation: str
@@ -310,6 +332,7 @@ def _resolve_class_qualifier(
     position: int,
     namespace_spans: Sequence[_NamedSpan],
     class_spans: Sequence[_NamedSpan],
+    known_class_names: Sequence[str] = (),
 ) -> Optional[str]:
     cleaned = _normalize_qualified_name(qualifier)
     candidates = {cleaned}
@@ -325,6 +348,10 @@ def _resolve_class_qualifier(
             ]
             if len(matching) == 1:
                 return matching[0].qualified_name
+    for known in known_class_names:
+        normalized = _normalize_qualified_name(known)
+        if normalized in candidates or normalized.endswith("::" + cleaned):
+            return normalized
     return None
 
 
@@ -332,6 +359,7 @@ def _function_spans(
     masked: str,
     namespace_spans: Sequence[_NamedSpan],
     class_spans: Sequence[_NamedSpan],
+    known_class_names: Sequence[str] = (),
 ) -> Tuple[_FunctionShape, ...]:
     found: List[_FunctionShape] = []
     for match in _FUNCTION_RE.finditer(masked):
@@ -359,6 +387,7 @@ def _function_spans(
                 match.start(),
                 namespace_spans,
                 class_spans,
+                known_class_names,
             )
             if resolved is not None:
                 owner_class = resolved
@@ -370,6 +399,63 @@ def _function_spans(
             )
         )
     return tuple(sorted(found, key=lambda item: (item.span.start, item.name)))
+
+
+def _object_bindings(
+    masked: str,
+    class_spans: Sequence[_NamedSpan],
+    block_spans: Sequence[_Span],
+    functions: Sequence[_FunctionShape],
+) -> Tuple[_ObjectBinding, ...]:
+    found: List[_ObjectBinding] = []
+    known_classes = {
+        item.qualified_class_name
+        for item in _member_candidates(masked, class_spans, functions)[0]
+    }
+    known_classes.update({item.qualified_name for item in class_spans})
+    for match in _OBJECT_ALIAS_DECL_RE.finditer(masked):
+        if _function_for(functions, match.start()) is None:
+            continue
+        scope = _innermost_span(block_spans, match.start())
+        if scope is None:
+            continue
+        target_class = match.group("type")
+        if target_class is not None:
+            target_class = _resolve_class_qualifier(
+                target_class + "::",
+                match.start(),
+                _namespace_spans(masked),
+                class_spans,
+                tuple(known_classes),
+            ) or _normalize_qualified_name(target_class)
+        else:
+            target_class = None
+        if target_class is None:
+            continue
+        found.append(
+            _ObjectBinding(
+                name=match.group("alias"),
+                target_class=target_class,
+                declaration_position=match.start(),
+                scope=scope,
+            )
+        )
+    return tuple(found)
+
+
+def _resolve_object_binding(
+    bindings: Sequence[_ObjectBinding], name: str, position: int
+) -> Optional[_ObjectBinding]:
+    candidates = [
+        item for item in bindings
+        if item.name == name
+        and item.declaration_position <= position
+        and item.scope.contains(position)
+    ]
+    return min(
+        candidates,
+        key=lambda item: (item.scope.end - item.scope.start, -item.declaration_position),
+    ) if candidates else None
 
 
 def _local_bindings(
@@ -512,6 +598,7 @@ def _member_candidates(
     masked: str,
     class_spans: Sequence[_NamedSpan],
     functions: Sequence[_FunctionShape],
+    source_path: str = "<lexical>",
 ):
     members: List[_MemberShape] = []
     global_names: Set[str] = set()
@@ -532,9 +619,36 @@ def _member_candidates(
                 declaration_span=_Span(match.start(), match.end()),
                 class_name=class_span.name,
                 qualified_class_name=class_span.qualified_name,
+                source_path=source_path,
             )
         )
     return tuple(members), global_names
+
+
+def _member_key(member: _MemberShape) -> str:
+    return (
+        member.source_path + "::"
+        + member.qualified_class_name + "::" + member.name
+    )
+
+
+def _select_member(
+    candidates: Sequence[_MemberShape],
+    owner: Optional[str],
+    unit_path: str,
+) -> Tuple[Optional[_MemberShape], bool]:
+    matching = [
+        member for member in candidates
+        if owner is not None and member.qualified_class_name == owner
+    ]
+    if not matching:
+        return None, False
+    local = [member for member in matching if member.source_path == unit_path]
+    if local:
+        return local[0], False
+    if len({member.source_path for member in matching}) != 1:
+        return None, True
+    return matching[0], False
 
 
 def _function_for(
@@ -552,6 +666,8 @@ def _access_owner(
     function: Optional[_FunctionShape],
     namespace_spans: Sequence[_NamedSpan],
     class_spans: Sequence[_NamedSpan],
+    object_bindings: Sequence[_ObjectBinding] = (),
+    known_class_names: Sequence[str] = (),
 ) -> Tuple[str, Optional[str]]:
     before = masked[:position]
     if _THIS_PREFIX_RE.search(before):
@@ -565,9 +681,17 @@ def _access_owner(
                 position,
                 namespace_spans,
                 class_spans,
+                known_class_names,
             ),
         )
     if _OBJECT_PREFIX_RE.search(before):
+        object_match = _OBJECT_ALIAS_TOKEN_RE.search(before)
+        if object_match is not None:
+            binding = _resolve_object_binding(
+                object_bindings, object_match.group("alias"), position
+            )
+            if binding is not None:
+                return "object_alias", binding.target_class
         return "object", None
     if function is not None:
         return "unqualified", function.owner_class
@@ -601,15 +725,22 @@ def _potential_conflict_pairs(
                 and right.operation == "read"
             ):
                 continue
+            if (
+                not left.atomic
+                and not right.atomic
+                and "initialization" in {left.operation, right.operation}
+                and {left.operation, right.operation} <= {"initialization", "read"}
+            ):
+                continue
             pairs.append((left_index, right_index))
     return tuple(pairs)
 
 
 def _candidate_finding(
-    unit: SourceUnit,
     access: _MemberAccess,
     reasons: Iterable[str],
 ) -> DetectorFinding:
+    unit = access.unit
     line, column = _line_col(unit.text, access.position)
     explanation = "; ".join(sorted(set(reasons))) or (
         "a synchronization proof is unavailable for the potential conflicting access"
@@ -625,7 +756,8 @@ def _candidate_finding(
             "Primary candidate root cause is a possible race condition (CWE-362); "
             "CWE-416/use-after-free is only a possible consequence. This syntax "
             "evidence does not prove UAF, guard dominance, concurrent interleaving, "
-            "attacker control, or security impact; it is not proof of safety."
+            "attacker control, or security impact; it is not proof of safety. "
+            f"Synchronization evidence: {explanation}."
         ),
         evidence_type="syntax",
         candidate_cwe="CWE-362",
@@ -646,27 +778,41 @@ def _candidate_finding(
 
 
 def _analyze_member_accesses(
-    unit: SourceUnit,
     key: str,
     accesses: Sequence[_MemberAccess],
 ) -> Tuple[Tuple[DetectorFinding, ...], Tuple[str, ...], bool]:
+    unit = accesses[0].unit
     if accesses and all(access.atomic for access in accesses):
         return (
             (),
             (
                 f"{unit.path}: modeled accesses to '{key}' use only the "
-                "atomic_load/atomic_store shared_ptr API; this narrow atomic-only "
-                "shape is not a concurrency proof.",
+                "atomic shared_ptr API; this narrow atomic-only shape is not a "
+                "concurrency proof.",
+            ),
+            True,
+        )
+    if accesses and all(access.operation == "initialization" for access in accesses):
+        return (
+            (),
+            (
+                f"{unit.path}: modeled accesses to '{key}' are constructor "
+                "initialization only; stable-owner shape is not a concurrency proof.",
             ),
             True,
         )
 
     conflict_pairs = _potential_conflict_pairs(accesses)
     if len(accesses) > 1 and not conflict_pairs:
+        shape = (
+            "constructor initialization followed only by stable reads"
+            if any(item.operation == "initialization" for item in accesses)
+            else "read-only"
+        )
         return (
             (),
             (
-                f"{unit.path}: modeled non-atomic accesses to '{key}' are read-only "
+                f"{unit.path}: modeled non-atomic accesses to '{key}' are {shape} "
                 "and do not form a potential conflicting pair in this narrow model.",
             ),
             True,
@@ -683,10 +829,10 @@ def _analyze_member_accesses(
         candidate_indices.add(index)
         reasons_by_index.setdefault(index, set()).add(reason)
 
-    if len(accesses) == 1 and not accesses[0].atomic:
+    if len(accesses) == 1 and not accesses[0].atomic and accesses[0].operation != "read":
         add_candidate(
             0,
-            "a single same-unit lexical access cannot prove external or "
+            "a single modeled lexical write cannot prove external or "
             "cross-function synchronization",
         )
         for reason in accesses[0].unreliable_lock_reasons:
@@ -805,7 +951,7 @@ def _analyze_member_accesses(
         limitations.append(f"{unit.path}: {reason}; candidate suppression was not applied.")
 
     findings = tuple(
-        _candidate_finding(unit, accesses[index], reasons_by_index[index])
+        _candidate_finding(accesses[index], reasons_by_index[index])
         for index in sorted(candidate_indices)
     )
     return findings, tuple(limitations), not unreliable_reasons
@@ -813,17 +959,34 @@ def _analyze_member_accesses(
 
 def _analyze_unit(
     unit: SourceUnit,
+    *,
+    external_members: Sequence[_MemberShape] = (),
+    access_sink: Optional[Dict[str, List[_MemberAccess]]] = None,
+    emit_findings: bool = True,
 ) -> Tuple[Tuple[DetectorFinding, ...], Tuple[str, ...], bool]:
     masked = _mask_comments_and_literals(unit.text)
     block_spans = _block_spans(masked)
     namespace_spans = _namespace_spans(masked)
     class_spans = _class_spans(masked, namespace_spans)
-    functions = _function_spans(masked, namespace_spans, class_spans)
+    known_class_names = tuple(sorted({
+        item.qualified_name for item in class_spans
+    } | {item.qualified_class_name for item in external_members}))
+    functions = _function_spans(
+        masked, namespace_spans, class_spans, known_class_names
+    )
+    object_bindings = _object_bindings(masked, class_spans, block_spans, functions)
     locals_by_name: Dict[str, List[_LocalBinding]] = {}
     for binding in _local_bindings(masked, class_spans, block_spans, functions):
         locals_by_name.setdefault(binding.name, []).append(binding)
     lock_scopes = _lock_scopes(masked, block_spans)
-    members, global_names = _member_candidates(masked, class_spans, functions)
+    local_members, global_names = _member_candidates(
+        masked, class_spans, functions, unit.path
+    )
+    local_declaration_spans = tuple(item.declaration_span for item in local_members)
+    members = tuple({
+        _member_key(item): item
+        for item in tuple(local_members) + tuple(external_members)
+    }.values())
 
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
@@ -836,7 +999,7 @@ def _analyze_unit(
         )
 
     accesses_by_member: Dict[str, List[_MemberAccess]] = {
-        member.qualified_class_name + "::" + member.name: []
+        _member_key(member): []
         for member in members
     }
     members_by_name: Dict[str, List[_MemberShape]] = {}
@@ -849,7 +1012,8 @@ def _analyze_unit(
         if not candidates:
             continue
         if any(
-            member.declaration_span.contains(token.start()) for member in candidates
+            declaration.contains(token.start())
+            for declaration in local_declaration_spans
         ):
             continue
         function = _function_for(functions, token.start())
@@ -859,37 +1023,44 @@ def _analyze_unit(
             function,
             namespace_spans,
             class_spans,
+            object_bindings,
+            known_class_names,
         )
         if access_kind != "this" and _is_shadowed(
             locals_by_name.get(name, ()), name, token.start()
         ):
             continue
         selected: Optional[_MemberShape] = None
+        ambiguous_member = False
         if access_kind in {"unqualified", "this"}:
-            selected = next(
-                (
-                    member
-                    for member in candidates
-                    if owner is not None and member.qualified_class_name == owner
-                ),
-                None,
-            )
+            selected, ambiguous_member = _select_member(candidates, owner, unit.path)
         elif access_kind == "qualified":
             if function is None:
                 continue
-            selected = next(
-                (
-                    member
-                    for member in candidates
-                    if owner is not None and member.qualified_class_name == owner
-                ),
-                None,
-            )
+            selected, ambiguous_member = _select_member(candidates, owner, unit.path)
             if selected is None and owner is None:
                 line, _column = _line_col(unit.text, token.start())
                 limitations.append(
                     f"{unit.path}: qualified shared_ptr member '{name}' occurrence "
                     f"at line {line} cannot be bound to a modeled class and remains unknown."
+                )
+                coverage_complete = False
+                continue
+        elif access_kind == "object_alias":
+            selected, ambiguous_member = _select_member(candidates, owner, unit.path)
+            if selected is None and ambiguous_member:
+                line, _column = _line_col(unit.text, token.start())
+                limitations.append(
+                    f"{unit.path}: shared_ptr member '{name}' occurrence at line {line} "
+                    "matches multiple selected-unit declarations and remains unknown."
+                )
+                coverage_complete = False
+                continue
+            if selected is None:
+                line, _column = _line_col(unit.text, token.start())
+                limitations.append(
+                    f"{unit.path}: simple object alias for shared_ptr member '{name}' "
+                    f"at line {line} is unresolved and remains unknown."
                 )
                 coverage_complete = False
                 continue
@@ -919,15 +1090,23 @@ def _analyze_unit(
             continue
 
         if selected is None:
+            if ambiguous_member:
+                line, _column = _line_col(unit.text, token.start())
+                limitations.append(
+                    f"{unit.path}: shared_ptr member '{name}' occurrence at line {line} "
+                    "matches multiple selected-unit declarations and remains unknown."
+                )
+                coverage_complete = False
             continue
 
-        key = selected.qualified_class_name + "::" + selected.name
+        key = _member_key(selected)
         held_mutexes, unreliable_lock_reasons = _access_lock_state(
             lock_scopes, token.start()
         )
         atomic_operation = _atomic_access_kind(masked, token.start())
         accesses_by_member[key].append(
             _MemberAccess(
+                unit=unit,
                 member=selected,
                 position=token.start(),
                 operation=(
@@ -943,7 +1122,15 @@ def _analyze_unit(
                         atomic_operation is None
                         and _looks_like_write(masked, token.start(), name)
                     )
-                    else "read"
+                    else (
+                        "initialization"
+                        if (
+                            atomic_operation is None
+                            and function is not None
+                            and token.start() < masked.find("{", function.span.start)
+                        )
+                        else "read"
+                    )
                 ),
                 atomic=atomic_operation is not None,
                 held_mutexes=held_mutexes,
@@ -963,13 +1150,16 @@ def _analyze_unit(
         )
         if not accesses:
             continue
-        member_findings, member_limitations, member_complete = (
-            _analyze_member_accesses(unit, key, accesses)
-        )
-        findings.extend(member_findings)
-        limitations.extend(member_limitations)
-        if not member_complete:
-            coverage_complete = False
+        if access_sink is not None:
+            access_sink.setdefault(key, []).extend(accesses)
+        if emit_findings:
+            member_findings, member_limitations, member_complete = (
+                _analyze_member_accesses(key, accesses)
+            )
+            findings.extend(member_findings)
+            limitations.extend(member_limitations)
+            if not member_complete:
+                coverage_complete = False
 
     if not members and not any("shared_ptr" in line for line in unit.text.splitlines()):
         limitations.append(
@@ -980,7 +1170,7 @@ def _analyze_unit(
 
 class SharedPtrRaceDetector:
     detector_id = "ohscanner.cpp.shared_ptr_race"
-    version = "0.4.0"
+    version = "0.5.0"
     supported_languages = ("cpp",)
     required_facts = ()
 
@@ -1004,7 +1194,20 @@ class SharedPtrRaceDetector:
         limitations: List[str] = []
         analyzed_files: List[str] = []
         coverage_complete = True
-
+        complete_units = tuple(unit for unit in ordered if unit.parse_status == "complete")
+        external_members: Dict[Tuple[str, str], _MemberShape] = {}
+        for unit in complete_units:
+            masked = _mask_comments_and_literals(unit.text)
+            namespace_spans = _namespace_spans(masked)
+            class_spans = _class_spans(masked, namespace_spans)
+            functions = _function_spans(masked, namespace_spans, class_spans)
+            members, _globals = _member_candidates(
+                masked, class_spans, functions, unit.path
+            )
+            for member in members:
+                external_members.setdefault(_member_key(member), member)
+        external_member_tuple = tuple(external_members[key] for key in sorted(external_members))
+        access_sink: Dict[str, List[_MemberAccess]] = {}
         for unit in ordered:
             if unit.parse_status != "complete":
                 limitations.append(
@@ -1012,11 +1215,24 @@ class SharedPtrRaceDetector:
                 )
                 coverage_complete = False
                 continue
-            unit_findings, unit_limitations, unit_complete = _analyze_unit(unit)
-            findings.extend(unit_findings)
+            _unit_findings, unit_limitations, unit_complete = _analyze_unit(
+                unit,
+                external_members=external_member_tuple,
+                access_sink=access_sink,
+                emit_findings=False,
+            )
             limitations.extend(f"{unit.path}: {item}" for item in unit_limitations)
             analyzed_files.append(unit.path)
             if not unit_complete:
+                coverage_complete = False
+        for key in sorted(access_sink):
+            accesses = sorted(access_sink[key], key=lambda item: (item.unit.path, item.position))
+            member_findings, member_limitations, member_complete = (
+                _analyze_member_accesses(key, accesses)
+            )
+            findings.extend(member_findings)
+            limitations.extend(member_limitations)
+            if not member_complete:
                 coverage_complete = False
 
         status = "completed" if coverage_complete else "blocked"

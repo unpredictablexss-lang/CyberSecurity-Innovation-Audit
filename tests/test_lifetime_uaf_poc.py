@@ -50,8 +50,12 @@ class LifetimeUafPocTests(unittest.TestCase):
     def test_manifest_and_harness_are_hash_bound(self) -> None:
         manifest = load_manifest(MANIFEST)
         self.assertEqual(manifest["detector_id"], "ohscanner.cpp.lifetime")
-        self.assertEqual(manifest["detector_version"], "0.3.0")
+        self.assertEqual(manifest["detector_version"], "0.4.0")
         self.assertEqual(verify_harness(manifest, HARNESS), manifest["harness_sha256"])
+        self.assertEqual(manifest["execution"]["compiler"], "clang++")
+        self.assertEqual(manifest["execution"]["sanitizer"], "address")
+        self.assertEqual(manifest["execution"]["repeat_count"], 3)
+        self.assertEqual(len(manifest["execution"]["canonical_argv"]), 13)
 
     def test_detector_covers_all_expanded_invalidation_shapes(self) -> None:
         cases = {
@@ -91,7 +95,7 @@ void case_{name}() {{
         result = LifetimeUafPocResult(
             package_id="cpp-lifetime-unique-ptr-alias-20261014",
             detector_id="ohscanner.cpp.lifetime",
-            detector_version="0.3.0",
+            detector_version="0.4.0",
             source_binding_status="self_authored_harness_hash_verified",
             harness_sha256="0" * 64,
             builds=(

@@ -39,6 +39,17 @@ _MEMBER_RAW_ALIAS_RE = re.compile(
     r"\b(?P<target>(?:[A-Za-z_]\w*\s*(?:\.|->)\s*)+[A-Za-z_]\w*)\s*=\s*"
     r"(?P<owner>[A-Za-z_]\w*)\s*\.\s*get\s*\(\s*\)"
 )
+_ALIAS_ASSIGN_RE = re.compile(
+    r"\b(?P<alias>[A-Za-z_]\w*)\s*=\s*"
+    r"(?P<owner>[A-Za-z_]\w*)\s*\.\s*get\s*\(\s*\)"
+)
+_ALIAS_CHAIN_DECL_RE = re.compile(
+    r"\b(?:(?:auto|[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*|auto\s+)"
+    r"(?P<alias>[A-Za-z_]\w*)\s*=\s*(?P<source>[A-Za-z_]\w*)\s*;"
+)
+_ALIAS_CHAIN_ASSIGN_RE = re.compile(
+    r"\b(?P<alias>[A-Za-z_]\w*)\s*=\s*(?P<source>[A-Za-z_]\w*)\s*;"
+)
 _POINTER_BINDING_RE = re.compile(
     r"\b(?:(?:auto|[A-Za-z_]\w*(?:\s*::\s*[A-Za-z_]\w*)*)\s*\*+\s*|auto\s+)"
     r"(?P<alias>[A-Za-z_]\w*)\s*(?P<decl_end>=|;|\()"
@@ -103,6 +114,7 @@ class _AliasShape:
     span: _Span
     binding_scope: Optional[_Span]
     binding_id: str
+    source_alias: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -411,6 +423,12 @@ def _escape_positions(
             continue
         if _resolve_binding(bindings, alias, position) != binding:
             continue
+        tail = masked[position + len(alias):]
+        if (
+            re.match(r"\s*;", tail)
+            and re.search(r"=\s*$", masked[:position].rstrip())
+        ):
+            continue
         call_name = _call_name_at(masked, position)
         if position in captures:
             kind = "lambda_capture"
@@ -436,6 +454,51 @@ def _stable_unique(findings: Iterable[DetectorFinding]) -> Tuple[DetectorFinding
             key=lambda item: (item.file, item.line, item.column or 0, item.rule_id, item.message),
         )
     )
+
+
+def _if_branch_regions(masked: str) -> Tuple[Tuple[_Span, Optional[_Span]], ...]:
+    regions: List[Tuple[_Span, Optional[_Span]]] = []
+    for match in re.finditer(r"\bif\s*\(", masked):
+        opening = masked.find("(", match.start())
+        closing = _call_end(masked, opening) if opening >= 0 else None
+        if closing is None:
+            continue
+        body_open = masked.find("{", closing)
+        if body_open < 0:
+            continue
+        body_close = _matching_delimiter(masked, body_open, "{", "}")
+        if body_close is None:
+            continue
+        else_match = re.search(r"\belse\b", masked[body_close + 1:])
+        else_span = None
+        if else_match is not None:
+            else_start = body_close + 1 + else_match.start()
+            after_else = body_close + 1 + else_match.end()
+            next_token = re.match(r"\s*(if\b|\{)", masked[after_else:])
+            if next_token and next_token.group(1) == "if":
+                continue
+            else_open = masked.find("{", else_start)
+            if else_open >= 0:
+                else_close = _matching_delimiter(masked, else_open, "{", "}")
+                if else_close is not None:
+                    else_span = _Span(else_open, else_close + 1)
+        regions.append((_Span(body_open, body_close + 1), else_span))
+    return tuple(regions)
+
+
+def _mutually_exclusive_branches(
+    masked: str, first: int, second: int
+) -> bool:
+    for then_span, else_span in _if_branch_regions(masked):
+        if else_span is None:
+            continue
+        if (
+            then_span.contains(first) and else_span.contains(second)
+        ) or (
+            else_span.contains(first) and then_span.contains(second)
+        ):
+            return True
+    return False
 
 
 def _sync_context(
@@ -557,6 +620,68 @@ def _analyze_unit(
                 binding_id=binding.binding_id if binding is not None else "unresolved-alias",
             )
         )
+
+    for match in _ALIAS_ASSIGN_RE.finditer(masked):
+        if not _is_plain_identifier_at(masked, match.start("alias")):
+            continue
+        function_scope = _innermost_span(function_spans, match.start())
+        binding_scope = _innermost_span(spans, match.start())
+        if function_scope is None or binding_scope is None:
+            continue
+        binding = _resolve_binding(
+            pointer_bindings, match.group("alias"), match.start("alias")
+        )
+        aliases.append(
+            _AliasShape(
+                alias=match.group("alias"),
+                owner=match.group("owner"),
+                position=match.start(),
+                name_position=match.start("alias"),
+                declaration_span=_Span(match.start(), match.end()),
+                span=function_scope,
+                binding_scope=binding.binding_scope if binding is not None else binding_scope,
+                binding_id=binding.binding_id if binding is not None else "unresolved-alias",
+            )
+        )
+
+    for pattern in (_ALIAS_CHAIN_DECL_RE, _ALIAS_CHAIN_ASSIGN_RE):
+        for match in pattern.finditer(masked):
+            if (
+                pattern is _ALIAS_CHAIN_ASSIGN_RE
+                and not _is_plain_identifier_at(masked, match.start("alias"))
+            ):
+                continue
+            function_scope = _innermost_span(function_spans, match.start())
+            binding_scope = _innermost_span(spans, match.start())
+            if function_scope is None or binding_scope is None:
+                continue
+            binding = _resolve_binding(
+                pointer_bindings, match.group("alias"), match.start("alias")
+            )
+            source = next(
+                (
+                    item for item in aliases
+                    if item.alias == match.group("source")
+                    and item.position < match.start()
+                    and item.span.contains(match.start())
+                ),
+                None,
+            )
+            if source is None:
+                continue
+            aliases.append(
+                _AliasShape(
+                    alias=match.group("alias"),
+                    owner=source.owner if source is not None else "<unresolved>",
+                    position=match.start(),
+                    name_position=match.start("alias"),
+                    declaration_span=_Span(match.start(), match.end()),
+                    span=function_scope,
+                    binding_scope=binding.binding_scope if binding is not None else binding_scope,
+                    binding_id=binding.binding_id if binding is not None else "unresolved-alias",
+                    source_alias=match.group("source"),
+                )
+            )
 
     member_raw_alias_seen = False
     for match in _MEMBER_RAW_ALIAS_RE.finditer(masked):
@@ -700,7 +825,7 @@ def _analyze_unit(
             reset for reset in resets
             if reset_owner.get(reset.position) == owner
         ]
-        if not owner_aliases or not owner_resets:
+        if not owner_aliases:
             continue
         for alias in owner_aliases:
             binding = alias_binding.get(alias.position)
@@ -733,6 +858,15 @@ def _analyze_unit(
                 use_positions,
                 rebind_positions,
             )
+            modeled_transfer_spans = tuple(
+                item.declaration_span
+                for item in aliases
+                if item.source_alias == alias.alias
+            )
+            escapes = tuple(
+                item for item in escapes
+                if not any(span.contains(item[0]) for span in modeled_transfer_spans)
+            )
             if escapes:
                 analysis_complete = False
                 escaped_kinds = ",".join(sorted({kind for _position, kind in escapes}))
@@ -741,7 +875,27 @@ def _analyze_unit(
                     f"but escapes/transfers through {escaped_kinds}; downstream lifetime "
                     "semantics remain unknown and are not treated as safe."
                 )
-            for reset in owner_resets:
+            scope_end_resets = list(owner_resets)
+            if (
+                owner.binding_scope is not None
+                and alias.binding_scope is not None
+                and alias.binding_scope.end > owner.binding_scope.end
+            ):
+                scope_end_resets.append(
+                    _ResetShape(
+                        owner=owner.owner,
+                        position=owner.binding_scope.end,
+                        call_end=owner.binding_scope.end,
+                        span=owner.span,
+                        invalidation_kind="owner scope end",
+                        description=(
+                            f"owner scope end for '{owner.owner}' destroyed the "
+                            "unique_ptr-owned object"
+                        ),
+                        transfer_scope_end=None,
+                    )
+                )
+            for reset in scope_end_resets:
                 if reset.position <= alias.position:
                     continue
                 for use_position in use_positions:
@@ -759,12 +913,25 @@ def _analyze_unit(
                         continue
                     if alias.binding_scope is None or owner.binding_scope is None:
                         continue
+                    scope_boundary = reset.invalidation_kind == "owner scope end"
                     if not (
                         alias.binding_scope.contains(use_position)
-                        and owner.binding_scope.contains(use_position)
                         and alias.span.contains(use_position)
                         and owner.span.contains(use_position)
+                        and (
+                            scope_boundary
+                            or owner.binding_scope.contains(use_position)
+                        )
                     ):
+                        continue
+                    if _mutually_exclusive_branches(
+                        masked, reset.position, use_position
+                    ):
+                        limitations.append(
+                            f"Raw alias '{alias.alias}' use and {reset.description} "
+                            "occur in mutually exclusive narrow CFG branches; no "
+                            "candidate was emitted for that path pair."
+                        )
                         continue
                     rebound_matches = [
                         match
@@ -841,6 +1008,7 @@ def _analyze_unit(
                             column=column,
                             candidate_cwe="CWE-416",
                             symbol=alias.alias,
+                            source_sha256=unit.sha256,
                         )
                     )
     if owners and any(owner.binding_scope is None for owner in owners):
@@ -855,7 +1023,7 @@ class LifetimeOwnershipGuardDetector:
     """M0-compatible narrow detector; v1 remains unfrozen."""
 
     detector_id = "ohscanner.cpp.lifetime"
-    version = "0.3.0"
+    version = "0.4.0"
     supported_languages = ("cpp",)
     # Source path/text/hash/parse status and request provenance are mandatory
     # SourceUnit/ScanRequest fields. No synthetic shared-fact names are required.

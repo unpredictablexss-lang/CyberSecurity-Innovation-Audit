@@ -1,6 +1,6 @@
 # C/C++ shared_ptr race detector
 
-Detector `ohscanner.cpp.shared_ptr_race`, version `0.4.0`, emits source-bound
+Detector `ohscanner.cpp.shared_ptr_race`, version `0.5.0`, emits source-bound
 `candidate/unassessed` syntax evidence for modeled class/static `std::shared_ptr`
 members. It records read/write, atomic/non-atomic, lock identity and function/location
 facts, then evaluates every potential conflicting access pair independently.
@@ -24,7 +24,7 @@ C/C++ family PoCs:
 - unique_ptr raw-alias lifetime: `src/ohscanner/poc/cpp_lifetime_uaf.py`
 
 Both record controlled dynamic evidence without upgrading candidates to product
-vulnerabilities. The lifetime detector is version `0.3.0` and covers reset, owner
+vulnerabilities. The lifetime detector is version `0.4.0` and covers reset, owner
 assignment and scope-bounded move transfer invalidations. See
 `research/methods/cpp/DETECTOR_POC_MATRIX.md`.
 

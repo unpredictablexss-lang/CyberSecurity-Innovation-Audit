@@ -1,0 +1,13 @@
+diff --git a/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp b/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp
+index 669a05e..d7e9606 100644
+--- a/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp
++++ b/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp
+@@ -13,6 +13,7 @@ int main()
+     std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+     Widget* alias = owner.get();
+     owner = std::make_unique<Widget>();
++    alias = owner.get();
+     alias->Touch();
+     return 0;
+ }
+\ No newline at end of file

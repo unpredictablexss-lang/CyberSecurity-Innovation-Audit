@@ -2,10 +2,42 @@
   "schema_version": 1,
   "package_id": "cpp-lifetime-unique-ptr-alias-20261014",
   "detector_id": "ohscanner.cpp.lifetime",
-  "detector_version": "0.3.0",
+  "detector_version": "0.4.0",
   "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
   "source_binding_status": "self_authored_harness_hash_verified",
   "harness_sha256": "e617b9d4e9dd3efdc9c02e8604cb6d228fdd37977995ae0c4ae6ba536dfc3aad",
+  "execution": {
+    "canonical_argv": [
+      ".venv-web/bin/python",
+      "-m",
+      "src.ohscanner.poc.cpp_lifetime_uaf",
+      "--manifest",
+      "src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/manifest.json",
+      "--harness",
+      "src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+      "--output",
+      "outputs/poc/detector-enhancement-20261015/lifetime",
+      "--compiler",
+      "clang++",
+      "--repeats",
+      "3"
+    ],
+    "compiler": "clang++",
+    "sanitizer": "address",
+    "repeat_count": 3,
+    "environment": {
+      "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+    },
+    "required_result_fields": [
+      "build command argv",
+      "run command argv",
+      "compiler and version",
+      "sanitizer outcome",
+      "repeat index",
+      "harness hash",
+      "observed and expected result"
+    ]
+  },
   "variants": [
     "reset_vulnerable",
     "null_assignment_vulnerable",

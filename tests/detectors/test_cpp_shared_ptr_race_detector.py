@@ -44,7 +44,7 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(self.detector.version, "0.4.0")
+        self.assertEqual(self.detector.version, "0.5.0")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
 
@@ -400,6 +400,44 @@ public:
         self.assertEqual(run.status, "completed")
         self.assertEqual({finding.file for finding in run.findings}, {first.path, second.path})
         self.assertEqual(len(run.findings), 2)
+    def test_duplicate_class_declarations_are_not_cross_bound(self) -> None:
+        first = self.generated_unit(
+            "duplicate_class_write",
+            """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+    std::mutex mutex_;
+    void Reset() {
+        std::lock_guard<std::mutex> guard(mutex_);
+        instance_.reset();
+    }
+};
+""",
+        )
+        second = self.generated_unit(
+            "duplicate_class_read",
+            """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+    std::mutex mutex_;
+    int Read() const {
+        std::lock_guard<std::mutex> guard(mutex_);
+        return instance_ ? 1 : 0;
+    }
+};
+""",
+        )
+        run = self.detector.detect(self.context, (first, second))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].file, first.path)
+
 
     def test_unresolved_object_member_access_is_unknown(self) -> None:
         text = """
@@ -740,6 +778,120 @@ public:
         self.assertTrue(
             any("mixed atomic/non-atomic synchronization protocol" in item for item in run.limitations)
         )
+
+    def test_constructor_initialization_and_stable_read_are_not_race_candidates(self) -> None:
+        text = """
+#include <memory>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+    Holder() : instance_(nullptr) {}
+    int Read() const { return instance_ ? 1 : 0; }
+};
+"""
+        unit = self.generated_unit("constructor_stable_owner", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(
+            any("constructor initialization followed only by stable reads" in item for item in run.limitations)
+        )
+
+    def test_cross_file_access_pair_is_aggregated(self) -> None:
+        declaration = self.generated_unit(
+            "cross_file_declaration",
+            """
+#include <memory>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+    void Set(std::shared_ptr<int> value);
+    int Read() const;
+};
+""",
+        )
+        definitions = self.generated_unit(
+            "cross_file_definitions",
+            """
+#include <memory>
+void Holder::Set(std::shared_ptr<int> value) { instance_ = value; }
+int Holder::Read() const { return instance_ ? 1 : 0; }
+""",
+        )
+        run = self.detector.detect(self.context, (declaration, definitions))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 2)
+        self.assertEqual(
+            {finding.file for finding in run.findings},
+            {definitions.path},
+        )
+        for finding in run.findings:
+            self.assert_synchronization_proof_unknown(
+                finding, "cross-function synchronization protocol is unknown"
+            )
+
+    def test_cross_file_pair_under_same_reliable_mutex_is_narrowly_suppressed(self) -> None:
+        declaration = self.generated_unit(
+            "cross_file_mutex_declaration",
+            """
+#include <memory>
+#include <mutex>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+    std::mutex mutex_;
+    void Set(std::shared_ptr<int> value);
+    int Read() const;
+};
+""",
+        )
+        definitions = self.generated_unit(
+            "cross_file_mutex_definitions",
+            """
+#include <memory>
+#include <mutex>
+void Holder::Set(std::shared_ptr<int> value) {
+    std::lock_guard<std::mutex> guard(mutex_);
+    instance_ = value;
+}
+int Holder::Read() const {
+    std::lock_guard<std::mutex> guard(mutex_);
+    return instance_ ? 1 : 0;
+}
+""",
+        )
+        run = self.detector.detect(self.context, (declaration, definitions))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(
+            any("all potential conflicting access pairs" in item for item in run.limitations)
+        )
+
+    def test_simple_intra_function_object_alias_binds_the_member(self) -> None:
+        text = """
+#include <memory>
+class Holder {
+public:
+    std::shared_ptr<int> instance_;
+    void Mutate() {
+        Holder holder;
+        Holder* alias = &holder;
+        alias->instance_ = std::make_shared<int>(1);
+        bool ready = static_cast<bool>(alias->instance_);
+        (void)ready;
+    }
+};
+"""
+        unit = self.generated_unit("intra_function_object_alias", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertGreaterEqual(len(run.findings), 1)
+        self.assertTrue(all(item.symbol == "instance_" for item in run.findings))
+        self.assertIn(
+            "no reliable mutex covers the pair",
+            run.findings[0].message + run.findings[-1].message,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

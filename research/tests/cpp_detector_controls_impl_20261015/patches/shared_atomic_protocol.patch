@@ -1,0 +1,39 @@
+diff --git a/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp b/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp
+index 27ecbe1..ab9d98f 100644
+--- a/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp
++++ b/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp
+@@ -15,9 +15,16 @@ public:
+         std::atomic_exchange(&instance_, std::make_shared<Widget>());
+     }
+ 
+-    static std::shared_ptr<Widget> OrdinaryRead()
++    static bool CompareExchange()
+     {
+-        return instance_;
++        std::shared_ptr<Widget> expected;
++        return std::atomic_compare_exchange_strong(
++            &instance_, &expected, std::make_shared<Widget>());
++    }
++
++    static std::shared_ptr<Widget> Load()
++    {
++        return std::atomic_load(&instance_);
+     }
+ 
+ private:
+@@ -35,13 +42,14 @@ int main()
+         }
+         for (int step = 0; step < 20000; ++step) {
+             Holder::Exchange();
++            (void)Holder::CompareExchange();
+         }
+     });
+     threads.emplace_back([&start]() {
+         while (!start.load()) {
+         }
+         for (int step = 0; step < 20000; ++step) {
+-            auto instance = Holder::OrdinaryRead();
++            auto instance = Holder::Load();
+             if (instance != nullptr) {
+                 instance->Touch();
+             }

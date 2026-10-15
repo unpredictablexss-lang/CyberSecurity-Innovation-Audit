@@ -1,6 +1,2 @@
-# Shell scripts must keep LF endings so they stay runnable under Linux/WSL
-# even though the repo is checked out on Windows with core.autocrlf=true.
-*.sh text eol=lf
-
-# Vendored third-party rules are kept byte-identical to their upstream (LF).
-rules/cpp/vendor/** text eol=lf
+# Nested unified-diff fixtures use a single-space context line for empty C++ lines.
+*.patch whitespace=-trailing-space

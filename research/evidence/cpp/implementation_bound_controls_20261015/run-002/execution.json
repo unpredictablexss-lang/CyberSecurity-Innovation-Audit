@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-15T12:02:55+08:00",
+  "run_id": "run-002",
+  "working_directory": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+  "invocation_shell": "Ubuntu-22.04 WSL2 bash -lc",
+  "outer_argv": [
+    ".venv-web/bin/python",
+    "research/experiments/cpp/run_four_class_controls.py",
+    "--manifest",
+    "research/tests/cpp_detector_controls_impl_20261015/manifest.json",
+    "--output",
+    "research/evidence/cpp/implementation_bound_controls_20261015/run-002",
+    "--work-dir",
+    "outputs/poc/cpp-detector-controls-impl-20261015/run-002",
+    "--compiler",
+    "clang++",
+    "--repeats",
+    "3"
+  ],
+  "outer_shell_command": "env LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 ASAN_OPTIONS='abort_on_error=1:detect_leaks=0:handle_segv=1' TSAN_OPTIONS='halt_on_error=1:exitcode=66' .venv-web/bin/python research/experiments/cpp/run_four_class_controls.py --manifest research/tests/cpp_detector_controls_impl_20261015/manifest.json --output research/evidence/cpp/implementation_bound_controls_20261015/run-002 --work-dir outputs/poc/cpp-detector-controls-impl-20261015/run-002 --compiler clang++ --repeats 3",
+  "environment": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PYTHONHASHSEED": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1",
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "environment_capture_policy": "allowlisted reproduction variables only; unrelated host variables and secrets excluded",
+  "repeats": 3,
+  "compiler": {
+    "command": "clang++",
+    "version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "full_output": [
+      "Ubuntu clang version 14.0.0-1ubuntu1.1",
+      "Target: x86_64-pc-linux-gnu",
+      "Thread model: posix",
+      "InstalledDir: /usr/bin"
+    ]
+  },
+  "sanitizer_policy": "per-control address/thread sanitizer is recorded in results.json and every raw run log",
+  "execution_scope": "20 four-class controls, 6 zero-fuzz patch revalidations, 3 detector regression commands, 20 native controls and 2 family PoCs",
+  "process_exit_code": 0,
+  "results": {
+    "path": "research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json",
+    "sha256": "2be497117214f5dd060d3e4f15cf68d3ebecdc025a3c03ee6ee3af4dff7345cc"
+  }
+}
