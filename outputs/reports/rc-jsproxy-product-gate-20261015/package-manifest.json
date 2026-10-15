@@ -1,0 +1,43 @@
+{
+  "files": {
+    "fixed_control_mutex.patch": {
+      "sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+      "size": 794
+    },
+    "patched_atomic_minimal.patch": {
+      "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+      "size": 658
+    },
+    "validation.json": {
+      "sha256": "963b98a8d9e5a907e93a5fb5d591c1c0940655ecb83f8923f6bc0bb2e65fab46",
+      "size": 16754
+    },
+    "validation.md": {
+      "sha256": "c73783fb3fe725248c60080cdd34c4c3411e1726e627996fe1b4ae5bd3cc30f7",
+      "size": 6331
+    }
+  },
+  "generated_by": {
+    "path": "src/ohscanner/poc/rc_jsproxy_product_gate.py",
+    "sha256": "d8402e80d966f8bda80e6ecbd76d0b5675638df7b2cd228893ddef18a01bf239"
+  },
+  "kind": "rc_jsproxy_product_validation_package_manifest",
+  "package_id": "rc-jsproxy-product-gate-20261015",
+  "patches": [
+    {
+      "git_apply_cached_check": "passed",
+      "path": "fixed_control_mutex.patch",
+      "role": "independent safe control",
+      "sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+      "variant": "fixed_control_mutex"
+    },
+    {
+      "git_apply_cached_check": "passed",
+      "path": "patched_atomic_minimal.patch",
+      "role": "minimal proposed repair",
+      "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+      "variant": "patched_atomic_minimal"
+    }
+  ],
+  "schema_version": 1
+}
