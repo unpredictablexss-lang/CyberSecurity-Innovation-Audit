@@ -248,4 +248,7 @@ outputs/reports/workbench/
 outputs/poc/
 outputs/poc-loop/
 outputs/reports/*/
+!outputs/reports/m1_descriptor_identity/
+outputs/reports/m1_descriptor_identity/*
+!outputs/reports/m1_descriptor_identity/historical_identity_baseline.json
 outputs/workbench-review-*/
