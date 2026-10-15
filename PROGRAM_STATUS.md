@@ -765,3 +765,57 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   按已批准的契约 v2（§27）取 `schema_version=2`，两者需要在合并进 main 前对齐。
 - **测试**：合并后的树 `Ran 451 tests ... OK`（本次运行无跳过项）。合并前同一条线的基线为
   450 项（其中 5 项红），本轮净增 1 项（对照测试）。
+
+## 37. 2026-10-15 推送已完成的 3 个提交 + window_window_manager 14 条候选逐条复核（队友 B）
+
+### 已推送（负责人本轮授权；仍为 Draft PR，**未**标 Ready、**未**合并）
+
+- 推送前的核对：当前分支 `feat/interface-ipc-detector`，HEAD `f245681`，工作树干净，
+  领先 `origin/feat/interface-ipc-detector` **恰好 3 个提交**（`d586008` → `f2bd80b` → `f245681`），
+  远端当时停在 `48bce9e` → 可安全快進。推送后远端为
+  **`f2456815c8af17bc2edb5ecddcbc361ccb434d35`**（= 本地 HEAD），未做 force-push。
+- 推送前那 3 个提交上跑的**全量测试 454 项 OK**（对应 HEAD `f245681`），
+  `git diff --check` 干净，测试运行未改动 HEAD。
+
+### 已修复的过期表述
+
+- §22/§26/§29/§30/§31/§32/§33/§34 里的「未推送」是**写作当时**的事实；经
+  `git merge-base --is-ancestor` 核对，`3d88ffc`、`4fda320`、`89401fb`、`3feb5bc`、`48bce9e`
+  **都是当前 HEAD 的祖先**，已随本分支在远端 → 上述标记对这几个提交**已失效**。
+  §33 提到的集成分支提交 `3fe3537` **不在**本分支（`NOT ancestor`），该行保持原样。
+
+### 已完成：`openharmony/window_window_manager` @ `8b0d8fe1…` 的 14 条候选逐条复核
+
+- **报告**：`docs/research/ipc_wwm_deep_review_2026-10-15.md`（本节的事实来源）。
+- **版本绑定**：候选自带的 `source_sha256` 六个候选文件、pinned blob、本地 `perf-corpus` 工作树
+  **三者一致**，且该 clone 的 HEAD 就是声明 commit — 本轮**没有** dsoftbus 式偏移；所有引文仍用
+  `git show <commit>:<path>`，未以工作树为证据来源。
+- **判定分布（四类互斥，不互相折算）**：likely false positive **6**（1/3/9/10/11/14）、
+  unresolved external dependency **2**（12/13）、plausible but unproven **6**（2/4/5/6/7/8）、
+  confirmed **0**。`validated_vulnerability` 仍为 **0**，未升级任何候选、未删改任何负结果。
+- **FP 的守卫位置全部可复核**：`screen_session_manager.cpp:10918/:10933`（+ `CheckSavePermission`
+  `:10894-10912`）、`wm/src/window_session_impl.cpp:5064`、`scene_session_manager.cpp:12969/:12984/:4779`、
+  `window_manager_service.cpp:1608`（支配靠 `finishCallback` 保持 nullptr 传播到 stub 的空分支）。
+- **两条重点候选**：候选 2（`screen_session_manager_stub.cpp:1778`）— 派发路径无守卫，`GetRenderSession`
+  `:3200-3208` 无守卫，同文件有 `:2026` 先例；缺口在 foundation/graphics 的令牌能力语义与 SA 4607 可达性，
+  且 WMS 本来就把同种令牌交给应用（`scene_session_manager.cpp:5421`），增量是「任意 `screenId`」。
+  候选 4（`session_stub.cpp:592`）— `Connect` 全链**无所有权检查**，`identityToken` 仅主窗比较且空值即通过、
+  失败还返回 `WS_OK`；`renderSession` 在 `scene_session.cpp:253` **无条件**赋值（失败也回写令牌）。
+- **同一批候选里证据最强的一条**：候选 7/8（恢复路径）——`GetSceneSessionBySessionInfo:3756-3762`
+  按调用者给定的 `persistentId_` 取回**任意活会话**且不比对属主；`CheckSessionPropertyOnRecovery`
+  的守卫只查窗型（特定会话变体连 `IsNeedRecover` 都跳过）；`Session::Reconnect:1873-1875` 会接管
+  stage/eventChannel 并**改写会话的 pid/uid**。仍判 `plausible but unproven`，**不写成漏洞**：
+  可达性（第三方应用能否自备 property/事务）与影响均未证。候选集**不按严重度排序**这一点已记入报告 §7.3。
+
+### 未验证 / unknown（本轮的诚实边界）
+
+- 14 条中 **10 条的宿主文件 `file_parse_status=partial`**（1/2/4/5/6/7/8/9/10/11）；文件级 partial 268 /
+  complete 811。判定只建立在**直接读到的**守卫上，不假设 partial 文件里的守卫都找到了。
+- 外部依赖清单（报告 §6）：`RSUIDirector`/渲染令牌（foundation/graphics，本仓库只有 test mock）、
+  `Ace::UIContent`、`RSIWindowAnimationFinishedCallback`、`WINDOW_MANAGER_SERVICE_ID` 的数值与归属
+  （全树无定义）、`sa_profile` 的 `permission` 字段语义（4606/4607/scene_board 4607 **均无该字段**，
+  但消费方在框架侧）。这些**既不判成漏洞也不判成安全**。
+- **不给 Precision/准确率**：误报 6 与证据边界 2 分列计数，二者都不进准确率；独立 holdout 仍不存在。
+- **未跑动态验证**：本轮全部为静态复核；7/8 若要推进，先钉 `isPersistentRecover_` 分支与可达性论证。
+- 未修改任何检测器规则或契约；报告 §7.1 的 `object_ownership` 义务是**新契约建议**，须单独落地并带
+  正例/反例/无关对照。
