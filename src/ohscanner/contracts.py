@@ -115,11 +115,28 @@ class DetectorFinding:
     consequence_impact: Optional[str] = None
     consequence_cwe: Optional[str] = None
     source_sha256: str = ""
+    # A-CCR-03 layered identity inputs. These are optional and fail closed:
+    # a missing field never falls back to message, line, or legacy ID.
+    rule_version: Optional[str] = None
+    rule_lineage_id: Optional[str] = None
+    symbol_identity: Optional[str] = None
+    ast_fingerprint: Optional[str] = None
+    identity_quality: str = "unknown"
 
     def __post_init__(self):
         safe_relative_path(self.file)
         if self.source_sha256 and not re.fullmatch(r"[a-f0-9]{64}", self.source_sha256):
             raise ValueError("invalid finding source SHA-256")
+        for key, value in (
+            ("rule_version", self.rule_version),
+            ("rule_lineage_id", self.rule_lineage_id),
+            ("symbol_identity", self.symbol_identity),
+            ("ast_fingerprint", self.ast_fingerprint),
+        ):
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ValueError("invalid " + key)
+        if self.identity_quality not in ("complete", "partial", "failed", "unknown"):
+            raise ValueError("invalid identity quality")
         if not all(isinstance(item, EvidenceObligation) for item in self.evidence_obligations):
             raise ValueError("invalid evidence obligation")
         if isinstance(self.line, bool) or not isinstance(self.line, int) or self.line < 1:

@@ -53,6 +53,9 @@ def prepare_git_context(repo_dir: Path, repository: str, commit: str,
             "ast": ast,
             "facts_v1": build_syntax_facts(ast),
             "coverage": coverage,
+            # Exact Git blob binding for A-CCR-03 occurrence records. The
+            # identity layer records it; it never verifies repository ownership.
+            "source_blob_oid": {source.path: source.oid for source in sources},
         },
     )
     return context, tree, inventory, coverage, sources
