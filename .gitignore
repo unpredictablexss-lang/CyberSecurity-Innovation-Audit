@@ -239,3 +239,13 @@ web/dist/
 *.sqlite3
 *.sqlite3-*
 outputs/reports/workbench/
+
+# Local review scratch space and non-portable environment
+.codex-review-tmp/
+.venv-web/
+
+# Large generated runtime evidence; keep locally without committing artifacts
+outputs/poc/
+outputs/poc-loop/
+outputs/reports/*/
+outputs/workbench-review-*/

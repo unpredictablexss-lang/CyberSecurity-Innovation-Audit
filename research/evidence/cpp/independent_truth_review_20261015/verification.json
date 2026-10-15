@@ -1,0 +1,75 @@
+{
+  "checks": {
+    "append_target_was_new": true,
+    "detector_rule_scope_profile_recorded": true,
+    "grouping_key_complete": true,
+    "historical_review_files_unmodified_by_this_run": true,
+    "holdout_count_34": true,
+    "jsproxy_controlled_tests_passed": true,
+    "jsproxy_positive_fixed_controls_present": true,
+    "plausible_unproven_count_11": true,
+    "positive_fixed_safe_unrelated_or_unknown_reason_per_item": true,
+    "precision_recall_not_computed": true,
+    "review_item_count_45": true,
+    "source_hash_checks_all_verified": true,
+    "thread_event_publication_lifecycle_trigger_sync_fields_present": true,
+    "unique_workbench_candidate_count_44": true,
+    "zero_false_positive_or_false_negative_claim_absent": true
+  },
+  "counts": {
+    "controlled_mechanism_labels": {
+      "safe": 1,
+      "unknown": 11,
+      "unrelated": 31,
+      "vulnerable": 2
+    },
+    "groups": 37,
+    "review_items": 45,
+    "source_checks": 45,
+    "truth_labels": {
+      "safe": 1,
+      "unknown": 13,
+      "unrelated": 31
+    }
+  },
+  "generated_date": "2026-10-15",
+  "kind": "cpp_shared_ptr_independent_truth_review_verification",
+  "limitations": [
+    "Product-level vulnerable/fixed truth is not asserted for RC-JSPROXY; only component owner-race mechanism is controlled-positive.",
+    "Remote channel, PIP controllers, stream listener and HDR surface capture retain unknown/partial.",
+    "safe/unrelated labels are scoped to shared_ptr owner-race shape.",
+    "No Precision/Recall or zero-error claim is produced."
+  ],
+  "output_hashes": {
+    "research/evidence/cpp/independent_truth_review_20261015/group_truth_review.json": {
+      "bytes": 81142,
+      "sha256": "077fe7cc55af7bb4686876e87d5aa268c5cc7db25c85becf6a06a5142daae310"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/independent_truth_review.json": {
+      "bytes": 420761,
+      "sha256": "79856bef1e7efad3bbd8f7374b8dcb5661635062c3c44ae9ca3250cafdfafea7"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/independent_truth_review.md": {
+      "bytes": 99907,
+      "sha256": "0ac3fb991b10da183a86aa0386eb191ef61559bbead80bc961f3ea7163c7621c"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/truth_set_manifest.json": {
+      "bytes": 3948,
+      "sha256": "1f4666f39ddf7a043dc215b045d1d8dbc6153168bd4bcd2ce8d62609af9539c2"
+    },
+    "research/evidence/cpp/review_20261014/independent_truth_review_append_20261015.jsonl": {
+      "bytes": 237347,
+      "sha256": "f1e3159a3f496163ddb8b535313ddc247c5f387dbf592fcd35a2645813a8724b"
+    }
+  },
+  "schema_version": 1,
+  "source_check_counts": {
+    "blob_match": 45,
+    "commit_match": 45,
+    "source_sha256_match": 45,
+    "total": 45,
+    "tree_match": 45,
+    "verified": 45
+  },
+  "status": "passed_with_unknowns"
+}

@@ -1,0 +1,1274 @@
+{
+  "generated_date": "2026-10-15",
+  "item_count": 45,
+  "items": [
+    {
+      "blind_item_id": "00c8ae87a8576190",
+      "column": 22,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 32,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 40,
+        "focus_line": 32,
+        "start_line": 24,
+        "text": "  24: namespace Rosen {\n  25: class JsPiPWindowListener : public IPiPLifeCycle,\n  26:                             public IPiPActionObserver,\n  27:                             public IPiPControlObserver,\n  28:                             public IPiPWindowSize,\n  29:                             public IPiPActiveStatusObserver {\n  30: public:\n  31:     JsPiPWindowListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n  32:         : env_(env), jsCallBack_(callback) {}\n  33:     ~JsPiPWindowListener();\n  34:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n  35:     void OnPreparePictureInPictureStart(PiPStateChangeReason reason) override;\n  36:     void OnPictureInPictureStart(PiPStateChangeReason reason) override;\n  37:     void OnPreparePictureInPictureStop(PiPStateChangeReason reason) override;\n  38:     void OnPictureInPictureStop(PiPStateChangeReason reason) override;\n  39:     void OnPictureInPictureOperationError(int32_t errorCode) override;\n  40:     void OnRestoreUserInterface(PiPStateChangeReason reason) override;"
+      },
+      "source_git_blob_oid": "29db5c04bd534bcd029d702e8df7867573b6f35d",
+      "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "symbol": "jsCallBack_"
+    },
+    {
+      "blind_item_id": "03ac81fdf0dad858",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 265,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 273,
+        "focus_line": 265,
+        "start_line": 257,
+        "text": " 257: \n 258:     // LCOV_EXCL_START\n 259:     bool Marshalling(Parcel& parcel) const override\n 260:     {\n 261:         if (!parcel.WriteParcelable(animationParams.get())) {\n 262:             return false;\n 263:         }\n 264: \n 265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 266:             return false;\n 267:         }\n 268: \n 269:         bool hasNeedAnimation = (needAnimation != nullptr);\n 270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 271:             return false;\n 272:         }\n 273:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "animationSystemParams"
+    },
+    {
+      "blind_item_id": "0984ba53e4891550",
+      "column": 71,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 117,
+      "operation": "read",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 125,
+        "focus_line": 117,
+        "start_line": 109,
+        "text": " 109:     std::vector<int32_t> grantResults;\n 110:     std::vector<int32_t> errorReasons;\n 111:     std::vector<bool> dialogShownResults;\n 112:     std::shared_ptr<RequestAsyncContext> data = nullptr;\n 113: };\n 114: \n 115: class AuthorizationResult : public Security::AccessToken::TokenCallbackStub {\n 116: public:\n 117:     AuthorizationResult(std::shared_ptr<RequestAsyncContext>& data) : data_(data) {}\n 118:     ~AuthorizationResult() override = default;\n 119: \n 120:     void GrantResultsCallback(const std::vector<std::string>& permissionList,\n 121:         const std::vector<int>& grantResults) override;\n 122:     void WindowShownCallback() override;\n 123: \n 124: private:\n 125:     std::shared_ptr<RequestAsyncContext> data_ = nullptr;"
+      },
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "symbol": "data_"
+    },
+    {
+      "blind_item_id": "0a21bb32264c7d75",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 261,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 269,
+        "focus_line": 261,
+        "start_line": 253,
+        "text": " 253:      * @brief Whether application-defined window size limits are allowed to exceed system limits.\n 254:      */\n 255:     bool isWindowLimitsForcible = false;\n 256:     bool minimizeOnStart = false;\n 257: \n 258:     // LCOV_EXCL_START\n 259:     bool Marshalling(Parcel& parcel) const override\n 260:     {\n 261:         if (!parcel.WriteParcelable(animationParams.get())) {\n 262:             return false;\n 263:         }\n 264: \n 265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 266:             return false;\n 267:         }\n 268: \n 269:         bool hasNeedAnimation = (needAnimation != nullptr);"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "animationParams"
+    },
+    {
+      "blind_item_id": "0c076a622b333f8d",
+      "column": 54,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 281,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 289,
+        "focus_line": 281,
+        "start_line": 273,
+        "text": " 273:         if (!parcel.WriteBool(minimizeOnStart)) {\n 274:             return false;\n 275:         }\n 276: \n 277:         bool hasExcludeFromDock = (excludeFromDock != nullptr);\n 278:         if (!parcel.WriteBool(hasExcludeFromDock)) {\n 279:             return false;\n 280:         }\n 281:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 282:             return false;\n 283:         }\n 284: \n 285:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 286:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 287:             return false;\n 288:         }\n 289:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "excludeFromDock"
+    },
+    {
+      "blind_item_id": "0dcfabb07e3a819e",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 68,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 76,
+        "focus_line": 68,
+        "start_line": 60,
+        "text": "  60: #endif\n  61:     int32_t contextType_ = static_cast<int32_t>(REQUEST_GLOBAL_SWITCH_ON_SETTING);\n  62: };\n  63: \n  64: struct RequestGlobalSwitchAsyncContextHandle {\n  65:     explicit RequestGlobalSwitchAsyncContextHandle(\n  66:         std::shared_ptr<RequestGlobalSwitchAsyncContext>& requestAsyncContext)\n  67:     {\n  68:         asyncContextPtr = requestAsyncContext;\n  69:     }\n  70: \n  71:     std::shared_ptr<RequestGlobalSwitchAsyncContext> asyncContextPtr;\n  72: };\n  73: \n  74: class RequestGlobalSwitchAsyncInstanceControl {\n  75:     public:\n  76:         static void AddCallbackByInstanceId(std::shared_ptr<RequestGlobalSwitchAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "bc968e7ce325261154cc42d57134516a94ae454d",
+      "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+      "symbol": "asyncContextPtr"
+    },
+    {
+      "blind_item_id": "109e777bac47451e",
+      "column": 16,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "component": "distributeddatamgr_kv_store",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "line": 61,
+      "operation": "read",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 69,
+        "focus_line": 61,
+        "start_line": 53,
+        "text": "  53: };\n  54: \n  55: class ExtensionContext : public ContextImpl {\n  56: public:\n  57:     ExtensionContext() = default;\n  58:     virtual ~ExtensionContext() = default;\n  59: \n  60:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n  61:         return abilityInfo_;\n  62:     }\n  63: \n  64:     void SetAbilityInfo(const std::shared_ptr<AppExecFwk::AbilityInfo> &abilityInfo) {\n  65:         abilityInfo_ = abilityInfo;\n  66:     }\n  67: \n  68:     using SelfType = ExtensionContext;\n  69:     static const size_t CONTEXT_TYPE_ID;"
+      },
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "symbol": "abilityInfo_"
+    },
+    {
+      "blind_item_id": "11a9e51881bba4a3",
+      "column": 67,
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "component": "update_updateservice",
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "line": 27,
+      "operation": "read",
+      "repository": "openharmony/update_updateservice",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 35,
+        "focus_line": 27,
+        "start_line": 19,
+        "text": "  19: #include <cstdint>\n  20: \n  21: #include \"time_utils_proxy.h\"\n  22: \n  23: namespace OHOS {\n  24: namespace UpdateEngine {\n  25: class StatusCache {\n  26: public:\n  27:     StatusCache(std::shared_ptr<TimeUtilsProxy> timeUtilsProxy) : timeUtilsProxy_(timeUtilsProxy) {}\n  28:     ~StatusCache() = default;\n  29: \n  30:     bool IsChecking();\n  31:     void SetIsChecking(bool isChecking);\n  32: \n  33: private:\n  34:     int64_t GetCurrentTime();\n  35: "
+      },
+      "source_git_blob_oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "symbol": "timeUtilsProxy_"
+    },
+    {
+      "blind_item_id": "189d9dc2fec1ba7c",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 57,
+      "operation": "write",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 65,
+        "focus_line": 57,
+        "start_line": 49,
+        "text": "  49:     std::string GetPiPNavigationId() const override;\n  50: \n  51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  52:     {\n  53:         return mainWindowXComponentController_;\n  54:     }\n  55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  56:     {\n  57:         mainWindowXComponentController_ = controller;\n  58:     }\n  59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }\n  62: \n  63: protected:\n  64:     sptr<PipOptionAni> pipOption_ = nullptr;\n  65:     ani_vm* vm_ = nullptr;"
+      },
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "symbol": "mainWindowXComponentController_"
+    },
+    {
+      "blind_item_id": "18c96f591a6dca1e",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 257,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 265,
+        "focus_line": 257,
+        "start_line": 249,
+        "text": " 249:     bool minimizeOnStart = false;\n 250: \n 251:     bool Marshalling(Parcel& parcel) const override\n 252:     {\n 253:         if (!parcel.WriteParcelable(animationParams.get())) {\n 254:             return false;\n 255:         }\n 256: \n 257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 258:             return false;\n 259:         }\n 260: \n 261:         bool hasNeedAnimation = (needAnimation != nullptr);\n 262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 263:             return false;\n 264:         }\n 265:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "animationSystemParams"
+    },
+    {
+      "blind_item_id": "1fae182b80e03b31",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 53,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 61,
+        "focus_line": 53,
+        "start_line": 45,
+        "text": "  45: const int32_t UIEFFECT_INVALID_ID = -1;\n  46: class UIEffectParams : public Parcelable {\n  47: public:\n  48:     bool Marshalling(Parcel& parcel) const override;\n  49:     static UIEffectParams* Unmarshalling(Parcel& parcel);\n  50: \n  51:     bool IsEmpty()\n  52:     {\n  53:         return backgroundFilter_ == nullptr && effect_ == nullptr;\n  54:     }\n  55: \n  56:     napi_status ConvertToJsValue(napi_env env, napi_value& val);\n  57:     napi_status ConvertFromJsValue(napi_env env, napi_value val);\n  58: \n  59: private:\n  60:     std::shared_ptr<Filter> backgroundFilter_ = nullptr;\n  61:     std::shared_ptr<VisualEffect> effect_ = nullptr;"
+      },
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "symbol": "backgroundFilter_"
+    },
+    {
+      "blind_item_id": "216f43693c1ed53f",
+      "column": 52,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 273,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 281,
+        "focus_line": 273,
+        "start_line": 265,
+        "text": " 265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 266:             return false;\n 267:         }\n 268: \n 269:         bool hasNeedAnimation = (needAnimation != nullptr);\n 270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 271:             return false;\n 272:         }\n 273:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n 274:             return false;\n 275:         }\n 276: \n 277:         if (!parcel.WriteBool(isWindowLimitsForcible)) {\n 278:             return false;\n 279:         }\n 280: \n 281:         if (!parcel.WriteBool(minimizeOnStart)) {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "needAnimation"
+    },
+    {
+      "blind_item_id": "262e8786de8d4855",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 53,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 61,
+        "focus_line": 53,
+        "start_line": 45,
+        "text": "  45:     ani_ref GetANICustomNodeController() override;\n  46:     ani_ref GetANITypeNode() const override;\n  47:     bool IsTypeNodeEnabled() const override;\n  48:     bool IsPullPiPAndHandleNavigation();\n  49:     std::string GetPiPNavigationId() const override;\n  50: \n  51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  52:     {\n  53:         return mainWindowXComponentController_;\n  54:     }\n  55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  56:     {\n  57:         mainWindowXComponentController_ = controller;\n  58:     }\n  59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }"
+      },
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "symbol": "mainWindowXComponentController_"
+    },
+    {
+      "blind_item_id": "28f5d974aafabd67",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 61,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 69,
+        "focus_line": 61,
+        "start_line": 53,
+        "text": "  53:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n  54: #endif\n  55:     int32_t contextType_ = static_cast<int32_t>(OPEN_PERMISSION_ON_SETTING);\n  56: };\n  57: \n  58: struct OpenOnSettingAsyncContextHandle {\n  59:     explicit OpenOnSettingAsyncContextHandle(std::shared_ptr<OpenPermOnSettingAsyncContext>& openAsyncContext)\n  60:     {\n  61:         asyncContextPtr = openAsyncContext;\n  62:     }\n  63: \n  64:     std::shared_ptr<OpenPermOnSettingAsyncContext> asyncContextPtr;\n  65: };\n  66: \n  67: class OpenOnSettingAsyncInstanceControl {\n  68:     public:\n  69:         static void AddCallbackByInstanceId(std::shared_ptr<OpenPermOnSettingAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "2c5c6dcf02cf1ae7e44ff7538055057ba4cf33f9",
+      "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+      "symbol": "asyncContextPtr"
+    },
+    {
+      "blind_item_id": "2933d6f08739598b",
+      "column": 22,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 33,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 41,
+        "focus_line": 33,
+        "start_line": 25,
+        "text": "  25: \n  26: namespace OHOS {\n  27: namespace Rosen {\n  28: class JsFbWindowListener : public IFbLifeCycle,\n  29:                              public IFbClickObserver,\n  30:                              public IFbDestroyObserver {\n  31: public:\n  32:     JsFbWindowListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n  33:         : env_(env), jsCallBack_(callback) {}\n  34:     ~JsFbWindowListener() override;\n  35:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n  36:     void OnFloatingBallStart() override;\n  37:     void OnFloatingBallStop() override;\n  38: \n  39:     void OnClickEvent() override;\n  40:     void OnDestroyEvent(const std::string& reason) override;\n  41: "
+      },
+      "source_git_blob_oid": "26e4a721b1f126e33af5c9fba7c908702ea49dbd",
+      "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "symbol": "jsCallBack_"
+    },
+    {
+      "blind_item_id": "29c57a4203eeb950",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 141,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 149,
+        "focus_line": 141,
+        "start_line": 133,
+        "text": " 133:     inline const Rect& GetWindowRect() const { return windowRect_; }\n 134:     inline void SetWindowRect(const Rect& rect) { windowRect_ = rect; }\n 135:     inline bool GetIsAutoStartEnabled() const { return isAutoStartEnabled_; }\n 136:     inline void SetIsAutoStartEnabled(bool enable) { isAutoStartEnabled_ = enable; }\n 137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n 138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n 139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n 140:     {\n 141:         return pipXComponentController_;\n 142:     }\n 143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n 144:     {\n 145:         pipXComponentController_ = controller;\n 146:     }\n 147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n 148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n 149:     inline int32_t GetHandleId() const { return handleId_; }"
+      },
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "symbol": "pipXComponentController_"
+    },
+    {
+      "blind_item_id": "2c4b4625bf41f268",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 41,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 49,
+        "focus_line": 41,
+        "start_line": 33,
+        "text": "  33:     virtual ~RemoteCommandExecutor();\n  34: \n  35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n  36:     {\n  37:         return ptrChannel_;\n  38:     }\n  39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n  40:     {\n  41:         ptrChannel_ = ptrChannel;\n  42:     }\n  43: \n  44:     /**\n  45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now.\n  46:      *\n  47:      * @param targetNodeId target device node id(udid)\n  48:      * @return Returns <b>a shared_ptr</b> if the operation is successful, returns <b>nullptr</b> otherwise.\n  49:      * @see SoftBusChannel"
+      },
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "symbol": "ptrChannel_"
+    },
+    {
+      "blind_item_id": "2fd1e3c72dcb88d7",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 214,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 222,
+        "focus_line": 214,
+        "start_line": 206,
+        "text": " 206:     AnimationType animationType = AnimationType::FADE_IN_OUT;\n 207:     std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n 208: \n 209:     bool Marshalling(Parcel& parcel) const override\n 210:     {\n 211:         if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n 212:             return false;\n 213:         }\n 214:         if (!parcel.WriteParcelable(animationConfig.get())) {\n 215:             return false;\n 216:         }\n 217:         return true;\n 218:     }\n 219: \n 220:     static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n 221:     {\n 222:         StartAnimationSystemOptions* startAnimationSystemOptions = new StartAnimationSystemOptions();"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "animationConfig"
+    },
+    {
+      "blind_item_id": "42a9712edb1f3512",
+      "column": 16,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "component": "distributeddatamgr_kv_store",
+      "file": "frameworks/common/js_proxy.h",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "line": 42,
+      "operation": "read",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 50,
+        "focus_line": 42,
+        "start_line": 34,
+        "text": "  34: public:\n  35:     void SetInstance(std::shared_ptr<T> instance)\n  36:     {\n  37:         instance_ = std::move(instance);\n  38:     }\n  39: \n  40:     std::shared_ptr<T> GetInstance() const\n  41:     {\n  42:         return instance_;\n  43:     }\n  44: \n  45: protected:\n  46:     // It is not allowed to directly use parent class objects for construction and destruction\n  47:     JSProxy() = default;\n  48:     ~JSProxy() = default;\n  49: \n  50: private:"
+      },
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "symbol": "instance_"
+    },
+    {
+      "blind_item_id": "43861dc7e550047d",
+      "column": 56,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 297,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 305,
+        "focus_line": 297,
+        "start_line": 289,
+        "text": " 289:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 290:             return false;\n 291:         }\n 292: \n 293:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 294:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 295:             return false;\n 296:         }\n 297:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n 298:             return false;\n 299:         }\n 300:         return true;\n 301:     }\n 302:     // LCOV_EXCL_STOP\n 303: \n 304:     static WindowCreateParams* Unmarshalling(Parcel& parcel)\n 305:     {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "excludeFromRecent"
+    },
+    {
+      "blind_item_id": "475c88d0bbd639f7",
+      "column": 16,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "component": "distributeddatamgr_kv_store",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "line": 81,
+      "operation": "read",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 89,
+        "focus_line": 81,
+        "start_line": 73,
+        "text": "  73: };\n  74: \n  75: class AbilityContext : public Context {\n  76: public:\n  77:     AbilityContext() = default;\n  78:     virtual ~AbilityContext() = default;\n  79: \n  80:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n  81:         return abilityInfo_;\n  82:     }\n  83: \n  84: protected:\n  85:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n  86: };\n  87: \n  88: } // namespace AbilityRuntime\n  89: } // namespace OHOS"
+      },
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "symbol": "abilityInfo_"
+    },
+    {
+      "blind_item_id": "4d1c3c0f1eb52fed",
+      "column": 9,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "component": "distributeddatamgr_kv_store",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "line": 65,
+      "operation": "write",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 73,
+        "focus_line": 65,
+        "start_line": 57,
+        "text": "  57:     ExtensionContext() = default;\n  58:     virtual ~ExtensionContext() = default;\n  59: \n  60:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n  61:         return abilityInfo_;\n  62:     }\n  63: \n  64:     void SetAbilityInfo(const std::shared_ptr<AppExecFwk::AbilityInfo> &abilityInfo) {\n  65:         abilityInfo_ = abilityInfo;\n  66:     }\n  67: \n  68:     using SelfType = ExtensionContext;\n  69:     static const size_t CONTEXT_TYPE_ID;\n  70: \n  71: protected:\n  72:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n  73: };"
+      },
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "symbol": "abilityInfo_"
+    },
+    {
+      "blind_item_id": "50d42b057f4213b2",
+      "column": 29,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "utils/include/surface_capture_future.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 73,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 81,
+        "focus_line": 73,
+        "start_line": 65,
+        "text": "  65:  \n  66:     std::vector<std::shared_ptr<Media::PixelMap>> GetHDRResult(long timeOut)\n  67:     {\n  68:         std::unique_lock <std::mutex> lock(mutex_);\n  69:         if (!DmUtils::safe_wait_for(conditionVariable_, lock,\n  70:             std::chrono::milliseconds(timeOut), [this] { return IsReady(); })) {\n  71:             TLOGE(WmsLogTag::DEFAULT, \"wait for %{public}ld, timeout.\", timeOut);\n  72:         }\n  73:         return { pixelMap_, hdrPixelMap_ };\n  74:     }\n  75: \n  76: protected:\n  77:     void Call(std::shared_ptr<Media::PixelMap> pixelmap) override\n  78:     {\n  79:         if (!flag_) {\n  80:             pixelMap_ = pixelmap;\n  81:             flag_ = true;"
+      },
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "symbol": "hdrPixelMap_"
+    },
+    {
+      "blind_item_id": "5c64a5975b7d348e",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wmserver/include/drag_controller.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 68,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 76,
+        "focus_line": 68,
+        "start_line": 60,
+        "text": "  60: \n  61: /*\n  62:  * MoveDragController is the class which is used to handle move or drag floating window\n  63:  */\n  64: class MoveDragController : public RefBase {\n  65: public:\n  66:     MoveDragController() : windowProperty_(new WindowProperty()), moveDragProperty_(new MoveDragProperty())\n  67:     {\n  68:         vsyncCallback_->onCallback =\n  69:             [this](int64_t timeStamp, int64_t _) { this->OnReceiveVsync(timeStamp); };\n  70:     }\n  71:     ~MoveDragController() = default;\n  72: \n  73:     bool Init();\n  74:     void Stop();\n  75:     void HandleReadyToMoveOrDrag(uint32_t windowId, sptr<WindowProperty>& windowProperty,\n  76:         sptr<MoveDragProperty>& moveDragProperty);"
+      },
+      "source_git_blob_oid": "d0fcbe8d24b7b47d83e2bf6fcf65954aac3e4428",
+      "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "symbol": "vsyncCallback_"
+    },
+    {
+      "blind_item_id": "61fadc5b5d197135",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 253,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 261,
+        "focus_line": 253,
+        "start_line": 245,
+        "text": " 245:     /**\n 246:      * @brief Whether application-defined window size limits are allowed to exceed system limits.\n 247:      */\n 248:     bool isWindowLimitsForcible = false;\n 249:     bool minimizeOnStart = false;\n 250: \n 251:     bool Marshalling(Parcel& parcel) const override\n 252:     {\n 253:         if (!parcel.WriteParcelable(animationParams.get())) {\n 254:             return false;\n 255:         }\n 256: \n 257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 258:             return false;\n 259:         }\n 260: \n 261:         bool hasNeedAnimation = (needAnimation != nullptr);"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "animationParams"
+    },
+    {
+      "blind_item_id": "6dbe3a1c389d9083",
+      "column": 86,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 115,
+      "operation": "read",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 123,
+        "focus_line": 115,
+        "start_line": 107,
+        "text": " 107: \n 108: private:\n 109:     int32_t sessionId_ = 0;\n 110:     std::shared_ptr<RequestAsyncContext> reqContext_ = nullptr;\n 111: };\n 112: \n 113: class AuthorizationResult : public Security::AccessToken::TokenCallbackStub {\n 114: public:\n 115:     explicit AuthorizationResult(const std::shared_ptr<RequestAsyncContext>& data) : data_(data) {}\n 116:     ~AuthorizationResult() override = default;\n 117:     void GrantResultsCallback(const std::vector<std::string>& permissions,\n 118:         const std::vector<int>& grantResults) override;\n 119: \n 120: private:\n 121:     std::shared_ptr<RequestAsyncContext> data_ = nullptr;\n 122: };\n 123: "
+      },
+      "source_git_blob_oid": "93c786e28ddd7dc390dbe6a2f24c784cb2f9a872",
+      "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+      "symbol": "data_"
+    },
+    {
+      "blind_item_id": "72b468b6e62a3bfc",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 145,
+      "operation": "write",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 153,
+        "focus_line": 145,
+        "start_line": 137,
+        "text": " 137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n 138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n 139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n 140:     {\n 141:         return pipXComponentController_;\n 142:     }\n 143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n 144:     {\n 145:         pipXComponentController_ = controller;\n 146:     }\n 147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n 148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n 149:     inline int32_t GetHandleId() const { return handleId_; }\n 150:     inline void SetHandleId(int32_t id) { handleId_ = id; }\n 151:     inline sptr<Window> GetMainWindow() const { return mainWindow_; }\n 152: \n 153:     // diffrent between normal and web"
+      },
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "symbol": "pipXComponentController_"
+    },
+    {
+      "blind_item_id": "7c0cc08d2a792c8c",
+      "column": 16,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 37,
+      "operation": "read",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 45,
+        "focus_line": 37,
+        "start_line": 29,
+        "text": "  29: namespace AccessToken {\n  30: class RemoteCommandExecutor final : public std::enable_shared_from_this<RemoteCommandExecutor>  {\n  31: public:\n  32:     explicit RemoteCommandExecutor(const std::string &targetNodeId);\n  33:     virtual ~RemoteCommandExecutor();\n  34: \n  35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n  36:     {\n  37:         return ptrChannel_;\n  38:     }\n  39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n  40:     {\n  41:         ptrChannel_ = ptrChannel;\n  42:     }\n  43: \n  44:     /**\n  45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now."
+      },
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "symbol": "ptrChannel_"
+    },
+    {
+      "blind_item_id": "8523ddac356a47a3",
+      "column": 86,
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "component": "communication_dsoftbus",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "line": 67,
+      "operation": "read",
+      "repository": "openharmony/communication_dsoftbus",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 75,
+        "focus_line": 67,
+        "start_line": 59,
+        "text": "  59:         {\n  60:             listener_->OnRippleStats(data);\n  61:         }\n  62: \n  63:     private:\n  64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n  65:     };\n  66: \n  67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n  68:     StreamManager() = delete;\n  69:     virtual ~StreamManager() = default;\n  70: \n  71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n  72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n  73: \n  74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n  75:         std::pair<uint8_t*, uint32_t> sessionKey) override;"
+      },
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "symbol": "streamListener_"
+    },
+    {
+      "blind_item_id": "8bc53a1a1abb0b3c",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 54,
+      "operation": "write",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 62,
+        "focus_line": 54,
+        "start_line": 46,
+        "text": "  46:     std::string GetPiPNavigationId() const override;\n  47:     \n  48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  49:     {\n  50:         return mainWindowXComponentController_;\n  51:     }\n  52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  53:     {\n  54:         mainWindowXComponentController_ = controller;\n  55:     }\n  56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  58: \n  59: protected:\n  60:     WMErrorResult CreatePictureInPictureWindow(StartPipType startType) override;\n  61:     void UpdateWinRectByComponent() override;\n  62:     void UpdatePiPSourceRect() const override;"
+      },
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "symbol": "mainWindowXComponentController_"
+    },
+    {
+      "blind_item_id": "8bf2c12c014dda78",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 220,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 228,
+        "focus_line": 220,
+        "start_line": 212,
+        "text": " 212:     std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n 213: \n 214:     // LCOV_EXCL_START\n 215:     bool Marshalling(Parcel& parcel) const override\n 216:     {\n 217:         if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n 218:             return false;\n 219:         }\n 220:         if (!parcel.WriteParcelable(animationConfig.get())) {\n 221:             return false;\n 222:         }\n 223:         return true;\n 224:     }\n 225:     // LCOV_EXCL_STOP\n 226: \n 227:     static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n 228:     {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "animationConfig"
+    },
+    {
+      "blind_item_id": "9428dad22daecdb4",
+      "column": 52,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 265,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 273,
+        "focus_line": 265,
+        "start_line": 257,
+        "text": " 257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 258:             return false;\n 259:         }\n 260: \n 261:         bool hasNeedAnimation = (needAnimation != nullptr);\n 262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 263:             return false;\n 264:         }\n 265:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n 266:             return false;\n 267:         }\n 268: \n 269:         if (!parcel.WriteBool(isWindowLimitsForcible)) {\n 270:             return false;\n 271:         }\n 272: \n 273:         if (!parcel.WriteBool(minimizeOnStart)) {"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "needAnimation"
+    },
+    {
+      "blind_item_id": "99ce5dad55f7c1af",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 63,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 71,
+        "focus_line": 63,
+        "start_line": 55,
+        "text": "  55:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n  56: #endif\n  57:     int32_t contextType_ = static_cast<int32_t>(REQUEST_PERMISSION_ON_SETTING);\n  58: };\n  59: \n  60: struct RequestOnSettingAsyncContextHandle {\n  61:     explicit RequestOnSettingAsyncContextHandle(std::shared_ptr<RequestPermOnSettingAsyncContext>& requestAsyncContext)\n  62:     {\n  63:         asyncContextPtr = requestAsyncContext;\n  64:     }\n  65: \n  66:     std::shared_ptr<RequestPermOnSettingAsyncContext> asyncContextPtr;\n  67: };\n  68: \n  69: class RequestOnSettingAsyncInstanceControl {\n  70:     public:\n  71:         static void AddCallbackByInstanceId(std::shared_ptr<RequestPermOnSettingAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "7828aceaf6d50c98c2b70d49f7ea17bda654a982",
+      "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+      "symbol": "asyncContextPtr"
+    },
+    {
+      "blind_item_id": "9a7da68327154c5f",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 50,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 58,
+        "focus_line": 50,
+        "start_line": 42,
+        "text": "  42:     std::shared_ptr<NativeReference> GetCustomNodeController() override;\n  43:     std::shared_ptr<NativeReference> GetTypeNode() const override;\n  44:     bool IsTypeNodeEnabled() const override;\n  45:     bool IsPullPiPAndHandleNavigation();\n  46:     std::string GetPiPNavigationId() const override;\n  47:     \n  48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  49:     {\n  50:         return mainWindowXComponentController_;\n  51:     }\n  52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  53:     {\n  54:         mainWindowXComponentController_ = controller;\n  55:     }\n  56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  58: "
+      },
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "symbol": "mainWindowXComponentController_"
+    },
+    {
+      "blind_item_id": "9b3f9c97a527cc4e",
+      "column": 86,
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "component": "communication_dsoftbus",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "line": 67,
+      "operation": "read",
+      "repository": "openharmony/communication_dsoftbus",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 75,
+        "focus_line": 67,
+        "start_line": 59,
+        "text": "  59:         {\n  60:             listener_->OnRippleStats(data);\n  61:         }\n  62: \n  63:     private:\n  64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n  65:     };\n  66: \n  67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n  68:     StreamManager() = delete;\n  69:     virtual ~StreamManager() = default;\n  70: \n  71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n  72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n  73: \n  74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n  75:         std::pair<uint8_t*, uint32_t> sessionKey) override;"
+      },
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "symbol": "streamListener_"
+    },
+    {
+      "blind_item_id": "9c78273d5197f6b0",
+      "column": 64,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "wmserver/include/window_common_event.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 41,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 49,
+        "focus_line": 41,
+        "start_line": 33,
+        "text": "  33:     void UnSubscriberEvent();\n  34:     void OnReceiveEvent(const EventFwk::CommonEventData& data);\n  35: \n  36: private:\n  37:     class EventSubscriber : public EventFwk::CommonEventSubscriber {\n  38:     public:\n  39:         EventSubscriber(const EventFwk::CommonEventSubscribeInfo& subscriberInfo,\n  40:             const std::shared_ptr<WindowCommonEvent>& eventHandler)\n  41:             : EventFwk::CommonEventSubscriber(subscriberInfo), eventHandler_(eventHandler) {};\n  42:         ~EventSubscriber() = default;\n  43:         void OnReceiveEvent(const EventFwk::CommonEventData& data) override\n  44:         {\n  45:             eventHandler_->OnReceiveEvent(data);\n  46:         }\n  47:         \n  48:     private:\n  49:         std::shared_ptr<WindowCommonEvent> eventHandler_;"
+      },
+      "source_git_blob_oid": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "symbol": "eventHandler_"
+    },
+    {
+      "blind_item_id": "a434fff861916fd3",
+      "column": 9,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "component": "distributeddatamgr_kv_store",
+      "file": "frameworks/common/js_proxy.h",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "line": 37,
+      "operation": "write",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 45,
+        "focus_line": 37,
+        "start_line": 29,
+        "text": "  29:     ~JSCreator() = default;\n  30: };\n  31: \n  32: template<typename T>\n  33: class JSProxy {\n  34: public:\n  35:     void SetInstance(std::shared_ptr<T> instance)\n  36:     {\n  37:         instance_ = std::move(instance);\n  38:     }\n  39: \n  40:     std::shared_ptr<T> GetInstance() const\n  41:     {\n  42:         return instance_;\n  43:     }\n  44: \n  45: protected:"
+      },
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "symbol": "instance_"
+    },
+    {
+      "blind_item_id": "addd5418e89eb1f1",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 72,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 80,
+        "focus_line": 72,
+        "start_line": 64,
+        "text": "  64:     {\n  65:         result.errorCode = errcode;\n  66:     }\n  67: };\n  68: \n  69: struct RequestAsyncContextHandle {\n  70:     explicit RequestAsyncContextHandle(std::shared_ptr<RequestAsyncContext>& requestAsyncContext)\n  71:     {\n  72:         asyncContextPtr = requestAsyncContext;\n  73:     }\n  74: \n  75:     std::shared_ptr<RequestAsyncContext> asyncContextPtr;\n  76: };\n  77: \n  78: class RequestAsyncInstanceControl {\n  79:     public:\n  80:         static void AddCallbackByInstanceId(std::shared_ptr<RequestAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "symbol": "asyncContextPtr"
+    },
+    {
+      "blind_item_id": "b578e1c0b3670993",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 51,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 59,
+        "focus_line": 51,
+        "start_line": 43,
+        "text": "  43:     bool releaseFlag = false;\n  44:     std::function<void(RetDataBool)> callbackRef = nullptr;\n  45: };\n  46: \n  47: struct RequestGlobalSwitchAsyncContextHandle {\n  48:     explicit RequestGlobalSwitchAsyncContextHandle(\n  49:         std::shared_ptr<RequestGlobalSwitchAsyncContext>& requestAsyncContext)\n  50:     {\n  51:         asyncContextPtr = requestAsyncContext;\n  52:     }\n  53: \n  54:     std::shared_ptr<RequestGlobalSwitchAsyncContext> asyncContextPtr;\n  55: };\n  56: \n  57: class SwitchOnSettingUICallback {\n  58: public:\n  59:     explicit SwitchOnSettingUICallback(const std::shared_ptr<RequestGlobalSwitchAsyncContext>& reqContext);"
+      },
+      "source_git_blob_oid": "5ee7e75ff720127386ef77cc515d979613ee81b5",
+      "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+      "symbol": "asyncContextPtr"
+    },
+    {
+      "blind_item_id": "bc7c8154a71b4ae2",
+      "column": 56,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 289,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 297,
+        "focus_line": 289,
+        "start_line": 281,
+        "text": " 281:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 282:             return false;\n 283:         }\n 284: \n 285:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 286:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 287:             return false;\n 288:         }\n 289:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n 290:             return false;\n 291:         }\n 292:         return true;\n 293:     }\n 294: \n 295:     static WindowCreateParams* Unmarshalling(Parcel& parcel)\n 296:     {\n 297:         auto windowCreateParams = std::make_unique<WindowCreateParams>();"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "excludeFromRecent"
+    },
+    {
+      "blind_item_id": "bffe538666df990b",
+      "column": 22,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 32,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 40,
+        "focus_line": 32,
+        "start_line": 24,
+        "text": "  24: namespace OHOS {\n  25: namespace Rosen {\n  26: \n  27: class JsFloatViewListener : public IFvStateChangeObserver,\n  28:                             public IFvRectChangeObserver,\n  29:                             public IFvLimitsChangeObserver {\n  30: public:\n  31:     JsFloatViewListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n  32:         : env_(env), jsCallBack_(callback) {}\n  33:     ~JsFloatViewListener() override;\n  34:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n  35: \n  36:     void OnStateChange(const FloatViewState& state, const std::string& stopReason) override;\n  37:     void OnRectangleChange(const Rect& window, double scale, const std::string& reason) override;\n  38:     void OnLimitsChange(const FloatViewLimits& limits) override;\n  39: \n  40: private:"
+      },
+      "source_git_blob_oid": "8c6a9f3774155f25d1deb5f431faef5ca26f5f1f",
+      "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "symbol": "jsCallBack_"
+    },
+    {
+      "blind_item_id": "cacae956a5a61860",
+      "column": 48,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 53,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 61,
+        "focus_line": 53,
+        "start_line": 45,
+        "text": "  45: const int32_t UIEFFECT_INVALID_ID = -1;\n  46: class UIEffectParams : public Parcelable {\n  47: public:\n  48:     bool Marshalling(Parcel& parcel) const override;\n  49:     static UIEffectParams* Unmarshalling(Parcel& parcel);\n  50: \n  51:     bool IsEmpty()\n  52:     {\n  53:         return backgroundFilter_ == nullptr && effect_ == nullptr;\n  54:     }\n  55: \n  56:     napi_status ConvertToJsValue(napi_env env, napi_value& val);\n  57:     napi_status ConvertFromJsValue(napi_env env, napi_value val);\n  58: \n  59: private:\n  60:     std::shared_ptr<Filter> backgroundFilter_ = nullptr;\n  61:     std::shared_ptr<VisualEffect> effect_ = nullptr;"
+      },
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "symbol": "effect_"
+    },
+    {
+      "blind_item_id": "cc38ebb39a402845",
+      "column": 54,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 289,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 297,
+        "focus_line": 289,
+        "start_line": 281,
+        "text": " 281:         if (!parcel.WriteBool(minimizeOnStart)) {\n 282:             return false;\n 283:         }\n 284: \n 285:         bool hasExcludeFromDock = (excludeFromDock != nullptr);\n 286:         if (!parcel.WriteBool(hasExcludeFromDock)) {\n 287:             return false;\n 288:         }\n 289:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 290:             return false;\n 291:         }\n 292: \n 293:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 294:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 295:             return false;\n 296:         }\n 297:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "excludeFromDock"
+    },
+    {
+      "blind_item_id": "ce61b4591bfb3ad9",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "line": 49,
+      "operation": "write",
+      "repository": "openharmony/security_access_token",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 57,
+        "focus_line": 49,
+        "start_line": 41,
+        "text": "  41:     bool uiAbilityFlag = false;\n  42:     bool releaseFlag = false;\n  43:     std::function<void(RetDataCArrI32)> callbackRef =  nullptr;\n  44: };\n  45: \n  46: struct RequestOnSettingAsyncContextHandle {\n  47:     explicit RequestOnSettingAsyncContextHandle(std::shared_ptr<RequestPermOnSettingAsyncContext>& requestAsyncContext)\n  48:     {\n  49:         asyncContextPtr = requestAsyncContext;\n  50:     }\n  51: \n  52:     std::shared_ptr<RequestPermOnSettingAsyncContext> asyncContextPtr;\n  53: };\n  54: \n  55: class PermissonOnSettingUICallback {\n  56: public:\n  57:     explicit PermissonOnSettingUICallback(const std::shared_ptr<RequestPermOnSettingAsyncContext>& reqContext);"
+      },
+      "source_git_blob_oid": "5ac2150911a4e2cc107ce1d28f0553c93bbe0512",
+      "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+      "symbol": "asyncContextPtr"
+    },
+    {
+      "blind_item_id": "ea22cf515d93fc90",
+      "column": 18,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "file": "utils/include/surface_capture_future.h",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "line": 73,
+      "operation": "read",
+      "repository": "openharmony/window_window_manager",
+      "review_questions": [
+        "Identify every same-object shared_ptr owner read/write pair.",
+        "Resolve thread or event-queue ownership and publication order.",
+        "Resolve atomic or mutex synchronization for the complete owner access set.",
+        "State whether a feasible trigger window exists.",
+        "Identify reachable sensitive operations and concrete CIA impact.",
+        "Choose vulnerable/fixed/safe/unrelated/unknown and cite fixed source evidence."
+      ],
+      "source_context": {
+        "end_line": 81,
+        "focus_line": 73,
+        "start_line": 65,
+        "text": "  65:  \n  66:     std::vector<std::shared_ptr<Media::PixelMap>> GetHDRResult(long timeOut)\n  67:     {\n  68:         std::unique_lock <std::mutex> lock(mutex_);\n  69:         if (!DmUtils::safe_wait_for(conditionVariable_, lock,\n  70:             std::chrono::milliseconds(timeOut), [this] { return IsReady(); })) {\n  71:             TLOGE(WmsLogTag::DEFAULT, \"wait for %{public}ld, timeout.\", timeOut);\n  72:         }\n  73:         return { pixelMap_, hdrPixelMap_ };\n  74:     }\n  75: \n  76: protected:\n  77:     void Call(std::shared_ptr<Media::PixelMap> pixelmap) override\n  78:     {\n  79:         if (!flag_) {\n  80:             pixelMap_ = pixelmap;\n  81:             flag_ = true;"
+      },
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "symbol": "pixelMap_"
+    }
+  ],
+  "kind": "cpp_shared_ptr_blind_review_packet",
+  "protocol": [
+    "Review this packet before opening review_supplement.json/md or blind_review_key.json.",
+    "Record a blind label for every blind_item_id and freeze those labels before comparison.",
+    "Do not use first-round labels, group hypotheses, or the A-line technical suggestion as truth.",
+    "The key is opened only after blind labels are frozen."
+  ],
+  "schema_version": 1
+}

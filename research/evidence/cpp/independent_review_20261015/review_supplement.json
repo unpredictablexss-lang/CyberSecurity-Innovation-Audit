@@ -1,0 +1,3300 @@
+{
+  "comparison_to_first_round_counts": {
+    "consistent_non_vulnerability": 28,
+    "consistent_refuted_scope": 3,
+    "consistent_unresolved": 12,
+    "disagreement_keep_unknown": 1,
+    "disagreement_resolved_safe": 1
+  },
+  "generated_date": "2026-10-15",
+  "group_findings": {
+    "RC-CONSTRUCTOR-NOISE": {
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "priority": "normal",
+      "summary": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "technical_suggestion": "unrelated"
+    },
+    "RC-JSPROXY": {
+      "evidence_locations": [
+        "frameworks/common/js_proxy.h:29-44",
+        "frameworks/jskitsimpl/distributeddata/src/js_kv_store_resultset.cpp:73-286",
+        "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp:79-297",
+        "frameworks/jskitsimpl/distributedkvstore/src/napi_data_share_adapter.cpp:89-111"
+      ],
+      "minimal_reproduction": "Run concurrent SetInstance(nullptr) and GetInstance calls for a representative result-set wrapper under TSan, then repeat after serializing owner mutation through the actual NAPI queue.",
+      "missing_facts": [
+        "NAPI execute/complete thread affinity and callback queue ordering for each JSProxy subtype.",
+        "Whether SetInstance(nullptr) can overlap a queued GetInstance operation.",
+        "Product entry, attacker control, and concrete CIA impact."
+      ],
+      "priority": "high",
+      "summary": "JSProxy::instance_ has an unsynchronized SetInstance/GetInstance owner pair. The result-set lifecycle clears or replaces the owner while other operations call GetInstance, so NAPI queue serialization and safe publication are required before deciding whether the pair can overlap.",
+      "technical_suggestion": "unknown"
+    },
+    "RC-PIP-CONTROLLERS": {
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "priority": "high",
+      "summary": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "technical_suggestion": "unknown"
+    },
+    "RC-REMOTE-CHANNEL": {
+      "evidence_locations": [
+        "services/tokensyncmanager/include/remote/remote_command_executor.h:35-41",
+        "services/tokensyncmanager/src/remote/remote_command_executor.cpp:84-96",
+        "services/tokensyncmanager/src/remote/remote_command_executor.cpp:307-317",
+        "services/tokensyncmanager/src/remote/remote_command_manager.cpp:176-190",
+        "services/tokensyncmanager/src/remote/remote_command_manager.cpp:276-287"
+      ],
+      "minimal_reproduction": "Build a narrow RemoteCommandExecutor harness that concurrently calls SetChannel/GetChannel and CreateChannelIfNeeded/ProcessOneCommand under TSan, then repeat with one owner mutex or atomic shared_ptr protocol.",
+      "missing_facts": [
+        "Exact thread/event-runner ownership for NotifyDeviceOnline, GetExecutorChannel, and command execution.",
+        "A happens-before proof or a controlled race/fixed run for ptrChannel_ publication and reset.",
+        "Real product entry, privilege boundary, trigger, and CIA consequence."
+      ],
+      "priority": "high",
+      "summary": "RemoteCommandExecutor::ptrChannel_ has an unsynchronized setter/getter pair and is also written by CreateChannelIfNeeded and read while commands execute. The executor mutex covers only part of the owner accesses; concurrent device-online and command-processing paths remain a realistic race shape.",
+      "technical_suggestion": "unknown"
+    },
+    "RC-SCOPE-MOCK": {
+      "evidence_locations": [
+        "kvstoremock/external_inner_kit/napi/include/extension_context.h:55-85"
+      ],
+      "minimal_reproduction": "No vulnerability PoC. Retain as an unrelated/scope-control item and exclude from production scoring.",
+      "missing_facts": [
+        "No product fact is required to classify this specific item as out of production scope."
+      ],
+      "priority": "normal",
+      "summary": "The diagnostic is under kvstoremock/external_inner_kit, which is non-production mock/support source and was admitted by the historical scope path rule. It is not a production component vulnerability.",
+      "technical_suggestion": "unrelated"
+    },
+    "RC-STREAM-LISTENER": {
+      "evidence_locations": [
+        "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h:67,87-110",
+        "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.cpp:58-61,88-95,172-185"
+      ],
+      "minimal_reproduction": "Race SetStreamRecvListener with CreateStreamClientChannel/CreateStreamServerChannel in a controlled StreamManager harness under TSan, then repeat with a common mutex or immutable listener publication.",
+      "missing_facts": [
+        "Whether channel creation and SetStreamRecvListener can execute concurrently on one StreamManager.",
+        "Publication ordering between streamListener_, socketListener_, and the socket callback.",
+        "Reachable trigger and CIA consequence in the product."
+      ],
+      "priority": "high",
+      "summary": "StreamManager::streamListener_ is initialized in the constructor, read while creating client/server channels, and reassigned by SetStreamRecvListener without synchronization. The candidate constructor site is not itself a conflicting runtime access, but it participates in the same owner lifecycle.",
+      "technical_suggestion": "unknown"
+    },
+    "RC-WINDOW-SINGLE": {
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "priority": "normal",
+      "summary": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "technical_suggestion": "unrelated"
+    }
+  },
+  "independence": {
+    "blind_review": false,
+    "first_round_reviewer": "teammate-A / static review",
+    "independent_review": false,
+    "reason": "The current A-line execution participated in the first-round review workflow and had already seen aggregate labels. This artifact is a technical supplement and disagreement register, not final truth signoff.",
+    "required_next_reviewer": "a reviewer who did not perform the first-round candidate adjudication"
+  },
+  "input_hashes": {
+    "holdout_manifest.json": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a",
+    "review_ledger.json": "6fc11cc43cd653cad449022ae16a3d5a2b110e353065d2ae53a13738f97f5404",
+    "root_cause_groups.json": "0e487a981df6733a9efc7d4f72119a44dde615bb1649e66590484eb06b964166",
+    "verification.json": "9efa73b1d0a916d6cee6c74d21bdd2caaceaee2ee6724be0bb7ef83107d1621f"
+  },
+  "kind": "cpp_shared_ptr_independent_review_supplement",
+  "limitations": [
+    "independent_review=false; another reviewer must sign final truth labels.",
+    "No Precision/Recall is computed before independent truth labels exist.",
+    "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+    "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+    "A technical suggestion of unknown is not vulnerable or safe.",
+    "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+    "The fixed source repositories are external pinned Git objects and are not committed into this project."
+  ],
+  "precision_recall": "not_computed",
+  "project_checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "0dd71fd78baa01283df081f9bd02fe4b7f2df326",
+    "project_root": "/mnt/e/网安/CyberSecurity-Innovation-Audit"
+  },
+  "review_group": "A-line shared_ptr candidate review supplement",
+  "review_items": [
+    {
+      "assessment": "RemoteCommandExecutor::ptrChannel_ has an unsynchronized setter/getter pair and is also written by CreateChannelIfNeeded and read while commands execute. The executor mutex covers only part of the owner accesses; concurrent device-online and command-processing paths remain a realistic race shape.",
+      "column": 16,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9206921efb49a379",
+      "evidence_locations": [
+        "services/tokensyncmanager/include/remote/remote_command_executor.h:35-41",
+        "services/tokensyncmanager/src/remote/remote_command_executor.cpp:84-96",
+        "services/tokensyncmanager/src/remote/remote_command_executor.cpp:307-317",
+        "services/tokensyncmanager/src/remote/remote_command_manager.cpp:176-190",
+        "services/tokensyncmanager/src/remote/remote_command_manager.cpp:276-287"
+      ],
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 37,
+      "minimal_reproduction": "Build a narrow RemoteCommandExecutor harness that concurrently calls SetChannel/GetChannel and CreateChannelIfNeeded/ProcessOneCommand under TSan, then repeat with one owner mutex or atomic shared_ptr protocol.",
+      "missing_facts": [
+        "Exact thread/event-runner ownership for NotifyDeviceOnline, GetExecutorChannel, and command execution.",
+        "A happens-before proof or a controlled race/fixed run for ptrChannel_ publication and reset.",
+        "Real product entry, privilege boundary, trigger, and CIA consequence."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 45,
+        "focus_line": 37,
+        "start_line": 29,
+        "text": "  29: namespace AccessToken {\n  30: class RemoteCommandExecutor final : public std::enable_shared_from_this<RemoteCommandExecutor>  {\n  31: public:\n  32:     explicit RemoteCommandExecutor(const std::string &targetNodeId);\n  33:     virtual ~RemoteCommandExecutor();\n  34: \n  35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n  36:     {\n  37:         return ptrChannel_;\n  38:     }\n  39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n  40:     {\n  41:         ptrChannel_ = ptrChannel;\n  42:     }\n  43: \n  44:     /**\n  45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now."
+      },
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "source_sha256_verified": true,
+      "symbol": "ptrChannel_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b"
+    },
+    {
+      "assessment": "RemoteCommandExecutor::ptrChannel_ has an unsynchronized setter/getter pair and is also written by CreateChannelIfNeeded and read while commands execute. The executor mutex covers only part of the owner accesses; concurrent device-online and command-processing paths remain a realistic race shape.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3bac2f99cba097b8",
+      "evidence_locations": [
+        "services/tokensyncmanager/include/remote/remote_command_executor.h:35-41",
+        "services/tokensyncmanager/src/remote/remote_command_executor.cpp:84-96",
+        "services/tokensyncmanager/src/remote/remote_command_executor.cpp:307-317",
+        "services/tokensyncmanager/src/remote/remote_command_manager.cpp:176-190",
+        "services/tokensyncmanager/src/remote/remote_command_manager.cpp:276-287"
+      ],
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 41,
+      "minimal_reproduction": "Build a narrow RemoteCommandExecutor harness that concurrently calls SetChannel/GetChannel and CreateChannelIfNeeded/ProcessOneCommand under TSan, then repeat with one owner mutex or atomic shared_ptr protocol.",
+      "missing_facts": [
+        "Exact thread/event-runner ownership for NotifyDeviceOnline, GetExecutorChannel, and command execution.",
+        "A happens-before proof or a controlled race/fixed run for ptrChannel_ publication and reset.",
+        "Real product entry, privilege boundary, trigger, and CIA consequence."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 49,
+        "focus_line": 41,
+        "start_line": 33,
+        "text": "  33:     virtual ~RemoteCommandExecutor();\n  34: \n  35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n  36:     {\n  37:         return ptrChannel_;\n  38:     }\n  39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n  40:     {\n  41:         ptrChannel_ = ptrChannel;\n  42:     }\n  43: \n  44:     /**\n  45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now.\n  46:      *\n  47:      * @param targetNodeId target device node id(udid)\n  48:      * @return Returns <b>a shared_ptr</b> if the operation is successful, returns <b>nullptr</b> otherwise.\n  49:      * @see SoftBusChannel"
+      },
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "source_sha256_verified": true,
+      "symbol": "ptrChannel_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b"
+    },
+    {
+      "assessment": "JSProxy::instance_ has an unsynchronized SetInstance/GetInstance owner pair. The result-set lifecycle clears or replaces the owner while other operations call GetInstance, so NAPI queue serialization and safe publication are required before deciding whether the pair can overlap.",
+      "column": 9,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "distributeddatamgr_kv_store",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:fdd6e227d2ca661e",
+      "evidence_locations": [
+        "frameworks/common/js_proxy.h:29-44",
+        "frameworks/jskitsimpl/distributeddata/src/js_kv_store_resultset.cpp:73-286",
+        "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp:79-297",
+        "frameworks/jskitsimpl/distributedkvstore/src/napi_data_share_adapter.cpp:89-111"
+      ],
+      "file": "frameworks/common/js_proxy.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "job_id": "f261748b7eff4144bab9646a6b00b607",
+      "line": 37,
+      "minimal_reproduction": "Run concurrent SetInstance(nullptr) and GetInstance calls for a representative result-set wrapper under TSan, then repeat after serializing owner mutation through the actual NAPI queue.",
+      "missing_facts": [
+        "NAPI execute/complete thread affinity and callback queue ordering for each JSProxy subtype.",
+        "Whether SetInstance(nullptr) can overlap a queued GetInstance operation.",
+        "Product entry, attacker control, and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_item_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-JSPROXY",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 45,
+        "focus_line": 37,
+        "start_line": 29,
+        "text": "  29:     ~JSCreator() = default;\n  30: };\n  31: \n  32: template<typename T>\n  33: class JSProxy {\n  34: public:\n  35:     void SetInstance(std::shared_ptr<T> instance)\n  36:     {\n  37:         instance_ = std::move(instance);\n  38:     }\n  39: \n  40:     std::shared_ptr<T> GetInstance() const\n  41:     {\n  42:         return instance_;\n  43:     }\n  44: \n  45: protected:"
+      },
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "source_sha256_verified": true,
+      "symbol": "instance_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef"
+    },
+    {
+      "assessment": "JSProxy::instance_ has an unsynchronized SetInstance/GetInstance owner pair. The result-set lifecycle clears or replaces the owner while other operations call GetInstance, so NAPI queue serialization and safe publication are required before deciding whether the pair can overlap.",
+      "column": 16,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "distributeddatamgr_kv_store",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:cf558619929424b7",
+      "evidence_locations": [
+        "frameworks/common/js_proxy.h:29-44",
+        "frameworks/jskitsimpl/distributeddata/src/js_kv_store_resultset.cpp:73-286",
+        "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp:79-297",
+        "frameworks/jskitsimpl/distributedkvstore/src/napi_data_share_adapter.cpp:89-111"
+      ],
+      "file": "frameworks/common/js_proxy.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "job_id": "f261748b7eff4144bab9646a6b00b607",
+      "line": 42,
+      "minimal_reproduction": "Run concurrent SetInstance(nullptr) and GetInstance calls for a representative result-set wrapper under TSan, then repeat after serializing owner mutation through the actual NAPI queue.",
+      "missing_facts": [
+        "NAPI execute/complete thread affinity and callback queue ordering for each JSProxy subtype.",
+        "Whether SetInstance(nullptr) can overlap a queued GetInstance operation.",
+        "Product entry, attacker control, and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_item_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-JSPROXY",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 50,
+        "focus_line": 42,
+        "start_line": 34,
+        "text": "  34: public:\n  35:     void SetInstance(std::shared_ptr<T> instance)\n  36:     {\n  37:         instance_ = std::move(instance);\n  38:     }\n  39: \n  40:     std::shared_ptr<T> GetInstance() const\n  41:     {\n  42:         return instance_;\n  43:     }\n  44: \n  45: protected:\n  46:     // It is not allowed to directly use parent class objects for construction and destruction\n  47:     JSProxy() = default;\n  48:     ~JSProxy() = default;\n  49: \n  50: private:"
+      },
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "source_sha256_verified": true,
+      "symbol": "instance_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c"
+    },
+    {
+      "assessment": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:120564aa8b3e5e0e",
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "file": "wm/include/picture_in_picture_controller.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 50,
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 58,
+        "focus_line": 50,
+        "start_line": 42,
+        "text": "  42:     std::shared_ptr<NativeReference> GetCustomNodeController() override;\n  43:     std::shared_ptr<NativeReference> GetTypeNode() const override;\n  44:     bool IsTypeNodeEnabled() const override;\n  45:     bool IsPullPiPAndHandleNavigation();\n  46:     std::string GetPiPNavigationId() const override;\n  47:     \n  48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  49:     {\n  50:         return mainWindowXComponentController_;\n  51:     }\n  52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  53:     {\n  54:         mainWindowXComponentController_ = controller;\n  55:     }\n  56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  58: "
+      },
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "source_sha256_verified": true,
+      "symbol": "mainWindowXComponentController_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8"
+    },
+    {
+      "assessment": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:dbb5f947830c529b",
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "file": "wm/include/picture_in_picture_controller.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 54,
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 62,
+        "focus_line": 54,
+        "start_line": 46,
+        "text": "  46:     std::string GetPiPNavigationId() const override;\n  47:     \n  48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  49:     {\n  50:         return mainWindowXComponentController_;\n  51:     }\n  52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  53:     {\n  54:         mainWindowXComponentController_ = controller;\n  55:     }\n  56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  58: \n  59: protected:\n  60:     WMErrorResult CreatePictureInPictureWindow(StartPipType startType) override;\n  61:     void UpdateWinRectByComponent() override;\n  62:     void UpdatePiPSourceRect() const override;"
+      },
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "source_sha256_verified": true,
+      "symbol": "mainWindowXComponentController_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d"
+    },
+    {
+      "assessment": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3b7de515ce92c047",
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 53,
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 61,
+        "focus_line": 53,
+        "start_line": 45,
+        "text": "  45:     ani_ref GetANICustomNodeController() override;\n  46:     ani_ref GetANITypeNode() const override;\n  47:     bool IsTypeNodeEnabled() const override;\n  48:     bool IsPullPiPAndHandleNavigation();\n  49:     std::string GetPiPNavigationId() const override;\n  50: \n  51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  52:     {\n  53:         return mainWindowXComponentController_;\n  54:     }\n  55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  56:     {\n  57:         mainWindowXComponentController_ = controller;\n  58:     }\n  59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }"
+      },
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "source_sha256_verified": true,
+      "symbol": "mainWindowXComponentController_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81"
+    },
+    {
+      "assessment": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8aa8bf0d35097509",
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 57,
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 65,
+        "focus_line": 57,
+        "start_line": 49,
+        "text": "  49:     std::string GetPiPNavigationId() const override;\n  50: \n  51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n  52:     {\n  53:         return mainWindowXComponentController_;\n  54:     }\n  55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n  56:     {\n  57:         mainWindowXComponentController_ = controller;\n  58:     }\n  59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n  60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n  61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }\n  62: \n  63: protected:\n  64:     sptr<PipOptionAni> pipOption_ = nullptr;\n  65:     ani_vm* vm_ = nullptr;"
+      },
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "source_sha256_verified": true,
+      "symbol": "mainWindowXComponentController_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c"
+    },
+    {
+      "assessment": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:182861cbf5065462",
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 141,
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 149,
+        "focus_line": 141,
+        "start_line": 133,
+        "text": " 133:     inline const Rect& GetWindowRect() const { return windowRect_; }\n 134:     inline void SetWindowRect(const Rect& rect) { windowRect_ = rect; }\n 135:     inline bool GetIsAutoStartEnabled() const { return isAutoStartEnabled_; }\n 136:     inline void SetIsAutoStartEnabled(bool enable) { isAutoStartEnabled_ = enable; }\n 137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n 138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n 139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n 140:     {\n 141:         return pipXComponentController_;\n 142:     }\n 143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n 144:     {\n 145:         pipXComponentController_ = controller;\n 146:     }\n 147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n 148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n 149:     inline int32_t GetHandleId() const { return handleId_; }"
+      },
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "source_sha256_verified": true,
+      "symbol": "pipXComponentController_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652"
+    },
+    {
+      "assessment": "PictureInPicture controller owner members have getter/setter or direct read/write pairs without a repository-local lock. Direct member accesses also occur from source-rect, reset, and ext-controller paths. Thread/event-runner affinity is not established.",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a9e99a7e0a6f4146",
+      "evidence_locations": [
+        "wm/include/picture_in_picture_controller.h:49-56",
+        "wm/include/picture_in_picture_controller_ani.h:52-59",
+        "wm/include/picture_in_picture_controller_base.h:140-147",
+        "wm/src/picture_in_picture_controller.cpp:62-63,175,283-289,475-492",
+        "wm/src/picture_in_picture_controller_ani.cpp:85-86,169,276-282,482-500"
+      ],
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 145,
+      "minimal_reproduction": "Create two controller variants and race SetXComponentController/SetMainWindowXComponentController against the source-rect and ResetExtController readers under TSan; repeat with a mutex-protected owner.",
+      "missing_facts": [
+        "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+        "Feasible interleaving while a controller is shared between main and PIP windows.",
+        "Reachable product trigger and concrete CIA impact."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 153,
+        "focus_line": 145,
+        "start_line": 137,
+        "text": " 137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n 138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n 139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n 140:     {\n 141:         return pipXComponentController_;\n 142:     }\n 143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n 144:     {\n 145:         pipXComponentController_ = controller;\n 146:     }\n 147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n 148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n 149:     inline int32_t GetHandleId() const { return handleId_; }\n 150:     inline void SetHandleId(int32_t id) { handleId_ = id; }\n 151:     inline sptr<Window> GetMainWindow() const { return mainWindow_; }\n 152: \n 153:     // diffrent between normal and web"
+      },
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "source_sha256_verified": true,
+      "symbol": "pipXComponentController_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af"
+    },
+    {
+      "assessment": "StreamManager::streamListener_ is initialized in the constructor, read while creating client/server channels, and reassigned by SetStreamRecvListener without synchronization. The candidate constructor site is not itself a conflicting runtime access, but it participates in the same owner lifecycle.",
+      "column": 86,
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "communication_dsoftbus",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3a00ec7ac4a80075",
+      "evidence_locations": [
+        "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h:67,87-110",
+        "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.cpp:58-61,88-95,172-185"
+      ],
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "job_id": "8e96ef0ed3dc4b809efdb22e56746ecb",
+      "line": 67,
+      "minimal_reproduction": "Race SetStreamRecvListener with CreateStreamClientChannel/CreateStreamServerChannel in a controlled StreamManager harness under TSan, then repeat with a common mutex or immutable listener publication.",
+      "missing_facts": [
+        "Whether channel creation and SetStreamRecvListener can execute concurrently on one StreamManager.",
+        "Publication ordering between streamListener_, socketListener_, and the socket callback.",
+        "Reachable trigger and CIA consequence in the product."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/communication_dsoftbus",
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+      "review_scope": "plausible_unproven",
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 75,
+        "focus_line": 67,
+        "start_line": 59,
+        "text": "  59:         {\n  60:             listener_->OnRippleStats(data);\n  61:         }\n  62: \n  63:     private:\n  64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n  65:     };\n  66: \n  67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n  68:     StreamManager() = delete;\n  69:     virtual ~StreamManager() = default;\n  70: \n  71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n  72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n  73: \n  74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n  75:         std::pair<uint8_t*, uint32_t> sessionKey) override;"
+      },
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "source_sha256_verified": true,
+      "symbol": "streamListener_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 67,
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "update_updateservice",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8c59bff727467c96",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "job_id": "e91c15b566f24582b76caa9083ef598a",
+      "line": 27,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/update_updateservice",
+      "review_item_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 35,
+        "focus_line": 27,
+        "start_line": 19,
+        "text": "  19: #include <cstdint>\n  20: \n  21: #include \"time_utils_proxy.h\"\n  22: \n  23: namespace OHOS {\n  24: namespace UpdateEngine {\n  25: class StatusCache {\n  26: public:\n  27:     StatusCache(std::shared_ptr<TimeUtilsProxy> timeUtilsProxy) : timeUtilsProxy_(timeUtilsProxy) {}\n  28:     ~StatusCache() = default;\n  29: \n  30:     bool IsChecking();\n  31:     void SetIsChecking(bool isChecking);\n  32: \n  33: private:\n  34:     int64_t GetCurrentTime();\n  35: "
+      },
+      "source_git_blob_oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "source_sha256_verified": true,
+      "symbol": "timeUtilsProxy_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 86,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d8af1c4db4ad6579",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 115,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 123,
+        "focus_line": 115,
+        "start_line": 107,
+        "text": " 107: \n 108: private:\n 109:     int32_t sessionId_ = 0;\n 110:     std::shared_ptr<RequestAsyncContext> reqContext_ = nullptr;\n 111: };\n 112: \n 113: class AuthorizationResult : public Security::AccessToken::TokenCallbackStub {\n 114: public:\n 115:     explicit AuthorizationResult(const std::shared_ptr<RequestAsyncContext>& data) : data_(data) {}\n 116:     ~AuthorizationResult() override = default;\n 117:     void GrantResultsCallback(const std::vector<std::string>& permissions,\n 118:         const std::vector<int>& grantResults) override;\n 119: \n 120: private:\n 121:     std::shared_ptr<RequestAsyncContext> data_ = nullptr;\n 122: };\n 123: "
+      },
+      "source_git_blob_oid": "93c786e28ddd7dc390dbe6a2f24c784cb2f9a872",
+      "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+      "source_sha256_verified": true,
+      "symbol": "data_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a2e8ea87344f261f",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 51,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 59,
+        "focus_line": 51,
+        "start_line": 43,
+        "text": "  43:     bool releaseFlag = false;\n  44:     std::function<void(RetDataBool)> callbackRef = nullptr;\n  45: };\n  46: \n  47: struct RequestGlobalSwitchAsyncContextHandle {\n  48:     explicit RequestGlobalSwitchAsyncContextHandle(\n  49:         std::shared_ptr<RequestGlobalSwitchAsyncContext>& requestAsyncContext)\n  50:     {\n  51:         asyncContextPtr = requestAsyncContext;\n  52:     }\n  53: \n  54:     std::shared_ptr<RequestGlobalSwitchAsyncContext> asyncContextPtr;\n  55: };\n  56: \n  57: class SwitchOnSettingUICallback {\n  58: public:\n  59:     explicit SwitchOnSettingUICallback(const std::shared_ptr<RequestGlobalSwitchAsyncContext>& reqContext);"
+      },
+      "source_git_blob_oid": "5ee7e75ff720127386ef77cc515d979613ee81b5",
+      "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+      "source_sha256_verified": true,
+      "symbol": "asyncContextPtr",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:089c58a01b3a66a8",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 49,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 57,
+        "focus_line": 49,
+        "start_line": 41,
+        "text": "  41:     bool uiAbilityFlag = false;\n  42:     bool releaseFlag = false;\n  43:     std::function<void(RetDataCArrI32)> callbackRef =  nullptr;\n  44: };\n  45: \n  46: struct RequestOnSettingAsyncContextHandle {\n  47:     explicit RequestOnSettingAsyncContextHandle(std::shared_ptr<RequestPermOnSettingAsyncContext>& requestAsyncContext)\n  48:     {\n  49:         asyncContextPtr = requestAsyncContext;\n  50:     }\n  51: \n  52:     std::shared_ptr<RequestPermOnSettingAsyncContext> asyncContextPtr;\n  53: };\n  54: \n  55: class PermissonOnSettingUICallback {\n  56: public:\n  57:     explicit PermissonOnSettingUICallback(const std::shared_ptr<RequestPermOnSettingAsyncContext>& reqContext);"
+      },
+      "source_git_blob_oid": "5ac2150911a4e2cc107ce1d28f0553c93bbe0512",
+      "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+      "source_sha256_verified": true,
+      "symbol": "asyncContextPtr",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d9832942dc24a7fd",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 61,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 69,
+        "focus_line": 61,
+        "start_line": 53,
+        "text": "  53:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n  54: #endif\n  55:     int32_t contextType_ = static_cast<int32_t>(OPEN_PERMISSION_ON_SETTING);\n  56: };\n  57: \n  58: struct OpenOnSettingAsyncContextHandle {\n  59:     explicit OpenOnSettingAsyncContextHandle(std::shared_ptr<OpenPermOnSettingAsyncContext>& openAsyncContext)\n  60:     {\n  61:         asyncContextPtr = openAsyncContext;\n  62:     }\n  63: \n  64:     std::shared_ptr<OpenPermOnSettingAsyncContext> asyncContextPtr;\n  65: };\n  66: \n  67: class OpenOnSettingAsyncInstanceControl {\n  68:     public:\n  69:         static void AddCallbackByInstanceId(std::shared_ptr<OpenPermOnSettingAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "2c5c6dcf02cf1ae7e44ff7538055057ba4cf33f9",
+      "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+      "source_sha256_verified": true,
+      "symbol": "asyncContextPtr",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9f15e9ed288e908f",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 68,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 76,
+        "focus_line": 68,
+        "start_line": 60,
+        "text": "  60: #endif\n  61:     int32_t contextType_ = static_cast<int32_t>(REQUEST_GLOBAL_SWITCH_ON_SETTING);\n  62: };\n  63: \n  64: struct RequestGlobalSwitchAsyncContextHandle {\n  65:     explicit RequestGlobalSwitchAsyncContextHandle(\n  66:         std::shared_ptr<RequestGlobalSwitchAsyncContext>& requestAsyncContext)\n  67:     {\n  68:         asyncContextPtr = requestAsyncContext;\n  69:     }\n  70: \n  71:     std::shared_ptr<RequestGlobalSwitchAsyncContext> asyncContextPtr;\n  72: };\n  73: \n  74: class RequestGlobalSwitchAsyncInstanceControl {\n  75:     public:\n  76:         static void AddCallbackByInstanceId(std::shared_ptr<RequestGlobalSwitchAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "bc968e7ce325261154cc42d57134516a94ae454d",
+      "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+      "source_sha256_verified": true,
+      "symbol": "asyncContextPtr",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3b5c55b6b40da278",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 72,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 80,
+        "focus_line": 72,
+        "start_line": 64,
+        "text": "  64:     {\n  65:         result.errorCode = errcode;\n  66:     }\n  67: };\n  68: \n  69: struct RequestAsyncContextHandle {\n  70:     explicit RequestAsyncContextHandle(std::shared_ptr<RequestAsyncContext>& requestAsyncContext)\n  71:     {\n  72:         asyncContextPtr = requestAsyncContext;\n  73:     }\n  74: \n  75:     std::shared_ptr<RequestAsyncContext> asyncContextPtr;\n  76: };\n  77: \n  78: class RequestAsyncInstanceControl {\n  79:     public:\n  80:         static void AddCallbackByInstanceId(std::shared_ptr<RequestAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "source_sha256_verified": true,
+      "symbol": "asyncContextPtr",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 71,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6b05864947153293",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 117,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 125,
+        "focus_line": 117,
+        "start_line": 109,
+        "text": " 109:     std::vector<int32_t> grantResults;\n 110:     std::vector<int32_t> errorReasons;\n 111:     std::vector<bool> dialogShownResults;\n 112:     std::shared_ptr<RequestAsyncContext> data = nullptr;\n 113: };\n 114: \n 115: class AuthorizationResult : public Security::AccessToken::TokenCallbackStub {\n 116: public:\n 117:     AuthorizationResult(std::shared_ptr<RequestAsyncContext>& data) : data_(data) {}\n 118:     ~AuthorizationResult() override = default;\n 119: \n 120:     void GrantResultsCallback(const std::vector<std::string>& permissionList,\n 121:         const std::vector<int>& grantResults) override;\n 122:     void WindowShownCallback() override;\n 123: \n 124: private:\n 125:     std::shared_ptr<RequestAsyncContext> data_ = nullptr;"
+      },
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "source_sha256_verified": true,
+      "symbol": "data_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4"
+    },
+    {
+      "assessment": "The reported site is constructor/member initialization or a stable-owner read. Repository-wide exact symbol search did not show a later owner reassignment for the same object. This excludes the observed non-atomic shared_ptr owner write/read race shape, but does not prove pointee thread safety.",
+      "column": 9,
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "security_access_token",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:104a194d0e487cc4",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "line": 63,
+      "minimal_reproduction": "Only needed if a later owner assignment or cross-thread pointee mutation is discovered.",
+      "missing_facts": [
+        "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/security_access_token",
+      "review_item_id": "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 71,
+        "focus_line": 63,
+        "start_line": 55,
+        "text": "  55:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n  56: #endif\n  57:     int32_t contextType_ = static_cast<int32_t>(REQUEST_PERMISSION_ON_SETTING);\n  58: };\n  59: \n  60: struct RequestOnSettingAsyncContextHandle {\n  61:     explicit RequestOnSettingAsyncContextHandle(std::shared_ptr<RequestPermOnSettingAsyncContext>& requestAsyncContext)\n  62:     {\n  63:         asyncContextPtr = requestAsyncContext;\n  64:     }\n  65: \n  66:     std::shared_ptr<RequestPermOnSettingAsyncContext> asyncContextPtr;\n  67: };\n  68: \n  69: class RequestOnSettingAsyncInstanceControl {\n  70:     public:\n  71:         static void AddCallbackByInstanceId(std::shared_ptr<RequestPermOnSettingAsyncContext>& asyncContext);"
+      },
+      "source_git_blob_oid": "7828aceaf6d50c98c2b70d49f7ea17bda654a982",
+      "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+      "source_sha256_verified": true,
+      "symbol": "asyncContextPtr",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495"
+    },
+    {
+      "assessment": "The diagnostic is under kvstoremock/external_inner_kit, which is non-production mock/support source and was admitted by the historical scope path rule. It is not a production component vulnerability.",
+      "column": 16,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "comparison_to_first_round": "consistent_refuted_scope",
+      "component": "distributeddatamgr_kv_store",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:afde9c16d899ceb8",
+      "evidence_locations": [
+        "kvstoremock/external_inner_kit/napi/include/extension_context.h:55-85"
+      ],
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "refuted",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "job_id": "f261748b7eff4144bab9646a6b00b607",
+      "line": 61,
+      "minimal_reproduction": "No vulnerability PoC. Retain as an unrelated/scope-control item and exclude from production scoring.",
+      "missing_facts": [
+        "No product fact is required to classify this specific item as out of production scope."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "not_applicable_out_of_scope"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "not_applicable_out_of_scope"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_item_id": "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-SCOPE-MOCK",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 69,
+        "focus_line": 61,
+        "start_line": 53,
+        "text": "  53: };\n  54: \n  55: class ExtensionContext : public ContextImpl {\n  56: public:\n  57:     ExtensionContext() = default;\n  58:     virtual ~ExtensionContext() = default;\n  59: \n  60:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n  61:         return abilityInfo_;\n  62:     }\n  63: \n  64:     void SetAbilityInfo(const std::shared_ptr<AppExecFwk::AbilityInfo> &abilityInfo) {\n  65:         abilityInfo_ = abilityInfo;\n  66:     }\n  67: \n  68:     using SelfType = ExtensionContext;\n  69:     static const size_t CONTEXT_TYPE_ID;"
+      },
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "source_sha256_verified": true,
+      "symbol": "abilityInfo_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427"
+    },
+    {
+      "assessment": "The diagnostic is under kvstoremock/external_inner_kit, which is non-production mock/support source and was admitted by the historical scope path rule. It is not a production component vulnerability.",
+      "column": 9,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "comparison_to_first_round": "consistent_refuted_scope",
+      "component": "distributeddatamgr_kv_store",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:565571f23fbc00e3",
+      "evidence_locations": [
+        "kvstoremock/external_inner_kit/napi/include/extension_context.h:55-85"
+      ],
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "refuted",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "job_id": "f261748b7eff4144bab9646a6b00b607",
+      "line": 65,
+      "minimal_reproduction": "No vulnerability PoC. Retain as an unrelated/scope-control item and exclude from production scoring.",
+      "missing_facts": [
+        "No product fact is required to classify this specific item as out of production scope."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "not_applicable_out_of_scope"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "not_applicable_out_of_scope"
+        }
+      ],
+      "operation": "write",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_item_id": "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-SCOPE-MOCK",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 73,
+        "focus_line": 65,
+        "start_line": 57,
+        "text": "  57:     ExtensionContext() = default;\n  58:     virtual ~ExtensionContext() = default;\n  59: \n  60:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n  61:         return abilityInfo_;\n  62:     }\n  63: \n  64:     void SetAbilityInfo(const std::shared_ptr<AppExecFwk::AbilityInfo> &abilityInfo) {\n  65:         abilityInfo_ = abilityInfo;\n  66:     }\n  67: \n  68:     using SelfType = ExtensionContext;\n  69:     static const size_t CONTEXT_TYPE_ID;\n  70: \n  71: protected:\n  72:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n  73: };"
+      },
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "source_sha256_verified": true,
+      "symbol": "abilityInfo_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5"
+    },
+    {
+      "assessment": "The diagnostic is under kvstoremock/external_inner_kit, which is non-production mock/support source and was admitted by the historical scope path rule. It is not a production component vulnerability.",
+      "column": 16,
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "comparison_to_first_round": "consistent_refuted_scope",
+      "component": "distributeddatamgr_kv_store",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:0176c25c2194b0d7",
+      "evidence_locations": [
+        "kvstoremock/external_inner_kit/napi/include/extension_context.h:55-85"
+      ],
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "refuted",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "job_id": "f261748b7eff4144bab9646a6b00b607",
+      "line": 81,
+      "minimal_reproduction": "No vulnerability PoC. Retain as an unrelated/scope-control item and exclude from production scoring.",
+      "missing_facts": [
+        "No product fact is required to classify this specific item as out of production scope."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "not_applicable_out_of_scope"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "not_applicable_out_of_scope"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "review_item_id": "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-SCOPE-MOCK",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 89,
+        "focus_line": 81,
+        "start_line": 73,
+        "text": "  73: };\n  74: \n  75: class AbilityContext : public Context {\n  76: public:\n  77:     AbilityContext() = default;\n  78:     virtual ~AbilityContext() = default;\n  79: \n  80:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n  81:         return abilityInfo_;\n  82:     }\n  83: \n  84: protected:\n  85:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n  86: };\n  87: \n  88: } // namespace AbilityRuntime\n  89: } // namespace OHOS"
+      },
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "source_sha256_verified": true,
+      "symbol": "abilityInfo_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ddc2f2c8ccefa542",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 220,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 228,
+        "focus_line": 220,
+        "start_line": 212,
+        "text": " 212:     std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n 213: \n 214:     // LCOV_EXCL_START\n 215:     bool Marshalling(Parcel& parcel) const override\n 216:     {\n 217:         if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n 218:             return false;\n 219:         }\n 220:         if (!parcel.WriteParcelable(animationConfig.get())) {\n 221:             return false;\n 222:         }\n 223:         return true;\n 224:     }\n 225:     // LCOV_EXCL_STOP\n 226: \n 227:     static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n 228:     {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_sha256_verified": true,
+      "symbol": "animationConfig",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:88adf81778a285a9",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 261,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 269,
+        "focus_line": 261,
+        "start_line": 253,
+        "text": " 253:      * @brief Whether application-defined window size limits are allowed to exceed system limits.\n 254:      */\n 255:     bool isWindowLimitsForcible = false;\n 256:     bool minimizeOnStart = false;\n 257: \n 258:     // LCOV_EXCL_START\n 259:     bool Marshalling(Parcel& parcel) const override\n 260:     {\n 261:         if (!parcel.WriteParcelable(animationParams.get())) {\n 262:             return false;\n 263:         }\n 264: \n 265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 266:             return false;\n 267:         }\n 268: \n 269:         bool hasNeedAnimation = (needAnimation != nullptr);"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_sha256_verified": true,
+      "symbol": "animationParams",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ed042de13472f105",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 265,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 273,
+        "focus_line": 265,
+        "start_line": 257,
+        "text": " 257: \n 258:     // LCOV_EXCL_START\n 259:     bool Marshalling(Parcel& parcel) const override\n 260:     {\n 261:         if (!parcel.WriteParcelable(animationParams.get())) {\n 262:             return false;\n 263:         }\n 264: \n 265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 266:             return false;\n 267:         }\n 268: \n 269:         bool hasNeedAnimation = (needAnimation != nullptr);\n 270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 271:             return false;\n 272:         }\n 273:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_sha256_verified": true,
+      "symbol": "animationSystemParams",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 52,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:506ce95217f58cdd",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 273,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 281,
+        "focus_line": 273,
+        "start_line": 265,
+        "text": " 265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 266:             return false;\n 267:         }\n 268: \n 269:         bool hasNeedAnimation = (needAnimation != nullptr);\n 270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 271:             return false;\n 272:         }\n 273:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n 274:             return false;\n 275:         }\n 276: \n 277:         if (!parcel.WriteBool(isWindowLimitsForcible)) {\n 278:             return false;\n 279:         }\n 280: \n 281:         if (!parcel.WriteBool(minimizeOnStart)) {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_sha256_verified": true,
+      "symbol": "needAnimation",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 54,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:36fc4a9919ef311c",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 289,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 297,
+        "focus_line": 289,
+        "start_line": 281,
+        "text": " 281:         if (!parcel.WriteBool(minimizeOnStart)) {\n 282:             return false;\n 283:         }\n 284: \n 285:         bool hasExcludeFromDock = (excludeFromDock != nullptr);\n 286:         if (!parcel.WriteBool(hasExcludeFromDock)) {\n 287:             return false;\n 288:         }\n 289:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 290:             return false;\n 291:         }\n 292: \n 293:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 294:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 295:             return false;\n 296:         }\n 297:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_sha256_verified": true,
+      "symbol": "excludeFromDock",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 56,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:da37107a72040100",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 297,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 305,
+        "focus_line": 297,
+        "start_line": 289,
+        "text": " 289:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 290:             return false;\n 291:         }\n 292: \n 293:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 294:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 295:             return false;\n 296:         }\n 297:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n 298:             return false;\n 299:         }\n 300:         return true;\n 301:     }\n 302:     // LCOV_EXCL_STOP\n 303: \n 304:     static WindowCreateParams* Unmarshalling(Parcel& parcel)\n 305:     {"
+      },
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_sha256_verified": true,
+      "symbol": "excludeFromRecent",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 22,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:efd72e030c5373be",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 32,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 40,
+        "focus_line": 32,
+        "start_line": 24,
+        "text": "  24: namespace OHOS {\n  25: namespace Rosen {\n  26: \n  27: class JsFloatViewListener : public IFvStateChangeObserver,\n  28:                             public IFvRectChangeObserver,\n  29:                             public IFvLimitsChangeObserver {\n  30: public:\n  31:     JsFloatViewListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n  32:         : env_(env), jsCallBack_(callback) {}\n  33:     ~JsFloatViewListener() override;\n  34:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n  35: \n  36:     void OnStateChange(const FloatViewState& state, const std::string& stopReason) override;\n  37:     void OnRectangleChange(const Rect& window, double scale, const std::string& reason) override;\n  38:     void OnLimitsChange(const FloatViewLimits& limits) override;\n  39: \n  40: private:"
+      },
+      "source_git_blob_oid": "8c6a9f3774155f25d1deb5f431faef5ca26f5f1f",
+      "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "source_sha256_verified": true,
+      "symbol": "jsCallBack_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 22,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2b72311e39c5ba9c",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 33,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 41,
+        "focus_line": 33,
+        "start_line": 25,
+        "text": "  25: \n  26: namespace OHOS {\n  27: namespace Rosen {\n  28: class JsFbWindowListener : public IFbLifeCycle,\n  29:                              public IFbClickObserver,\n  30:                              public IFbDestroyObserver {\n  31: public:\n  32:     JsFbWindowListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n  33:         : env_(env), jsCallBack_(callback) {}\n  34:     ~JsFbWindowListener() override;\n  35:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n  36:     void OnFloatingBallStart() override;\n  37:     void OnFloatingBallStop() override;\n  38: \n  39:     void OnClickEvent() override;\n  40:     void OnDestroyEvent(const std::string& reason) override;\n  41: "
+      },
+      "source_git_blob_oid": "26e4a721b1f126e33af5c9fba7c908702ea49dbd",
+      "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "source_sha256_verified": true,
+      "symbol": "jsCallBack_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 22,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c086123c9d41ee3e",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 32,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 40,
+        "focus_line": 32,
+        "start_line": 24,
+        "text": "  24: namespace Rosen {\n  25: class JsPiPWindowListener : public IPiPLifeCycle,\n  26:                             public IPiPActionObserver,\n  27:                             public IPiPControlObserver,\n  28:                             public IPiPWindowSize,\n  29:                             public IPiPActiveStatusObserver {\n  30: public:\n  31:     JsPiPWindowListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n  32:         : env_(env), jsCallBack_(callback) {}\n  33:     ~JsPiPWindowListener();\n  34:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n  35:     void OnPreparePictureInPictureStart(PiPStateChangeReason reason) override;\n  36:     void OnPictureInPictureStart(PiPStateChangeReason reason) override;\n  37:     void OnPreparePictureInPictureStop(PiPStateChangeReason reason) override;\n  38:     void OnPictureInPictureStop(PiPStateChangeReason reason) override;\n  39:     void OnPictureInPictureOperationError(int32_t errorCode) override;\n  40:     void OnRestoreUserInterface(PiPStateChangeReason reason) override;"
+      },
+      "source_git_blob_oid": "29db5c04bd534bcd029d702e8df7867573b6f35d",
+      "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "source_sha256_verified": true,
+      "symbol": "jsCallBack_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:71fa65325123bf8b",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "previewer/include/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 214,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 222,
+        "focus_line": 214,
+        "start_line": 206,
+        "text": " 206:     AnimationType animationType = AnimationType::FADE_IN_OUT;\n 207:     std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n 208: \n 209:     bool Marshalling(Parcel& parcel) const override\n 210:     {\n 211:         if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n 212:             return false;\n 213:         }\n 214:         if (!parcel.WriteParcelable(animationConfig.get())) {\n 215:             return false;\n 216:         }\n 217:         return true;\n 218:     }\n 219: \n 220:     static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n 221:     {\n 222:         StartAnimationSystemOptions* startAnimationSystemOptions = new StartAnimationSystemOptions();"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_sha256_verified": true,
+      "symbol": "animationConfig",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:893564c6130e3cac",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "previewer/include/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 253,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 261,
+        "focus_line": 253,
+        "start_line": 245,
+        "text": " 245:     /**\n 246:      * @brief Whether application-defined window size limits are allowed to exceed system limits.\n 247:      */\n 248:     bool isWindowLimitsForcible = false;\n 249:     bool minimizeOnStart = false;\n 250: \n 251:     bool Marshalling(Parcel& parcel) const override\n 252:     {\n 253:         if (!parcel.WriteParcelable(animationParams.get())) {\n 254:             return false;\n 255:         }\n 256: \n 257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 258:             return false;\n 259:         }\n 260: \n 261:         bool hasNeedAnimation = (needAnimation != nullptr);"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_sha256_verified": true,
+      "symbol": "animationParams",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 37,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d5124f0862a6e7c7",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "previewer/include/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 257,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 265,
+        "focus_line": 257,
+        "start_line": 249,
+        "text": " 249:     bool minimizeOnStart = false;\n 250: \n 251:     bool Marshalling(Parcel& parcel) const override\n 252:     {\n 253:         if (!parcel.WriteParcelable(animationParams.get())) {\n 254:             return false;\n 255:         }\n 256: \n 257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 258:             return false;\n 259:         }\n 260: \n 261:         bool hasNeedAnimation = (needAnimation != nullptr);\n 262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 263:             return false;\n 264:         }\n 265:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_sha256_verified": true,
+      "symbol": "animationSystemParams",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 52,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c51749733cd5316e",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "previewer/include/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 265,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 273,
+        "focus_line": 265,
+        "start_line": 257,
+        "text": " 257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n 258:             return false;\n 259:         }\n 260: \n 261:         bool hasNeedAnimation = (needAnimation != nullptr);\n 262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n 263:             return false;\n 264:         }\n 265:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n 266:             return false;\n 267:         }\n 268: \n 269:         if (!parcel.WriteBool(isWindowLimitsForcible)) {\n 270:             return false;\n 271:         }\n 272: \n 273:         if (!parcel.WriteBool(minimizeOnStart)) {"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_sha256_verified": true,
+      "symbol": "needAnimation",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 54,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6b315ae8b49a0cb4",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "previewer/include/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 281,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 289,
+        "focus_line": 281,
+        "start_line": 273,
+        "text": " 273:         if (!parcel.WriteBool(minimizeOnStart)) {\n 274:             return false;\n 275:         }\n 276: \n 277:         bool hasExcludeFromDock = (excludeFromDock != nullptr);\n 278:         if (!parcel.WriteBool(hasExcludeFromDock)) {\n 279:             return false;\n 280:         }\n 281:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 282:             return false;\n 283:         }\n 284: \n 285:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 286:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 287:             return false;\n 288:         }\n 289:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_sha256_verified": true,
+      "symbol": "excludeFromDock",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 56,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d2e5434b329e803c",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "previewer/include/wm_animation_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 289,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 297,
+        "focus_line": 289,
+        "start_line": 281,
+        "text": " 281:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n 282:             return false;\n 283:         }\n 284: \n 285:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n 286:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n 287:             return false;\n 288:         }\n 289:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n 290:             return false;\n 291:         }\n 292:         return true;\n 293:     }\n 294: \n 295:     static WindowCreateParams* Unmarshalling(Parcel& parcel)\n 296:     {\n 297:         auto windowCreateParams = std::make_unique<WindowCreateParams>();"
+      },
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_sha256_verified": true,
+      "symbol": "excludeFromRecent",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00"
+    },
+    {
+      "assessment": "Most hdrPixelMap_ accesses are protected by mutex_, including GetHDRResult and the HDR/error callbacks. However OnSurfaceCapture assigns hdrPixelMap_ = nullptr before FutureCall() takes mutex_, so that write can overlap the locked GetHDRResult read after a timeout. The owner pair remains unresolved.",
+      "column": 29,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "disagreement_keep_unknown",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:10da51cf3210aac9",
+      "evidence_locations": [
+        "utils/include/future.h:22-52",
+        "utils/include/surface_capture_future.h:30-58,66-95"
+      ],
+      "file": "utils/include/surface_capture_future.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 73,
+      "minimal_reproduction": "Race OnSurfaceCapture with GetHDRResult around timeout under TSan, then repeat after moving hdrPixelMap_ = nullptr inside the mutex.",
+      "missing_facts": [
+        "Whether an OnSurfaceCapture callback can overlap a timed-out GetHDRResult caller in product paths.",
+        "Controlled TSan evidence for the out-of-lock hdrPixelMap_ reset.",
+        "Product trigger and CIA consequence."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 81,
+        "focus_line": 73,
+        "start_line": 65,
+        "text": "  65:  \n  66:     std::vector<std::shared_ptr<Media::PixelMap>> GetHDRResult(long timeOut)\n  67:     {\n  68:         std::unique_lock <std::mutex> lock(mutex_);\n  69:         if (!DmUtils::safe_wait_for(conditionVariable_, lock,\n  70:             std::chrono::milliseconds(timeOut), [this] { return IsReady(); })) {\n  71:             TLOGE(WmsLogTag::DEFAULT, \"wait for %{public}ld, timeout.\", timeOut);\n  72:         }\n  73:         return { pixelMap_, hdrPixelMap_ };\n  74:     }\n  75: \n  76: protected:\n  77:     void Call(std::shared_ptr<Media::PixelMap> pixelmap) override\n  78:     {\n  79:         if (!flag_) {\n  80:             pixelMap_ = pixelmap;\n  81:             flag_ = true;"
+      },
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "source_sha256_verified": true,
+      "symbol": "hdrPixelMap_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1"
+    },
+    {
+      "assessment": "All observed pixelMap_ owner accesses are serialized by mutex_. OnSurfaceCaptureHDR and OnSurfaceCaptureWithErrorCode lock directly; OnSurfaceCapture writes through FutureCall(), and GetResult()/FetchResult() read while Future::GetResult holds the same mutex. This establishes synchronization for the non-atomic shared_ptr owner access set, not pointee safety.",
+      "column": 18,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "disagreement_resolved_safe",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9d52151c77a1c9f8",
+      "evidence_locations": [
+        "utils/include/future.h:22-52",
+        "utils/include/surface_capture_future.h:30-58,66-95"
+      ],
+      "file": "utils/include/surface_capture_future.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 73,
+      "minimal_reproduction": "Keep as a safe synchronization control and verify that concurrent callback/GetResult runs remain clean under TSan.",
+      "missing_facts": [
+        "Pointee PixelMap thread safety and product-level CIA impact are outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 81,
+        "focus_line": 73,
+        "start_line": 65,
+        "text": "  65:  \n  66:     std::vector<std::shared_ptr<Media::PixelMap>> GetHDRResult(long timeOut)\n  67:     {\n  68:         std::unique_lock <std::mutex> lock(mutex_);\n  69:         if (!DmUtils::safe_wait_for(conditionVariable_, lock,\n  70:             std::chrono::milliseconds(timeOut), [this] { return IsReady(); })) {\n  71:             TLOGE(WmsLogTag::DEFAULT, \"wait for %{public}ld, timeout.\", timeOut);\n  72:         }\n  73:         return { pixelMap_, hdrPixelMap_ };\n  74:     }\n  75: \n  76: protected:\n  77:     void Call(std::shared_ptr<Media::PixelMap> pixelmap) override\n  78:     {\n  79:         if (!flag_) {\n  80:             pixelMap_ = pixelmap;\n  81:             flag_ = true;"
+      },
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "source_sha256_verified": true,
+      "symbol": "pixelMap_",
+      "technical_suggestion": "safe",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881"
+    },
+    {
+      "assessment": "The reported IsEmpty() reads occur after ConvertFromJsValue initializes a newly created local UIEffectParams in the same NAPI flow. Parcel Unmarshalling also constructs a fresh object before publication. No same-object post-publication owner mutation pair was found, so these sites are unrelated to the observed shared_ptr owner race shape; this is not pointee safety proof.",
+      "column": 16,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c39b27e5285d882f",
+      "evidence_locations": [
+        "utils/include/ui_effect_controller_common.h:46-62",
+        "utils/src/ui_effect_controller_common.cpp:50-76,110-130",
+        "interfaces/kits/napi/window_runtime/window_napi/js_ui_effect_controller.cpp:125-130,173-192",
+        "window_scene/session/host/src/ui_effect_controller_stub.cpp:41-56"
+      ],
+      "file": "utils/include/ui_effect_controller_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 53,
+      "minimal_reproduction": "Only needed if a same UIEffectParams object is mutated after publication or concurrently parsed.",
+      "missing_facts": [
+        "Pointee Filter/VisualEffect thread safety is outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 61,
+        "focus_line": 53,
+        "start_line": 45,
+        "text": "  45: const int32_t UIEFFECT_INVALID_ID = -1;\n  46: class UIEffectParams : public Parcelable {\n  47: public:\n  48:     bool Marshalling(Parcel& parcel) const override;\n  49:     static UIEffectParams* Unmarshalling(Parcel& parcel);\n  50: \n  51:     bool IsEmpty()\n  52:     {\n  53:         return backgroundFilter_ == nullptr && effect_ == nullptr;\n  54:     }\n  55: \n  56:     napi_status ConvertToJsValue(napi_env env, napi_value& val);\n  57:     napi_status ConvertFromJsValue(napi_env env, napi_value val);\n  58: \n  59: private:\n  60:     std::shared_ptr<Filter> backgroundFilter_ = nullptr;\n  61:     std::shared_ptr<VisualEffect> effect_ = nullptr;"
+      },
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "source_sha256_verified": true,
+      "symbol": "backgroundFilter_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a"
+    },
+    {
+      "assessment": "The reported IsEmpty() reads occur after ConvertFromJsValue initializes a newly created local UIEffectParams in the same NAPI flow. Parcel Unmarshalling also constructs a fresh object before publication. No same-object post-publication owner mutation pair was found, so these sites are unrelated to the observed shared_ptr owner race shape; this is not pointee safety proof.",
+      "column": 48,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ef9b55edb54ffcea",
+      "evidence_locations": [
+        "utils/include/ui_effect_controller_common.h:46-62",
+        "utils/src/ui_effect_controller_common.cpp:50-76,110-130",
+        "interfaces/kits/napi/window_runtime/window_napi/js_ui_effect_controller.cpp:125-130,173-192",
+        "window_scene/session/host/src/ui_effect_controller_stub.cpp:41-56"
+      ],
+      "file": "utils/include/ui_effect_controller_common.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 53,
+      "minimal_reproduction": "Only needed if a same UIEffectParams object is mutated after publication or concurrently parsed.",
+      "missing_facts": [
+        "Pointee Filter/VisualEffect thread safety is outside this owner-race disposition."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 61,
+        "focus_line": 53,
+        "start_line": 45,
+        "text": "  45: const int32_t UIEFFECT_INVALID_ID = -1;\n  46: class UIEffectParams : public Parcelable {\n  47: public:\n  48:     bool Marshalling(Parcel& parcel) const override;\n  49:     static UIEffectParams* Unmarshalling(Parcel& parcel);\n  50: \n  51:     bool IsEmpty()\n  52:     {\n  53:         return backgroundFilter_ == nullptr && effect_ == nullptr;\n  54:     }\n  55: \n  56:     napi_status ConvertToJsValue(napi_env env, napi_value& val);\n  57:     napi_status ConvertFromJsValue(napi_env env, napi_value val);\n  58: \n  59: private:\n  60:     std::shared_ptr<Filter> backgroundFilter_ = nullptr;\n  61:     std::shared_ptr<VisualEffect> effect_ = nullptr;"
+      },
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "source_sha256_verified": true,
+      "symbol": "effect_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 9,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4d4fc419b2328830",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "wmserver/include/drag_controller.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 68,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 76,
+        "focus_line": 68,
+        "start_line": 60,
+        "text": "  60: \n  61: /*\n  62:  * MoveDragController is the class which is used to handle move or drag floating window\n  63:  */\n  64: class MoveDragController : public RefBase {\n  65: public:\n  66:     MoveDragController() : windowProperty_(new WindowProperty()), moveDragProperty_(new MoveDragProperty())\n  67:     {\n  68:         vsyncCallback_->onCallback =\n  69:             [this](int64_t timeStamp, int64_t _) { this->OnReceiveVsync(timeStamp); };\n  70:     }\n  71:     ~MoveDragController() = default;\n  72: \n  73:     bool Init();\n  74:     void Stop();\n  75:     void HandleReadyToMoveOrDrag(uint32_t windowId, sptr<WindowProperty>& windowProperty,\n  76:         sptr<MoveDragProperty>& moveDragProperty);"
+      },
+      "source_git_blob_oid": "d0fcbe8d24b7b47d83e2bf6fcf65954aac3e4428",
+      "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "source_sha256_verified": true,
+      "symbol": "vsyncCallback_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80"
+    },
+    {
+      "assessment": "Most reported accesses are constructor initialization or Marshalling reads paired with Unmarshalling writes to a newly allocated, distinct object. The lexical sites do not establish a same-object concurrent owner write/read pair.",
+      "column": 64,
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "comparison_to_first_round": "consistent_non_vulnerability",
+      "component": "window_window_manager",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d31f8237b87d720d",
+      "evidence_locations": [
+        "See the per-item source context generated from the pinned Git blob."
+      ],
+      "file": "wmserver/include/window_common_event.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "likely_false_positive",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "line": 41,
+      "minimal_reproduction": "Only needed if a same-object owner mutation path is found.",
+      "missing_facts": [
+        "Pointee behavior and broader object lifecycle are not safety proof."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "normal",
+      "profile_id": "light-ast",
+      "repository": "openharmony/window_window_manager",
+      "review_item_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 49,
+        "focus_line": 41,
+        "start_line": 33,
+        "text": "  33:     void UnSubscriberEvent();\n  34:     void OnReceiveEvent(const EventFwk::CommonEventData& data);\n  35: \n  36: private:\n  37:     class EventSubscriber : public EventFwk::CommonEventSubscriber {\n  38:     public:\n  39:         EventSubscriber(const EventFwk::CommonEventSubscribeInfo& subscriberInfo,\n  40:             const std::shared_ptr<WindowCommonEvent>& eventHandler)\n  41:             : EventFwk::CommonEventSubscriber(subscriberInfo), eventHandler_(eventHandler) {};\n  42:         ~EventSubscriber() = default;\n  43:         void OnReceiveEvent(const EventFwk::CommonEventData& data) override\n  44:         {\n  45:             eventHandler_->OnReceiveEvent(data);\n  46:         }\n  47:         \n  48:     private:\n  49:         std::shared_ptr<WindowCommonEvent> eventHandler_;"
+      },
+      "source_git_blob_oid": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "source_sha256_verified": true,
+      "symbol": "eventHandler_",
+      "technical_suggestion": "unrelated",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d"
+    },
+    {
+      "assessment": "StreamManager::streamListener_ is initialized in the constructor, read while creating client/server channels, and reassigned by SetStreamRecvListener without synchronization. The candidate constructor site is not itself a conflicting runtime access, but it participates in the same owner lifecycle.",
+      "column": 86,
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "comparison_to_first_round": "consistent_unresolved",
+      "component": "communication_dsoftbus",
+      "detector_id": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.4.0",
+      "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3a00ec7ac4a80075",
+      "evidence_locations": [
+        "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h:67,87-110",
+        "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.cpp:58-61,88-95,172-185"
+      ],
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "first_round_reviewer": "teammate-A / static review",
+      "first_round_status": "plausible_unproven",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "job_id": "8e96ef0ed3dc4b809efdb22e56746ecb",
+      "line": 67,
+      "minimal_reproduction": "Race SetStreamRecvListener with CreateStreamClientChannel/CreateStreamServerChannel in a controlled StreamManager harness under TSan, then repeat with a common mutex or immutable listener publication.",
+      "missing_facts": [
+        "Whether channel creation and SetStreamRecvListener can execute concurrently on one StreamManager.",
+        "Publication ordering between streamListener_, socketListener_, and the socket callback.",
+        "Reachable trigger and CIA consequence in the product."
+      ],
+      "obligations": [
+        {
+          "description": "Resolve all owner accesses and synchronization semantics.",
+          "kind": "synchronization_proof",
+          "status": "unknown"
+        },
+        {
+          "description": "Demonstrate or exclude a feasible concurrent access pair on the same object.",
+          "kind": "thread_interleaving",
+          "status": "unknown"
+        },
+        {
+          "description": "Establish the real build, template/macro and component execution context.",
+          "kind": "product_build_context",
+          "status": "unknown"
+        },
+        {
+          "description": "Verify reachable trigger and concrete CIA impact independently.",
+          "kind": "security_impact",
+          "status": "unknown"
+        }
+      ],
+      "operation": "read",
+      "priority": "high",
+      "profile_id": "light-ast",
+      "repository": "openharmony/communication_dsoftbus",
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout",
+      "review_scope": "holdout",
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "source_context": {
+        "end_line": 75,
+        "focus_line": 67,
+        "start_line": 59,
+        "text": "  59:         {\n  60:             listener_->OnRippleStats(data);\n  61:         }\n  62: \n  63:     private:\n  64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n  65:     };\n  66: \n  67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n  68:     StreamManager() = delete;\n  69:     virtual ~StreamManager() = default;\n  70: \n  71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n  72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n  73: \n  74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n  75:         std::pair<uint8_t*, uint32_t> sessionKey) override;"
+      },
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "source_sha256_verified": true,
+      "symbol": "streamListener_",
+      "technical_suggestion": "unknown",
+      "truth_signoff_status": "pending_independent_reviewer",
+      "validated_vulnerability": 0,
+      "workbench_candidate_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7"
+    }
+  ],
+  "schema_version": 1,
+  "scope": {
+    "holdout_items": 34,
+    "overlap_candidate_ids": [
+      "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7"
+    ],
+    "plausible_unproven_items": 11,
+    "review_items": 45,
+    "unique_candidates": 44
+  },
+  "surface_symbol_overrides": {
+    "hdrPixelMap_": {
+      "evidence_locations": [
+        "utils/include/future.h:22-52",
+        "utils/include/surface_capture_future.h:30-58,66-95"
+      ],
+      "minimal_reproduction": "Race OnSurfaceCapture with GetHDRResult around timeout under TSan, then repeat after moving hdrPixelMap_ = nullptr inside the mutex.",
+      "missing_facts": [
+        "Whether an OnSurfaceCapture callback can overlap a timed-out GetHDRResult caller in product paths.",
+        "Controlled TSan evidence for the out-of-lock hdrPixelMap_ reset.",
+        "Product trigger and CIA consequence."
+      ],
+      "priority": "high",
+      "summary": "Most hdrPixelMap_ accesses are protected by mutex_, including GetHDRResult and the HDR/error callbacks. However OnSurfaceCapture assigns hdrPixelMap_ = nullptr before FutureCall() takes mutex_, so that write can overlap the locked GetHDRResult read after a timeout. The owner pair remains unresolved.",
+      "technical_suggestion": "unknown"
+    },
+    "pixelMap_": {
+      "evidence_locations": [
+        "utils/include/future.h:22-52",
+        "utils/include/surface_capture_future.h:30-58,66-95"
+      ],
+      "minimal_reproduction": "Keep as a safe synchronization control and verify that concurrent callback/GetResult runs remain clean under TSan.",
+      "missing_facts": [
+        "Pointee PixelMap thread safety and product-level CIA impact are outside this owner-race disposition."
+      ],
+      "priority": "normal",
+      "summary": "All observed pixelMap_ owner accesses are serialized by mutex_. OnSurfaceCaptureHDR and OnSurfaceCaptureWithErrorCode lock directly; OnSurfaceCapture writes through FutureCall(), and GetResult()/FetchResult() read while Future::GetResult holds the same mutex. This establishes synchronization for the non-atomic shared_ptr owner access set, not pointee safety.",
+      "technical_suggestion": "safe"
+    }
+  },
+  "technical_suggestion_counts": {
+    "safe": 1,
+    "unknown": 13,
+    "unrelated": 31
+  },
+  "validated_vulnerability": 0,
+  "window_overrides": {
+    "utils/include/ui_effect_controller_common.h": {
+      "evidence_locations": [
+        "utils/include/ui_effect_controller_common.h:46-62",
+        "utils/src/ui_effect_controller_common.cpp:50-76,110-130",
+        "interfaces/kits/napi/window_runtime/window_napi/js_ui_effect_controller.cpp:125-130,173-192",
+        "window_scene/session/host/src/ui_effect_controller_stub.cpp:41-56"
+      ],
+      "minimal_reproduction": "Only needed if a same UIEffectParams object is mutated after publication or concurrently parsed.",
+      "missing_facts": [
+        "Pointee Filter/VisualEffect thread safety is outside this owner-race disposition."
+      ],
+      "priority": "normal",
+      "summary": "The reported IsEmpty() reads occur after ConvertFromJsValue initializes a newly created local UIEffectParams in the same NAPI flow. Parcel Unmarshalling also constructs a fresh object before publication. No same-object post-publication owner mutation pair was found, so these sites are unrelated to the observed shared_ptr owner race shape; this is not pointee safety proof.",
+      "technical_suggestion": "unrelated"
+    }
+  }
+}

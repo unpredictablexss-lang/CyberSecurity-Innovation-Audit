@@ -1,2 +1,5 @@
 # Nested unified-diff fixtures use a single-space context line for empty C++ lines.
 *.patch whitespace=-trailing-space
+# Generated review packets quote source lines whose whitespace is part of the evidence.
+docs/reviews/** whitespace=-trailing-space
+research/evidence/** whitespace=-trailing-space

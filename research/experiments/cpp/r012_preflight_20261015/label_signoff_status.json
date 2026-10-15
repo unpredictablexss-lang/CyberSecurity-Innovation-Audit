@@ -1,0 +1,3840 @@
+{
+  "kind": "ohscanner.a_line.r012_label_signoff_status",
+  "schema_version": 1,
+  "generated_date": "2026-10-15",
+  "generated_timezone": "Asia/Shanghai",
+  "p5a_status": {
+    "status": "not_completed",
+    "independent_review": false,
+    "blind_review": false,
+    "required_next_reviewer": "a reviewer who did not perform the first-round candidate adjudication",
+    "reason": "The current A-line execution participated in the first-round review workflow and had already seen aggregate labels. This artifact is a technical supplement and disagreement register, not final truth signoff.",
+    "completed_signatures": 0,
+    "pending_signatures": 45,
+    "input_set_creation_allowed": false,
+    "split_freeze_allowed": false
+  },
+  "counts": {
+    "review_items": 45,
+    "unique_candidates": 44,
+    "plausible_unproven_review_items": 11,
+    "holdout_review_items": 34,
+    "overlapping_candidates": 1,
+    "signed_independent_truth_labels": 0,
+    "pending_independent_truth_labels": 45
+  },
+  "non_truth_technical_suggestion_counts": {
+    "safe": 1,
+    "unrelated": 31,
+    "unknown": 13,
+    "note": "These are scoped technical suggestions, not independent truth labels."
+  },
+  "items": [
+    {
+      "review_item_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b:plausible",
+      "blind_item_id": "7c0cc08d2a792c8c",
+      "workbench_candidate_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+        "line": 37,
+        "column": 16,
+        "symbol": "ptrChannel_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-REMOTE-CHANNEL",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Exact thread/event-runner ownership for NotifyDeviceOnline, GetExecutorChannel, and command execution.",
+          "A happens-before proof or a controlled race/fixed run for ptrChannel_ publication and reset.",
+          "Real product entry, privilege boundary, trigger, and CIA consequence."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427:holdout",
+      "blind_item_id": "109e777bac47451e",
+      "workbench_candidate_id": "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+        "line": 61,
+        "column": 16,
+        "symbol": "abilityInfo_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-SCOPE-MOCK",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "No product fact is required to classify this specific item as out of production scope."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c:holdout",
+      "blind_item_id": "0c076a622b333f8d",
+      "workbench_candidate_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "previewer/include/wm_animation_common.h",
+        "line": 281,
+        "column": 54,
+        "symbol": "excludeFromDock"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81:plausible",
+      "blind_item_id": "262e8786de8d4855",
+      "workbench_candidate_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wm/include/picture_in_picture_controller_ani.h",
+        "line": 53,
+        "column": 16,
+        "symbol": "mainWindowXComponentController_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-PIP-CONTROLLERS",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+          "Feasible interleaving while a controller is shared between main and PIP windows.",
+          "Reachable product trigger and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710:holdout",
+      "blind_item_id": "28f5d974aafabd67",
+      "workbench_candidate_id": "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "2c5c6dcf02cf1ae7e44ff7538055057ba4cf33f9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+        "line": 61,
+        "column": 9,
+        "symbol": "asyncContextPtr"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00:holdout",
+      "blind_item_id": "bc7c8154a71b4ae2",
+      "workbench_candidate_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "previewer/include/wm_animation_common.h",
+        "line": 289,
+        "column": 56,
+        "symbol": "excludeFromRecent"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout",
+      "blind_item_id": "9b3f9c97a527cc4e",
+      "workbench_candidate_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/communication_dsoftbus",
+        "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+        "tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+        "line": 67,
+        "column": 86,
+        "symbol": "streamListener_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-STREAM-LISTENER",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether channel creation and SetStreamRecvListener can execute concurrently on one StreamManager.",
+          "Publication ordering between streamListener_, socketListener_, and the socket callback.",
+          "Reachable trigger and CIA consequence in the product."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+      "blind_item_id": "8523ddac356a47a3",
+      "workbench_candidate_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/communication_dsoftbus",
+        "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+        "tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+        "line": 67,
+        "column": 86,
+        "symbol": "streamListener_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-STREAM-LISTENER",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether channel creation and SetStreamRecvListener can execute concurrently on one StreamManager.",
+          "Publication ordering between streamListener_, socketListener_, and the socket callback.",
+          "Reachable trigger and CIA consequence in the product."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4:holdout",
+      "blind_item_id": "0984ba53e4891550",
+      "workbench_candidate_id": "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+        "line": 117,
+        "column": 71,
+        "symbol": "data_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598:holdout",
+      "blind_item_id": "2933d6f08739598b",
+      "workbench_candidate_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "26e4a721b1f126e33af5c9fba7c908702ea49dbd",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+        "line": 33,
+        "column": 22,
+        "symbol": "jsCallBack_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122:holdout",
+      "blind_item_id": "0dcfabb07e3a819e",
+      "workbench_candidate_id": "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "bc968e7ce325261154cc42d57134516a94ae454d",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+        "line": 68,
+        "column": 9,
+        "symbol": "asyncContextPtr"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679:holdout",
+      "blind_item_id": "11a9e51881bba4a3",
+      "workbench_candidate_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/update_updateservice",
+        "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+        "tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "services/core/ability/status_cache/include/status_cache.h",
+        "line": 27,
+        "column": 67,
+        "symbol": "timeUtilsProxy_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc:holdout",
+      "blind_item_id": "addd5418e89eb1f1",
+      "workbench_candidate_id": "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+        "line": 72,
+        "column": 9,
+        "symbol": "asyncContextPtr"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff:holdout",
+      "blind_item_id": "00c8ae87a8576190",
+      "workbench_candidate_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "29db5c04bd534bcd029d702e8df7867573b6f35d",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+        "line": 32,
+        "column": 22,
+        "symbol": "jsCallBack_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba:holdout",
+      "blind_item_id": "8bf2c12c014dda78",
+      "workbench_candidate_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "line": 220,
+        "column": 37,
+        "symbol": "animationConfig"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde:holdout",
+      "blind_item_id": "9428dad22daecdb4",
+      "workbench_candidate_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "previewer/include/wm_animation_common.h",
+        "line": 265,
+        "column": 52,
+        "symbol": "needAnimation"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20:holdout",
+      "blind_item_id": "43861dc7e550047d",
+      "workbench_candidate_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "line": 297,
+        "column": 56,
+        "symbol": "excludeFromRecent"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d:holdout",
+      "blind_item_id": "9c78273d5197f6b0",
+      "workbench_candidate_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wmserver/include/window_common_event.h",
+        "line": 41,
+        "column": 64,
+        "symbol": "eventHandler_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701:holdout",
+      "blind_item_id": "2fd1e3c72dcb88d7",
+      "workbench_candidate_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "previewer/include/wm_animation_common.h",
+        "line": 214,
+        "column": 37,
+        "symbol": "animationConfig"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b:plausible",
+      "blind_item_id": "2c4b4625bf41f268",
+      "workbench_candidate_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+        "line": 41,
+        "column": 9,
+        "symbol": "ptrChannel_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-REMOTE-CHANNEL",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Exact thread/event-runner ownership for NotifyDeviceOnline, GetExecutorChannel, and command execution.",
+          "A happens-before proof or a controlled race/fixed run for ptrChannel_ publication and reset.",
+          "Real product entry, privilege boundary, trigger, and CIA consequence."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c:plausible",
+      "blind_item_id": "189d9dc2fec1ba7c",
+      "workbench_candidate_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wm/include/picture_in_picture_controller_ani.h",
+        "line": 57,
+        "column": 9,
+        "symbol": "mainWindowXComponentController_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-PIP-CONTROLLERS",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+          "Feasible interleaving while a controller is shared between main and PIP windows.",
+          "Reachable product trigger and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652:plausible",
+      "blind_item_id": "29c57a4203eeb950",
+      "workbench_candidate_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wm/include/picture_in_picture_controller_base.h",
+        "line": 141,
+        "column": 16,
+        "symbol": "pipXComponentController_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-PIP-CONTROLLERS",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+          "Feasible interleaving while a controller is shared between main and PIP windows.",
+          "Reachable product trigger and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef:plausible",
+      "blind_item_id": "a434fff861916fd3",
+      "workbench_candidate_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "frameworks/common/js_proxy.h",
+        "line": 37,
+        "column": 9,
+        "symbol": "instance_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-JSPROXY",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "NAPI execute/complete thread affinity and callback queue ordering for each JSProxy subtype.",
+          "Whether SetInstance(nullptr) can overlap a queued GetInstance operation.",
+          "Product entry, attacker control, and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c:plausible",
+      "blind_item_id": "42a9712edb1f3512",
+      "workbench_candidate_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "frameworks/common/js_proxy.h",
+        "line": 42,
+        "column": 16,
+        "symbol": "instance_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-JSPROXY",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "NAPI execute/complete thread affinity and callback queue ordering for each JSProxy subtype.",
+          "Whether SetInstance(nullptr) can overlap a queued GetInstance operation.",
+          "Product entry, attacker control, and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9:holdout",
+      "blind_item_id": "cacae956a5a61860",
+      "workbench_candidate_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "utils/include/ui_effect_controller_common.h",
+        "line": 53,
+        "column": 48,
+        "symbol": "effect_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee Filter/VisualEffect thread safety is outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e:holdout",
+      "blind_item_id": "18c96f591a6dca1e",
+      "workbench_candidate_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "previewer/include/wm_animation_common.h",
+        "line": 257,
+        "column": 37,
+        "symbol": "animationSystemParams"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d:plausible",
+      "blind_item_id": "8bc53a1a1abb0b3c",
+      "workbench_candidate_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wm/include/picture_in_picture_controller.h",
+        "line": 54,
+        "column": 9,
+        "symbol": "mainWindowXComponentController_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-PIP-CONTROLLERS",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+          "Feasible interleaving while a controller is shared between main and PIP windows.",
+          "Reachable product trigger and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881:holdout",
+      "blind_item_id": "ea22cf515d93fc90",
+      "workbench_candidate_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "utils/include/surface_capture_future.h",
+        "line": 73,
+        "column": 18,
+        "symbol": "pixelMap_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "safe",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee PixelMap thread safety and product-level CIA impact are outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30:holdout",
+      "blind_item_id": "b578e1c0b3670993",
+      "workbench_candidate_id": "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "5ee7e75ff720127386ef77cc515d979613ee81b5",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+        "line": 51,
+        "column": 9,
+        "symbol": "asyncContextPtr"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af:plausible",
+      "blind_item_id": "72b468b6e62a3bfc",
+      "workbench_candidate_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wm/include/picture_in_picture_controller_base.h",
+        "line": 145,
+        "column": 9,
+        "symbol": "pipXComponentController_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-PIP-CONTROLLERS",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+          "Feasible interleaving while a controller is shared between main and PIP windows.",
+          "Reachable product trigger and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84:holdout",
+      "blind_item_id": "03ac81fdf0dad858",
+      "workbench_candidate_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "line": 265,
+        "column": 37,
+        "symbol": "animationSystemParams"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a:holdout",
+      "blind_item_id": "0a21bb32264c7d75",
+      "workbench_candidate_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "line": 261,
+        "column": 37,
+        "symbol": "animationParams"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116:holdout",
+      "blind_item_id": "ce61b4591bfb3ad9",
+      "workbench_candidate_id": "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "5ac2150911a4e2cc107ce1d28f0553c93bbe0512",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+        "line": 49,
+        "column": 9,
+        "symbol": "asyncContextPtr"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80:holdout",
+      "blind_item_id": "5c64a5975b7d348e",
+      "workbench_candidate_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "d0fcbe8d24b7b47d83e2bf6fcf65954aac3e4428",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wmserver/include/drag_controller.h",
+        "line": 68,
+        "column": 9,
+        "symbol": "vsyncCallback_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a:holdout",
+      "blind_item_id": "1fae182b80e03b31",
+      "workbench_candidate_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "utils/include/ui_effect_controller_common.h",
+        "line": 53,
+        "column": 16,
+        "symbol": "backgroundFilter_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee Filter/VisualEffect thread safety is outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d:holdout",
+      "blind_item_id": "475c88d0bbd639f7",
+      "workbench_candidate_id": "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+        "line": 81,
+        "column": 16,
+        "symbol": "abilityInfo_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-SCOPE-MOCK",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "No product fact is required to classify this specific item as out of production scope."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee:holdout",
+      "blind_item_id": "bffe538666df990b",
+      "workbench_candidate_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "8c6a9f3774155f25d1deb5f431faef5ca26f5f1f",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+        "line": 32,
+        "column": 22,
+        "symbol": "jsCallBack_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6:holdout",
+      "blind_item_id": "6dbe3a1c389d9083",
+      "workbench_candidate_id": "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "93c786e28ddd7dc390dbe6a2f24c784cb2f9a872",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+        "line": 115,
+        "column": 86,
+        "symbol": "data_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8:plausible",
+      "blind_item_id": "9a7da68327154c5f",
+      "workbench_candidate_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8",
+      "review_scope": "plausible_unproven",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "wm/include/picture_in_picture_controller.h",
+        "line": 50,
+        "column": 16,
+        "symbol": "mainWindowXComponentController_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-PIP-CONTROLLERS",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether setters run on the same event runner as source-rect/reset/extension-controller readers.",
+          "Feasible interleaving while a controller is shared between main and PIP windows.",
+          "Reachable product trigger and concrete CIA impact."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495:holdout",
+      "blind_item_id": "99ce5dad55f7c1af",
+      "workbench_candidate_id": "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/security_access_token",
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "7828aceaf6d50c98c2b70d49f7ea17bda654a982",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+        "line": 63,
+        "column": 9,
+        "symbol": "asyncContextPtr"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-CONSTRUCTOR-NOISE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee internal thread safety and safe publication remain outside this owner-race disposition."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5:holdout",
+      "blind_item_id": "4d1c3c0f1eb52fed",
+      "workbench_candidate_id": "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+        "line": 65,
+        "column": 9,
+        "symbol": "abilityInfo_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-SCOPE-MOCK",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "No product fact is required to classify this specific item as out of production scope."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1:holdout",
+      "blind_item_id": "50d42b057f4213b2",
+      "workbench_candidate_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "utils/include/surface_capture_future.h",
+        "line": 73,
+        "column": 29,
+        "symbol": "hdrPixelMap_"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unknown",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Whether an OnSurfaceCapture callback can overlap a timed-out GetHDRResult caller in product paths.",
+          "Controlled TSan evidence for the out-of-lock hdrPixelMap_ reset.",
+          "Product trigger and CIA consequence."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785:holdout",
+      "blind_item_id": "216f43693c1ed53f",
+      "workbench_candidate_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "line": 273,
+        "column": 52,
+        "symbol": "needAnimation"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9:holdout",
+      "blind_item_id": "cc38ebb39a402845",
+      "workbench_candidate_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "line": 289,
+        "column": 54,
+        "symbol": "excludeFromDock"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    },
+    {
+      "review_item_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3:holdout",
+      "blind_item_id": "61fadc5b5d197135",
+      "workbench_candidate_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3",
+      "review_scope": "holdout",
+      "source_binding": {
+        "repository": "openharmony/window_window_manager",
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "parent_commit": "unknown_not_provided",
+        "fix_commit": "unknown_not_provided",
+        "parent_tree": "unknown_not_provided",
+        "fix_tree": "unknown_not_provided",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "parent_blob": "unknown_not_provided",
+        "fix_blob": "unknown_not_provided",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "parent_source_sha256": "unknown_not_provided",
+        "fix_source_sha256": "unknown_not_provided",
+        "source_sha256_verified": true,
+        "file": "previewer/include/wm_animation_common.h",
+        "line": 253,
+        "column": 37,
+        "symbol": "animationParams"
+      },
+      "detector_binding": {
+        "detector_id": "ohscanner.cpp.shared_ptr_race",
+        "detector_version": "0.4.0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "profile_id": "light-ast"
+      },
+      "grouping": {
+        "first_round_root_cause_group_id": "RC-WINDOW-SINGLE",
+        "root_cause_authority": "first_round_hypothesis_only_not_independent_truth",
+        "independent_root_cause_group_id": "unknown_pending_p5a_independent_signoff",
+        "patch_family_id": "unknown_pending_p5a_independent_signoff",
+        "split": "pending_p5a_independent_signoff",
+        "split_freeze_status": "blocked_by_p5a_gate"
+      },
+      "label_signoff": {
+        "final_label": "unknown",
+        "label_status": "pending_independent_reviewer",
+        "label_truth_source": "unknown_not_signed",
+        "signer": "unknown_not_signed",
+        "signed_at": "unknown_not_signed",
+        "sign": "unknown_not_signed",
+        "current_technical_suggestion": "unrelated",
+        "technical_suggestion_is_truth": false
+      },
+      "security_gate_truth": {
+        "entrypoint": "unknown",
+        "entry_truth_source": "unknown_not_signed",
+        "trigger_condition": "unknown",
+        "trigger_truth_source": "unknown_not_signed",
+        "privilege_boundary": "unknown",
+        "privilege_truth_source": "unknown_not_signed",
+        "cia_impact": "unknown",
+        "cia_truth_source": "unknown_not_signed",
+        "exclusion_reason": "unknown_not_signed"
+      },
+      "analysis_completeness": {
+        "parse_status": "unknown_not_enumerated_by_signed_manifest",
+        "build_context_status": "unknown_missing_or_unresolved",
+        "coverage_status": "unknown_not_frozen_for_r012",
+        "missing_facts": [
+          "Pointee behavior and broader object lifecycle are not safety proof."
+        ],
+        "limitations": [
+          "independent_review=false; another reviewer must sign final truth labels.",
+          "No Precision/Recall is computed before independent truth labels exist.",
+          "A technical suggestion of unrelated excludes the observed owner-race shape only; it is not a global safety claim.",
+          "A technical suggestion of safe is scoped to the observed shared_ptr owner access synchronization; it is not pointee or product safety proof.",
+          "A technical suggestion of unknown is not vulnerable or safe.",
+          "Product entry, privilege boundary, attacker control and CIA impact remain unproven for all items.",
+          "The fixed source repositories are external pinned Git objects and are not committed into this project."
+        ]
+      },
+      "retention": {
+        "must_retain": true,
+        "excluded": false,
+        "exclusion_reason": null,
+        "final_input_set_membership": "not_determined"
+      }
+    }
+  ]
+}

@@ -1,0 +1,415 @@
+{
+  "checks": {
+    "blind_item_count_45": true,
+    "blind_item_ids_unique": true,
+    "blind_packet_omits_review_labels": true,
+    "holdout_count_34": true,
+    "no_truth_signoff_claimed": true,
+    "plausible_unproven_count_11": true,
+    "precision_recall_not_computed": true,
+    "review_item_count_45": true,
+    "source_hash_checks_all_verified": true,
+    "source_head_and_tree_match_manifests": true,
+    "unique_candidate_count_44": true,
+    "validated_vulnerability_zero": true
+  },
+  "comparison_to_first_round_counts": {
+    "consistent_non_vulnerability": 28,
+    "consistent_refuted_scope": 3,
+    "consistent_unresolved": 12,
+    "disagreement_keep_unknown": 1,
+    "disagreement_resolved_safe": 1
+  },
+  "counts": {
+    "holdout_items": 34,
+    "plausible_unproven_items": 11,
+    "review_items": 45,
+    "source_hash_checks": 45,
+    "unique_candidates": 44
+  },
+  "generated_date": "2026-10-15",
+  "input_hashes": {
+    "holdout_manifest.json": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a",
+    "review_ledger.json": "6fc11cc43cd653cad449022ae16a3d5a2b110e353065d2ae53a13738f97f5404",
+    "root_cause_groups.json": "0e487a981df6733a9efc7d4f72119a44dde615bb1649e66590484eb06b964166",
+    "verification.json": "9efa73b1d0a916d6cee6c74d21bdd2caaceaee2ee6724be0bb7ef83107d1621f"
+  },
+  "kind": "cpp_shared_ptr_independent_review_supplement_verification",
+  "output_hashes": {
+    "blind_review_key.json": "78eefe54d9a27c27dcb0a31a16120108676d15a2c6a1d8e9aef5fb3c27d15edb",
+    "blind_review_packet.json": "2fd3164586e7afdb1fd27d1ef438100d23876b6164ffff191bd31ed6339c5eb4",
+    "blind_review_packet.md": "f86f1da903da871de9bb14bf80e157121c258a9a499cae276c1c58268486bfea",
+    "independent_signoff_template.md": "54efb204e44e9b9572f96421a63c9f9f660ebb6d51f3e4ccfdfc6b904947d692",
+    "review_supplement.json": "5ebce2b474d66382486c5000667a0cc281c426ec6bf05bcb49a526ce9a8b1029",
+    "review_supplement.md": "923cd2bcf2d96bc33953637a57a37b64c94134bf3f66f0228326b2a34c390f72"
+  },
+  "schema_version": 1,
+  "source_checks": [
+    {
+      "component": "security_access_token",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "review_item_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b:plausible",
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "review_item_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b:plausible",
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "verified": true
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "file": "frameworks/common/js_proxy.h",
+      "review_item_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef:plausible",
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "verified": true
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "file": "frameworks/common/js_proxy.h",
+      "review_item_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c:plausible",
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "review_item_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8:plausible",
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "review_item_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d:plausible",
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "review_item_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81:plausible",
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "review_item_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c:plausible",
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "review_item_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652:plausible",
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "review_item_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af:plausible",
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "verified": true
+    },
+    {
+      "component": "communication_dsoftbus",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "verified": true
+    },
+    {
+      "component": "update_updateservice",
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "review_item_id": "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679:holdout",
+      "source_git_blob_oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+      "review_item_id": "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6:holdout",
+      "source_git_blob_oid": "93c786e28ddd7dc390dbe6a2f24c784cb2f9a872",
+      "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+      "review_item_id": "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30:holdout",
+      "source_git_blob_oid": "5ee7e75ff720127386ef77cc515d979613ee81b5",
+      "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+      "review_item_id": "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116:holdout",
+      "source_git_blob_oid": "5ac2150911a4e2cc107ce1d28f0553c93bbe0512",
+      "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+      "review_item_id": "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710:holdout",
+      "source_git_blob_oid": "2c5c6dcf02cf1ae7e44ff7538055057ba4cf33f9",
+      "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+      "review_item_id": "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122:holdout",
+      "source_git_blob_oid": "bc968e7ce325261154cc42d57134516a94ae454d",
+      "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "review_item_id": "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc:holdout",
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "review_item_id": "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4:holdout",
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "verified": true
+    },
+    {
+      "component": "security_access_token",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+      "review_item_id": "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495:holdout",
+      "source_git_blob_oid": "7828aceaf6d50c98c2b70d49f7ea17bda654a982",
+      "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+      "verified": true
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "review_item_id": "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427:holdout",
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "verified": true
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "review_item_id": "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5:holdout",
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "verified": true
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "review_item_id": "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d:holdout",
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "review_item_id": "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba:holdout",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "review_item_id": "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a:holdout",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "review_item_id": "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84:holdout",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "review_item_id": "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785:holdout",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "review_item_id": "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9:holdout",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "review_item_id": "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20:holdout",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+      "review_item_id": "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee:holdout",
+      "source_git_blob_oid": "8c6a9f3774155f25d1deb5f431faef5ca26f5f1f",
+      "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+      "review_item_id": "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598:holdout",
+      "source_git_blob_oid": "26e4a721b1f126e33af5c9fba7c908702ea49dbd",
+      "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+      "review_item_id": "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff:holdout",
+      "source_git_blob_oid": "29db5c04bd534bcd029d702e8df7867573b6f35d",
+      "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "review_item_id": "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701:holdout",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "review_item_id": "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3:holdout",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "review_item_id": "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e:holdout",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "review_item_id": "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde:holdout",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "review_item_id": "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c:holdout",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "previewer/include/wm_animation_common.h",
+      "review_item_id": "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00:holdout",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "utils/include/surface_capture_future.h",
+      "review_item_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1:holdout",
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "utils/include/surface_capture_future.h",
+      "review_item_id": "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881:holdout",
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "review_item_id": "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a:holdout",
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "review_item_id": "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9:holdout",
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wmserver/include/drag_controller.h",
+      "review_item_id": "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80:holdout",
+      "source_git_blob_oid": "d0fcbe8d24b7b47d83e2bf6fcf65954aac3e4428",
+      "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "verified": true
+    },
+    {
+      "component": "window_window_manager",
+      "file": "wmserver/include/window_common_event.h",
+      "review_item_id": "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d:holdout",
+      "source_git_blob_oid": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "verified": true
+    },
+    {
+      "component": "communication_dsoftbus",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout",
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "verified": true
+    }
+  ],
+  "status": "passed",
+  "technical_suggestion_counts": {
+    "safe": 1,
+    "unknown": 13,
+    "unrelated": 31
+  }
+}

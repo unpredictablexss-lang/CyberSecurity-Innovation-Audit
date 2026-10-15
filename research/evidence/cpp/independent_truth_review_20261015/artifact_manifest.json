@@ -1,0 +1,34 @@
+{
+  "append_only": true,
+  "files": {
+    "research/evidence/cpp/independent_truth_review_20261015/group_truth_review.json": {
+      "bytes": 81142,
+      "sha256": "077fe7cc55af7bb4686876e87d5aa268c5cc7db25c85becf6a06a5142daae310"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/independent_truth_review.json": {
+      "bytes": 420761,
+      "sha256": "79856bef1e7efad3bbd8f7374b8dcb5661635062c3c44ae9ca3250cafdfafea7"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/independent_truth_review.md": {
+      "bytes": 99907,
+      "sha256": "0ac3fb991b10da183a86aa0386eb191ef61559bbead80bc961f3ea7163c7621c"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/truth_set_manifest.json": {
+      "bytes": 3948,
+      "sha256": "1f4666f39ddf7a043dc215b045d1d8dbc6153168bd4bcd2ce8d62609af9539c2"
+    },
+    "research/evidence/cpp/independent_truth_review_20261015/verification.json": {
+      "bytes": 2819,
+      "sha256": "fa9d249e884235205f2bb1d5fff861ed7cf9c0dae4812e27d73f96113bb6fa7a"
+    },
+    "research/evidence/cpp/review_20261014/independent_truth_review_append_20261015.jsonl": {
+      "bytes": 237347,
+      "sha256": "f1e3159a3f496163ddb8b535313ddc247c5f387dbf592fcd35a2645813a8724b"
+    }
+  },
+  "generated_date": "2026-10-15",
+  "historical_records_preserved": true,
+  "kind": "cpp_shared_ptr_independent_truth_review_artifact_manifest",
+  "review_stream": "research/evidence/cpp/review_20261014/independent_truth_review_append_20261015.jsonl",
+  "schema_version": 1
+}

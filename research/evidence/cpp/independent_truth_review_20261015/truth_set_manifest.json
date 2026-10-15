@@ -1,0 +1,89 @@
+{
+  "append_only": true,
+  "controlled_evidence": {
+    "fixed": "fixed_control_mutex and patched_atomic_minimal race/close_get_entry clean 3/3 each",
+    "jsproxy_poc_outcome": "stable_reproduced_and_patch_revalidated",
+    "jsproxy_poc_repeats": 3,
+    "jsproxy_test_command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc 'cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m unittest tests.test_shared_ptr_jsproxy_poc -q'",
+    "jsproxy_test_result": "8 tests, OK",
+    "positive": "vulnerable race and close_get_entry sanitizer_triggered 3/3 each",
+    "safe": "vulnerable single clean 1/1; surface pixelMap_ owner accesses covered by Future::mutex_",
+    "unrelated": "vulnerable unrelated clean 1/1; constructor/fresh-object/scope controls excluded from owner-race shape"
+  },
+  "controlled_mechanism_label_counts": {
+    "safe": 1,
+    "unknown": 11,
+    "unrelated": 31,
+    "vulnerable": 2
+  },
+  "eligible_for_metrics": false,
+  "generated_date": "2026-10-15",
+  "group_count": 37,
+  "holdout_count": 34,
+  "inputs": {
+    "blind_review_labels": {
+      "path": "research/evidence/cpp/independent_review_20261015/blind_review_labels_frozen_20261015.json",
+      "sha256": "21104d9b9827c2877482a73b3018c43dad9abbdf63020e2c2df35a3aae09acd3"
+    },
+    "holdout_manifest": {
+      "path": "research/evidence/cpp/review_20261014/holdout_manifest.json",
+      "sha256": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a"
+    },
+    "independent_comparison": {
+      "path": "research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.json",
+      "sha256": "408db60a66f2d86c83caec572e304fe5cd6085269422f1177e27e03f296be65f"
+    },
+    "review_ledger": {
+      "path": "research/evidence/cpp/review_20261014/review_ledger.json",
+      "sha256": "6fc11cc43cd653cad449022ae16a3d5a2b110e353065d2ae53a13738f97f5404"
+    },
+    "review_supplement": {
+      "path": "research/evidence/cpp/independent_review_20261015/review_supplement.json",
+      "sha256": "5ebce2b474d66382486c5000667a0cc281c426ec6bf05bcb49a526ce9a8b1029"
+    },
+    "root_cause_groups": {
+      "path": "research/evidence/cpp/review_20261014/root_cause_groups.json",
+      "sha256": "0e487a981df6733a9efc7d4f72119a44dde615bb1649e66590484eb06b964166"
+    }
+  },
+  "kind": "cpp_shared_ptr_independent_truth_review_append",
+  "metrics": "not_computed",
+  "plausible_unproven_count": 11,
+  "project_checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "dirty_status_file_count": 339,
+    "dirty_status_sha256": "416baa2da73b4187e7e7b0a74ce610aa3aaa49ec3627d827d54e8dc06df2a7c5",
+    "dirty_worktree": true,
+    "dirty_worktree_preserved": true,
+    "head": "0dd71fd78baa01283df081f9bd02fe4b7f2df326",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "tree": "20ec92e835803f486d088eef183c7db08564926b"
+  },
+  "promotion_boundary": {
+    "confirmed_reportable": false,
+    "cve": "not identified or assigned in local evidence",
+    "explanation": "JSProxy component mechanism is controlled-positive, but product deployment, permission/attacker boundary and CIA are not complete. Other unresolved groups remain unknown/partial.",
+    "validated_vulnerability": 0
+  },
+  "reason_metrics_blocked": "Unknown/partial product-level entries, trigger windows, synchronization proofs and CIA impacts remain; no precision/recall or zero-error claim is made.",
+  "review_item_count": 45,
+  "schema_version": 1,
+  "source_identity_verification": {
+    "all_verified": true,
+    "counts": {
+      "blob_match": 45,
+      "commit_match": 45,
+      "source_sha256_match": 45,
+      "total": 45,
+      "tree_match": 45,
+      "verified": 45
+    }
+  },
+  "truth_label_counts": {
+    "safe": 1,
+    "unknown": 13,
+    "unrelated": 31
+  },
+  "truth_set_status": "independent_truth_set_with_unknowns_and_scope_limits",
+  "unique_workbench_candidate_count": 44
+}

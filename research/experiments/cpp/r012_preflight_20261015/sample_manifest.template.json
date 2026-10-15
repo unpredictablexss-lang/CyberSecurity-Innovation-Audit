@@ -1,0 +1,133 @@
+{
+  "kind": "ohscanner.a_line.r012_sample_manifest_template",
+  "schema_version": 1,
+  "status": "template_only_not_an_r0_r1_r2_input_set",
+  "gate": {
+    "required": "P5-A independent truth-label signoff completed",
+    "current": "not_completed",
+    "split_freeze_allowed": false,
+    "r0_r1_r2_input_set_creation_allowed": false
+  },
+  "sample_identity": {
+    "required_fields": [
+      "sample_id",
+      "review_item_id",
+      "workbench_candidate_id",
+      "review_scope"
+    ],
+    "sample_id_rule": "stable caller-assigned ID; do not reuse blind_item_id as a truth claim"
+  },
+  "source_binding": {
+    "required_fields": [
+      "repository",
+      "parent_commit",
+      "fix_commit",
+      "parent_tree",
+      "fix_tree",
+      "parent_blob",
+      "fix_blob",
+      "parent_source_sha256",
+      "fix_source_sha256",
+      "source_git_blob_oid",
+      "source_sha256"
+    ],
+    "missing_value": "unknown_not_provided",
+    "verification_rule": "Every available Git object and source digest must be recomputed and recorded; unavailable fields remain unknown."
+  },
+  "detector_binding": {
+    "required_fields": [
+      "detector_id",
+      "detector_version",
+      "rule_id",
+      "profile_id",
+      "scope"
+    ],
+    "missing_value": "unknown_not_provided"
+  },
+  "independent_root_cause_and_patch_family": {
+    "required_fields": [
+      "root_cause_group_id",
+      "root_cause_truth_source",
+      "patch_family_id",
+      "patch_family_truth_source"
+    ],
+    "split_rule": "Freeze development, tuning and holdout only after independent root-cause and patch-family grouping is signed.",
+    "leakage_rule": "Variants of the same root cause or patch family may not cross development, tuning and holdout."
+  },
+  "label_truth": {
+    "required_fields": [
+      "label",
+      "label_truth_source",
+      "label_signer",
+      "label_signed_at",
+      "label_signoff_status"
+    ],
+    "label_enum": [
+      "vulnerable",
+      "fixed",
+      "safe",
+      "unrelated",
+      "unknown"
+    ],
+    "allowed_truth_sources": [
+      "independent_source_review",
+      "controlled_runtime_validation",
+      "independent_review_plus_controlled_runtime_validation"
+    ],
+    "disallowed_truth_sources": [
+      "synthetic_control",
+      "model_self_evaluation",
+      "detector_output",
+      "technical_suggestion",
+      "first_round_aggregate_label"
+    ]
+  },
+  "security_gate_truth": {
+    "required_fields": [
+      "entrypoint",
+      "entry_truth_source",
+      "trigger_condition",
+      "trigger_truth_source",
+      "privilege_boundary",
+      "privilege_truth_source",
+      "cia_impact",
+      "cia_truth_source",
+      "exclusion_reason"
+    ],
+    "rule": "AST/pattern matches and patch provenance alone do not establish entry, trigger, privilege, attacker control or CIA impact."
+  },
+  "analysis_completeness": {
+    "required_fields": [
+      "parse_status",
+      "build_context_status",
+      "coverage_status",
+      "missing_facts",
+      "limitations"
+    ],
+    "retention_rule": "Retain unknown, parse-failed, partial, failed, unexecuted and missing-build-context samples. Do not relabel them safe or miss."
+  },
+  "split_assignment": {
+    "required_fields": [
+      "split",
+      "split_group_id",
+      "freeze_manifest_sha256",
+      "freeze_authority",
+      "freeze_signed_at"
+    ],
+    "split_enum": [
+      "development",
+      "tuning",
+      "holdout"
+    ],
+    "current_default": "pending_p5a_independent_signoff"
+  },
+  "prohibited_at_this_stage": [
+    "model_invocation",
+    "precision_recall",
+    "best_run_selection",
+    "real_model_configuration",
+    "blind_review_protocol_assignment",
+    "tool_budget_assignment",
+    "final_statistics"
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "kind": "ohscanner.a_line.r012_preflight_manifest",
+  "schema_version": 1,
+  "generated_date": "2026-10-15",
+  "generated_timezone": "Asia/Shanghai",
+  "project_checkout": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "root": "E:/网安/CyberSecurity-Innovation-Audit",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "0dd71fd78baa01283df081f9bd02fe4b7f2df326",
+    "dirty_at_generation": true,
+    "dirty_entries": [
+      " M \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"",
+      " M research/methods/cpp/DETECTOR_POC_MATRIX.md",
+      " M research/methods/cpp/LIFETIME_METHOD_CARD.md",
+      " M research/methods/cpp/SHARED_PTR_RACE_METHOD_CARD.md",
+      " M src/ohscanner/detectors/cpp/README.md",
+      " M src/ohscanner/detectors/cpp/lifetime_detector.py",
+      " M src/ohscanner/detectors/cpp/shared_ptr_race_detector.py",
+      " M src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/manifest.json",
+      " M src/ohscanner/poc/harnesses/cpp_shared_ptr_delayed_singleton/manifest.json",
+      " M tests/detectors/test_cpp_lifetime_detector.py",
+      " M tests/detectors/test_cpp_shared_ptr_race_detector.py",
+      " M tests/test_lifetime_uaf_poc.py",
+      " M tests/test_shared_ptr_race_poc.py",
+      "?? .codex-review-tmp/",
+      "?? .venv-web/",
+      "?? docs/reviews/",
+      "?? outputs/poc-loop/",
+      "?? outputs/poc/",
+      "?? outputs/reports/a_cpp_rescan_20261014/",
+      "?? outputs/reports/cpp_same_scope_20261014/",
+      "?? outputs/reports/static_module_20261013/",
+      "?? outputs/workbench-review-208/",
+      "?? research/evidence/cpp/detector_enhancement_20261015/",
+      "?? research/evidence/cpp/four_class_controls/",
+      "?? research/evidence/cpp/independent_review_20261015/",
+      "?? research/evidence/cpp/shared_ptr_jsproxy_2026-10-15.md",
+      "?? research/experiments/cpp/",
+      "?? research/tests/",
+      "?? scripts/build_cpp_independent_review_supplement.py",
+      "?? src/ohscanner/poc/cpp_shared_ptr_jsproxy.py",
+      "?? src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/",
+      "?? tests/test_cpp_four_class_controls.py",
+      "?? tests/test_shared_ptr_jsproxy_poc.py"
+    ]
+  },
+  "p5a_gate": {
+    "required": "P5-A independent truth-label signoff completed",
+    "observed": "not_completed",
+    "evidence": {
+      "independent_review": false,
+      "blind_review": false,
+      "pending_independent_truth_labels": 45,
+      "completed_independent_truth_labels": 0
+    },
+    "decision": "do_not_create_or_freeze_r0_r1_r2_input_sets",
+    "allowed_outputs": [
+      "manifest_templates",
+      "label_signoff_status",
+      "sample_size_template",
+      "human_cost_template",
+      "experiment_budget_template"
+    ]
+  },
+  "source_inputs": {
+    "research/evidence/cpp/review_20261014/holdout_manifest.json": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a",
+    "research/evidence/cpp/review_20261014/review_ledger.json": "6fc11cc43cd653cad449022ae16a3d5a2b110e353065d2ae53a13738f97f5404",
+    "research/evidence/cpp/review_20261014/root_cause_groups.json": "0e487a981df6733a9efc7d4f72119a44dde615bb1649e66590484eb06b964166",
+    "research/evidence/cpp/independent_review_20261015/verification.json": "c598a194d8f6bc8b67b5fcd9e0f09e3c4722e6c1412cf1505f351a126c873309",
+    "research/evidence/cpp/independent_review_20261015/blind_review_key.json": "78eefe54d9a27c27dcb0a31a16120108676d15a2c6a1d8e9aef5fb3c27d15edb",
+    "research/evidence/cpp/independent_review_20261015/blind_review_packet.json": "2fd3164586e7afdb1fd27d1ef438100d23876b6164ffff191bd31ed6339c5eb4",
+    "research/evidence/cpp/independent_review_20261015/review_supplement.json": "5ebce2b474d66382486c5000667a0cc281c426ec6bf05bcb49a526ce9a8b1029",
+    "research/evidence/cpp/independent_review_20261015/independent_signoff_template.md": "54efb204e44e9b9572f96421a63c9f9f660ebb6d51f3e4ccfdfc6b904947d692"
+  },
+  "generated_templates": {
+    "README.md": "84908d360b5a0687944fd952426d5c776ca25e9041275cf875f2c1374c74857f",
+    "sample_manifest.template.json": "55a98366e7edd9025d4e67542a6ca12b7f78f7dd69b52110e0fd38043d0b164f",
+    "label_signoff_status.json": "2ab2d0a2e81168ccf2946662a0c8b52b5ddfe00aadb67290c1cc13e6eb767c9a",
+    "sample_size.template.json": "00f905b23db44ea9f19356e7cc68ac9c261dc67bdd60ce45c4bdb86249b9d566",
+    "human_cost.template.csv": "a9dda025c1b8f6c3dd456bfebf84cd6442af506116002252e4cb76479ff7596a",
+    "experiment_budget.template.json": "fac138cf26578451a7c09e4008bc0f50e3d80ff59f015aa622ca54ec4ecba33a"
+  },
+  "scope": {
+    "line": "A / C++ shared_ptr",
+    "review_items": 45,
+    "unique_candidates": 44,
+    "plausible_unproven_review_items": 11,
+    "holdout_review_items": 34,
+    "first_round_root_cause_groups_total": 9,
+    "independent_root_cause_groups": "not_signed",
+    "patch_families": "not_signed",
+    "development_tuning_holdout": "not_frozen"
+  },
+  "prohibitions": [
+    "No R0/R1/R2 input set generation before P5-A signoff",
+    "No model invocation",
+    "No Precision/Recall",
+    "No best-run selection",
+    "No synthetic-control substitution for independent truth",
+    "No model self-evaluation as truth",
+    "No dropping unknown, parse-failed or missing-build-context items"
+  ]
+}

@@ -1,0 +1,1210 @@
+{
+  "generated_date": "2026-10-15",
+  "group_count": 37,
+  "groups": [
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair at reported read.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Callback object retains request context; no owner replacement.",
+        "shared_ptr_publication_order": "Authorization/request wrapper constructor copies RequestAsyncContext into data_; callback reads stable owner.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/cj/accesstoken/include/at_manager_impl.h|data_|287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+      "item_indices": [
+        13
+      ],
+      "review_item_ids": [
+        "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+      "symbol": "data_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair; wrapper initialization only.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Handle retains request context through async/callback completion.",
+        "shared_ptr_publication_order": "Async-context handle constructor copies local shared_ptr into asyncContextPtr; no observed owner replacement.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h|asyncContextPtr|1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+      "item_indices": [
+        14
+      ],
+      "review_item_ids": [
+        "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+      "symbol": "asyncContextPtr",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair; wrapper initialization only.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Handle retains request context through async/callback completion.",
+        "shared_ptr_publication_order": "Async-context handle constructor copies local shared_ptr into asyncContextPtr; no observed owner replacement.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h|asyncContextPtr|a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+      "item_indices": [
+        15
+      ],
+      "review_item_ids": [
+        "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+      "symbol": "asyncContextPtr",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair; wrapper initialization only.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Handle retains request context through async/callback completion.",
+        "shared_ptr_publication_order": "Async-context handle constructor copies local shared_ptr into asyncContextPtr; no observed owner replacement.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h|asyncContextPtr|01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+      "item_indices": [
+        16
+      ],
+      "review_item_ids": [
+        "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+      "symbol": "asyncContextPtr",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair; wrapper initialization only.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Handle retains request context through async/callback completion.",
+        "shared_ptr_publication_order": "Async-context handle constructor copies local shared_ptr into asyncContextPtr; no observed owner replacement.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h|asyncContextPtr|96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+      "item_indices": [
+        17
+      ],
+      "review_item_ids": [
+        "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+      "symbol": "asyncContextPtr",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair; wrapper initialization only.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Handle retains request context through async/callback completion.",
+        "shared_ptr_publication_order": "Async-context handle constructor copies local shared_ptr into asyncContextPtr; no observed owner replacement.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h|asyncContextPtr|ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "item_indices": [
+        18
+      ],
+      "review_item_ids": [
+        "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "symbol": "asyncContextPtr",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair at reported read.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Callback object retains request context; no owner replacement.",
+        "shared_ptr_publication_order": "Authorization/request wrapper constructor copies RequestAsyncContext into data_; callback reads stable owner.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h|data_|ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "item_indices": [
+        19
+      ],
+      "review_item_ids": [
+        "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "symbol": "data_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair; wrapper initialization only.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Handle retains request context through async/callback completion.",
+        "shared_ptr_publication_order": "Async-context handle constructor copies local shared_ptr into asyncContextPtr; no observed owner replacement.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h|asyncContextPtr|c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+      "item_indices": [
+        20
+      ],
+      "review_item_ids": [
+        "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+      "symbol": "asyncContextPtr",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No candidate race remains at site; no CIA claim.",
+        "conflicting_access_pair": "No same-object pair after initialization.",
+        "entry_privilege": "Not applicable to reported noise site.",
+        "shared_object_lifecycle": "Stable owner after construction; no replacement/reset.",
+        "shared_ptr_publication_order": "StatusCache constructor copies TimeUtilsProxy into timeUtilsProxy_; later code only tests/calls pointee.",
+        "synchronization_protocol": "No synchronization proof needed to exclude the observed constructor/single-access shape; no same-object mutation pair in reviewed source.",
+        "thread_or_event_queue_ownership": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+        "trigger_window": "No same-object conflicting pair, hence no proven owner-race trigger window."
+      },
+      "candidate_ids": [
+        "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Constructor/stable-owner shape excludes observed owner race, not product safety.",
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "group_key": "RC-CONSTRUCTOR-NOISE|services/core/ability/status_cache/include/status_cache.h|timeUtilsProxy_|cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "item_indices": [
+        12
+      ],
+      "review_item_ids": [
+        "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679:holdout"
+      ],
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "symbol": "timeUtilsProxy_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "Controlled TSan proves owner data race/UB in the modeled component shape. Product crash/DoS, returned-entry integrity, confidentiality and privilege effects unmeasured.",
+        "conflicting_access_pair": "SetInstance write at js_proxy.h:37 versus GetInstance read at :42 on the same owner; async close and sync result-set calls provide the call shape.",
+        "entry_privilege": "Source-visible distributedKVStore NAPI entries; runtime permission, package resolution, app identity, cross-app/remote reachability and attacker control partial/unknown.",
+        "shared_object_lifecycle": "napi_wrap owns the JS wrapper until finalize; async ContextBase keeps selfRef. GetInstance copies retain the pointee while SetInstance(nullptr) drops the wrapper owner. Owner control-block and pointee lifetime cross JS/worker contexts.",
+        "shared_ptr_publication_order": "GetResultSet execute calls SetInstance; completion returns the wrapper. Sync methods copy GetInstance. CloseResultSet execute calls GetInstance then SetInstance(nullptr). Completion serialization does not order execute against a later sync JS call.",
+        "synchronization_protocol": "No mutex/atomic owner API in JSProxy. NapiQueue serializes completion only. Fixed control uses a mutex; proposed minimal patch uses atomic_load/atomic_store.",
+        "thread_or_event_queue_ownership": "Sync ResultSet methods use GetCbInfoSync on the NAPI/JS call context. GetResultSet/CloseResultSet use NapiQueue::AsyncWork: execute runs on the NAPI worker pool and complete on the JS/NAPI queue. The same JSProxy owner can be read by a sync call while async CloseResultSet clears it.",
+        "trigger_window": "Source-visible sequence getResultSet -> closeResultSet -> immediate getEntry/getCount before async close execute completes. The controlled Harness models this exact overlap."
+      },
+      "candidate_ids": [
+        "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef",
+        "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c"
+      ],
+      "classification_counts": {
+        "unknown": 2
+      },
+      "classification_rationale": "Real owner pair but unresolved queue, trigger, entry/privilege and CIA facts; retain unknown.",
+      "file": "frameworks/common/js_proxy.h",
+      "group_key": "RC-JSPROXY|frameworks/common/js_proxy.h|instance_|38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "item_indices": [
+        3,
+        4
+      ],
+      "review_item_ids": [
+        "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef:plausible",
+        "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c:plausible"
+      ],
+      "root_cause_group": "RC-JSPROXY",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "symbol": "instance_",
+      "unknown_reasons": [
+        "product build/deployment identity",
+        "runtime permission and attacker-control boundary",
+        "measured product CIA and stable exploitability"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No product crash, corruption, disclosure or privilege effect measured.",
+        "conflicting_access_pair": "Getter/setter and direct read/write pairs exist; source-rect/reset readers do not alone prove a cross-thread same-object pair.",
+        "entry_privilege": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "shared_object_lifecycle": "PIP/window manager and PipOption share controller shared_ptrs. Reset tears down attachment but does not establish synchronized owner publication/destruction for all fields.",
+        "shared_ptr_publication_order": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "synchronization_protocol": "No local lock/atomic owner API covers both controller members and observed access paths. Same-runner serialization is possible but unproven.",
+        "thread_or_event_queue_ownership": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "candidate_ids": [
+        "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8",
+        "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d"
+      ],
+      "classification_counts": {
+        "unknown": 2
+      },
+      "classification_rationale": "Unsynchronized shape exists but evidence gate is incomplete; retain unknown.",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "group_key": "RC-PIP-CONTROLLERS|wm/include/picture_in_picture_controller.h|mainWindowXComponentController_|5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "item_indices": [
+        5,
+        6
+      ],
+      "review_item_ids": [
+        "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8:plausible",
+        "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d:plausible"
+      ],
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "symbol": "mainWindowXComponentController_",
+      "unknown_reasons": [
+        "same event-runner or queue serialization",
+        "feasible main/PIP shared-controller interleaving",
+        "reachable trigger and CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No product crash, corruption, disclosure or privilege effect measured.",
+        "conflicting_access_pair": "Getter/setter and direct read/write pairs exist; source-rect/reset readers do not alone prove a cross-thread same-object pair.",
+        "entry_privilege": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "shared_object_lifecycle": "PIP/window manager and PipOption share controller shared_ptrs. Reset tears down attachment but does not establish synchronized owner publication/destruction for all fields.",
+        "shared_ptr_publication_order": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "synchronization_protocol": "No local lock/atomic owner API covers both controller members and observed access paths. Same-runner serialization is possible but unproven.",
+        "thread_or_event_queue_ownership": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "candidate_ids": [
+        "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81",
+        "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c"
+      ],
+      "classification_counts": {
+        "unknown": 2
+      },
+      "classification_rationale": "Unsynchronized shape exists but evidence gate is incomplete; retain unknown.",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "group_key": "RC-PIP-CONTROLLERS|wm/include/picture_in_picture_controller_ani.h|mainWindowXComponentController_|c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "item_indices": [
+        7,
+        8
+      ],
+      "review_item_ids": [
+        "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81:plausible",
+        "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c:plausible"
+      ],
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "symbol": "mainWindowXComponentController_",
+      "unknown_reasons": [
+        "same event-runner or queue serialization",
+        "feasible main/PIP shared-controller interleaving",
+        "reachable trigger and CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No product crash, corruption, disclosure or privilege effect measured.",
+        "conflicting_access_pair": "Getter/setter and direct read/write pairs exist; source-rect/reset readers do not alone prove a cross-thread same-object pair.",
+        "entry_privilege": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "shared_object_lifecycle": "PIP/window manager and PipOption share controller shared_ptrs. Reset tears down attachment but does not establish synchronized owner publication/destruction for all fields.",
+        "shared_ptr_publication_order": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "synchronization_protocol": "No local lock/atomic owner API covers both controller members and observed access paths. Same-runner serialization is possible but unproven.",
+        "thread_or_event_queue_ownership": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "candidate_ids": [
+        "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652",
+        "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af"
+      ],
+      "classification_counts": {
+        "unknown": 2
+      },
+      "classification_rationale": "Unsynchronized shape exists but evidence gate is incomplete; retain unknown.",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "group_key": "RC-PIP-CONTROLLERS|wm/include/picture_in_picture_controller_base.h|pipXComponentController_|a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "item_indices": [
+        9,
+        10
+      ],
+      "review_item_ids": [
+        "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652:plausible",
+        "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af:plausible"
+      ],
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "symbol": "pipXComponentController_",
+      "unknown_reasons": [
+        "same event-runner or queue serialization",
+        "feasible main/PIP shared-controller interleaving",
+        "reachable trigger and CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No measured product crash, corruption, disclosure or privilege effect.",
+        "conflicting_access_pair": "Lexical same-object ptrChannel_ write/read pair exists; concurrent overlap is plausible but unproven.",
+        "entry_privilege": "Source-visible SoftBus device and remote-command paths; privilege, trust boundary and attacker control unknown.",
+        "shared_object_lifecycle": "Manager map owns the executor. The posted runner captures weak_from_this and locks self while processing. Offline releases the channel and removes the map entry; GetExecutorChannel returns a channel shared_ptr by value. Channel retention is visible, but ptrChannel_ publication/reset order is unresolved.",
+        "shared_ptr_publication_order": "GetOrCreateRemoteCommandExecutor publishes the executor; NotifyDeviceOnline checks GetChannel and calls SetChannel under RemoteCommandManager::mutex_. CreateChannelIfNeeded writes ptrChannel_ under RemoteCommandExecutor::recursive_mutex_; ProcessOneCommand/ExecuteRemoteCommand read it. Different locks leave no proven happens-before edge.",
+        "synchronization_protocol": "Manager mutex covers map and manager wrapper; executor mutex covers buffering/CreateChannelIfNeeded. Public Get/SetChannel and several reads/writes are not covered by one lock. Protocol incomplete.",
+        "thread_or_event_queue_ownership": "Send command work is posted to TokenSyncManagerService::GetSendEventHandler() on an FFRT EventRunner; device online/offline enters through SoftBus device callbacks and socket session callbacks. Exact callback thread identities and common serialization are not proven.",
+        "trigger_window": "Device-online channel creation versus send-runner processing or socket callback use, with offline release/remove as a third event. Feasible product schedule and rate are not established."
+      },
+      "candidate_ids": [
+        "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b",
+        "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b"
+      ],
+      "classification_counts": {
+        "unknown": 2
+      },
+      "classification_rationale": "Partial synchronization and incomplete reachability/impact evidence; retain unknown.",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "group_key": "RC-REMOTE-CHANNEL|services/tokensyncmanager/include/remote/remote_command_executor.h|ptrChannel_|2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "item_indices": [
+        1,
+        2
+      ],
+      "review_item_ids": [
+        "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b:plausible",
+        "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b:plausible"
+      ],
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "symbol": "ptrChannel_",
+      "unknown_reasons": [
+        "exact thread/event-runner ownership",
+        "happens-before or controlled ptrChannel_ race/fixed run",
+        "product trigger and CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No production CIA claim.",
+        "conflicting_access_pair": "No production same-object pair admitted by scope.",
+        "entry_privilege": "No production entry/privilege claim.",
+        "shared_object_lifecycle": "Mock/support lifetime is not a production component claim.",
+        "shared_ptr_publication_order": "Not applicable to production vulnerability truth; retained as out-of-scope control.",
+        "synchronization_protocol": "Not applicable to production owner-race question.",
+        "thread_or_event_queue_ownership": "Reported source is under kvstoremock/external_inner_kit, a mock/support scope excluded from production scoring by the historical scope rule.",
+        "trigger_window": "No production trigger in scope."
+      },
+      "candidate_ids": [
+        "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427",
+        "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5",
+        "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d"
+      ],
+      "classification_counts": {
+        "unrelated": 3
+      },
+      "classification_rationale": "Explicit non-production mock/support path; unrelated excludes only a production shared_ptr vulnerability claim.",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "group_key": "RC-SCOPE-MOCK|kvstoremock/external_inner_kit/napi/include/extension_context.h|abilityInfo_|fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "item_indices": [
+        21,
+        22,
+        23
+      ],
+      "review_item_ids": [
+        "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427:holdout",
+        "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5:holdout",
+        "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d:holdout"
+      ],
+      "root_cause_group": "RC-SCOPE-MOCK",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "symbol": "abilityInfo_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No product trigger or CIA consequence established.",
+        "conflicting_access_pair": "Constructor/self-assignment is not a post-publication same-object pair. Public setter mutation remains an unresolved external possibility.",
+        "entry_privilege": "Stream setup/receive source-visible; product caller, privilege, attacker control and deployment unknown.",
+        "shared_object_lifecycle": "StreamAdaptor owns StreamManager; StreamManager owns socket map/listener fields; VtpStreamSocket owns streamReceiver_. Release drops socket/listener. Observed callback lifetime is separate from candidate streamListener_.",
+        "shared_ptr_publication_order": "Constructor initializes streamListener_. Create*Channel calls SetStreamRecvListener(streamListener_), which writes it, creates StreamSocketListener(recvListener) and installs the separate copy on the socket.",
+        "synchronization_protocol": "No manager lock covers streamListener_/socketListener_/socketMap_; VtpStreamSocket::streamSocketLock_ covers streamReceiver_ callback use. Candidate owner protocol incomplete.",
+        "thread_or_event_queue_ownership": "Stream setup runs on caller thread. VtpStreamSocket creates detached NotifyStreamListener/DoStreamRecv threads and invokes streamReceiver_ under streamSocketLock_. streamListener_ itself is not shown to be read by callbacks; StreamSocketListener keeps a separate listener_ copy.",
+        "trigger_window": "Would require product caller to invoke public SetStreamRecvListener concurrently with Create*Channel or another setter. Production call-site search found setup calls and tests only."
+      },
+      "candidate_ids": [
+        "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7",
+        "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7"
+      ],
+      "classification_counts": {
+        "unknown": 2
+      },
+      "classification_rationale": "Source provenance and concurrency obligations unresolved; retain unknown.",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "group_key": "RC-STREAM-LISTENER|sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h|streamListener_|66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "item_indices": [
+        11,
+        45
+      ],
+      "review_item_ids": [
+        "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+        "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout"
+      ],
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "symbol": "streamListener_",
+      "unknown_reasons": [
+        "product caller for public SetStreamRecvListener",
+        "same-object post-publication overlap",
+        "trigger and CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/innerkits/wm/wm_animation_common.h|animationConfig|7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "item_indices": [
+        24
+      ],
+      "review_item_ids": [
+        "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "animationConfig",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/innerkits/wm/wm_animation_common.h|animationParams|7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "item_indices": [
+        25
+      ],
+      "review_item_ids": [
+        "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "animationParams",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/innerkits/wm/wm_animation_common.h|animationSystemParams|7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "item_indices": [
+        26
+      ],
+      "review_item_ids": [
+        "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "animationSystemParams",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/innerkits/wm/wm_animation_common.h|excludeFromDock|7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "item_indices": [
+        28
+      ],
+      "review_item_ids": [
+        "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "excludeFromDock",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/innerkits/wm/wm_animation_common.h|excludeFromRecent|7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "item_indices": [
+        29
+      ],
+      "review_item_ids": [
+        "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "excludeFromRecent",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/innerkits/wm/wm_animation_common.h|needAnimation|7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "item_indices": [
+        27
+      ],
+      "review_item_ids": [
+        "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "symbol": "needAnimation",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Listener/callback capture keeps owner alive for observed flow.",
+        "shared_ptr_publication_order": "jsCallBack_ copied into wrapper at construction then read by callback dispatch; no post-publication replacement.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Stable owner initialization/read-only propagation excludes observed owner race.",
+      "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/kits/napi/float_view_napi/js_float_view_listener.h|jsCallBack_|fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "item_indices": [
+        30
+      ],
+      "review_item_ids": [
+        "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "symbol": "jsCallBack_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Listener/callback capture keeps owner alive for observed flow.",
+        "shared_ptr_publication_order": "jsCallBack_ copied into wrapper at construction then read by callback dispatch; no post-publication replacement.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Stable owner initialization/read-only propagation excludes observed owner race.",
+      "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h|jsCallBack_|b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "item_indices": [
+        31
+      ],
+      "review_item_ids": [
+        "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "symbol": "jsCallBack_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Listener/callback capture keeps owner alive for observed flow.",
+        "shared_ptr_publication_order": "jsCallBack_ copied into wrapper at construction then read by callback dispatch; no post-publication replacement.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Stable owner initialization/read-only propagation excludes observed owner race.",
+      "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+      "group_key": "RC-WINDOW-SINGLE|interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h|jsCallBack_|20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "item_indices": [
+        32
+      ],
+      "review_item_ids": [
+        "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "symbol": "jsCallBack_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "previewer/include/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|previewer/include/wm_animation_common.h|animationConfig|dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "item_indices": [
+        33
+      ],
+      "review_item_ids": [
+        "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "animationConfig",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "previewer/include/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|previewer/include/wm_animation_common.h|animationParams|dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "item_indices": [
+        34
+      ],
+      "review_item_ids": [
+        "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "animationParams",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "previewer/include/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|previewer/include/wm_animation_common.h|animationSystemParams|dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "item_indices": [
+        35
+      ],
+      "review_item_ids": [
+        "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "animationSystemParams",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "previewer/include/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|previewer/include/wm_animation_common.h|excludeFromDock|dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "item_indices": [
+        37
+      ],
+      "review_item_ids": [
+        "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "excludeFromDock",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "previewer/include/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|previewer/include/wm_animation_common.h|excludeFromRecent|dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "item_indices": [
+        38
+      ],
+      "review_item_ids": [
+        "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "excludeFromRecent",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object owner pair; distinct object lifecycles.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owners are established before publication and not reassigned at reported sites. SurfaceCaptureFuture owner fields are mutex-covered except HDR reset before FutureCall.",
+        "shared_ptr_publication_order": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Observed sites are not a same-object concurrent owner pair.",
+      "file": "previewer/include/wm_animation_common.h",
+      "group_key": "RC-WINDOW-SINGLE|previewer/include/wm_animation_common.h|needAnimation|dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "item_indices": [
+        36
+      ],
+      "review_item_ids": [
+        "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "symbol": "needAnimation",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "Out-of-lock reset versus locked timeout read unresolved.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "New capture can reset member while timeout caller still reaches GetHDRResult.",
+        "shared_ptr_publication_order": "Out-of-lock reset can precede FutureCall; timeout GetHDRResult may read/copy the owner.",
+        "synchronization_protocol": "Partial: most accesses locked, reset outside mutex_. Repair would move reset under lock or use atomic owner ops.",
+        "thread_or_event_queue_ownership": "HDR/error callbacks and GetHDRResult can differ; most accesses use Future::mutex_, but OnSurfaceCapture resets hdrPixelMap_=nullptr before FutureCall locks.",
+        "trigger_window": "Potential timeout/reset overlap; exact callback schedule and product trigger unproven."
+      },
+      "candidate_ids": [
+        "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1"
+      ],
+      "classification_counts": {
+        "unknown": 1
+      },
+      "classification_rationale": "Out-of-lock owner write/read remains unresolved; retain unknown.",
+      "file": "utils/include/surface_capture_future.h",
+      "group_key": "RC-WINDOW-SINGLE|utils/include/surface_capture_future.h|hdrPixelMap_|6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "item_indices": [
+        39
+      ],
+      "review_item_ids": [
+        "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "symbol": "hdrPixelMap_",
+      "unknown_reasons": [
+        "actual timeout/callback overlap",
+        "controlled TSan run for reset",
+        "product trigger and CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "Pair exists but is mutex-synchronized.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "SurfaceCaptureFuture owns pixelMap_ until result retrieval/overwrite; owner access set protected by mutex_.",
+        "shared_ptr_publication_order": "OnSurfaceCapture writes through FutureCall(); GetResult/FetchResult read while Future::GetResult holds mutex_.",
+        "synchronization_protocol": "Future::mutex_ covers the pixelMap_ owner access set.",
+        "thread_or_event_queue_ownership": "Callbacks and GetResult/FetchResult may differ, but all observed pixelMap_ owner accesses are serialized by Future::mutex_.",
+        "trigger_window": "Callback/GetResult may overlap but owner operations are serialized; no owner race window remains."
+      },
+      "candidate_ids": [
+        "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881"
+      ],
+      "classification_counts": {
+        "safe": 1
+      },
+      "classification_rationale": "Independent fixed-source check supports safe only for observed owner synchronization.",
+      "file": "utils/include/surface_capture_future.h",
+      "group_key": "RC-WINDOW-SINGLE|utils/include/surface_capture_future.h|pixelMap_|6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "item_indices": [
+        40
+      ],
+      "review_item_ids": [
+        "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "symbol": "pixelMap_",
+      "unknown_reasons": [
+        "pointee PixelMap thread safety",
+        "product CIA impact"
+      ]
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Reported owner attached to fresh local then read; no post-publication mutation.",
+        "shared_ptr_publication_order": "IsEmpty reads after ConvertFromJsValue initializes a fresh local UIEffectParams; Parcel Unmarshalling constructs fresh object.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Fresh-object/sequential shape excludes observed owner race, not product safety.",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "group_key": "RC-WINDOW-SINGLE|utils/include/ui_effect_controller_common.h|backgroundFilter_|1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "item_indices": [
+        41
+      ],
+      "review_item_ids": [
+        "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "symbol": "backgroundFilter_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Reported owner attached to fresh local then read; no post-publication mutation.",
+        "shared_ptr_publication_order": "IsEmpty reads after ConvertFromJsValue initializes a fresh local UIEffectParams; Parcel Unmarshalling constructs fresh object.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Fresh-object/sequential shape excludes observed owner race, not product safety.",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "group_key": "RC-WINDOW-SINGLE|utils/include/ui_effect_controller_common.h|effect_|1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "item_indices": [
+        42
+      ],
+      "review_item_ids": [
+        "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "symbol": "effect_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object mutation pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owner held by wrapper; no reset at candidate site.",
+        "shared_ptr_publication_order": "Callback/handler owner initialized or captured at construction/registration and stable in bounded source.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Stable owner initialization/use is not an owner race.",
+      "file": "wmserver/include/drag_controller.h",
+      "group_key": "RC-WINDOW-SINGLE|wmserver/include/drag_controller.h|vsyncCallback_|9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "item_indices": [
+        43
+      ],
+      "review_item_ids": [
+        "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "symbol": "vsyncCallback_",
+      "unknown_reasons": []
+    },
+    {
+      "analysis": {
+        "cia_basis": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "conflicting_access_pair": "No same-object mutation pair.",
+        "entry_privilege": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "shared_object_lifecycle": "Owner held by wrapper; no reset at candidate site.",
+        "shared_ptr_publication_order": "Callback/handler owner initialized or captured at construction/registration and stable in bounded source.",
+        "synchronization_protocol": "No synchronization needed for constructor/fresh-object sites. pixelMap_ accesses use Future::mutex_; hdrPixelMap_ reset is outside it.",
+        "thread_or_event_queue_ownership": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+        "trigger_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window."
+      },
+      "candidate_ids": [
+        "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d"
+      ],
+      "classification_counts": {
+        "unrelated": 1
+      },
+      "classification_rationale": "Selected nested member is owner-stable in fixed source.",
+      "file": "wmserver/include/window_common_event.h",
+      "group_key": "RC-WINDOW-SINGLE|wmserver/include/window_common_event.h|eventHandler_|2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "item_indices": [
+        44
+      ],
+      "review_item_ids": [
+        "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d:holdout"
+      ],
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "symbol": "eventHandler_",
+      "unknown_reasons": []
+    }
+  ],
+  "kind": "cpp_shared_ptr_independent_truth_groups",
+  "schema_version": 1
+}

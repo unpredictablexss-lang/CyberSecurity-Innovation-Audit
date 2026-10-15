@@ -1,0 +1,56 @@
+{
+  "kind": "ohscanner.a_line.r012_sample_size_template",
+  "schema_version": 1,
+  "status": "template_only_split_counts_not_frozen",
+  "observed_review_pool": {
+    "review_items": 45,
+    "unique_candidates": 44,
+    "plausible_unproven_review_items": 11,
+    "holdout_review_items": 34,
+    "overlapping_candidates": 1,
+    "first_round_root_cause_groups_touched": 7,
+    "first_round_root_cause_groups_total": 9
+  },
+  "independent_truth_counts": {
+    "vulnerable": null,
+    "fixed": null,
+    "safe": null,
+    "unrelated": null,
+    "unknown": null,
+    "status": "not_signed"
+  },
+  "planned_split_counts": {
+    "development": null,
+    "tuning": null,
+    "holdout": null,
+    "status": "not_frozen_blocked_by_p5a_gate"
+  },
+  "preserved_analysis_status_counts": {
+    "unknown_truth_items": 45,
+    "parse_failed_items": null,
+    "missing_or_unresolved_build_context_items": 45,
+    "partial_items": null,
+    "failed_items": null,
+    "unexecuted_items": null,
+    "note": "Null means the signed source manifests do not independently enumerate that category; do not interpret null as zero."
+  },
+  "controls_not_eligible_as_independent_truth": {
+    "synthetic_or_fixture_controls": 12,
+    "eligible_as_independent_truth": false,
+    "note": "Fixture and synthetic controls remain development controls only."
+  },
+  "reporting": {
+    "precision": "not_computed",
+    "recall": "not_computed",
+    "best_run": "not_selected",
+    "model_self_evaluation_used_as_truth": false
+  },
+  "fill_after_p5a": [
+    "independent_truth_counts",
+    "planned_split_counts",
+    "parse_failed_items",
+    "partial_items",
+    "failed_items",
+    "unexecuted_items"
+  ]
+}
