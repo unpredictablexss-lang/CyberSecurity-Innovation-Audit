@@ -23,6 +23,122 @@ Detailed Chinese methods and per-root/tool comparison: docs/research/ipc_scanner
 
 ---
 
+# IPC method card v0.13 — a candidate is read at the revision it was found in (2026-10-14)
+
+The dsoftbus round reviews four candidates, and has to settle which revision they came from
+before any judgement. Full record: `docs/research/ipc_dsoftbus_deep_review_2026-10-14.md`.
+
+- **The reading error, and the rule that follows.** The working tree sat at `9f922677` while the
+  run declared `652f88e0`; neither is an ancestor of the other and 89 files differ, so reading the
+  tree put every line number seven lines out (`ReadInterfaceToken` at 384 rather than 391). The
+  candidates' own `source_sha256` settle it, and they match the pinned blob. The tool never had
+  this problem — `audit.py` plans with `ls-tree -r -l <commit>` and reads blobs by OID,
+  `git_source.py` verifies the commit — so this is a **reading rule, not a code fix**: locate a
+  candidate by its recorded hash, read `git -C <repo> show <commit>:<path>`, and treat a working
+  tree as unusable as evidence.
+- **Two CAP-01 candidates are false positives with a checkable reason.**
+  `softbus_server_stub.cpp:2174/2191` anchor on `reply.WriteRemoteObject(object)` inside
+  `GetSoftbusSpecObjectInner`/`GetBusCenterExObjInner`, but the guard is one frame up and
+  dominates: `:391` compares the interface token, `:403` `CheckPermission(code)` resolves a
+  per-code permission at `:294-297` (`DISTRIBUTED_DATASYNC` / `DISTRIBUTED_SOFTBUS_CENTER` /
+  `ACCESS_SERVICE_DM`) and verifies it against `IPCSkeleton::GetCallingTokenID()` through
+  `SoftBusCheckIsAccessAndRecordAccessToken`, whose body is a real
+  `AccessTokenKit::VerifyAccessToken`; `:416` is the only dispatch point, with no path around it.
+  Mechanism M4. This confirms the 2026-10-11 review's §2.3 judgement independently and supplies
+  the pinned line numbers and the dominance argument.
+- **Two AUTH-01 candidates are an external gap, not a false positive.**
+  `bus_center_ex_obj_stub.cpp:56` and `trans_spec_object_stub.cpp:62` override `OnRemoteRequest`
+  and forward the raw parcel through `dlsym` into `libdsoftbus_server_plugin.z.so`. Four checkable
+  items bound the gap: neither symbol is implemented in the tree; no `.gn`/`.gni` builds that
+  library; the IPC framework's `SendRequestInner` (`ipc_object_stub.cpp:393-409` @ `bbb92dbb`)
+  performs no token check of its own, so overriding the stub is not backstopped; and the in-repo
+  `TransSpecObject` answers all 16 methods with `SOFTBUS_NOT_IMPLEMENT`. Reachability is bounded
+  from the export side — a caller must pass the §2.1 permission gate to obtain the handle — and
+  whether the plugin re-checks per call cannot be decided without it. Both stay
+  `plausible but unproven` and are **kept**.
+- **Nothing is promoted.** Four candidates remain `evidence_type=syntax`,
+  `validated_vulnerability` 0. The two external gaps are not written as vulnerabilities.
+- **Two contract questions raised, not applied:** a distinct obligation kind
+  `implementation_outside_scope` for the dlopen-forwarder shape (the fact is mechanically
+  decidable from the entry index, so the detector can record it instead of leaving
+  `guard_effectiveness: unknown`), and separate counting of `false_positive` versus
+  `unresolved_external_dependency` — merging them understates accuracy and aims the improvement
+  work at the wrong place. Report §3 has both.
+
+> **2026-10-14 状态**：dsoftbus 深审由队友 B 提交，未推送、未合并；两项契约提议待 owner 决定。
+
+---
+
+# IPC method card v0.12 — private-parse coverage raised, without moving a single candidate (2026-10-14)
+
+`normalize_syntax` rewrote a format width macro only when a literal sat on **both** sides, and it
+matched the PRI family alone. The common OpenHarmony spelling puts the macro last in the sequence
+— `COMM_LOGE(TAG, "count=%{public}" PRIu32, n)`, because the comma follows it — and no SCN form
+was matched at all, so `sscanf_s(p, "pkg_%" SCNd64 "_%" SCNd64, ...)` failed twice over. The token
+then reached tree-sitter as a bare identifier between literals, the **private** parse (the one that
+decides which `function_definition` nodes are inspected) fell to partial, and only the error-free
+functions of that file were read.
+
+- **What changed.** The family is now `PRI|SCN` with the `LEAST`/`FAST` widths, and the rule fires
+  when a literal *precedes* the token, with or without one following. The replacement is `""` plus
+  the same number of spaces, so byte offsets and newlines are unchanged and the original text stays
+  intact for evidence.
+- **Measured.** Private-parse coverage over the 5261-file corpus **83.3% → 86.0%**; **146 files
+  rescued, 0 lost** (strictly monotone); candidate-carrying files go from 8/11 parseable to
+  **11/11**. Candidate delta **0**.
+- **The zero is established, not assumed.** A baseline re-run with the pre-change rule and an
+  otherwise identical driver, over the same four components, commits and scope, produces an
+  identical candidate set — same keys, same fields, same `obligations_source`, same messages. The
+  detector still walks the error-free functions of a partially parsed file, and none of the current
+  23 candidates (sat 3, dsoftbus 4, update 2, wwm 14, kv 0) sits in a function the old rule reached
+  differently. This is a coverage fix, not a finding fix.
+- **It also settles an attribution.** The deltas against the stale `outputs/reports/` set
+  (sat 20 → 3, wwm 15 → 14, and the `driver_synthesized_unknown` → runner-obligations flip) come
+  from the **rule/model version** (0.3.0/v1 → 0.5.0/v3, i.e. M1 and the platform change), not from
+  this normalization: the same committed comparison that shows zero delta here shows those deltas
+  there. Recording a coverage improvement as if it had changed the findings is the misreporting the
+  competition penalises.
+- **Tests.** Three shapes that must not already parse, four controls that must come back
+  byte-identical (`#include <inttypes.h>`, `(int)PRIu32`, `"a" PRIORITY`, `SCANNER`), and offset
+  preservation on a real softbus excerpt. The "must not already parse" assertion needs a
+  bytes-as-written parse, so the test module grows a `parses_raw` helper — `parses_clean` normalizes
+  first and can only state the after condition. Full suite **454 OK**.
+- **What is not established.** The rule is a lexical model of a macro that is never expanded; a
+  definition legitimately ending a literal sequence without an intervening comma would be rewritten
+  too. It raises what the interpreter can *read*, and says nothing about guard meaning, dominance or
+  reachability.
+
+> **2026-10-14 状态**：由队友 B 单独提交，未推送、未合并。
+
+---
+
+# IPC method card v0.11 — the CCR's clause (b) landed upstream, and the flip is applied here (2026-10-13)
+
+The owner's platform change (`022c022`, core) records evidence obligations **for a blocked run**
+instead of dropping them together with the coverage counters, and separates "inspected but
+incomplete" from "never inspected" per file. That is clause (b) of
+`docs/contracts/ohscanner_blocked_run_coverage_ccr.md`; §3.2 of that document is a pre-written table
+of exactly which assertions must flip when it lands, and this applies it.
+
+- **The driver's behaviour does not change.** Its synthesis gate was already
+  `if not entry["obligations"]`, so the "never duplicate recorded evidence" invariant held before
+  this commit. What moved is the prose describing the old platform, the assertions that pinned it,
+  and a new control that keeps the fallback path itself pinned
+  (`test_driver_standing_questions_appear_only_without_a_runner_record`, exercised by stripping the
+  runner's record and asserting the driver still fills the gap).
+- **`DRIVER_STANDING_OBLIGATIONS`** (was `PARTIAL_ONLY_OBLIGATIONS`) is no longer partial-only: the
+  five standing questions are what the driver supplies when, and only when, the runner recorded
+  nothing.
+- **What stays pinned, deliberately.** `scope_files == 0` on the blocked pass is **not** flipped:
+  clauses (a) and (c) are not done, so that zero must still be printed next to the counts that say
+  what was actually done.
+- **Candidate set and identities unchanged.** Obligations are metadata: this adds and removes
+  nothing, and `validated_vulnerability` stays 0. Tests at the time: **451 OK**.
+
+> **2026-10-13 状态**：由队友 B 提交，未推送、未合并；CCR 条款 (a)/(c) 仍未落地。
+
+---
+
 # IPC method card v0.10 — M2: a one-hop same-file relay is not an unguarded boundary unless the callee is the guard (2026-10-12)
 
 v0.9 changed how one comparison is *read*. This changes whether a path is read as
