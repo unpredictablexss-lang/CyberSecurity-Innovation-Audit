@@ -1,0 +1,191 @@
+# A-NULL-01 implementation verification record
+
+- recorded_at: 2026-10-15T17:16:49+08:00
+- cwd: E:\网安\CyberSecurity-Innovation-Audit
+- branch: codex/full-runtime-performance-audit-20261014
+- head: cda936a0c837575e59436118970238015d6fc56c
+- head_tree: df60536b1d45ec514ac3c7ccaac24cd2641e861b
+- remote: https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git
+- python: Python 3.10.12
+- platform:
+```text
+Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]
+```
+
+## Artifact SHA-256
+
+- `src/ohscanner/detectors/cpp/null_dereference_detector.py`: `63d848c76570c63c09d03d5e15b1af01bc292c85acb4f4603966b185c0382326`
+- `src/ohscanner/detectors/cpp/README.md`: `cfe54fa62ef231ef687aebd783b21447dc86cbb5f57ea0fd2aec451668cad08c`
+- `tests/detectors/null_dereference_fixture_support.py`: `33c4ceaf1c77bf58fb28196d301f1f3674ff7708dc526b9fbfdac7336be52605`
+- `tests/detectors/test_cpp_null_dereference_detector.py`: `b52ea3d3111f17a13799486d0ce31575d4fb2806f00c100b4ffb79e2541c10c3`
+- `research/contracts/a_ccr_04/owner_approval.json`: `e22a6f39ca301edbf2468be12c12f4da0ced03c653eec43088a355270b42cdbf`
+- `research/tests/a_null_01/manifest.json`: `2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3`
+- `research/tests/a_null_01/regression_matrix.json`: `b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784`
+- `research/tests/a_null_01/verify_fixtures.py`: `621804225cec29662352642844615483dda885a21375bcdb4312669271ab1eeb`
+- `research/evidence/cpp/a_null_01_implementation_20261015/collect_results.py`: `e03c5c139d5ababac45ea31c3dc466abdcf6c538921abc83b8e8feb8ec9b987c`
+- `research/evidence/cpp/a_null_01_implementation_20261015/postimplementation_results.json`: `83be7686050132efbb4e73ac199caeae211e2a376181436c3397e3205128e59d`
+- `research/evidence/cpp/a_null_01_implementation_20261015/run_verification.sh`: `1035566fcf82a4a699872d31951eff76f01ad654067f6eee7f0a153d2a5281d5`
+- `research/evidence/cpp/a_null_01_implementation_20261015/run_verification.raw.txt`: `e0f9b548e8250ff0de6caec4ff8f5dbbf3275fda2c3bd87862003abf8584bb20`
+
+## Exact combined verification replay
+
+```text
+argv: wsl.exe -d Ubuntu-22.04 -- bash "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/evidence/cpp/a_null_01_implementation_20261015/run_verification.sh"
+started_at: 2026-10-15T17:13:50+08:00
+ended_at: 2026-10-15T17:16:14+08:00
+exit_code: 0
+__A_NULL_START__ fixture_integrity
+{
+  "fixtures": 18,
+  "git_status_porcelain_sha256": "b98087a6858fd16115c072e95f4b5d9dccdfb6614e8d70611273be6491f12a0e",
+  "manifest_sha256": "2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3",
+  "mode": "check",
+  "regression_matrix_sha256": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784",
+  "snapshot_sha256": "c4c965974ccf2a5dc76a2376550cc415e3ce46e3b469e6ba8fbc6d5e63d8863f",
+  "status": "passed"
+}
+__A_NULL_END__ fixture_integrity exit_code=0
+__A_NULL_START__ targeted_null_detector
+test_manifest_and_matrix_identity_constants_are_stable (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_owner_approval_record_binds_approver_date_and_commit (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_package_is_exactly_the_preexisting_18_fixture_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_all_18_fixture_observations_match_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_combined_18_unit_run_retains_candidates_and_fails_closed (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_declares_exact_identity_and_scope (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_failed_and_not_analyzed_publish_no_safety_or_miss_claim (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_output_is_deterministic_across_replays (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.476s
+
+OK
+__A_NULL_END__ targeted_null_detector exit_code=0
+__A_NULL_START__ combined_cpp_detectors
+test_alias_assignment_from_owner_is_modeled (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_auto_pointer_shadowing_is_distinct_binding (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_auto_shadow_after_use_does_not_suppress_earlier_candidate (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_auto_shadow_is_scoped_to_its_block (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_comments_and_string_literals_are_not_analyzed (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_conditional_rebinding_is_not_suppressed_without_cfg (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_cooperative_timeout_fails_only_this_detector_run (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_cross_function_escape_keeps_observed_candidate_and_marks_unknown (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_declares_exact_scope_and_required_facts (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_duplicate_class_declarations_are_isolated_across_source_units (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_fixed_rebind_and_safe_control_have_no_findings (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_intra_function_alias_chain_is_modeled (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_lambda_capture_escape_is_unknown_but_not_safe (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_member_alias_only_is_unknown_and_not_a_local_binding (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_member_assignment_does_not_rebind_a_local_alias (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_mixed_coverage_analyzes_complete_units_but_stays_blocked (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_move_from_owner_invalidates_transferred_object_alias (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_mutex_scope_is_recorded_without_suppressing_candidate (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_mutually_exclusive_branch_pair_is_not_reported (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_nested_use_of_outer_alias_remains_candidate (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_non_owner_pointer_shadowing_is_distinct_binding (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_output_is_stable_and_input_units_are_deduplicated (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_owner_null_assignment_invalidates_raw_alias (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_owner_replacement_invalidates_previous_object (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_owner_scope_boundary_control_is_not_reported (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_owner_scope_end_invalidates_outer_alias (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_parenthesized_alias_dereference_is_one_candidate (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_partial_and_failed_parse_are_blocked_unknown_not_completed (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_rebinding_after_use_does_not_suppress_earlier_candidate (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_rebound_alias_suppression_is_explicit_ablation (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_same_name_owner_and_alias_bindings_do_not_cross_functions (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_unbraced_conditional_rebinding_remains_candidate (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_vulnerable_shape_emits_only_candidate_evidence (tests.detectors.test_cpp_lifetime_detector.LifetimeDetectorTests) ... ok
+test_all_accesses_under_same_mutex_are_suppressed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_atomic_exchange_and_compare_exchange_are_modeled_as_atomic_writes (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_atomic_read_and_mutex_protected_write_is_candidate_unknown (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_atomic_write_and_mutex_protected_read_is_candidate_unknown (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_comments_and_string_literals_are_not_analyzed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_constructor_initialization_and_stable_read_are_not_race_candidates (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_crash_is_isolated_and_this_detector_still_runs (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_cross_file_access_pair_is_aggregated (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_cross_file_pair_under_same_reliable_mutex_is_narrowly_suppressed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_declares_exact_scope_and_required_facts (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_defer_lock_is_unknown_and_not_suppressed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_detector_returns_blocked_when_selected_scope_is_empty (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_different_mutexes_do_not_get_suppressed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_duplicate_class_declarations_are_not_cross_bound (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_explicit_atomic_api_is_atomic_and_mixed_with_ordinary_write (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_global_and_member_same_name_bind_only_the_member_access (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_global_shared_ptr_is_explicitly_not_applicable (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_incomplete_scope_is_blocked_unknown_not_safe (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_local_shadowing_does_not_replace_this_member_access (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_mixed_atomic_and_mutex_paths_are_candidate_unknown_not_safe (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_mixed_atomic_and_non_atomic_with_different_mutexes_is_candidate (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_mixed_atomic_and_ordinary_access_under_same_reliable_mutex_is_suppressed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_mixed_coverage_analyzes_complete_units_but_stays_blocked (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_namespace_qualified_access_is_bound_to_the_class_member (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_no_matching_language_is_not_applicable_not_miss (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_one_sided_mutex_reports_only_unprotected_access (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_output_is_stable_and_duplicate_units_are_deduplicated (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_partial_failed_and_not_run_are_blocked_unknown (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_qualified_static_definition_is_not_a_candidate_access (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_same_member_name_in_another_class_is_not_attributed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_same_name_in_different_translation_units_is_not_cross_bound (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_simple_intra_function_object_alias_binds_the_member (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_std_namespaced_atomic_load_and_store_are_not_findings (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_templated_class_owner_is_bound_for_out_of_line_method (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_try_to_lock_is_unknown_and_not_suppressed (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_unrelated_shape_has_no_findings (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_unresolved_object_member_access_is_unknown (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_vulnerable_shape_emits_only_candidate_evidence (tests.detectors.test_cpp_shared_ptr_race_detector.SharedPtrRaceDetectorTests) ... ok
+test_manifest_and_matrix_identity_constants_are_stable (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_owner_approval_record_binds_approver_date_and_commit (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_package_is_exactly_the_preexisting_18_fixture_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_all_18_fixture_observations_match_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_combined_18_unit_run_retains_candidates_and_fails_closed (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_declares_exact_identity_and_scope (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_failed_and_not_analyzed_publish_no_safety_or_miss_claim (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_output_is_deterministic_across_replays (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+
+----------------------------------------------------------------------
+Ran 80 tests in 22.254s
+
+OK
+__A_NULL_END__ combined_cpp_detectors exit_code=0
+__A_NULL_START__ project_wide
+/mnt/e/网安/CyberSecurity-Innovation-Audit/.venv-web/lib/python3.10/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+----------------------------------------------------------------------
+Ran 635 tests in 113.014s
+
+OK (skipped=8)
+{"source_sync_process": {"clone_stage": {"failed_staging_removed": true, "published": false, "published_target": null, "staging_path": "/tmp/tmp9igtn5qa/data/repo-cache/.retry_component.cd76c28c24fe4cbab8ba7bb367dda32f.partial"}, "command": ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never", "-c", "credential.helper=", "clone", "--no-checkout", "--", "https://github.com/openharmony/retry_component.git", "/tmp/tmp9igtn5qa/data/repo-cache/.retry_component.cd76c28c24fe4cbab8ba7bb367dda32f.partial"], "credential_boundary": "anonymous public HTTPS; approved URL has no userinfo/query/fragment; credential helpers and interactive prompts disabled; persisted text redacted", "cwd": "/tmp", "exit_code": 9, "requested_url": "https://github.com/openharmony/retry_component.git", "stderr": "Authorization: <redacted>\nfatal: simulated public network failure", "stdout": "password=<redacted> https://<redacted>@example.invalid/x", "supervisor_deadline": "outer operation Worker", "timeout_seconds": 30}}
+{"source_sync_process": {"clone_stage": {"published": true, "published_target": "/tmp/tmp9igtn5qa/data/repo-cache/retry_component", "staging_path": "/tmp/tmp9igtn5qa/data/repo-cache/.retry_component.9560252b9b7d401dbef59dab0a03f502.partial"}, "command": ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never", "-c", "credential.helper=", "clone", "--no-checkout", "--", "https://github.com/openharmony/retry_component.git", "/tmp/tmp9igtn5qa/data/repo-cache/.retry_component.9560252b9b7d401dbef59dab0a03f502.partial"], "credential_boundary": "anonymous public HTTPS; approved URL has no userinfo/query/fragment; credential helpers and interactive prompts disabled; persisted text redacted", "cwd": "/tmp", "exit_code": 0, "requested_url": "https://github.com/openharmony/retry_component.git", "stderr": "", "stdout": "", "supervisor_deadline": "outer operation Worker", "timeout_seconds": 30}}
+{"source_sync_process": {"command": ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never", "-c", "credential.helper=", "-C", "/tmp/tmpj399nlp1/data/repo-cache/c_utils", "fetch", "--prune", "--tags", "https://github.com/openharmony/c_utils.git", "+refs/heads/*:refs/remotes/origin/*"], "credential_boundary": "anonymous public HTTPS; approved URL has no userinfo/query/fragment; credential helpers and interactive prompts disabled; persisted text redacted", "cwd": "/tmp", "exit_code": 0, "requested_url": "https://github.com/openharmony/c_utils.git", "stderr": "", "stdout": "", "supervisor_deadline": "outer operation Worker", "timeout_seconds": 30}}
+__A_NULL_END__ project_wide exit_code=0
+```
+
+## git diff --check
+
+```text
+argv: git diff --check
+exit_code: 0
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/开发协作与交付指南.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/面板功能与验收.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/项目现状与下一步.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'scripts/verify_owner_ipc_components.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/detectors/cpp/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/workbench/operation_worker.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/workbench/operations.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/workbench/operations_api.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/SourceEvidence.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/pages/Cases.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/pages/JobDetail.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/pages/Operations.tsx', LF will be replaced by CRLF the next time Git touches it
+```
+
+## Interpretation
+
+- The 18 authored fixtures produced exactly 11 source-bound candidate findings; fixed/safe/unrelated controls produced zero findings with narrow negative limitations.
+- The failed-parse and unsupported-language controls produced no absence, safety, miss or product conclusion.
+- Every candidate carries source SHA-256 and all eight A-NULL-01 EvidenceObligations; default state remains candidate/unassessed.
+- No Precision/Recall, zero-FP/FN, product reachability, attacker-control or CIA claim is made.
+- Public catalog registration was not changed in this implementation work.

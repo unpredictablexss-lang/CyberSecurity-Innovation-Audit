@@ -1,0 +1,68 @@
+# A-NULL-01 preimplementation failure-to-pass record
+
+- recorded_at: 2026-10-15T15:48:54+08:00
+- cwd: E:\网安\CyberSecurity-Innovation-Audit
+- branch: codex/full-runtime-performance-audit-20261014
+- head: cda936a0c837575e59436118970238015d6fc56c
+- dirty_status_sha256: db59b9384480a50ae32839af60110e0e4a448e6693adf087f652670b667cd63a
+- python: Python 3.10.12
+- platform:
+```text
+Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35
+3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]
+```
+
+## Artifact SHA-256 before implementation
+
+- `research/contracts/a_ccr_04/owner_approval.json`: `e22a6f39ca301edbf2468be12c12f4da0ced03c653eec43088a355270b42cdbf`
+- `research/specs/cpp/A-NULL-01-IMPLEMENTATION_DESIGN.md`: `14c14f46f022705d1882816fd6cda582b9c580d50ad2e29f3b285b5e800bdddc`
+- `research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md`: `e805c67674bd8e14cbe2f65738bdcde54763e1502448bc659fca49c81ff07cde`
+- `research/tests/a_null_01/manifest.json`: `2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3`
+- `research/tests/a_null_01/regression_matrix.json`: `b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784`
+- `research/tests/a_null_01/verify_fixtures.py`: `621804225cec29662352642844615483dda885a21375bcdb4312669271ab1eeb`
+- `tests/detectors/null_dereference_fixture_support.py`: `33c4ceaf1c77bf58fb28196d301f1f3674ff7708dc526b9fbfdac7336be52605`
+- `tests/detectors/test_cpp_null_dereference_detector.py`: `b52ea3d3111f17a13799486d0ce31575d4fb2806f00c100b4ffb79e2541c10c3`
+
+## Fixture integrity check
+
+```text
+argv: wsl.exe -d Ubuntu-22.04 -- bash -lc 'cd "/mnt/e/网安/CyberSecurity-Innovation-Audit" && .venv-web/bin/python research/tests/a_null_01/verify_fixtures.py --check'
+exit_code: 0
+{
+  "fixtures": 18,
+  "git_status_porcelain_sha256": "2e46b636035b621d443f7e36f3c5b0998a3c371e8b99b176a8aa1f23497d6290",
+  "manifest_sha256": "2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3",
+  "mode": "check",
+  "regression_matrix_sha256": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784",
+  "snapshot_sha256": "c4c965974ccf2a5dc76a2376550cc415e3ce46e3b469e6ba8fbc6d5e63d8863f",
+  "status": "passed"
+}
+```
+
+## Failure regression before detector implementation
+
+```text
+argv: wsl.exe -d Ubuntu-22.04 -- bash -lc 'cd "/mnt/e/网安/CyberSecurity-Innovation-Audit" && .venv-web/bin/python -m unittest tests.detectors.test_cpp_null_dereference_detector -v'
+exit_code: 1
+test_manifest_and_matrix_identity_constants_are_stable (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_owner_approval_record_binds_approver_date_and_commit (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_package_is_exactly_the_preexisting_18_fixture_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+ERROR
+
+======================================================================
+ERROR: setUpClass (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit/tests/detectors/test_cpp_null_dereference_detector.py", line 87, in setUpClass
+    cls.detector = make_detector()
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit/tests/detectors/test_cpp_null_dereference_detector.py", line 15, in make_detector
+    from src.ohscanner.detectors.cpp.null_dereference_detector import (
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.cpp.null_dereference_detector'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.577s
+
+FAILED (errors=1)
+```
+
+Expected failure cause: the production module was absent. Fixture/approval integrity tests passed before the detector regression failed.

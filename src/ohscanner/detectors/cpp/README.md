@@ -1,4 +1,19 @@
-# C/C++ shared_ptr race detector
+# C/C++ detectors
+
+## A-NULL-01 v0.1.0
+
+`ohscanner.cpp.null_dereference` v0.1.0 recognizes a narrow same-function C/C++
+null-source and pointer-dereference shape. It records local, parameter, member and
+function-return pointer roles, bounded guard/error-path relations and source-bound
+candidate evidence. It is not a complete CFG, type, alias, macro, template, exception,
+destructor or build-context analysis. Candidate results require the A-NULL-01
+EvidenceObligation gate; zero findings are not a safe verdict.
+
+Owner approval is recorded in
+`research/contracts/a_ccr_04/owner_approval.json`; catalog registration remains a
+separate change from this detector implementation.
+
+## C/C++ shared_ptr race detector v0.5.0
 
 Detector `ohscanner.cpp.shared_ptr_race`, version `0.5.0`, emits source-bound
 `candidate/unassessed` syntax evidence for modeled class/static `std::shared_ptr`

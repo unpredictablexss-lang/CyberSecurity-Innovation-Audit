@@ -1,0 +1,1236 @@
+{
+  "schema_version": "ohscanner.a-null-01-implementation-results-v1",
+  "recorded_at": "2026-10-15T17:05:53+08:00",
+  "checkout": {
+    "head": "cda936a0c837575e59436118970238015d6fc56c",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty_status_porcelain": "M .gitattributes\n M .github/workflows/ci.yml\n M .gitignore\n M AGENTS.md\n M PROGRAM_STATUS.md\n M README.md\n M benchmarks/historical/README.md\n M benchmarks/historical/c_utils_singleton_uaf.json\n M benchmarks/historical/communication_dsoftbus_null_deref.json\n M benchmarks/historical/kernel_liteos_a_getgroups_oob.json\n M benchmarks/perf_scale_corpus_2026-10-10.json\n M benchmarks/tool_comparison/README.md\n M \"benchmarks/\\346\\200\\247\\350\\203\\275\\350\\247\\204\\346\\250\\241\\345\\244\\215\\346\\265\\213\\346\\225\\260\\346\\215\\256_2026-10-14.json\"\n M \"benchmarks/\\347\\273\\204\\344\\273\\266\\346\\200\\247\\350\\203\\275\\350\\247\\204\\346\\250\\241\\345\\256\\236\\346\\265\\213.md\"\n M config/README.md\n M config/targets/README.md\n M config/targets/template.yaml\n M config/targets/third_party_cJSON.yaml\n M config/workspace.local.example.json\n M docker/validation/README.md\n M \"docs/Agent\\346\\226\\271\\346\\241\\210\\344\\270\\216\\345\\257\\271\\347\\205\\247\\345\\256\\236\\351\\252\\214.md\"\n M docs/README.md\n M docs/integration/ipc_source_import_20261011.json\n M docs/reviews/teammate_a_review_feedback_2026-10-14.md\n M docs/strategy/competition_deliverables_plan.md\n M docs/testing/ohscanner_performance_scale.md\n M \"docs/\\345\\274\\200\\345\\217\\221\\345\\215\\217\\344\\275\\234\\344\\270\\216\\344\\272\\244\\344\\273\\230\\346\\214\\207\\345\\215\\227.md\"\n M \"docs/\\346\\236\\266\\346\\236\\204\\344\\270\\216\\345\\205\\254\\345\\205\\261\\345\\215\\217\\350\\256\\256.md\"\n M \"docs/\\351\\235\\242\\346\\235\\277\\345\\212\\237\\350\\203\\275\\344\\270\\216\\351\\252\\214\\346\\224\\266.md\"\n M \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"\n M models/README.md\n M outputs/README.md\n M outputs/unified-development/algorithm-integration-summary.json\n M outputs/unified-development/v1-history-verification.json\n M requirements-web.txt\n M requirements.txt\n M research/contracts/A-CCR-03-approval.json\n M research/contracts/A-CCR-03-stable-finding-identity.md\n M research/contracts/a_ccr_04/A-CCR-04-ReadOnlyFactView.md\n M research/contracts/a_ccr_04/conformance.py\n M research/contracts/a_ccr_04/contract.json\n M research/contracts/a_ccr_04/verification.json\n M research/corpus/interface/ipc/model_sources.json\n M research/evidence/cpp/a_shared_ptr_229_erratum_2026-10-14.json\n M research/evidence/cpp/component_scans/communication_dsoftbus.manifest.json\n M research/evidence/cpp/component_scans/distributeddatamgr_kv_store.manifest.json\n M research/evidence/cpp/component_scans/index.json\n M research/evidence/cpp/component_scans/security_access_token.manifest.json\n M research/evidence/cpp/component_scans/update_updateservice.manifest.json\n M research/evidence/cpp/component_scans/window_window_manager.manifest.json\n M research/evidence/cpp/implementation_bound_controls_20261015/run-002/execution.json\n M research/evidence/cpp/implementation_bound_controls_20261015/run-002/verification.json\n M research/evidence/cpp/independent_review_20261015/blind_review_labels_frozen_20261015.json\n M research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.json\n M research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.md\n M research/evidence/cpp/independent_review_20261015/independent_signoff_template.md\n M research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json\n M research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.template.json\n M research/evidence/cpp/review_20261014/verification.json\n M research/evidence/cpp/shared_ptr_jsproxy_supplement_2026-10-15.json\n M research/evidence/cpp/source_sync_20261014.json\n M research/evidence/cpp/source_sync_20261014.md\n M research/experiments/cpp/r012_preflight_20261015/README.md\n M research/experiments/cpp/r012_preflight_20261015/experiment_budget.template.json\n M research/experiments/cpp/r012_preflight_20261015/human_cost.template.csv\n M research/experiments/cpp/r012_preflight_20261015/label_signoff_status.json\n M research/experiments/cpp/r012_preflight_20261015/preflight_manifest.json\n M research/experiments/cpp/r012_preflight_20261015/sample_manifest.template.json\n M research/experiments/cpp/r012_preflight_20261015/sample_size.template.json\n M research/experiments/cpp/rescan_fixed_a_same_scope_20261015.py\n M research/experiments/interface/ipc/tool_source_manifest.json\n M research/methods/cpp/DETECTOR_POC_MATRIX.md\n M research/methods/cpp/LIFETIME_METHOD_CARD.md\n M research/methods/cpp/SHARED_PTR_RACE_METHOD_CARD.md\n M research/methods/interface/IPC_METHOD_CARD.md\n M research/reviews/a_shared_ptr_229_erratum_2026-10-14.md\n M research/reviews/ipc_candidate_review_2026-10-11.md\n M research/tests/cpp_detector_controls/patches/lifetime_move_scope.patch\n M research/tests/cpp_detector_controls/patches/lifetime_owner_null_rebind.patch\n M research/tests/cpp_detector_controls/patches/lifetime_owner_replacement_rebind.patch\n M research/tests/cpp_detector_controls/patches/lifetime_reset_rebind.patch\n M research/tests/cpp_detector_controls/patches/shared_atomic_protocol.patch\n M research/tests/cpp_detector_controls/patches/shared_delayed_singleton_explicit_lock.patch\n M research/tests/cpp_detector_controls_impl_20261015/manifest.json\n M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_move_scope.patch\n M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_null_rebind.patch\n M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_replacement_rebind.patch\n M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_reset_rebind.patch\n M research/tests/cpp_detector_controls_impl_20261015/patches/shared_atomic_protocol.patch\n M research/tests/cpp_detector_controls_impl_20261015/patches/shared_delayed_singleton_explicit_lock.patch\n M rules/README.md\n M samples/README.md\n M samples/safe/demo_safe_copy.cpp\n M samples/vulnerable/demo_overflow.cpp\n M scripts/README.md\n M scripts/joern_nothrow_guard.sc\n M scripts/local_workspace.py\n M scripts/perf_scale_scan.py\n M scripts/replay_static_baselines.py\n M scripts/verify_owner_ipc_components.py\n M scripts/verify_workbench.py\n M src/__init__.py\n M src/analyzer/__init__.py\n M src/baseline/__init__.py\n M src/baseline/clang_analyzer.py\n M src/benchmark/__init__.py\n M src/benchmark/compare.py\n M src/benchmark/historical.py\n M src/benchmark/report_inputs.py\n M src/benchmark/root_cause_matrix.py\n M src/benchmark/scanner_compare.py\n M src/benchmark/tool_matrix.py\n M src/benchmark/tool_result.py\n M src/case/assembler.py\n M src/cli/__main__.py\n M src/cli/main.py\n M src/core/ast_scanner.py\n M src/core/case.py\n M src/core/context.py\n M src/core/evidence.py\n M src/core/finding.py\n M src/core/report.py\n M src/core/scanner.py\n M src/evidence/from_tool_result.py\n M src/evidence/from_triage.py\n M src/investigation/ipc_deterministic.py\n M src/llm/__init__.py\n M src/ohscanner/__init__.py\n M src/ohscanner/contracts.py\n M src/ohscanner/detectors/__init__.py\n M src/ohscanner/detectors/catalog.py\n M src/ohscanner/detectors/cpp/README.md\n M src/ohscanner/detectors/cpp/__init__.py\n M src/ohscanner/detectors/cpp/m2_adapter.py\n M src/ohscanner/detectors/example.py\n M src/ohscanner/detectors/interface/__init__.py\n M src/ohscanner/detectors/interface/analysis.py\n M src/ohscanner/detectors/interface/cpp_macros.py\n M src/ohscanner/detectors/interface/detector.py\n M src/ohscanner/detectors/interface/entry_index.py\n M src/ohscanner/detectors/interface/m2_adapter.py\n M src/ohscanner/detectors/interface/models.py\n M src/ohscanner/execution.py\n M src/ohscanner/facts.py\n M src/ohscanner/fixture.py\n M src/ohscanner/frontend.py\n M src/ohscanner/git_source.py\n M src/ohscanner/indexing.py\n M src/ohscanner/mocks.py\n M src/ohscanner/poc/__init__.py\n M src/ohscanner/poc/cpp_shared_ptr_jsproxy.py\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/README.md\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/harness.cpp\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/manifest.json\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/observations.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/poc_compat.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/hilog/log.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/ipc_object_stub.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/ipc_types.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/iremote_broker.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/iremote_stub.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/message_option.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/message_parcel.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/peer_holder.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/securec.h\n M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stubs.cpp\n M src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/README.md\n M src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp\n M src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json\n M src/ohscanner/poc/rc_jsproxy_product_gate.py\n M src/ohscanner/poc/reachability.py\n M src/ohscanner/poc/sources.py\n M src/ohscanner/poc/states.py\n M src/ohscanner/runner.py\n M src/ohscanner/smoke.py\n M src/parser/__init__.py\n M src/parser/ast.py\n M src/providers/__init__.py\n M src/providers/base.py\n M src/providers/clang_sa.py\n M src/providers/codeql.py\n M src/providers/cppcheck.py\n M src/providers/joern.py\n M src/providers/registry.py\n M src/providers/semgrep.py\n M src/report/benchmark_report.py\n M src/rules/__init__.py\n M src/triage/__init__.py\n M src/triage/callsite.py\n M src/triage/review.py\n M src/triage/review_store.py\n M src/utils/__init__.py\n M src/validation/__init__.py\n M src/validation/cjson_allocator.py\n M src/workbench/__init__.py\n M src/workbench/__main__.py\n M src/workbench/api.py\n M src/workbench/child.py\n M src/workbench/operation_worker.py\n M src/workbench/operations.py\n M src/workbench/operations_api.py\n M src/workbench/operations_store.py\n M src/workbench/service.py\n M src/workbench/settings.py\n M src/workbench/store.py\n M src/workbench/validation.py\n M src/workbench/worker.py\n M tests/README.md\n M tests/detectors/__init__.py\n M tests/detectors/fixture_support.py\n M tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp\n M tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp\n M tests/detectors/fixtures/cpp_lifetime/incomplete_scope_unmodeled_owner.cpp\n M tests/detectors/fixtures/cpp_lifetime/manifest.json\n M tests/detectors/fixtures/cpp_lifetime/missing_symbol_unresolved_alias.cpp\n M tests/detectors/fixtures/cpp_lifetime/not_run_parse_pending.cpp\n M tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp\n M tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp\n M tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp\n M tests/detectors/fixtures/cpp_lifetime/unsupported_language_note.js\n M tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp\n M tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp\n M tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/fixed_atomic_shared_ptr.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/manifest.json\n M tests/detectors/fixtures/cpp_shared_ptr_race/not_applicable_no_matching_language.js\n M tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_helper.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_only.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_failed_parse.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_incomplete_scope.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_macro_shared_ptr.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_not_run.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_partial_parse.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_plain_pointer.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_shared_ptr_local.cpp\n M tests/detectors/fixtures/cpp_shared_ptr_race/vulnerable_non_atomic_shared_ptr.cpp\n M tests/detectors/shared_ptr_race_fixture_support.py\n M tests/detectors/test_cpp_runner_integration.py\n M tests/fixtures/ipc/auth_fixed.cpp\n M tests/fixtures/ipc/auth_ignored_positive.cpp\n M tests/fixtures/ipc/auth_positive.cpp\n M tests/fixtures/ipc/cached_caller_fixed.cpp\n M tests/fixtures/ipc/capability_fixed.cpp\n M tests/fixtures/ipc/capability_null_safe.cpp\n M tests/fixtures/ipc/capability_positive.cpp\n M tests/fixtures/ipc/comments_safe.cpp\n M tests/fixtures/ipc/common_types.h\n M tests/fixtures/ipc/coverage_fixed.cpp\n M tests/fixtures/ipc/coverage_late_positive.cpp\n M tests/fixtures/ipc/coverage_positive.cpp\n M tests/fixtures/ipc/dead_path_safe.cpp\n M tests/fixtures/ipc/denied_complement_positive.cpp\n M tests/fixtures/ipc/descriptor_after_positive.cpp\n M tests/fixtures/ipc/descriptor_alias_positive.cpp\n M tests/fixtures/ipc/descriptor_call_only_positive.cpp\n M tests/fixtures/ipc/descriptor_inherited_fixed.cpp\n M tests/fixtures/ipc/descriptor_interface_fixed.cpp\n M tests/fixtures/ipc/descriptor_no_prefix_fixed.cpp\n M tests/fixtures/ipc/descriptor_no_reject_positive.cpp\n M tests/fixtures/ipc/descriptor_one_branch_positive.cpp\n M tests/fixtures/ipc/descriptor_unrelated_positive.cpp\n M tests/fixtures/ipc/descriptor_unresolved_positive.cpp\n M tests/fixtures/ipc/descriptor_wrong_interface_positive.cpp\n M tests/fixtures/ipc/helper_fixed.cpp\n M tests/fixtures/ipc/helper_positive.cpp\n M tests/fixtures/ipc/identity_fixed.cpp\n M tests/fixtures/ipc/identity_positive.cpp\n M tests/fixtures/ipc/manifest.json\n M tests/fixtures/ipc/owner_fixed.cpp\n M tests/fixtures/ipc/owner_positive.cpp\n M tests/fixtures/ipc/parcel_fixed.cpp\n M tests/fixtures/ipc/parcel_positive.cpp\n M tests/fixtures/ipc/parcel_unrelated_bound_positive.cpp\n M tests/fixtures/ipc/relay_fixed.cpp\n M tests/fixtures/ipc/relay_inner_after_dispatch_positive.cpp\n M tests/fixtures/ipc/relay_inner_guard_fixed.cpp\n M tests/fixtures/ipc/relay_inner_local_guard_fixed.cpp\n M tests/fixtures/ipc/relay_inner_nested_positive.cpp\n M tests/fixtures/ipc/relay_inner_no_guard_positive.cpp\n M tests/fixtures/ipc/relay_inner_no_reject_positive.cpp\n M tests/fixtures/ipc/relay_inner_substituted_positive.cpp\n M tests/fixtures/ipc/relay_inner_wrong_interface_positive.cpp\n M tests/fixtures/ipc/relay_positive.cpp\n M tests/fixtures/ipc/relay_read_only_positive.cpp\n M tests/fixtures/ipc/request_identity_positive.cpp\n M tests/fixtures/ipc/reset_identity_positive.cpp\n M tests/fixtures/ipc/switch_positive.cpp\n M tests/fixtures/ipc/wrong_parcel_positive.cpp\n M tests/fixtures/ohscanner/bridge.ets\n M tests/fixtures/ohscanner/sample.cpp\n M tests/test_a_ccr_03_finding_identity.py\n M tests/test_ast.py\n M tests/test_ast_scanner.py\n M tests/test_benchmark_report.py\n M tests/test_benchmark_report_inputs.py\n M tests/test_case.py\n M tests/test_case_assembler.py\n M tests/test_clang_baseline.py\n M tests/test_context.py\n M tests/test_contract_v2_source_binding.py\n M tests/test_evidence.py\n M tests/test_historical_benchmark.py\n M tests/test_historical_label.py\n M tests/test_investigation_dual_layer.py\n M tests/test_ipc_descriptor_identity.py\n M tests/test_ipc_detector.py\n M tests/test_ipc_disclosure_consequence.py\n M tests/test_ipc_entry_index.py\n M tests/test_ipc_macros.py\n M tests/test_ipc_relay_guard.py\n M tests/test_ohscanner_contract.py\n M tests/test_ohscanner_m1.py\n M tests/test_ohscanner_m15.py\n M tests/test_ohscanner_m2.py\n M tests/test_ohscanner_m2_a_integration.py\n M tests/test_owner_ipc_platform.py\n M tests/test_poc_runner.py\n M tests/test_provider_adapters.py\n M tests/test_rc_jsproxy_product_gate.py\n M tests/test_review_store.py\n M tests/test_root_cause_matrix.py\n M tests/test_scanner.py\n M tests/test_scanner_compare.py\n M tests/test_shared_ptr_jsproxy_poc.py\n M tests/test_source_preparation.py\n M tests/test_tool_compare.py\n M tests/test_tool_matrix.py\n M tests/test_tool_result.py\n M tests/test_triage.py\n M tests/test_workbench.py\n M tests/test_workbench_clusters.py\n M tests/test_workbench_operations.py\n M validation/cjson/allocator_robustness.c\n M web/build.mjs\n M web/index.html\n M web/package-lock.json\n M web/package.json\n M web/src/SourceEvidence.tsx\n M web/src/api.ts\n M web/src/components.tsx\n M web/src/main.tsx\n M web/src/pages/Capabilities.tsx\n M web/src/pages/Cases.tsx\n M web/src/pages/JobDetail.tsx\n M web/src/pages/NewScan.tsx\n M web/src/pages/Operations.tsx\n M web/src/pages/Repositories.tsx\n M web/src/style.css\n M web/tsconfig.json\n?? outputs/browser-acceptance/\n?? outputs/platform-real-product-browser-01/\n?? outputs/reports/m1_descriptor_identity/\n?? research/contracts/A-CCR-REVIEW-stable-finding-identity-readonlyfactview.md\n?? research/contracts/a_ccr_04/owner_approval.json\n?? research/evidence/cpp/a_null_01_implementation_20261015/\n?? research/evidence/cpp/a_null_01_preimplementation_20261015/\n?? research/evidence/cpp/a_truth_01_freeze_20261015/\n?? research/evidence/cpp/detector_enhancement_20261015/\n?? research/evidence/cpp/four_class_controls/run-001/\n?? research/evidence/cpp/four_class_controls/run-002/\n?? research/evidence/cpp/four_class_controls/run-003/\n?? research/evidence/cpp/four_class_controls/run-004/\n?? research/evidence/cpp/four_class_controls/run-005/family_poc/\n?? research/evidence/cpp/four_class_controls/run-005/logs/\n?? research/evidence/cpp/four_class_controls/run-005/results.json\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json\n?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/\n?? research/experiments/cpp/r0_r1_r2_20261015/\n?? research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md\n?? research/specs/\n?? research/tests/a_ccr_03_stable_finding_identity/\n?? research/tests/a_null_01/\n?? scripts/browser_acceptance.mjs\n?? scripts/browser_acceptance_seed.py\n?? scripts/git_https_fixture_server.py\n?? scripts/platform_real_product_browser_acceptance.mjs\n?? scripts/platform_real_product_browser_seed.py\n?? src/ohscanner/detectors/cpp/null_dereference_detector.py\n?? tests/detectors/null_dereference_fixture_support.py\n?? tests/detectors/test_cpp_null_dereference_detector.py\n?? tests/test_workbench_browser_acceptance.py"
+  },
+  "environment": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "executable": "/mnt/e/网安/CyberSecurity-Innovation-Audit/.venv-web/bin/python"
+  },
+  "artifact_sha256": {
+    "src/ohscanner/detectors/cpp/null_dereference_detector.py": "63d848c76570c63c09d03d5e15b1af01bc292c85acb4f4603966b185c0382326",
+    "src/ohscanner/detectors/cpp/README.md": "cfe54fa62ef231ef687aebd783b21447dc86cbb5f57ea0fd2aec451668cad08c",
+    "tests/detectors/null_dereference_fixture_support.py": "33c4ceaf1c77bf58fb28196d301f1f3674ff7708dc526b9fbfdac7336be52605",
+    "tests/detectors/test_cpp_null_dereference_detector.py": "b52ea3d3111f17a13799486d0ce31575d4fb2806f00c100b4ffb79e2541c10c3",
+    "research/contracts/a_ccr_04/owner_approval.json": "e22a6f39ca301edbf2468be12c12f4da0ced03c653eec43088a355270b42cdbf",
+    "research/tests/a_null_01/manifest.json": "2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3",
+    "research/tests/a_null_01/regression_matrix.json": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784"
+  },
+  "fixture_integrity": {
+    "argv": [
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/.venv-web/bin/python",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/a_null_01/verify_fixtures.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"fixtures\": 18,\n  \"git_status_porcelain_sha256\": \"b98087a6858fd16115c072e95f4b5d9dccdfb6614e8d70611273be6491f12a0e\",\n  \"manifest_sha256\": \"2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3\",\n  \"mode\": \"check\",\n  \"regression_matrix_sha256\": \"b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784\",\n  \"snapshot_sha256\": \"c4c965974ccf2a5dc76a2376550cc415e3ce46e3b469e6ba8fbc6d5e63d8863f\",\n  \"status\": \"passed\"\n}\n",
+    "stderr": ""
+  },
+  "fixture_count": 18,
+  "expected_fixture_count": 18,
+  "per_fixture": [
+    {
+      "fixture": "fixed_local_guarded_deref.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/fixed_local_guarded_deref.cpp",
+      "source_sha256": "c789cb7a7caf2c1d282f050642d54e3bdad6b6565de070375ffd4ba5570c0317",
+      "matrix_expected_observation": "no_candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 0,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/fixed_local_guarded_deref.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "fixed_parameter_early_return.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/fixed_parameter_early_return.cpp",
+      "source_sha256": "9bb54e84a4738e89302b104ddd259647c30a13d56ea0b6df14ebf5a2044f42c6",
+      "matrix_expected_observation": "no_candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 0,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/fixed_parameter_early_return.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "not_analyzed_no_cpp_shape.js",
+      "source_path": "research/tests/a_null_01/fixtures/not_analyzed_no_cpp_shape.js",
+      "source_sha256": "ceebe23694800fe72e4af8db69f9dd15e577d95033ee950221c37a80c8af6f26",
+      "matrix_expected_observation": "not_analyzed_no_matching_language",
+      "matrix_expected_coverage": "not_analyzed",
+      "matrix_expected_finding_count": null,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/not_analyzed_no_cpp_shape.js",
+          "not_analyzed"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "No absence, safety, miss or product conclusion is published for failed/not-analyzed coverage.",
+        "not_analyzed language=js; no C/C++ conclusion for research/tests/a_null_01/fixtures/not_analyzed_no_cpp_shape.js.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "safe_address_of_local.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/safe_address_of_local.cpp",
+      "source_sha256": "28da2da593f1be753e939a4ca299048c010f7dd0d56d3f3ac7ec848b4cbf2db3",
+      "matrix_expected_observation": "no_candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 0,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/safe_address_of_local.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "safe_positive_guard_nested.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/safe_positive_guard_nested.cpp",
+      "source_sha256": "b827ffa13047dc3beedc4d4f6420b37d2ce55bd8c2874c07a472c3b1fb8def4f",
+      "matrix_expected_observation": "no_candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 0,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/safe_positive_guard_nested.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "unknown_cross_function_alias.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "source_sha256": "0072b8dabe7ec6c693db89798a63612fd87ed81a0b87c43bf0d0f423e7e30cc0",
+      "matrix_expected_observation": "candidate_with_unknown_obligations",
+      "matrix_expected_coverage": "partial",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "blocked",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+          "partial"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "unknown_reason: cross_function_alias",
+        "unknown_reason: unresolved_function_return_nullability",
+        "unknown_reason: function_return_nullability_unknown",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [
+        "cross_function_alias",
+        "unresolved_function_return_nullability",
+        "function_return_nullability_unknown"
+      ],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+          "line": 9,
+          "column": 12,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "0072b8dabe7ec6c693db89798a63612fd87ed81a0b87c43bf0d0f423e7e30cc0",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "unknown_exception_destructor.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "source_sha256": "19cfb8245dbb06f3e8d3f6ae2534acd5282c04465054be7b92a9f0e14207b220",
+      "matrix_expected_observation": "candidate_with_unknown_obligations",
+      "matrix_expected_coverage": "partial",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "blocked",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+          "partial"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "unknown_reason: exception_edges_unknown",
+        "unknown_reason: destructor_order_unknown",
+        "unknown_reason: cross_function_alias",
+        "unknown_reason: smart_pointer_value_unknown_nullability",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [
+        "exception_edges_unknown",
+        "destructor_order_unknown",
+        "cross_function_alias",
+        "smart_pointer_value_unknown_nullability"
+      ],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+          "line": 11,
+          "column": 12,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "19cfb8245dbb06f3e8d3f6ae2534acd5282c04465054be7b92a9f0e14207b220",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=smart_pointer_value_unknown_nullability; sink=member_dereference; guard_relation=not_dominating; error_path=exception_unmodeled; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "unknown_failed_parse.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unknown_failed_parse.cpp",
+      "source_sha256": "d2e8446d76cc67eb61395035320143c74aa480a35846992a8452fde6a0beecd4",
+      "matrix_expected_observation": "unknown_incomplete_analysis",
+      "matrix_expected_coverage": "failed",
+      "matrix_expected_finding_count": null,
+      "observed_status": "failed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unknown_failed_parse.cpp",
+          "failed"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "parse_failed: research/tests/a_null_01/fixtures/unknown_failed_parse.cpp",
+        "No absence, safety, miss or product conclusion is published for failed/not-analyzed coverage.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "unknown_indirect_call.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+      "source_sha256": "b9488cf8a5e6ae5c8f25d722a7cb1d1bbb1bf44677ce63262d4160545e2281c9",
+      "matrix_expected_observation": "candidate_with_unknown_obligations",
+      "matrix_expected_coverage": "partial",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "blocked",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+          "partial"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "unknown_reason: function_pointer_target_unresolved",
+        "unknown_reason: callee_dereference_unknown",
+        "unknown_reason: guard_dominance_unknown",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [
+        "function_pointer_target_unresolved",
+        "callee_dereference_unknown",
+        "guard_dominance_unknown"
+      ],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+          "line": 8,
+          "column": 19,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "b9488cf8a5e6ae5c8f25d722a7cb1d1bbb1bf44677ce63262d4160545e2281c9",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=indirect_call_argument; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "unknown_macro.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+      "source_sha256": "7e83694de02bbe642f55b8d4ec642399278729d7216b0759890f7f89306b96a2",
+      "matrix_expected_observation": "candidate_with_unknown_obligations",
+      "matrix_expected_coverage": "partial",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "blocked",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+          "partial"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "unknown_reason: macro_not_expanded",
+        "unknown_reason: compile_context_missing",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [
+        "macro_not_expanded",
+        "compile_context_missing"
+      ],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+          "line": 4,
+          "column": 12,
+          "symbol": "value",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "7e83694de02bbe642f55b8d4ec642399278729d7216b0759890f7f89306b96a2",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=macro_expanded_unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "unknown_template.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unknown_template.cpp",
+      "source_sha256": "724f7488eea4c256a317960fd476faf3c421b664b41444af27aba099eeb1e287",
+      "matrix_expected_observation": "candidate_with_unknown_obligations",
+      "matrix_expected_coverage": "partial",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "blocked",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unknown_template.cpp",
+          "partial"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "unknown_reason: template_instantiation_unknown",
+        "unknown_reason: type_system_unknown",
+        "unknown_reason: guard_dominance_unknown",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [
+        "template_instantiation_unknown",
+        "type_system_unknown",
+        "guard_dominance_unknown"
+      ],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/unknown_template.cpp",
+          "line": 8,
+          "column": 5,
+          "symbol": "box.value",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "724f7488eea4c256a317960fd476faf3c421b664b41444af27aba099eeb1e287",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_unknown; sink=dependent_unary_dereference; guard_relation=unknown; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "unrelated_no_pointer_shape.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/unrelated_no_pointer_shape.cpp",
+      "source_sha256": "15da20ddd16ff8d326bfa42826169348180fd2e39009d0b076f42ef9f1279767",
+      "matrix_expected_observation": "no_candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 0,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/unrelated_no_pointer_shape.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 0,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": []
+    },
+    {
+      "fixture": "vulnerable_error_path_falls_through.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+      "source_sha256": "3b485c6676271c1b3ace7294f56b6154b3ec8dfccb12263626bf468f9f812c95",
+      "matrix_expected_observation": "candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+          "line": 10,
+          "column": 12,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "3b485c6676271c1b3ace7294f56b6154b3ec8dfccb12263626bf468f9f812c95",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=not_dominating; error_path=error_branch_falls_through; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "vulnerable_guard_not_dominating.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+      "source_sha256": "1a4ef7599a7583b4e2338a359cf107597875b99b3be9b63b9652f3d43ebe96fd",
+      "matrix_expected_observation": "candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+          "line": 10,
+          "column": 12,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "1a4ef7599a7583b4e2338a359cf107597875b99b3be9b63b9652f3d43ebe96fd",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=not_dominating; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "vulnerable_local_null.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+      "source_sha256": "ed228483ede7f0d47e17a237bc919661dd058df277026a10b2a2174260df62d8",
+      "matrix_expected_observation": "candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+          "line": 7,
+          "column": 5,
+          "symbol": "value",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "ed228483ede7f0d47e17a237bc919661dd058df277026a10b2a2174260df62d8",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=local_pointer_explicit_null; sink=unary_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "vulnerable_member_pointer.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+      "source_sha256": "008ab238b1e7ce43f9498af45ebd4dec71e65b725c33f184021f4e87d8f13917",
+      "matrix_expected_observation": "candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+          "line": 9,
+          "column": 16,
+          "symbol": "item_",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "008ab238b1e7ce43f9498af45ebd4dec71e65b725c33f184021f4e87d8f13917",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=member_pointer_explicit_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "vulnerable_parameter.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+      "source_sha256": "182c6cd346fb752a4eab12b3c006c6c58eec8ad89c249f035c3538ffc85ae69a",
+      "matrix_expected_observation": "candidate_shape",
+      "matrix_expected_coverage": "complete",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "completed",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+          "complete"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+          "line": 6,
+          "column": 12,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "182c6cd346fb752a4eab12b3c006c6c58eec8ad89c249f035c3538ffc85ae69a",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=parameter_may_be_null; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fixture": "vulnerable_return_value.cpp",
+      "source_path": "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+      "source_sha256": "6f1b4ade4aa8d3ac454762360b51e4e6c05da3480fef6cd2809e8dbf5f32b8c7",
+      "matrix_expected_observation": "candidate_with_unknown_obligations",
+      "matrix_expected_coverage": "partial",
+      "matrix_expected_finding_count": 1,
+      "observed_status": "blocked",
+      "observed_file_outcomes": [
+        [
+          "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+          "partial"
+        ]
+      ],
+      "observed_finding_count": 1,
+      "observed_limitations": [
+        "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+        "unknown_reason: cross_function_alias",
+        "unknown_reason: unresolved_function_return_nullability",
+        "unknown_reason: function_return_nullability_unknown",
+        "Zero findings under this bounded rule are not a safe verdict.",
+        "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+      ],
+      "unknown_reasons": [
+        "cross_function_alias",
+        "unresolved_function_return_nullability",
+        "function_return_nullability_unknown"
+      ],
+      "findings": [
+        {
+          "file": "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+          "line": 9,
+          "column": 12,
+          "symbol": "item",
+          "rule_id": "ohcpp-null-dereference-candidate-001",
+          "evidence_type": "syntax",
+          "candidate_cwe": "CWE-476",
+          "source_sha256": "6f1b4ade4aa8d3ac454762360b51e4e6c05da3480fef6cd2809e8dbf5f32b8c7",
+          "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=function_return_value_unknown_nullability; sink=member_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+          "evidence_obligations": [
+            {
+              "kind": "guard_dominance",
+              "description": "Establish complete CFG dominance for every sink.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_alias",
+              "description": "Resolve parameter, return, member and escaped aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "compile_context",
+              "description": "Bind compiler, defines, includes, language mode and instantiations.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the null source or trigger.",
+              "status": "missing"
+            },
+            {
+              "kind": "sensitive_operation_reachability",
+              "description": "Show the sink is reachable in the affected build.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Record reproducible trigger conditions and observed behavior.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "combined_run": {
+    "status": "failed",
+    "file_outcomes": [
+      [
+        "research/tests/a_null_01/fixtures/fixed_local_guarded_deref.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/fixed_parameter_early_return.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/not_analyzed_no_cpp_shape.js",
+        "not_analyzed"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/safe_address_of_local.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/safe_positive_guard_nested.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+        "partial"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+        "partial"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unknown_failed_parse.cpp",
+        "failed"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+        "partial"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+        "partial"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unknown_template.cpp",
+        "partial"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/unrelated_no_pointer_shape.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+        "complete"
+      ],
+      [
+        "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+        "partial"
+      ]
+    ],
+    "analyzed_files": [
+      "research/tests/a_null_01/fixtures/fixed_local_guarded_deref.cpp",
+      "research/tests/a_null_01/fixtures/fixed_parameter_early_return.cpp",
+      "research/tests/a_null_01/fixtures/safe_address_of_local.cpp",
+      "research/tests/a_null_01/fixtures/safe_positive_guard_nested.cpp",
+      "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+      "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+      "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+      "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+      "research/tests/a_null_01/fixtures/unknown_template.cpp",
+      "research/tests/a_null_01/fixtures/unrelated_no_pointer_shape.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+      "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp"
+    ],
+    "finding_count": 11,
+    "limitations": [
+      "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+      "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+      "No absence, safety, miss or product conclusion is published for failed/not-analyzed coverage.",
+      "not_analyzed language=js; no C/C++ conclusion for research/tests/a_null_01/fixtures/not_analyzed_no_cpp_shape.js.",
+      "unknown_reason: cross_function_alias",
+      "unknown_reason: unresolved_function_return_nullability",
+      "unknown_reason: function_return_nullability_unknown",
+      "unknown_reason: exception_edges_unknown",
+      "unknown_reason: destructor_order_unknown",
+      "unknown_reason: smart_pointer_value_unknown_nullability",
+      "parse_failed: research/tests/a_null_01/fixtures/unknown_failed_parse.cpp",
+      "unknown_reason: function_pointer_target_unresolved",
+      "unknown_reason: callee_dereference_unknown",
+      "unknown_reason: guard_dominance_unknown",
+      "unknown_reason: macro_not_expanded",
+      "unknown_reason: compile_context_missing",
+      "unknown_reason: template_instantiation_unknown",
+      "unknown_reason: type_system_unknown",
+      "Zero findings under this bounded rule are not a safe verdict.",
+      "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+    ],
+    "source_sha256s": [
+      "0072b8dabe7ec6c693db89798a63612fd87ed81a0b87c43bf0d0f423e7e30cc0",
+      "008ab238b1e7ce43f9498af45ebd4dec71e65b725c33f184021f4e87d8f13917",
+      "182c6cd346fb752a4eab12b3c006c6c58eec8ad89c249f035c3538ffc85ae69a",
+      "19cfb8245dbb06f3e8d3f6ae2534acd5282c04465054be7b92a9f0e14207b220",
+      "1a4ef7599a7583b4e2338a359cf107597875b99b3be9b63b9652f3d43ebe96fd",
+      "3b485c6676271c1b3ace7294f56b6154b3ec8dfccb12263626bf468f9f812c95",
+      "6f1b4ade4aa8d3ac454762360b51e4e6c05da3480fef6cd2809e8dbf5f32b8c7",
+      "724f7488eea4c256a317960fd476faf3c421b664b41444af27aba099eeb1e287",
+      "7e83694de02bbe642f55b8d4ec642399278729d7216b0759890f7f89306b96a2",
+      "b9488cf8a5e6ae5c8f25d722a7cb1d1bbb1bf44677ce63262d4160545e2281c9",
+      "ed228483ede7f0d47e17a237bc919661dd058df277026a10b2a2174260df62d8"
+    ]
+  },
+  "claims": {
+    "precision_recall_claimed": false,
+    "zero_false_positive_or_negative_claimed": false,
+    "candidate_promoted": false,
+    "external_scanner_dependency": false,
+    "catalog_registration_changed": false,
+    "default_output_state": "candidate/unassessed"
+  }
+}

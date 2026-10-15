@@ -1,0 +1,297 @@
+{
+  "schema_version": "ohscanner.a-null-01-regression-matrix-v1",
+  "change_request_id": "A-NULL-01",
+  "status": "preimplementation_fixture_design_only",
+  "approval_gate": {
+    "required_change_request": "A-CCR-04",
+    "repository_record": "proposed/awaiting_owner_approval",
+    "public_code_allowed": false,
+    "deferred_deliverables": [
+      "detector implementation",
+      "production detector README",
+      "catalog or runner integration",
+      "detector regression execution",
+      "PoC and dynamic validation"
+    ]
+  },
+  "proposed_detector": {
+    "detector_id": "ohscanner.cpp.null_dereference",
+    "version": "0.1.0",
+    "rule_id": "ohcpp-null-dereference-candidate-001",
+    "candidate_cwe": "CWE-476",
+    "output_state": "candidate/unassessed"
+  },
+  "coverage_semantics": {
+    "complete": "The bounded same-function syntax slice was fully processed; semantic proof may still be unknown.",
+    "partial": "A source/sink shape may be visible, but macros, templates, exceptions, destructor order, CFG, aliasing, indirect calls or build context remain unmodeled.",
+    "failed": "Parsing, integrity or analysis execution failed; no absence or safety conclusion is allowed.",
+    "not_analyzed": "The unit is outside the supported C/C++ scope or was not selected."
+  },
+  "evidence_obligations": [
+    {
+      "kind": "guard_dominance",
+      "candidate_status": "unknown",
+      "description": "A complete CFG/dominance proof must establish whether a null guard dominates every dereference sink."
+    },
+    {
+      "kind": "cross_function_alias",
+      "candidate_status": "unknown",
+      "description": "Parameters, return values, member pointers and escaped aliases require bounded alias evidence before promotion."
+    },
+    {
+      "kind": "compile_context",
+      "candidate_status": "missing",
+      "description": "The exact compiler, defines, include graph, language mode and template instantiation context must be bound."
+    },
+    {
+      "kind": "entry_or_privilege_boundary",
+      "candidate_status": "missing",
+      "description": "A realistic reachable entry point and its privilege boundary are required for a security claim."
+    },
+    {
+      "kind": "attacker_control",
+      "candidate_status": "missing",
+      "description": "Evidence must show that an attacker can influence the null source or trigger path."
+    },
+    {
+      "kind": "sensitive_operation_reachability",
+      "candidate_status": "missing",
+      "description": "The dereference must be shown reachable in the affected product build."
+    },
+    {
+      "kind": "trigger_conditions",
+      "candidate_status": "missing",
+      "description": "Concrete reproducible trigger conditions and failure behavior are required."
+    },
+    {
+      "kind": "cia_impact",
+      "candidate_status": "missing",
+      "description": "A concrete confidentiality, integrity or availability impact must be established."
+    }
+  ],
+  "cases": [
+    {
+      "fixture": "vulnerable_local_null.cpp",
+      "fixture_category": "vulnerable",
+      "parse_status": "complete",
+      "expected_observation": "candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "null_source": "local_pointer_explicit_null",
+      "sink": "unary_dereference",
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "vulnerable_parameter.cpp",
+      "fixture_category": "vulnerable",
+      "parse_status": "complete",
+      "expected_observation": "candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "null_source": "parameter_may_be_null",
+      "sink": "member_dereference",
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "vulnerable_member_pointer.cpp",
+      "fixture_category": "vulnerable",
+      "parse_status": "complete",
+      "expected_observation": "candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "null_source": "member_pointer_explicit_null",
+      "sink": "member_dereference",
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "vulnerable_return_value.cpp",
+      "fixture_category": "vulnerable_unknown_return",
+      "parse_status": "complete",
+      "expected_observation": "candidate_with_unknown_obligations",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "null_source": "function_return_value_unknown_nullability",
+      "sink": "member_dereference",
+      "guard_relation": "none",
+      "error_path": "not_applicable",
+      "unknown_reasons": ["unresolved_function_return_nullability", "cross_function_alias"]
+    },
+    {
+      "fixture": "vulnerable_guard_not_dominating.cpp",
+      "fixture_category": "vulnerable",
+      "parse_status": "complete",
+      "expected_observation": "candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "null_source": "parameter_may_be_null",
+      "sink": "member_dereference",
+      "guard_relation": "not_dominating",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "vulnerable_error_path_falls_through.cpp",
+      "fixture_category": "vulnerable",
+      "parse_status": "complete",
+      "expected_observation": "candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "null_source": "parameter_may_be_null",
+      "sink": "member_dereference",
+      "guard_relation": "not_dominating",
+      "error_path": "error_branch_falls_through"
+    },
+    {
+      "fixture": "fixed_parameter_early_return.cpp",
+      "fixture_category": "fixed",
+      "parse_status": "complete",
+      "expected_observation": "no_candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "null_source": "parameter_may_be_null",
+      "sink": "member_dereference",
+      "guard_relation": "dominating",
+      "error_path": "early_return"
+    },
+    {
+      "fixture": "fixed_local_guarded_deref.cpp",
+      "fixture_category": "fixed",
+      "parse_status": "complete",
+      "expected_observation": "no_candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "null_source": "parameter_may_be_null",
+      "sink": "unary_dereference",
+      "guard_relation": "dominating",
+      "error_path": "early_return"
+    },
+    {
+      "fixture": "safe_address_of_local.cpp",
+      "fixture_category": "safe",
+      "parse_status": "complete",
+      "expected_observation": "no_candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "null_source": "address_of_local_non_null_in_scope",
+      "sink": "unary_dereference",
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "safe_positive_guard_nested.cpp",
+      "fixture_category": "safe",
+      "parse_status": "complete",
+      "expected_observation": "no_candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "null_source": "parameter_may_be_null",
+      "sink": "member_dereference",
+      "guard_relation": "dominating",
+      "error_path": "positive_guard_only"
+    },
+    {
+      "fixture": "unrelated_no_pointer_shape.cpp",
+      "fixture_category": "unrelated",
+      "parse_status": "complete",
+      "expected_observation": "no_candidate_shape",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "null_source": "not_applicable",
+      "sink": "not_applicable",
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "unknown_macro.cpp",
+      "fixture_category": "unknown_macro",
+      "parse_status": "complete",
+      "expected_observation": "candidate_with_unknown_obligations",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "null_source": "parameter_may_be_null",
+      "sink": "macro_expanded_unary_dereference",
+      "guard_relation": "unknown",
+      "error_path": "not_applicable",
+      "unknown_reasons": ["macro_not_expanded", "compile_context_missing"]
+    },
+    {
+      "fixture": "unknown_template.cpp",
+      "fixture_category": "unknown_template",
+      "parse_status": "complete",
+      "expected_observation": "candidate_with_unknown_obligations",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "null_source": "member_pointer_unknown",
+      "sink": "dependent_unary_dereference",
+      "guard_relation": "unknown",
+      "error_path": "not_applicable",
+      "unknown_reasons": ["template_instantiation_unknown", "type_system_unknown"]
+    },
+    {
+      "fixture": "unknown_exception_destructor.cpp",
+      "fixture_category": "unknown_exception_destructor",
+      "parse_status": "complete",
+      "expected_observation": "candidate_with_unknown_obligations",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "null_source": "smart_pointer_value_unknown_nullability",
+      "sink": "member_dereference",
+      "guard_relation": "not_dominating",
+      "error_path": "exception_unmodeled",
+      "unknown_reasons": ["exception_edges_unknown", "destructor_order_unknown", "cross_function_alias"]
+    },
+    {
+      "fixture": "unknown_indirect_call.cpp",
+      "fixture_category": "unknown_indirect_call",
+      "parse_status": "complete",
+      "expected_observation": "candidate_with_unknown_obligations",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "null_source": "parameter_may_be_null",
+      "sink": "indirect_call_argument",
+      "guard_relation": "unknown",
+      "error_path": "not_applicable",
+      "unknown_reasons": ["function_pointer_target_unresolved", "callee_dereference_unknown"]
+    },
+    {
+      "fixture": "unknown_cross_function_alias.cpp",
+      "fixture_category": "unknown_cross_function_alias",
+      "parse_status": "complete",
+      "expected_observation": "candidate_with_unknown_obligations",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "null_source": "function_return_value_unknown_nullability",
+      "sink": "member_dereference",
+      "guard_relation": "none",
+      "error_path": "not_applicable",
+      "unknown_reasons": ["cross_function_alias", "function_return_nullability_unknown"]
+    },
+    {
+      "fixture": "unknown_failed_parse.cpp",
+      "fixture_category": "unknown_failed_parse",
+      "parse_status": "failed",
+      "expected_observation": "unknown_incomplete_analysis",
+      "expected_coverage": "failed",
+      "expected_finding_count": null,
+      "null_source": "unknown",
+      "sink": "unknown",
+      "guard_relation": "unknown",
+      "error_path": "unknown",
+      "unknown_reasons": ["parse_failed"]
+    },
+    {
+      "fixture": "not_analyzed_no_cpp_shape.js",
+      "fixture_category": "not_analyzed_unsupported_language",
+      "parse_status": "complete",
+      "expected_observation": "not_analyzed_no_matching_language",
+      "expected_coverage": "not_analyzed",
+      "expected_finding_count": null,
+      "null_source": "not_applicable",
+      "sink": "not_applicable",
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    }
+  ]
+}

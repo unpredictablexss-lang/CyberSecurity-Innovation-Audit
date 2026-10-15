@@ -1,0 +1,157 @@
+{
+  "schema_version": "ohscanner.a-null-01-preimplementation-verification-v1",
+  "change_request_id": "A-NULL-01",
+  "generated_at": "2026-10-15T14:36:19+08:00",
+  "scope": "fixture_method_card_and_implementation_design_only",
+  "approval_gate": {
+    "required_change_request": "A-CCR-04",
+    "repository_record": "proposed/awaiting_owner_approval",
+    "approval_evidence": "research/contracts/a_ccr_04/verification.json:approval_state",
+    "public_code_allowed": false,
+    "decision": "defer_detector_implementation_and_public_readme"
+  },
+  "checkout": {
+    "workspace": "E:\\网安\\CyberSecurity-Innovation-Audit",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "0e94ceafab1b2d79547bdf71c86e26e8b42a6b48",
+    "tree": "cee6b4609e65f2954114b368761614d5f745d6a6",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "remote_branch": "origin/codex/full-runtime-performance-audit-20261014",
+    "remote_head_observed": "38b93d30ed4be71af4a8245ed18198d999c3ee18",
+    "local_relation": "ahead_1",
+    "dirty_worktree": true,
+    "dirty_worktree_policy": "preserved_not_reset_or_overwritten"
+  },
+  "runtime": {
+    "os": "Ubuntu 22.04.5 LTS under WSL2",
+    "python": "3.10.12",
+    "production_detector_dependencies": [],
+    "prohibited_production_dependencies": [
+      "CodeQL",
+      "Clang Static Analyzer",
+      "Infer",
+      "Joern"
+    ]
+  },
+  "proposed_identity": {
+    "detector_id": "ohscanner.cpp.null_dereference",
+    "detector_version": "0.1.0",
+    "rule_id": "ohcpp-null-dereference-candidate-001",
+    "candidate_cwe": "CWE-476",
+    "output_state": "candidate/unassessed"
+  },
+  "artifact_hashes_sha256": {
+    "research/tests/a_null_01/regression_matrix.json": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784",
+    "research/tests/a_null_01/manifest.json": "2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3",
+    "research/tests/a_null_01/verify_fixtures.py": "621804225cec29662352642844615483dda885a21375bcdb4312669271ab1eeb",
+    "research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md": "e805c67674bd8e14cbe2f65738bdcde54763e1502448bc659fca49c81ff07cde",
+    "research/specs/cpp/A-NULL-01-IMPLEMENTATION_DESIGN.md": "14c14f46f022705d1882816fd6cda582b9c580d50ad2e29f3b285b5e800bdddc",
+    "research/contracts/a_ccr_04/A-CCR-04-ReadOnlyFactView.md": "94c9f6616b7d715aa0a154655b95b29e58567aa3b91d78320f9681ad6cec99d1",
+    "research/contracts/a_ccr_04/contract.json": "ee2dba0d64d0fcbfdefe864e1433bb1ee110fb395ef0f0412335ee4ef7824feb",
+    "research/contracts/a_ccr_04/verification.json": "2182c664e9ef6f10c1211a65386a933fb55a70f4f75df08ecde7f1662cc8a7f0"
+  },
+  "fixture_identity": {
+    "fixture_count": 18,
+    "fixture_snapshot_sha256": "c4c965974ccf2a5dc76a2376550cc415e3ce46e3b469e6ba8fbc6d5e63d8863f",
+    "per_source_binding": [
+      "path",
+      "language",
+      "byte_length",
+      "sha256",
+      "git_blob_sha1",
+      "parse_status"
+    ],
+    "counts": {
+      "fixture_category": {
+        "vulnerable": 5,
+        "vulnerable_unknown_return": 1,
+        "fixed": 2,
+        "safe": 2,
+        "unrelated": 1,
+        "unknown": 6,
+        "not_analyzed_unsupported_language": 1
+      },
+      "expected_observation": {
+        "candidate_shape": 5,
+        "candidate_with_unknown_obligations": 6,
+        "no_candidate_shape": 5,
+        "unknown_incomplete_analysis": 1,
+        "not_analyzed_no_matching_language": 1
+      },
+      "expected_coverage": {
+        "complete": 10,
+        "partial": 6,
+        "failed": 1,
+        "not_analyzed": 1
+      }
+    }
+  },
+  "verification": [
+    {
+      "argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "bash",
+        "-lc",
+        "cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && .venv-web/bin/python research/tests/a_null_01/verify_fixtures.py --check"
+      ],
+      "status": "passed",
+      "result": {
+        "fixtures": 18,
+        "manifest_sha256": "2630248684a61688d2bce9f00d64ae9bb9a4fad3ab47c67bdf386d7aec32a3d3",
+        "regression_matrix_sha256": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784",
+        "snapshot_sha256": "c4c965974ccf2a5dc76a2376550cc415e3ce46e3b469e6ba8fbc6d5e63d8863f",
+        "git_status_porcelain_sha256": "f2673672cb3c06781216c5b0a80e4a58dd762a54ed3ab11ebfa875d4e4305363"
+      }
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--",
+        "bash",
+        "-lc",
+        "cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && .venv-web/bin/python -m unittest tests.test_a_ccr_04_contract tests.test_a_ccr_04_budget"
+      ],
+      "status": "passed",
+      "result": {
+        "tests": 22,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "status": "passed_with_line_ending_warnings",
+      "result": {
+        "whitespace_errors": 0,
+        "note": "The existing worktree has LF/CRLF normalization warnings; no whitespace error was reported. Untracked files are not covered by git diff --check."
+      }
+    }
+  ],
+  "evidence_obligation_count": 8,
+  "implementation_state": {
+    "detector_implementation": "not_created_gate_blocked",
+    "public_detector_readme": "not_created_gate_blocked",
+    "catalog_or_runner_integration": "not_created_gate_blocked",
+    "detector_regression_execution": "not_executed_no_public_implementation",
+    "poc_and_dynamic_validation": "not_executed_preimplementation_scope"
+  },
+  "limitations": [
+    "A-CCR-04 remains awaiting owner approval in repository evidence, so no public implementation was created.",
+    "Fixture verification proves fixture and matrix identity only; it does not execute the proposed detector.",
+    "The 18 fixtures are self-authored synthetic controls and are not independent labelled benchmark data.",
+    "No CFG, type, alias, macro expansion, template instantiation, exception/destructor order or product build proof exists.",
+    "No Precision/Recall, zero FP/FN, product reachability, attacker control, trigger, affected version, CIA impact, PoC, remediation or patch revalidation is claimed.",
+    "Zero expected findings on fixed, safe and unrelated controls are narrow negative expectations, not safety proof.",
+    "The git_status_porcelain_sha256 is a point-in-time observation before this verification file was written; adding evidence changes porcelain status."
+  ]
+}
