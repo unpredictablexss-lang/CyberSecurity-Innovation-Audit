@@ -1,0 +1,18 @@
+--- a/services/src/platform_callback_stub.cpp
++++ b/services/src/platform_callback_stub.cpp
+@@ -34,6 +34,15 @@
+     int PlatformCallbackStub::OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply,
+                                               MessageOption& option)
+     {
++        // Interface-descriptor guard. The descriptor names the interface a transaction is
++        // addressed to. Without reading it before the payload, a caller that presents no
++        // token at all -- or a token belonging to a different interface -- is served anyway,
++        // and the payload is parsed as though it came from the peer this stub was
++        // registered with.
++        std::u16string callerDescriptor = data.ReadInterfaceToken();
++        if (callerDescriptor != GetDescriptor()) {
++            return ErrorCode::ERROR_STATUS_UNKNOWN_TRANSACTION;
++        }
+         switch (code) {
+             case NOTIFY_EVENT: {
+                 int eventId = data.ReadInt32();

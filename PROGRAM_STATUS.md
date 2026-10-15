@@ -1087,3 +1087,92 @@ plausible but unproven **6**、**confirmed 0**。**五组件合计候选数仍�
   HEAD 为 **`61cb12b`**（本轮 Markdown 改动尚未提交；本轮改动只有 Markdown，不进入 Python 测试输入）。
   **不把该结果写成「已在本轮提交上验证」**——提交哈希在提交后才存在，本轮提交的准确 HEAD 用
   `git rev-parse HEAD` 或推送后的远端核对。
+
+## 40. 2026-10-15 打通 AUTH-01 修复重验闭环（自撰补丁）+ PoC 载体 spike 判定（队友 B）
+
+**为什么做**：`AGENTS.md` 的证据门把 `reportable` 钉在三个条件上——六字段齐全、`poc_state == stable_reproduced`、
+**`patch_revalidation == passed`**。前两项在 2026-10-10 已有（AUTH-01 `inputmethod_imf` / `cve-2023-0036`
+端到端触发，3/3），第三项一直是「靠上游恰好有修复」间接说明，**本项目自己既没给出补丁、也没验证过补丁**。
+本轮把它补上，顺带用一个小预算 spike 判定新 PoC 载体是否值得做。
+
+### 一、载体 spike 判定（判负/半负，负结果保留）
+
+方法照抄已跑通的 AUTH-01 harness（真实 TU + 真实头文件 + `commonlibrary_c_utils` 真实 `Parcel` +
+最小 `poc_compat`），对每个探针跑自动 include 闭包发现。**预算 ≤20 轮，实耗 A 2 轮 / B 约 10 轮。**
+
+| 探针 | 载体 | 判定 | 依据 |
+|---|---|---|---|
+| A | `window_window_manager` `screen_session_manager_stub.cpp`（CAP-01，2,088 行） | **本地不可行** | 第 2 层缺 `ui/rs_display_node.h`（`graphic_2d`），本机全树无该组件 |
+| B | `communication_dsoftbus` `bus_center_ex_obj_stub.cpp`（AUTH-01，67 行） | **可编译，但不可用于闭环** | 8 个 `-I` + 一个补 `#include <mutex>`/`HILOG_IMPL` 的 compat shim 后 `clang++ -c` 退出码 0，产出 20,440 字节 `.o`，`BusCenterExObjStub::OnRemoteRequest` 为已定义符号 |
+
+**探针 B 编得过不等于能当载体。** 这条候选在 §37 之前的 `ipc_dsoftbus_deep_review_2026-10-14` 里
+**已经判过**，结论 `external gap / plausible but unproven`：真正的派发在 `libdsoftbus_server_plugin.z.so`，
+本仓库无实现、无构建目标；给它建 PoC 只能观测到「桩不比对描述符就转交」这件**静态上早已确认**的事，
+impact 一格填不了，还会踩「把非漏洞包装成交付件」的风险。
+**⇒ 计划里「谁编过谁当载体」这条规则的前提不成立，本次不按它执行；载体切换为「闭已有 AUTH-01 的环」。**
+
+### 二、自撰补丁 + 修复重验（本轮主要产出，全在 B 线自有面）
+
+新增 `harnesses/auth01_descriptor_bypass/fix.diff`（18 行，`patch -p1` 可应用），
+**从 guard/effect 关系推导**：效应是 `notifyEvent()` 走到 `MessageHandler::SendMessage()`，只能从 `switch`
+的 `NOTIFY_EVENT` 分支到达；漏洞版在这条路径上**唯一前置条件**是 `code == NOTIFY_EVENT`，
+「事务属于本接口」**整体缺席**而非被旁路。补丁在 `switch` 之前读接口 token、不等于 `GetDescriptor()`
+即返回 `ERROR_STATUS_UNKNOWN_TRANSACTION`。**位置必须在最前**是正确性要求而非风格：
+`ReadInterfaceToken()` 消费 parcel 字节，任何错位都会解析错误。上游 `5eaddcab` 在同一位置加了等价守卫，
+本补丁**独立推导、独立验证**，该事实写在 manifest 的 `rationale` 里，不装作与上游无关。
+
+| 项 | 值 |
+|---|---|
+| 补丁 id | `auth01-descriptor-guard-v1`，作用于 `vulnerable` |
+| 应用 / 重新编译 | 成功 / 成功（`clang++`，ASan+UBSan，`returncode = 0`） |
+| 补丁后源码 sha256 | `7b7660ab9973e27fa5a104b76f7c713aa95a210cf504d507d7a6c2778389dba9` |
+| 状态 | **`passed`** |
+
+| 用例 | 角色 | 打补丁后观测 | 判定 | 符合 fixed 预期 |
+|---|---|---|---|---|
+| `no_token` | attack | `messages_sent=0 ret=-74` | `no_trigger` | 是 |
+| `foreign_token` | attack | `messages_sent=0 ret=-74` | `no_trigger` | 是 |
+| `correct_token` | 正对照 | `messages_sent=1 msgId=5 userId=4242` | `trigger` | 是 |
+
+**判据**（`runner.py:patch_revalidation_state`，纯逻辑 + 5 个单测）：`passed` 要求补丁应用成功、
+重新编译成功、**每个**用例符合 `fixed` 修订预期。正对照在比对集里，所以**「一律拒绝」不会被误当成修复**；
+其余状态命名为 `not_applied` / `build_failed` / `run_failed` / `failed`，不与 `passed` 混淆。
+
+**改了哪些文件**（全在 `src/ohscanner/poc/`）：新增 `fix.diff`、`PatchRevalidation`、`apply_patch`、
+`patch_revalidation_state`、`_revalidate_patch`；从 `build_revision` 拆出可复用的 `build_translation_unit`
+（**旧签名保持兼容**）；`manifest.json` 增 `patch` 块；报告渲染增第 3 节。
+**未触碰**检测规则、`models.py` 词表、公共契约、`catalog.py`、`src/case`、`src/benchmark`、`src/report`
+（owner 共享面）、A 线代码、Draft PR。
+
+### 三、这一步在证据门里的位置
+
+`patch_revalidation` 从「无」变成「`passed`」，且是**本项目产出**的补丁。
+**没有跟着变的**：`validated_vulnerability` 仍为 **0**；可达性仍 **`partial`**；
+无特权/无关进程能否拿到句柄、对端身份与权限、对端是否转出句柄，**均未证明**。
+**不因为有了补丁闭环就上调任何判定。**
+
+### 四、未验证 / unknown（本节的诚实边界）
+
+- 修复闭环证明的是「守卫有效」，**不是**「攻击者到得了这里」——可达性义务原样保留。
+- **影响范围未做**：未跨 tag/分支扫描。（数据源已确认可用：`ipc-research/repos/inputmethod_imf`
+  6,231 提交 / 57 tag / 19 条发布分支；`e663b470` 可达 `origin/OpenHarmony-3.0-LTS` 与 v3.0.5–v3.0.8，
+  `5eaddcab` 可达同分支与 v3.0.6–v3.0.8。）
+- **报告渲染未做**：`src/report/vulnerability_report.py` 在 B 仓库不存在，属 owner 共享面，移植需批准。
+- **性能数据未做**：B 的 audit manifest 只记文件数与字节数，无墙钟/峰值 RSS。
+- **数据一致性未核**（2026-10-10 已记，本轮仍未解）：`ipc-research/pairs/cve-2023-0036/lineage.json`
+  标 `verification_level: S1`，`research/corpus/interface/ipc/verified_pairs.jsonl` 标
+  `S2 / patch_root_cause_review`，两处不一致，需队伍核对哪一份准。
+- spike 只证明了「本机缺 `graphic_2d` 时 A 编不过」「B 能编成 `.o`」，**不是**「A 永远不可行」「B 可提升」。
+
+### 五、本轮检查（命令 / 结果 / HEAD）
+
+- 证据读取：`git -C ~/openharmony-audit/ipc-research/repos/inputmethod_imf show <commit>:<path>`；
+  spike 脚本 `/home/audit/wtmp/w78.sh … w83.sh`（仓库之外，不入库）。
+- 端到端：`.venv/bin/python research/experiments/interface/poc/run_poc.py --json outputs/reports/poc_auth01_descriptor_bypass.json --md outputs/reports/poc_auth01_descriptor_bypass.md`
+  → `patch_state = passed`（产物 gitignored，未入库）。
+- `git diff --check` → 干净。
+- 回归：`.venv/bin/python -m unittest discover -s tests` → **Ran 463 tests in 55.093s … OK**
+  （此前基线 454；本轮 +9：状态机纯逻辑 5、manifest 形状 3、真编译集成 1）。
+  集成用例已改为**类级共享一次运行**，避免每个用例重编三个修订——改前 79s、改后 24s。
+  HEAD 为 **`a646c59`**（本轮改动尚未提交）。**不把该结果写成「已在本轮提交上验证」**——
+  提交哈希在提交后才存在。

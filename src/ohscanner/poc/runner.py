@@ -5,16 +5,18 @@ translation unit, runs it under a sanitizer, classifies what happened, replays
 the triggering case for stability, and records everything. It never touches a
 live service: the target is a local scratch copy built from a local object store.
 """
+import hashlib
 import json
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import time
 from pathlib import Path
 
 from .reachability import verify as verify_reachability
-from .records import BuildRecord, CaseOutcome, PocResult, RevisionRun
+from .records import BuildRecord, CaseOutcome, PatchRevalidation, PocResult, RevisionRun
 from .sources import materialize, pinned_files
 from .states import evidence_for, ladder_state, replay_label
 
@@ -73,15 +75,29 @@ def build_revision(manifest, harness_dir, revision, component_root, binary_dir,
                    compiler, cutils_dir, timeout=300):
     """Compile one pinned revision; returns a BuildRecord either way."""
     entry = manifest["revisions"][revision]
-    commit = entry["commit"]
     source = next(item for item in manifest["sources"] if item["revision"] == revision)
+    return build_translation_unit(
+        manifest, harness_dir, label=revision, commit=entry["commit"],
+        source_path=source["path"], source_sha256=source["sha256"],
+        component_root=component_root, binary_dir=binary_dir, compiler=compiler,
+        cutils_dir=cutils_dir, timeout=timeout)
+
+
+def build_translation_unit(manifest, harness_dir, *, label, commit, source_path, source_sha256,
+                           component_root, binary_dir, compiler, cutils_dir, timeout=300):
+    """Compile one translation unit against the harness; returns a BuildRecord either way.
+
+    `label` names the output binary and the record. It is separate from the commit
+    so a derived revision (a patched copy of a pinned one) can be built through the
+    same path without pretending to be a commit that does not exist.
+    """
     support = manifest.get("support_sources", {}).get("parcel", {})
     support_files = [cutils_dir / name for name in support.get("files", ())]
     support_includes = [cutils_dir / name for name in support.get("include_dirs", ())]
 
     flags = list(manifest.get("compile_flags", ("-std=c++17", "-g", "-O1")))
     flags.append("-fsanitize=" + ",".join(manifest["sanitizers"]))
-    binary = Path(binary_dir) / ("poc_" + revision)
+    binary = Path(binary_dir) / ("poc_" + label)
 
     command = [compiler, *flags,
                "-include", str(Path(harness_dir) / "poc_compat.h"),
@@ -89,7 +105,7 @@ def build_revision(manifest, harness_dir, revision, component_root, binary_dir,
                "-I", str(harness_dir),
                "-I", str(Path(component_root) / "services" / "include"),
                *[item for path in support_includes for item in ("-I", str(path))],
-               str(Path(component_root) / source["path"]),
+               str(Path(component_root) / source_path),
                *[str(path) for path in support_files],
                str(Path(harness_dir) / "stubs.cpp"),
                str(Path(harness_dir) / "harness.cpp"),
@@ -97,8 +113,8 @@ def build_revision(manifest, harness_dir, revision, component_root, binary_dir,
 
     result = _run(command, cwd=harness_dir, timeout=timeout)
     return BuildRecord(
-        revision=revision, commit=commit,
-        source_sha256=(source["sha256"],),
+        revision=label, commit=commit,
+        source_sha256=(source_sha256,),
         compiler=compiler,
         compiler_version=environment_fingerprint(compiler, manifest["sanitizers"], "")["compiler_version"],
         sanitizers=tuple(manifest["sanitizers"]),
@@ -123,6 +139,72 @@ def run_case(binary, case, observable, timeout=60):
 def _expectation_met(case, revision, verdict):
     expected = case.get("expect", {}).get(revision, "any")
     return True if expected == "any" else verdict == expected
+
+
+def apply_patch(component_root, patch_file, timeout=120):
+    """Apply a harness-supplied patch to a scratch copy of the source.
+
+    `--batch` keeps the call non-interactive and `--forward` makes a reversed or
+    already-applied patch fail loudly instead of being silently undone.
+    """
+    return _run(["patch", "--batch", "--forward", "-p1", "-i", str(patch_file)],
+                cwd=component_root, timeout=timeout)
+
+
+def patch_revalidation_state(*, applied, build, expectations):
+    """Whether a patch revalidation passed, judged only on recorded evidence.
+
+    A build that succeeded but changed nothing is not a pass: every case must meet
+    the equivalent revision's expectation, and that set includes the positive
+    control, so a patch that simply rejects everything fails here rather than
+    looking like a fix.
+    """
+    if not applied:
+        return "not_applied"
+    if build is None or not build.ok:
+        return "build_failed"
+    if not expectations:
+        return "run_failed"
+    return "passed" if all(expectations.values()) else "failed"
+
+
+def _revalidate_patch(manifest, entry, harness_dir, work_dir, binary_dir, compiler,
+                      cutils_dir, build_timeout, run_timeout):
+    """Patch the vulnerable revision, rebuild it, re-run every case, judge the result."""
+    applies_to = entry.get("applies_to", "vulnerable")
+    source = next(item for item in manifest["sources"] if item["revision"] == applies_to)
+    patched_root = Path(work_dir) / "component" / "patched"
+    if patched_root.exists():
+        shutil.rmtree(patched_root)
+    shutil.copytree(Path(work_dir) / "component" / applies_to, patched_root)
+
+    applied = apply_patch(patched_root, Path(harness_dir) / entry["file"], timeout=build_timeout)
+    ok = applied.returncode == 0
+
+    patched_sha256 = ""
+    build = None
+    cases, expectations = [], {}
+    if ok:
+        patched_sha256 = hashlib.sha256((patched_root / source["path"]).read_bytes()).hexdigest()
+        build = build_translation_unit(
+            manifest, harness_dir, label="patched",
+            commit=manifest["revisions"][applies_to]["commit"],
+            source_path=source["path"], source_sha256=source["sha256"],
+            component_root=patched_root, binary_dir=binary_dir, compiler=compiler,
+            cutils_dir=cutils_dir, timeout=build_timeout)
+        if build.ok:
+            equivalent = entry.get("expected_equivalent_revision", "fixed")
+            for case in manifest["cases"]:
+                outcome = run_case(build.binary, case, manifest["observable"], timeout=run_timeout)
+                cases.append(outcome)
+                expectations[outcome.case_id] = _expectation_met(case, equivalent, outcome.verdict)
+
+    return PatchRevalidation(
+        patch_id=entry["id"], applies_to=applies_to, file=entry["file"],
+        rationale=entry.get("rationale", ""), applied=ok, patched_sha256=patched_sha256,
+        apply_stdout=applied.stdout[-4000:], apply_stderr=applied.stderr[-4000:],
+        build=build, cases=tuple(cases), expectations_met=expectations,
+        state=patch_revalidation_state(applied=ok, build=build, expectations=expectations))
 
 
 def run_poc(manifest_path, git_dir, work_dir, compiler="clang++", cutils_dir=None,
@@ -191,6 +273,11 @@ def run_poc(manifest_path, git_dir, work_dir, compiler="clang++", cutils_dir=Non
     ran = all(len(run.cases) == len(manifest["cases"]) for run in revisions.values())
     state = ladder_state(generated=True, built=built, ran=ran, triggered=triggered, stable=stable)
 
+    revalidation = None
+    if manifest.get("patch") and "vulnerable" in revisions:
+        revalidation = _revalidate_patch(manifest, manifest["patch"], harness_dir, work_dir,
+                                         binary_dir, compiler, cutils_dir, build_timeout, run_timeout)
+
     return PocResult(
         schema_version=1, family=manifest["family"], family_name=manifest["family_name"],
         harness=manifest["harness"], root_cause_instance_id=manifest["root_cause_instance_id"],
@@ -201,4 +288,5 @@ def run_poc(manifest_path, git_dir, work_dir, compiler="clang++", cutils_dir=Non
         revisions=revisions, state=state, evidence_level=evidence_for(state),
         validated_vulnerability=0,
         limitations=tuple(manifest["known_limitations"]),
-        reachability=verify_reachability(manifest.get("reachability"), git_dir))
+        reachability=verify_reachability(manifest.get("reachability"), git_dir),
+        patch_revalidation=revalidation)

@@ -80,6 +80,15 @@
       }
     ]
   },
+  "patch": {
+    "id": "auth01-descriptor-guard-v1",
+    "applies_to": "vulnerable",
+    "file": "fix.diff",
+    "authored_by": "this project",
+    "expected_equivalent_revision": "fixed",
+    "rationale": "Guard/effect relation: the effect is notifyEvent() reaching MessageHandler::SendMessage(), which is only reachable from the NOTIFY_EVENT arm of the switch. The vulnerable revision's only precondition on that path is code == NOTIFY_EVENT, so nothing in the precondition binds the transaction to this interface at all; the descriptor is not a precondition, it is absent. The patch makes it one by reading the interface token before the switch and returning ERROR_STATUS_UNKNOWN_TRANSACTION unless it equals GetDescriptor(). The read has to come first: ReadInterfaceToken consumes parcel bytes, so a check placed after any payload read would compare against the wrong offset and misparse the request. The guard is therefore at the same position as the upstream fix but was derived from this relation rather than copied.",
+    "criterion": "The patched build of the vulnerable revision must reproduce the fixed revision's per-case expectations, positive control included, so a patch that rejects every transaction cannot pass as a fix."
+  },
   "cases": [
     {"id": "no_token", "args": ["notoken"], "role": "attack",
      "expect": {"vulnerable": "trigger", "fixed": "no_trigger"},

@@ -15,7 +15,7 @@ from pathlib import Path
 
 from src.ohscanner.poc import states, sources
 from src.ohscanner.poc.reachability import render_markdown as render_reachability
-from src.ohscanner.poc.runner import classify_case, parse_signals
+from src.ohscanner.poc.runner import classify_case, parse_signals, patch_revalidation_state
 from src.ohscanner.poc.sources import PinnedFile, SourceMismatch, SourceUnavailable, materialize
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -158,6 +158,74 @@ class ManifestTests(unittest.TestCase):
         self.assertIn("reachability", joined)
 
 
+class PatchRevalidationStateTests(unittest.TestCase):
+    """The pass/fail rule is pure logic, so it is pinned without invoking a compiler."""
+
+    class _Build:
+        def __init__(self, ok):
+            self.ok = ok
+
+    def test_not_applied_is_never_a_pass(self):
+        self.assertEqual(
+            patch_revalidation_state(applied=False, build=None, expectations={}), "not_applied")
+
+    def test_a_failed_or_missing_build_is_not_a_pass(self):
+        self.assertEqual(
+            patch_revalidation_state(applied=True, build=self._Build(False), expectations={}),
+            "build_failed")
+        self.assertEqual(
+            patch_revalidation_state(applied=True, build=None, expectations={}), "build_failed")
+
+    def test_a_build_with_no_cases_is_not_a_pass(self):
+        self.assertEqual(
+            patch_revalidation_state(applied=True, build=self._Build(True), expectations={}),
+            "run_failed")
+
+    def test_one_unmet_expectation_fails_the_patch(self):
+        # `correct_token` is the positive control: a patch that rejects everything
+        # must not be recorded as a fix just because the attack stopped working.
+        self.assertEqual(
+            patch_revalidation_state(applied=True, build=self._Build(True),
+                                     expectations={"no_token": True, "correct_token": False}),
+            "failed")
+
+    def test_every_expectation_met_is_a_pass(self):
+        self.assertEqual(
+            patch_revalidation_state(applied=True, build=self._Build(True),
+                                     expectations={"no_token": True, "correct_token": True}),
+            "passed")
+
+
+class PatchManifestTests(unittest.TestCase):
+    """The patch block is data the runner trusts, so pin its shape."""
+
+    def setUp(self):
+        self.manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+
+    def test_the_harness_declares_a_patch(self):
+        entry = self.manifest.get("patch")
+        self.assertIsNotNone(entry, "a PoC that claims a fix must carry the patch that fixes it")
+        self.assertEqual(entry["applies_to"], "vulnerable")
+        self.assertTrue(entry["rationale"].strip())
+
+    def test_the_patch_file_is_present_next_to_the_manifest(self):
+        patch_file = MANIFEST.parent / self.manifest["patch"]["file"]
+        self.assertTrue(patch_file.is_file(), str(patch_file))
+        text = patch_file.read_text(encoding="utf-8")
+        self.assertIn("--- a/", text)
+        self.assertIn("+++ b/", text)
+
+    def test_a_patch_must_target_a_declared_revision(self):
+        entry = self.manifest["patch"]
+        self.assertIn(entry["applies_to"], self.manifest["revisions"])
+        self.assertIn(entry["expected_equivalent_revision"], self.manifest["revisions"])
+        for case in self.manifest["cases"]:
+            with self.subTest(case=case["id"]):
+                # The judged expectations are read from this revision, so it has
+                # to be one the cases actually declare.
+                self.assertIn(entry["expected_equivalent_revision"], case["expect"])
+
+
 @unittest.skipUnless(PAIR_GIT.is_dir(), "the pinned source store is required")
 class ReachabilityEvidenceTests(unittest.TestCase):
     """Reachability relations must be digest- and line-verified, not trusted."""
@@ -215,12 +283,25 @@ class ReachabilityEvidenceTests(unittest.TestCase):
 @unittest.skipUnless(shutil.which("clang++") and PAIR_GIT.is_dir() and CUTILS.is_dir(),
                      "clang++, the pinned source store and the c_utils checkout are required")
 class Auth01IntegrationTests(unittest.TestCase):
-    """Builds and runs the AUTH-01 harness for real."""
+    """Builds and runs the AUTH-01 harness for real.
+
+    Compiling the harness is what costs time here, so the whole class reads one
+    run: rebuilding the same two revisions once per test would multiply the
+    suite's wall clock without adding evidence.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from src.ohscanner.poc import run_poc
+        cls._work = tempfile.TemporaryDirectory()
+        cls.result = run_poc(MANIFEST, PAIR_GIT, cls._work.name, cutils_dir=CUTILS, repeats=2)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._work.cleanup()
 
     def test_attack_triggers_on_the_vulnerable_revision_only(self):
-        from src.ohscanner.poc import run_poc
-        with tempfile.TemporaryDirectory() as work:
-            result = run_poc(MANIFEST, PAIR_GIT, work, cutils_dir=CUTILS, repeats=2)
+        result = self.result
 
         vulnerable = result.revisions["vulnerable"]
         fixed = result.revisions["fixed"]
@@ -242,12 +323,33 @@ class Auth01IntegrationTests(unittest.TestCase):
         self.assertTrue(all(fixed.expectations_met.values()))
 
     def test_record_keeps_validated_vulnerability_at_zero(self):
-        from src.ohscanner.poc import render_markdown, run_poc
-        with tempfile.TemporaryDirectory() as work:
-            result = run_poc(MANIFEST, PAIR_GIT, work, cutils_dir=CUTILS, repeats=1)
+        from src.ohscanner.poc import render_markdown
+        result = self.result
         self.assertEqual(result.validated_vulnerability, 0)
         self.assertIn("validated_vulnerability", json.dumps(result.to_dict()))
         self.assertIn("EvidenceObligation", render_markdown(result))
+
+    def test_the_project_authored_patch_is_revalidated(self):
+        """Applying our own patch must stop the attack without breaking the control."""
+        result = self.result
+
+        revalidation = result.patch_revalidation
+        self.assertIsNotNone(revalidation)
+        self.assertTrue(revalidation.applied, revalidation.apply_stderr[-500:])
+        self.assertTrue(revalidation.build.ok, revalidation.build.stderr[-500:])
+        self.assertEqual(len(revalidation.patched_sha256), 64)
+        self.assertTrue(all(revalidation.expectations_met.values()), revalidation.expectations_met)
+        self.assertEqual(result.patch_state, "passed")
+
+        verdicts = {case.case_id: case.verdict for case in revalidation.cases}
+        self.assertEqual(verdicts["no_token"], "no_trigger")
+        self.assertEqual(verdicts["foreign_token"], "no_trigger")
+        self.assertEqual(verdicts["correct_token"], "trigger")
+
+        # The revalidation patches a copy: the pinned vulnerable revision must
+        # still trigger, otherwise the record would be describing a different run.
+        original = {case.case_id: case.verdict for case in result.revisions["vulnerable"].cases}
+        self.assertEqual(original["no_token"], "trigger")
 
 
 if __name__ == "__main__":

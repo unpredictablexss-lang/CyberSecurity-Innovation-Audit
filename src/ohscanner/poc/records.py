@@ -53,6 +53,30 @@ class RevisionRun:
 
 
 @dataclass(frozen=True)
+class PatchRevalidation:
+    """What happened when the project's own patch was applied to the vulnerable revision.
+
+    The upstream `fixed` revision proves that *some* fix exists; it does not prove
+    that this project can state one and show it works. This record closes that gap:
+    the patch is applied to the vulnerable source, the result is rebuilt and run,
+    and the outcome is judged against the fixed revision's expectations so a
+    blanket rejection cannot pass for a fix.
+    """
+    patch_id: str
+    applies_to: str
+    file: str
+    rationale: str
+    applied: bool
+    patched_sha256: str
+    apply_stdout: str
+    apply_stderr: str
+    build: Optional[BuildRecord]
+    cases: Tuple[CaseOutcome, ...]
+    expectations_met: Mapping[str, bool]
+    state: str
+
+
+@dataclass(frozen=True)
 class PocResult:
     schema_version: int
     family: str
@@ -70,6 +94,12 @@ class PocResult:
     validated_vulnerability: int
     limitations: Tuple[str, ...]
     reachability: Optional[ReachabilityEvidence] = None
+    patch_revalidation: Optional[PatchRevalidation] = None
+
+    @property
+    def patch_state(self):
+        """`not_run` when the harness declares no patch, so absence is visible."""
+        return self.patch_revalidation.state if self.patch_revalidation else "not_run"
 
     def to_dict(self):
         return asdict(self)
@@ -93,6 +123,7 @@ def render_markdown(result):
         "- 家族：`" + result.family + "` " + result.family_name + "，候选 CWE `" + result.candidate_cwe + "`",
         "- 记录符号：`" + result.reported_symbol + "`",
         "- 生命周期状态：**" + result.state + "**；证据等级：**" + result.evidence_level + "**",
+        "- 修复重验（自撰补丁）：**" + result.patch_state + "**",
         "",
         "## 1. 环境指纹",
         "",
@@ -132,8 +163,44 @@ def render_markdown(result):
     if result.reachability is not None:
         lines += ["", render_reachability(result.reachability)]
 
+    if result.patch_revalidation is not None:
+        lines += ["", render_patch_revalidation(result.patch_revalidation)]
+
     lines += ["", "## 4. 没有证明的事", ""]
     for item in result.limitations:
         lines.append("- " + item)
     lines.append("")
     return "\n".join(lines) + "\n"
+
+
+def render_patch_revalidation(revalidation):
+    lines = [
+        "## 3. 修复重验（本项目自撰补丁）",
+        "",
+        "- 补丁 `" + revalidation.patch_id + "`（`" + revalidation.file + "`），作用于 `"
+        + revalidation.applies_to + "` 修订",
+        "- 判定依据（guard/effect 关系）：" + revalidation.rationale,
+        "- 应用：" + ("成功" if revalidation.applied else "**失败**")
+        + (("；补丁后源码 sha256 `" + revalidation.patched_sha256[:16] + "`")
+           if revalidation.patched_sha256 else ""),
+        "- 重新编译：" + ("成功" if revalidation.build is not None and revalidation.build.ok
+                          else ("失败" if revalidation.build is not None else "未进行")),
+        "- 结果：**" + revalidation.state + "**",
+        "",
+        "判据是「打过本补丁的漏洞版」必须复现 `fixed` 修订的逐用例预期——包括正对照，",
+        "这样「一律拒绝」不会被误当成修复。",
+        "",
+    ]
+    if not revalidation.applied:
+        lines += ["补丁应用输出：", "", "```text",
+                  (revalidation.apply_stdout + revalidation.apply_stderr)[-1500:], "```", ""]
+    if revalidation.cases:
+        lines += ["| 用例 | 角色 | 观测 | 判定 | 符合 fixed 预期 |",
+                  "|---|---|---|---|---|"]
+        for case in revalidation.cases:
+            signals = " ".join(k + "=" + str(v) for k, v in sorted(case.signals.items()))
+            met = revalidation.expectations_met.get(case.case_id)
+            lines.append("| " + case.case_id + " | " + case.role + " | " + (signals or "—")
+                         + " | " + case.verdict + " | "
+                         + (_yes_no(met) if met is not None else "—") + " |")
+    return "\n".join(lines)
