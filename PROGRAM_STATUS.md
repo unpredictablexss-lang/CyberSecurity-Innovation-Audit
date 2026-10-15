@@ -959,3 +959,131 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   **父提交 `b2d9885` 上的同名结果不构成「已在 `6852b1c` 验证」**（`6852b1c` 上从未跑过）。
 - 顺带记录：`docs/research/` 与本文件之外**无**代码改动；`sa_profile/4606.json`、检测规则、
   公共契约均未触碰。
+
+---
+
+## 39. 2026-10-15 `security_access_token` 3 条 + `update_updateservice` 2 条深审：五组件复核覆盖率补齐到 23/23（队友 B）
+
+承接 §38 的下一步：把当前检测器版本下**仅剩的 5 条未逐条复核的候选**判完。报告：
+`docs/research/ipc_sat_update_deep_review_2026-10-15.md`。检测器 `ohscanner.interface.ipc` **0.5.0**，
+模型 `oh-ipc-2026.10-v3`。**本轮不改任何规则、不改公共契约、不做动态验证。**
+
+### 为何要做这一步：先前写下的「23」并不都是**当前版本**的复核结论
+
+五组件 23 条候选（wwn 14 / dsoftbus 4 / sat 3 / update 2 / kv 0）此前只有 18 条
+（WWM 14 见 §37、dsoftbus 4 见方法卡 v0.13）在当前版本下逐条判过。剩下 5 条最后一次
+逐条判定是在 **0.3.0** 的 41 条全查里（`docs/research/ipc_candidate_review_2026-10-11.md`：
+sat 20 条全 FP、update 2 条判 FP）。**规则已经从 0.3.0 走到 0.5.0（M1/M2），
+把 0.3.0 的判定直接当作 0.5.0 的判定是没有依据的**，所以这 5 条必须重判。
+
+### 已完成：5 条逐条复核，全部 likely false positive
+
+| 组件 | 位置 | 规则 | 被报的效果调用 | 判定 |
+|---|---|---|---|---|
+| security_access_token | `token_sync_manager_stub.cpp:104` | `ipc.auth.missing` | `GetRemoteHapTokenInfo` | likely false positive（M3） |
+| security_access_token | `token_sync_manager_stub.cpp:121` | `ipc.auth.missing` | `DeleteRemoteHapTokenInfo` | likely false positive（M3） |
+| security_access_token | `token_sync_manager_stub.cpp:136` | `ipc.auth.missing` | `UpdateRemoteHapTokenInfo` | likely false positive（M3） |
+| update_updateservice | `update_service_stub.cpp:228` | `ipc.auth.guard-coverage` | `service->Upgrade`（code 5） | likely false positive（M5） |
+| update_updateservice | `update_service_stub.cpp:336` | `ipc.auth.guard-coverage` | `service->FactoryReset`（code 18） | likely false positive（M5） |
+
+判据是**三件可复核的事**，不是"本地没搜到限制"：守卫**存在**、守卫的失败分支**返回**、
+守卫**支配**那条被报告的效果调用。
+
+- **sat 3 条**：`TokenSyncManagerStub::OnRemoteRequest` 的 `switch`（`:46`）是唯一派发点；
+  三个 handler 的第一条语句都是 `if (!IsRootCalling() && !IsNativeProcessCalling()) { …; return; }`
+  （`:83` / `:110` / `:127`），失败分支写 `ERR_IDENTITY_CHECK_FAILED` 后返回，效果调用在函数末尾
+  （`:104` / `:121` / `:136`），中间无分支可绕过。`IsRootCalling()` = `GetCallingUid() == ROOT_UID`（`:70-79`）；
+  `IsNativeProcessCalling()` = 调用者 token 类型 `TOKEN_NATIVE`（`:62-68`）。描述符门（`:42`）**已被检测器正确识别**
+  （候选 1 的路径轨迹含 `(42, 'descriptor != ITokenSyncManager::GetDescriptor() => False')`）——**M1 在此文件上生效**。
+- **update 2 条**：`:432` 是唯一派发点，`(this->*(iter->second))(...)`；到它之前 `:409` / `:416` / `:421` / `:425`
+  四个分支各自 return，无旁路。`:421` 的 `IsCallerValid()`（TOKEN_HAP 要求 `IsSystemAppByFullTokenID`；
+  TOKEN_NATIVE 要求 uid 为 `ROOT_UID(0)` 或 `EDM_UID(3057)`；其余 false）与 `:425` 的 `IsPermissionGranted(code)`
+  （`AccessTokenKit::VerifyAccessToken`，`UPGRADE`→`ohos.permission.UPDATE_SYSTEM`，`FACTORY_RESET`→`ohos.permission.FACTORY_RESET`）
+  **两级都支配**。code 绑定经枚举核验：`updater_sa_ipc_interface_code.h:22-43` 从 `CHECK_VERSION = 1` 顺序递增，
+  故 `UPGRADE = 5`（`requestFuncMap_:48`）、`FACTORY_RESET = 18`（`:63`），与检测器 `codes=5/18` 一致。
+
+### 机制归属（两条已在检测器自己的输出里写明）
+
+- **M3（sat 3 条）**：授权谓词是本地 helper，其布尔取值未被解析成 auth 事实。**检测器自己的 `limitations`
+  就记着守卫的名字**（`security_access_token` 共 249 条，其中 16 条 `Unresolved multi-outcome helper return:`）：
+  `TokenSyncManagerStub::IsRootCalling`、以及三个 `…Inner`。同时引擎侧**已有**对应能力：
+  `analysis.py:530-531` 对这三个调用名有专门分支（`state.auth` 非空 **或** `caller_class` 含 `TOKEN_NATIVE`），
+  `analysis.py:881-882` 能把 `GetCallingUid()` 与 `trusted_uids` 的比较建模为 auth 事实。
+  所以**不是"无法建模"，而是事实没走到路径上**——`IsRootCalling` 在 `#ifndef/#else` 下有两个 `return`
+  （一个布尔表达式、一个字面 `false`），helper 摘要（`analysis.py:824-834`）要求 return 一致或恰为 true/false 字面量，
+  于是给 `UNKNOWN` 并记 limitation。**M3 缺陷未修复**（修复需单独提交 + 正/固定/安全对照，本轮不做）。
+- **M5（update 2 条）**：**检测器没有把「有守卫」说成「无守卫」**——它 `:421`/`:425` 两个调用都看见了，
+  消息里写着 `dispatcher-guard-observed`，并如实说"支配性未建立"。对**候选**是 FP（支配成立）；
+  对**规则** M5 未修复，维持 10-11 报告 §5 的处置（按派发形态证明支配性，把「支配」与「存在但支配未知」分开记录，
+  **不是**删掉候选）。`limitations` 侧 92 条里有 2 条 `Unresolved multi-outcome helper return:`：
+  `UpdateServiceStub::IsCallerValid`、`UpdateServiceStub::IsPermissionGranted`。
+
+### 五组件复核覆盖率（本轮之后）
+
+| 组件 | 候选 | 复核状态 |
+|---|---:|---|
+| window_window_manager | 14 | 2026-10-15 已复核（6 FP / 2 外部依赖 / 6 plausible / 0 confirmed） |
+| communication_dsoftbus | 4 | 2026-10-14 已复核（2 FP / 2 外部依赖） |
+| security_access_token | 3 | **本轮已复核**（3 likely false positive） |
+| update_updateservice | 2 | **本轮已复核**（2 likely false positive） |
+| distributeddatamgr_kv_store | 0 | 无候选 |
+| **合计** | **23** | **23/23 有复核记录** |
+
+合计候选级判定：likely false positive **13**、unresolved external dependency **6**、
+plausible but unproven **6**、**confirmed 0**。**五组件合计候选数仍为 23**：
+本轮 0 新增、0 删除、0 合并、0 升级。`validated_vulnerability` 仍为 **0**。
+
+> **口径提醒**：上表是**候选级**判定，不得外推成「这两个组件是安全的」。`completed` 不是 safe、
+> 空 findings 不是安全证明，本轮只覆盖被报告的那 5 条路径；sat 那道门的**策略是否充分**
+> （native 进程粒度）本仓库内无可判定证据，**未判**。
+
+### 本轮顺带查出的一条负结果（保留，不删）：`IPCSkeleton::IsLocalCalling()` 不是"同进程"判据
+
+调查中我先把 sat `:37` 的 `if (!IPCSkeleton::IsLocalCalling())` 读成"跨进程调用一律拒绝"，
+并准备据此写"远端调用者到不了这三个事务"。**按 pinned 源码更正**：
+`ipc_skeleton.cpp:258-265` 转发给 invoker；`binder_invoker.cpp:1714-1717` 恒 `return true`；
+`dbinder_databus_invoker.cpp:802-805` 恒 `return false`（`communication_ipc @ bbb92dbb`）。
+即该函数真实语义是**"不是 dbinder/databus 跨设备调用"**，binder 路径上**恒为 true**，`const` 不构成门。
+写出这条是因为该误读会**放大**结论（把一个没有源码支撑的更强断言写进报告）。
+**记录为负结果并保留。**
+
+### 未验证 / unknown（本节的诚实边界）
+
+- sat 3 条：授权门**存在且支配**已证；但"native 进程"作为授权粒度的**策略充分性**未判——需策略评审，
+  本仓库内无证据。以下两点记为**观察**、不写成 finding：① `IsNativeProcessCalling()` 只比对 token **类型**
+  为 `TOKEN_NATIVE`，不比对**是哪一个** native 进程；② `ATM_BUILD_VARIANT_USER_ENABLE` 构建下
+  `IsRootCalling()` 恒 `false`（`:76-78`），两种构建下都有检查，通过的集合不同。
+- update 2 条：支配性已按源码证明，但**派发形态的支配性证明尚未成为规则**（M5），
+  同类形态在别的组件上仍会照旧产出候选。
+- 5 条全部 `evidence_type = syntax`；可达性、攻击者控制、具体影响三格均未填。
+- **M3 的成因在本节只记录"limitations 里有这几条 / 引擎有那个分支 / `:881` 能建模 trusted-uid"这三件已验证事实**，
+  不把"每条 limitation 的内部成因"当结论（例如 `IsPermissionGranted` 表面只有一个 `return` 却也被列入）。
+- 独立 holdout 仍不存在（`research/corpus/interface/ipc/verified_pairs.jsonl` 12 条全 `split=design`，S3 = 0），
+  **Precision/Recall 仍不可宣称**；本报告的 5 条**不折算**进任何精度指标。
+
+### 固定版本与读取纪律
+
+| 组件 | commit | 文件 | blob oid | sha256 |
+|---|---|---|---|---|
+| security_access_token | `17d88bfb36bea6c9370ba919ac41a22d16dd66b3` | `services/tokensyncmanager/src/service/token_sync_manager_stub.cpp` | `6b32d5dcc0e0b98c858a374d95640deb06ec94b0` | `c775adcc…636ae1` |
+| update_updateservice | `e4942a33cc5ed29040e5c720bea3b2a8e4a79221` | `services/engine/src/update_service_stub.cpp` | `51ab923c63520965b13c95cab7c1674d799c93e9` | `9f0076ef…65768` |
+
+两个 commit 与 `outputs/reports/*.manifest.json` 记录一致；两个 perf-corpus 克隆 `HEAD` 等于该 commit
+且工作树干净。**本次全部内容从 `git show <commit>:<path>` 读出，未把工作树当证据**（v0.13 读法规则）；
+行号一律是 pinned blob 行号。
+
+### 本轮检查（命令 / 结果 / HEAD）
+
+- 证据读取：`git -C ~/openharmony-audit/perf-corpus/{security_access_token,update_updateservice,communication_ipc} show <commit>:<path>`；
+  脚本 `/home/audit/wtmp/w52.sh … w64.sh`（仓库之外，不入库）。
+- 候选与 limitations 来源：`research/experiments/interface/ipc/measure_consequences.py`
+  → `outputs/reports/consequence_dimension_v050.json`（10 组件 / 5,270 文件 / **72** 条 /
+  `findings_without_a_consequence = 0` / `validated_vulnerability = 0`；产物 gitignored，未入库）。
+  其中 `security_access_token` 3 条、`update_updateservice` 2 条、`window_window_manager` 14 条，
+  与五组件集逐条一致。
+- `git diff --check` → 干净。本轮改动**只有 Markdown**（本文件 + 新增 `docs/research/` 报告），
+  不进入 Python 测试输入；检测规则、公共契约、`catalog.py`、Draft PR 均未触碰。
+- 回归：`.venv/bin/python -m unittest discover -s tests` → **Ran 454 tests in 48.461s … OK**，
+  HEAD 为 **`61cb12b`**（本轮 Markdown 改动尚未提交；本轮改动只有 Markdown，不进入 Python 测试输入）。
+  **不把该结果写成「已在本轮提交上验证」**——提交哈希在提交后才存在，本轮提交的准确 HEAD 用
+  `git rev-parse HEAD` 或推送后的远端核对。
