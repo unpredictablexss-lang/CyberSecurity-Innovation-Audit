@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "a-ccr-03-owner-approval",
+  "status": "approved",
+  "approver": "项目负责人",
+  "approval_date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "approval_source": "用户在 A-CCR-03-IMPLEMENT 任务前置条件中明确声明：项目负责人已经批准该提案",
+  "approved_artifact": {
+    "git_tracked": false,
+    "path": "research/contracts/A-CCR-03-stable-finding-identity.md",
+    "sha256": "261a9918f1d220da8218dd19a57545cb2d4b2a041bb119f1fe7d238d3b7d906c",
+    "git_status": "untracked-at-approval"
+  },
+  "approved_commit": "38b93d30ed4be71af4a8245ed18198d999c3ee18",
+  "approved_commit_basis": "A-CCR-03 提案“本次 checkout 身份”记录的 HEAD；批准对象哈希以 approved_artifact.sha256 为准",
+  "approval_recorded_at": "2026-10-15T15:18:40+08:00",
+  "recorded_at_checkout": {
+    "head_tree": "cee6b4609e65f2954114b368761614d5f745d6a6",
+    "head": "0e94ceafab1b2d79547bdf71c86e26e8b42a6b48",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "prior_review_material": {
+    "path": "research/contracts/A-CCR-REVIEW-stable-finding-identity-readonlyfactview.md",
+    "sha256": "053282ff6697029c24b82e9d38af8f8e2fccc797d271d0e6a299486cb110403d",
+    "append_only_note": "保留原审批材料，不改写其历史状态；本记录是后续批准事实",
+    "recorded_status_before_approval": "awaiting_owner_approval"
+  },
+  "authorization": {
+    "real_model_calls": false,
+    "public_identity_implementation": true,
+    "historical_id_backfill": false,
+    "push": false,
+    "detector_fixes_in_same_commit": false,
+    "separate_public_ccr_commit": true,
+    "merge": false,
+    "mark_ready": false,
+    "compatibility_tests_required": true
+  }
+}
