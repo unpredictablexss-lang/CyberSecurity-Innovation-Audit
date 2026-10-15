@@ -792,6 +792,52 @@ class ManifestTests(ComponentAuditTestCase):
         self.assertEqual(component_slug("weird owner/re po"), "re_po")
         self.assertEqual(component_slug(""), "component")
 
+    def test_the_manifest_records_the_cost_next_to_the_scale(self):
+        """Performance is a deliverable: the manifest must not record scale alone."""
+        out_dir = self.root / "reports"
+        buffer = StringIO()
+        with redirect_stdout(buffer):
+            audit_module.main([
+                "--repo-dir", str(self.repo), "--repository", REPOSITORY,
+                "--commit", self.commit, "--out-dir", str(out_dir),
+            ])
+        manifest = json.loads(
+            (out_dir / (component_slug(REPOSITORY) + ".manifest.json")).read_text(encoding="utf-8"))
+        performance = manifest["performance"]
+        self.assertGreater(performance["elapsed_seconds"], 0)
+        self.assertEqual(
+            performance["scope"],
+            "one process, one component; includes interpreter start and report write")
+        self.assertEqual(performance["files_per_second"],
+                         round(manifest["coverage"]["files_selected"]
+                               / performance["elapsed_seconds"], 2))
+        # Scale and cost sit in one document, so the file count can never be
+        # quoted without the run that produced it.
+        self.assertEqual(manifest["performance"]["elapsed_seconds"],
+                         json.loads((out_dir / (component_slug(REPOSITORY) + ".json"))
+                                    .read_text(encoding="utf-8"))["elapsed_seconds"])
+        self.assertIn("cost:", buffer.getvalue())
+
+    def test_a_run_too_short_to_divide_by_reports_no_rate_rather_than_zero(self):
+        self.assertIsNone(audit_module._rate(100, 0))
+        self.assertEqual(audit_module._rate(100, 4), 25.0)
+
+    def test_peak_rss_is_recorded_on_the_report_and_rendered(self):
+        report = audit_module.audit_component(
+            self.repo, REPOSITORY, self.commit, excerpt_context=0)
+        # A real measurement where the platform can take one, an explicit
+        # absence otherwise -- never a silent 0 that reads as "used no memory".
+        self.assertNotEqual(report["peak_rss_kb"], 0)
+        if audit_module.resource is not None:
+            self.assertIsInstance(report["peak_rss_kb"], int)
+            self.assertGreater(report["peak_rss_kb"], 0)
+        else:
+            self.assertIsNone(report["peak_rss_kb"])
+        rendered = audit_module.render_markdown(report)
+        self.assertIn("Peak RSS:", rendered)
+        self.assertIn("process high-water mark", rendered)
+        self.assertIn("peak_rss_kb", " ".join(report["limitations"]))
+
 
 if __name__ == "__main__":
     unittest.main()

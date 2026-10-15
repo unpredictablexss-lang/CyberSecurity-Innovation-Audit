@@ -99,6 +99,11 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:  # POSIX-only; the module has to stay importable where it is absent.
+    import resource
+except ImportError:  # pragma: no cover - no `resource` on Windows
+    resource = None
+
 from ...contracts import safe_relative_path
 from ...execution import run_reviewed_detectors
 from ...git_source import (
@@ -981,6 +986,7 @@ def audit_component(
         "plan_sha256": plan.plan_sha256,
         "provenance": "local_git_objects",
         "elapsed_seconds": round(time.monotonic() - started, 3),
+        "peak_rss_kb": peak_rss_kb(),
         "validated_vulnerability": 0,
         # Three different counts, kept apart on purpose: a passing test suite says
         # nothing about detection quality, and a candidate count is not a finding
@@ -1022,6 +1028,12 @@ def audit_component(
             "one alternative shard configuration. Invariance under arbitrary sharding is not "
             "claimed: a rule with a component-global view would need whole-component "
             "evaluation, which no pass here performs.",
+            "`elapsed_seconds` and `peak_rss_kb` describe one run of one process, including "
+            "the interpreter start and the report write. The RSS figure is a per-process "
+            "high-water mark, so it is the audit's own cost only when the audit owns its "
+            "process; a caller auditing several components in one process gets a running "
+            "maximum. Neither number is a bound, and neither says anything about detection "
+            "quality.",
         ],
     }
 
@@ -1105,6 +1117,9 @@ def render_markdown(report):
         f"- Scope plan SHA-256: `{report['plan_sha256']}`",
         f"- Passes: {', '.join('`' + name + '`' for name in report['passes'])}",
         f"- Wall clock: {report['elapsed_seconds']}s",
+        "- Peak RSS: " + (f"{report['peak_rss_kb'] / 1024:.1f} MB"
+                          if report.get("peak_rss_kb") else "not measured")
+        + " (process high-water mark; see limitations)",
         "- Validated vulnerabilities: **0** (static candidates only)",
         "",
         "## 1. Run state",
@@ -1302,6 +1317,33 @@ def component_slug(repository):
     return slug or "component"
 
 
+def peak_rss_kb():
+    """Peak RSS in KiB of the process that ran the audit, or None where unmeasurable.
+
+    `ru_maxrss` is a per-process high-water mark, so this is the audit's own
+    footprint only when the audit owns its process -- which is how `main()` runs
+    it, one component per invocation. A caller that audits several components in
+    one process would get a running maximum instead, so the number is reported
+    with that scope attached rather than as an unconditional per-component figure.
+    On Linux the unit is KiB; on macOS it would be bytes, and the recorded
+    platform is what makes that read correctly. The value is a measurement, not a
+    bound: it says what the run cost, not what it could cost.
+    """
+    if resource is None:
+        return None
+    try:
+        return int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    except (ValueError, OSError):  # pragma: no cover - platform dependent
+        return None
+
+
+def _rate(units, seconds, digits=2):
+    """units per second, or None when the run was too short to divide by."""
+    if not seconds:
+        return None
+    return round(units / seconds, digits)
+
+
 def _file_sha256(path):
     digest = hashlib.sha256()
     with Path(path).open("rb") as handle:
@@ -1358,6 +1400,16 @@ def write_manifest(out_dir, report, json_path, md_path, argv, repo_dir):
             "parse_complete": analysis["parse_complete"],
             "parse_partial": analysis["parse_partial"],
             "files_analyzed": analysis["files_analyzed"],
+        },
+        # Cost of the run, next to its scale, so the two are never quoted apart.
+        # Derived rates are left as None rather than 0.0 when the run was too
+        # short to divide by: a zero rate would read as "scanned nothing".
+        "performance": {
+            "elapsed_seconds": report["elapsed_seconds"],
+            "peak_rss_kb": report.get("peak_rss_kb"),
+            "files_per_second": _rate(analysis["files_selected"], report["elapsed_seconds"]),
+            "bytes_per_second": _rate(analysis["bytes_selected"], report["elapsed_seconds"]),
+            "scope": "one process, one component; includes interpreter start and report write",
         },
         "artifacts": {
             "json": {"path": str(json_path), "sha256": _file_sha256(json_path)},
@@ -1457,6 +1509,9 @@ def main(argv=None):
           f"driver-synthesized unknown obligations "
           f"{counts['candidates_with_driver_synthesized_obligations']})")
     print(f"[OK] confirmed vulnerabilities: {counts['confirmed_vulnerabilities']}")
+    rss = report.get("peak_rss_kb")
+    print(f"[OK] cost: {report['elapsed_seconds']}s"
+          + (f", peak RSS {rss / 1024:.1f} MB" if rss else ", peak RSS not measured"))
     print(f"[OK] JSON report: {json_out}")
     print(f"[OK] Markdown report: {md_out}")
     print(f"[OK] Manifest: {manifest_path}")

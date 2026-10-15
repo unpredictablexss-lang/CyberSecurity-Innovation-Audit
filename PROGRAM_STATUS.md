@@ -1253,3 +1253,69 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   （含真仓库边界回归：两个边界提交必须分别判成 `affected` / `fixed`）。
 - 克隆性质核实：`git config --get remote.origin.partialclonefilter` → `blob:none`；
   `rev-parse --is-shallow-repository` → `false`。
+
+## 42. 2026-10-15 接口线组件审计的性能与规模实测（队友 B）
+
+交付件 **#7 性能数据**。记录写入 `docs/testing/interface_audit_performance_2026-10-15.md`。
+**`validated_vulnerability` 仍为 0**：这是成本测量，不是检出能力评测。
+
+### 一、改动（全在 B 线自有面）
+
+`src/ohscanner/detectors/interface/audit.py` 新增 `peak_rss_kb()` 与 `_rate()`；报告新增
+`peak_rss_kb`；**manifest 新增 `performance` 块**（墙钟、峰值 RSS、files/s、bytes/s、口径说明）；
+渲染首部与 CLI 输出新增成本行；`limitations` 新增一条写明墙钟/RSS 的口径。
+`tests/test_component_audit.py` +3 用例。
+
+**改动前的事实**：B 的 audit manifest **只记文件数与字节数，没有任何时间或内存字段**——
+产物的规模可以被引用，而它的成本无处可查。现在两者写在同一个文档里。
+
+### 二、实测（5 个真实组件，每个组件一个独立进程）
+
+| 组件 | 固定提交 | 文件 | 源码字节 | 完整/部分 | 候选 | 墙钟 (s) | 峰值 RSS (MB) | files/s | MB/s |
+|---|---|---:|---:|---|---:|---:|---:|---:|---:|
+| `communication_ipc` | `bbb92dbb2f52` | 252 | 2,189,480 | 154/97 | 12 | 8.74 | 226.4 | 28.8 | 0.25 |
+| `inputmethod_imf` | `7777cba9eb19` | 412 | 3,191,273 | 330/72 | 4 | 10.72 | 312.2 | 38.4 | 0.30 |
+| `security_access_token` | `17d88bfb36be` | 550 | 3,484,891 | 489/56 | 3 | 16.05 | 307.0 | 34.3 | 0.22 |
+| `update_updateservice` | `e4942a33cc5e` | 219 | 851,345 | 187/31 | 2 | 3.42 | 88.3 | 64.0 | 0.25 |
+| `window_window_manager` | `8b0d8fe1b973` | 1112 | 20,206,691 | 811/268 | 14 | 98.46 | 1886.4 | 11.3 | 0.21 |
+
+合计 **2,545 文件 / 29,923,680 字节 / 137.39 s**，单组件峰值最高 **1,886 MB**。
+五个组件 `file accounting closed` 全 `True`（`files_unaccounted = 0`），
+`confirmed_vulnerabilities` 全 0，候选合计 35 条（皆为未验证候选）；
+`window_window_manager` 的 14 条与 2026-10-15 的逐条复核报告一致。
+
+### 三、从数字里读出的三条事实
+
+1. **吞吐是字节受限的**：files/s 区间 11.3–64.0（跨 5.7 倍），而 MB/s 稳定在 0.21–0.30。
+   两个解析器都逐文件建 AST，决定成本的是源码字节。用 files/s 比较组件会得出错误结论，
+   所以报告里两个都给，不让前者被单独引用。
+2. **内存约为源码字节的 100 倍**：108× / 103× / 92× / 109× / 98×，稳定得反常（±10%），
+   说明内存跟着源码总量走，而不是跟着候选数或组件类型走。
+3. **`window_window_manager` 是当前的规模边界**：20.2 MB / 1,112 文件，单次单进程
+   98.46 s、1,886 MB，且**在一个分片内跑完**（未触发 2000 文件 / 32 MiB 上限）——
+   这 1.9 GB 是单次整树解析本身的占用，不是分片开销。
+
+### 四、未验证 / unknown（本节的诚实边界）
+
+- **不是检出能力评测**：候选数与 `confirmed_vulnerabilities: 0` 与任何耗时数字无关。
+- **不是上界**：均为单次测量（未取中位数/最坏值），未测并行、增量缓存、硬超时或资源隔离。
+- **未测整树规模**：最大被测组件 20.2 MB 源码；千万行整树未测，且分片上限使整树必须分片，
+  分片成本未量化。
+- **内存口径**：`ru_maxrss` 是进程高水位；同一进程内跑多个组件时它是运行最大值。
+  本记录 5 个数字来自 5 次独立进程调用，**不能**用来解释「一个进程跑完 5 个组件」的内存。
+- **与主线示例检测器实测不可相减**：主线 2026-10-10 在同一批克隆上测得 `wwm` 41.13 s /
+  265.7 MB / 1,944 文件、`inputmethod_imf` 6.34 s / 101.3 MB / 698 文件，
+  但那是**另一个检测器**且**文件选择口径不同**（主线按顶层目录分片，接口线按规则只取生产文件）。
+  分母不同，不能说「接口线慢多少倍」。
+
+### 五、本节检查（命令 / 结果）
+
+- 单测：`.venv/bin/python -m unittest tests.test_component_audit` → **Ran 49 tests … OK**。
+- 实测：5 个组件各一次
+  `.venv/bin/python -m src.ohscanner.detectors.interface.audit --repo-dir perf-corpus/<c>
+  --repository openharmony/<c> --commit <sha> --out-dir outputs/reports/interface_perf`。
+- 产物 `outputs/reports/interface_perf/`（5 组件 × JSON/MD/manifest 三件 = 15 个文件）**不入库**；
+  本文表格由其中的 JSON 直接渲染，未手抄。
+- **该目录其实不被 `.gitignore` 覆盖**（第 226–227 行的 `outputs/reports/*.json` / `*.md` 不跨 `/`，
+  只匹配顶层）；`git check-ignore` 对 15 个文件全部返回「未忽略」。它们只是**未跟踪**，
+  不提交靠的是 `git add` 时的手工选择，不是规则兜底。
