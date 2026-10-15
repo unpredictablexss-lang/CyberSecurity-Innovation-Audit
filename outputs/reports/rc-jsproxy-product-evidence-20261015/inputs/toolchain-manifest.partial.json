@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "kind": "partial_openharmony_toolchain_manifest",
+  "status": "partial_untrusted",
+  "host": {
+    "platform": "WSL2",
+    "distribution": "Ubuntu-22.04",
+    "kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "architecture": "x86_64",
+    "memory": "7739292 kB",
+    "cpu_count": 16
+  },
+  "repo_tool": {
+    "launcher_path": "/home/audit/.local/bin/repo",
+    "launcher_sha256": "1211b57b57e4122a9c546295a59b37d24068f1164d0e87bef096d5323c413e4f",
+    "launcher_version": "2.65",
+    "source_commit": "e1e215a14ea5373419acb8753b6865de19d1f122",
+    "source_url": "https://github.com/GerritCodeReview/git-repo.git"
+  },
+  "build_repository": {
+    "path": "/home/audit/ohos-rk3568-product/build",
+    "commit": "e25cf4a7012bdaba7296b30b703201e87d89e390",
+    "tree": "41a0bd8070cbfc61a25e3e08d5652219581ea3e1",
+    "dirty": true,
+    "dirty_reason": "toolchain-only concurrency patch changed PoolDownloader max_workers from cpu_count() to min(cpu_count(), 2)"
+  },
+  "configuration": {
+    "prebuilts_config_sha256": "9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850",
+    "pool_downloader_original_sha256": "53eab587cb7f3a001495dceff4d55078fbcb402880ca2a87078cca2b993828a2",
+    "pool_downloader_patched_sha256": "465c89d05a2dcffb141b64879308577d64908d20c6d99af541beab37fa3cdf24",
+    "patch_evidence_sha256": "b4a21b36caef97808c2b0e4f0b9afa1aeb830206304685cd98a1b91ea1f63af2"
+  },
+  "observed_tools": {
+    "gn": {
+      "status": "present",
+      "version": "2026 (47b40ef4)",
+      "sha256": "aa76f11ec5ab820695fdd0973d644d205305b1a23fabcc43e230871f502230a7"
+    },
+    "ninja": {
+      "status": "present",
+      "version": "1.13.2",
+      "sha256": "2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b"
+    },
+    "python": {
+      "status": "present",
+      "version": "Python 3.12.10",
+      "binary_sha256": "a47a746772762bc5ddb1d51a665dfe70d3541a43cec5d7560452eb24143a0fb7",
+      "archive_sha256": "2628c30fe369e2cb39b4abde0201889484eaf49b57e468499a51728bf338bf76",
+      "evidence_sha256": "7e4a29e80e0833f17b37211baf1e2be28d2661d3fe129ed2bab825d4f6ffc8f6"
+    },
+    "node": {
+      "status": "present_after_integrity_repair",
+      "version": "v14.21.1",
+      "binary_sha256": "6f920cf526ac67c66756848a9622d29d8596b136fec7b93cfe43f8290fc2d223",
+      "archive_sha256": "8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e",
+      "evidence_sha256": "c7e664e722207e7142653ef052d95bf250a62e4beef8997a70039fd45b5bf153",
+      "repair_reason": "previous extracted node binary was truncated and segfaulted after WSL ext4 recovery"
+    },
+    "clang": {
+      "status": "archive_verified_extraction_incomplete",
+      "archive_path": "/root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+      "archive_size": 789238720,
+      "archive_sha256": "8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf",
+      "binary_status": "missing",
+      "failure_reason": "tar extraction terminated by WSL CreateInstance/I/O failure; no clang++ binary is available",
+      "evidence_sha256": "37140cfe4fb6fb1988e7966cdca0661a147e628822ae98ef49619d5deedac90c"
+    },
+    "hvigor": {
+      "status": "missing",
+      "failure_reason": "hvigor command-line-tools extraction was not completed after repeated WSL storage failures"
+    }
+  },
+  "prebuilts": {
+    "mark_count": 29,
+    "complete": false,
+    "probe_sha256": "f465dc6a12babfd15207ca06092cbeeeb5be6ff487064f39d437f858b90b7aba",
+    "download_log_sha256": "d30f096217e8ccb0afabb80c2710038ff24b2e30dd1579556f8b70f4eb7f683b"
+  },
+  "attempts": [
+    {
+      "id": "repo-bootstrap",
+      "command": "curl -fL --retry 3 --connect-timeout 20 https://storage.googleapis.com/git-repo-downloads/repo -o /home/audit/.local/bin/repo",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "evidence_sha256": "89463d685a909723ed8d709da2056f9d65dec285c9e691daa00be13e06711344",
+      "failure_reason": null
+    },
+    {
+      "id": "core-project-sync",
+      "command": "repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --force-checkout --no-manifest-update build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store",
+      "repeats": 3,
+      "successful": 1,
+      "failed": 2,
+      "evidence_sha256": "cb4df7b4f45c775d55eb0b2659af572628f959602b2a403c077f6706a627b1f3",
+      "failure_reason": "initial rockchip checkout failed until git-lfs was installed"
+    },
+    {
+      "id": "audited-kv-checkout",
+      "command": "git -C foundation/distributeddatamgr/kv_store checkout --detach acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "evidence_sha256": "07704dc6e9cd22172a574d0be1d5ccdfb9b154c9f5326a19415b39ab50b3ac0f",
+      "failure_reason": null
+    },
+    {
+      "id": "clang-download",
+      "command": "curl -fL --connect-timeout 10 --max-time 15 -C - https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz -o /root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz",
+      "repeats": 3,
+      "successful": 1,
+      "failed": 2,
+      "evidence_sha256": "e1231b4af9e14589e93f97ae664faaa50146617ee2b5a0ddb3a5dda158113b4a",
+      "failure_reason": "first two resumable attempts stopped by max-time; final hash verified"
+    },
+    {
+      "id": "clang-extract",
+      "command": "tar -xzf /root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz -C /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64",
+      "repeats": 2,
+      "successful": 0,
+      "failed": 2,
+      "evidence_sha256": "37140cfe4fb6fb1988e7966cdca0661a147e628822ae98ef49619d5deedac90c",
+      "failure_reason": "WSL CreateInstance/I/O failure terminated extraction before clang++ was materialized"
+    }
+  ],
+  "integrity": {
+    "status": "untrusted_partial",
+    "reason": "WSL ext4 repeatedly required recovery after abrupt VM termination; at least one extracted binary was observed truncated, so only hash-verified archives and individually repaired binaries are retained as observations"
+  },
+  "limitation": "This manifest is not a complete toolchain manifest and cannot support a claim that a rk3568/user product artifact was built."
+}

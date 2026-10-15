@@ -1,0 +1,55 @@
+timestamp=2026-10-15T15:45:17.5918513+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=targeted fetch/checkout with git-lfs installed"; echo "command=repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --no-manifest-update device/soc/rockchip"; repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --no-manifest-update device/soc/rockchip; rc=$?; echo "exit=$rc"; git -C device/soc/rockchip rev-parse HEAD 2>&1; exit $rc'
+
+2026-10-15T15:45:20+08:00
+network_action=targeted fetch/checkout with git-lfs installed
+command=repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --no-manifest-update device/soc/rockchip
+Skipping update of local manifest project.
+Updating files:  59% (2314/3917)
+Updating files:  60% (2351/3917)
+Updating files:  61% (2390/3917)
+Updating files:  62% (2429/3917)
+Updating files:  63% (2468/3917)
+Updating files:  64% (2507/3917)
+Updating files:  65% (2547/3917)
+Updating files:  66% (2586/3917)
+Updating files:  67% (2625/3917)
+Updating files:  68% (2664/3917)
+Updating files:  69% (2703/3917)
+Updating files:  70% (2742/3917)
+Updating files:  71% (2782/3917)
+Updating files:  72% (2821/3917)
+Updating files:  73% (2860/3917)
+Updating files:  74% (2899/3917)
+Updating files:  75% (2938/3917)
+Updating files:  76% (2977/3917)
+Updating files:  77% (3017/3917)
+Updating files:  78% (3056/3917)
+Updating files:  79% (3095/3917)
+Updating files:  80% (3134/3917)
+Updating files:  81% (3173/3917)
+Updating files:  82% (3212/3917)
+Updating files:  82% (3213/3917)
+Updating files:  83% (3252/3917)
+Updating files:  84% (3291/3917)
+Updating files:  85% (3330/3917)
+Updating files:  86% (3369/3917)
+Updating files:  87% (3408/3917)
+Updating files:  88% (3447/3917)
+Updating files:  89% (3487/3917)
+Updating files:  90% (3526/3917)
+Updating files:  91% (3565/3917)
+Updating files:  92% (3604/3917)
+Updating files:  93% (3643/3917)
+Updating files:  94% (3682/3917)
+Updating files:  95% (3722/3917)
+Updating files:  96% (3761/3917)
+Updating files:  97% (3800/3917)
+Updating files:  98% (3839/3917)
+Updating files:  99% (3878/3917)
+Updating files: 100% (3917/3917)
+Updating files: 100% (3917/3917), done.
+Finalizing sync state...
+repo sync has finished successfully.
+exit=0
+0aa6ba16f89844023137fb84ac03189b30c8780b

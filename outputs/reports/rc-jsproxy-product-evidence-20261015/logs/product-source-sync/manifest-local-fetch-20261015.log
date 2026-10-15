@@ -1,0 +1,8 @@
+timestamp=2026-10-15T15:25:14.5412877+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; cd /home/audit/ohos-rk3568-product/.repo/manifests.git; date --iso-8601=seconds; echo "network_action=local-only git fetch file:///mnt/e/网安/_product_targets/manifest"; echo "command=git fetch origin master:refs/remotes/origin/master"; git fetch origin master:refs/remotes/origin/master; rc=$?; echo "exit=$rc"; git show-ref; exit $rc'
+
+2026-10-15T15:25:17+08:00
+network_action=local-only git fetch file:///mnt/e/网安/_product_targets/manifest
+command=git fetch origin master:refs/remotes/origin/master
+warning: rejected refs/remotes/origin/master because shallow roots are not allowed to be updated
+exit=0

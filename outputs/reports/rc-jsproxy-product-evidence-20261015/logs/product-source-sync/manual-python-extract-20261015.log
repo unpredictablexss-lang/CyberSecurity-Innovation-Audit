@@ -1,0 +1,7 @@
+timestamp=2026-10-15T16:17:45.5648595+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; root=/home/audit/ohos-rk3568-product; f=/root/.prebuilts_cache/python-linux-x86-GLIBC2.35-3.12.10_20260414.tar.gz; expected=2628c30fe369e2cb39b4abde0201889484eaf49b57e468499a51728bf338bf76; observed=$(sha256sum "$f" | cut -d" " -f1); echo "network_action=none"; echo "observed_sha256=$observed"; [ "$observed" = "$expected" ]; mkdir -p "$root/prebuilts/python"; tar -xzf "$f" -C "$root/prebuilts/python"; rm -f "$root/prebuilts/python/linux-x86/current"; ln -s 3.12.10 "$root/prebuilts/python/linux-x86/current"; printf 0 > "$root/prebuilts/python/$expected.linux-x86.mark"; "$root/prebuilts/python/linux-x86/current/bin/python3" --version; sha256sum "$root/prebuilts/python/$expected.linux-x86.mark"'
+
+network_action=none
+observed_sha256=2628c30fe369e2cb39b4abde0201889484eaf49b57e468499a51728bf338bf76
+Python 3.12.10
+5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9  /home/audit/ohos-rk3568-product/prebuilts/python/2628c30fe369e2cb39b4abde0201889484eaf49b57e468499a51728bf338bf76.linux-x86.mark

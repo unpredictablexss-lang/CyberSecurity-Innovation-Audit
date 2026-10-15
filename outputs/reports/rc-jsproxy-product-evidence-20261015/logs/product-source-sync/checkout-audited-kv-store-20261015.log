@@ -1,0 +1,13 @@
+timestamp=2026-10-15T15:46:42.0567831+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; root=/home/audit/ohos-rk3568-product; p=$root/foundation/distributeddatamgr/kv_store; commit=acfb22aac16161d8fb0cefb6cc9b92f04f489a80; expected_tree=3b92c53fde616d5a3f9487b0c295670a42c63023; expected_source_blob=19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46; date --iso-8601=seconds; echo "network_action=none"; echo "command=git -C foundation/distributeddatamgr/kv_store checkout --detach $commit"; echo "before=$(git -C $p rev-parse HEAD)"; tree=$(git -C $p rev-parse "$commit^{tree}"); echo "observed_tree=$tree"; [ "$tree" = "$expected_tree" ]; blob=$(git -C $p rev-parse "$commit:frameworks/common/js_proxy.h"); echo "observed_blob=$blob"; [ "$blob" = "$expected_source_blob" ]; git -C $p checkout --detach $commit; echo "after=$(git -C $p rev-parse HEAD)"; git -C $p status --short; sha256sum $p/frameworks/common/js_proxy.h'
+
+2026-10-15T15:46:45+08:00
+network_action=none
+command=git -C foundation/distributeddatamgr/kv_store checkout --detach acfb22aac16161d8fb0cefb6cc9b92f04f489a80
+before=64e48eb1d97b45f44125761f16811f78be609a4a
+observed_tree=3b92c53fde616d5a3f9487b0c295670a42c63023
+observed_blob=19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46
+Previous HEAD position was 64e48eb1d !2706 merge closefd into master
+HEAD is now at acfb22aac !2705 merge kv into master
+after=acfb22aac16161d8fb0cefb6cc9b92f04f489a80
+38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f  /home/audit/ohos-rk3568-product/foundation/distributeddatamgr/kv_store/frameworks/common/js_proxy.h

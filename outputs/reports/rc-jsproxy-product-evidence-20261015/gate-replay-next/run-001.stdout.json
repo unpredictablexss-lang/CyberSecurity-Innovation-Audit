@@ -1,0 +1,7 @@
+{
+  "final_status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "component_validation": "met",
+  "product_gate": "not_met",
+  "output_dir": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output"
+}

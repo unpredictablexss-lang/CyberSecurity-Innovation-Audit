@@ -1,0 +1,1533 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_next_evidence_ledger_v1",
+  "task_id": "A-EVID-02-NEXT",
+  "generated_at": "2026-10-15T14:41:57.4618563+08:00",
+  "status": "candidate/unknown",
+  "component_validation": "met",
+  "product_gate": "not_met",
+  "validated_vulnerability": 0,
+  "promotion_allowed": false,
+  "confirmed_reportable": false,
+  "conclusion_rule": "missing complete product checkout/build/artifact/runtime trace/identity/CIA/scope evidence keeps product_gate=not_met",
+  "project_checkout": {
+    "repository": "E:/网安/CyberSecurity-Innovation-Audit",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "0e94ceafab1b2d79547bdf71c86e26e8b42a6b48",
+    "tree": "cee6b4609e65f2954114b368761614d5f745d6a6",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty_worktree_preserved": true,
+    "dirty_files": [
+      ".gitignore",
+      "docs/开发协作与交付指南.md",
+      "docs/面板功能与验收.md",
+      "docs/项目现状与下一步.md",
+      "scripts/verify_owner_ipc_components.py",
+      "src/workbench/operations.py",
+      "src/workbench/operations_api.py",
+      "tests/test_workbench_operations.py",
+      "web/src/SourceEvidence.tsx",
+      "web/src/pages/Cases.tsx",
+      "web/src/pages/JobDetail.tsx",
+      "web/src/pages/Operations.tsx",
+      "outputs/browser-acceptance/",
+      "outputs/reports/m1_descriptor_identity/",
+      "research/contracts/A-CCR-03-stable-finding-identity.md",
+      "research/contracts/A-CCR-REVIEW-stable-finding-identity-readonlyfactview.md",
+      "research/evidence/cpp/a_null_01_preimplementation_20261015/",
+      "research/evidence/cpp/a_truth_01_freeze_20261015/",
+      "research/evidence/cpp/detector_enhancement_20261015/",
+      "research/evidence/cpp/four_class_controls/",
+      "research/evidence/cpp/implementation_bound_controls_20261015/",
+      "research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/",
+      "research/experiments/cpp/r0_r1_r2_20261015/",
+      "research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md",
+      "research/specs/",
+      "research/tests/a_ccr_03_stable_finding_identity/",
+      "research/tests/a_null_01/",
+      "scripts/browser_acceptance.mjs",
+      "scripts/browser_acceptance_seed.py",
+      "scripts/git_https_fixture_server.py",
+      "tests/test_workbench_browser_acceptance.py"
+    ],
+    "push_performed": false
+  },
+  "product_source_observations": {
+    "target": {
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "remotes": [
+        "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+        "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+      ],
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "checkout_state": "detached HEAD, clean at inspection time"
+    },
+    "partial_roots": [
+      {
+        "repository": "openharmony/build",
+        "remote": "https://github.com/openharmony/build.git",
+        "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d",
+        "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad",
+        "checkout_state": "clean at inspection time"
+      },
+      {
+        "repository": "openharmony/manifest",
+        "remote": "https://github.com/openharmony/manifest.git",
+        "commit": "077460ee7a284b4f45816764337fea99eb4057cb",
+        "tree": "6d5dba1ab7e9ffb137676df248067510b71b832a",
+        "checkout_state": "clean at inspection time"
+      },
+      {
+        "repository": "openharmony/vendor_hihope",
+        "remote": "https://gitcode.com/openharmony/vendor_hihope.git",
+        "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+        "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+        "checkout_state": "clean at inspection time"
+      }
+    ],
+    "manifest_file": {
+      "path": "default_small.xml",
+      "git_blob": "802d516038203cb261d013f4ebcd04c925972708",
+      "source_sha256": "37c6186ff503e4df93f134fffcbbd0f2a845552cf415270a58899f7351fad215"
+    },
+    "manifest_finding": "default_small.xml declares default revision=master and distributeddatamgr_kv_store revision=master; this cannot serve as a pinned product source manifest",
+    "source_objects": [
+      {
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+      },
+      {
+        "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+        "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+        "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7"
+      },
+      {
+        "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+        "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+        "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+      },
+      {
+        "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+        "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+        "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9"
+      },
+      {
+        "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+        "git_blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+        "source_sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1"
+      },
+      {
+        "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+        "git_blob": "504578cc068321602f143b5713dd09f4bfd89071",
+        "source_sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67"
+      },
+      {
+        "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+        "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+        "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+      },
+      {
+        "path": "kv_store.gni",
+        "git_blob": "f7deb0fb4856ef406b2fc1cac55b064280655d9f",
+        "source_sha256": "098c107cc0abfbd9556ae6214dafb66e58d1d1e14d1ba3ff03381851e868e565"
+      },
+      {
+        "path": "kv_store_deps.gni",
+        "git_blob": "1a57f3060909db38adafc8dc32369f079f680322",
+        "source_sha256": "53a3103d5b16cfd400c7d146097bcdb86d8051dbcc5cedf3b61fb372c55228a3"
+      }
+    ],
+    "missing_product_root_paths": [
+      ".gn",
+      "foundation/distributeddatamgr/kv_store/BUILD.gn",
+      "device/board/hihope/rk3568",
+      "prebuilts/build-tools",
+      "prebuilts/python",
+      "prebuilts/clang"
+    ]
+  },
+  "toolchain_observations": {
+    "source_binding": {
+      "repository": "openharmony/build",
+      "remote": "https://github.com/openharmony/build.git",
+      "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d",
+      "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad",
+      "checkout_state": "clean at inspection time"
+    },
+    "objects": [
+      {
+        "path": "build_scripts/build.sh",
+        "git_blob": "c853776b7bc743a60fdccc46ff1c57ea688fbe75",
+        "source_sha256": "a349c0081b7e5fd4a432c6c0d20ea73e967b8ffde12f4e03099912dd35422a4d"
+      },
+      {
+        "path": "toolchain/toolchain.gni",
+        "git_blob": "cfdca34c2e1dea5a8b923cd6d0d451dbcd4a851a",
+        "source_sha256": "df9d247793cf381ac1ad1cb7834e2d8898086d4a6996312615abe23add210731"
+      }
+    ],
+    "source_declared_versions": {
+      "node": "14.21.1",
+      "clang": "15.0.4"
+    },
+    "actual_product_toolchain_manifest_sha256": null,
+    "missing": [
+      "OpenHarmony SDK",
+      "GN binary",
+      "Ninja binary",
+      "hvigorw binary",
+      "Java",
+      "product Python",
+      "compiler/linker binaries",
+      "binary version output",
+      "binary hashes and resolved paths"
+    ]
+  },
+  "product_profile_observations": {
+    "source_binding": {
+      "repository": "openharmony/vendor_hihope",
+      "remote": "https://gitcode.com/openharmony/vendor_hihope.git",
+      "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+      "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+      "checkout_state": "clean at inspection time"
+    },
+    "objects": [
+      {
+        "path": "rk3568/config.json",
+        "git_blob": "7a4a6464cbce51bc29d605ccf706fe0bdebc650c",
+        "source_sha256": "a5e783fd9d2c777d1b9d34832796ebd063d155158f4a72ef2821a6707f02479c"
+      },
+      {
+        "path": "rk3568/product.gni",
+        "git_blob": "60e39596b26e52829b8ff4b2698cb15e1a88fed5",
+        "source_sha256": "762ce8c4e909ed94d91b7dcbc4d40b3d509b5b0b02f20b3c3b38e47f50f6da86"
+      }
+    ],
+    "observed": {
+      "product_name": "rk3568",
+      "build_variant": "user",
+      "config_version": "3.0",
+      "api_version": 8,
+      "device_build_path": "device/board/hihope/rk3568"
+    },
+    "linkage_status": "partial_unlinked_to_pinned_kv_store_image"
+  },
+  "checklist": [
+    {
+      "id": "pinned-product-source-manifest",
+      "checklist_item": "pinned product source manifest",
+      "result": "partial_not_product_manifest",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/manifest",
+            "remote": "https://github.com/openharmony/manifest.git",
+            "commit": "077460ee7a284b4f45816764337fea99eb4057cb",
+            "tree": "6d5dba1ab7e9ffb137676df248067510b71b832a",
+            "checkout_state": "clean at inspection time"
+          },
+          {
+            "repository": "openharmony/build",
+            "remote": "https://github.com/openharmony/build.git",
+            "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d",
+            "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad",
+            "checkout_state": "clean at inspection time"
+          },
+          {
+            "repository": "openharmony/vendor_hihope",
+            "remote": "https://gitcode.com/openharmony/vendor_hihope.git",
+            "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+            "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+            "checkout_state": "clean at inspection time"
+          },
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "default_small.xml",
+            "git_blob": "802d516038203cb261d013f4ebcd04c925972708",
+            "source_sha256": "37c6186ff503e4df93f134fffcbbd0f2a845552cf415270a58899f7351fad215"
+          },
+          {
+            "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+            "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+            "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "git -C E:/网安/_product_targets/manifest rev-parse 077460ee7a284b4f45816764337fea99eb4057cb^{tree}",
+          "git -C E:/网安/_product_targets/manifest show 077460ee7a284b4f45816764337fea99eb4057cb:default_small.xml",
+          "rg -n \"<default|distributeddatamgr_kv_store|revision=\" E:/网安/_product_targets/manifest/default_small.xml"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "failure_reason": null
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        }
+      ],
+      "missing_evidence": [
+        "complete OpenHarmony checkout",
+        "per-project full SHA manifest with no moving revisions",
+        "root .repo snapshot hash",
+        "manifest SHA-256 over complete pinned project set"
+      ],
+      "conclusion": "Four available repositories are independently pinned in this ledger, but default_small.xml uses default revision=master and project revision=master. This is not a complete pinned product source manifest."
+    },
+    {
+      "id": "toolchain-manifest",
+      "checklist_item": "toolchain manifest",
+      "result": "partial_not_product_toolchain_manifest",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/build",
+            "remote": "https://github.com/openharmony/build.git",
+            "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d",
+            "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad",
+            "checkout_state": "clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "build_scripts/build.sh",
+            "git_blob": "c853776b7bc743a60fdccc46ff1c57ea688fbe75",
+            "source_sha256": "a349c0081b7e5fd4a432c6c0d20ea73e967b8ffde12f4e03099912dd35422a4d"
+          },
+          {
+            "path": "toolchain/toolchain.gni",
+            "git_blob": "cfdca34c2e1dea5a8b923cd6d0d451dbcd4a851a",
+            "source_sha256": "df9d247793cf381ac1ad1cb7834e2d8898086d4a6996312615abe23add210731"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "Test-Path E:/网安/_product_targets/prebuilts/build-tools",
+          "Test-Path E:/网安/_product_targets/prebuilts/python",
+          "Get-Content E:/网安/_product_targets/build/build_scripts/build.sh",
+          "Get-Content E:/网安/_product_targets/build/toolchain/toolchain.gni"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "failure_reason": "Product prebuilts are absent; only source-declared paths and versions were observed."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        }
+      ],
+      "missing_evidence": [
+        "actual OpenHarmony SDK",
+        "GN/Ninja/hvigorw/Java/Python/compiler/linker binaries",
+        "binary version output",
+        "binary SHA-256 and resolved paths",
+        "toolchain_manifest_sha256"
+      ],
+      "conclusion": "build.sh declares Node 14.21.1 and toolchain.gni declares clang_version 15.0.4, but prebuilts/build-tools, prebuilts/python and prebuilts/clang are missing. No product toolchain manifest hash is asserted."
+    },
+    {
+      "id": "dependency-closure",
+      "checklist_item": "GN/Ninja/NAPI/device/prebuilts dependency closure",
+      "result": "partial_source_visible_dependency_edges_only",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          },
+          {
+            "repository": "openharmony/build",
+            "remote": "https://github.com/openharmony/build.git",
+            "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d",
+            "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad",
+            "checkout_state": "clean at inspection time"
+          },
+          {
+            "repository": "openharmony/vendor_hihope",
+            "remote": "https://gitcode.com/openharmony/vendor_hihope.git",
+            "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+            "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+            "checkout_state": "clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+            "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+            "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+          },
+          {
+            "path": "kv_store.gni",
+            "git_blob": "f7deb0fb4856ef406b2fc1cac55b064280655d9f",
+            "source_sha256": "098c107cc0abfbd9556ae6214dafb66e58d1d1e14d1ba3ff03381851e868e565"
+          },
+          {
+            "path": "kv_store_deps.gni",
+            "git_blob": "1a57f3060909db38adafc8dc32369f079f680322",
+            "source_sha256": "53a3103d5b16cfd400c7d146097bcdb86d8051dbcc5cedf3b61fb372c55228a3"
+          },
+          {
+            "path": "rk3568/config.json",
+            "git_blob": "7a4a6464cbce51bc29d605ccf706fe0bdebc650c",
+            "source_sha256": "a5e783fd9d2c777d1b9d34832796ebd063d155158f4a72ef2821a6707f02479c"
+          },
+          {
+            "path": "rk3568/product.gni",
+            "git_blob": "60e39596b26e52829b8ff4b2698cb15e1a88fed5",
+            "source_sha256": "762ce8c4e909ed94d91b7dcbc4d40b3d509b5b0b02f20b3c3b38e47f50f6da86"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "rg -n \"deps|external_deps|module_install|part_name\" E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/interfaces/jskits/distributedkvstore/BUILD.gn",
+          "rg -n \"kv_store_(napi|ipc|ability|common_event)|external_deps\" E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/kv_store_deps.gni",
+          "rg -n \"device_build_path|product_name|subsystems\" E:/网安/_product_targets/vendor_hihope/rk3568/config.json"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "failure_reason": "GN gen/resolved args/package/install graph could not run because root .gn and required projects/prebuilts are absent."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "missing_evidence": [
+        "GN target graph from a complete root",
+        "resolved args",
+        "Ninja graph",
+        "NAPI/ability/IPC/common-event/device/prebuilts resolved identities",
+        "package/install graph",
+        "build_manifest_sha256"
+      ],
+      "conclusion": "BUILD.gn and kv_store_deps.gni expose source-level dependency declarations, including NAPI, ability, IPC, common-event and mock fallbacks. They do not prove the rk3568/user resolved dependency closure."
+    },
+    {
+      "id": "artifact-vulnerable",
+      "checklist_item": "vulnerable product artifact",
+      "result": "not_executed_product_artifact_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+            "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+            "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+          }
+        ],
+        "patch_sha256": null,
+        "product_variant_source_sha256": null,
+        "component_variant_source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity",
+        "patch_sha256": null,
+        "product_variant_build_log_sha256": null,
+        "product_variant_source_manifest_sha256": null,
+        "product_toolchain_manifest_sha256": null,
+        "product_build_manifest_sha256": null
+      },
+      "execution": {
+        "commands": [
+          "bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No complete product checkout/toolchain/dependency closure; product build was not executed for this variant. Existing component Harness output is deliberately not used as a product artifact."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "missing_evidence": [
+        "variant build command executed on product source",
+        "build log SHA-256",
+        "source/toolchain/build manifests",
+        "product artifact exact path/SHA-256/size/install path"
+      ],
+      "conclusion": "No vulnerable product artifact exists in the current evidence. Component Harness identity is not admitted as product artifact identity."
+    },
+    {
+      "id": "artifact-fixed_control_mutex",
+      "checklist_item": "fixed_control_mutex product artifact",
+      "result": "not_executed_product_artifact_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+            "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+            "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+          }
+        ],
+        "patch_sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+        "product_variant_source_sha256": null,
+        "component_variant_source_sha256": "9044ccaac42cefdd2c153c01b07c0893634aa0aee8ad54093e1065740329a902"
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity",
+        "patch_sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+        "product_variant_build_log_sha256": null,
+        "product_variant_source_manifest_sha256": null,
+        "product_toolchain_manifest_sha256": null,
+        "product_build_manifest_sha256": null
+      },
+      "execution": {
+        "commands": [
+          "bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No complete product checkout/toolchain/dependency closure; product build was not executed for this variant. Existing component Harness output is deliberately not used as a product artifact."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "missing_evidence": [
+        "variant build command executed on product source",
+        "build log SHA-256",
+        "source/toolchain/build manifests",
+        "product artifact exact path/SHA-256/size/install path"
+      ],
+      "conclusion": "No fixed_control_mutex product artifact exists in the current evidence. Component Harness identity is not admitted as product artifact identity."
+    },
+    {
+      "id": "artifact-patched_atomic_minimal",
+      "checklist_item": "patched_atomic_minimal product artifact",
+      "result": "not_executed_product_artifact_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+            "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+            "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+          }
+        ],
+        "patch_sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+        "product_variant_source_sha256": null,
+        "component_variant_source_sha256": "4d57f286602e15af636c40158e8cdabc6f617fda89d8276128c674b4ab633b6f"
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity",
+        "patch_sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+        "product_variant_build_log_sha256": null,
+        "product_variant_source_manifest_sha256": null,
+        "product_toolchain_manifest_sha256": null,
+        "product_build_manifest_sha256": null
+      },
+      "execution": {
+        "commands": [
+          "bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No complete product checkout/toolchain/dependency closure; product build was not executed for this variant. Existing component Harness output is deliberately not used as a product artifact."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "missing_evidence": [
+        "variant build command executed on product source",
+        "build log SHA-256",
+        "source/toolchain/build manifests",
+        "product artifact exact path/SHA-256/size/install path"
+      ],
+      "conclusion": "No patched_atomic_minimal product artifact exists in the current evidence. Component Harness identity is not admitted as product artifact identity."
+    },
+    {
+      "id": "product-entry-runtime-symbol",
+      "checklist_item": "product entry and runtime symbol chain",
+      "result": "source_visible_only_product_reachability_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/common/js_proxy.h",
+            "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+            "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+            "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+            "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+            "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+            "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+            "git_blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+            "source_sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1"
+          },
+          {
+            "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+            "git_blob": "504578cc068321602f143b5713dd09f4bfd89071",
+            "source_sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "rg -n \"getResultSet|closeResultSet|getEntry|GetInstance|SetInstance|AsyncWork|napi_create_async_work\" E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/frameworks E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/interfaces/jskits/distributedkvstore"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "failure_reason": "No product binary/module resolution or runtime symbol table was available."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "missing_evidence": [
+        "deployment package/module resolution",
+        "product artifact SHA-256",
+        "runtime symbol/versioned symbol evidence",
+        "live JS/NAPI call trace"
+      ],
+      "conclusion": "getResultSet/closeResultSet/getEntry/AsyncWork and GetInstance/SetInstance are source-visible. Product reachability, exported surface resolution and runtime symbols remain unknown."
+    },
+    {
+      "id": "permission-uid-user-sandbox-exported",
+      "checklist_item": "permission, UID, user, sandbox and exported surface",
+      "result": "unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          },
+          {
+            "repository": "openharmony/vendor_hihope",
+            "remote": "https://gitcode.com/openharmony/vendor_hihope.git",
+            "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+            "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+            "checkout_state": "clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+            "git_blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+            "source_sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1"
+          },
+          {
+            "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+            "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+            "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9"
+          },
+          {
+            "path": "rk3568/config.json",
+            "git_blob": "7a4a6464cbce51bc29d605ccf706fe0bdebc650c",
+            "source_sha256": "a5e783fd9d2c777d1b9d34832796ebd063d155158f4a72ef2821a6707f02479c"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "rg -n \"IsSystemApi|IsSystemApp|DISTRIBUTED_DATASYNC|requireInternal|data.distributed\" E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/interfaces E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/frameworks E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store/test/unittest/distributedKVStore/config.json"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 1,
+          "executed": 1,
+          "successful": 1,
+          "failed": 0
+        },
+        "failure_reason": "No live app/device identity or policy enforcement result was available."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "missing_evidence": [
+        "permission name and grant_mode",
+        "grant/deny/failure result",
+        "caller app identity",
+        "UID and user",
+        "sandbox/privilege boundary",
+        "exported and cross-app/IPC/remote surface",
+        "attacker control proof"
+      ],
+      "conclusion": "Source/test declarations mention DISTRIBUTED_DATASYNC and system API checks, but they do not prove grant mode, denial behavior, UID/user/sandbox boundary, exported surface or attacker control for this interleaving."
+    },
+    {
+      "id": "product-close-get-entry-trace",
+      "checklist_item": "product-level CloseResultSet/getEntry interleaving trace",
+      "result": "component_reproduced_product_trace_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/common/js_proxy.h",
+            "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+            "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+            "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+            "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+            "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+            "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "run product trace workload for vulnerable/fixed_control_mutex/patched_atomic_minimal under rk3568/user"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 9,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No product build, device/runtime trace source or product artifact was available. Component TSan traces were not reused as product traces."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "missing_evidence": [
+        "3 product traces per variant",
+        "product thread IDs",
+        "JS/async-execute/complete queue labels",
+        "Get/SetInstance and CloseResultSet/getEntry source-bound events",
+        "overlap start/end",
+        "product artifact hash per trace",
+        "trace hash and timeout/failure reason"
+      ],
+      "conclusion": "The component Harness reproduces a TSan data race under its controlled model. It is not a product trace and does not establish UAF, DoS, disclosure, corruption or stable exploitability."
+    },
+    {
+      "id": "cia-availability",
+      "checklist_item": "availability measurement",
+      "result": "not_executed_product_cia_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+            "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+            "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+            "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+            "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "measure product process/API failure or no-failure denominator over repeated rk3568/user trigger"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 3,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No product runtime was executed."
+      },
+      "evidence": [],
+      "missing_evidence": [
+        "command",
+        "repeat count and denominator",
+        "process/API failure count",
+        "crash/no-crash classification",
+        "result artifact SHA-256"
+      ],
+      "conclusion": "No product availability rate, stable crash or verified negative was measured."
+    },
+    {
+      "id": "cia-integrity",
+      "checklist_item": "integrity measurement",
+      "result": "not_executed_product_cia_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "compare returned entry/state against expected result over repeated rk3568/user trigger"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 3,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No product runtime was executed."
+      },
+      "evidence": [],
+      "missing_evidence": [
+        "command",
+        "repeat count and denominator",
+        "returned entry/state divergence",
+        "verified negative if no divergence",
+        "result artifact SHA-256"
+      ],
+      "conclusion": "No product returned-entry or state divergence measurement exists."
+    },
+    {
+      "id": "cia-confidentiality",
+      "checklist_item": "confidentiality measurement",
+      "result": "not_executed_product_cia_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "measure same-app/cross-app/device disclosure boundary over repeated rk3568/user trigger"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 3,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No product/runtime/device boundary was executed."
+      },
+      "evidence": [],
+      "missing_evidence": [
+        "command",
+        "repeat count and denominator",
+        "same-app result",
+        "cross-app result",
+        "device-boundary result or verified negative",
+        "result artifact SHA-256"
+      ],
+      "conclusion": "No confidentiality exposure or verified negative was measured; no leak claim is made."
+    },
+    {
+      "id": "affected-module-version-branch",
+      "checklist_item": "affected module, version and branch",
+      "result": "partial_source_module_bound_product_scope_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          },
+          {
+            "repository": "openharmony/vendor_hihope",
+            "remote": "https://gitcode.com/openharmony/vendor_hihope.git",
+            "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+            "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+            "checkout_state": "clean at inspection time"
+          },
+          {
+            "repository": "openharmony/manifest",
+            "remote": "https://github.com/openharmony/manifest.git",
+            "commit": "077460ee7a284b4f45816764337fea99eb4057cb",
+            "tree": "6d5dba1ab7e9ffb137676df248067510b71b832a",
+            "checkout_state": "clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/common/js_proxy.h",
+            "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+            "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+            "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+            "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+            "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+            "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9"
+          },
+          {
+            "path": "rk3568/config.json",
+            "git_blob": "7a4a6464cbce51bc29d605ccf706fe0bdebc650c",
+            "source_sha256": "a5e783fd9d2c777d1b9d34832796ebd063d155158f4a72ef2821a6707f02479c"
+          },
+          {
+            "path": "default_small.xml",
+            "git_blob": "802d516038203cb261d013f4ebcd04c925972708",
+            "source_sha256": "37c6186ff503e4df93f134fffcbbd0f2a845552cf415270a58899f7351fad215"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "git -C E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store branch --all --contains acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "git -C E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store tag --contains acfb22aac16161d8fb0cefb6cc9b92f04f489a80"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 2,
+          "executed": 1,
+          "successful": 1,
+          "failed": 1
+        },
+        "failure_reason": "Only detached local membership was observed; git tag --contains returned a malformed-object-name error for the valid commit, so no tag membership is claimed."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "missing_evidence": [
+        "product image/version/tag manifest",
+        "fixed commit membership in affected and fixed branches",
+        "per-module affected version items",
+        "evidence hash per module/version/branch item"
+      ],
+      "conclusion": "Four source modules are bound to exact commit/tree/blob/source hashes. rk3568 config says version 3.0/api_version 8 at vendor_hihope commit, but no pinned image/tag/branch manifest links that profile to this kv_store commit; affected version/branch remain unknown."
+    },
+    {
+      "id": "cwe-cve-search",
+      "checklist_item": "CWE/CVE binding and retrieval record",
+      "result": "cwe_supported_bounded_search_recorded_no_assignment_claim",
+      "product_gate_effect": "component_support_only_product_gate_still_unknown",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/common/js_proxy.h",
+            "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+            "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+            "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+            "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+            "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+            "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f"
+          },
+          {
+            "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+            "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+            "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "NVD CVE API 2.0 keywordSearch=OpenHarmony KVStore",
+          "NVD CVE API 2.0 keywordSearch=distributeddatamgr kv_store",
+          "NVD CVE API 2.0 keywordSearch=CloseResultSet getEntry",
+          "GitHub commit search repo:openharmony/distributeddatamgr_kv_store CloseResultSet",
+          "GitHub commit search repo:openharmony/distributeddatamgr_kv_store getEntry"
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 5,
+          "executed": 5,
+          "successful": 5,
+          "failed": 0
+        },
+        "failure_reason": null
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "missing_evidence": [
+        "independent reviewer signature",
+        "full upstream advisory/disclosure scope",
+        "assignment record if one exists",
+        "Gate input evidence hash wiring for the search record"
+      ],
+      "conclusion": "CWE-362 remains a source/component race-root-cause candidate. Bounded NVD and GitHub searches are recorded below. Zero keyword matches is not proof of no CVE and no CVE assignment is asserted."
+    },
+    {
+      "id": "product-fix-revalidation",
+      "checklist_item": "product-level fix revalidation",
+      "result": "component_patch_only_product_revalidation_unknown",
+      "product_gate_effect": "blocks_product_gate",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/common/js_proxy.h",
+            "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+            "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+          }
+        ],
+        "fixed_control_patch_sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+        "patched_atomic_patch_sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9"
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "apply fixed_control_mutex.patch and patched_atomic_minimal.patch to product source",
+          "build vulnerable/fixed_control_mutex/patched_atomic_minimal in rk3568/user",
+          "repeat product trace and CIA validation 3 times per variant"
+        ],
+        "command_status": "not_executed",
+        "repeats": {
+          "planned": 9,
+          "executed": 0,
+          "successful": 0,
+          "failed": 0
+        },
+        "failure_reason": "No complete product checkout, product build or product runtime was available. Component clean controls do not substitute for product patch revalidation."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/fixed_control_mutex.patch",
+          "sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a"
+        },
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/patched_atomic_minimal.patch",
+          "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9"
+        }
+      ],
+      "missing_evidence": [
+        "patch apply result on exact product source",
+        "three product builds",
+        "product trace/CIA reruns",
+        "product artifact hashes",
+        "same-profile comparison"
+      ],
+      "conclusion": "The mutex control and atomic patch are source-bound proposed controls and have component-level clean repeats only. They are not product fixes and have not been product-revalidated."
+    },
+    {
+      "id": "gate-replay",
+      "checklist_item": "fixed fail-closed Gate replay",
+      "result": "passed_fail_closed_two_replays",
+      "product_gate_effect": "keeps_candidate_unknown",
+      "source_binding": {
+        "repositories": [
+          {
+            "repository": "openharmony/distributeddatamgr_kv_store",
+            "remotes": [
+              "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+              "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git"
+            ],
+            "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+            "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+            "checkout_state": "detached HEAD, clean at inspection time"
+          }
+        ],
+        "objects": [
+          {
+            "path": "frameworks/common/js_proxy.h",
+            "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+            "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+          }
+        ]
+      },
+      "artifact_binding": {
+        "product_artifact_path": null,
+        "product_artifact_sha256": null,
+        "product_install_path": null,
+        "product_artifact_size": null,
+        "component_harness_binary_hash_used_as_product_artifact": false,
+        "policy": "component Harness binary/output hashes are excluded from product artifact identity"
+      },
+      "execution": {
+        "commands": [
+          "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /mnt/e/网安/_product_targets --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir <run-output-dir>\"",
+          "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m unittest tests.test_rc_jsproxy_product_gate -v\""
+        ],
+        "command_status": "executed",
+        "repeats": {
+          "planned": 2,
+          "executed": 2,
+          "successful": 2,
+          "failed": 0
+        },
+        "failure_reason": "Gate completed fail-closed; product obligations remained unknown. This is not a Gate execution failure."
+      },
+      "evidence": [
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output/validation.json",
+          "sha256": "4785ecb9ad58b61694440065800ab4a352173519bf27ec0f0eae37e74f1840db"
+        },
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002/output/validation.json",
+          "sha256": "4785ecb9ad58b61694440065800ab4a352173519bf27ec0f0eae37e74f1840db"
+        },
+        {
+          "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/targeted-tests.log",
+          "sha256": "b0c0992f06a72aba1f28faf2d1e4a7d38804cd414694af7e0174356a00d13ee9"
+        }
+      ],
+      "missing_evidence": [
+        "new product build/artifact evidence",
+        "new product entry/permission/runtime evidence",
+        "new product trace/CIA evidence",
+        "owner authorization for any status change"
+      ],
+      "conclusion": "Two Gate replays produced byte-identical validation.json: component_validation=met, product_gate=not_met, validated_vulnerability=0, final_status=candidate/unknown. Eight Gate tests passed."
+    }
+  ],
+  "cwe_cve_search_record": {
+    "search_time_zone": "Asia/Shanghai (+08:00)",
+    "network_actions_logged": true,
+    "queries": [
+      {
+        "id": "nvd-openharmony-kvstore",
+        "provider": "NVD CVE API 2.0",
+        "query": "keywordSearch=OpenHarmony KVStore",
+        "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=OpenHarmony%20KVStore",
+        "started_at": "2026-10-15T14:33:36.868239+08:00",
+        "finished_at": "2026-10-15T14:33:38.4516186+08:00",
+        "http_status": 200,
+        "response_sha256": "44a139491b8689333367cf74d83dd2220a165414d89980ce1884dc006d15bf58",
+        "result_count": 0,
+        "result_ids": [],
+        "failure_reason": null
+      },
+      {
+        "id": "nvd-distributeddatamgr-kv-store",
+        "provider": "NVD CVE API 2.0",
+        "query": "keywordSearch=distributeddatamgr kv_store",
+        "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=distributeddatamgr%20kv_store",
+        "started_at": "2026-10-15T14:33:38.4556343+08:00",
+        "finished_at": "2026-10-15T14:33:39.5788374+08:00",
+        "http_status": 200,
+        "response_sha256": "9e61e4917c7c46ac0ab5e20d89296947a4050a8c483e7ab8aba9bf4ca3dad3cd",
+        "result_count": 0,
+        "result_ids": [],
+        "failure_reason": null
+      },
+      {
+        "id": "nvd-closeresultset-getentry",
+        "provider": "NVD CVE API 2.0",
+        "query": "keywordSearch=CloseResultSet getEntry",
+        "url": "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=CloseResultSet%20getEntry",
+        "started_at": "2026-10-15T14:33:39.5791931+08:00",
+        "finished_at": "2026-10-15T14:33:40.4417689+08:00",
+        "http_status": 200,
+        "response_sha256": "5f481eff74495ed73248e81bca8af9553f7dd431a37b5e56f499f3d804dfca0a",
+        "result_count": 0,
+        "result_ids": [],
+        "failure_reason": null
+      },
+      {
+        "id": "github-commit-closeresultset",
+        "provider": "GitHub commit search",
+        "query": "repo:openharmony/distributeddatamgr_kv_store CloseResultSet",
+        "url": "https://api.github.com/search/commits?q=repo%3Aopenharmony%2Fdistributeddatamgr_kv_store%20CloseResultSet",
+        "started_at": "2026-10-15T14:33:40.4420086+08:00",
+        "finished_at": "2026-10-15T14:33:41.5268698+08:00",
+        "http_status": 200,
+        "response_sha256": "4af480b8ee5b87b369a76c49bd22c9a783908272ebffbe97898f8ab0f0772a5f",
+        "result_count": 0,
+        "result_ids": [],
+        "failure_reason": null
+      },
+      {
+        "id": "github-commit-getentry",
+        "provider": "GitHub commit search",
+        "query": "repo:openharmony/distributeddatamgr_kv_store getEntry",
+        "url": "https://api.github.com/search/commits?q=repo%3Aopenharmony%2Fdistributeddatamgr_kv_store%20getEntry",
+        "started_at": "2026-10-15T14:33:41.527003+08:00",
+        "finished_at": "2026-10-15T14:33:42.6403015+08:00",
+        "http_status": 200,
+        "response_sha256": "2adf763661ff7bb7d960b78b7e3cd651b57ddbdef850cb3a6b3e44930200e731",
+        "result_count": 2,
+        "result_ids": [
+          "078ead2e70348be142d332036cb4e761a425168d",
+          "8a3ba67cf0e7ad65c911ac58fd6da2741c5a64e6"
+        ],
+        "failure_reason": null
+      }
+    ],
+    "interpretation": "Bounded keyword/commit searches only. Zero NVD keyword matches does not prove no assignment. Two GitHub getEntry commit matches are search hits, not vulnerability or CVE evidence. No CVE ID is assigned or fabricated."
+  },
+  "claim_guardrails": [
+    "ThreadSanitizer race is not UAF, denial of service, data leak, memory corruption or stable exploitability.",
+    "source-visible is not product reachable.",
+    "component Harness binary/output hashes are not product artifact hashes.",
+    "unknown/partial/failed/unexecuted is not safe, miss or proof of absence.",
+    "no CVE assignment is asserted; bounded search is not exhaustive.",
+    "no candidate/review/report state is upgraded."
+  ],
+  "overall": {
+    "component_validation": "met",
+    "product_gate": "not_met",
+    "validated_vulnerability": 0,
+    "status": "candidate/unknown",
+    "promotion_allowed": false,
+    "reason": "Complete product source/toolchain/dependency closure, three product artifacts, product entry/identity/deployment, product traces, CIA, product scope and product patch revalidation are still missing."
+  }
+}

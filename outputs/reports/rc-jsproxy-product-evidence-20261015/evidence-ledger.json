@@ -1,0 +1,908 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_product_evidence_ledger_v1",
+  "generated_at": "2026-10-15T12:42:02+08:00",
+  "template": {
+    "path": "inputs/product-evidence.template.json",
+    "sha256": "256737d1f45f87ed9e279637a038afa2850ca2602a42208f94ded8fe19c3a30c"
+  },
+  "overall": {
+    "status": "candidate/unknown",
+    "validated_vulnerability": 0,
+    "promotion_allowed": false,
+    "confirmed_reportable": false,
+    "product_gate": "not_met",
+    "component_validation": "met",
+    "rule": "missing product build, entry/permission/identity/deployment, product trace, CIA, scope or audited CVE evidence forces candidate/unknown"
+  },
+  "records": [
+    {
+      "id": "real-build-method",
+      "requirement": "真实产品/组件构建方法、source/toolchain/build manifest、完整依赖闭包",
+      "status": "component_harness_verified_product_blocked",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+        "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+        "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9",
+        "checkout_sha256": "365d6197f68caa3f1f9ae22752f140e91689d1baf26fd6563f5dbe73a7047c2a"
+      },
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": "bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 2,
+        "repeat_successful": 0,
+        "repeat_failed": 2,
+        "failure_reason": "CRLF script parse failed; normalized entry then failed because complete OpenHarmony source tree is absent",
+        "required_next_command": "provide full pinned OpenHarmony checkout and exact product build command"
+      },
+      "conclusion": "Source-derived build target exists; component Harness builds three local variants. No real product build occurred.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "source-manifest",
+      "requirement": "source manifest，绑定全部项目/revision/tree",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "default_small.xml tracks distributeddatamgr_kv_store at revision=master; complete per-project pinned manifest unavailable",
+        "required_next_command": "export repo/toolchain manifest with every project pinned to commit/tree"
+      },
+      "conclusion": "Partial roots have commit/tree observations only; no complete source manifest hash exists.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "toolchain-manifest",
+      "requirement": "toolchain manifest，编译器/SDK/NAPI/GN/Python/build-tools 版本与 hash",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "prebuilts/build-tools and prebuilts/python are missing; no SDK/toolchain manifest captured",
+        "required_next_command": "export exact OHOS SDK/build-tools/Python/compiler manifest"
+      },
+      "conclusion": "Host clang 14 is only for component Harness and is not an OpenHarmony product toolchain.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "dependency-closure",
+      "requirement": "完整依赖闭包，含 GN target 依赖、prebuilts、device config 与 install/package graph",
+      "status": "unknown",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+        "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+        "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9",
+        "checkout_sha256": "365d6197f68caa3f1f9ae22752f140e91689d1baf26fd6563f5dbe73a7047c2a"
+      },
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "missing .gn, kv_store BUILD.gn root, rk3568 device config, build-tools and Python prebuilts",
+        "required_next_command": "export GN graph/resolved deps and package/install manifest"
+      },
+      "conclusion": "BUILD.gn identifies full OHOS dependencies but does not establish a resolvable product dependency closure.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "artifact-vulnerable",
+      "requirement": "vulnerable 产品产物 exact path/hash/size/install path",
+      "status": "unknown_product_component_artifact_known",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "checkout_sha256": "e417eb614183e090fe9390e3c5842bfa8ff1bacb382b191e6560d4591cc6d050"
+      },
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "product artifact build/install/hash was not executed; component Harness binary/source hashes are recorded separately and cannot substitute for product artifact evidence",
+        "required_next_command": "build vulnerable product target and hash exact output"
+      },
+      "conclusion": "Component Harness binary SHA-256 3c5f8bd92e4aa5853b54cac2c6d65488328659aabe209f7ca265ba6fcf5794a0 is not a product artifact hash.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "artifact-fixed-control-mutex",
+      "requirement": "fixed_control_mutex 产品产物 exact path/hash/size/install path",
+      "status": "unknown_product_component_artifact_known",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": null,
+        "source_sha256": "9044ccaac42cefdd2c153c01b07c0893634aa0aee8ad54093e1065740329a902",
+        "checkout_sha256": null
+      },
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "product artifact build/install/hash was not executed; component Harness binary/source hashes are recorded separately and cannot substitute for product artifact evidence",
+        "required_next_command": "apply control to product source, rebuild same profile, hash/install exact output"
+      },
+      "conclusion": "Component Harness binary SHA-256 56a70dedb22c1dbf1f13194d5ab68300ada17804ab0340760b2b6ca6db920054 is not a product artifact hash.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "artifact-patched-atomic-minimal",
+      "requirement": "patched_atomic_minimal 产品产物 exact path/hash/size/install path",
+      "status": "unknown_product_component_artifact_known",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": null,
+        "source_sha256": "4d57f286602e15af636c40158e8cdabc6f617fda89d8276128c674b4ab633b6f",
+        "checkout_sha256": null
+      },
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/component-patch.diff",
+          "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "product artifact build/install/hash was not executed; component Harness binary/source hashes are recorded separately and cannot substitute for product artifact evidence",
+        "required_next_command": "apply proposed patch to product source, rebuild same profile, hash/install exact output"
+      },
+      "conclusion": "Component Harness binary SHA-256 9a0392195866aa3ed6beb2b8ba59cbde4f5fe99da4ae3b22c65bb1a7bc97b32c is not a product artifact hash; patch is not upstream.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "entry-js-napi",
+      "requirement": "JS/NAPI 入口与真实产品 runtime symbol/reachability",
+      "status": "source_visible_only_product_unknown",
+      "source": [
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+          "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+          "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+          "checkout_sha256": "b03b018ca1338bd668260e81e4e218d39f7b4a90dd1f0af6d7f5f65a943c9235"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+          "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+          "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+          "checkout_sha256": "0506d6e6a21b6edc863e70f388f3af75c9cdf22e3fdb73504f7efca1c8ef6ac3"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+          "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+          "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+          "checkout_sha256": "62711571d96440e846067822490734cd6d20a446b8e7f4b4c0530033e5568471"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+          "git_blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+          "source_sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1",
+          "checkout_sha256": "190901cbf130a69381cd478412838b19cdc5015a81874f8311b06874289afcd1"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+          "git_blob": "504578cc068321602f143b5713dd09f4bfd89071",
+          "source_sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67",
+          "checkout_sha256": "e60e4b5a1f860758057a616af6d1c8bce1e39ab4d21d35636ade5d45a97b3842"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "inputs/candidate-manifest.json",
+          "sha256": "9bfd1891d2100a4cb1006addbd75f83683a4aa9e0ccc687ebd8ee35fcb7c473b"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "source verification succeeded; live product entry/deployment resolution not executed",
+        "required_next_command": "run instrumented product fixture and capture runtime symbols/module resolution"
+      },
+      "conclusion": "getResultSet/closeResultSet/getEntry/NapiQueue::AsyncWork are source-visible. Source-visible is not product reachable.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "permission",
+      "requirement": "permission name/grant mode/deny result for result-set operations",
+      "status": "unknown",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "interfaces/innerkits/distributeddata/include/types.h",
+        "git_blob": "7ee8c58504bed9570b5477aa26d9a2a4281c693a",
+        "source_sha256": "9116b8f8774c0bb23388ac840f8f687ff3012dd4e251643b96a18887fb835e5f",
+        "checkout_sha256": "108b1d0a6e40eac93227a584f8d9c21f13f90fb36b7c4e3c021926ba7a71afc8"
+      },
+      "evidence": [
+        {
+          "path": "inputs/method-card.json",
+          "sha256": "341728ebac082c0d43710edf10d9d2ed4159c3a0bd80407ccdb1fa253f034243"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no runtime policy trace; DISTRIBUTED_DATASYNC declaration is not enforcement proof for this interleaving",
+        "required_next_command": "capture grant/deny policy trace for getResultSet/getEntry/closeResultSet"
+      },
+      "conclusion": "Permission context is source-visible only; app permission enforcement remains unknown.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "app-identity",
+      "requirement": "app identity/uid/user/privilege/attacker control",
+      "status": "unknown",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/jskitsimpl/distributedkvstore/src/js_util.cpp",
+        "git_blob": "9b77ec855efa9b3f00e2fc66c74a0d37d1ce4162",
+        "source_sha256": "3559183047a4f136070bc1d54b3863a607f1af8b6e983992a621db452e7daa64",
+        "checkout_sha256": "89a1703e3e07448d401640315a54892f7c3718d5921a44885f3d3d312485f921"
+      },
+      "evidence": [
+        {
+          "path": "inputs/method-card.json",
+          "sha256": "341728ebac082c0d43710edf10d9d2ed4159c3a0bd80407ccdb1fa253f034243"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no product process identity/UID/app credential observed",
+        "required_next_command": "run same-app and cross-app callers; record identity, uid, user and privilege boundary"
+      },
+      "conclusion": "IsSystemApp/IsSystemApi checks are source facts, not proof of a reachable attacker boundary.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "sandbox-deployment",
+      "requirement": "sandbox/user/device deployment boundary、image version、install/package path、exported surface",
+      "status": "unknown",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+        "git_blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+        "source_sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9",
+        "checkout_sha256": "365d6197f68caa3f1f9ae22752f140e91689d1baf26fd6563f5dbe73a7047c2a"
+      },
+      "evidence": [
+        {
+          "path": "inputs/build-preflight.log",
+          "sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no built image/package; relative_install_dir is not a verified deployed install path",
+        "required_next_command": "capture image manifest, install path, exported surface, sandbox/user boundary and module resolution"
+      },
+      "conclusion": "BUILD.gn source placement is not deployment proof.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "trace-close-get-entry",
+      "requirement": "真实产品中 CloseResultSet 与 getEntry 的 thread/queue/source-bound 交错 trace，三 variant 各 3 次",
+      "status": "component_reproduced_product_unknown",
+      "source": [
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+          "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+          "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+          "checkout_sha256": "b03b018ca1338bd668260e81e4e218d39f7b4a90dd1f0af6d7f5f65a943c9235"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+          "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+          "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+          "checkout_sha256": "0506d6e6a21b6edc863e70f388f3af75c9cdf22e3fdb73504f7efca1c8ef6ac3"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+          "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+          "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+          "checkout_sha256": "62711571d96440e846067822490734cd6d20a446b8e7f4b4c0530033e5568471"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+          "git_blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+          "source_sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1",
+          "checkout_sha256": "190901cbf130a69381cd478412838b19cdc5015a81874f8311b06874289afcd1"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+          "git_blob": "504578cc068321602f143b5713dd09f4bfd89071",
+          "source_sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67",
+          "checkout_sha256": "e60e4b5a1f860758057a616af6d1c8bce1e39ab4d21d35636ade5d45a97b3842"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 9,
+        "repeat_executed": 9,
+        "repeat_successful": 9,
+        "repeat_failed": 0,
+        "failure_reason": "all 9 component close_get_entry repeats executed (vulnerable 3/3 TSan; fixed/patched 3/3 clean), but no product thread/queue/artifact binding",
+        "required_next_command": "run product trace 3 repeats per variant and bind each event to product artifact/source hash"
+      },
+      "conclusion": "Harness close_get_entry is a controlled model, not a product trace.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "cia-availability",
+      "requirement": "产品 process/API failure/crash/no-failure rate under repeated trigger",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 3,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no product process/API outcome measured; TSan race is not availability impact",
+        "required_next_command": "measure product process/API failures over a frozen repeat count and record denominator"
+      },
+      "conclusion": "No availability claim is made.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "cia-integrity",
+      "requirement": "returned entry/state divergence, corruption or verified negative",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 3,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no returned-entry or result-set state comparison in product",
+        "required_next_command": "compare expected/returned entries and state across vulnerable/fixed/patched product runs"
+      },
+      "conclusion": "No integrity impact claim is made.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "cia-confidentiality",
+      "requirement": "same-app/cross-app/device disclosure boundary or verified negative",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 3,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no cross-boundary disclosure measurement",
+        "required_next_command": "run same-app, cross-app and device-boundary disclosure checks with fixed data canaries"
+      },
+      "conclusion": "No confidentiality disclosure claim is made.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "affected-module",
+      "requirement": "affected module",
+      "status": "source_bound_candidate",
+      "source": [
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+          "git_blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+          "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+          "checkout_sha256": "b03b018ca1338bd668260e81e4e218d39f7b4a90dd1f0af6d7f5f65a943c9235"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+          "git_blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+          "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+          "checkout_sha256": "0506d6e6a21b6edc863e70f388f3af75c9cdf22e3fdb73504f7efca1c8ef6ac3"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+          "git_blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+          "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+          "checkout_sha256": "62711571d96440e846067822490734cd6d20a446b8e7f4b4c0530033e5568471"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+          "git_blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+          "source_sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1",
+          "checkout_sha256": "190901cbf130a69381cd478412838b19cdc5015a81874f8311b06874289afcd1"
+        },
+        {
+          "repository": "openharmony/distributeddatamgr_kv_store",
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+          "git_blob": "504578cc068321602f143b5713dd09f4bfd89071",
+          "source_sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67",
+          "checkout_sha256": "e60e4b5a1f860758057a616af6d1c8bce1e39ab4d21d35636ade5d45a97b3842"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "inputs/candidate-manifest.json",
+          "sha256": "9bfd1891d2100a4cb1006addbd75f83683a4aa9e0ccc687ebd8ee35fcb7c473b"
+        },
+        {
+          "path": "inputs/method-card.json",
+          "sha256": "341728ebac082c0d43710edf10d9d2ed4159c3a0bd80407ccdb1fa253f034243"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": null,
+        "required_next_command": null
+      },
+      "conclusion": "Candidate modules: frameworks/common/js_proxy.h, js_single_kv_store.cpp, js_kv_store_resultset.cpp, napi_queue.cpp; product packaging impact remains unknown.",
+      "promotion_effect": "scope_partial"
+    },
+    {
+      "id": "affected-version",
+      "requirement": "affected version/product image",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "logs/target-scope-context.log",
+          "sha256": "a6d434d512944dde4d68373eb2481fd3ea14ee1c75948a3558a4d96e6e625097"
+        },
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": "git branch -a --contains HEAD; git tag --contains HEAD; git name-rev --name-only HEAD",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "no local tag contains HEAD; product image version not established",
+        "required_next_command": "bind commit/tree to exact product image/version manifest"
+      },
+      "conclusion": "Only commit/tree identity is known.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "affected-branch",
+      "requirement": "affected branch membership",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "logs/target-scope-context.log",
+          "sha256": "a6d434d512944dde4d68373eb2481fd3ea14ee1c75948a3558a4d96e6e625097"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": "git branch -a --contains HEAD; git tag --contains HEAD; git name-rev --name-only HEAD",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "target checkout is detached; only source/acfb22... synthetic name observed, no audited branch membership",
+        "required_next_command": "provide fixed upstream branch/ref membership evidence without network fetch assumptions"
+      },
+      "conclusion": "Branch claim is not treated as implementation proof.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "cwe",
+      "requirement": "CWE 依据",
+      "status": "candidate_supported_not_product_verified",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "checkout_sha256": "e417eb614183e090fe9390e3c5842bfa8ff1bacb382b191e6560d4591cc6d050"
+      },
+      "evidence": [
+        {
+          "path": "inputs/method-card.json",
+          "sha256": "341728ebac082c0d43710edf10d9d2ed4159c3a0bd80407ccdb1fa253f034243"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": null,
+        "required_next_command": null
+      },
+      "conclusion": "CWE-362 is supported by non-atomic shared_ptr owner write/read plus component TSan race. CWE-416 remains a possible consequence only.",
+      "promotion_effect": "component_support_only"
+    },
+    {
+      "id": "cve",
+      "requirement": "CVE assignment 或有审计范围的 no-assignment search",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/product-evidence.json",
+          "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+        }
+      ],
+      "execution": {
+        "environment": "not executed: product environment/artifacts unavailable",
+        "command": null,
+        "command_status": "not_executed",
+        "repeat_planned": 1,
+        "repeat_executed": 0,
+        "repeat_successful": 0,
+        "repeat_failed": 0,
+        "failure_reason": "no CVE/NVD/upstream search scope, query, timestamp or result record; network_action=none",
+        "required_next_command": "perform and save bounded CVE/NVD/upstream search scope and results, or explicitly sign no assignment"
+      },
+      "conclusion": "No CVE is assigned or inferred.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "exploitability",
+      "requirement": "stable crash/UAF/memory corruption/privilege escalation",
+      "status": "unknown",
+      "source": null,
+      "evidence": [
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "TSan race reproduced; no product crash/UAF/memory primitive/privilege boundary crossing",
+        "required_next_command": "collect product sanitizer/crash/memory evidence and distinguish owner UB from result-set use-after-close"
+      },
+      "conclusion": "Do not translate TSan race into UAF, data leak or stable exploitability.",
+      "promotion_effect": "blocks_product_gate"
+    },
+    {
+      "id": "component-sanitizer",
+      "requirement": "组件级 PoC、sanitizer、positive/fixed/safe/unrelated controls",
+      "status": "verified_component_only",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": null,
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "checkout_sha256": null
+      },
+      "evidence": [
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        },
+        {
+          "path": "inputs/component-evidence-bundle.json",
+          "sha256": "d98d11a98dbb59a52917d9f723f3cb8ece4b0c8c912478544c56878d9bfd272f"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 24,
+        "repeat_executed": 24,
+        "repeat_successful": 24,
+        "repeat_failed": 0,
+        "failure_reason": null,
+        "required_next_command": null
+      },
+      "conclusion": "24 runs: vulnerable race/close_get_entry 3/3 TSan each; fixed/patched race/close_get_entry 3/3 clean each; single/unrelated controls clean.",
+      "promotion_effect": "component_only_no_promotion"
+    },
+    {
+      "id": "component-patch-revalidation",
+      "requirement": "组件级 patch revalidation 与产物 hash",
+      "status": "verified_component_only",
+      "source": {
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "path": "frameworks/common/js_proxy.h",
+        "git_blob": null,
+        "source_sha256": "4d57f286602e15af636c40158e8cdabc6f617fda89d8276128c674b4ab633b6f",
+        "checkout_sha256": null
+      },
+      "evidence": [
+        {
+          "path": "inputs/component-patch.diff",
+          "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9"
+        },
+        {
+          "path": "inputs/component-poc.json",
+          "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12; Ubuntu clang 14.0.0; TSan; network_action=none",
+        "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": null,
+        "required_next_command": "apply both controls to real product build and repeat"
+      },
+      "conclusion": "Patch SHA-256 3b04fd... and fixed source SHA-256 9044cc... are component-bound; no product patch artifact hash exists.",
+      "promotion_effect": "component_only_no_promotion"
+    },
+    {
+      "id": "gate-replay",
+      "requirement": "fail-closed Gate 重放",
+      "status": "passed_fail_closed",
+      "source": null,
+      "evidence": [
+        {
+          "path": "validation.json",
+          "sha256": "4785ecb9ad58b61694440065800ab4a352173519bf27ec0f0eae37e74f1840db"
+        },
+        {
+          "path": "logs/gate-replay.log",
+          "sha256": "cc2b340385a8c80c66c696e3a4ad068b5912262eb79661d81d5a2fa6fc0f53ae"
+        },
+        {
+          "path": "run-context.json",
+          "sha256": "250d9869acd413fc3c76f4723f1903007766fcd6e61f599dbdf5b2ee93354137"
+        }
+      ],
+      "execution": {
+        "environment": "WSL2 Ubuntu 22.04; Python 3.10.12",
+        "command": "see run-context.json commands.product_gate_replay",
+        "command_status": "executed",
+        "repeat_planned": 1,
+        "repeat_executed": 1,
+        "repeat_successful": 1,
+        "repeat_failed": 0,
+        "failure_reason": "product gate not_met because product obligations remain unknown",
+        "required_next_command": null
+      },
+      "conclusion": "Gate returned component_validation=met, product_gate=not_met, final_status=candidate/unknown, validated_vulnerability=0.",
+      "promotion_effect": "keeps_candidate_unknown"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+--- project
+## codex/full-runtime-performance-audit-20261014...origin/codex/full-runtime-performance-audit-20261014
+ M scripts/verify_owner_ipc_components.py
+ M src/workbench/operations_api.py
+ M web/src/SourceEvidence.tsx
+ M web/src/pages/Cases.tsx
+ M web/src/pages/JobDetail.tsx
+ M web/src/pages/Operations.tsx
+?? outputs/browser-acceptance/
+?? research/contracts/
+?? research/evidence/cpp/detector_enhancement_20261015/
+?? research/evidence/cpp/four_class_controls/run-001/
+?? research/evidence/cpp/four_class_controls/run-002/
+?? research/evidence/cpp/four_class_controls/run-003/
+?? research/evidence/cpp/four_class_controls/run-004/
+?? research/evidence/cpp/four_class_controls/run-005/family_poc/
+?? research/evidence/cpp/four_class_controls/run-005/logs/
+?? research/evidence/cpp/four_class_controls/run-005/results.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json
+?? scripts/browser_acceptance.mjs
+?? scripts/browser_acceptance_seed.py
+?? tests/test_workbench_browser_acceptance.py
+38b93d30ed4be71af4a8245ed18198d999c3ee18
+5be00bf65cd330e7a0309567a51be3a67c066c8c
+origin	https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git (fetch)
+origin	https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git (push)
+--- target
+acfb22aac16161d8fb0cefb6cc9b92f04f489a80
+3b92c53fde616d5a3f9487b0c295670a42c63023
+gitcode	https://gitcode.com/openharmony/distributeddatamgr_kv_store.git (fetch)
+gitcode	https://gitcode.com/openharmony/distributeddatamgr_kv_store.git (push)
+origin	https://gitee.com/openharmony/distributeddatamgr_kv_store.git (fetch) [blob:none]
+origin	https://gitee.com/openharmony/distributeddatamgr_kv_store.git (push)
+--- product partial roots
+--- E:\网安\_product_targets\build
+961ba684a2c9a1feaa063cbe597ebf04642f297d
+ab27e98d45f83213cbb5f5ed801f4a3c370c9fad
+origin	https://github.com/openharmony/build.git (fetch)
+origin	https://github.com/openharmony/build.git (push)
+--- E:\网安\_product_targets\manifest
+077460ee7a284b4f45816764337fea99eb4057cb
+6d5dba1ab7e9ffb137676df248067510b71b832a
+origin	https://github.com/openharmony/manifest.git (fetch)
+origin	https://github.com/openharmony/manifest.git (push)
+--- E:\网安\_product_targets\vendor_hihope
+480fc8c7eb815855eb4265ebf2771fea5fc89baa
+a27ff9167d82feac2ba56d953f3f39c6d510c785
+origin	https://gitcode.com/openharmony/vendor_hihope.git (fetch)
+origin	https://gitcode.com/openharmony/vendor_hihope.git (push)

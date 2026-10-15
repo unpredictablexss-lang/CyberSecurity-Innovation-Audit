@@ -1,0 +1,49 @@
+timestamp=2026-10-15T15:48:50.4220504+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; date --iso-8601=seconds; echo "network_action=apt install unzip"; echo "command=DEBIAN_FRONTEND=noninteractive apt-get install -y unzip"; DEBIAN_FRONTEND=noninteractive apt-get install -y unzip; rc=$?; echo "exit=$rc"; unzip -v 2>&1 | head -n 3; exit $rc'
+
+2026-10-15T15:48:50+08:00
+network_action=apt install unzip
+command=DEBIAN_FRONTEND=noninteractive apt-get install -y unzip
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Suggested packages:
+  zip
+The following NEW packages will be installed:
+  unzip
+0 upgraded, 1 newly installed, 0 to remove and 37 not upgraded.
+Need to get 175 kB of archives.
+After this operation, 386 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 unzip amd64 6.0-26ubuntu3.2 [175 kB]
+Fetched 175 kB in 3s (59.6 kB/s)
+Selecting previously unselected package unzip.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 55734 files and directories currently installed.)
+Preparing to unpack .../unzip_6.0-26ubuntu3.2_amd64.deb ...
+Unpacking unzip (6.0-26ubuntu3.2) ...
+Setting up unzip (6.0-26ubuntu3.2) ...
+Processing triggers for man-db (2.10.2-1) ...
+exit=0
+UnZip 6.00 of 20 April 2009, by Debian. Original by Info-ZIP.
+
+Latest sources and executables are at ftp://ftp.info-zip.org/pub/infozip/ ;

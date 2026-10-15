@@ -1,0 +1,21 @@
+timestamp=2026-10-15T16:32:30.2235670+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; root=/home/audit/ohos-rk3568-product; out=/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/toolchain-probe-20261015.txt; { echo "gn_version=$($root/prebuilts/build-tools/linux-x86/bin/gn --version 2>/dev/null)"; echo "ninja_version=$($root/prebuilts/build-tools/linux-x86/bin/ninja --version 2>/dev/null)"; echo "python_version=$($root/prebuilts/python/linux-x86/current/bin/python3 --version 2>&1)"; echo "node_version=$($root/prebuilts/build-tools/common/nodejs/node-v14.21.1-linux-x64/bin/node --version 2>&1)"; echo "clang_version=$($root/prebuilts/clang/ohos/linux-x86_64/llvm/bin/clang++ --version 2>&1 | head -n 1)"; echo "git_version=$(git --version)"; echo "repo_launcher_sha256=$(sha256sum /home/audit/.local/bin/repo | cut -d" " -f1)"; echo "repo_source_commit=$(git -C $root/.repo/repo rev-parse HEAD 2>/dev/null)"; echo "prebuilts_config_sha256=$(sha256sum $root/build/prebuilts_config.json | cut -d" " -f1)"; echo "pool_downloader_sha256=$(sha256sum $root/build/prebuilts_service/pool_downloader.py | cut -d" " -f1)"; echo "gn_sha256=$(sha256sum $root/prebuilts/build-tools/linux-x86/bin/gn | cut -d" " -f1)"; echo "ninja_sha256=$(sha256sum $root/prebuilts/build-tools/linux-x86/bin/ninja | cut -d" " -f1)"; echo "python3_sha256=$(sha256sum $root/prebuilts/python/linux-x86/current/bin/python3.12 | cut -d" " -f1)"; echo "node_sha256=$(sha256sum $root/prebuilts/build-tools/common/nodejs/node-v14.21.1-linux-x64/bin/node | cut -d" " -f1)"; echo "clangxx_sha256=$(sha256sum $root/prebuilts/clang/ohos/linux-x86_64/llvm/bin/clang++ | cut -d" " -f1)"; echo "mark_count=$(find $root/prebuilts -type f -name "*.mark" | wc -l)"; } > "$out" 2>&1; rc=$?; echo "exit=$rc"; cat "$out"; exit $rc'
+
+exit=0
+gn_version=2026 (47b40ef4)
+ninja_version=1.13.2
+python_version=Python 3.12.10
+node_version=
+clang_version=bash: line 1: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64/llvm/bin/clang++: No such file or directory
+git_version=git version 2.34.1
+repo_launcher_sha256=1211b57b57e4122a9c546295a59b37d24068f1164d0e87bef096d5323c413e4f
+repo_source_commit=e1e215a14ea5373419acb8753b6865de19d1f122
+prebuilts_config_sha256=9cd6a95721895aff6eb44a8c314d36e4a79543ddbf9865e25da602c8b4d4f850
+pool_downloader_sha256=465c89d05a2dcffb141b64879308577d64908d20c6d99af541beab37fa3cdf24
+gn_sha256=aa76f11ec5ab820695fdd0973d644d205305b1a23fabcc43e230871f502230a7
+ninja_sha256=2c867ca18771ff64d2a9f72f16316760651c98b1fbce692b0542f25de49b112b
+python3_sha256=a47a746772762bc5ddb1d51a665dfe70d3541a43cec5d7560452eb24143a0fb7
+node_sha256=13014b0bd7f86fdbe19812415874870b12321e5becd72722e79731f62fcbf3d9
+sha256sum: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64/llvm/bin/clang++: No such file or directory
+clangxx_sha256=
+mark_count=29

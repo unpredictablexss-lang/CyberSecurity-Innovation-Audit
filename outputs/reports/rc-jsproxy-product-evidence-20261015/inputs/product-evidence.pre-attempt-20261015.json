@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_product_evidence_v1",
+  "status": "blocked",
+  "product_build": {
+    "method_status": "source_derived_unexecuted",
+    "source_manifest_sha256": null,
+    "toolchain_manifest_sha256": null,
+    "profile": {
+      "product_name": "rk3568",
+      "build_variant": "user",
+      "build_target": "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+    },
+    "observed_partial_roots": [
+      {"name": "build", "path": "E:/网安/_product_targets/build", "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d", "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad", "status": "clean"},
+      {"name": "manifest", "path": "E:/网安/_product_targets/manifest", "commit": "077460ee7a284b4f45816764337fea99eb4057cb", "tree": "6d5dba1ab7e9ffb137676df248067510b71b832a", "status": "clean"},
+      {"name": "vendor_hihope", "path": "E:/网安/_product_targets/vendor_hihope", "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa", "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785", "status": "clean"},
+      {"name": "distributeddatamgr_kv_store", "path": "E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store", "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80", "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023", "status": "clean"}
+    ],
+    "preflight": {
+      "status": "blocked",
+      "missing": [".gn", "foundation/distributeddatamgr/kv_store/BUILD.gn", "device/board/hihope/rk3568", "prebuilts/build-tools", "prebuilts/python"],
+      "line_endings": "partial checkout exposes CRLF build/build_scripts/build.sh and cannot be invoked directly by bash",
+      "product_manifest_problem": "default_small.xml tracks distributeddatamgr_kv_store at moving revision=master; a complete per-project pinned source manifest is not available"
+    },
+    "build_attempt": {
+      "command": ["bash", "build/build_scripts/build.sh", "--product-name", "rk3568", "--build-variant", "user", "--build-target", "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"],
+      "executed_at": "2026-10-15T11:46:00+08:00",
+      "environment": "local WSL2 Ubuntu 22.04, no network required after early failure",
+      "exit_code": 1,
+      "observed_failure": "CRLF script parsing; after in-memory CR normalization the build entry exits with Cannot find source tree containing /mnt/e/网安/_product_targets",
+      "network_action": "none",
+      "log_path": "research/evidence/cpp/rc_jsproxy_product_gate_20261015/build-preflight.log",
+      "log_sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74"
+    },
+    "variants": [
+      {"variant": "vulnerable", "status": "unknown", "build_command": null, "source_manifest_sha256": null, "toolchain_manifest_sha256": null, "artifact": null},
+      {"variant": "fixed_control_mutex", "status": "unknown", "build_command": null, "source_manifest_sha256": null, "toolchain_manifest_sha256": null, "artifact": null},
+      {"variant": "patched_atomic_minimal", "status": "unknown", "build_command": null, "source_manifest_sha256": null, "toolchain_manifest_sha256": null, "artifact": null}
+    ]
+  },
+  "entry_chain": {
+    "status": "partial_source_visible_only",
+    "entries": [],
+    "permission": {"status": "unknown", "evidence_sha256": null},
+    "identity": {"status": "unknown", "evidence_sha256": null},
+    "deployment": {"status": "unknown", "evidence_sha256": null}
+  },
+  "trigger_traces": [],
+  "cia_impact": {
+    "availability": {"status": "unknown", "claim": "Harness race is proven; product failure rate is not measured", "method": null, "evidence_sha256": null},
+    "integrity": {"status": "unknown", "claim": "no product returned-entry or state measurement", "method": null, "evidence_sha256": null},
+    "confidentiality": {"status": "unknown", "claim": "no same-app/cross-app/device disclosure measurement", "method": null, "evidence_sha256": null}
+  },
+  "affected_scope": {
+    "modules": ["frameworks/common/js_proxy.h", "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp", "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp", "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp"],
+    "versions": {"status": "unknown", "items": []},
+    "branches": {"status": "unknown", "items": []}
+  },
+  "cwe_cve": {
+    "cwe": {"status": "candidate_supported", "id": "CWE-362", "basis": "source-bound non-atomic shared_ptr owner read/write and component TSan race", "evidence_sha256": null},
+    "cve": {"status": "unknown", "id": null, "basis": "no audited CVE/NVD/upstream search record and no assignment evidence", "evidence_sha256": null}
+  },
+  "unknowns": [
+    {"id": "product-build", "severity": "critical", "question": "真实产品/组件构建命令、完整依赖/工具链 manifest、三 variant 构建产物 hash/install path 未证明"},
+    {"id": "product-entry", "severity": "critical", "question": "真实产品进程中的 JS/NAPI entry 与部署包解析未证明"},
+    {"id": "permission-identity", "severity": "critical", "question": "permission grant/deny、app identity、uid/user/sandbox 边界未证明"},
+    {"id": "product-trace", "severity": "critical", "question": "产品级 thread/queue/source-bound CloseResultSet/getEntry 交错 trace 未证明"},
+    {"id": "cia-impact", "severity": "high", "question": "产品级 availability/integrity/confidentiality 实测未完成"},
+    {"id": "scope", "severity": "high", "question": "受影响版本、分支和产品 image 范围未证明"},
+    {"id": "cve", "severity": "medium", "question": "CVE assignment/上游公告/检索范围尚未审计"},
+    {"id": "exploitability", "severity": "high", "question": "stable crash、memory corruption、UAF 与可利用性未证明"}
+  ]
+}

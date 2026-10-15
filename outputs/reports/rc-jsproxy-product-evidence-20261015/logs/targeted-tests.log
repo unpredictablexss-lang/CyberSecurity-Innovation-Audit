@@ -1,0 +1,21 @@
+test_builder_writes_fail_closed_package (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_complete_product_shape_meets_gate_but_requires_authorization (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_existing_component_evidence_is_met (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_high_unknown_blocks_product_gate (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_missing_product_evidence_fails_closed (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_product_patch_identity_mismatch_blocks_gate (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_repair_patches_are_source_bound (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_tampered_three_party_repeat_blocks_component_gate (tests.test_rc_jsproxy_product_gate.RcJsProxyProductGateTests) ... ok
+test_exact_git_objects_and_source_hashes_are_verified (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_exact_vulnerable_source_produces_two_unknown_candidates (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_failed_patch_revalidation_is_not_success (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_fixed_control_and_minimal_patch_remove_detector_findings (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_manifest_binds_candidate_detector_rule_and_git_identity (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_source_tampering_is_rejected (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_stable_vulnerable_and_clean_repairs_are_classified (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+test_unreproduced_vulnerable_race_is_not_promoted (tests.test_shared_ptr_jsproxy_poc.SharedPtrJsProxyPocTests) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 4.092s
+
+OK

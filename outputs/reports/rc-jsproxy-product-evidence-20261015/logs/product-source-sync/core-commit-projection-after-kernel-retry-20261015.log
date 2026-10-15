@@ -1,0 +1,10 @@
+timestamp=2026-10-15T16:46:32.6456096+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -uo pipefail; root=/home/audit/ohos-rk3568-product; out=/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/core-project-commits-20261015.txt; : > "$out"; for p in build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store kernel/linux/build; do commit=$(git -C "$root/$p" rev-parse HEAD 2>/dev/null || echo invalid); tree=$(git -C "$root/$p" rev-parse "HEAD^{tree}" 2>/dev/null || echo invalid); status=$(git -C "$root/$p" status --porcelain 2>&1); rc=$?; if [ $rc -eq 0 ]; then dirty_count=$(printf "%s" "$status" | sed "/^$/d" | wc -l); status_text=ok; else dirty_count=-1; status_text=$(printf "%s" "$status" | tr "\\n" " "); fi; printf "%s\t%s\t%s\t%s\t%s\n" "$p" "$commit" "$tree" "$dirty_count" "$status_text" >> "$out"; done; cat "$out"'
+
+build	e25cf4a7012bdaba7296b30b703201e87d89e390	41a0bd8070cbfc61a25e3e08d5652219581ea3e1	0	ok
+productdefine/common	c9317af4074bf0e445fe3fc3979e53c470687153	71f1c83472fbf4b0360bf9fbde23572c529cef21	0	ok
+device/board/hihope	5d368fb765920c2b1cad41eb86164563461a7074	992544086dffa1a73ea444f7a22eeed25b149107	0	ok
+device/soc/rockchip	0aa6ba16f89844023137fb84ac03189b30c8780b	ecab68f691c790d5407ba66a0d466f1e32e5a81a	0	ok
+vendor/hihope	b40eabbe69943126c65df1f9ff28057f56e93e46	aa95785ef84ddde8d1c3622e2c2d80d6b388caeb	0	ok
+foundation/distributeddatamgr/kv_store	acfb22aac16161d8fb0cefb6cc9b92f04f489a80	3b92c53fde616d5a3f9487b0c295670a42c63023	0	ok
+kernel/linux/build	f99b7582473a9a92a2a09d9d94719728ec913994	9ce49c2ad9a7e46d32f56a0b2eff1612981ea44f	-1	fatal: .git/index: index file smaller than expected

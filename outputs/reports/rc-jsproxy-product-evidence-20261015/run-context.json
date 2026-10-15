@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_product_evidence_run_context_v1",
+  "generated_at": "2026-10-15T12:40:06+08:00",
+  "status": "candidate/unknown",
+  "product_gate": "not_met",
+  "execution_environment": {
+    "host": "Windows workspace with WSL2 Ubuntu-22.04",
+    "wsl_kernel": "6.18.54.1-microsoft-standard-WSL2",
+    "python": "3.10.12",
+    "compiler": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "component_sanitizer": "ThreadSanitizer (-fsanitize=thread)",
+    "network_actions": "none",
+    "isolation": "component Harness under WSL2; no live product/device execution",
+    "product_build_environment": "not available"
+  },
+  "project_checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "38b93d30ed4be71af4a8245ed18198d999c3ee18",
+    "tree": "5be00bf65cd330e7a0309567a51be3a67c066c8c",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty_files": [
+      "scripts/verify_owner_ipc_components.py",
+      "src/workbench/operations_api.py",
+      "web/src/SourceEvidence.tsx",
+      "web/src/pages/Cases.tsx",
+      "web/src/pages/JobDetail.tsx",
+      "web/src/pages/Operations.tsx",
+      "research/evidence/cpp/detector_enhancement_20261015/",
+      "research/evidence/cpp/four_class_controls/",
+      "research/evidence/cpp/implementation_bound_controls_20261015/",
+      "scripts/browser_acceptance_seed.py",
+      "tests/test_workbench_browser_acceptance.py"
+    ],
+    "dirty_worktree_preserved": true,
+    "push_performed": false,
+    "evidence_path": "logs/checkout-context.log",
+    "evidence_sha256": "5c32ff9d57c4bf94547143cb701ed365484b2cf2d4c1aed8de8202bfadf61610"
+  },
+  "target_checkout": {
+    "repository": "openharmony/distributeddatamgr_kv_store",
+    "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+    "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+    "remote": "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+    "mirror": "https://gitcode.com/openharmony/distributeddatamgr_kv_store.git",
+    "state": "detached HEAD, clean",
+    "local_branch_membership": "detached source/acfb22aac16161d8fb0cefb6cc9b92f04f489a80 only; no product tag/branch proof",
+    "evidence_path": "logs/checkout-context.log",
+    "evidence_sha256": "5c32ff9d57c4bf94547143cb701ed365484b2cf2d4c1aed8de8202bfadf61610"
+  },
+  "product_partial_roots": [
+    {
+      "name": "build",
+      "path": "E:/网安/_product_targets/build",
+      "commit": "961ba684a2c9a1feaa063cbe597ebf04642f297d",
+      "tree": "ab27e98d45f83213cbb5f5ed801f4a3c370c9fad",
+      "status": "clean"
+    },
+    {
+      "name": "manifest",
+      "path": "E:/网安/_product_targets/manifest",
+      "commit": "077460ee7a284b4f45816764337fea99eb4057cb",
+      "tree": "6d5dba1ab7e9ffb137676df248067510b71b832a",
+      "status": "clean"
+    },
+    {
+      "name": "vendor_hihope",
+      "path": "E:/网安/_product_targets/vendor_hihope",
+      "commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+      "tree": "a27ff9167d82feac2ba56d953f3f39c6d510c785",
+      "status": "clean"
+    }
+  ],
+  "commands": [
+    {
+      "id": "component_replay",
+      "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.cpp_shared_ptr_jsproxy --output outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001 --repeats 3\"",
+      "repeats_planned": 1,
+      "repeats_executed": 1,
+      "repeats_successful": 1,
+      "repeats_failed": 0,
+      "outcome": "stable_reproduced_and_patch_revalidated",
+      "evidence_path": "inputs/component-poc.json",
+      "evidence_sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35",
+      "failure_reason": null
+    },
+    {
+      "id": "targeted_tests",
+      "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m unittest tests.test_rc_jsproxy_product_gate tests.test_shared_ptr_jsproxy_poc -v\"",
+      "repeats_planned": 1,
+      "repeats_executed": 1,
+      "repeats_successful": 1,
+      "repeats_failed": 0,
+      "outcome": "16 tests passed",
+      "evidence_path": "logs/targeted-tests.log",
+      "evidence_sha256": "eba7f9bca6e23ae75471b39355014c715dea21e53245a17a466184635e6cdb03",
+      "failure_reason": null
+    },
+    {
+      "id": "product_gate_replay",
+      "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /mnt/e/网安/_product_targets --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir outputs/reports/rc-jsproxy-product-evidence-20261015\"",
+      "repeats_planned": 1,
+      "repeats_executed": 1,
+      "repeats_successful": 1,
+      "repeats_failed": 0,
+      "outcome": "component met; product gate not_met; final candidate/unknown",
+      "evidence_path": "logs/gate-replay.log",
+      "evidence_sha256": "cc2b340385a8c80c66c696e3a4ad068b5912262eb79661d81d5a2fa6fc0f53ae",
+      "failure_reason": "product build/entry/permission/trace/CIA/scope/CVE obligations remain unproven"
+    },
+    {
+      "id": "product_build_preflight",
+      "command": "bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+      "repeats_planned": 1,
+      "repeats_executed": 2,
+      "repeats_successful": 0,
+      "repeats_failed": 2,
+      "outcome": "blocked",
+      "evidence_path": "inputs/build-preflight.log",
+      "evidence_sha256": "06c71e78853a187751d19e0002caced8332ac0c4869233e0cbdc24abfcf8aa74",
+      "failure_reason": "CRLF script parsing, then missing complete OpenHarmony source tree (.gn, kv_store BUILD.gn, device/board/hihope/rk3568, prebuilts/build-tools, prebuilts/python)"
+    },
+    {
+      "id": "git_diff_check",
+      "command": "git diff --check",
+      "repeats_planned": 1,
+      "repeats_executed": 1,
+      "repeats_successful": 0,
+      "repeats_failed": 1,
+      "outcome": "failed_pre_existing",
+      "evidence_path": "logs/git-diff-check.log",
+      "evidence_sha256": "e6ac6223165275da2cc1ad701d849245be6c355fc466cdbabd13a85db8217929",
+      "failure_reason": "pre-existing dirty files report new blank line at EOF in src/workbench/operations_api.py and web/src/pages/JobDetail.tsx; not modified by this task"
+    }
+  ],
+  "template": {
+    "path": "inputs/product-evidence.template.json",
+    "sha256": "256737d1f45f87ed9e279637a038afa2850ca2602a42208f94ded8fe19c3a30c",
+    "usage": "sole product evidence template"
+  },
+  "limitations": [
+    "No complete OpenHarmony product checkout, pinned source manifest, toolchain manifest or dependency closure was available.",
+    "No product artifact was built; no product artifact hash is asserted.",
+    "No live product/device run, app identity/permission trace, deployment resolution, product interleaving trace or CIA measurement was performed.",
+    "Component Harness TSan results are not product exploitability evidence."
+  ]
+}

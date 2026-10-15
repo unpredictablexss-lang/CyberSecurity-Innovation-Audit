@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_product_evidence_v1",
+  "status": "draft_only",
+  "product_build": {
+    "source_manifest_sha256": "<64 lowercase hex>",
+    "toolchain_manifest_sha256": "<64 lowercase hex>",
+        "build_manifest_sha256": "<64 lowercase hex>",
+        "build_log_sha256": "<64 lowercase hex>",
+        "variant_source_sha256": "<64 lowercase hex>",
+        "patch_sha256": "null_or_hash_for_fixed_patched_variants",
+    "profile": {
+      "product_name": "rk3568",
+      "build_variant": "user",
+      "build_target": "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+    },
+    "variants": [
+      {
+        "variant": "vulnerable",
+        "status": "verified",
+        "build_command": ["bash", "build/build_scripts/build.sh", "--product-name", "rk3568", "--build-variant", "user", "--build-target", "<full target>"],
+        "source_manifest_sha256": "<64 lowercase hex>",
+        "toolchain_manifest_sha256": "<64 lowercase hex>",
+        "build_manifest_sha256": "<64 lowercase hex>",
+        "build_log_sha256": "<64 lowercase hex>",
+        "variant_source_sha256": "<64 lowercase hex>",
+        "patch_sha256": "null_or_hash_for_fixed_patched_variants",
+        "artifact": {
+          "path": "<exact build output path>",
+          "sha256": "<64 lowercase hex>",
+          "size": 0,
+          "install_path": "<exact device/package install path>"
+        }
+      },
+      {
+        "variant": "fixed_control_mutex",
+        "status": "verified",
+        "build_command": ["<exact argv>"],
+        "source_manifest_sha256": "<64 lowercase hex>",
+        "toolchain_manifest_sha256": "<64 lowercase hex>",
+        "build_manifest_sha256": "<64 lowercase hex>",
+        "build_log_sha256": "<64 lowercase hex>",
+        "variant_source_sha256": "<64 lowercase hex>",
+        "patch_sha256": "null_or_hash_for_fixed_patched_variants",
+        "artifact": {"path": "<path>", "sha256": "<hash>", "size": 0, "install_path": "<path>"}
+      },
+      {
+        "variant": "patched_atomic_minimal",
+        "status": "verified",
+        "build_command": ["<exact argv>"],
+        "source_manifest_sha256": "<64 lowercase hex>",
+        "toolchain_manifest_sha256": "<64 lowercase hex>",
+        "build_manifest_sha256": "<64 lowercase hex>",
+        "build_log_sha256": "<64 lowercase hex>",
+        "variant_source_sha256": "<64 lowercase hex>",
+        "patch_sha256": "null_or_hash_for_fixed_patched_variants",
+        "artifact": {"path": "<path>", "sha256": "<hash>", "size": 0, "install_path": "<path>"}
+      }
+    ]
+  },
+  "entry_chain": {
+    "status": "verified",
+    "entries": [
+      {"entry": "SingleKVStore.getResultSet", "source_path": "<path>", "source_sha256": "<hash>", "runtime_symbol": "<symbol>", "evidence_sha256": "<hash>"},
+      {"entry": "SingleKVStore.closeResultSet", "source_path": "<path>", "source_sha256": "<hash>", "runtime_symbol": "<symbol>", "evidence_sha256": "<hash>"},
+      {"entry": "KVStoreResultSet.getEntry", "source_path": "<path>", "source_sha256": "<hash>", "runtime_symbol": "<symbol>", "evidence_sha256": "<hash>"},
+      {"entry": "NapiQueue.AsyncWork", "source_path": "<path>", "source_sha256": "<hash>", "runtime_symbol": "<symbol>", "evidence_sha256": "<hash>"}
+    ],
+    "permission": {"status": "verified", "permission": "<name>", "grant_mode": "<mode>", "failure_result": "<result>", "evidence_sha256": "<hash>"},
+    "identity": {"status": "verified", "app_identity": "<identity>", "uid": 0, "sandbox": "<boundary>", "user": "<user>", "evidence_sha256": "<hash>"},
+    "deployment": {"status": "verified", "image_version": "<version>", "install_path": "<path>", "exported_surface": "<surface>", "evidence_sha256": "<hash>"}
+  },
+  "trigger_traces": [
+    {
+      "variant": "vulnerable",
+      "repeat": 1,
+      "status": "verified",
+      "product_artifact_sha256": "<hash>",
+      "trace_sha256": "<hash>",
+      "outcome": "race_observed",
+      "overlap": {"start_event": "<event-id>", "end_event": "<event-id>"},
+      "events": [
+        {"sequence": 1, "thread_id": "<js-thread>", "queue": "js", "operation": "getEntry.GetInstance", "source_location": "<path:line>", "source_sha256": "<hash>"},
+        {"sequence": 2, "thread_id": "<async-thread>", "queue": "async-execute", "operation": "closeResultSet.execute.SetInstance", "source_location": "<path:line>", "source_sha256": "<hash>"},
+        {"sequence": 3, "thread_id": "<async-thread>", "queue": "async-execute", "operation": "CloseResultSet", "source_location": "<path:line>", "source_sha256": "<hash>"},
+        {"sequence": 4, "thread_id": "<js-thread>", "queue": "js", "operation": "getEntry.result", "source_location": "<path:line>", "source_sha256": "<hash>"}
+      ]
+    }
+  ],
+  "cia_impact": {
+    "availability": {"status": "verified_observed", "claim": "<measured claim>", "method": "<method>", "evidence_sha256": "<hash>"},
+    "integrity": {"status": "verified_observed_or_verified_negative", "claim": "<measured claim>", "method": "<method>", "evidence_sha256": "<hash>"},
+    "confidentiality": {"status": "verified_observed_or_verified_negative", "claim": "<measured claim>", "method": "<method>", "evidence_sha256": "<hash>"}
+  },
+  "affected_scope": {
+    "modules": ["<module>"],
+    "versions": {"status": "verified", "items": [{"version": "<version>", "evidence_sha256": "<hash>"}]},
+    "branches": {"status": "verified", "items": [{"branch": "<branch>", "commit": "<full sha>", "evidence_sha256": "<hash>"}]}
+  },
+  "cwe_cve": {
+    "cwe": {"status": "verified", "id": "CWE-362", "basis": "<root-cause and trace basis>", "evidence_sha256": "<hash>"},
+    "cve": {"status": "assigned_verified_or_not_assigned_with_audited_search", "id": "<CVE or null>", "basis": "<scope and search basis>", "evidence_sha256": "<hash>"}
+  },
+  "build_log": {"path": "<path>", "sha256": "<hash>"},
+  "unknowns": [
+    {"id": "<stable-id>", "severity": "low|medium|high|critical", "question": "<remaining unknown>"}
+  ]
+}

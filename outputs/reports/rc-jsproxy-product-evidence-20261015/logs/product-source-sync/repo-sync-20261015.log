@@ -1,0 +1,252 @@
+timestamp=2026-10-15T15:28:49.3482864+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; export REPO_URL=https://github.com/GerritCodeReview/git-repo.git; cd /home/audit/ohos-rk3568-product/.repo/manifests; date --iso-8601=seconds; echo "network_action=local manifest checkout then project fetch/sync"; echo "command=git checkout --detach 077460ee7a284b4f45816764337fea99eb4057cb"; git checkout --detach 077460ee7a284b4f45816764337fea99eb4057cb; rc1=$?; echo "checkout_exit=$rc1"; cd ..; cd ..; if [ $rc1 -ne 0 ]; then exit $rc1; fi; echo "manifest_commit=$(git -C .repo/manifests rev-parse HEAD)"; echo "command=repo sync --no-manifest-update --current-branch --jobs=8 --jobs-network=6 --retry-fetches=3 --no-tags --no-clone-bundle"; repo sync --no-manifest-update --current-branch --jobs=8 --jobs-network=6 --retry-fetches=3 --no-tags --no-clone-bundle; rc=$?; echo "sync_exit=$rc"; date --iso-8601=seconds; exit $rc'
+
+2026-10-15T15:28:49+08:00
+network_action=local manifest checkout then project fetch/sync
+command=git checkout --detach 077460ee7a284b4f45816764337fea99eb4057cb
+HEAD is now at 077460ee !2701 merge master into master
+checkout_exit=0
+manifest_commit=077460ee7a284b4f45816764337fea99eb4057cb
+command=repo sync --no-manifest-update --current-branch --jobs=8 --jobs-network=6 --retry-fetches=3 --no-tags --no-clone-bundle
+Skipping update of local manifest project.
+error.GitError: Cannot checkout applications_hap: Cannot initialize work tree for applications_hap
+error.GitError: Cannot checkout global_font_manager: Cannot initialize work tree for global_font_manager
+error.GitError: Cannot checkout update_update_app: Cannot initialize work tree for update_update_app
+error.GitError: Cannot checkout global_system_resources: Cannot initialize work tree for global_system_resources
+error.GitError: Cannot checkout update_updater: Cannot initialize work tree for update_updater
+error.GitError: Cannot checkout web_webview: Cannot initialize work tree for web_webview
+error.GitError: Cannot checkout device_soc_rockchip: Cannot initialize work tree for device_soc_rockchip
+error.GitError: Cannot checkout docs_cangjie: Cannot initialize work tree for docs_cangjie
+error.GitError: Cannot checkout graphic_graphic_3d: Cannot initialize work tree for graphic_graphic_3d
+error.GitError: Cannot checkout multimedia_media_foundation: Cannot initialize work tree for multimedia_media_foundation
+error.GitError: Cannot checkout graphic_graphic_2d: Cannot initialize work tree for graphic_graphic_2d
+error.GitError: Cannot checkout multimedia_player_framework: Cannot initialize work tree for multimedia_player_framework
+error.GitError: Cannot checkout multimedia_image_framework: Cannot initialize work tree for multimedia_image_framework
+error.GitError: Cannot checkout arkui_ace_engine: Cannot initialize work tree for arkui_ace_engine
+error: Cannot fetch kernel_linux_6.6 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch kernel_linux_5.10 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch kernel_linux_patches (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch napi_generator (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/napi_generator.git')
+error: Cannot fetch productdefine_common (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/productdefine_common.git')
+error: Cannot fetch ostest_wukong (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/ostest_wukong.git')
+error: Cannot fetch testfwk_arkxtest (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/testfwk_arkxtest.git')
+error: Cannot fetch testfwk_xdevice (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/testfwk_xdevice.git')
+error: Cannot fetch testfwk_developer_test (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/testfwk_developer_test.git')
+error: Cannot fetch testfwk_testfwk_cangjie_wrapper (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/testfwk_testfwk_cangjie_wrapper.git')
+error: Cannot fetch xts_acts (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/xts_acts.git')
+error: Cannot fetch xts_dcts (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/xts_dcts.git')
+error: Cannot fetch xts_device_attest_lite (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/xts_device_attest_lite.git')
+error: Cannot fetch xts_device_attest (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/xts_device_attest.git')
+error: Cannot fetch xts_tools (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/xts_tools.git')
+error: Cannot fetch third_party_egl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_egl.git')
+error: Cannot fetch third_party_FreeBSD (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_FreeBSD.git')
+error: Cannot fetch docs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch xts_hats (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/xts_hats.git')
+error: Cannot fetch third_party_pyyaml (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_pyyaml.git')
+error: Cannot fetch third_party_abseil-cpp (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_abseil-cpp.git')
+error: Cannot fetch multimedia_audio_framework (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch third_party_alsa-lib (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_alsa-lib.git')
+error: Cannot fetch third_party_benchmark (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_benchmark.git')
+error: Cannot fetch third_party_alsa-utils (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_alsa-utils.git')
+error: Cannot fetch third_party_astc-encoder (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_astc-encoder.git')
+error: Cannot fetch third_party_brotli (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_brotli.git')
+error: Cannot fetch third_party_backends (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_backends.git')
+error: Cannot fetch third_party_bounds_checking_function (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_bounds_checking_function.git')
+error: Cannot fetch third_party_bzip2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_bzip2.git')
+error: Cannot fetch third_party_cangjie_compiler (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cangjie_compiler.git')
+error: Cannot fetch third_party_cangjie_tools (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cangjie_tools.git')
+error: Cannot fetch third_party_cangjie_runtime (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cangjie_runtime.git')
+error: Cannot fetch third_party_cares (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cares.git')
+error: Cannot fetch third_party_css-what (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_css-what.git')
+error: Cannot fetch third_party_cups (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cups.git')
+error: Cannot fetch third_party_cJSON (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cJSON.git')
+error: Cannot fetch third_party_curl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_curl.git')
+error: Cannot fetch third_party_dav1d (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_dav1d.git')
+error: Cannot fetch third_party_cups-filters (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_cups-filters.git')
+error: Cannot fetch third_party_decimal.js (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_decimal.js.git')
+error: Cannot fetch third_party_e2fsprogs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_e2fsprogs.git')
+error: Cannot fetch third_party_elfutils (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_elfutils.git')
+error: Cannot fetch third_party_elfio (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_elfio.git')
+error: Cannot fetch applications_app_samples (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch third_party_expat (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_expat.git')
+error: Cannot fetch third_party_exfatprogs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_exfatprogs.git')
+error: Cannot fetch third_party_f2fs-tools (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_f2fs-tools.git')
+error: Cannot fetch third_party_ffmpeg (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_ffmpeg.git')
+error: Cannot fetch third_party_fsverity-utils (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_fsverity-utils.git')
+error: Cannot fetch third_party_flatbuffers (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_flatbuffers.git')
+error: Cannot fetch third_party_glfw (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_glfw.git')
+error: Cannot fetch third_party_freetype (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_freetype.git')
+error: Cannot fetch third_party_glslang (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_glslang.git')
+error: Cannot fetch third_party_gn (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_gn.git')
+error: Cannot fetch third_party_grpc (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_grpc.git')
+error: Cannot fetch third_party_googletest (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_googletest.git')
+error: Cannot fetch third_party_jinja2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_jinja2.git')
+error: Cannot fetch third_party_icu (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_icu.git')
+error: Cannot fetch third_party_jerryscript (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_jerryscript.git')
+error: Cannot fetch third_party_jsframework (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_jsframework.git')
+error: Cannot fetch third_party_json (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_json.git')
+error: Cannot fetch third_party_lame (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_lame.git')
+error: Cannot fetch third_party_gptfdisk (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_gptfdisk.git')
+error: Cannot fetch third_party_jsoncpp (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_jsoncpp.git')
+error: Cannot fetch multimedia_av_codec (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch third_party_libabigail (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libabigail.git')
+error: Cannot fetch third_party_libcoap (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libcoap.git')
+error: Cannot fetch third_party_libdrm (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libdrm.git')
+error: Cannot fetch window_window_manager (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/TRACE_FILE')
+error: Cannot fetch third_party_libedit (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libedit.git')
+error: Cannot fetch third_party_libexif (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libexif.git')
+error: Cannot fetch third_party_iptables (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_iptables.git')
+error: Cannot fetch third_party_libfuse (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libfuse.git')
+error: Cannot fetch third_party_libevdev (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libevdev.git')
+error: Cannot fetch third_party_libinput (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libinput.git')
+error: Cannot fetch third_party_libnl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libnl.git')
+error: Cannot fetch third_party_libbpf (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libbpf.git')
+error: Cannot fetch third_party_libunwind (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libunwind.git')
+error: Cannot fetch third_party_libuv (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libuv.git')
+error: Cannot fetch third_party_libjpeg-turbo (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libjpeg-turbo.git')
+error: Cannot fetch third_party_libvpx (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libvpx.git')
+error: Cannot fetch third_party_libusb (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libusb.git')
+error: Cannot fetch third_party_liburing (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_liburing.git')
+error: Cannot fetch third_party_libpng (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libpng.git')
+error: Cannot fetch third_party_libphonenumber (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libphonenumber.git')
+error: Cannot fetch third_party_lz4 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_lz4.git')
+error: Cannot fetch third_party_libtiff (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libtiff.git')
+error: Cannot fetch third_party_libwebsockets (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libwebsockets.git')
+error: Cannot fetch third_party_libxml2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_libxml2.git')
+error: Cannot fetch third_party_markupsafe (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_markupsafe.git')
+error: Cannot fetch third_party_mesa3d (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_mesa3d.git')
+error: Cannot fetch third_party_mbedtls (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_mbedtls.git')
+error: Cannot fetch third_party_mindspore (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_mindspore.git')
+error: Cannot fetch third_party_lzma (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_lzma.git')
+error: Cannot fetch third_party_mksh (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_mksh.git')
+error: Cannot fetch third_party_mtdev (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_mtdev.git')
+error: Cannot fetch third_party_musl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_musl.git')
+error: Cannot fetch third_party_nghttp2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_nghttp2.git')
+error: Cannot fetch third_party_ninja (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_ninja.git')
+error: Cannot fetch third_party_noto-cjk (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_noto-cjk.git')
+error: Cannot fetch third_party_opengles (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_opengles.git')
+error: Cannot fetch third_party_node (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_node.git')
+error: Cannot fetch third_party_ntfs-3g (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_ntfs-3g.git')
+error: Cannot fetch third_party_notofonts (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_notofonts.git')
+error: Cannot fetch third_party_ncurses (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_ncurses.git')
+error: Cannot fetch third_party_meshoptimizer (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_meshoptimizer.git')
+error: Cannot fetch third_party_openhitls (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_openhitls.git')
+error: Cannot fetch third_party_opensles (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_opensles.git')
+error: Cannot fetch third_party_openmax (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_openmax.git')
+error: Cannot fetch third_party_opencore-amr (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_opencore-amr.git')
+error: Cannot fetch third_party_openssl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_openssl.git')
+error: Cannot fetch third_party_opencl-headers (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_opencl-headers.git')
+error: Cannot fetch third_party_optimized_routines (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_optimized_routines.git')
+error: Cannot fetch third_party_opus (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_opus.git')
+error: Cannot fetch third_party_pcre2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_pcre2.git')
+error: Cannot fetch third_party_popt (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_popt.git')
+error: Cannot fetch third_party_pulseaudio (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_pulseaudio.git')
+error: Cannot fetch third_party_parse5 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_parse5.git')
+error: Cannot fetch third_party_protobuf (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_protobuf.git')
+error: Cannot fetch third_party_re2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_re2.git')
+error: Cannot fetch third_party_python (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_python.git')
+error: Cannot fetch third_party_rust_aho-corasick (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_aho-corasick.git')
+error: Cannot fetch third_party_rust_atty (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_atty.git')
+error: Cannot fetch third_party_rust_bindgen (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_bindgen.git')
+error: Cannot fetch third_party_rust_autocfg (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_autocfg.git')
+error: Cannot fetch third_party_rust_cfg-if (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_cfg-if.git')
+error: Cannot fetch third_party_rust_clap (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_clap.git')
+error: Cannot fetch third_party_rust_clang-sys (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_clang-sys.git')
+error: Cannot fetch third_party_rust_codespan (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_codespan.git')
+error: Cannot fetch third_party_rust_bitflags (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_bitflags.git')
+error: Cannot fetch third_party_rust_either (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_either.git')
+error: Cannot fetch third_party_rust_heck (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_heck.git')
+error: Cannot fetch third_party_rust_foreign-types (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_foreign-types.git')
+error: Cannot fetch third_party_rust_glob (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_glob.git')
+error: Cannot fetch third_party_rust_humantime (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_humantime.git')
+error: Cannot fetch third_party_rust_env_logger (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_env_logger.git')
+error: Cannot fetch third_party_rust_cxx (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_cxx.git')
+error: Cannot fetch third_party_rust_io-lifetimes (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_io-lifetimes.git')
+error: Cannot fetch third_party_rust_lazy-static.rs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_lazy-static.rs.git')
+error: Cannot fetch third_party_rust_linux-raw-sys (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_linux-raw-sys.git')
+error: Cannot fetch third_party_rust_log (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_log.git')
+error: Cannot fetch third_party_rust_is-terminal (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_is-terminal.git')
+error: Cannot fetch third_party_rust_lazycell (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_lazycell.git')
+error: Cannot fetch third_party_rust_memoffset (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_memoffset.git')
+error: Cannot fetch third_party_rust_minimal-lexical (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_minimal-lexical.git')
+error: Cannot fetch third_party_rust_memchr (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_memchr.git')
+error: Cannot fetch third_party_rust_nix (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_nix.git')
+error: Cannot fetch third_party_rust_os_str_bytes (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_os_str_bytes.git')
+error: Cannot fetch third_party_rust_peeking_take_while (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_peeking_take_while.git')
+error: Cannot fetch third_party_rust_pin-utils (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_pin-utils.git')
+error: Cannot fetch third_party_rust_nom (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_nom.git')
+error: Cannot fetch third_party_rust_libloading (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_libloading.git')
+error: Cannot fetch third_party_rust_once_cell (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_once_cell.git')
+error: Cannot fetch third_party_rust_proc-macro-error (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_proc-macro-error.git')
+error: Cannot fetch third_party_rust_proc-macro2 (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_proc-macro2.git')
+error: Cannot fetch third_party_rust_quote (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_quote.git')
+error: Cannot fetch third_party_rust_rustc-hash (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_rustc-hash.git')
+error: Cannot fetch third_party_rust_rust-cexpr (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_rust-cexpr.git')
+error: Cannot fetch third_party_rust_rust-openssl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_rust-openssl.git')
+error: Cannot fetch third_party_rust_serde (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_serde.git')
+error: Cannot fetch third_party_rust_static-assertions-rs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_static-assertions-rs.git')
+error: Cannot fetch third_party_rust_link-cplusplus (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_link-cplusplus.git')
+error: Cannot fetch third_party_rust_strsim-rs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_strsim-rs.git')
+error: Cannot fetch third_party_rust_libc (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_libc.git')
+error: Cannot fetch third_party_rust_regex (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_regex.git')
+error: Cannot fetch third_party_rust_syn (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_syn.git')
+error: Cannot fetch third_party_rust_rustix (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_rustix.git')
+error: Cannot fetch third_party_rust_termcolor (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_termcolor.git')
+error: Cannot fetch third_party_rust_unicode-width (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_unicode-width.git')
+error: Cannot fetch third_party_rust_unicode-ident (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_unicode-ident.git')
+error: Cannot fetch third_party_rust_shlex (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_shlex.git')
+error: Cannot fetch third_party_rust_version_check (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_version_check.git')
+error: Cannot fetch third_party_rust_rust (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_rust.git')
+error: Cannot fetch third_party_sane-airscan (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_sane-airscan.git')
+error: Cannot fetch third_party_rust_which-rs (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_rust_which-rs.git')
+error: Cannot fetch third_party_selinux (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_selinux.git')
+error: Cannot fetch third_party_sonic (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_sonic.git')
+error: Cannot fetch third_party_spirv-headers (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_spirv-headers.git')
+error: Cannot fetch third_party_toybox (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_toybox.git')
+error: Cannot fetch third_party_sqlite (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_sqlite.git')
+error: Cannot fetch third_party_typescript (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_typescript.git')
+error: Cannot fetch third_party_tex-hyphen (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_tex-hyphen.git')
+error: Cannot fetch third_party_tzdata (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_tzdata.git')
+error: Cannot fetch third_party_unity (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_unity.git')
+error: Cannot fetch third_party_vixl (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_vixl.git')
+error: Cannot fetch third_party_vk-gl-cts (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_vk-gl-cts.git')
+error: Cannot fetch third_party_vulkan-loader (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_vulkan-loader.git')
+error: Cannot fetch third_party_wpa_supplicant (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_wpa_supplicant.git')
+error: Cannot fetch third_party_vulkan-headers (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_vulkan-headers.git')
+error: Cannot fetch third_party_spirv-tools (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_spirv-tools.git')
+error: Cannot fetch third_party_vma (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_vma.git')
+error: Cannot fetch third_party_xmp_toolkit_sdk (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_xmp_toolkit_sdk.git')
+error: Cannot fetch third_party_zlib (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_zlib.git')
+error: Cannot fetch third_party_weex-loader (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_weex-loader.git')
+error: Cannot fetch vendor_hihope (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/vendor_hihope.git')
+error: Cannot fetch third_party_skia (OSError: [Errno 30] Read-only file system: '/home/audit/ohos-rk3568-product/.repo/project-objects/third_party_skia.git')
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+  File "/usr/lib/python3.10/multiprocessing/managers.py", line 599, in _run_server
+  File "/usr/lib/python3.10/multiprocessing/managers.py", line 184, in serve_forever
+SystemExit: 0
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/util.py", line 300, in _run_finalizers
+  File "/usr/lib/python3.10/multiprocessing/util.py", line 224, in __call__
+OSError: [Errno 30] Read-only file system: '/tmp/pymp-eqbmi6ad/listener-vx299y2u'
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+  File "/usr/lib/python3.10/multiprocessing/managers.py", line 599, in _run_server
+  File "/usr/lib/python3.10/multiprocessing/managers.py", line 184, in serve_forever
+SystemExit: 0
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/util.py", line 300, in _run_finalizers
+  File "/usr/lib/python3.10/multiprocessing/util.py", line 224, in __call__
+  File "/usr/lib/python3.10/multiprocessing/util.py", line 133, in _remove_temp_dir
+  File "/usr/lib/python3.10/shutil.py", line 725, in rmtree
+  File "/usr/lib/python3.10/shutil.py", line 681, in _rmtree_safe_fd
+  File "/usr/lib/python3.10/shutil.py", line 679, in _rmtree_safe_fd
+OSError: [Errno 30] Read-only file system: 'listener-vx299y2u'

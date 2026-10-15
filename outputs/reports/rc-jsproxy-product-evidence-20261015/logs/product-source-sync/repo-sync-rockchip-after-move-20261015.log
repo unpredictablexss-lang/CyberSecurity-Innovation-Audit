@@ -1,0 +1,37 @@
+timestamp=2026-10-15T15:43:41.7684957+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=targeted fetch/checkout after preserving partial directory"; echo "command=repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --no-manifest-update device/soc/rockchip"; repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --no-manifest-update device/soc/rockchip; rc=$?; echo "exit=$rc"; git -C device/soc/rockchip rev-parse HEAD 2>&1; exit $rc'
+
+2026-10-15T15:43:45+08:00
+network_action=targeted fetch/checkout after preserving partial directory
+command=repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --no-manifest-update device/soc/rockchip
+Skipping update of local manifest project.
+Updating files:  59% (2313/3917)
+Updating files:  60% (2351/3917)
+Updating files:  61% (2390/3917)
+Updating files:  62% (2429/3917)
+Updating files:  63% (2468/3917)
+Updating files:  64% (2507/3917)
+Updating files:  65% (2547/3917)
+Updating files:  66% (2586/3917)
+Updating files:  67% (2625/3917)
+Updating files:  68% (2664/3917)
+Updating files:  69% (2703/3917)
+Updating files:  70% (2742/3917)
+Updating files:  71% (2782/3917)
+Updating files:  72% (2821/3917)
+Updating files:  73% (2860/3917)
+Updating files:  74% (2899/3917)
+git-lfs filter-process --skip: 1: git-lfs: not found
+fatal: the remote end hung up unexpectedly
+error.GitError: Cannot checkout device_soc_rockchip: Cannot initialize work tree for device_soc_rockchip
+error: Cannot checkout device_soc_rockchip
+error: Unable to fully sync the tree
+error: Checking out local projects failed.
+Failing repos (checkout):
+device/soc/rockchip
+Try re-running with "-j1 --fail-fast" to exit at the first error.
+================================================================================
+Repo command failed due to the following `SyncError` errors:
+Cannot initialize work tree for device_soc_rockchip
+exit=1
+fatal: not a git repository (or any of the parent directories): .git

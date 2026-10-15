@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "kind": "product_source_patch_apply_check",
+  "status": "source_apply_only",
+  "repository": "openharmony/distributeddatamgr_kv_store",
+  "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+  "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+  "command": "git -C <source-repo> apply --check --whitespace=nowarn <patch>",
+  "repeats": 1,
+  "variants": [
+    {
+      "variant": "fixed_control_mutex",
+      "patch_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\outputs\\reports\\rc-jsproxy-product-evidence-20261015\\fixed_control_mutex.patch",
+      "patch_sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+      "apply_check_exit": 0,
+      "status": "verified_source_apply_only"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "patch_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\outputs\\reports\\rc-jsproxy-product-evidence-20261015\\patched_atomic_minimal.patch",
+      "patch_sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+      "apply_check_exit": 0,
+      "status": "verified_source_apply_only"
+    }
+  ],
+  "limitation": "This proves only that both patches apply to the audited Git source. No product artifact, product build, runtime trace or CIA revalidation was performed."
+}

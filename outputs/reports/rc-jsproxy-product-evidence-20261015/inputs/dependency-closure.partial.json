@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "kind": "partial_rk3568_kvstore_dependency_closure",
+  "status": "unresolved_blocked",
+  "target": {
+    "product_name": "rk3568",
+    "build_variant": "user",
+    "label": "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+    "product_config": {
+      "path": "vendor/hihope/rk3568/config.json",
+      "version": "3.0",
+      "api_version": 8,
+      "device_build_path": "device/board/hihope/rk3568"
+    }
+  },
+  "source_bindings": {
+    "build_gn": {
+      "path": "foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore/BUILD.gn",
+      "sha256": "365d6197f68caa3f1f9ae22752f140e91689d1baf26fd6563f5dbe73a7047c2a",
+      "size": 5041
+    },
+    "kv_store_gni": {
+      "path": "foundation/distributeddatamgr/kv_store/kv_store.gni",
+      "sha256": "c46cc3572500b8ccf51f5825eafb26a7f8e669b8f70b8d3003405d29e4cd9e4e",
+      "size": 1943
+    },
+    "kv_store_deps_gni": {
+      "path": "foundation/distributeddatamgr/kv_store/kv_store_deps.gni",
+      "sha256": "08dda7e38fdae1af0cfb398203fb1aee6e8d2d35b0abf2e56c3378d46ebfe7e4",
+      "size": 12823
+    }
+  },
+  "declared_direct_dependencies": {
+    "gn_deps": [
+      "//foundation/distributeddatamgr/kv_store/interfaces/innerkits/distributeddata:distributeddata_inner",
+      "kv_store_deps.gni:deps_hilog",
+      "kv_store_deps.gni:deps_napi",
+      "kv_store_deps.gni:deps_common_event_service",
+      "kv_store_deps.gni:deps_ability_base_want",
+      "kv_store_deps.gni:deps_ability_runtime_ability_manager",
+      "kv_store_deps.gni:deps_ability_runtime_abilitykit_native",
+      "kv_store_deps.gni:deps_ability_runtime_napi_base_context",
+      "kv_store_deps.gni:deps_ability_runtime_napi_common",
+      "kv_store_deps.gni:deps_ipc_single"
+    ],
+    "external_deps": [
+      "bounds_checking_function:libsec_shared",
+      "c_utils:utils",
+      "json:nlohmann_json_static",
+      "data_share:datashare_common",
+      "data_share:datashare_provider",
+      "common_event_service:cesfwk_innerkits",
+      "ability_base_want dependency from kv_store_deps.gni",
+      "ability_runtime dependency set from kv_store_deps.gni",
+      "arkui_napi dependency from kv_store_deps.gni",
+      "hilog:libhilog",
+      "ipc:ipc_single"
+    ]
+  },
+  "resolved_closure": {
+    "status": "not_resolved",
+    "reason": "GN generation did not reach target graph resolution because the build loader first failed on missing/corrupt project bundle metadata and WSL storage terminated the retry."
+  },
+  "observed_source_projects": {
+    "checked_out": [
+      "build",
+      "foundation/distributeddatamgr/kv_store",
+      "kernel/linux/build",
+      "productdefine/common",
+      "device/board/hihope",
+      "device/soc/rockchip",
+      "vendor/hihope"
+    ],
+    "missing_count": 473,
+    "manifest_sha256": "288f2de3e43bd9f86ab4ddb5ae10731758255c97cb4c7d92b10f8d830cc44e63"
+  },
+  "attempts": [
+    {
+      "id": "gn-entry-attempt-1",
+      "repeats": 1,
+      "successful": 0,
+      "failed": 1,
+      "failure_reason": "prebuilt Python lacked jinja2",
+      "evidence_sha256": "d8caa77187626c482093773528900fe3967fa5ef031150edc66bec17330df572"
+    },
+    {
+      "id": "gn-entry-attempt-2",
+      "repeats": 1,
+      "successful": 0,
+      "failed": 1,
+      "failure_reason": "kernel/linux/build/bundle.json was absent/empty; targeted kernel/linux/build sync was required",
+      "evidence_sha256": "0438195904dbae746b27d3b8d3e95766dff941fe55ece79db5b33756913d2c92"
+    },
+    {
+      "id": "kernel-project-sync",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "evidence_sha256": "794938eca5591e4235c6645be1658a429575961a2b336174f9cc15a117b529e0"
+    },
+    {
+      "id": "gn-entry-attempt-3",
+      "repeats": 1,
+      "successful": 0,
+      "failed": 1,
+      "failure_reason": "WSL storage terminated during subsystem config scan before GN args or dependency graph were produced",
+      "evidence_sha256": "873eaf402ec8c78fb3241c2a42a7d6936fed63ba358b985f5e7b7abb71c42aed"
+    }
+  ],
+  "limitation": "This is a source-declared dependency inventory, not a resolved GN/Ninja dependency closure and not proof of a product build graph."
+}

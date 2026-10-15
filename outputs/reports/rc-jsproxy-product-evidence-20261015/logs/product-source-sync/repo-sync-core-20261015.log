@@ -1,0 +1,28 @@
+timestamp=2026-10-15T15:42:01.0192416+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; export REPO_URL=https://github.com/GerritCodeReview/git-repo.git; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=targeted project fetch/checkout"; echo "command=repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --force-checkout --no-manifest-update build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store"; repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --force-checkout --no-manifest-update build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store; rc=$?; echo "exit=$rc"; date --iso-8601=seconds; for p in build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store; do printf "%s " "$p"; git -C "$p" rev-parse HEAD 2>&1; done; exit $rc'
+
+2026-10-15T15:42:04+08:00
+network_action=targeted project fetch/checkout
+command=repo sync --no-interleaved --jobs=1 --current-branch --retry-fetches=3 --no-tags --no-clone-bundle --force-checkout --no-manifest-update build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store
+Skipping update of local manifest project.
+error.GitError: Cannot checkout device_soc_rockchip: /home/audit/ohos-rk3568-product/device/soc/rockchip/.git: unsupported checkout state
+error: Cannot checkout device_soc_rockchip
+error: Unable to fully sync the tree
+error: Checking out local projects failed.
+Failing repos (checkout):
+device/soc/rockchip
+Try re-running with "-j1 --fail-fast" to exit at the first error.
+================================================================================
+Repo command failed due to the following `SyncError` errors:
+/home/audit/ohos-rk3568-product/device/soc/rockchip/.git: unsupported checkout state
+exit=1
+2026-10-15T15:42:11+08:00
+build e25cf4a7012bdaba7296b30b703201e87d89e390
+productdefine/common c9317af4074bf0e445fe3fc3979e53c470687153
+device/board/hihope 5d368fb765920c2b1cad41eb86164563461a7074
+device/soc/rockchip fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+HEAD
+vendor/hihope b40eabbe69943126c65df1f9ff28057f56e93e46
+foundation/distributeddatamgr/kv_store 64e48eb1d97b45f44125761f16811f78be609a4a

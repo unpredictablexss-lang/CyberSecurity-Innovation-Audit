@@ -1,0 +1,11 @@
+timestamp=2026-10-15T16:07:15.4855230+08:00
+original_copy=outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/toolchain-pool_downloader.original.py
+original_sha256=53eab587cb7f3a001495dceff4d55078fbcb402880ca2a87078cca2b993828a2
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; p=/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py; echo "network_action=none"; echo "command=python replacement of cnt = cpu_count() with cnt = min(cpu_count(), 2) in PoolDownloader._run_download_in_thread_pool"; before=$(sha256sum $p | cut -d" " -f1); count=$(grep -c "cnt = cpu_count()" $p); echo "before=$before"; echo "occurrences=$count"; [ "$count" -eq 1 ]; sed -i "s/cnt = cpu_count()/cnt = min(cpu_count(), 2)/" $p; after=$(sha256sum $p | cut -d" " -f1); echo "after=$after"; grep -n "cnt = min" $p'
+
+network_action=none
+command=python replacement of cnt = cpu_count() with cnt = min(cpu_count(), 2) in PoolDownloader._run_download_in_thread_pool
+before=53eab587cb7f3a001495dceff4d55078fbcb402880ca2a87078cca2b993828a2
+occurrences=1
+after=465c89d05a2dcffb141b64879308577d64908d20c6d99af541beab37fa3cdf24
+62:            cnt = min(cpu_count(), 2)

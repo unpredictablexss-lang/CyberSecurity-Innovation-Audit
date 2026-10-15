@@ -1,0 +1,17 @@
+timestamp=2026-10-15T15:24:38.5324061+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; export REPO_URL=https://github.com/GerritCodeReview/git-repo.git; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=repo init with GitHub git-repo mirror and local OpenHarmony manifest"; echo "env REPO_URL=$REPO_URL"; echo "command=repo init -u file:///mnt/e/网安/_product_targets/manifest -b master -m chipsets/dayu200.xml -g ohos:standard,ohos:system,ohos:chipset --no-repo-verify --no-clone-bundle"; repo init -u file:///mnt/e/网安/_product_targets/manifest -b master -m chipsets/dayu200.xml -g "ohos:standard,ohos:system,ohos:chipset" --no-repo-verify --no-clone-bundle; rc=$?; echo "exit=$rc"; if [ -d .repo/manifests ]; then echo "manifest_commit=$(git -C .repo/manifests rev-parse HEAD)"; git -C .repo/manifests status --short; fi; if [ -d .repo/repo ]; then echo "repo_source_commit=$(git -C .repo/repo rev-parse HEAD)"; fi; exit $rc'
+
+2026-10-15T15:24:39+08:00
+network_action=repo init with GitHub git-repo mirror and local OpenHarmony manifest
+env REPO_URL=https://github.com/GerritCodeReview/git-repo.git
+command=repo init -u file:///mnt/e/网安/_product_targets/manifest -b master -m chipsets/dayu200.xml -g ohos:standard,ohos:system,ohos:chipset --no-repo-verify --no-clone-bundle
+repo: warning: verification of repo code has been disabled;
+repo will not be able to verify the integrity of itself.
+
+error: in `init -u file:///mnt/e/网安/_product_targets/manifest -b master -m chipsets/dayu200.xml -g ohos:standard,ohos:system,ohos:chipset --no-repo-verify --no-clone-bundle`: revision master in manifests not found
+exit=1
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+manifest_commit=HEAD
+repo_source_commit=e1e215a14ea5373419acb8753b6865de19d1f122

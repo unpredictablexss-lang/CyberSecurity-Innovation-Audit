@@ -1,0 +1,13 @@
+timestamp=2026-10-15T15:22:00.5284835+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; cd /home/audit; date --iso-8601=seconds; for u in https://gitee.com/tools/repo.git https://gitee.com/mirrors/repo.git https://github.com/mirrors/repo.git https://github.com/GerritCodeReview/git-repo.git; do echo "network_action=ls-remote $u"; timeout 30 git -c http.lowSpeedLimit=1 -c http.lowSpeedTime=30 ls-remote "$u" HEAD; echo "exit=$?"; done'
+
+2026-10-15T15:22:03+08:00
+network_action=ls-remote https://gitee.com/tools/repo.git
+exit=124
+network_action=ls-remote https://gitee.com/mirrors/repo.git
+exit=124
+network_action=ls-remote https://github.com/mirrors/repo.git
+exit=124
+network_action=ls-remote https://github.com/GerritCodeReview/git-repo.git
+a0bc2b14a30bef631b91a2ca37c5254d9af44718	HEAD
+exit=0

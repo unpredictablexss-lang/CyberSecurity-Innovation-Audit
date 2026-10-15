@@ -1,0 +1,18 @@
+[93m[OHOS WARNING][0m  Failed to find ccache, ccache disabled.
+[OHOS INFO] [PRELOAD] generated build prop info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/build.prop
+[OHOS INFO] [PRELOAD] generated build config info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/build_config.json
+[OHOS INFO] [PRELOAD] generated product parts info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/parts.json
+[OHOS INFO] [PRELOAD] generated parts config info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/parts_config.json
+[OHOS INFO] [PRELOAD] generated build gnargs prop info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/build_gnargs.prop
+[OHOS INFO] [PRELOAD] generated features info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/features.json
+[OHOS INFO] [PRELOAD] generated syscap info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/syscap.json
+[OHOS INFO] [PRELOAD] generated exclusion modules info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/exclusion_modules.json
+[OHOS INFO] [PRELOAD] generated dependency pruning info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/dependency_pruning.json
+[OHOS INFO] [PRELOAD] generated platforms build info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/platforms.build
+[OHOS INFO] [PRELOAD] generated subsystem config info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/subsystem_config.json
+[OHOS INFO] [PRELOAD] generated system capability info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/systemcapability.json
+[OHOS INFO] [PRELOAD] generated compile_standard_whitelist info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/compile_standard_whitelist.json
+[OHOS INFO] [PRELOAD] generated compile_env_allowlist info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/compile_env_allowlist.json
+[OHOS INFO] [PRELOAD] generated hvigor_compile_whitelist info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/hvigor_compile_hap_whitelist.json
+[OHOS INFO]  The run time for _prebuild_and_preload is 0.07 s
+[OHOS INFO] [LOAD] Checking all build args...

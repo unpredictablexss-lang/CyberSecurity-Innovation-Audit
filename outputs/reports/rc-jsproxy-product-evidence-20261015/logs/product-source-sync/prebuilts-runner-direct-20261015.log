@@ -1,0 +1,11 @@
+timestamp=2026-10-15T16:01:23.9855593+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; p=/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh; ls -l "$p"; file "$p"; rm -f /home/audit/prebuilts-bg.log /home/audit/prebuilts-bg.exit; echo "command=bash $p"; bash "$p"; rc=$?; echo "runner_exit=$rc"; ls -l /home/audit/prebuilts-bg.exit /home/audit/prebuilts-bg.log 2>&1; cat /home/audit/prebuilts-bg.exit 2>&1; tail -n 20 /home/audit/prebuilts-bg.log 2>&1; exit $rc'
+
+-rwxrwxrwx 1 root root 421 Oct 15 15:59 /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh
+/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh: Bourne-Again shell script, ASCII text executable
+command=bash /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh
+runner_exit=120
+ls: cannot access '/home/audit/prebuilts-bg.exit': No such file or directory
+-rw-r--r-- 1 root root 55924 Oct 15 16:01 /home/audit/prebuilts-bg.log
+cat: /home/audit/prebuilts-bg.exit: No such file or directory
+bash: line 1: /usr/bin/tail: Input/output error

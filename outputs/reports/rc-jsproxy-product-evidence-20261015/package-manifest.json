@@ -1,0 +1,83 @@
+{
+  "files": {
+    "run-context.json": {
+      "sha256": "250d9869acd413fc3c76f4723f1903007766fcd6e61f599dbdf5b2ee93354137",
+      "size": 7660
+    },
+    "fixed_control_mutex.patch": {
+      "sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+      "size": 794
+    },
+    "validation.md": {
+      "sha256": "f597101878ad4b1f2c25c080ddffc1a565dbea6ddc8c7bb2c7cc9949a0cf54c2",
+      "size": 6551
+    },
+    "attempt-evidence-ledger-20261015.json": {
+      "sha256": "e1156a56d478cfbd56329cc284ed7d42e8b0031d7b7f4fea6dd0057d0b7d5bbd",
+      "size": 6730
+    },
+    "README.md": {
+      "sha256": "7a5c6d2fc10ae5c92c82fca3d0a7cd65a5b31ae88dc69b701a906bcf280afbd6",
+      "size": 2417
+    },
+    "next-evidence-checklist.md": {
+      "sha256": "560b379aa1633052c5529730beeb49bc45629cc82322696a06eea95f1ef1cccb",
+      "size": 3022
+    },
+    "next-evidence-checklist-20261015.md": {
+      "sha256": "eb45c5441524c720aba99496ddb64816ac9230ea77b2f9426372b5bb61d834fb",
+      "size": 5522
+    },
+    "gate-replay-result.json": {
+      "sha256": "6f930b325deaa4fadf4516b7e1c7dde7dcbaaf0f8b1b7fea92c15446361a9427",
+      "size": 12129
+    },
+    "validation.json": {
+      "sha256": "229dfe6753206defbed7b98f018cee4f46eebaed034d1990ce45479369c38ede",
+      "size": 22531
+    },
+    "evidence-ledger.json": {
+      "sha256": "0a37908ee8c6540f8d8f79f7d6eab88219a2b3b252d759fe1111a815fd2b149a",
+      "size": 45156
+    },
+    "limitations-next.md": {
+      "sha256": "4e29a0552b87b390bf785160c8f0ad4e44e463abf3fe2836164361478d8bf888",
+      "size": 6348
+    },
+    "patched_atomic_minimal.patch": {
+      "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+      "size": 658
+    },
+    "next-evidence-ledger.json": {
+      "sha256": "e1a8e35ea4fb59d62631c1d84c2cada6e48d489bd8ad079546a5db14a6dce61a",
+      "size": 71213
+    },
+    "limitations.md": {
+      "sha256": "580e57cf5742aa5de36836bfec99ed656ce389fbe05ed9af7c259d5a26afacdd",
+      "size": 3020
+    }
+  },
+  "generated_by": {
+    "path": "src/ohscanner/poc/rc_jsproxy_product_gate.py",
+    "sha256": "f4781d2959737f20e0d48b8949e5d5ad043cccad84ebade24838fb6a17c99721"
+  },
+  "kind": "rc_jsproxy_product_validation_package_manifest",
+  "package_id": "rc-jsproxy-product-gate-20261015",
+  "patches": [
+    {
+      "git_apply_cached_check": "passed",
+      "path": "fixed_control_mutex.patch",
+      "role": "independent safe control",
+      "sha256": "f4b976fa8fd1b60f8ffc3d51e8262c5da3f2144d19cd51dab999ec80c415bf9a",
+      "variant": "fixed_control_mutex"
+    },
+    {
+      "git_apply_cached_check": "passed",
+      "path": "patched_atomic_minimal.patch",
+      "role": "minimal proposed repair",
+      "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+      "variant": "patched_atomic_minimal"
+    }
+  ],
+  "schema_version": 1
+}

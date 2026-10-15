@@ -1,0 +1,756 @@
+{
+  "schema_version": 2,
+  "package_id": "cpp-shared-ptr-jsproxy-20261015",
+  "detector": {
+    "id": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.0",
+    "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+  },
+  "candidate_status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "source_binding_status": "git_object_payload_and_checkout_hash_verified",
+  "source": {
+    "path": "frameworks/common/js_proxy.h",
+    "blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+    "sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+    "checkout_sha256": "e417eb614183e090fe9390e3c5842bfa8ff1bacb382b191e6560d4591cc6d050",
+    "role": "vulnerable JSProxy owner implementation",
+    "verified": true
+  },
+  "call_path_sources": [
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+      "blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+      "sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+      "checkout_sha256": "b03b018ca1338bd668260e81e4e218d39f7b4a90dd1f0af6d7f5f65a943c9235",
+      "role": "getResultSet and closeResultSet NAPI entries; async execute writes/reads JSProxy owner",
+      "verified": true
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+      "blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+      "sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+      "checkout_sha256": "0506d6e6a21b6edc863e70f388f3af75c9cdf22e3fdb73504f7efca1c8ef6ac3",
+      "role": "synchronous KVStoreResultSet.getEntry copies JSProxy owner on the JS thread",
+      "verified": true
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+      "blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+      "sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+      "checkout_sha256": "62711571d96440e846067822490734cd6d20a446b8e7f4b4c0530033e5568471",
+      "role": "NapiQueue::AsyncWork schedules execute through napi_create_async_work",
+      "verified": true
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+      "blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+      "sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1",
+      "checkout_sha256": "190901cbf130a69381cd478412838b19cdc5015a81874f8311b06874289afcd1",
+      "role": "NAPI module registration data.distributedKVStore and createKVManager export",
+      "verified": true
+    },
+    {
+      "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+      "blob": "504578cc068321602f143b5713dd09f4bfd89071",
+      "sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67",
+      "checkout_sha256": "e60e4b5a1f860758057a616af6d1c8bce1e39ab4d21d35636ade5d45a97b3842",
+      "role": "JS kit export; observed requireInternal target is data.distributedData and needs product packaging resolution",
+      "verified": true
+    },
+    {
+      "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+      "blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+      "sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9",
+      "checkout_sha256": "365d6197f68caa3f1f9ae22752f140e91689d1baf26fd6563f5dbe73a7047c2a",
+      "role": "product build/install boundary; standard-system shared library under module/data with full OHOS dependencies",
+      "verified": true
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_util.cpp",
+      "blob": "9b77ec855efa9b3f00e2fc66c74a0d37d1ce4162",
+      "sha256": "3559183047a4f136070bc1d54b3863a607f1af8b6e983992a621db452e7daa64",
+      "checkout_sha256": "89a1703e3e07448d401640315a54892f7c3718d5921a44885f3d3d312485f921",
+      "role": "runtime app identity check; IsSystemApi is true only for DATASHARE input classification",
+      "verified": true
+    },
+    {
+      "path": "interfaces/innerkits/distributeddata/include/types.h",
+      "blob": "7ee8c58504bed9570b5477aa26d9a2a4281c693a",
+      "sha256": "9116b8f8774c0bb23388ac840f8f687ff3012dd4e251643b96a18887fb835e5f",
+      "checkout_sha256": "108b1d0a6e40eac93227a584f8d9c21f13f90fb36b7c4e3c021926ba7a71afc8",
+      "role": "permission declaration context; DISTRIBUTED_DATASYNC is documented for autoSync, not proved for this result-set interleaving",
+      "verified": true
+    },
+    {
+      "path": "test/unittest/distributedKVStore/config.json",
+      "blob": "72fa5d4c3aa48225de59997a093307159792058d",
+      "sha256": "5072910880396e4defc427f13b9f827c2fe92c7a80ea89e6550a4c6d01e75f15",
+      "checkout_sha256": "5f69cb867afc61ce51882ef57dc3ac640afe56ae0f208587ebc81a40024a7bc9",
+      "role": "test app deployment manifest requests ohos.permission.DISTRIBUTED_DATASYNC; sample/test evidence is not policy enforcement proof",
+      "verified": true
+    }
+  ],
+  "detector_runs": [
+    {
+      "variant": "vulnerable",
+      "status": "completed",
+      "finding_count": 2,
+      "findings": [
+        {
+          "file": "frameworks/common/js_proxy.h",
+          "line": 37,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''instance_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown.",
+          "evidence_type": "syntax",
+          "column": 9,
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "description": "Synchronization proof is unknown: no reliable mutex covers the pair; cross-function synchronization protocol is unknown. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion.",
+              "status": "unknown"
+            }
+          ],
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+        },
+        {
+          "file": "frameworks/common/js_proxy.h",
+          "line": 42,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''instance_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown.",
+          "evidence_type": "syntax",
+          "column": 16,
+          "candidate_cwe": "CWE-362",
+          "symbol": "instance_",
+          "evidence_obligations": [
+            {
+              "kind": "synchronization_proof",
+              "description": "Synchronization proof is unknown: no reliable mutex covers the pair; cross-function synchronization protocol is unknown. Prove the complete access protocol, lock identity/dominance and cross-function ordering before promotion.",
+              "status": "unknown"
+            }
+          ],
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f"
+        }
+      ],
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "frameworks/common/js_proxy.h: pairwise analysis of 'frameworks/common/js_proxy.h::JSProxy::instance_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+      ]
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "status": "completed",
+      "finding_count": 0,
+      "findings": [],
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "frameworks/common/js_proxy.h: all potential conflicting access pairs to 'frameworks/common/js_proxy.h::JSProxy::instance_' share reliable lexical mutex 'instanceMutex_'; pairwise suppression is limited to this translation unit and lexical lock model."
+      ]
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "status": "completed",
+      "finding_count": 0,
+      "findings": [],
+      "limitations": [
+        "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+        "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+        "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+        "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+        "frameworks/common/js_proxy.h: modeled accesses to 'frameworks/common/js_proxy.h::JSProxy::instance_' use only the atomic shared_ptr API; this narrow atomic-only shape is not a concurrency proof."
+      ]
+    }
+  ],
+  "builds": [
+    {
+      "variant": "vulnerable",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=thread",
+        "-pthread",
+        "-no-pie",
+        "-I/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.106864381999998,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=thread",
+        "-pthread",
+        "-no-pie",
+        "-I/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/include",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.894841232999994,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=thread",
+        "-pthread",
+        "-no-pie",
+        "-I/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/include",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.645862968999978,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    }
+  ],
+  "runs": [
+    {
+      "variant": "vulnerable",
+      "mode": "single",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "single"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.026805680999984816,
+      "stdout": "RESULT=single_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "unrelated",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "unrelated"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.03903973200002042,
+      "stdout": "RESULT=unrelated_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "race",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.06554520899999261,
+      "stdout": "",
+      "stderr": "LLVMSymbolizer: error reading file: No such file or directory\n==================\nWARNING: ThreadSanitizer: data race (pid=1128)\n  Write of size 8 at 0x7fffffffe090 by thread T6:\n    #0 std::enable_if<__and_<std::__not_<std::__is_tuple_like<Widget*> >, std::is_move_constructible<Widget*>, std::is_move_assignable<Widget*> >::value, void>::type std::swap<Widget*>(Widget*&, Widget*&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:206:11 (poc+0x4d01e6) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1316:2 (poc+0x4d01e6)\n    #2 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (poc+0x4d01e6)\n    #3 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (poc+0x4d01e6)\n    #4 OHOS::JSProxy::JSProxy<Widget>::SetInstance(std::shared_ptr<Widget>) /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:37:19 (poc+0x4d01e6)\n    #5 RunRace(int, int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:69:27 (poc+0x4d01e6)\n    #6 void std::__invoke_impl<void, RunRace(int, int, long)::$_1>(std::__invoke_other, RunRace(int, int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d01e6)\n    #7 std::__invoke_result<RunRace(int, int, long)::$_1>::type std::__invoke<RunRace(int, int, long)::$_1>(RunRace(int, int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d01e6)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d01e6)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d01e6)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d01e6)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x7fffffffe090 by thread T1:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4cfeff) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4cfeff)\n    #2 OHOS::JSProxy::JSProxy<Widget>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:42:16 (poc+0x4cfeff)\n    #3 RunRace(int, int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:54:39 (poc+0x4cfeff)\n    #4 void std::__invoke_impl<void, RunRace(int, int, long)::$_0>(std::__invoke_other, RunRace(int, int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cfeff)\n    #5 std::__invoke_result<RunRace(int, int, long)::$_0>::type std::__invoke<RunRace(int, int, long)::$_0>(RunRace(int, int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cfeff)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cfeff)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cfeff)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cfeff)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is stack of main thread.\n\n  Location is global '??' at 0x7ffffffde000 ([stack]+0x20090)\n\n  Thread T6 (tid=1135, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T1 (tid=1130, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:206:11 in std::enable_if<__and_<std::__not_<std::__is_tuple_like<Widget*> >, std::is_move_constructible<Widget*>, std::is_move_assignable<Widget*> >::value, void>::type std::swap<Widget*>(Widget*&, Widget*&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "race",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.046946210999976756,
+      "stdout": "",
+      "stderr": "LLVMSymbolizer: error reading file: No such file or directory\n==================\nWARNING: ThreadSanitizer: data race (pid=1137)\n  Write of size 8 at 0x7fffffffe090 by thread T5:\n    #0 std::enable_if<__and_<std::__not_<std::__is_tuple_like<Widget*> >, std::is_move_constructible<Widget*>, std::is_move_assignable<Widget*> >::value, void>::type std::swap<Widget*>(Widget*&, Widget*&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:206:11 (poc+0x4d01e6) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1316:2 (poc+0x4d01e6)\n    #2 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (poc+0x4d01e6)\n    #3 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (poc+0x4d01e6)\n    #4 OHOS::JSProxy::JSProxy<Widget>::SetInstance(std::shared_ptr<Widget>) /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:37:19 (poc+0x4d01e6)\n    #5 RunRace(int, int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:69:27 (poc+0x4d01e6)\n    #6 void std::__invoke_impl<void, RunRace(int, int, long)::$_1>(std::__invoke_other, RunRace(int, int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d01e6)\n    #7 std::__invoke_result<RunRace(int, int, long)::$_1>::type std::__invoke<RunRace(int, int, long)::$_1>(RunRace(int, int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d01e6)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d01e6)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d01e6)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d01e6)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x7fffffffe090 by thread T4:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4cfeff) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4cfeff)\n    #2 OHOS::JSProxy::JSProxy<Widget>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:42:16 (poc+0x4cfeff)\n    #3 RunRace(int, int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:54:39 (poc+0x4cfeff)\n    #4 void std::__invoke_impl<void, RunRace(int, int, long)::$_0>(std::__invoke_other, RunRace(int, int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cfeff)\n    #5 std::__invoke_result<RunRace(int, int, long)::$_0>::type std::__invoke<RunRace(int, int, long)::$_0>(RunRace(int, int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cfeff)\n    #6 void std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cfeff)\n    #7 std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cfeff)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cfeff)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is stack of main thread.\n\n  Location is global '??' at 0x7ffffffde000 ([stack]+0x20090)\n\n  Thread T5 (tid=1143, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T4 (tid=1142, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:206:11 in std::enable_if<__and_<std::__not_<std::__is_tuple_like<Widget*> >, std::is_move_constructible<Widget*>, std::is_move_assignable<Widget*> >::value, void>::type std::swap<Widget*>(Widget*&, Widget*&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "race",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.044954208000007156,
+      "stdout": "",
+      "stderr": "LLVMSymbolizer: error reading file: No such file or directory\n==================\nWARNING: ThreadSanitizer: data race (pid=1146)\n  Write of size 8 at 0x7fffffffe098 by thread T6:\n    #0 std::__shared_count<(__gnu_cxx::_Lock_policy)2>::_M_swap(std::__shared_count<(__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:734:12 (poc+0x4d0202) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1317:14 (poc+0x4d0202)\n    #2 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (poc+0x4d0202)\n    #3 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (poc+0x4d0202)\n    #4 OHOS::JSProxy::JSProxy<Widget>::SetInstance(std::shared_ptr<Widget>) /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:37:19 (poc+0x4d0202)\n    #5 RunRace(int, int, long)::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:69:27 (poc+0x4d0202)\n    #6 void std::__invoke_impl<void, RunRace(int, int, long)::$_1>(std::__invoke_other, RunRace(int, int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d0202)\n    #7 std::__invoke_result<RunRace(int, int, long)::$_1>::type std::__invoke<RunRace(int, int, long)::$_1>(RunRace(int, int, long)::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d0202)\n    #8 void std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d0202)\n    #9 std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d0202)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d0202)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x7fffffffe098 by thread T2:\n    #0 std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:709:19 (poc+0x4cff0b) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4cff0b)\n    #2 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4cff0b)\n    #3 OHOS::JSProxy::JSProxy<Widget>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:42:16 (poc+0x4cff0b)\n    #4 RunRace(int, int, long)::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:54:39 (poc+0x4cff0b)\n    #5 void std::__invoke_impl<void, RunRace(int, int, long)::$_0>(std::__invoke_other, RunRace(int, int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4cff0b)\n    #6 std::__invoke_result<RunRace(int, int, long)::$_0>::type std::__invoke<RunRace(int, int, long)::$_0>(RunRace(int, int, long)::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4cff0b)\n    #7 void std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4cff0b)\n    #8 std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4cff0b)\n    #9 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunRace(int, int, long)::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4cff0b)\n    #10 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is stack of main thread.\n\n  Location is global '??' at 0x7ffffffde000 ([stack]+0x20098)\n\n  Thread T6 (tid=1153, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T2 (tid=1149, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:734:12 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::_M_swap(std::__shared_count<(__gnu_cxx::_Lock_policy)2>&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "close_get_entry",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.04691631700001153,
+      "stdout": "",
+      "stderr": "LLVMSymbolizer: error reading file: No such file or directory\n==================\nWARNING: ThreadSanitizer: data race (pid=1155)\n  Read of size 8 at 0x7fffffffe0b8 by thread T2:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4d08b3) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4d08b3)\n    #2 OHOS::JSProxy::JSProxy<Widget>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:42:16 (poc+0x4d08b3)\n    #3 RunCloseGetEntry(long)::$_3::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:112:36 (poc+0x4d08b3)\n    #4 void std::__invoke_impl<void, RunCloseGetEntry(long)::$_3>(std::__invoke_other, RunCloseGetEntry(long)::$_3&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d08b3)\n    #5 std::__invoke_result<RunCloseGetEntry(long)::$_3>::type std::__invoke<RunCloseGetEntry(long)::$_3>(RunCloseGetEntry(long)::$_3&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d08b3)\n    #6 void std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d08b3)\n    #7 std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d08b3)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d08b3)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous write of size 8 at 0x7fffffffe0b8 by thread T1:\n    #0 std::enable_if<__and_<std::__not_<std::__is_tuple_like<Widget*> >, std::is_move_constructible<Widget*>, std::is_move_assignable<Widget*> >::value, void>::type std::swap<Widget*>(Widget*&, Widget*&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:206:11 (poc+0x4d0632) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1316:2 (poc+0x4d0632)\n    #2 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (poc+0x4d0632)\n    #3 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (poc+0x4d0632)\n    #4 OHOS::JSProxy::JSProxy<Widget>::SetInstance(std::shared_ptr<Widget>) /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:37:19 (poc+0x4d0632)\n    #5 RunCloseGetEntry(long)::$_2::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:102:19 (poc+0x4d0632)\n    #6 void std::__invoke_impl<void, RunCloseGetEntry(long)::$_2>(std::__invoke_other, RunCloseGetEntry(long)::$_2&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d0632)\n    #7 std::__invoke_result<RunCloseGetEntry(long)::$_2>::type std::__invoke<RunCloseGetEntry(long)::$_2>(RunCloseGetEntry(long)::$_2&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d0632)\n    #8 void std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d0632)\n    #9 std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d0632)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d0632)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is stack of main thread.\n\n  Location is global '??' at 0x7ffffffde000 ([stack]+0x200b8)\n\n  Thread T2 (tid=1158, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T1 (tid=1157, finished) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "close_get_entry",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.04221196099999247,
+      "stdout": "",
+      "stderr": "LLVMSymbolizer: error reading file: No such file or directory\n==================\nWARNING: ThreadSanitizer: data race (pid=1160)\n  Write of size 8 at 0x7fffffffe0c0 by thread T1:\n    #0 std::__shared_count<(__gnu_cxx::_Lock_policy)2>::_M_swap(std::__shared_count<(__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:734:12 (poc+0x4d0646) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1317:14 (poc+0x4d0646)\n    #2 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (poc+0x4d0646)\n    #3 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (poc+0x4d0646)\n    #4 OHOS::JSProxy::JSProxy<Widget>::SetInstance(std::shared_ptr<Widget>) /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:37:19 (poc+0x4d0646)\n    #5 RunCloseGetEntry(long)::$_2::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:102:19 (poc+0x4d0646)\n    #6 void std::__invoke_impl<void, RunCloseGetEntry(long)::$_2>(std::__invoke_other, RunCloseGetEntry(long)::$_2&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d0646)\n    #7 std::__invoke_result<RunCloseGetEntry(long)::$_2>::type std::__invoke<RunCloseGetEntry(long)::$_2>(RunCloseGetEntry(long)::$_2&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d0646)\n    #8 void std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d0646)\n    #9 std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d0646)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d0646)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous read of size 8 at 0x7fffffffe0c0 by thread T2:\n    #0 std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:709:19 (poc+0x4d08bf) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4d08bf)\n    #2 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4d08bf)\n    #3 OHOS::JSProxy::JSProxy<Widget>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:42:16 (poc+0x4d08bf)\n    #4 RunCloseGetEntry(long)::$_3::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:112:36 (poc+0x4d08bf)\n    #5 void std::__invoke_impl<void, RunCloseGetEntry(long)::$_3>(std::__invoke_other, RunCloseGetEntry(long)::$_3&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d08bf)\n    #6 std::__invoke_result<RunCloseGetEntry(long)::$_3>::type std::__invoke<RunCloseGetEntry(long)::$_3>(RunCloseGetEntry(long)::$_3&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d08bf)\n    #7 void std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d08bf)\n    #8 std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d08bf)\n    #9 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d08bf)\n    #10 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is stack of main thread.\n\n  Location is global '??' at 0x7ffffffde000 ([stack]+0x200c0)\n\n  Thread T1 (tid=1162, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T2 (tid=1163, finished) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:734:12 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::_M_swap(std::__shared_count<(__gnu_cxx::_Lock_policy)2>&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "vulnerable",
+      "mode": "close_get_entry",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 66,
+      "elapsed_seconds": 0.05877634000000853,
+      "stdout": "",
+      "stderr": "LLVMSymbolizer: error reading file: No such file or directory\n==================\nWARNING: ThreadSanitizer: data race (pid=1165)\n  Read of size 8 at 0x7fffffffe0b8 by thread T2:\n    #0 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (poc+0x4d08b3) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::shared_ptr<Widget>::shared_ptr(std::shared_ptr<Widget> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (poc+0x4d08b3)\n    #2 OHOS::JSProxy::JSProxy<Widget>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:42:16 (poc+0x4d08b3)\n    #3 RunCloseGetEntry(long)::$_3::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:112:36 (poc+0x4d08b3)\n    #4 void std::__invoke_impl<void, RunCloseGetEntry(long)::$_3>(std::__invoke_other, RunCloseGetEntry(long)::$_3&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d08b3)\n    #5 std::__invoke_result<RunCloseGetEntry(long)::$_3>::type std::__invoke<RunCloseGetEntry(long)::$_3>(RunCloseGetEntry(long)::$_3&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d08b3)\n    #6 void std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d08b3)\n    #7 std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d08b3)\n    #8 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_3> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d08b3)\n    #9 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Previous write of size 8 at 0x7fffffffe0b8 by thread T1:\n    #0 std::enable_if<__and_<std::__not_<std::__is_tuple_like<Widget*> >, std::is_move_constructible<Widget*>, std::is_move_assignable<Widget*> >::value, void>::type std::swap<Widget*>(Widget*&, Widget*&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:206:11 (poc+0x4d0632) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1316:2 (poc+0x4d0632)\n    #2 std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (poc+0x4d0632)\n    #3 std::shared_ptr<Widget>::operator=(std::shared_ptr<Widget>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (poc+0x4d0632)\n    #4 OHOS::JSProxy::JSProxy<Widget>::SetInstance(std::shared_ptr<Widget>) /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/vulnerable/include/js_proxy_variant.h:37:19 (poc+0x4d0632)\n    #5 RunCloseGetEntry(long)::$_2::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp:102:19 (poc+0x4d0632)\n    #6 void std::__invoke_impl<void, RunCloseGetEntry(long)::$_2>(std::__invoke_other, RunCloseGetEntry(long)::$_2&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (poc+0x4d0632)\n    #7 std::__invoke_result<RunCloseGetEntry(long)::$_2>::type std::__invoke<RunCloseGetEntry(long)::$_2>(RunCloseGetEntry(long)::$_2&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (poc+0x4d0632)\n    #8 void std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (poc+0x4d0632)\n    #9 std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (poc+0x4d0632)\n    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<RunCloseGetEntry(long)::$_2> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (poc+0x4d0632)\n    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n\n  Location is stack of main thread.\n\n  Location is global '??' at 0x7ffffffde000 ([stack]+0x200b8)\n\n  Thread T2 (tid=1168, running) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\n  Thread T1 (tid=1167, finished) created by main thread at:\n    #0 pthread_create <null> (poc+0x44d46d) (BuildId: d864cb4e32d245bcadf5c6ebfc0582a628f9f6c2)\n    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)\n    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 in std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<Widget, (__gnu_cxx::_Lock_policy)2> const&)\n==================\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "single",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "single"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.028853096999995387,
+      "stdout": "RESULT=single_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "unrelated",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "unrelated"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.04351545999998052,
+      "stdout": "RESULT=unrelated_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "race",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3498527130000184,
+      "stdout": "RESULT=race_ok observed=101100\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "race",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3675182680000262,
+      "stdout": "RESULT=race_ok observed=101777\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "race",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.35499871100000746,
+      "stdout": "RESULT=race_ok observed=103098\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "close_get_entry",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6151833119999992,
+      "stdout": "RESULT=close_get_entry_ok rounds=2000 observed=394\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "close_get_entry",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6199329080000098,
+      "stdout": "RESULT=close_get_entry_ok rounds=2000 observed=403\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "fixed_control_mutex",
+      "mode": "close_get_entry",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/fixed_control_mutex/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6171994699999743,
+      "stdout": "RESULT=close_get_entry_ok rounds=2000 observed=365\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "single",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "single"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.026171580999999833,
+      "stdout": "RESULT=single_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "unrelated",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "unrelated"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.040446833999993714,
+      "stdout": "RESULT=unrelated_ok\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "race",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3340678609999941,
+      "stdout": "RESULT=race_ok observed=103511\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "race",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3391901130000008,
+      "stdout": "RESULT=race_ok observed=105344\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "race",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "race",
+        "4",
+        "2",
+        "50000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.32314629699999387,
+      "stdout": "RESULT=race_ok observed=105399\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "close_get_entry",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.5963604840000016,
+      "stdout": "RESULT=close_get_entry_ok rounds=2000 observed=30\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "close_get_entry",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6053673959999912,
+      "stdout": "RESULT=close_get_entry_ok rounds=2000 observed=17\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "patched_atomic_minimal",
+      "mode": "close_get_entry",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/work/patched_atomic_minimal/poc",
+        "close_get_entry",
+        "2000"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6217172679999976,
+      "stdout": "RESULT=close_get_entry_ok rounds=2000 observed=25\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    }
+  ],
+  "repeats": 3,
+  "outcome": "stable_reproduced_and_patch_revalidated",
+  "patch": {
+    "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+    "fixed_source_sha256": "9044ccaac42cefdd2c153c01b07c0893634aa0aee8ad54093e1065740329a902",
+    "patched_source_sha256": "4d57f286602e15af636c40158e8cdabc6f617fda89d8276128c674b4ab633b6f",
+    "fixed_control": "mutex around JSProxy owner access",
+    "minimal_patch": "std::atomic_load/std::atomic_store on instance_"
+  },
+  "evidence_level": "controlled_component_dynamic_reproduction",
+  "environment": {
+    "compiler": "clang++",
+    "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "harness_sha256": "67e4eb8bb832b57ce224bae4d3cb020be348c84424d3c8791ce9504efa9d6b59",
+    "detector_source_sha256": "70197fb273054a20e2e6de82aa4eaa6bdeeaf4951ead6d5076b0e9832c65e230",
+    "poc_runner_sha256": "413e442fe3bf500a88b744c8a514b9271184dd219a0448205c2387efd97a407c",
+    "sanitizers": [
+      "thread"
+    ],
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "aslr_workaround": true,
+    "modes": [
+      "single",
+      "race",
+      "close_get_entry",
+      "unrelated"
+    ],
+    "variants": [
+      "vulnerable",
+      "fixed_control_mutex",
+      "patched_atomic_minimal"
+    ]
+  },
+  "limitations": [
+    "PoC is a self-contained workload around exact Git-blob JSProxy bytes and modeled async CloseResultSet versus sync getEntry; it is not a full OpenHarmony build or a live distributed KV store run.",
+    "ThreadSanitizer proves unsynchronized shared_ptr owner accesses in the modeled call patterns; it does not prove a stable crash, memory corruption, data disclosure, privilege escalation, or exploitable stability.",
+    "The source-visible ArkTS/JS entry is partial; runtime permission enforcement, product module resolution, deployed image/version scope and cross-app/remote attacker control remain unknown.",
+    "fixed_control_mutex is an independently authored safe control; patched_atomic_minimal is a proposed local patch, not an upstream fix.",
+    "CWE-416 is only a possible consequence and remains unproven without product-level use-after-free evidence.",
+    "Git blob payload SHA-256 is canonical; checkout SHA-256 is separately recorded because repository line-ending filters change working-tree bytes."
+  ]
+}

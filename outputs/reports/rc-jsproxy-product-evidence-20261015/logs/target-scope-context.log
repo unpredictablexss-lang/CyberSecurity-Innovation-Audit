@@ -1,0 +1,6 @@
+command=git branch -a --contains HEAD
+* (HEAD detached at acfb22aa)
+command=git tag --contains HEAD
+command=git name-rev --name-only HEAD
+source/acfb22aac16161d8fb0cefb6cc9b92f04f489a80
+interpretation=local ref observation only; product image/tag/version membership remains unknown

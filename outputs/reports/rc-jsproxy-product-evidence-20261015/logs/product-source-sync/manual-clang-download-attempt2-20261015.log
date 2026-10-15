@@ -1,0 +1,25 @@
+timestamp=2026-10-15T16:19:03.9029750+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; f=/root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz; u=https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz; date --iso-8601=seconds; echo "network_action=manual resumable clang toolchain download attempt 2"; echo "command=curl -fL --connect-timeout 10 --max-time 20 -C - $u -o $f"; curl -fL --connect-timeout 10 --max-time 20 -C - "$u" -o "$f"; rc=$?; echo "exit=$rc"; stat -c "size=%s" "$f" 2>&1; exit $rc'
+
+2026-10-15T16:19:07+08:00
+network_action=manual resumable clang toolchain download attempt 2
+command=curl -fL --connect-timeout 10 --max-time 20 -C - https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz -o /root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz
+** Resuming transfer from byte position 646118856
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0
+  0  136M    0 64750    0     0  32271      0  1:13:54  0:00:02  1:13:52 32278
+  0  136M    0  735k    0     0   227k      0  0:10:15  0:00:03  0:10:12  227k
+  2  136M    2 2815k    0     0   654k      0  0:03:33  0:00:04  0:03:29  654k
+  5  136M    5 6991k    0     0  1380k      0  0:01:41  0:00:05  0:01:36 1380k
+ 17  136M   17 23.7M    0     0  4127k      0  0:00:33  0:00:05  0:00:28 5174k
+ 36  136M   36 49.4M    0     0  7328k      0  0:00:19  0:00:06  0:00:13 10.0M
+ 42  136M   42 57.9M    0     0  7243k      0  0:00:19  0:00:08  0:00:11 11.5M
+ 55  136M   55 76.1M    0     0  8763k      0  0:00:15  0:00:08  0:00:07 15.9M
+ 76  136M   76  103M    0     0  10.4M      0  0:00:13  0:00:09  0:00:04 19.7M
+ 94  136M   94  129M    0     0  11.7M      0  0:00:11  0:00:11 --:--:-- 20.5M
+100  136M  100  136M    0     0  12.2M      0  0:00:11  0:00:11 --:--:-- 20.5M
+exit=0
+size=789238720

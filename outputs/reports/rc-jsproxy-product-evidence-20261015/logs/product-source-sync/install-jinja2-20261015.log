@@ -1,0 +1,29 @@
+timestamp=2026-10-15T16:41:57.7036218+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; root=/home/audit/ohos-rk3568-product; py=$root/prebuilts/python/linux-x86/current/bin/python3; pip=$root/prebuilts/python/linux-x86/current/bin/pip3; date --iso-8601=seconds; echo "network_action=install Python build dependency jinja2"; echo "command=$py $pip install --trusted-host repo.huaweicloud.com -i https://repo.huaweicloud.com/repository/pypi/simple jinja2"; "$py" "$pip" install --trusted-host repo.huaweicloud.com -i https://repo.huaweicloud.com/repository/pypi/simple jinja2; rc=$?; echo "exit=$rc"; "$py" -m pip show jinja2 | sed -n "1,12p"; exit $rc'
+
+2026-10-15T16:41:57+08:00
+network_action=install Python build dependency jinja2
+command=/home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/current/bin/python3 /home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/current/bin/pip3 install --trusted-host repo.huaweicloud.com -i https://repo.huaweicloud.com/repository/pypi/simple jinja2
+Looking in indexes: https://repo.huaweicloud.com/repository/pypi/simple
+Collecting jinja2
+  Downloading https://repo.huaweicloud.com/repository/pypi/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl (134 kB)
+Collecting MarkupSafe>=2.0 (from jinja2)
+  Downloading https://repo.huaweicloud.com/repository/pypi/packages/4f/a7/aeedb5140afa41fc74c225e9184ab96723a6e873b6ee1c9fede7283456d8/markupsafe-3.0.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Installing collected packages: MarkupSafe, jinja2
+
+Successfully installed MarkupSafe-3.0.4 jinja2-3.1.6
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 26.0.1 -> 26.2.1
+[notice] To update, run: /home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/current/bin/python3 -m pip install --upgrade pip
+exit=0
+Name: Jinja2
+Version: 3.1.6
+Summary: A very fast and expressive template engine.
+Home-page: 
+Author: 
+Author-email: 
+License: 
+Location: /home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/current/lib/python3.12/site-packages
+Requires: MarkupSafe
+Required-by: 

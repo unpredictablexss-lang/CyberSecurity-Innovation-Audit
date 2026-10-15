@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_device_runtime_availability",
+  "status": "unavailable",
+  "checked_at": "2026-10-15T17:07:00.6116183+08:00",
+  "commands": [
+    {
+      "command": "Get-PnpDevice -PresentOnly -Status OK | Where-Object FriendlyName/InstanceId matches ADB|Android|Rockchip|rk3568",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "result": "no ADB or Rockchip/rk3568 device observed"
+    },
+    {
+      "command": "wsl adb devices -l",
+      "repeats": 1,
+      "successful": 0,
+      "failed": 1,
+      "result": "adb not installed"
+    }
+  ],
+  "product_runtime_performed": false,
+  "product_traces": 0,
+  "failure_reason": "no rk3568 device or OpenHarmony runtime is attached; product permission/identity/trace/CIA measurements cannot be executed"
+}

@@ -1,0 +1,8 @@
+warning: in the working copy of 'scripts/verify_owner_ipc_components.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/workbench/operations_api.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/SourceEvidence.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/pages/Cases.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/pages/JobDetail.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'web/src/pages/Operations.tsx', LF will be replaced by CRLF the next time Git touches it
+src/workbench/operations_api.py:296: new blank line at EOF.
+web/src/pages/JobDetail.tsx:816: new blank line at EOF.

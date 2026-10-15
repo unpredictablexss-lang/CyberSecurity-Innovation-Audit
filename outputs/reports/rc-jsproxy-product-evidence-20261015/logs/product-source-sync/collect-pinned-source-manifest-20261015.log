@@ -1,0 +1,5 @@
+timestamp=2026-10-15T16:27:31.2048251+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; echo "network_action=none"; echo "command=python3 collect_pinned_source_manifest.py"; python3 /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/collect_pinned_source_manifest.py --source-root /home/audit/ohos-rk3568-product --declared-manifest /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/source-manifest-declared-20261015.xml --output /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/pinned-source-manifest.partial.json; rc=$?; echo "exit=$rc"; sha256sum /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/pinned-source-manifest.partial.json; exit $rc'
+
+network_action=none
+command=python3 collect_pinned_source_manifest.py

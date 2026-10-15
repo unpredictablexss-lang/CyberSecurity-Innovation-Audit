@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_product_gate_replay_result_v1",
+  "generated_at": "2026-10-15T14:42:56.1916048+08:00",
+  "task_id": "A-EVID-02-NEXT",
+  "gate": {
+    "path": "src/ohscanner/poc/rc_jsproxy_product_gate.py",
+    "sha256": "f4781d2959737f20e0d48b8949e5d5ad043cccad84ebade24838fb6a17c99721",
+    "candidate_manifest": {
+      "path": "src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json",
+      "sha256": "9bfd1891d2100a4cb1006addbd75f83683a4aa9e0ccc687ebd8ee35fcb7c473b"
+    },
+    "component_poc": {
+      "path": "outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json",
+      "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+    },
+    "product_evidence": {
+      "path": "research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json",
+      "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+    },
+    "product_source_root": "E:/网安/_product_targets",
+    "source_repo": "E:/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store"
+  },
+  "repeats": {
+    "planned": 2,
+    "executed": 2,
+    "successful": 2,
+    "failed": 0
+  },
+  "runs": [
+    {
+      "id": "run-001",
+      "command_argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--exec",
+        "/bin/bash",
+        "-lc",
+        "cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /mnt/e/网安/_product_targets --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output"
+      ],
+      "output_dir": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output",
+      "exit_code": 0,
+      "stdout": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001.stdout.json",
+        "sha256": "9b136f38d1e6b49f817939be85bb6aa58c5311cf7df2484e8de26f6a03755fe1"
+      },
+      "validation": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output/validation.json",
+        "sha256": "4785ecb9ad58b61694440065800ab4a352173519bf27ec0f0eae37e74f1840db"
+      },
+      "validation_markdown": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output/validation.md",
+        "sha256": "c73783fb3fe725248c60080cdd34c4c3411e1726e627996fe1b4ae5bd3cc30f7"
+      },
+      "package_manifest": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-001/output/package-manifest.json",
+        "sha256": "a89f8649f023ffe0f6e84296d25cd049607fe9c69570cba7c9d7870fb9a9473d"
+      },
+      "result": {
+        "final_status": "candidate/unknown",
+        "validated_vulnerability": 0,
+        "component_validation": "met",
+        "product_gate": "not_met"
+      },
+      "failure_reason": "none at Gate execution level; product evidence obligations remain unknown and fail closed"
+    },
+    {
+      "id": "run-002",
+      "command_argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--exec",
+        "/bin/bash",
+        "-lc",
+        "cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /mnt/e/网安/_product_targets --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002/output"
+      ],
+      "output_dir": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002/output",
+      "exit_code": 0,
+      "stdout": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002.stdout.json",
+        "sha256": "8b7af23b1c674841b5c63484de4c77ed24b09e80e06fd4d28f9ed8ea51bd5486"
+      },
+      "validation": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002/output/validation.json",
+        "sha256": "4785ecb9ad58b61694440065800ab4a352173519bf27ec0f0eae37e74f1840db"
+      },
+      "validation_markdown": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002/output/validation.md",
+        "sha256": "c73783fb3fe725248c60080cdd34c4c3411e1726e627996fe1b4ae5bd3cc30f7"
+      },
+      "package_manifest": {
+        "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/run-002/output/package-manifest.json",
+        "sha256": "a89f8649f023ffe0f6e84296d25cd049607fe9c69570cba7c9d7870fb9a9473d"
+      },
+      "result": {
+        "final_status": "candidate/unknown",
+        "validated_vulnerability": 0,
+        "component_validation": "met",
+        "product_gate": "not_met"
+      },
+      "failure_reason": "none at Gate execution level; product evidence obligations remain unknown and fail closed"
+    }
+  ],
+  "determinism": {
+    "validation_json_byte_identical": true,
+    "validation_json_sha256": "4785ecb9ad58b61694440065800ab4a352173519bf27ec0f0eae37e74f1840db",
+    "validation_md_byte_identical": true,
+    "validation_md_sha256": "c73783fb3fe725248c60080cdd34c4c3411e1726e627996fe1b4ae5bd3cc30f7",
+    "stdout_diff_explanation": "stdout differs only because each run records a distinct output_dir"
+  },
+  "targeted_test": {
+    "command": "wsl.exe -d Ubuntu-22.04 --exec /bin/bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m unittest tests.test_rc_jsproxy_product_gate -v\"",
+    "repeats": {
+      "planned": 1,
+      "executed": 1,
+      "successful": 1,
+      "failed": 0
+    },
+    "result": "8 tests passed",
+    "log": {
+      "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/gate-replay-next/targeted-tests.log",
+      "sha256": "b0c0992f06a72aba1f28faf2d1e4a7d38804cd414694af7e0174356a00d13ee9"
+    }
+  },
+  "result": {
+    "final_status": "candidate/unknown",
+    "validated_vulnerability": 0,
+    "component_validation": "met",
+    "product_gate": "not_met",
+    "recommended_status": "candidate/unknown",
+    "status_change_requires_owner_authorization": true
+  },
+  "product_obligations": [
+    {
+      "detail": "three product variants require exact source/toolchain manifests, build command, artifact path/hash/size/install path",
+      "id": "product_build_and_artifact_identity",
+      "status": "unknown"
+    },
+    {
+      "detail": "JS/NAPI call chain plus permission, process identity and deployment boundary must all be verified",
+      "id": "real_entry_chain",
+      "status": "unknown"
+    },
+    {
+      "detail": "three repeats per variant require product thread IDs, closeResultSet/getEntry overlap and variant-bound artifacts",
+      "id": "product_interleaving_trace",
+      "status": "unknown"
+    },
+    {
+      "detail": "availability/integrity/confidentiality need measured claims and evidence; one concrete observed impact is required",
+      "id": "cia_impact",
+      "status": "unknown"
+    },
+    {
+      "detail": "module, affected version and branch membership require source/history/product evidence",
+      "id": "affected_modules_versions_branches",
+      "status": "unknown"
+    },
+    {
+      "detail": "CWE-362 basis is required; CVE must be assigned/verified or supported by an audited no-assignment search",
+      "id": "cwe_cve_binding",
+      "status": "unknown"
+    }
+  ],
+  "blocking_unknowns": [
+    {
+      "id": "product-build",
+      "question": "真实产品/组件构建命令、完整依赖/工具链 manifest、三 variant 构建产物 hash/install path 未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "product-entry",
+      "question": "真实产品进程中的 JS/NAPI entry 与部署包解析未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "permission-identity",
+      "question": "permission grant/deny、app identity、uid/user/sandbox 边界未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "product-trace",
+      "question": "产品级 thread/queue/source-bound CloseResultSet/getEntry 交错 trace 未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "cia-impact",
+      "question": "产品级 availability/integrity/confidentiality 实测未完成",
+      "severity": "high"
+    },
+    {
+      "id": "scope",
+      "question": "受影响版本、分支和产品 image 范围未证明",
+      "severity": "high"
+    },
+    {
+      "id": "exploitability",
+      "question": "stable crash、memory corruption、UAF 与可利用性未证明",
+      "severity": "high"
+    }
+  ],
+  "remaining_unknowns": [
+    {
+      "id": "product-build",
+      "question": "真实产品/组件构建命令、完整依赖/工具链 manifest、三 variant 构建产物 hash/install path 未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "product-entry",
+      "question": "真实产品进程中的 JS/NAPI entry 与部署包解析未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "permission-identity",
+      "question": "permission grant/deny、app identity、uid/user/sandbox 边界未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "product-trace",
+      "question": "产品级 thread/queue/source-bound CloseResultSet/getEntry 交错 trace 未证明",
+      "severity": "critical"
+    },
+    {
+      "id": "cia-impact",
+      "question": "产品级 availability/integrity/confidentiality 实测未完成",
+      "severity": "high"
+    },
+    {
+      "id": "scope",
+      "question": "受影响版本、分支和产品 image 范围未证明",
+      "severity": "high"
+    },
+    {
+      "id": "cve",
+      "question": "CVE assignment/上游公告/检索范围尚未审计",
+      "severity": "medium"
+    },
+    {
+      "id": "exploitability",
+      "question": "stable crash、memory corruption、UAF 与可利用性未证明",
+      "severity": "high"
+    }
+  ],
+  "artifact_identity_policy": {
+    "product_variant_artifact_hashes": {
+      "vulnerable": null,
+      "fixed_control_mutex": null,
+      "patched_atomic_minimal": null
+    },
+    "component_harness_binary_hash_used_as_product_artifact": false,
+    "reason": "No product artifact exists; component Harness identities are excluded by policy and by the fixed Gate input shape."
+  },
+  "conclusion": "Fail-closed replay is deterministic and keeps candidate/unknown. No confirmed/reportable state change is authorized or made.",
+  "companion_evidence": {
+    "next_evidence_ledger": {
+      "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/next-evidence-ledger.json",
+      "sha256": "e1a8e35ea4fb59d62631c1d84c2cada6e48d489bd8ad079546a5db14a6dce61a"
+    },
+    "limitations": {
+      "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/limitations-next.md",
+      "sha256": "47d0b62e2f7520f985147ead81fe65a512db39c3cc64c29d0344d34c84912043"
+    },
+    "checklist": {
+      "path": "outputs/reports/rc-jsproxy-product-evidence-20261015/next-evidence-checklist-20261015.md",
+      "sha256": "eb45c5441524c720aba99496ddb64816ac9230ea77b2f9426372b5bb61d834fb"
+    }
+  }
+}

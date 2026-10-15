@@ -1,0 +1,17 @@
+timestamp=2026-10-15T16:41:27.0502547+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; root=/home/audit/ohos-rk3568-product; cd "$root"; export PATH=$root/prebuilts/build-tools/linux-x86/bin:$root/prebuilts/python/linux-x86/current/bin:$root/prebuilts/build-tools/common/nodejs/current/bin:$PATH; target=//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore; date --iso-8601=seconds; echo "network_action=none"; echo "command=python3 build/scripts/entry.py --source-root-dir $root --product-name rk3568 --build-variant user --build-only-gn -T $target"; python3 build/scripts/entry.py --source-root-dir "$root" --product-name rk3568 --build-variant user --build-only-gn -T "$target" > /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/build-entry-gn-preflight-20261015.raw.log 2>&1; rc=$?; echo "exit=$rc"; tail -n 160 /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/build-entry-gn-preflight-20261015.raw.log; exit $rc'
+
+2026-10-15T16:41:30+08:00
+network_action=none
+command=python3 build/scripts/entry.py --source-root-dir /home/audit/ohos-rk3568-product --product-name rk3568 --build-variant user --build-only-gn -T //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore
+exit=1
+Traceback (most recent call last):
+  File "/home/audit/ohos-rk3568-product/build/hb/main.py", line 42, in <module>
+    from services.loader import OHOSLoader
+  File "/home/audit/ohos-rk3568-product/build/hb/services/loader.py", line 27, in <module>
+    from util.loader import generate_targets_gn  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/audit/ohos-rk3568-product/build/hb/util/loader/generate_targets_gn.py", line 27, in <module>
+    from jinja2 import Template  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'jinja2'

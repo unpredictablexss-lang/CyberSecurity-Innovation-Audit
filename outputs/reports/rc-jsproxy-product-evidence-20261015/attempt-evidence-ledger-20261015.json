@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_product_collection_attempt_ledger",
+  "status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "confirmed_or_reportable": false,
+  "component_validation": "met",
+  "product_gate": "not_met",
+  "validation_sha256": "229dfe6753206defbed7b98f018cee4f46eebaed034d1990ce45479369c38ede",
+  "entries": [
+    {
+      "id": "pinned-source-manifest",
+      "status": "partial_untrusted",
+      "evidence_path": "inputs/pinned-source-manifest.partial.json",
+      "evidence_sha256": "288f2de3e43bd9f86ab4ddb5ae10731758255c97cb4c7d92b10f8d830cc44e63",
+      "command": "repo manifest -r plus checked-out Git projection",
+      "repeats": 2,
+      "successful": 1,
+      "failed": 1,
+      "failure_reason": "repo manifest -r failed because 473 worktrees are missing and one checked-out Git index is corrupt"
+    },
+    {
+      "id": "toolchain-manifest",
+      "status": "partial_untrusted",
+      "evidence_path": "inputs/toolchain-manifest.partial.json",
+      "evidence_sha256": "4c5756e9c1b91cc08c73e8e5b195b6b580eda95e5c7f3aafa2589e9cf6d4a5c4",
+      "command": "bash build/prebuilts_download.sh plus manual hash-verified repairs",
+      "repeats": 8,
+      "successful": 3,
+      "failed": 5,
+      "failure_reason": "WSL ext4 recovery; Node extraction required repair; clang/hvigor extraction incomplete"
+    },
+    {
+      "id": "dependency-closure",
+      "status": "unresolved_blocked",
+      "evidence_path": "inputs/dependency-closure.partial.json",
+      "evidence_sha256": "3d53dfa365315ed30ae6d4965d291db080341b6c3cc4838a435a4dd52b1a887c",
+      "command": "python3 build/scripts/entry.py --product-name rk3568 --build-variant user --build-only-gn -T //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+      "repeats": 3,
+      "successful": 0,
+      "failed": 3,
+      "failure_reason": "jinja2 missing; kernel/linux/build bundle missing; then WSL storage termination before GN graph"
+    },
+    {
+      "id": "product-build-artifacts",
+      "status": "not_produced",
+      "evidence_path": "inputs/product-evidence.json",
+      "evidence_sha256": "8c405df715c70d298f5b9627cd83a2f108bf71d30107ee7decd363b06a8ddd2b",
+      "command": "bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+      "repeats": 5,
+      "successful": 0,
+      "failed": 5,
+      "failure_reason": "no complete trusted source/toolchain/GN closure; no vulnerable/fixed/patched product artifact hash"
+    },
+    {
+      "id": "device-runtime",
+      "status": "unavailable",
+      "evidence_path": "inputs/device-runtime-availability.json",
+      "evidence_sha256": "271a41dc8538218a3d544e4ca4b7bdffb3b7ac9e0df115bb808cc6830da0b108",
+      "command": "Get-PnpDevice and wsl adb devices -l",
+      "repeats": 2,
+      "successful": 1,
+      "failed": 1,
+      "failure_reason": "no rk3568/OpenHarmony runtime device attached; no product trace/CIA/permission evidence possible"
+    },
+    {
+      "id": "product-source-patch-apply",
+      "status": "verified_source_apply_only",
+      "evidence_path": "inputs/product-source-patch-apply-check.json",
+      "evidence_sha256": "06031e845d51f413443dd32523881e6b4f7e1283ebd2b6ecbfaec48142c65139",
+      "command": "git -C <audited-source-repo> apply --check --whitespace=nowarn <patch>",
+      "repeats": 2,
+      "successful": 2,
+      "failed": 0,
+      "failure_reason": "source apply does not prove product build/runtime revalidation"
+    },
+    {
+      "id": "affected-scope",
+      "status": "partial",
+      "evidence_path": "inputs/affected-scope.partial.json",
+      "evidence_sha256": "46c50bd202ebbb715aafa9a644587e87c85f13aaf881e699dc2fc06e00afe71f",
+      "command": "git branch/tag containment and rk3568 vendor profile inspection",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "failure_reason": "source branch/module observed; product version/image/branch impact remains unknown"
+    },
+    {
+      "id": "gate-replay-run1",
+      "status": "completed_fail_closed",
+      "evidence_path": "logs/product-source-sync/gate-replay-corrected-run1-20261015.log",
+      "evidence_sha256": "610ad45006f7c56094dd8cb138df520ab6b2f69bb47c8705f82533865d3f6d9b",
+      "command": ".venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate ...",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "failure_reason": "product obligations remained unknown; product_gate=not_met"
+    },
+    {
+      "id": "gate-replay-run2",
+      "status": "completed_fail_closed",
+      "evidence_path": "logs/product-source-sync/gate-replay-corrected-run2-20261015.log",
+      "evidence_sha256": "a1171b9179c6072470122ca946f41554d04eafad4568cdb3019ab9ea59f91ffd",
+      "command": ".venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate ...",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "failure_reason": "same validation hash as run1; product_gate=not_met"
+    },
+    {
+      "id": "targeted-tests",
+      "status": "passed",
+      "evidence_path": "logs/product-source-sync/targeted-tests-after-attempt-20261015.log",
+      "evidence_sha256": "68836a8450ce954cdb481e653164a2eeeebbc1e4cacd345e87eab2d621cb7664",
+      "command": ".venv-web/bin/python -m unittest tests.test_rc_jsproxy_product_gate tests.test_shared_ptr_jsproxy_poc -v",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "failure_reason": null
+    },
+    {
+      "id": "gate-replay-run3",
+      "status": "completed_fail_closed",
+      "evidence_path": "logs/product-source-sync/gate-replay-corrected-run3-20261015.log",
+      "evidence_sha256": "3e89e92b1411f8638bdc0320c07eb7a881a940b5bee917835d7d1d1b122939a5",
+      "command": ".venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate ...",
+      "repeats": 1,
+      "successful": 1,
+      "failed": 0,
+      "failure_reason": "same validation hash as run1/run2; product_gate=not_met"
+    }
+  ],
+  "limitations": [
+    "No complete pinned source/toolchain/dependency closure.",
+    "No rk3568/user product artifacts for vulnerable, fixed_control_mutex, or patched_atomic_minimal.",
+    "No product runtime symbols, permission/UID/user/sandbox evidence, product interleaving traces, or CIA measurements.",
+    "Source patch apply is not product repair revalidation.",
+    "Component TSan race is not UAF/DoS/disclosure/stable exploitability evidence.",
+    "No confirmed/reportable promotion was performed."
+  ]
+}

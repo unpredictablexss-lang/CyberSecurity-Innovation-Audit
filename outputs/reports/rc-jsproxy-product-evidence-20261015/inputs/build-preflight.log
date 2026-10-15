@@ -1,0 +1,26 @@
+[attempt-1]
+timestamp=2026-10-15T11:45:00+08:00
+command=bash build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore
+exit_code=1
+network_action=none
+output:
+build/build_scripts/build.sh: line 14: $'\r': command not found
+build/build_scripts/build.sh: line 15: set: -\r: invalid option
+build/build_scripts/build.sh: line 16: set: +\r: invalid option
+build/build_scripts/build.sh: line 19: syntax error near unexpected token `$'{\r''
+
+[attempt-2]
+timestamp=2026-10-15T11:46:39+08:00
+command=bash -c "$(sed "s/\r$//" build/build_scripts/build.sh)" build/build_scripts/build.sh --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore
+purpose=evaluate the product entry after in-memory CR normalization without modifying the checkout
+exit_code=1
+network_action=none
+output:
+**********Welcome to OpenHarmony!**********
+Build args: --product-name rk3568 --build-variant user --build-target //foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore
+[OHOS ERROR] Cannot find source tree containing /mnt/e/网安/_product_targets
+
+[preflight]
+root=/mnt/e/网安/_product_targets
+missing=.gn; foundation/distributeddatamgr/kv_store/BUILD.gn; device/board/hihope/rk3568; prebuilts/build-tools; prebuilts/python
+layout_note=partial repositories are present outside the required full OpenHarmony source layout; default_small.xml records distributeddatamgr_kv_store revision=master and is not a complete per-project pinned build manifest

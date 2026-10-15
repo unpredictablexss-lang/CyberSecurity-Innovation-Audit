@@ -1,0 +1,6 @@
+timestamp=2026-10-15T15:57:43.4560491+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; cd /home/audit/ohos-rk3568-product; rm -f /home/audit/prebuilts-bg.log /home/audit/prebuilts-bg.exit; echo "network_action=background resume OpenHarmony prebuilts download"; echo "command=setsid bash -c \"bash build/prebuilts_download.sh; echo \\\">$?\" > /home/audit/prebuilts-bg.exit\" > /home/audit/prebuilts-bg.log 2>&1 < /dev/null &"; setsid bash -c "bash build/prebuilts_download.sh; echo \\\">$?\" > /home/audit/prebuilts-bg.exit" > /home/audit/prebuilts-bg.log 2>&1 < /dev/null & echo "background_pid=$!"'
+
+network_action=background resume OpenHarmony prebuilts download
+command=setsid bash -c "bash build/prebuilts_download.sh; echo \">0" > /home/audit/prebuilts-bg.exit" > /home/audit/prebuilts-bg.log 2>&1 < /dev/null &
+background_pid=827

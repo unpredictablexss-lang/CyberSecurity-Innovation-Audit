@@ -1,0 +1,5 @@
+timestamp=2026-10-15T16:55:33.4656461+08:00
+command=git -C E:\网安\audit-sources-20261014\home\audit\openharmony-audit\perf-corpus\distributeddatamgr_kv_store apply --check --whitespace=nowarn <patch>
+fixed_exit=0
+atomic_exit=0
+

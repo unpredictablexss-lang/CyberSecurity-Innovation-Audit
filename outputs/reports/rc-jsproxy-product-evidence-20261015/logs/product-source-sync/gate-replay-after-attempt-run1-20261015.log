@@ -1,0 +1,15 @@
+timestamp=2026-10-15T17:02:55.2937043+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; cd /mnt/e/网安/CyberSecurity-Innovation-Audit; date --iso-8601=seconds; echo "network_action=none"; echo "command=.venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /home/audit/ohos-rk3568-product --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir outputs/reports/rc-jsproxy-product-evidence-20261015"; .venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /home/audit/ohos-rk3568-product --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir outputs/reports/rc-jsproxy-product-evidence-20261015; rc=$?; echo "exit=$rc"; sha256sum outputs/reports/rc-jsproxy-product-evidence-20261015/validation.json; exit $rc'
+
+2026-10-15T17:02:55+08:00
+network_action=none
+command=.venv-web/bin/python -m src.ohscanner.poc.rc_jsproxy_product_gate --candidate-manifest src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json --component-poc outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json --product-evidence research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json --product-source-root /home/audit/ohos-rk3568-product --source-repo /mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store --output-dir outputs/reports/rc-jsproxy-product-evidence-20261015
+{
+  "final_status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "component_validation": "met",
+  "product_gate": "not_met",
+  "output_dir": "outputs/reports/rc-jsproxy-product-evidence-20261015"
+}
+exit=0
+8499dfecc80fa302d66566d96322672db42c36bc5381ced039fdabf27e8b3be8  outputs/reports/rc-jsproxy-product-evidence-20261015/validation.json

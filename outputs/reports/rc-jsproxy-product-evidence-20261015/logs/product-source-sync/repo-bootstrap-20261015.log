@@ -1,0 +1,23 @@
+timestamp=2026-10-15T15:18:27.9715018+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; mkdir -p /home/audit/.local/bin /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=download repo launcher"; echo "command=curl -fL --retry 3 --connect-timeout 20 https://storage.googleapis.com/git-repo-downloads/repo -o /home/audit/.local/bin/repo"; curl -fL --retry 3 --connect-timeout 20 https://storage.googleapis.com/git-repo-downloads/repo -o /home/audit/.local/bin/repo; rc=$?; echo "curl_exit=$rc"; if [ $rc -ne 0 ]; then echo "fallback=https://gitee.com/tools/repo/raw/master/repo"; curl -fL --retry 3 --connect-timeout 20 https://gitee.com/tools/repo/raw/master/repo -o /home/audit/.local/bin/repo; rc=$?; echo "fallback_exit=$rc"; fi; chmod +x /home/audit/.local/bin/repo; sha256sum /home/audit/.local/bin/repo; /home/audit/.local/bin/repo --version 2>&1 | head -n 8; exit $rc'
+
+2026-10-15T15:18:30+08:00
+network_action=download repo launcher
+command=curl -fL --retry 3 --connect-timeout 20 https://storage.googleapis.com/git-repo-downloads/repo -o /home/audit/.local/bin/repo
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 80 45880   80 36893    0     0  29566      0  0:00:01  0:00:01 --:--:-- 29561
+100 45880  100 45880    0     0  35002      0  0:00:01  0:00:01 --:--:-- 34996
+curl_exit=0
+1211b57b57e4122a9c546295a59b37d24068f1164d0e87bef096d5323c413e4f  /home/audit/.local/bin/repo
+<repo not installed>
+repo launcher version 2.65
+       (from /home/audit/.local/bin/repo)
+git 2.34.1
+Python 3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]
+OS Linux 6.18.54.1-microsoft-standard-WSL2 (#1 SMP PREEMPT_DYNAMIC Tue Oct  6 19:13:07 UTC 2026)
+CPU x86_64 (x86_64)
+Bug reports: https://issues.gerritcodereview.com/issues/new?component=1370071

@@ -1,0 +1,14 @@
+timestamp=2026-10-15T16:17:04.4738097+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; mkdir -p /root/.prebuilts_cache; f=/root/.prebuilts_cache/python-linux-x86-GLIBC2.35-3.12.10_20260414.tar.gz; u=https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-GLIBC2.35-3.12.10_20260414.tar.gz; date --iso-8601=seconds; echo "network_action=manual resumable toolchain download"; echo "command=curl -fL --retry 3 --connect-timeout 10 --max-time 25 -C - $u -o $f"; curl -fL --retry 3 --connect-timeout 10 --max-time 25 -C - "$u" -o "$f"; rc=$?; echo "exit=$rc"; stat -c "size=%s" "$f" 2>&1; exit $rc'
+
+2026-10-15T16:17:07+08:00
+network_action=manual resumable toolchain download
+command=curl -fL --retry 3 --connect-timeout 10 --max-time 25 -C - https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-GLIBC2.35-3.12.10_20260414.tar.gz -o /root/.prebuilts_cache/python-linux-x86-GLIBC2.35-3.12.10_20260414.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 9028k  100 9028k    0     0  29.7M      0 --:--:-- --:--:-- --:--:-- 29.7M
+exit=0
+size=9244701

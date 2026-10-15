@@ -1,0 +1,7 @@
+timestamp=2026-10-15T15:44:52.5967771+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; root=/home/audit/ohos-rk3568-product; src=$(realpath -m "$root/device/soc/rockchip"); dst="$root/.repo-broken/device_soc_rockchip-20261015-1544"; expected="$root/device/soc/rockchip"; echo "src=$src"; echo "expected=$expected"; echo "dst=$dst"; [ "$src" = "$expected" ]; [ ! -e "$dst" ]; mkdir -p "$root/.repo-broken"; mv -- "$src" "$dst"; echo "move_exit=0"'
+
+src=/home/audit/ohos-rk3568-product/device/soc/rockchip
+expected=/home/audit/ohos-rk3568-product/device/soc/rockchip
+dst=/home/audit/ohos-rk3568-product/.repo-broken/device_soc_rockchip-20261015-1544
+move_exit=0

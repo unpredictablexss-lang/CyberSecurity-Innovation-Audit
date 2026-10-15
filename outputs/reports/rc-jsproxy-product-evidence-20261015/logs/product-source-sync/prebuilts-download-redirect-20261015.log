@@ -1,0 +1,6 @@
+timestamp=2026-10-15T15:52:02.6352794+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=resume prebuilts with output redirected to /home/audit/prebuilts-download-20261015.log"; echo "command=bash build/prebuilts_download.sh > /home/audit/prebuilts-download-20261015.log 2>&1"; bash build/prebuilts_download.sh > /home/audit/prebuilts-download-20261015.log 2>&1; rc=$?; echo "exit=$rc"; date --iso-8601=seconds; tail -n 80 /home/audit/prebuilts-download-20261015.log; exit $rc'
+
+2026-10-15T15:52:02+08:00
+network_action=resume prebuilts with output redirected to /home/audit/prebuilts-download-20261015.log
+command=bash build/prebuilts_download.sh > /home/audit/prebuilts-download-20261015.log 2>&1

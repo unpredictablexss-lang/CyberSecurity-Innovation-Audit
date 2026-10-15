@@ -1,0 +1,55 @@
+[93m[OHOS WARNING][0m  Failed to find ccache, ccache disabled.
+[OHOS INFO] [PRELOAD] generated build prop info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/build.prop
+[OHOS INFO] [PRELOAD] generated build config info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/build_config.json
+[OHOS INFO] [PRELOAD] generated product parts info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/parts.json
+[OHOS INFO] [PRELOAD] generated parts config info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/parts_config.json
+[OHOS INFO] [PRELOAD] generated build gnargs prop info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/build_gnargs.prop
+[OHOS INFO] [PRELOAD] generated features info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/features.json
+[OHOS INFO] [PRELOAD] generated syscap info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/syscap.json
+[OHOS INFO] [PRELOAD] generated exclusion modules info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/exclusion_modules.json
+[OHOS INFO] [PRELOAD] generated dependency pruning info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/dependency_pruning.json
+[OHOS INFO] [PRELOAD] generated platforms build info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/platforms.build
+[OHOS INFO] [PRELOAD] generated subsystem config info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/subsystem_config.json
+[OHOS INFO] [PRELOAD] generated system capability info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/systemcapability.json
+[OHOS INFO] [PRELOAD] generated compile_standard_whitelist info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/compile_standard_whitelist.json
+[OHOS INFO] [PRELOAD] generated compile_env_allowlist info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/compile_env_allowlist.json
+[OHOS INFO] [PRELOAD] generated hvigor_compile_whitelist info to /home/audit/ohos-rk3568-product/out/preloader/rk3568/hvigor_compile_hap_whitelist.json
+[OHOS INFO]  The run time for _prebuild_and_preload is 0.07 s
+[OHOS INFO] [LOAD] Checking all build args...
+[OHOS INFO] [LOAD] subsytem config scan completed costed is 4.93 s
+
+[91m[OHOS ERROR][0m [LOAD] Traceback (most recent call last):
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/build/hb/containers/status.py", line 47, in wrapper
+[91m[OHOS ERROR][0m [LOAD]     return func(*args, **kwargs)
+[91m[OHOS ERROR][0m [LOAD]            ^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/build/hb/util/loader/load_bundle_file.py", line 60, in _loading_config
+[91m[OHOS ERROR][0m [LOAD]     self.bundle_info = file_utils.read_json_file(self._build_config_file)
+[91m[OHOS ERROR][0m [LOAD]                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/build/scripts/util/file_utils.py", line 42, in read_json_file
+[91m[OHOS ERROR][0m [LOAD]     data = json.load(input_f)
+[91m[OHOS ERROR][0m [LOAD]            ^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/3.12.10/lib/python3.12/json/__init__.py", line 293, in load
+[91m[OHOS ERROR][0m [LOAD]     return loads(fp.read(),
+[91m[OHOS ERROR][0m [LOAD]            ^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/3.12.10/lib/python3.12/json/__init__.py", line 346, in loads
+[91m[OHOS ERROR][0m [LOAD]     return _default_decoder.decode(s)
+[91m[OHOS ERROR][0m [LOAD]            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/3.12.10/lib/python3.12/json/decoder.py", line 338, in decode
+[91m[OHOS ERROR][0m [LOAD]     obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+[91m[OHOS ERROR][0m [LOAD]                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[91m[OHOS ERROR][0m [LOAD]   File "/home/audit/ohos-rk3568-product/prebuilts/python/linux-x86/3.12.10/lib/python3.12/json/decoder.py", line 356, in raw_decode
+[91m[OHOS ERROR][0m [LOAD]     raise JSONDecodeError("Expecting value", s, err.value) from None
+[91m[OHOS ERROR][0m [LOAD] json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[91m[OHOS ERROR][0m [LOAD] 
+
+[91m[OHOS ERROR][0m [LOAD] Code:        0000
+[91m[OHOS ERROR][0m [LOAD] 
+[91m[OHOS ERROR][0m [LOAD] Reason:      Expecting value: line 1 column 1 (char 0)
+[91m[OHOS ERROR][0m [LOAD] 
+[91m[OHOS ERROR][0m [LOAD] Error Type:  UNKNOWN ERROR TYPE
+[91m[OHOS ERROR][0m [LOAD] 
+[91m[OHOS ERROR][0m [LOAD] Description: NO DESCRIPTION
+[91m[OHOS ERROR][0m [LOAD] 
+[91m[OHOS ERROR][0m [LOAD] Solution:    NO SOLUTION
+[91m[OHOS ERROR][0m [LOAD] 
+The file '/home/audit/ohos-rk3568-product/kernel/linux/build/bundle.json' format is incorrect.

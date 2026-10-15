@@ -1,0 +1,57 @@
+timestamp=2026-10-15T15:44:08.9692463+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; date --iso-8601=seconds; echo "network_action=apt update/install git-lfs"; echo "command=apt-get update && apt-get install -y git-lfs"; apt-get update; rc1=$?; echo "apt_update_exit=$rc1"; if [ $rc1 -eq 0 ]; then DEBIAN_FRONTEND=noninteractive apt-get install -y git-lfs; rc=$?; else rc=$rc1; fi; echo "exit=$rc"; git lfs version 2>&1; exit $rc'
+
+2026-10-15T15:44:12+08:00
+network_action=apt update/install git-lfs
+command=apt-get update && apt-get install -y git-lfs
+Get:1 http://security.ubuntu.com/ubuntu jammy-security InRelease [129 kB]
+Hit:2 http://archive.ubuntu.com/ubuntu jammy InRelease
+Get:3 http://archive.ubuntu.com/ubuntu jammy-updates InRelease [128 kB]
+Get:4 http://security.ubuntu.com/ubuntu jammy-security/main amd64 Packages [3642 kB]
+Get:5 http://archive.ubuntu.com/ubuntu jammy-backports InRelease [127 kB]
+Get:6 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 Packages [3908 kB]
+Get:7 http://security.ubuntu.com/ubuntu jammy-security/universe amd64 Packages [1053 kB]
+Get:8 http://archive.ubuntu.com/ubuntu jammy-updates/main Translation-en [576 kB]
+Get:9 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 Packages [1287 kB]
+Fetched 10.9 MB in 11s (1020 kB/s)
+Reading package lists...
+apt_update_exit=0
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  git-lfs
+0 upgraded, 1 newly installed, 0 to remove and 37 not upgraded.
+Need to get 3544 kB of archives.
+After this operation, 10.5 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy-updates/universe amd64 git-lfs amd64 3.0.2-1ubuntu0.3 [3544 kB]
+Fetched 3544 kB in 5s (762 kB/s)
+Selecting previously unselected package git-lfs.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 55686 files and directories currently installed.)
+Preparing to unpack .../git-lfs_3.0.2-1ubuntu0.3_amd64.deb ...
+Unpacking git-lfs (3.0.2-1ubuntu0.3) ...
+Setting up git-lfs (3.0.2-1ubuntu0.3) ...
+Processing triggers for man-db (2.10.2-1) ...
+exit=0
+git-lfs/3.0.2 (GitHub; linux amd64; go 1.18.1)

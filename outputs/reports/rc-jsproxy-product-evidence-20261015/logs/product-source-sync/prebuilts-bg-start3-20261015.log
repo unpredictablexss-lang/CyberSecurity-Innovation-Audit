@@ -1,0 +1,8 @@
+timestamp=2026-10-15T15:59:31.6753681+08:00
+script=outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh
+script_sha256=273b76a724fde3d8f622ca20590be52c3b7ef70f53136d5a757a2ea42e285b78
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; rm -f /home/audit/prebuilts-bg.log /home/audit/prebuilts-bg.exit /home/audit/prebuilts-bg-launch.log; echo "network_action=background prebuilts runner"; echo "command=setsid /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh </dev/null >/home/audit/prebuilts-bg-launch.log 2>&1 &"; setsid /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh </dev/null >/home/audit/prebuilts-bg-launch.log 2>&1 & echo "background_pid=$!"'
+
+network_action=background prebuilts runner
+command=setsid /mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/logs/product-source-sync/prebuilts-bg-runner.sh </dev/null >/home/audit/prebuilts-bg-launch.log 2>&1 &
+background_pid=829

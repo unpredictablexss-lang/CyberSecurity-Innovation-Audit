@@ -1,0 +1,11 @@
+timestamp=2026-10-15T17:23:50.9078489+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; export REPO_URL=file:///home/audit/ohos-rk3568-product/.repo/repo; export REPO_REV=e1e215a14ea5373419acb8753b6865de19d1f122; root=/mnt/e/网安/ohos-rk3568-product-stable; mkdir -p "$root"; cd "$root"; date --iso-8601=seconds; echo "network_action=repo init with local repo source at exact commit and GitHub manifest"; echo "REPO_URL=$REPO_URL"; echo "REPO_REV=$REPO_REV"; repo init -u https://github.com/openharmony/manifest.git -b master -m chipsets/dayu200.xml -g "ohos:standard,ohos:system,ohos:chipset" --no-repo-verify --no-clone-bundle; rc=$?; echo "exit=$rc"; if [ -d .repo/manifests ]; then git -C .repo/manifests checkout --detach 077460ee7a284b4f45816764337fea99eb4057cb; echo "manifest_commit=$(git -C .repo/manifests rev-parse HEAD)"; fi; exit $rc'
+
+2026-10-15T17:23:53+08:00
+network_action=repo init with local repo source at exact commit and GitHub manifest
+REPO_URL=file:///home/audit/ohos-rk3568-product/.repo/repo
+REPO_REV=e1e215a14ea5373419acb8753b6865de19d1f122
+repo: warning: verification of repo code has been disabled;
+repo will not be able to verify the integrity of itself.
+
+warning: repo is not tracking a remote branch, so it will not receive updates

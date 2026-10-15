@@ -1,0 +1,4 @@
+timestamp=2026-10-15T16:46:05.0787146+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; root=/home/audit/ohos-rk3568-product; out=/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/reports/rc-jsproxy-product-evidence-20261015/inputs/core-project-commits-20261015.txt; : > "$out"; for p in build productdefine/common device/board/hihope device/soc/rockchip vendor/hihope foundation/distributeddatamgr/kv_store kernel/linux/build; do commit=$(git -C "$root/$p" rev-parse HEAD); tree=$(git -C "$root/$p" rev-parse "HEAD^{tree}"); dirty_count=$(git -C "$root/$p" status --porcelain | wc -l); printf "%s\t%s\t%s\t%s\n" "$p" "$commit" "$tree" "$dirty_count" >> "$out"; done; cat "$out"'
+
+fatal: .git/index: index file smaller than expected

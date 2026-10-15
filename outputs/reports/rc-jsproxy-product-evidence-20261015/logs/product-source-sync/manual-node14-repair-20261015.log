@@ -1,0 +1,14 @@
+timestamp=2026-10-15T16:33:34.1881368+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -euo pipefail; root=/home/audit/ohos-rk3568-product; f=/root/.prebuilts_cache/node-v14.21.1-linux-x64.tar.gz; u=https://repo.huaweicloud.com/nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz; expected=8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e; out=$root/prebuilts/build-tools/common/nodejs; date --iso-8601=seconds; echo "network_action=manual repair download of corrupted Node 14 prebuilt"; curl -fL --retry 3 --connect-timeout 10 --max-time 25 "$u" -o "$f"; observed=$(sha256sum "$f" | cut -d" " -f1); echo "observed_sha256=$observed"; [ "$observed" = "$expected" ]; rm -rf "$out/node-v14.21.1-linux-x64"; tar -xzf "$f" -C "$out"; rm -f "$out/current"; ln -s node-v14.21.1-linux-x64 "$out/current"; "$out/current/bin/node" --version; sha256sum "$out/current/bin/node"'
+
+2026-10-15T16:33:37+08:00
+network_action=manual repair download of corrupted Node 14 prebuilt
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 33.4M  100 33.4M    0     0  36.6M      0 --:--:-- --:--:-- --:--:-- 36.5M
+observed_sha256=8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e
+v14.21.1
+6f920cf526ac67c66756848a9622d29d8596b136fec7b93cfe43f8290fc2d223  /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs/current/bin/node

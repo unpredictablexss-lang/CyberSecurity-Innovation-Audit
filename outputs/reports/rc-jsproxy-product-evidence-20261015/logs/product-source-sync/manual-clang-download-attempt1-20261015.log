@@ -1,0 +1,42 @@
+timestamp=2026-10-15T16:18:05.1481699+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; mkdir -p /root/.prebuilts_cache; f=/root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz; u=https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz; date --iso-8601=seconds; echo "network_action=manual resumable clang toolchain download"; echo "command=curl -fL --connect-timeout 10 --max-time 28 -C - $u -o $f"; curl -fL --connect-timeout 10 --max-time 28 -C - "$u" -o "$f"; rc=$?; echo "exit=$rc"; stat -c "size=%s" "$f" 2>&1; exit $rc'
+
+2026-10-15T16:18:08+08:00
+network_action=manual resumable clang toolchain download
+command=curl -fL --connect-timeout 10 --max-time 28 -C - https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz -o /root/.prebuilts_cache/clang_linux-x86_64-02fbe8-20260908.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  2  752M    2 15.1M    0     0  39.0M      0  0:00:19 --:--:--  0:00:19 39.0M
+ 12  752M   12 90.7M    0     0  65.3M      0  0:00:11  0:00:01  0:00:10 65.3M
+ 22  752M   22  167M    0     0  70.1M      0  0:00:10  0:00:02  0:00:08 70.1M
+ 33  752M   33  250M    0     0  73.7M      0  0:00:10  0:00:03  0:00:07 73.7M
+ 42  752M   42  322M    0     0  73.0M      0  0:00:10  0:00:04  0:00:06 73.0M
+ 44  752M   44  337M    0     0  62.4M      0  0:00:12  0:00:05  0:00:07 64.2M
+ 46  752M   46  350M    0     0  54.8M      0  0:00:13  0:00:06  0:00:07 51.9M
+ 48  752M   48  361M    0     0  48.7M      0  0:00:15  0:00:07  0:00:08 38.5M
+ 49  752M   49  373M    0     0  44.4M      0  0:00:16  0:00:08  0:00:08 24.7M
+ 51  752M   51  385M    0     0  40.9M      0  0:00:18  0:00:09  0:00:09 12.7M
+ 52  752M   52  398M    0     0  38.3M      0  0:00:19  0:00:10  0:00:09 12.1M
+ 54  752M   54  410M    0     0  36.0M      0  0:00:20  0:00:11  0:00:09 12.0M
+ 56  752M   56  423M    0     0  34.1M      0  0:00:22  0:00:12  0:00:10 12.4M
+ 57  752M   57  435M    0     0  32.5M      0  0:00:23  0:00:13  0:00:10 12.3M
+ 59  752M   59  448M    0     0  31.2M      0  0:00:24  0:00:14  0:00:10 12.6M
+ 61  752M   61  461M    0     0  29.9M      0  0:00:25  0:00:15  0:00:10 12.6M
+ 63  752M   63  474M    0     0  28.9M      0  0:00:26  0:00:16  0:00:10 12.7M
+ 64  752M   64  485M    0     0  27.8M      0  0:00:26  0:00:17  0:00:09 12.3M
+ 66  752M   66  498M    0     0  27.1M      0  0:00:27  0:00:18  0:00:09 12.6M
+ 67  752M   67  510M    0     0  26.3M      0  0:00:28  0:00:19  0:00:09 12.3M
+ 69  752M   69  523M    0     0  25.6M      0  0:00:29  0:00:20  0:00:09 12.3M
+ 71  752M   71  534M    0     0  24.9M      0  0:00:30  0:00:21  0:00:09 12.0M
+ 72  752M   72  547M    0     0  24.4M      0  0:00:30  0:00:22  0:00:08 12.4M
+ 74  752M   74  560M    0     0  23.9M      0  0:00:31  0:00:23  0:00:08 12.3M
+ 76  752M   76  572M    0     0  23.4M      0  0:00:32  0:00:24  0:00:08 12.4M
+ 77  752M   77  584M    0     0  23.0M      0  0:00:32  0:00:25  0:00:07 12.1M
+ 79  752M   79  596M    0     0  22.5M      0  0:00:33  0:00:26  0:00:07 12.2M
+ 80  752M   80  609M    0     0  22.2M      0  0:00:33  0:00:27  0:00:06 12.3M
+ 81  752M   81  616M    0     0  22.0M      0  0:00:34  0:00:27  0:00:07 12.1M
+curl: (28) Operation timed out after 27999 milliseconds with 646118856 out of 789238720 bytes received
+exit=28
+size=646118856

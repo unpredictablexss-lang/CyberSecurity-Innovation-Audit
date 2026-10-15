@@ -1,0 +1,20 @@
+timestamp=2026-10-15T15:41:39.3323142+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; export PATH=/home/audit/.local/bin:$PATH; export REPO_URL=https://github.com/GerritCodeReview/git-repo.git; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=none"; echo "command=repo sync --local-only --no-interleaved --jobs=4 --force-checkout --no-manifest-update"; repo sync --local-only --no-interleaved --jobs=4 --force-checkout --no-manifest-update; rc=$?; echo "exit=$rc"; date --iso-8601=seconds; echo "checkout_dirs=$(find . -maxdepth 5 -type d -name .git | wc -l)"; for p in build foundation/distributeddatamgr/kv_store device/board/hihope device/soc/rockchip vendor/hihope; do printf "%s " "$p"; git -C "$p" rev-parse HEAD 2>&1; done; exit $rc'
+
+2026-10-15T15:41:39+08:00
+network_action=none
+command=repo sync --local-only --no-interleaved --jobs=4 --force-checkout --no-manifest-update
+Skipping update of local manifest project.
+error: Cannot checkout applications_app_samples: ManifestInvalidRevisionError: revision master in applications_app_samples not found
+error: in `sync --local-only --no-interleaved --jobs=4 --force-checkout --no-manifest-update`: revision master in applications_app_samples not found
+exit=1
+2026-10-15T15:41:39+08:00
+checkout_dirs=2
+build e25cf4a7012bdaba7296b30b703201e87d89e390
+foundation/distributeddatamgr/kv_store 64e48eb1d97b45f44125761f16811f78be609a4a
+device/board/hihope 5d368fb765920c2b1cad41eb86164563461a7074
+device/soc/rockchip fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+HEAD
+vendor/hihope fatal: cannot change to 'vendor/hihope': No such file or directory

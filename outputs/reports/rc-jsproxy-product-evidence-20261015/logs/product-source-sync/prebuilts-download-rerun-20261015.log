@@ -1,0 +1,606 @@
+timestamp=2026-10-15T15:49:10.1689471+08:00
+command=wsl.exe -d Ubuntu-22.04 --exec bash -lc 'set -o pipefail; cd /home/audit/ohos-rk3568-product; date --iso-8601=seconds; echo "network_action=resume OpenHarmony prebuilts download after installing unzip"; echo "command=bash build/prebuilts_download.sh"; bash build/prebuilts_download.sh; rc=$?; echo "exit=$rc"; date --iso-8601=seconds; echo "prebuilts_size=$(du -sh prebuilts | cut -f1)"; exit $rc'
+
+2026-10-15T15:49:12+08:00
+network_action=resume OpenHarmony prebuilts download after installing unzip
+command=bash build/prebuilts_download.sh
+Looking in indexes: http://repo.huaweicloud.com/repository/pypi/simple
+Requirement already satisfied: pip in ./oh_venv/lib/python3.10/site-packages (26.2.1)
+Looking in indexes: http://repo.huaweicloud.com/repository/pypi/simple
+Requirement already satisfied: rich in ./oh_venv/lib/python3.10/site-packages (15.0.0)
+Requirement already satisfied: markdown-it-py>=2.2.0 in ./oh_venv/lib/python3.10/site-packages (from rich) (4.2.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in ./oh_venv/lib/python3.10/site-packages (from rich) (2.21.0)
+Requirement already satisfied: mdurl~=0.1 in ./oh_venv/lib/python3.10/site-packages (from markdown-it-py>=2.2.0->rich) (0.1.2)
+rich installed successfully
+prebuilts_download start
+remove nodejs
+Looking in indexes: http://repo.huaweicloud.com/repository/pypi/simple
+Requirement already satisfied: requests in ./oh_venv/lib/python3.10/site-packages (2.34.2)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./oh_venv/lib/python3.10/site-packages (from requests) (3.5.2)
+Requirement already satisfied: idna<4,>=2.5 in ./oh_venv/lib/python3.10/site-packages (from requests) (3.20)
+Requirement already satisfied: urllib3<3,>=1.26 in ./oh_venv/lib/python3.10/site-packages (from requests) (2.8.0)
+Requirement already satisfied: certifi>=2023.5.7 in ./oh_venv/lib/python3.10/site-packages (from requests) (2026.7.22)
+start parse config file /home/audit/ohos-rk3568-product/build/prebuilts_config.json
+start download prebuilts, total 54
+remote_url: /nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+remote_url: /nodejs/v16.20.2/node-v16.20.2-linux-x64.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+remote_url: /nodejs/v18.20.1/node-v18.20.1-linux-x64.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-ohos-3.28.2-20240827.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-windows-x86-3.28.2.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/gn/20260611/gn-linux-x86-20260609.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-x86/bin
+remote_url: /openharmony/compiler/gn/20240530/gn-linux-aarch64-20240530.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-aarch64/bin
+remote_url: /openharmony/compiler/ninja/1.13.2/ohos/ninja-ohos-1.13.2-20260809.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/ohos/bin
+remote_url: /openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-x86/bin
+remote_url: /openharmony/compiler/ninja/1.13.2/windows/ninja-windows-x86-1.13.2-20260810.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/windows-x86/bin
+remote_url: /openharmony/compiler/ninja/1.13.2/linux/ninja-linux-aarch64-1.13.2-20260709.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-aarch64/bin
+remote_url: /openharmony/compiler/llvm_prebuilt_libs/ark_js_prebuilts_20230713.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools
+remote_url: /harmonyos/compiler/packing_tool/packing_tool_libs_20260412.zip
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/packing_tool
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/ohos_arm64/clang_ohos-arm64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/ohos-arm64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/windows/clang_windows-x86_64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/windows-x86_64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux_aarch64/clang_linux_aarch64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-aarch64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/ohos_arm64/libcxx_ndk_ohos-arm64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/ohos-arm64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/windows/libcxx-ndk_windows-x86_64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/windows-x86_64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux/libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux_aarch64/libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-aarch64
+remote_url: /openharmony/compiler/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0-arm-linux-gnueabi/1.0/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/gcc/linux-x86/arm/gcc-linaro-7.5.0-arm-linux-gnueabi
+remote_url: /openharmony/compiler/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0-arm-linux-gnueabi/1.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/gcc/linux-x86/aarch64
+remote_url: /openharmony/compiler/python/3.12.10/linux/python-linux-x86-GLIBC2.27-3.12.10_20260414.tar.gz
+name: python, unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/python
+name: python_llvm, unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/python_llvm
+remote_url: /openharmony/compiler/python/3.12.10/windows/python-mingw-x86-3.12.10_20260627.tar.gz
+name: python, unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/python
+name: python_llvm, unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/python_llvm
+remote_url: /openharmony/develop_tools/bpftool_v5.10.93_20221114.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/develop_tools
+remote_url: /openharmony/develop_tools/pahole_v1.21_20221124.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/develop_tools
+remote_url: /openharmony/compiler/rust/1.72.0-20250515/rust-nightly-x86_64-unknown-linux-gnu.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/rustc
+remote_url: /openharmony/compiler/rust/1.72.0-20250515/rust-std-nightly-aarch64-unknown-linux-ohos.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/rustc
+remote_url: /openharmony/compiler/rust/1.72.0-20250515/rust-std-nightly-armv7-unknown-linux-ohos.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/rustc
+remote_url: /openharmony/compiler/rust/1.72.0-20250515/rust-std-nightly-x86_64-unknown-linux-ohos.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/rustc
+remote_url: /openharmony/compiler/rust/1.72.0-20250515/rust-std-nightly-x86_64-pc-windows-gnullvm.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/rustc
+remote_url: /harmonyos/compiler/hvigor/5.0.3.906/command-line-tools.tar
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/tool/command-line-tools
+remote_url: /harmonyos/compiler/hvigor/6.0.0-release-patch-rc.2/command-line-tools.tar
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/tool/command-line-tools/6.x
+remote_url: /harmonyos/compiler/hvigor/26.0.0.621/command-line-tools.tar
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/tool/command-line-tools/26.x
+remote_url: /harmonyos/compiler/clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-release-x86_64.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools/llvm_aot/aot_x86_release
+remote_url: /harmonyos/compiler/clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-debug-x86_64.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools/llvm_aot/aot_x86_debug
+remote_url: /harmonyos/compiler/clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-release-aarch64.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools/llvm_aot/aot_aarch64_release
+remote_url: /harmonyos/compiler/clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-debug-aarch64.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools/llvm_aot/aot_aarch64_debug
+remote_url: /harmonyos/compiler/clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-release-ohos.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools/llvm_aot/aot_ohos_release
+remote_url: /harmonyos/compiler/clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-release-ohos-gn_20250306.tar.xz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/ark_tools/llvm_aot/aot_gn_ohos
+remote_url: /openharmony/compiler/mingw-w64/11.0.1/clang-mingw-20240510.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/mingw-w64/ohos/linux-x86_64
+remote_url: /openharmony/compiler/cangjie/1.2.0.alpha.21/cangjie-linux-x64-1.2.0-alpha.21.zip
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cangjie_sdk/linux-x64
+remote_url: /openharmony/compiler/cangjie/1.2.0.alpha.21/cangjie-linux-x64-1.2.0-alpha.21-hwasan.zip
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cangjie_sdk/linux-x64-hwasan
+remote_url: /openharmony/compiler/cangjie/1.2.0.alpha.21/cangjie-windows-x64-1.2.0-alpha.21.zip
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cangjie_sdk/windows-x64
+remote_url: /openharmony/compiler/cangjie/1.2.0.alpha.21/cangjie-api-tools-1.2.0-alpha.21.zip
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cangjie_sdk/build-tools
+remote_url: /openharmony/compiler/python/3.12.10/linux/python-linux-arm64-3.12.10_20260423.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/python_llvm
+remote_url: /openharmony/compiler/jsvm/js_rawheap_translator_linux_20260601.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/js_rawheap_translator
+remote_url: /openharmony/compiler/jsvm/js_rawheap_translator_windows_20260601.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/js_rawheap_translator
+remote_url: /openharmony/compiler/jsvm/js_rawheap_translator_darwin_20260601.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/js_rawheap_translator
+remote_url: /openharmony/compiler/jsvm/js_rawheap_translator_ohos_20260604.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/js_rawheap_translator
+remote_url: /openharmony/compiler/jsvm/js_rawheap_translator_linux_arm64_20260604.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/js_rawheap_translator
+[15:49:15] start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/nodejs/v14.21.1/no                      
+           de-v14.21.1-linux-x64.tar.gz                                         
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/nodejs/v16.20.2/no                      
+           de-v16.20.2-linux-x64.tar.gz                                         
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/gn/20260611/gn-linux-x86-20260609.tar.gz                          
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/nodejs/v18.20.1/no                      
+           de-v18.20.1-linux-x64.tar.gz                                         
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz                        
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-windows-x86-3.28.2.tar.gz                      
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/ninja/1.13.2/ohos/ninja-ohos-1.13.2-20260809                      
+           .tar.gz                                                              
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-ohos-3.28.2-20240827.tar.                      
+           gz                                                                   
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/gn/20240530/gn-linux-aarch64-20240530.tar.gz                      
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/ninja/1.13.2/linux/ninja-linux-aarch64-1.13.                      
+           2-20260709.tar.gz                                                    
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-linux-aarch64-3.28.2-2024                      
+           1210.tar.gz                                                          
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/llvm_prebuilt_libs/ark_js_prebuilts_20230713                      
+           .tar.gz                                                              
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/ninja/1.13.2/windows/ninja-windows-x86-1.13.                      
+           2-20260810.tar.gz                                                    
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20                      
+           260810.tar.gz                                                        
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/ohos_arm64/clang_ohos-ar                      
+           m64-02fbe8-20260908.tar.gz                                           
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /packing_tool/packing_tool_libs_20260412.zip                         
+remote sha256 for node-v14.21.1-linux-x64.tar.gz is 8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e
+remote sha256 for node-v18.20.1-linux-x64.tar.gz is d226c39c5546dca97567db8f8ca7f92fca6572d44f181b1f85af83eee5d6f9e1
+remote sha256 for cmake-windows-x86-3.28.2.tar.gz is 8f2a2abf736517d61d457d0507579b99bc8a711503e76f122347b63314a50d68
+remote sha256 for gn-linux-x86-20260609.tar.gz is 6e40a7f19f9aa6949aa10ed1c680fe3b6973ab94bddc52b9e120136845a315bd
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/gn/20260611/gn-linux-x86-20260609.tar.gz,                         
+           Sha256 markword check OK.                                            
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/windows/clang_windows-x8                      
+           6_64-02fbe8-20260908.tar.gz                                          
+           gn-linux-x86-20260609.tar.gz, download and      pool_downloader.py:88
+           decompress completed                                                 
+remote sha256 for node-v16.20.2-linux-x64.tar.gz is c9193e6c414891694759febe846f4f023bf48410a6924a8b1520c46565859665
+remote sha256 for cmake-linux-x86-3.28.2.tar.gz is 6635900983a247bd3eab8fa524c824019ee8f90200f0e772ff5ca86dce05f35c
+remote sha256 for ninja-windows-x86-1.13.2-20260810.tar.gz is 76524e524a6e270dcee5357b06cd90d788731a48cd7f4e2a0ff9267b5bcf2200
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/ninja/1.13.2/windows/ninja-windows-x86-1.13.                      
+           2-20260810.tar.gz, Sha256 markword check OK.                         
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/linux/clang_linux-x86_64                      
+           -02fbe8-20260908.tar.gz                                              
+           ninja-windows-x86-1.13.2-20260810.tar.gz,       pool_downloader.py:88
+           download and decompress completed                                    
+remote sha256 for gn-linux-aarch64-20240530.tar.gz is 5f43e66748895355bc2f091d1699d85909b0be8d3e60f3b54c599b12befe1326
+remote sha256 for ninja-ohos-1.13.2-20260809.tar.gz is 4975e1ebf2b32530a63c3696d215a45c5cf11aaa7a528c191ee2acc6bfd5795e
+remote sha256 for ninja-linux-x86-1.13.2-20260810.tar.gz is 97aad3d1cff64297a90d2fa60e77f246f6c550a5ad26cf38aed99f6413804057
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20                      
+           260810.tar.gz, Sha256 markword check OK.                             
+remote sha256 for packing_tool_libs_20260412.zip is 1001792b91206fa6c146f67fe70fd63d12e9b28172121e3e5a49947d5e1cb3f3
+remote sha256 for clang_ohos-arm64-02fbe8-20260908.tar.gz is ae8b104119903945adda92210d901545706500a96d6e4fc8d5ebe58a4b8a0cb1
+remote sha256 for ark_js_prebuilts_20230713.tar.gz is 92f76967dfe5aeb95f07aad30e5a20eb4df884850e87c02b4436d4ebea8857e4
+remote sha256 for cmake-linux-aarch64-3.28.2-20241210.tar.gz is 92220f56c8fcbdfcbccf178f44c1aebe6af7c2da7a0c87c75626f1174599b93d
+remote sha256 for cmake-ohos-3.28.2-20240827.tar.gz is 0e879d5e0ab3fcf21f3ac93ecddcc48656abaf7ed244a60f8f4bae503333f202
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/ninja/1.13.2/ohos/ninja-ohos-1.13.2-20260809                      
+           .tar.gz, Sha256 markword check OK.                                   
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/gn/20240530/gn-linux-aarch64-20240530.tar.gz                      
+           , Sha256 markword check OK.                                          
+remote sha256 for ninja-linux-aarch64-1.13.2-20260709.tar.gz is a6750cc1b276edc7a5252ca4ff527252bc16d10cd6596259845b02f16bacc241
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/linux_aarch64/clang_linu                      
+           x_aarch64-02fbe8-20260908.tar.gz                                     
+           ninja-linux-x86-1.13.2-20260810.tar.gz,         pool_downloader.py:88
+           download and decompress completed                                    
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/windows/libcxx-ndk_windo                      
+           ws-x86_64-02fbe8-20260908.tar.gz                                     
+           ninja-ohos-1.13.2-20260809.tar.gz, download and pool_downloader.py:88
+           decompress completed                                                 
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/cmake/3.28.2/cmake-ohos-3.28.2-20240827.tar.                      
+           gz, Sha256 markword check OK.                                        
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/ohos_arm64/libcxx_ndk_oh                      
+           os-arm64-02fbe8-20260908.tar.gz                                      
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/ninja/1.13.2/linux/ninja-linux-aarch64-1.13.                      
+           2-20260709.tar.gz, Sha256 markword check OK.                         
+           gn-linux-aarch64-20240530.tar.gz, download and  pool_downloader.py:88
+           decompress completed                                                 
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/linux/libcxx-ndk_linux-x                      
+           86_64-02fbe8-20260908.tar.gz                                         
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/linux_aarch64/libcxx-ndk                      
+           _linux-aarch64-02fbe8-20260908.tar.gz                                
+           cmake-ohos-3.28.2-20240827.tar.gz, download and pool_downloader.py:88
+           decompress completed                                                 
+           ninja-linux-aarch64-1.13.2-20260709.tar.gz,     pool_downloader.py:88
+           download and decompress completed                                    
+remote sha256 for clang_windows-x86_64-02fbe8-20260908.tar.gz is c6577a079fb882837afe4d35cabfa01315742d68fb1de487a857d8c71228a920
+remote sha256 for clang_linux-x86_64-02fbe8-20260908.tar.gz is 8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf
+remote sha256 for clang_linux_aarch64-02fbe8-20260908.tar.gz is 9979b3787b8b092671466bb1b1fd39b43ed326b19fb8dc6063d056acebebe829
+remote sha256 for libcxx-ndk_windows-x86_64-02fbe8-20260908.tar.gz is d48078a14fcf5f14b24de7fbc396863891511573cf1598eb16579e3a7dc6403b
+[15:49:16] https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/clang/15.0.4-02fbe8/windows/libcxx-ndk_windo                      
+           ws-x86_64-02fbe8-20260908.tar.gz, Sha256                             
+           markword check OK.                                                   
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0                      
+           -arm-linux-gnueabi/1.0/prebuilts_gcc_linux-x86_                      
+           arm_gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz                        
+           libcxx-ndk_windows-x86_64-02fbe8-20260908.tar.g pool_downloader.py:88
+           z, download and decompress completed                                 
+remote sha256 for libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz is 0789987b1298374daec3a00ef504f643183e7556fb4aa839af091b09a2c345dc
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/clang/15.0.4-02fbe8/linux/libcxx-ndk_linux-x                      
+           86_64-02fbe8-20260908.tar.gz, Sha256 markword                        
+           check OK.                                                            
+remote sha256 for libcxx_ndk_ohos-arm64-02fbe8-20260908.tar.gz is 4c56e1a71998cce81915e00989e187296e223af8c50db9229e0a4c8117502709
+remote sha256 for libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz is 1733574961f97dbe32c41b8e8bb30dc47af6e3900da8531a67dc08f105db8dea
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/clang/15.0.4-02fbe8/ohos_arm64/libcxx_ndk_oh                      
+           os-arm64-02fbe8-20260908.tar.gz, Sha256                              
+           markword check OK.                                                   
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0                      
+           -arm-linux-gnueabi/1.0/gcc-linaro-7.5.0-2019.12                      
+           -x86_64_aarch64-linux-gnu.tar.xz                                     
+           libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz, pool_downloader.py:88
+           download and decompress completed                                    
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/clang/15.0.4-02fbe8/linux_aarch64/libcxx-ndk                      
+           _linux-aarch64-02fbe8-20260908.tar.gz, Sha256                        
+           markword check OK.                                                   
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/python/3.12.10/linux/python-linux-x86-GLIBC2                      
+           .35-3.12.10_20260414.tar.gz                                          
+           libcxx_ndk_ohos-arm64-02fbe8-20260908.tar.gz,   pool_downloader.py:88
+           download and decompress completed                                    
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/python/3.12.10/windows/python-mingw-x86-3.12                      
+           .10_20260627.tar.gz                                                  
+           libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz pool_downloader.py:88
+           , download and decompress completed                                  
+remote sha256 for prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz is 1197812521c048eba01167dce191a3c249a3c73c0e4180f1987ba3663abb850b
+remote sha256 for python-linux-x86-GLIBC2.35-3.12.10_20260414.tar.gz is 2628c30fe369e2cb39b4abde0201889484eaf49b57e468499a51728bf338bf76
+           https://repo.huaweicloud.com/openharmony/compil pool_downloader.py:88
+           er/python/3.12.10/linux/python-linux-x86-GLIBC2                      
+           .35-3.12.10_20260414.tar.gz, Sha256 markword                         
+           check OK.                                                            
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/develo                      
+           p_tools/bpftool_v5.10.93_20221114.tar.gz                             
+           python-linux-x86-GLIBC2.27-3.12.10_20260414.tar pool_downloader.py:88
+           .gz, download and decompress completed                               
+remote sha256 for python-mingw-x86-3.12.10_20260627.tar.gz is 32d4d7471ad47237a01ef2fcdc9d8265bd4804f24d9f245a1e77d5e13b4e5927
+remote sha256 for gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz is 3b6465fb91564b54bbdf9578b4cc3aa198dd363f7a43820eab06ea2932c8e0bf
+remote sha256 for bpftool_v5.10.93_20221114.tar.gz is 1ef87a1c852705cad94ff6bb122346679fde4c8866bcbe616e46137fd7cb9656
+           https://repo.huaweicloud.com/openharmony/develo pool_downloader.py:88
+           p_tools/bpftool_v5.10.93_20221114.tar.gz,                            
+           Sha256 markword check OK.                                            
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/python/3.12.10/windows/python-mingw-x86-3.12                      
+           .10_20260627.tar.gz                                                  
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/develo                      
+           p_tools/pahole_v1.21_20221124.tar.gz                                 
+           bpftool_v5.10.93_20221114.tar.gz, download and  pool_downloader.py:88
+           decompress completed                                                 
+remote sha256 for pahole_v1.21_20221124.tar.gz is 8c5da09ea8023b7bce87dcdc13c905295563dcb33f27735321d78f48a154c928
+           https://repo.huaweicloud.com/openharmony/develo pool_downloader.py:88
+           p_tools/pahole_v1.21_20221124.tar.gz, Sha256                         
+           markword check OK.                                                   
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-nightly-x86_64-unk                      
+           nown-linux-gnu.tar.gz                                                
+           pahole_v1.21_20221124.tar.gz, download and      pool_downloader.py:88
+           decompress completed                                                 
+remote sha256 for rust-nightly-x86_64-unknown-linux-gnu.tar.gz is 7f9266abb82dc5080cbe074dbfd6baa735973cf950c49d642ca639f28f5f990e
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-nightly-x86_64-unk                      
+           nown-linux-gnu.tar.gz                                                
+           /home/audit/openharmony_prebuilts/953eb29194c0f pool_downloader.py:88
+           d5b5e05579838659e03.packing_tool_libs_20260412.                      
+           zip, Sha256 check download OK.                                       
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/953eb29194c0f                      
+           d5b5e05579838659e03.packing_tool_libs_20260412.                      
+           zip                                                                  
+           /home/audit/openharmony_prebuilts/953eb29194c0f pool_downloader.py:88
+           d5b5e05579838659e03.packing_tool_libs_20260412.                      
+           zip extracted to                                                     
+           /home/audit/ohos-rk3568-product/prebuilts/packi                      
+           ng_tool                                                              
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-aarch6                      
+           4-unknown-linux-ohos.tar.gz                                          
+           packing_tool_libs_20260412.zip, download and    pool_downloader.py:88
+           decompress completed                                                 
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz                        
+remote sha256 for rust-std-nightly-aarch64-unknown-linux-ohos.tar.gz is 67079af8865aac7b209cdeabe65343e674303685ae354d2ce5aa9920b78a6a2d
+           Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/d2fdeb4b32eaa                      
+           8b7de4fa1594db4ea07.python-mingw-x86-3.12.10_20                      
+           260627.tar.gz                                                        
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/d2fdeb4b32eaa                      
+           8b7de4fa1594db4ea07.python-mingw-x86-3.12.10_20                      
+           260627.tar.gz                                                        
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-aarch6                      
+           4-unknown-linux-ohos.tar.gz                                          
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-linux-aarch64-3.28.2-2024                      
+           1210.tar.gz                                                          
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/llvm_prebuilt_libs/ark_js_prebuilts_20230713                      
+           .tar.gz                                                              
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0                      
+           -arm-linux-gnueabi/1.0/gcc-linaro-7.5.0-2019.12                      
+           -x86_64_aarch64-linux-gnu.tar.xz                                     
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/nodejs/v18.20.1/no                      
+           de-v18.20.1-linux-x64.tar.gz                                         
+[15:49:17] Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/ohos_arm64/clang_ohos-ar                      
+           m64-02fbe8-20260908.tar.gz                                           
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/nodejs/v16.20.2/no                      
+           de-v16.20.2-linux-x64.tar.gz                                         
+           /home/audit/openharmony_prebuilts/d2fdeb4b32eaa pool_downloader.py:88
+           8b7de4fa1594db4ea07.python-mingw-x86-3.12.10_20                      
+           260627.tar.gz extracted to                                           
+           /home/audit/ohos-rk3568-product/prebuilts/pytho                      
+           n                                                                    
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-armv7-                      
+           unknown-linux-ohos.tar.gz                                            
+           python-mingw-x86-3.12.10_20260627.tar.gz,       pool_downloader.py:88
+           download and decompress completed                                    
+remote sha256 for rust-std-nightly-armv7-unknown-linux-ohos.tar.gz is e6af70129d1b825e8973c1a6fb12b3a0dd3a6cf78ed8feb53b5afb73b5634225
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-armv7-                      
+           unknown-linux-ohos.tar.gz                                            
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/windows/clang_windows-x8                      
+           6_64-02fbe8-20260908.tar.gz                                          
+[15:49:18] Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0                      
+           -arm-linux-gnueabi/1.0/prebuilts_gcc_linux-x86_                      
+           arm_gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz                        
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/cmake/3.28.2/cmake-windows-x86-3.28.2.tar.gz                      
+           /home/audit/openharmony_prebuilts/44f2993d118ed pool_downloader.py:88
+           3cefe4792a2fd62547f.node-v14.21.1-linux-x64.tar                      
+           .gz, Sha256 check download OK.                                       
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/44f2993d118ed                      
+           3cefe4792a2fd62547f.node-v14.21.1-linux-x64.tar                      
+           .gz                                                                  
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/linux/clang_linux-x86_64                      
+           -02fbe8-20260908.tar.gz                                              
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/clang/15.0.4-02fbe8/linux_aarch64/clang_linu                      
+           x_aarch64-02fbe8-20260908.tar.gz                                     
+[15:49:19] Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/5084e36f83c59                      
+           ea4aa08675172857d08.rust-std-nightly-armv7-unkn                      
+           own-linux-ohos.tar.gz                                                
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/5084e36f83c59                      
+           ea4aa08675172857d08.rust-std-nightly-armv7-unkn                      
+           own-linux-ohos.tar.gz                                                
+           /home/audit/openharmony_prebuilts/44f2993d118ed pool_downloader.py:88
+           3cefe4792a2fd62547f.node-v14.21.1-linux-x64.tar                      
+           .gz extracted to                                                     
+           /home/audit/ohos-rk3568-product/prebuilts/build                      
+           -tools/common/nodejs                                                 
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-x86_64                      
+           -unknown-linux-ohos.tar.gz                                           
+           node-v14.21.1-linux-x64.tar.gz, download and    pool_downloader.py:88
+           decompress completed                                                 
+           /home/audit/openharmony_prebuilts/5084e36f83c59 pool_downloader.py:88
+           ea4aa08675172857d08.rust-std-nightly-armv7-unkn                      
+           own-linux-ohos.tar.gz extracted to                                   
+           /home/audit/ohos-rk3568-product/prebuilts/rustc                      
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-x86_64                      
+           -pc-windows-gnullvm.tar.gz                                           
+           rust-std-nightly-armv7-unknown-linux-ohos.tar.g pool_downloader.py:88
+           z, download and decompress completed                                 
+remote sha256 for rust-std-nightly-x86_64-unknown-linux-ohos.tar.gz is 51f6d804cf5c8d83ec5d7b58a346d873654cb98ee34ab3b8de5a3857d531078f
+[15:49:20] Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-x86_64                      
+           -unknown-linux-ohos.tar.gz                                           
+remote sha256 for rust-std-nightly-x86_64-pc-windows-gnullvm.tar.gz is 217ad86cf0402630b6c171b380b0e4160b7976fef9565f00ca007dd87704932d
+[15:49:21] Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/openharmony/compil                      
+           er/rust/1.72.0-20250515/rust-std-nightly-x86_64                      
+           -pc-windows-gnullvm.tar.gz                                           
+[15:49:22] Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/e778f29e95d22                      
+           f8e3cb6e604936229dc.node-v16.20.2-linux-x64.tar                      
+           .gz                                                                  
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/e778f29e95d22                      
+           f8e3cb6e604936229dc.node-v16.20.2-linux-x64.tar                      
+           .gz                                                                  
+[15:49:23] /home/audit/openharmony_prebuilts/e778f29e95d22 pool_downloader.py:88
+           f8e3cb6e604936229dc.node-v16.20.2-linux-x64.tar                      
+           .gz extracted to                                                     
+           /home/audit/ohos-rk3568-product/prebuilts/build                      
+           -tools/common/nodejs                                                 
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /hvigor/5.0.3.906/command-line-tools.tar                             
+           node-v16.20.2-linux-x64.tar.gz, download and    pool_downloader.py:88
+           decompress completed                                                 
+           Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/ebe7c49b8fdbb                      
+           8cebc06adb7fef9cb4b.cmake-windows-x86-3.28.2.ta                      
+           r.gz                                                                 
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/ebe7c49b8fdbb                      
+           8cebc06adb7fef9cb4b.cmake-windows-x86-3.28.2.ta                      
+           r.gz                                                                 
+[15:49:24] /home/audit/openharmony_prebuilts/ebe7c49b8fdbb pool_downloader.py:88
+           8cebc06adb7fef9cb4b.cmake-windows-x86-3.28.2.ta                      
+           r.gz extracted to                                                    
+           /home/audit/ohos-rk3568-product/prebuilts/cmake                      
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /hvigor/6.0.0-release-patch-rc.2/command-line-t                      
+           ools.tar                                                             
+           cmake-windows-x86-3.28.2.tar.gz, download and   pool_downloader.py:88
+           decompress completed                                                 
+remote sha256 for command-line-tools.tar is 83e45209c65662bbeab81d36d691807bf8db56d94d7d15c959600dcc348814c3
+[15:49:25] Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /hvigor/6.0.0-release-patch-rc.2/command-line-t                      
+           ools.tar                                                             
+remote sha256 for command-line-tools.tar is 4c1abb155c9868e5a5612cf7a6ac25f00ad9d059cea4435593100ac76dd570f9
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /hvigor/5.0.3.906/command-line-tools.tar                             
+           Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/1d9cac0be980c                      
+           9030ae8ace9c1c9c948.rust-std-nightly-x86_64-unk                      
+           nown-linux-ohos.tar.gz                                               
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/1d9cac0be980c                      
+           9030ae8ace9c1c9c948.rust-std-nightly-x86_64-unk                      
+           nown-linux-ohos.tar.gz                                               
+[15:49:26] /home/audit/openharmony_prebuilts/1d9cac0be980c pool_downloader.py:88
+           9030ae8ace9c1c9c948.rust-std-nightly-x86_64-unk                      
+           nown-linux-ohos.tar.gz extracted to                                  
+           /home/audit/ohos-rk3568-product/prebuilts/rustc                      
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /hvigor/26.0.0.621/command-line-tools.tar                            
+           rust-std-nightly-x86_64-unknown-linux-ohos.tar. pool_downloader.py:88
+           gz, download and decompress completed                                
+[15:49:27] Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/59325cdd5538f                      
+           70910f66328acedea7d.prebuilts_gcc_linux-x86_arm                      
+           _gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz                           
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/59325cdd5538f                      
+           70910f66328acedea7d.prebuilts_gcc_linux-x86_arm                      
+           _gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz                           
+remote sha256 for command-line-tools.tar is 83888fb65cb80d40f07af0bd27d76cae005551265a3b0cd437b8a4f0c93d13cc
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /hvigor/26.0.0.621/command-line-tools.tar                            
+[15:49:31] /home/audit/openharmony_prebuilts/59325cdd5538f pool_downloader.py:88
+           70910f66328acedea7d.prebuilts_gcc_linux-x86_arm                      
+           _gcc-linaro-7.5.0-arm-linux-gnueabi.tar.gz                           
+           extracted to                                                         
+           /home/audit/ohos-rk3568-product/prebuilts/gcc/l                      
+           inux-x86/arm/gcc-linaro-7.5.0-arm-linux-gnueabi                      
+           start deal                                      pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-rele                      
+           ase-x86_64.tar.xz                                                    
+           prebuilts_gcc_linux-x86_arm_gcc-linaro-7.5.0-ar pool_downloader.py:88
+           m-linux-gnueabi.tar.gz, download and decompress                      
+           completed                                                            
+remote sha256 for llvm-15.0.4-ark18-release-x86_64.tar.xz is 9a64f2ea3a1dc4a06b814758036b4640256ec7d2d618674cfc51fae6eeedfd79
+           Downloading                                     pool_downloader.py:88
+           https://repo.huaweicloud.com/harmonyos/compiler                      
+           /clang/15.0.4-0d8b9c-ark/llvm-15.0.4-ark18-rele                      
+           ase-x86_64.tar.xz                                                    
+[15:49:32] Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/f37dca93a7202                      
+           ea9ae85160b20106156.llvm-15.0.4-ark18-release-x                      
+           86_64.tar.xz                                                         
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/f37dca93a7202                      
+           ea9ae85160b20106156.llvm-15.0.4-ark18-release-x                      
+           86_64.tar.xz                                                         
+[15:49:33] Downloaded                                      pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/f868615b69ef8                      
+           c04d1bfa4f6ed91c9d5.rust-std-nightly-x86_64-pc-                      
+           windows-gnullvm.tar.gz                                               
+           Start decompression                             pool_downloader.py:88
+           /home/audit/openharmony_prebuilts/f868615b69ef8                      
+           c04d1bfa4f6ed91c9d5.rust-std-nightly-x86_64-pc-                      
+           windows-gnullvm.tar.gz                                               

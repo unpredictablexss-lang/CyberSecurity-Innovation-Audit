@@ -1,0 +1,182 @@
+start parse config file build/prebuilts_config.json
+Required tags for parts node,gn,ninja,clang,libcxx-ndk,python,hvigor: ['base']
+start download prebuilts, total 15
+remote_url: /nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+remote_url: /nodejs/v16.20.2/node-v16.20.2-linux-x64.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+remote_url: /nodejs/v18.20.1/node-v18.20.1-linux-x64.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-ohos-3.28.2-20240827.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-windows-x86-3.28.2.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/cmake
+remote_url: /openharmony/compiler/gn/20260611/gn-linux-x86-20260609.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-x86/bin
+remote_url: /openharmony/compiler/gn/20240530/gn-linux-aarch64-20240530.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-aarch64/bin
+remote_url: /openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-x86/bin
+remote_url: /openharmony/compiler/ninja/1.13.2/linux/ninja-linux-aarch64-1.13.2-20260709.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/build-tools/linux-aarch64/bin
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux/libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-x86_64
+remote_url: /openharmony/compiler/clang/15.0.4-02fbe8/linux_aarch64/libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/clang/ohos/linux-aarch64
+remote_url: /openharmony/compiler/python/3.12.10/linux/python-linux-x86-GLIBC2.27-3.12.10_20260414.tar.gz
+unzip_dir: /home/audit/ohos-rk3568-product/prebuilts/python
+start deal https://repo.huaweicloud.com/nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz
+start deal https://repo.huaweicloud.com/nodejs/v16.20.2/node-v16.20.2-linux-x64.tar.gz
+remote sha256 for node-v16.20.2-linux-x64.tar.gz is c9193e6c414891694759febe846f4f023bf48410a6924a8b1520c46565859665
+remote sha256 for node-v14.21.1-linux-x64.tar.gz is 8ae854dac7fa5e7dfd5dae8fe8e001c0599821705f650b32c4819149cfda1d0e
+Downloading https://repo.huaweicloud.com/nodejs/v14.21.1/node-v14.21.1-linux-x64.tar.gz
+Downloading https://repo.huaweicloud.com/nodejs/v16.20.2/node-v16.20.2-linux-x64.tar.gz
+Downloaded /root/.prebuilts_cache/44f2993d118ed3cefe4792a2fd62547f.node-v14.21.1-linux-x64.tar.gz
+Start decompression /root/.prebuilts_cache/44f2993d118ed3cefe4792a2fd62547f.node-v14.21.1-linux-x64.tar.gz
+Downloaded /root/.prebuilts_cache/e778f29e95d22f8e3cb6e604936229dc.node-v16.20.2-linux-x64.tar.gz
+Start decompression /root/.prebuilts_cache/e778f29e95d22f8e3cb6e604936229dc.node-v16.20.2-linux-x64.tar.gz
+/root/.prebuilts_cache/e778f29e95d22f8e3cb6e604936229dc.node-v16.20.2-linux-x64.tar.gz extracted to /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+start deal https://repo.huaweicloud.com/nodejs/v18.20.1/node-v18.20.1-linux-x64.tar.gz
+node-v16.20.2-linux-x64.tar.gz, download and decompress completed
+remote sha256 for node-v18.20.1-linux-x64.tar.gz is d226c39c5546dca97567db8f8ca7f92fca6572d44f181b1f85af83eee5d6f9e1
+Downloading https://repo.huaweicloud.com/nodejs/v18.20.1/node-v18.20.1-linux-x64.tar.gz
+/root/.prebuilts_cache/44f2993d118ed3cefe4792a2fd62547f.node-v14.21.1-linux-x64.tar.gz extracted to /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+start deal https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz
+node-v14.21.1-linux-x64.tar.gz, download and decompress completed
+remote sha256 for cmake-linux-x86-3.28.2.tar.gz is 6635900983a247bd3eab8fa524c824019ee8f90200f0e772ff5ca86dce05f35c
+Downloading https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-x86-3.28.2.tar.gz
+Downloaded /root/.prebuilts_cache/9a42f763a78e35ac85f11241a4b8b631.node-v18.20.1-linux-x64.tar.gz
+Start decompression /root/.prebuilts_cache/9a42f763a78e35ac85f11241a4b8b631.node-v18.20.1-linux-x64.tar.gz
+Downloaded /root/.prebuilts_cache/9b1ca53ad98ebfaa0fbfa26d20d534df.cmake-linux-x86-3.28.2.tar.gz
+Start decompression /root/.prebuilts_cache/9b1ca53ad98ebfaa0fbfa26d20d534df.cmake-linux-x86-3.28.2.tar.gz
+/root/.prebuilts_cache/9b1ca53ad98ebfaa0fbfa26d20d534df.cmake-linux-x86-3.28.2.tar.gz extracted to /home/audit/ohos-rk3568-product/prebuilts/cmake
+start deal https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-ohos-3.28.2-20240827.tar.gz
+cmake-linux-x86-3.28.2.tar.gz, download and decompress completed
+remote sha256 for cmake-ohos-3.28.2-20240827.tar.gz is 0e879d5e0ab3fcf21f3ac93ecddcc48656abaf7ed244a60f8f4bae503333f202
+https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-ohos-3.28.2-20240827.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-windows-x86-3.28.2.tar.gz
+cmake-ohos-3.28.2-20240827.tar.gz, download and decompress completed
+/root/.prebuilts_cache/9a42f763a78e35ac85f11241a4b8b631.node-v18.20.1-linux-x64.tar.gz extracted to /home/audit/ohos-rk3568-product/prebuilts/build-tools/common/nodejs
+start deal https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz
+remote sha256 for cmake-windows-x86-3.28.2.tar.gz is 8f2a2abf736517d61d457d0507579b99bc8a711503e76f122347b63314a50d68
+node-v18.20.1-linux-x64.tar.gz, download and decompress completed
+https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-windows-x86-3.28.2.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/gn/20260611/gn-linux-x86-20260609.tar.gz
+cmake-windows-x86-3.28.2.tar.gz, download and decompress completed
+remote sha256 for gn-linux-x86-20260609.tar.gz is 6e40a7f19f9aa6949aa10ed1c680fe3b6973ab94bddc52b9e120136845a315bd
+remote sha256 for cmake-linux-aarch64-3.28.2-20241210.tar.gz is 92220f56c8fcbdfcbccf178f44c1aebe6af7c2da7a0c87c75626f1174599b93d
+https://repo.huaweicloud.com/openharmony/compiler/gn/20260611/gn-linux-x86-20260609.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/gn/20240530/gn-linux-aarch64-20240530.tar.gz
+gn-linux-x86-20260609.tar.gz, download and decompress completed
+Downloading https://repo.huaweicloud.com/openharmony/compiler/cmake/3.28.2/cmake-linux-aarch64-3.28.2-20241210.tar.gz
+remote sha256 for gn-linux-aarch64-20240530.tar.gz is 5f43e66748895355bc2f091d1699d85909b0be8d3e60f3b54c599b12befe1326
+https://repo.huaweicloud.com/openharmony/compiler/gn/20240530/gn-linux-aarch64-20240530.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz
+gn-linux-aarch64-20240530.tar.gz, download and decompress completed
+remote sha256 for ninja-linux-x86-1.13.2-20260810.tar.gz is 97aad3d1cff64297a90d2fa60e77f246f6c550a5ad26cf38aed99f6413804057
+https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-x86-1.13.2-20260810.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-aarch64-1.13.2-20260709.tar.gz
+ninja-linux-x86-1.13.2-20260810.tar.gz, download and decompress completed
+remote sha256 for ninja-linux-aarch64-1.13.2-20260709.tar.gz is a6750cc1b276edc7a5252ca4ff527252bc16d10cd6596259845b02f16bacc241
+https://repo.huaweicloud.com/openharmony/compiler/ninja/1.13.2/linux/ninja-linux-aarch64-1.13.2-20260709.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz
+ninja-linux-aarch64-1.13.2-20260709.tar.gz, download and decompress completed
+remote sha256 for clang_linux-x86_64-02fbe8-20260908.tar.gz is 8c1173e6386e2c7f72ca8350693fb2cf122b6fc6107fa66c77c6ba6283743edf
+Downloading https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz
+Downloaded /root/.prebuilts_cache/7987da516421e3cf13d3229d00479724.cmake-linux-aarch64-3.28.2-20241210.tar.gz
+Start decompression /root/.prebuilts_cache/7987da516421e3cf13d3229d00479724.cmake-linux-aarch64-3.28.2-20241210.tar.gz
+/root/.prebuilts_cache/7987da516421e3cf13d3229d00479724.cmake-linux-aarch64-3.28.2-20241210.tar.gz extracted to /home/audit/ohos-rk3568-product/prebuilts/cmake
+start deal https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz
+cmake-linux-aarch64-3.28.2-20241210.tar.gz, download and decompress completed
+remote sha256 for libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz is 0789987b1298374daec3a00ef504f643183e7556fb4aa839af091b09a2c345dc
+https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux_aarch64/libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz
+libcxx-ndk_linux-x86_64-02fbe8-20260908.tar.gz, download and decompress completed
+remote sha256 for libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz is 1733574961f97dbe32c41b8e8bb30dc47af6e3900da8531a67dc08f105db8dea
+https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux_aarch64/libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz, Sha256 markword check OK.
+start deal https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz
+libcxx-ndk_linux-aarch64-02fbe8-20260908.tar.gz, download and decompress completed
+get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz by sh256 file failed.
+get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz by SHASUMS256.txt file failed.
+get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz by sh256 file failed.
+get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz by SHASUMS256.txt file failed.
+get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz by sh256 file failed.
+get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz by SHASUMS256.txt file failed.
+Task <Future at 0x788019c90400 state=finished raised Exception> generated an exception: get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz failed.
+Traceback (most recent call last):
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 75, in _wait_for_download_tasks_complete
+    _ = task.result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 104, in _process
+    mark_file_exist, mark_file_path = check_sha256_by_mark(remote_url, unzip_dir, unzip_filename)
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/download_util.py", line 53, in check_sha256_by_mark
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/download_util.py", line 101, in get_remote_sha256
+Exception: get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz failed.
+
+Failed to open https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz, Error: [Errno 30] Read-only file system
+Failed to open https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz, Error: [Errno 30] Read-only file system: '/root/.prebuilts_cache/528f72941fc197274052a0b0882d8958.clang_linux-x86_64-02fbe8-20260908.tar.gz'
+Failed to open https://repo.huaweicloud.com/openharmony/compiler/clang/15.0.4-02fbe8/linux/clang_linux-x86_64-02fbe8-20260908.tar.gz, Error: [Errno 30] Read-only file system: '/root/.prebuilts_cache/528f72941fc197274052a0b0882d8958.clang_linux-x86_64-02fbe8-20260908.tar.gz'
+/root/.prebuilts_cache/528f72941fc197274052a0b0882d8958.clang_linux-x86_64-02fbe8-20260908.tar.gz, download failed after 3 retries, please check network status. Prebuilts download exit.
+Traceback (most recent call last):
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_config.py", line 121, in <module>
+    sys.exit(main())
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_config.py", line 115, in main
+    unchanged = pool_downloader.start()
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 57, in start
+    self._run_download_in_thread_pool()
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 70, in _run_download_in_thread_pool
+    self._wait_for_download_tasks_complete(tasks)
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 79, in _wait_for_download_tasks_complete
+    raise e
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 75, in _wait_for_download_tasks_complete
+    _ = task.result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 104, in _process
+    mark_file_exist, mark_file_path = check_sha256_by_mark(remote_url, unzip_dir, unzip_filename)
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/download_util.py", line 53, in check_sha256_by_mark
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/download_util.py", line 101, in get_remote_sha256
+Exception: get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz failed.
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 72, in apport_excepthook
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1002, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 945, in _find_spec
+  File "<frozen importlib._bootstrap_external>", line 1439, in find_spec
+  File "<frozen importlib._bootstrap_external>", line 1411, in _get_spec
+  File "<frozen importlib._bootstrap_external>", line 1548, in find_spec
+  File "<frozen importlib._bootstrap_external>", line 1591, in _fill_cache
+OSError: [Errno 5] Input/output error: '/usr/lib/python3/dist-packages/apport'
+
+Original exception was:
+Traceback (most recent call last):
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_config.py", line 121, in <module>
+    sys.exit(main())
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_config.py", line 115, in main
+    unchanged = pool_downloader.start()
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 57, in start
+    self._run_download_in_thread_pool()
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 70, in _run_download_in_thread_pool
+    self._wait_for_download_tasks_complete(tasks)
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 79, in _wait_for_download_tasks_complete
+    raise e
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 75, in _wait_for_download_tasks_complete
+    _ = task.result()
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+  File "/usr/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+  File "/usr/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/pool_downloader.py", line 104, in _process
+    mark_file_exist, mark_file_path = check_sha256_by_mark(remote_url, unzip_dir, unzip_filename)
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/download_util.py", line 53, in check_sha256_by_mark
+  File "/home/audit/ohos-rk3568-product/build/prebuilts_service/download_util.py", line 101, in get_remote_sha256
+Exception: get remote sha256 for https://repo.huaweicloud.com/openharmony/compiler/python/3.12.10/linux/python-linux-x86-2.35-3.12.10_20260414.tar.gz failed.

@@ -1,0 +1,446 @@
+{
+  "cia_requirement": {
+    "availability": "measured process/API failure or no failure under repeated product trigger",
+    "confidentiality": "same-app/cross-app/device disclosure boundary, or verified negative",
+    "integrity": "measured returned-entry or state divergence, or verified negative"
+  },
+  "component_validation": {
+    "candidate_status": "candidate/unknown",
+    "evidence_level": "controlled_component_dynamic_reproduction",
+    "obligations": [
+      {
+        "detail": "candidate/source/detector identity matches the fixed manifest",
+        "id": "component_source_and_identity",
+        "status": "met"
+      },
+      {
+        "detail": {
+          "fixed_control_mutex": {
+            "expected": 0,
+            "finding_count": 0
+          },
+          "patched_atomic_minimal": {
+            "expected": 0,
+            "finding_count": 0
+          },
+          "vulnerable": {
+            "expected": 2,
+            "finding_count": 2
+          }
+        },
+        "id": "component_detector_three_party",
+        "status": "met"
+      },
+      {
+        "detail": {
+          "fixed_control_mutex": {
+            "close_get_entry": {
+              "expected": "clean",
+              "outcomes": [
+                "clean",
+                "clean",
+                "clean"
+              ],
+              "repeats": [
+                1,
+                2,
+                3
+              ]
+            },
+            "race": {
+              "expected": "clean",
+              "outcomes": [
+                "clean",
+                "clean",
+                "clean"
+              ],
+              "repeats": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "patched_atomic_minimal": {
+            "close_get_entry": {
+              "expected": "clean",
+              "outcomes": [
+                "clean",
+                "clean",
+                "clean"
+              ],
+              "repeats": [
+                1,
+                2,
+                3
+              ]
+            },
+            "race": {
+              "expected": "clean",
+              "outcomes": [
+                "clean",
+                "clean",
+                "clean"
+              ],
+              "repeats": [
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "vulnerable": {
+            "close_get_entry": {
+              "expected": "sanitizer_triggered",
+              "outcomes": [
+                "sanitizer_triggered",
+                "sanitizer_triggered",
+                "sanitizer_triggered"
+              ],
+              "repeats": [
+                1,
+                2,
+                3
+              ]
+            },
+            "race": {
+              "expected": "sanitizer_triggered",
+              "outcomes": [
+                "sanitizer_triggered",
+                "sanitizer_triggered",
+                "sanitizer_triggered"
+              ],
+              "repeats": [
+                1,
+                2,
+                3
+              ]
+            }
+          }
+        },
+        "id": "component_vulnerable_fixed_patched_repeats",
+        "status": "met"
+      },
+      {
+        "detail": {
+          "fixed_control": "mutex around JSProxy owner access",
+          "fixed_source_sha256": "9044ccaac42cefdd2c153c01b07c0893634aa0aee8ad54093e1065740329a902",
+          "minimal_patch": "std::atomic_load/std::atomic_store on instance_",
+          "patched_source_sha256": "4d57f286602e15af636c40158e8cdabc6f617fda89d8276128c674b4ab633b6f",
+          "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9"
+        },
+        "id": "component_patch_revalidation",
+        "status": "met"
+      }
+    ],
+    "status": "met",
+    "validated_vulnerability": 0
+  },
+  "final_status": "candidate/unknown",
+  "fixed_identity": {
+    "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+    "repository": "openharmony/distributeddatamgr_kv_store",
+    "source_blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+    "source_path": "frameworks/common/js_proxy.h",
+    "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+    "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023"
+  },
+  "input_files": {
+    "candidate_manifest": {
+      "path": "src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json",
+      "sha256": "9bfd1891d2100a4cb1006addbd75f83683a4aa9e0ccc687ebd8ee35fcb7c473b"
+    },
+    "component_poc": {
+      "path": "outputs/poc/shared-ptr-jsproxy-product-evidence-20261015/replay-001/poc.json",
+      "sha256": "9f16bec8920f56bc66246918fa7d355e2cb013ed1cbefff509c309b50b8d6f35"
+    },
+    "generator": {
+      "path": "src/ohscanner/poc/rc_jsproxy_product_gate.py",
+      "sha256": "f4781d2959737f20e0d48b8949e5d5ad043cccad84ebade24838fb6a17c99721"
+    },
+    "product_evidence": {
+      "path": "research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json",
+      "sha256": "597d2bfb28d7afb0871d6e20082ce22492af52e28d404e60468e2fe44c2f924c"
+    }
+  },
+  "kind": "rc_jsproxy_product_validation_package",
+  "package_id": "rc-jsproxy-product-gate-20261015",
+  "product_build_method": {
+    "artifact_hash_requirement": [
+      "path",
+      "sha256",
+      "size",
+      "install_path"
+    ],
+    "build_target": "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+    "build_variant": "user",
+    "candidate_command_argv": [
+      "bash",
+      "build/build_scripts/build.sh",
+      "--product-name",
+      "rk3568",
+      "--build-variant",
+      "user",
+      "--build-target",
+      "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+    ],
+    "current_artifact_hashes": {
+      "fixed_control_mutex": null,
+      "patched_atomic_minimal": null,
+      "vulnerable": null
+    },
+    "preflight": {
+      "build_command_candidate": [
+        "bash",
+        "build/build_scripts/build.sh",
+        "--product-name",
+        "rk3568",
+        "--build-variant",
+        "user",
+        "--build-target",
+        "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore"
+      ],
+      "build_target": "//foundation/distributeddatamgr/kv_store/interfaces/jskits/distributedkvstore:distributedkvstore",
+      "checks": {
+        ".gn": false,
+        "build/build_scripts/build.sh": true,
+        "build/scripts/entry.py": true,
+        "device/board/hihope/rk3568": false,
+        "foundation/distributeddatamgr/kv_store/BUILD.gn": false,
+        "prebuilts/build-tools": false,
+        "prebuilts/python": false,
+        "vendor/hihope/rk3568": false
+      },
+      "missing": [
+        ".gn",
+        "foundation/distributeddatamgr/kv_store/BUILD.gn",
+        "device/board/hihope/rk3568",
+        "vendor/hihope/rk3568",
+        "prebuilts/build-tools",
+        "prebuilts/python"
+      ],
+      "root": "/mnt/e/网安/_product_targets",
+      "status": "blocked"
+    },
+    "product_name": "rk3568",
+    "source_root_requirement": "full OpenHarmony source tree with manifest-pinned project commits",
+    "status": "source_derived_unexecuted",
+    "variant_preparation": {
+      "fixed_control_mutex": "apply fixed_control_mutex.patch to the exact audited source",
+      "patched_atomic_minimal": "apply patched_atomic_minimal.patch to the exact audited source",
+      "vulnerable": "exact audited commit/tree without repair"
+    }
+  },
+  "product_validation": {
+    "blocking_unknowns": [
+      {
+        "id": "product-build",
+        "question": "真实产品/组件构建命令、完整依赖/工具链 manifest、三 variant 构建产物 hash/install path 未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "product-entry",
+        "question": "真实产品进程中的 JS/NAPI entry 与部署包解析未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "permission-identity",
+        "question": "permission grant/deny、app identity、uid/user/sandbox 边界未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "product-trace",
+        "question": "产品级 thread/queue/source-bound CloseResultSet/getEntry 交错 trace 未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "cia-impact",
+        "question": "产品级 availability/integrity/confidentiality 实测未完成",
+        "severity": "high"
+      },
+      {
+        "id": "scope",
+        "question": "受影响版本、分支和产品 image 范围未证明",
+        "severity": "high"
+      },
+      {
+        "id": "exploitability",
+        "question": "stable crash、memory corruption、UAF 与可利用性未证明",
+        "severity": "high"
+      }
+    ],
+    "obligations": [
+      {
+        "detail": "three product variants require exact source/toolchain manifests, build command, artifact path/hash/size/install path",
+        "id": "product_build_and_artifact_identity",
+        "status": "unknown"
+      },
+      {
+        "detail": "JS/NAPI call chain plus permission, process identity and deployment boundary must all be verified",
+        "id": "real_entry_chain",
+        "status": "unknown"
+      },
+      {
+        "detail": "three repeats per variant require product thread IDs, closeResultSet/getEntry overlap and variant-bound artifacts",
+        "id": "product_interleaving_trace",
+        "status": "unknown"
+      },
+      {
+        "detail": "availability/integrity/confidentiality need measured claims and evidence; one concrete observed impact is required",
+        "id": "cia_impact",
+        "status": "unknown"
+      },
+      {
+        "detail": "module, affected version and branch membership require source/history/product evidence",
+        "id": "affected_modules_versions_branches",
+        "status": "unknown"
+      },
+      {
+        "detail": "CWE-362 basis is required; CVE must be assigned/verified or supported by an audited no-assignment search",
+        "id": "cwe_cve_binding",
+        "status": "unknown"
+      }
+    ],
+    "promotion_gate": "not_met",
+    "recommended_status": "candidate/unknown",
+    "remaining_unknowns": [
+      {
+        "id": "product-build",
+        "question": "真实产品/组件构建命令、完整依赖/工具链 manifest、三 variant 构建产物 hash/install path 未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "product-entry",
+        "question": "真实产品进程中的 JS/NAPI entry 与部署包解析未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "permission-identity",
+        "question": "permission grant/deny、app identity、uid/user/sandbox 边界未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "product-trace",
+        "question": "产品级 thread/queue/source-bound CloseResultSet/getEntry 交错 trace 未证明",
+        "severity": "critical"
+      },
+      {
+        "id": "cia-impact",
+        "question": "产品级 availability/integrity/confidentiality 实测未完成",
+        "severity": "high"
+      },
+      {
+        "id": "scope",
+        "question": "受影响版本、分支和产品 image 范围未证明",
+        "severity": "high"
+      },
+      {
+        "id": "cve",
+        "question": "CVE assignment/上游公告/检索范围尚未审计",
+        "severity": "medium"
+      },
+      {
+        "id": "exploitability",
+        "question": "stable crash、memory corruption、UAF 与可利用性未证明",
+        "severity": "high"
+      }
+    ],
+    "status": "unknown",
+    "status_change_requires_owner_authorization": true
+  },
+  "promotion_policy": {
+    "candidate_default": "candidate/unknown",
+    "no_auto_promotion": true,
+    "promotion_requires": [
+      "verified product build and artifact identity",
+      "verified real entry chain, permission, app identity and deployment boundary",
+      "verified product-level interleaving trace",
+      "verified CIA impact and affected scope",
+      "verified CWE/CVE binding basis",
+      "independent owner/reviewer authorization"
+    ]
+  },
+  "schema_version": 1,
+  "selected_review_group": "RC-JSPROXY",
+  "source_visible_call_path": [
+    {
+      "blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+      "checkout_sha256": "b03b018ca1338bd668260e81e4e218d39f7b4a90dd1f0af6d7f5f65a943c9235",
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+      "role": "getResultSet and closeResultSet NAPI entries; async execute writes/reads JSProxy owner",
+      "sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+      "verified": true
+    },
+    {
+      "blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+      "checkout_sha256": "0506d6e6a21b6edc863e70f388f3af75c9cdf22e3fdb73504f7efca1c8ef6ac3",
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+      "role": "synchronous KVStoreResultSet.getEntry copies JSProxy owner on the JS thread",
+      "sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+      "verified": true
+    },
+    {
+      "blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+      "checkout_sha256": "62711571d96440e846067822490734cd6d20a446b8e7f4b4c0530033e5568471",
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+      "role": "NapiQueue::AsyncWork schedules execute through napi_create_async_work",
+      "sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+      "verified": true
+    },
+    {
+      "blob": "b1bbdaf994c8e22bd0ff19c810c3c07505fd2632",
+      "checkout_sha256": "190901cbf130a69381cd478412838b19cdc5015a81874f8311b06874289afcd1",
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/entry_point.cpp",
+      "role": "NAPI module registration data.distributedKVStore and createKVManager export",
+      "sha256": "685f43d3adbdf874275a049ccf7fcf34e8e262e2ca5104fdb56f0e7f338db8a1",
+      "verified": true
+    },
+    {
+      "blob": "504578cc068321602f143b5713dd09f4bfd89071",
+      "checkout_sha256": "e60e4b5a1f860758057a616af6d1c8bce1e39ab4d21d35636ade5d45a97b3842",
+      "path": "interfaces/jskits/distributedkvstore/distributed_kvstore.js",
+      "role": "JS kit export; observed requireInternal target is data.distributedData and needs product packaging resolution",
+      "sha256": "60cf688374ecdb08f8902f0868e0b40a3ae52899380cff0ca8ff690480478c67",
+      "verified": true
+    },
+    {
+      "blob": "83b2918b156473b588ef1a64d618b560cafd02d1",
+      "checkout_sha256": "365d6197f68caa3f1f9ae22752f140e91689d1baf26fd6563f5dbe73a7047c2a",
+      "path": "interfaces/jskits/distributedkvstore/BUILD.gn",
+      "role": "product build/install boundary; standard-system shared library under module/data with full OHOS dependencies",
+      "sha256": "98ab07c985fcfc1a1d06c611b6e12b3691b113ac90cbc3a7aee88db5f49a3ce9",
+      "verified": true
+    },
+    {
+      "blob": "9b77ec855efa9b3f00e2fc66c74a0d37d1ce4162",
+      "checkout_sha256": "89a1703e3e07448d401640315a54892f7c3718d5921a44885f3d3d312485f921",
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_util.cpp",
+      "role": "runtime app identity check; IsSystemApi is true only for DATASHARE input classification",
+      "sha256": "3559183047a4f136070bc1d54b3863a607f1af8b6e983992a621db452e7daa64",
+      "verified": true
+    },
+    {
+      "blob": "7ee8c58504bed9570b5477aa26d9a2a4281c693a",
+      "checkout_sha256": "108b1d0a6e40eac93227a584f8d9c21f13f90fb36b7c4e3c021926ba7a71afc8",
+      "path": "interfaces/innerkits/distributeddata/include/types.h",
+      "role": "permission declaration context; DISTRIBUTED_DATASYNC is documented for autoSync, not proved for this result-set interleaving",
+      "sha256": "9116b8f8774c0bb23388ac840f8f687ff3012dd4e251643b96a18887fb835e5f",
+      "verified": true
+    },
+    {
+      "blob": "72fa5d4c3aa48225de59997a093307159792058d",
+      "checkout_sha256": "5f69cb867afc61ce51882ef57dc3ac640afe56ae0f208587ebc81a40024a7bc9",
+      "path": "test/unittest/distributedKVStore/config.json",
+      "role": "test app deployment manifest requests ohos.permission.DISTRIBUTED_DATASYNC; sample/test evidence is not policy enforcement proof",
+      "sha256": "5072910880396e4defc427f13b9f827c2fe92c7a80ea89e6550a4c6d01e75f15",
+      "verified": true
+    }
+  ],
+  "trigger_conditions": [
+    "same application obtains a result set through SingleKVStore.getResultSet",
+    "synchronous KVStoreResultSet.getEntry runs on the JS thread",
+    "SingleKVStore.closeResultSet NapiQueue execute overlaps the synchronous read",
+    "the overlap is captured in the product process with thread IDs and queue/source locations"
+  ],
+  "validated_vulnerability": 0
+}

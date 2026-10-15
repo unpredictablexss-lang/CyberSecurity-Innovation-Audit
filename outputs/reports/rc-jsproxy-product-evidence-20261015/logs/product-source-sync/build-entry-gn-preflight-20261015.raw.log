@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/audit/ohos-rk3568-product/build/hb/main.py", line 42, in <module>
+    from services.loader import OHOSLoader
+  File "/home/audit/ohos-rk3568-product/build/hb/services/loader.py", line 27, in <module>
+    from util.loader import generate_targets_gn  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/audit/ohos-rk3568-product/build/hb/util/loader/generate_targets_gn.py", line 27, in <module>
+    from jinja2 import Template  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'jinja2'

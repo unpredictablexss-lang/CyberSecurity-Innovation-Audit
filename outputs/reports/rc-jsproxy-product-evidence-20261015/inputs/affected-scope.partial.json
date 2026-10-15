@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "kind": "rc_jsproxy_affected_scope_partial",
+  "status": "partial",
+  "modules": [
+    {
+      "path": "frameworks/common/js_proxy.h",
+      "blob": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "role": "candidate shared_ptr owner read/write"
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+      "blob": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+      "source_sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+      "role": "source-visible getResultSet/closeResultSet NAPI"
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+      "blob": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+      "source_sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+      "role": "source-visible synchronous getEntry"
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+      "blob": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+      "source_sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+      "role": "source-visible NapiQueue::AsyncWork"
+    }
+  ],
+  "branch_observation": {
+    "status": "source_history_observed",
+    "command": "git branch -a --contains acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+    "repeats": 1,
+    "successful": 1,
+    "failed": 0,
+    "output": "* (no branch)\n  remotes/gitcode/master",
+    "failure_reason": null
+  },
+  "tag_observation": {
+    "status": "no_tags_returned",
+    "command": "git tag --contains acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+    "repeats": 1,
+    "successful": 1,
+    "failed": 0,
+    "output": "",
+    "failure_reason": "empty tag output does not prove release-version membership"
+  },
+  "product_profile_observation": {
+    "status": "unlinked_partial",
+    "vendor_repo_commit": "480fc8c7eb815855eb4265ebf2771fea5fc89baa",
+    "config_path": "E:/网安/_product_targets/vendor_hihope/rk3568/config.json",
+    "config_sha256": "6b56344a745783b52a0de37fe695cf44fd283fdfaea3c779469e57e65db37b2d",
+    "version": "3.0",
+    "api_version": 8,
+    "failure_reason": "vendor rk3568 profile is not bound to the audited kv_store commit through a complete product image or synchronized release manifest"
+  },
+  "versions": {
+    "status": "unknown",
+    "items": [],
+    "failure_reason": "no complete product image/tag/release manifest links the audited commit to an affected shipped version"
+  },
+  "branches": {
+    "status": "partial_source_branch_only",
+    "items": [
+      {
+        "branch": "master",
+        "basis": "git branch -a --contains",
+        "evidence_sha256": null
+      }
+    ],
+    "failure_reason": "source branch membership is not product image/version impact"
+  },
+  "limitation": "Module and source-branch membership are observations; product version/image/branch impact remains unknown."
+}

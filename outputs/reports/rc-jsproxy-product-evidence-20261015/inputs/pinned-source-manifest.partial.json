@@ -1,0 +1,3884 @@
+{
+  "schema_version": 1,
+  "kind": "partial_openharmony_pinned_source_manifest",
+  "status": "partial_untrusted",
+  "source_root": "\\\\wsl.localhost\\Ubuntu-22.04\\home\\audit\\ohos-rk3568-product",
+  "declared_manifest": {
+    "path": "E:\\网安\\CyberSecurity-Innovation-Audit\\outputs\\reports\\rc-jsproxy-product-evidence-20261015\\inputs\\source-manifest-declared-20261015.xml",
+    "sha256": "151e99a6ffd49499bfbd9c217e5f4c07ca510eae8d22211a315ee5b4173274ab",
+    "size": 64506
+  },
+  "manifest_repo_commit": "077460ee7a284b4f45816764337fea99eb4057cb",
+  "counts": {
+    "invalid_dirty_worktrees": 1,
+    "missing_worktrees": 473,
+    "dirty_checked_out": 1,
+    "checked_out": 6,
+    "declared_projects": 480
+  },
+  "projects": [
+    {
+      "name": "ability_ability_base",
+      "path": "foundation/ability/ability_base",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ability_ability_cangjie_wrapper",
+      "path": "foundation/ability/ability_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ability_ability_runtime",
+      "path": "foundation/ability/ability_runtime",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ability_dmsfwk",
+      "path": "foundation/ability/dmsfwk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ability_form_fwk",
+      "path": "foundation/ability/form_fwk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ability_idl_tool",
+      "path": "foundation/ability/idl_tool",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "accesscontrol_accesscontrol_cangjie_wrapper",
+      "path": "base/accesscontrol/accesscontrol_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "accesscontrol_sandbox_manager",
+      "path": "base/accesscontrol/sandbox_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "accessibility",
+      "path": "foundation/barrierfree/accessibility",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "account_os_account",
+      "path": "base/account/os_account",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "advertising_ads_framework",
+      "path": "domains/advertising/advertising",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "advertising_oaid",
+      "path": "domains/advertising/oaid",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ai_engine",
+      "path": "foundation/ai/ai_engine",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ai_intelligent_voice_framework",
+      "path": "foundation/ai/intelligent_voice_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ai_neural_network_runtime",
+      "path": "foundation/ai/neural_network_runtime",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_admin_provisioning",
+      "path": "applications/standard/admin_provisioning",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_app_samples",
+      "path": "applications/standard/app_samples",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_applications_cangjie_wrapper",
+      "path": "applications/standard/applications_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_auth_widget",
+      "path": "applications/standard/auth_widget",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_browser",
+      "path": "applications/standard/browser",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_calendar",
+      "path": "applications/standard/calendar",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_calendar_data",
+      "path": "applications/standard/calendardata",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_call",
+      "path": "applications/standard/call",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_camera",
+      "path": "applications/standard/camera",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_contacts",
+      "path": "applications/standard/contacts",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_contacts_data",
+      "path": "applications/standard/contacts_data",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_dlp_manager",
+      "path": "applications/standard/dlp_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_filepicker",
+      "path": "applications/standard/filepicker",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_hap",
+      "path": "applications/standard/hap",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_intelligentscene",
+      "path": "applications/standard/intelligentscene",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_launcher",
+      "path": "applications/standard/launcher",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_mms",
+      "path": "applications/standard/mms",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_notes",
+      "path": "applications/standard/notes",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_number_identity",
+      "path": "base/telephony/number_identity",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_permission_manager",
+      "path": "applications/standard/permission_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_photos",
+      "path": "applications/standard/photos",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_players",
+      "path": "applications/standard/players",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_print_spooler",
+      "path": "applications/standard/printspooler",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_screenlock",
+      "path": "applications/standard/screenlock",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_screenrecorder",
+      "path": "applications/standard/screenrecorder",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_screenshot",
+      "path": "applications/standard/screenshot",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_settings",
+      "path": "applications/standard/settings",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_settings_data",
+      "path": "applications/standard/settings_data",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_simcardmanagement",
+      "path": "applications/standard/simcardmanagement",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_sound_recorder",
+      "path": "applications/standard/sound_recorder",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_startup_guide",
+      "path": "applications/standard/startup_guide",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_systemui",
+      "path": "applications/standard/systemui",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_theme",
+      "path": "applications/standard/theme",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_tips",
+      "path": "applications/standard/tips",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "applications_user_certificate_manager",
+      "path": "applications/standard/user_certificate_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_cangjie_ark_interop",
+      "path": "arkcompiler/cangjie_ark_interop",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_ets_frontend",
+      "path": "arkcompiler/ets_frontend",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_ets_runtime",
+      "path": "arkcompiler/ets_runtime",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_jsvm",
+      "path": "arkcompiler/jsvm",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_runtime_core",
+      "path": "arkcompiler/runtime_core",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_taihe_ffi_gen",
+      "path": "arkcompiler/taihe_ffi_gen",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkcompiler_toolchain",
+      "path": "arkcompiler/toolchain",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_ace_engine",
+      "path": "foundation/arkui/ace_engine",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_advanced_ui_component",
+      "path": "foundation/arkui/advanced_ui_component",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_arkui_cangjie_wrapper",
+      "path": "foundation/arkui/arkui_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_idlize",
+      "path": "foundation/arkui/idlize",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_napi",
+      "path": "foundation/arkui/napi",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_ui_appearance",
+      "path": "foundation/arkui/ui_appearance",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkui_ui_lite",
+      "path": "foundation/arkui/ui_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "arkweb_arkweb_cangjie_wrapper",
+      "path": "base/web/arkweb_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "base_location",
+      "path": "base/location/location",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "build",
+      "path": "build",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "commit": "e25cf4a7012bdaba7296b30b703201e87d89e390",
+      "tree": "41a0bd8070cbfc61a25e3e08d5652219581ea3e1",
+      "status": "checked_out",
+      "dirty": true
+    },
+    {
+      "name": "bundlemanager_app_domain_verify",
+      "path": "foundation/bundlemanager/app_domain_verify",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "bundlemanager_bundle_framework",
+      "path": "foundation/bundlemanager/bundle_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "bundlemanager_bundle_tool",
+      "path": "foundation/bundlemanager/bundle_tool",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "bundlemanager_bundlemanager_cangjie_wrapper",
+      "path": "foundation/bundlemanager/bundlemanager_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "bundlemanager_distributed_bundle_framework",
+      "path": "foundation/bundlemanager/distributed_bundle_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "bundlemanager_ecological_rule_manager",
+      "path": "foundation/bundlemanager/ecological_rule_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "busmanager_usb_manager",
+      "path": "base/usb/usb_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "castengine_cast_framework",
+      "path": "foundation/CastEngine/castengine_cast_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "castengine_cast_plus_stream",
+      "path": "foundation/CastEngine/castengine_cast_plus_stream",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "castengine_wifi_display",
+      "path": "foundation/CastEngine/castengine_wifi_display",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_c_utils",
+      "path": "commonlibrary/c_utils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_ets_utils",
+      "path": "commonlibrary/ets_utils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_memory_utils",
+      "path": "commonlibrary/memory_utils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_qrcode_generator",
+      "path": "commonlibrary/qrcode_generator",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_rust_ylong_http",
+      "path": "commonlibrary/rust/ylong_http",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_rust_ylong_json",
+      "path": "commonlibrary/rust/ylong_json",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_rust_ylong_runtime",
+      "path": "commonlibrary/rust/ylong_runtime",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "commonlibrary_utils_lite",
+      "path": "commonlibrary/utils_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_bluetooth",
+      "path": "foundation/communication/bluetooth",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_bluetooth_service",
+      "path": "foundation/communication/bluetooth_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_communication_cangjie_wrapper",
+      "path": "foundation/communication/communication_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_connected_nfc_tag",
+      "path": "foundation/communication/connected_nfc_tag",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_dhcp",
+      "path": "foundation/communication/dhcp",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_dsoftbus",
+      "path": "foundation/communication/dsoftbus",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_fusion_connectivity",
+      "path": "foundation/communication/fusion_connectivity",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_iot_connect",
+      "path": "foundation/communication/iot_connect",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_ipc",
+      "path": "foundation/communication/ipc",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_netmanager_base",
+      "path": "foundation/communication/netmanager_base",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_netmanager_ext",
+      "path": "foundation/communication/netmanager_ext",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_netstack",
+      "path": "foundation/communication/netstack",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_nfc",
+      "path": "foundation/communication/nfc",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_t2stack",
+      "path": "foundation/communication/t2stack",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "communication_wifi",
+      "path": "foundation/communication/wifi",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "connectivity_connectivity_cangjie_wrapper",
+      "path": "foundation/communication/connectivity_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "customization_assessment_configuration_service",
+      "path": "base/customization/assessment_configuration_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "customization_config_policy",
+      "path": "base/customization/config_policy",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "customization_enterprise_device_management",
+      "path": "base/customization/enterprise_device_management",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_ace_ets2bundle",
+      "path": "developtools/ace_ets2bundle",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_ace_js2bundle",
+      "path": "developtools/ace_js2bundle",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_global_resource_tool",
+      "path": "developtools/global_resource_tool",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_hapsigner",
+      "path": "developtools/hapsigner",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_hdc",
+      "path": "developtools/hdc",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_hiperf",
+      "path": "developtools/hiperf",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_integration_verification",
+      "path": "developtools/integration_verification",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_packing_tool",
+      "path": "developtools/packing_tool",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_profiler",
+      "path": "developtools/profiler",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_smartperf_host",
+      "path": "developtools/smartperf_host",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "developtools_syscap_codec",
+      "path": "developtools/syscap_codec",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "device_board_hihope",
+      "path": "device/board/hihope",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard",
+      "commit": "5d368fb765920c2b1cad41eb86164563461a7074",
+      "tree": "992544086dffa1a73ea444f7a22eeed25b149107",
+      "status": "checked_out",
+      "dirty": false
+    },
+    {
+      "name": "device_soc_rockchip",
+      "path": "device/soc/rockchip",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard",
+      "commit": "0aa6ba16f89844023137fb84ac03189b30c8780b",
+      "tree": "ecab68f691c790d5407ba66a0d466f1e32e5a81a",
+      "status": "checked_out",
+      "dirty": false
+    },
+    {
+      "name": "deviceprofile_device_info_manager",
+      "path": "foundation/deviceprofile/device_info_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_data_object",
+      "path": "foundation/distributeddatamgr/data_object",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_data_share",
+      "path": "foundation/distributeddatamgr/data_share",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_datamgr_service",
+      "path": "foundation/distributeddatamgr/datamgr_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_distributeddatamgr_cangjie_wrapper",
+      "path": "foundation/distributeddatamgr/distributeddatamgr_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_file",
+      "path": "foundation/distributeddatamgr/distributedfile",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_kv_store",
+      "path": "foundation/distributeddatamgr/kv_store",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "status": "checked_out",
+      "dirty": false
+    },
+    {
+      "name": "distributeddatamgr_pasteboard",
+      "path": "foundation/distributeddatamgr/pasteboard",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_preferences",
+      "path": "foundation/distributeddatamgr/preferences",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_relational_store",
+      "path": "foundation/distributeddatamgr/relational_store",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributeddatamgr_udmf",
+      "path": "foundation/distributeddatamgr/udmf",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_device_manager",
+      "path": "foundation/distributedhardware/device_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_distributed_audio",
+      "path": "foundation/distributedhardware/distributed_audio",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_distributed_camera",
+      "path": "foundation/distributedhardware/distributed_camera",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_distributed_hardware_fwk",
+      "path": "foundation/distributedhardware/distributed_hardware_fwk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_distributed_input",
+      "path": "foundation/distributedhardware/distributed_input",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_distributed_screen",
+      "path": "foundation/distributedhardware/distributed_screen",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "distributedhardware_mechbody_controller",
+      "path": "foundation/distributedhardware/mechbody_controller",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "docs",
+      "path": "docs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "docs_cangjie",
+      "path": "docs_cangjie",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "drivers_external_device_manager",
+      "path": "drivers/external_device_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "drivers_hdf_core",
+      "path": "drivers/hdf_core",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "drivers_interface",
+      "path": "drivers/interface",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "drivers_peripheral",
+      "path": "drivers/peripheral",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_app_file_service",
+      "path": "foundation/filemanagement/app_file_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_dfs_service",
+      "path": "foundation/filemanagement/dfs_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_disk_manager",
+      "path": "foundation/filemanagement/disk_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_file_api",
+      "path": "foundation/filemanagement/file_api",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_filemanagement_cangjie_wrapper",
+      "path": "foundation/filemanagement/filemanagement_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_storage_service",
+      "path": "foundation/filemanagement/storage_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "filemanagement_user_file_service",
+      "path": "foundation/filemanagement/user_file_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "game_game_controller_framework",
+      "path": "domains/game/game_controller_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "global_font_manager",
+      "path": "base/global/font_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "global_global_cangjie_wrapper",
+      "path": "base/global/global_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "global_i18n",
+      "path": "base/global/i18n",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "global_resource_management",
+      "path": "base/global/resource_management",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "global_system_resources",
+      "path": "base/global/system_resources",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "global_timezone",
+      "path": "base/global/timezone",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "graphic_graphic_2d",
+      "path": "foundation/graphic/graphic_2d",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "graphic_graphic_3d",
+      "path": "foundation/graphic/graphic_3d",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "graphic_graphic_cangjie_wrapper",
+      "path": "foundation/graphic/graphic_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "graphic_graphic_surface",
+      "path": "foundation/graphic/graphic_surface",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "graphic_graphic_utils_lite",
+      "path": "foundation/graphic/graphic_utils_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "graphic_graphics_effect",
+      "path": "foundation/graphic/graphics_effect",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_api_metrics",
+      "path": "base/hiviewdfx/hiviewdfx_api_metrics",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_blackbox_lite",
+      "path": "base/hiviewdfx/blackbox_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_faultloggerd",
+      "path": "base/hiviewdfx/faultloggerd",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hiappevent",
+      "path": "base/hiviewdfx/hiappevent",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hichecker",
+      "path": "base/hiviewdfx/hichecker",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hicollie",
+      "path": "base/hiviewdfx/hicollie",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hidumper",
+      "path": "base/hiviewdfx/hidumper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hidumper_lite",
+      "path": "base/hiviewdfx/hidumper_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hievent_lite",
+      "path": "base/hiviewdfx/hievent_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hilog",
+      "path": "base/hiviewdfx/hilog",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hilog_lite",
+      "path": "base/hiviewdfx/hilog_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hisysevent",
+      "path": "base/hiviewdfx/hisysevent",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hitrace",
+      "path": "base/hiviewdfx/hitrace",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hiview",
+      "path": "base/hiviewdfx/hiview",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hiview_lite",
+      "path": "base/hiviewdfx/hiview_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "hiviewdfx_hiviewdfx_cangjie_wrapper",
+      "path": "base/hiviewdfx/hiviewdfx_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ide_previewer",
+      "path": "ide/tools/previewer",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "inputmethod_imf",
+      "path": "base/inputmethod/imf",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "interface_sdk-js",
+      "path": "interface/sdk-js",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "interface_sdk_c",
+      "path": "interface/sdk_c",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "interface_sdk_cangjie",
+      "path": "interface/sdk_cangjie",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "kernel_linux_5.10",
+      "path": "kernel/linux/linux-5.10",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "kernel_linux_6.6",
+      "path": "kernel/linux/linux-6.6",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "kernel_linux_build",
+      "path": "kernel/linux/build",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard",
+      "commit": "f99b7582473a9a92a2a09d9d94719728ec913994",
+      "tree": "9ce49c2ad9a7e46d32f56a0b2eff1612981ea44f",
+      "status": "invalid_git_index",
+      "git_status_error": "fatal: .git/index: index file smaller than expected"
+    },
+    {
+      "name": "kernel_linux_common_modules",
+      "path": "kernel/linux/common_modules",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "kernel_linux_config",
+      "path": "kernel/linux/config",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "kernel_linux_patches",
+      "path": "kernel/linux/patches",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "linux_frame_aware_sched",
+      "path": "foundation/resourceschedule/frame_aware_sched",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "location_location_cangjie_wrapper",
+      "path": "base/location/location_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "msdp_device_status",
+      "path": "base/msdp/device_status",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_audio_framework",
+      "path": "foundation/multimedia/audio_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_av_codec",
+      "path": "foundation/multimedia/av_codec",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_av_session",
+      "path": "foundation/multimedia/av_session",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_camera_framework",
+      "path": "foundation/multimedia/camera_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_drm_framework",
+      "path": "foundation/multimedia/drm_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_image_effect",
+      "path": "foundation/multimedia/image_effect",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_image_framework",
+      "path": "foundation/multimedia/image_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_media_foundation",
+      "path": "foundation/multimedia/media_foundation",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_media_library",
+      "path": "foundation/multimedia/media_library",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_midi_framework",
+      "path": "foundation/multimedia/midi_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_multimedia_cangjie_wrapper",
+      "path": "foundation/multimedia/multimedia_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_player_framework",
+      "path": "foundation/multimedia/player_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_ringtone_library",
+      "path": "foundation/multimedia/ringtone_library",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimedia_video_processing_engine",
+      "path": "foundation/multimedia/video_processing_engine",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "multimodalinput_input",
+      "path": "foundation/multimodalinput/input",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "napi_generator",
+      "path": "napi_generator",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "netmanager_netmanager_cangjie_wrapper",
+      "path": "foundation/communication/netmanager_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "notification_common_event_service",
+      "path": "base/notification/common_event_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "notification_distributed_notification_service",
+      "path": "base/notification/distributed_notification_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "notification_eventhandler",
+      "path": "base/notification/eventhandler",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "notification_notification_cangjie_wrapper",
+      "path": "base/notification/notification_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "officeservice_object_editor",
+      "path": "foundation/officeservice/object_editor",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "ostest_wukong",
+      "path": "test/ostest/wukong",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "powermgr_battery_manager",
+      "path": "base/powermgr/battery_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "powermgr_battery_statistics",
+      "path": "base/powermgr/battery_statistics",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "powermgr_display_manager",
+      "path": "base/powermgr/display_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "powermgr_power_manager",
+      "path": "base/powermgr/power_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "powermgr_powermgr_cangjie_wrapper",
+      "path": "base/powermgr/powermgr_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "powermgr_thermal_manager",
+      "path": "base/powermgr/thermal_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "print_print_fwk",
+      "path": "base/print/print_fwk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "productdefine_common",
+      "path": "productdefine/common",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "commit": "c9317af4074bf0e445fe3fc3979e53c470687153",
+      "tree": "71f1c83472fbf4b0360bf9fbde23572c529cef21",
+      "status": "checked_out",
+      "dirty": false
+    },
+    {
+      "name": "request_request",
+      "path": "base/request/request",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "request_request_cangjie_wrapper",
+      "path": "base/request/request_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_background_task_mgr",
+      "path": "foundation/resourceschedule/background_task_mgr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_device_standby",
+      "path": "foundation/resourceschedule/device_standby",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_device_usage_statistics",
+      "path": "foundation/resourceschedule/device_usage_statistics",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_ffrt",
+      "path": "foundation/resourceschedule/ffrt",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_memmgr",
+      "path": "foundation/resourceschedule/memmgr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_qos_manager",
+      "path": "foundation/resourceschedule/qos_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_resource_schedule_service",
+      "path": "foundation/resourceschedule/resource_schedule_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_soc_perf",
+      "path": "foundation/resourceschedule/soc_perf",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "resourceschedule_work_scheduler",
+      "path": "foundation/resourceschedule/work_scheduler",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_access_token",
+      "path": "base/security/access_token",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_appverify",
+      "path": "base/security/appverify",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_asset",
+      "path": "base/security/asset",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_certificate_framework",
+      "path": "base/security/certificate_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_certificate_manager",
+      "path": "base/security/certificate_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_code_signature",
+      "path": "base/security/code_signature",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_crypto_framework",
+      "path": "base/security/crypto_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_dataclassification",
+      "path": "base/security/dataclassification",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_device_auth",
+      "path": "base/security/device_auth",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_device_security_level",
+      "path": "base/security/device_security_level",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_dlp_permission_service",
+      "path": "base/security/dlp_permission_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_huks",
+      "path": "base/security/huks",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_permission_lite",
+      "path": "base/security/permission_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_privacy_center",
+      "path": "applications/standard/security_privacy_center",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_security_cangjie_wrapper",
+      "path": "base/security/security_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_security_component_manager",
+      "path": "base/security/security_component_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_security_guard",
+      "path": "base/security/security_guard",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "security_selinux_adapter",
+      "path": "base/security/selinux_adapter",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "sensors_medical_sensor",
+      "path": "base/sensors/medical_sensor",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "sensors_miscdevice",
+      "path": "base/sensors/miscdevice",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "sensors_sensor",
+      "path": "base/sensors/sensor",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "sensors_sensors_cangjie_wrapper",
+      "path": "base/sensors/sensors_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "sensors_start",
+      "path": "base/sensors/start",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "startup_appspawn",
+      "path": "base/startup/appspawn",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "startup_hvb",
+      "path": "base/startup/hvb",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "startup_init",
+      "path": "base/startup/init",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "startup_startup_cangjie_wrapper",
+      "path": "base/startup/startup_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "systemabilitymgr_safwk",
+      "path": "foundation/systemabilitymgr/safwk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "systemabilitymgr_samgr",
+      "path": "foundation/systemabilitymgr/samgr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "systemabilitymgr_selectionfwk",
+      "path": "foundation/systemabilitymgr/selectionfwk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "tee_tee_client",
+      "path": "base/tee/tee_client",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "tee_tee_dev_kit",
+      "path": "base/tee/tee_dev_kit",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "tee_tee_os_framework",
+      "path": "base/tee/tee_os_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "tee_tee_os_kernel",
+      "path": "base/tee/tee_os_kernel",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_call_manager",
+      "path": "base/telephony/call_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_cellular_call",
+      "path": "base/telephony/cellular_call",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_cellular_data",
+      "path": "base/telephony/cellular_data",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_core_service",
+      "path": "base/telephony/core_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_ril_adapter",
+      "path": "base/telephony/ril_adapter",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_sms_mms",
+      "path": "base/telephony/sms_mms",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_state_registry",
+      "path": "base/telephony/state_registry",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_telephony_cangjie_wrapper",
+      "path": "base/telephony/telephony_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "telephony_telephony_data",
+      "path": "base/telephony/telephony_data",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "testfwk_arkxtest",
+      "path": "test/testfwk/arkxtest",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "testfwk_developer_test",
+      "path": "test/testfwk/developer_test",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "testfwk_testfwk_cangjie_wrapper",
+      "path": "test/testfwk/testfwk_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "testfwk_xdevice",
+      "path": "test/testfwk/xdevice",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "theme_screenlock_mgr",
+      "path": "base/theme/screenlock_mgr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "theme_wallpaper_mgr",
+      "path": "base/theme/wallpaper_mgr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_FreeBSD",
+      "path": "third_party/FreeBSD",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_abseil-cpp",
+      "path": "third_party/abseil-cpp",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_alsa-lib",
+      "path": "third_party/alsa-lib",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_alsa-utils",
+      "path": "third_party/alsa-utils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_astc-encoder",
+      "path": "third_party/astc-encoder",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_backends",
+      "path": "third_party/backends",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_benchmark",
+      "path": "third_party/benchmark",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_bounds_checking_function",
+      "path": "third_party/bounds_checking_function",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_brotli",
+      "path": "third_party/brotli",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_bzip2",
+      "path": "third_party/bzip2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cJSON",
+      "path": "third_party/cJSON",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cangjie_compiler",
+      "path": "third_party/cangjie_compiler",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cangjie_runtime",
+      "path": "third_party/cangjie_runtime",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cangjie_tools",
+      "path": "third_party/cangjie_tools",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cares",
+      "path": "third_party/cares",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_css-what",
+      "path": "third_party/css-what",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cups",
+      "path": "third_party/cups",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_cups-filters",
+      "path": "third_party/cups-filters",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_curl",
+      "path": "third_party/curl",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_dav1d",
+      "path": "third_party/dav1d",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_decimal.js",
+      "path": "third_party/decimal.js",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_e2fsprogs",
+      "path": "third_party/e2fsprogs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_egl",
+      "path": "third_party/EGL",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_elfio",
+      "path": "third_party/elfio",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_elfutils",
+      "path": "third_party/elfutils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_exfatprogs",
+      "path": "third_party/exfatprogs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_expat",
+      "path": "third_party/expat",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_f2fs-tools",
+      "path": "third_party/f2fs-tools",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_ffmpeg",
+      "path": "third_party/ffmpeg",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_flatbuffers",
+      "path": "third_party/flatbuffers",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_freetype",
+      "path": "third_party/freetype",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_fsverity-utils",
+      "path": "third_party/fsverity-utils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_glfw",
+      "path": "third_party/glfw",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_glslang",
+      "path": "third_party/glslang",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_gn",
+      "path": "third_party/gn",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_googletest",
+      "path": "third_party/googletest",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_gptfdisk",
+      "path": "third_party/gptfdisk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_grpc",
+      "path": "third_party/grpc",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_icu",
+      "path": "third_party/icu",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_iptables",
+      "path": "third_party/iptables",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_jerryscript",
+      "path": "third_party/jerryscript",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_jinja2",
+      "path": "third_party/jinja2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_jsframework",
+      "path": "third_party/jsframework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_json",
+      "path": "third_party/json",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_jsoncpp",
+      "path": "third_party/jsoncpp",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_lame",
+      "path": "third_party/lame",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libabigail",
+      "path": "third_party/libabigail",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libbpf",
+      "path": "third_party/libbpf",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libcoap",
+      "path": "third_party/libcoap",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libdrm",
+      "path": "third_party/libdrm",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libedit",
+      "path": "third_party/libedit",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libevdev",
+      "path": "third_party/libevdev",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libexif",
+      "path": "third_party/libexif",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libfuse",
+      "path": "third_party/libfuse",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libinput",
+      "path": "third_party/libinput",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libjpeg-turbo",
+      "path": "third_party/libjpeg-turbo",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libnl",
+      "path": "third_party/libnl",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libphonenumber",
+      "path": "third_party/libphonenumber",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libpng",
+      "path": "third_party/libpng",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libtiff",
+      "path": "third_party/libtiff",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libunwind",
+      "path": "third_party/libunwind",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_liburing",
+      "path": "third_party/liburing",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libusb",
+      "path": "third_party/libusb",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libuv",
+      "path": "third_party/libuv",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libvpx",
+      "path": "third_party/libvpx",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libwebsockets",
+      "path": "third_party/libwebsockets",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_libxml2",
+      "path": "third_party/libxml2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_lz4",
+      "path": "third_party/lz4",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_lzma",
+      "path": "third_party/lzma",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_markupsafe",
+      "path": "third_party/markupsafe",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_mbedtls",
+      "path": "third_party/mbedtls",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_mesa3d",
+      "path": "third_party/mesa3d",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_meshoptimizer",
+      "path": "third_party/meshoptimizer",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_mindspore",
+      "path": "third_party/mindspore",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_mksh",
+      "path": "third_party/mksh",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_mtdev",
+      "path": "third_party/mtdev",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_musl",
+      "path": "third_party/musl",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_ncurses",
+      "path": "third_party/ncurses",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_nghttp2",
+      "path": "third_party/nghttp2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_ninja",
+      "path": "third_party/ninja",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_node",
+      "path": "third_party/node",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_noto-cjk",
+      "path": "third_party/noto-cjk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_notofonts",
+      "path": "third_party/notofonts",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_ntfs-3g",
+      "path": "third_party/ntfs-3g",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_opencl-headers",
+      "path": "third_party/opencl-headers",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_opencore-amr",
+      "path": "third_party/opencore-amr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_opengles",
+      "path": "third_party/openGLES",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_openhitls",
+      "path": "third_party/openhitls",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_openmax",
+      "path": "third_party/openmax",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_opensles",
+      "path": "third_party/openSLES",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_openssl",
+      "path": "third_party/openssl",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_optimized_routines",
+      "path": "third_party/optimized-routines",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_opus",
+      "path": "third_party/opus",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_parse5",
+      "path": "third_party/parse5",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_pcre2",
+      "path": "third_party/pcre2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_popt",
+      "path": "third_party/popt",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_protobuf",
+      "path": "third_party/protobuf",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_pulseaudio",
+      "path": "third_party/pulseaudio",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_python",
+      "path": "third_party/python",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_pyyaml",
+      "path": "third_party/PyYAML",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_re2",
+      "path": "third_party/re2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_aho-corasick",
+      "path": "third_party/rust/crates/aho-corasick",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_atty",
+      "path": "third_party/rust/crates/atty",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_autocfg",
+      "path": "third_party/rust/crates/autocfg",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_bindgen",
+      "path": "third_party/rust/crates/bindgen",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_bitflags",
+      "path": "third_party/rust/crates/bitflags",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_cfg-if",
+      "path": "third_party/rust/crates/cfg-if",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_clang-sys",
+      "path": "third_party/rust/crates/clang-sys",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_clap",
+      "path": "third_party/rust/crates/clap",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_codespan",
+      "path": "third_party/rust/crates/codespan",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_cxx",
+      "path": "third_party/rust/crates/cxx",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_either",
+      "path": "third_party/rust/crates/either",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_env_logger",
+      "path": "third_party/rust/crates/env_logger",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_foreign-types",
+      "path": "third_party/rust/crates/foreign-types",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_glob",
+      "path": "third_party/rust/crates/glob",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_heck",
+      "path": "third_party/rust/crates/heck",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_humantime",
+      "path": "third_party/rust/crates/humantime",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_io-lifetimes",
+      "path": "third_party/rust/crates/io-lifetimes",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_is-terminal",
+      "path": "third_party/rust/crates/is-terminal",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_lazy-static.rs",
+      "path": "third_party/rust/crates/lazy-static.rs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_lazycell",
+      "path": "third_party/rust/crates/lazycell",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_libc",
+      "path": "third_party/rust/crates/libc",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_libloading",
+      "path": "third_party/rust/crates/libloading",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_link-cplusplus",
+      "path": "third_party/rust/crates/link-cplusplus",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_linux-raw-sys",
+      "path": "third_party/rust/crates/linux-raw-sys",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_log",
+      "path": "third_party/rust/crates/log",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_memchr",
+      "path": "third_party/rust/crates/memchr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_memoffset",
+      "path": "third_party/rust/crates/memoffset",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_minimal-lexical",
+      "path": "third_party/rust/crates/minimal-lexical",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_nix",
+      "path": "third_party/rust/crates/nix",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_nom",
+      "path": "third_party/rust/crates/nom",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_once_cell",
+      "path": "third_party/rust/crates/once_cell",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_os_str_bytes",
+      "path": "third_party/rust/crates/os_str_bytes",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_peeking_take_while",
+      "path": "third_party/rust/crates/peeking_take_while",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_pin-utils",
+      "path": "third_party/rust/crates/pin-utils",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_proc-macro-error",
+      "path": "third_party/rust/crates/proc-macro-error",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_proc-macro2",
+      "path": "third_party/rust/crates/proc-macro2",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_quote",
+      "path": "third_party/rust/crates/quote",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_regex",
+      "path": "third_party/rust/crates/regex",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_rust",
+      "path": "third_party/rust/rust",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_rust-cexpr",
+      "path": "third_party/rust/crates/rust-cexpr",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_rust-openssl",
+      "path": "third_party/rust/crates/rust-openssl",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_rustc-hash",
+      "path": "third_party/rust/crates/rustc-hash",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_rustix",
+      "path": "third_party/rust/crates/rustix",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_serde",
+      "path": "third_party/rust/crates/serde",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_shlex",
+      "path": "third_party/rust/crates/shlex",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_static-assertions-rs",
+      "path": "third_party/rust/crates/static-assertions-rs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_strsim-rs",
+      "path": "third_party/rust/crates/strsim-rs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_syn",
+      "path": "third_party/rust/crates/syn",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_termcolor",
+      "path": "third_party/rust/crates/termcolor",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_unicode-ident",
+      "path": "third_party/rust/crates/unicode-ident",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_unicode-width",
+      "path": "third_party/rust/crates/unicode-width",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_version_check",
+      "path": "third_party/rust/crates/version_check",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_rust_which-rs",
+      "path": "third_party/rust/crates/which-rs",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_sane-airscan",
+      "path": "third_party/sane-airscan",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_selinux",
+      "path": "third_party/selinux",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_skia",
+      "path": "third_party/skia",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_sonic",
+      "path": "third_party/sonic",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_spirv-headers",
+      "path": "third_party/spirv-headers",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_spirv-tools",
+      "path": "third_party/spirv-tools",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_sqlite",
+      "path": "third_party/sqlite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_tex-hyphen",
+      "path": "third_party/tex-hyphen",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_toybox",
+      "path": "third_party/toybox",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_typescript",
+      "path": "third_party/typescript",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_tzdata",
+      "path": "third_party/tzdata",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_unity",
+      "path": "third_party/unity",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_vixl",
+      "path": "third_party/vixl",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_vk-gl-cts",
+      "path": "third_party/vk-gl-cts",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_vma",
+      "path": "third_party/vma",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_vulkan-headers",
+      "path": "third_party/vulkan-headers",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_vulkan-loader",
+      "path": "third_party/vulkan-loader",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_weex-loader",
+      "path": "third_party/weex-loader",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_wpa_supplicant",
+      "path": "third_party/wpa_supplicant",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_xmp_toolkit_sdk",
+      "path": "third_party/xmp_toolkit_sdk",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "third_party_zlib",
+      "path": "third_party/zlib",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "time_time_cangjie_wrapper",
+      "path": "base/time/time_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "time_time_service",
+      "path": "base/time/time_service",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "update_packaging_tools",
+      "path": "base/update/packaging_tools",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "update_sys_installer",
+      "path": "base/update/sys_installer",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "update_sys_installer_lite",
+      "path": "base/update/sys_installer_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "update_update_app",
+      "path": "base/update/update_app",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "update_update_service",
+      "path": "base/update/updateservice",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "update_updater",
+      "path": "base/update/updater",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "useriam_companion_device_auth",
+      "path": "base/useriam/companion_device_auth",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "useriam_face_auth",
+      "path": "base/useriam/face_auth",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "useriam_fingerprint_auth",
+      "path": "base/useriam/fingerprint_auth",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "useriam_pin_auth",
+      "path": "base/useriam/pin_auth",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "useriam_user_auth_framework",
+      "path": "base/useriam/user_auth_framework",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "vendor_hihope",
+      "path": "vendor/hihope",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:standard",
+      "commit": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+      "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+      "status": "checked_out",
+      "dirty": false
+    },
+    {
+      "name": "web_webview",
+      "path": "base/web/webview",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "window_window_cangjie_wrapper",
+      "path": "foundation/window/window_cangjie_wrapper",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "cangjie,default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "window_window_manager",
+      "path": "foundation/window/window_manager",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "xts_acts",
+      "path": "test/xts/acts",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "xts_dcts",
+      "path": "test/xts/dcts",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:chipset,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "xts_device_attest",
+      "path": "test/xts/device_attest",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "xts_device_attest_lite",
+      "path": "test/xts/device_attest_lite",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "xts_hats",
+      "path": "test/xts/hats",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    },
+    {
+      "name": "xts_tools",
+      "path": "test/xts/tools",
+      "declared_revision": "master",
+      "remote": "gitcode",
+      "groups": "default,ohos:mini,ohos:small,ohos:standard,ohos:system",
+      "status": "missing_worktree"
+    }
+  ],
+  "integrity": "WSL ext4 recovery was required repeatedly and one checked-out project has a corrupt Git index; the build repository also carries a recorded toolchain-only concurrency patch. Commit/tree observations are retained but the tree is not a complete trusted build source.",
+  "limitation": "Only seven core projects are pinned by observed commit/tree; 473 declared master revisions remain unpinned because their worktrees are missing."
+}
