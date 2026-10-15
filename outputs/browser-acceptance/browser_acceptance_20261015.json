@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "checks": [
+    {
+      "name": "candidate_cluster_expand",
+      "status": "passed",
+      "details": "2 original candidate IDs remain addressable"
+    },
+    {
+      "name": "scan_report_downloads",
+      "status": "passed",
+      "details": "ea25320d3e114f5e9e4df7cd28d593dc_report.json, ea25320d3e114f5e9e4df7cd28d593dc_report.md"
+    },
+    {
+      "name": "review_and_evidence_ui",
+      "status": "passed",
+      "details": "append-only review and source-bound evidence saved from candidate drawer"
+    },
+    {
+      "name": "case_report_downloads",
+      "status": "passed",
+      "details": "ohscanner-case-a14ea4a82cfc4dadaa2552228f1b6e60.json, ohscanner-case-a14ea4a82cfc4dadaa2552228f1b6e60.md"
+    },
+    {
+      "name": "operation_cancel",
+      "status": "passed",
+      "details": "queued source_sync cancelled from browser"
+    },
+    {
+      "name": "operation_restart_recovery",
+      "status": "passed",
+      "details": "running operation became interrupted without publishing a partial result"
+    },
+    {
+      "name": "revision_range",
+      "status": "passed",
+      "details": "4e564ac99ee8..5d59e5f4a5fb"
+    },
+    {
+      "name": "date_range",
+      "status": "passed",
+      "details": "committer-date [start,end) selected two fixed commits"
+    },
+    {
+      "name": "version_matrix",
+      "status": "passed",
+      "details": "two fixed SHA observations compared; impact remains unknown"
+    },
+    {
+      "name": "source_sync",
+      "status": "passed",
+      "details": "explicit sync completed; remote refs=1"
+    },
+    {
+      "name": "operation_timeout",
+      "status": "passed",
+      "details": "10-second source-sync hard deadline published timed_out without a partial result"
+    },
+    {
+      "name": "candidate_cluster_expand",
+      "status": "passed",
+      "details": "2 original candidate IDs remain addressable"
+    },
+    {
+      "name": "case_report_downloads",
+      "status": "passed",
+      "details": "ohscanner-case-a14ea4a82cfc4dadaa2552228f1b6e60.json, ohscanner-case-a14ea4a82cfc4dadaa2552228f1b6e60.md"
+    },
+    {
+      "name": "restart_persistence",
+      "status": "passed",
+      "details": "operation, review, evidence, report hash and case report remained recoverable"
+    },
+    {
+      "name": "browser_full_chain",
+      "status": "passed",
+      "details": "browser UI drove repository operation planning, cancellation/deadline, cluster review and downloads"
+    }
+  ],
+  "network_actions": [
+    {
+      "action": "controlled loopback HTTPS Git clone/fetch under approved URL rewrite",
+      "repository": "openharmony/c_utils",
+      "requested_url": "https://github.com/openharmony/c_utils.git",
+      "effective_url": "https://127.0.0.1:9443/c_utils.git",
+      "purpose": "browser source-sync acceptance"
+    },
+    {
+      "action": "controlled loopback HTTPS Git fetch with hard deadline",
+      "repository": "openharmony/ace_napi",
+      "requested_url": "https://github.com/openharmony/ace_napi.git",
+      "effective_url": "https://127.0.0.1:9444/ace_napi.git",
+      "purpose": "browser timeout acceptance"
+    }
+  ],
+  "environment": {
+    "host": "Windows 11 + WSL2 Ubuntu 22.04",
+    "browser": "Microsoft Edge headless via playwright-core",
+    "backend": "/mnt/e/网安/CyberSecurity-Innovation-Audit @ current working tree",
+    "data_root": "E:\\网安\\CyberSecurity-Innovation-Audit\\.codex-review-tmp\\browser-acceptance-20261015"
+  },
+  "limitations": [
+    "Browser acceptance covers local workbench behavior only; it is not vulnerability accuracy or product security validation.",
+    "Version matrix reports static candidate observations with impact unknown.",
+    "The timeout control uses a deterministic loopback HTTPS Git endpoint and does not create a complete repository.",
+    "Public-network GitHub/Gitee/GitCode synchronization remains unverified."
+  ],
+  "unverified": [
+    "multi-user and public-network deployment",
+    "Docker runtime validation",
+    "product reachability and CIA impact"
+  ]
+}

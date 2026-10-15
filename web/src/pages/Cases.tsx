@@ -61,7 +61,8 @@ export default function Cases() {
       anchor.href = url;
       anchor.download = "ohscanner-case-" + caseId + "." + kind;
       anchor.click();
-      URL.revokeObjectURL(url);
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
     } catch (e) { message.error(String(e)); }
   };
   return (
@@ -79,7 +80,7 @@ export default function Cases() {
             { title: "案例", dataIndex: "title" },
             { title: "状态", render: () => <Tag>调查中 · 未确认</Tag> },
             { title: "关联观测", render: (_: any, c: any) => c.links.length },
-            { title: "报告", render: (_: any, c: any) => <Space><Button size="small" onClick={() => void downloadReport(c.id, "json")}>JSON</Button><Button size="small" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button></Space> },
+            { title: "报告", render: (_: any, c: any) => <Space><Button size="small" data-testid="download-case-json" onClick={() => void downloadReport(c.id, "json")}>JSON</Button><Button size="small" data-testid="download-case-md" onClick={() => void downloadReport(c.id, "md")}>Markdown</Button></Space> },
             {
               title: "创建时间",
               dataIndex: "created_at",

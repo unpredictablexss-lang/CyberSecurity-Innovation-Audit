@@ -235,15 +235,22 @@ def install_routes(app: FastAPI, settings, store):
                 "result_sha256": x["result_sha256"], "validation_gate": result.get("validation_gate"),
                 "gate_reason": result.get("gate_reason"), "validated_vulnerability": result.get("validated_vulnerability", 0),
                 "commit": result.get("commit"), "commits": result.get("commits")})
-        return {"schema_version": 1, "case_id": case_id, "candidates": records,
+        payload = {"schema_version": 1, "case_id": case_id, "candidates": records,
                 "operations": operation_summaries,
                 "assessments": ops.assessments(case_id),
                 "validated_vulnerability": 0,
                 "limitations": ["Static candidates and component harness observations do not establish product reachability or reportability."]}
+        return Response(
+            json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f'attachment; filename="{case_id}.json"'
+            },
+        )
 
     @router.get("/cases/{case_id}/report.md")
     def case_report_md(case_id: str):
-        data = case_report_json(case_id)
+        data = json.loads(case_report_json(case_id).body)
         rows = ["# OHScanner 调查案例报告", "", "案例 ID：" + case_id, "", "## 候选与证据"]
         for row in data["candidates"]:
             c = row["candidate"]
@@ -254,7 +261,13 @@ def install_routes(app: FastAPI, settings, store):
                      "- 结论：candidate；影响范围 unknown"]
         rows += ["", "## 限制", "", *["- " + x for x in data["limitations"]],
                  "", "确认漏洞数：0（本报告不会根据候选自动确认）。"]
-        return Response("\n".join(rows) + "\n", media_type="text/markdown")
+        return Response(
+            "\n".join(rows) + "\n",
+            media_type="text/markdown",
+            headers={
+                "Content-Disposition": f'attachment; filename="{case_id}.md"'
+            },
+        )
 
     @router.post("/cases/{case_id}/assessments", status_code=201)
     def assessment(case_id: str, body: AssessmentRequest):

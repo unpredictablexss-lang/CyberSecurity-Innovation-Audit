@@ -1,0 +1,11 @@
+{
+  "task": "PLATFORM-REAL-PRODUCT-BROWSER-01",
+  "purpose": "Windows fallback runtime because WSL service became unavailable during acceptance",
+  "exact_command": "\"E:\\网安\\CyberSecurity-Innovation-Audit\\.codex-review-tmp\\windows-venv-platform-20261015\\Scripts\\python.exe\" -m pip install --disable-pip-version-check --no-input -r requirements-web.txt",
+  "python": "E:\\网安\\CyberSecurity-Innovation-Audit\\.codex-review-tmp\\windows-venv-platform-20261015\\Scripts\\python.exe",
+  "log": {
+    "FullName": "E:\\网安\\CyberSecurity-Innovation-Audit\\outputs\\platform-real-product-browser-01\\windows_env_install_20261015.log",
+    "Length": 5061
+  },
+  "log_sha256": "cae7da9adbe944d54d02be5fca9653f688a1b99fb0b761232df3675b87a449e6"
+}

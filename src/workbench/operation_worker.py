@@ -52,7 +52,18 @@ class OperationWorker:
                         raise ValueError("operation log quota exceeded")
                     time.sleep(.1)
             if proc.returncode:
-                raise RuntimeError("Operation child exited " + str(proc.returncode) + "; inspect log")
+                error_path = folder / "child-error.json"
+                detail = ""
+                if error_path.is_file():
+                    try:
+                        child_error = json.loads(error_path.read_text(encoding="utf-8"))
+                        detail = "; stage=" + str(child_error.get("stage", "unknown")) \
+                            + "; error=" + str(child_error.get("message", ""))[:1200]
+                    except (OSError, ValueError):
+                        detail = "; child-error.json unreadable"
+                raise RuntimeError(
+                    "Operation child exited " + str(proc.returncode) + detail + "; inspect log"
+                )
             data = (folder / "child-result.json").read_bytes()
             if len(data) > 16 * 1024 * 1024:
                 raise ValueError("operation result quota exceeded")
@@ -62,6 +73,11 @@ class OperationWorker:
         finally:
             if proc is not None and proc.poll() is None:
                 Worker.terminate(proc)
+            if task["kind"] == "source_sync":
+                from .operations import cleanup_source_sync_staging
+                if cleanup_source_sync_staging(self.settings, task):
+                    self.ops.event(task["id"], "git_sync_staging_cleanup",
+                                   "Failed/cancelled/timed-out clone staging removed after child termination")
             if task["kind"] == "validation":
                 from .validation import cleanup_container
                 cleanup_container(task["id"])
@@ -105,8 +121,27 @@ def main():
         resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
         resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
         from .operations import execute
-        result = execute(settings, store, ops, task)
-        (ops.directory(args.child) / "child-result.json").write_text(json.dumps(result, ensure_ascii=False))
+        folder = ops.directory(args.child)
+        try:
+            result = execute(settings, store, ops, task)
+        except Exception as exc:
+            message = str(exc)
+            stage = "source_sync.git_process" if "source sync Git process" in message else "operation_child"
+            (folder / "child-error.json").write_text(
+                json.dumps({
+                    "stage": stage,
+                    "type": type(exc).__name__,
+                    "message": message,
+                    "stdout": getattr(exc, "stdout", None),
+                    "stderr": getattr(exc, "stderr", None),
+                }, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            print(json.dumps({"operation_child_error": {
+                "stage": stage, "type": type(exc).__name__, "message": message
+            }}, ensure_ascii=False, sort_keys=True))
+            raise
+        (folder / "child-result.json").write_text(json.dumps(result, ensure_ascii=False))
     else:
         OperationWorker(settings, args.validation).run(args.once)
 

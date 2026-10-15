@@ -1,0 +1,14 @@
+{
+  "task": "WEB-SOURCE-SYNC-01",
+  "run_id": "web-source-sync-01-r1",
+  "files": [
+    {
+      "path": "outputs/browser-acceptance/browser_acceptance_20261015_web-source-sync-01-r1.json",
+      "sha256": "333817d320684e01fd3de3bac38adbd6864f8a51c0072438fc92836cd4d119a1"
+    },
+    {
+      "path": "outputs/browser-acceptance/browser_acceptance_20261015_web-source-sync-01-r1.md",
+      "sha256": "78999dc76cb469edcb92ac337badaa985e96b4d81d036c20e883f8ba36464183"
+    }
+  ]
+}

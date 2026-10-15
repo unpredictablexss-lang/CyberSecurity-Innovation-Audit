@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "task": "PLATFORM-REAL-PRODUCT-BROWSER-01",
+  "run_id": "r18-20261015-01",
+  "started_at": "2026-10-15T09:20:57.449Z",
+  "finished_at": "2026-10-15T09:21:41.185Z",
+  "status": "failed",
+  "failure_stage": "browser acceptance",
+  "failure": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ant-modal button.ant-btn-primary')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"ant-btn css-1cowar7 ant-btn-primary ant-btn-color-primary ant-btn-variant-solid\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - <input readonly value=\"\" id=\"case_id\" type=\"search\" role=\"combobox\" unselectable=\"on\" autocomplete=\"off\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-owns=\"case_id_list\" aria-autocomplete=\"list\" aria-controls=\"case_id_list\" class=\"ant-select-selection-search-input\"/> from <div class=\"ant-modal-body\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\n    at createProductReviewEvidenceCase (E:\\网安\\CyberSecurity-Innovation-Audit\\scripts\\platform_real_product_browser_acceptance.mjs:337:59)\n    at async main (E:\\网安\\CyberSecurity-Innovation-Audit\\scripts\\platform_real_product_browser_acceptance.mjs:560:19)\n    at async file:///E:/%E7%BD%91%E5%AE%89/CyberSecurity-Innovation-Audit/scripts/platform_real_product_browser_acceptance.mjs:905:1",
+  "checks": [
+    {
+      "name": "product_fixed_binding_and_coverage",
+      "status": "passed",
+      "details": "commit=e663b47013d534a56165ab7467fbb3e14bf7172b, tree=5037e995cb4f3f29d54307b6e0fbf352cc9d6252, detector=ohscanner.interface.ipc, coverage=partial"
+    },
+    {
+      "name": "product_candidate_cluster_expand",
+      "status": "passed",
+      "details": "2 fixed-source candidate identities remain addressable"
+    },
+    {
+      "name": "platform_real_product_browser_boundary",
+      "status": "failed",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.ant-modal button.ant-btn-primary')\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"ant-btn css-1cowar7 ant-btn-primary ant-btn-color-primary ant-btn-variant-solid\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - <input readonly value=\"\" id=\"case_id\" type=\"search\" role=\"combobox\" unselectable=\"on\" autocomplete=\"off\" aria-expanded=\"false\" aria-haspopup=\"listbox\" aria-owns=\"case_id_list\" aria-autocomplete=\"list\" aria-controls=\"case_id_list\" class=\"ant-select-selection-search-input\"/> from <div class=\"ant-modal-body\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\n    at createProductReviewEvidenceCase (E:\\网安\\CyberSecurity-Innovation-Audit\\scripts\\platform_real_product_browser_acceptance.mjs:337:59)\n    at async main (E:\\网安\\CyberSecurity-Innovation-Audit\\scripts\\platform_real_product_browser_acceptance.mjs:560:19)\n    at async file:///E:/%E7%BD%91%E5%AE%89/CyberSecurity-Innovation-Audit/scripts/platform_real_product_browser_acceptance.mjs:905:1"
+    }
+  ],
+  "git_state": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "full_commit_sha": "cda936a0c837575e59436118970238015d6fc56c",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty_files": [
+      " M .gitignore",
+      " M \"docs/\\345\\274\\200\\345\\217\\221\\345\\215\\217\\344\\275\\234\\344\\270\\216\\344\\272\\244\\344\\273\\230\\346\\214\\207\\345\\215\\227.md\"",
+      " M \"docs/\\351\\235\\242\\346\\235\\277\\345\\212\\237\\350\\203\\275\\344\\270\\216\\351\\252\\214\\346\\224\\266.md\"",
+      " M \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"",
+      " M research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json",
+      " M scripts/verify_owner_ipc_components.py",
+      " M src/ohscanner/detectors/cpp/README.md",
+      " M src/workbench/operation_worker.py",
+      " M src/workbench/operations.py",
+      " M src/workbench/operations_api.py",
+      " M tests/test_workbench_operations.py",
+      " M web/src/SourceEvidence.tsx",
+      " M web/src/pages/Cases.tsx",
+      " M web/src/pages/JobDetail.tsx",
+      " M web/src/pages/Operations.tsx",
+      "?? outputs/browser-acceptance/",
+      "?? outputs/platform-real-product-browser-01/",
+      "?? outputs/reports/m1_descriptor_identity/",
+      "?? research/contracts/A-CCR-REVIEW-stable-finding-identity-readonlyfactview.md",
+      "?? research/contracts/a_ccr_04/owner_approval.json",
+      "?? research/evidence/cpp/a_null_01_implementation_20261015/",
+      "?? research/evidence/cpp/a_null_01_preimplementation_20261015/",
+      "?? research/evidence/cpp/a_truth_01_freeze_20261015/",
+      "?? research/evidence/cpp/detector_enhancement_20261015/",
+      "?? research/evidence/cpp/four_class_controls/run-001/",
+      "?? research/evidence/cpp/four_class_controls/run-002/",
+      "?? research/evidence/cpp/four_class_controls/run-003/",
+      "?? research/evidence/cpp/four_class_controls/run-004/",
+      "?? research/evidence/cpp/four_class_controls/run-005/family_poc/",
+      "?? research/evidence/cpp/four_class_controls/run-005/logs/",
+      "?? research/evidence/cpp/four_class_controls/run-005/results.json",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json",
+      "?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/",
+      "?? research/experiments/cpp/r0_r1_r2_20261015/",
+      "?? research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md",
+      "?? research/specs/",
+      "?? research/tests/a_ccr_03_stable_finding_identity/",
+      "?? research/tests/a_null_01/",
+      "?? scripts/browser_acceptance.mjs",
+      "?? scripts/browser_acceptance_seed.py",
+      "?? scripts/git_https_fixture_server.py",
+      "?? scripts/platform_real_product_browser_acceptance.mjs",
+      "?? scripts/platform_real_product_browser_seed.py",
+      "?? src/ohscanner/detectors/cpp/null_dereference_detector.py",
+      "?? tests/detectors/null_dereference_fixture_support.py",
+      "?? tests/detectors/test_cpp_null_dereference_detector.py",
+      "?? tests/test_workbench_browser_acceptance.py"
+    ]
+  },
+  "backend": {
+    "git_head": "cda936a0c837575e59436118970238015d6fc56c",
+    "backend_source_sha256": "8849b39d08a4f24c825062ca556b13cf2540ca27d9dfb2cf0220d4fcab64e6d0",
+    "engine_sha256": "95add697d451717af582027d7aa639709dfae18408b102440f04cbbca587f99b"
+  },
+  "product_binding": {
+    "dirty_file_count": 59,
+    "dirty_status_sha256": "3b62426274b41bc3acff8ced775d994e02553b05555761f69be18a498fa1bda0",
+    "head_commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+    "head_tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+    "preservation": "read-only Git object scan; checkout was not reset, cleaned, or overwritten",
+    "repository": "/home/audit/openharmony-audit/ipc-research/repos/inputmethod_imf"
+  },
+  "component_binding": {
+    "dirty_file_count": 224,
+    "dirty_status_sha256": "f0df7878145ecfa24b247bc1bcb6915ab19076d37a33980d1a478451d40c9d77",
+    "head_commit": "b807d3dadb7dbb7639fe85b3a5f72da18d318da2",
+    "head_tree": "52b42d41ed091f7dcae37c4ce3a0d95b6fb1f16d",
+    "preservation": "read-only Git object scan; checkout was not reset, cleaned, or overwritten",
+    "repository": "/home/audit/openharmony-targets/commonlibrary_c_utils"
+  },
+  "scope": {
+    "include_paths": [
+      "."
+    ],
+    "mode": "repository_snapshot"
+  },
+  "detector": {
+    "evidence_level": "candidate/unassessed",
+    "id": "ohscanner.interface.ipc",
+    "version": "0.5.0"
+  },
+  "coverage": {
+    "analyzed_files": 62,
+    "file_outcomes": null,
+    "limitations": [],
+    "status": "partial"
+  },
+  "report": {
+    "job_id": "0bb820794d194ae2ab134795850361f6",
+    "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+    "tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+    "sha256": "b4c955fdbf0f5b56fdee7f9144ef8dd6ddc81c986191b6bf6d9178b15e78e4bd",
+    "status": "completed_with_limitations",
+    "diagnostic_count": 10,
+    "candidate_evidence_level": "candidate/unassessed"
+  },
+  "review_evidence_case": null,
+  "validation_queue": null,
+  "commands": [
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && echo WSL_READY\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && .venv-web/bin/python -m scripts.platform_real_product_browser_seed --root '/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/platform-real-product-browser-r18-20261015-01'\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && env OHSCANNER_DATA='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/platform-real-product-browser-r18-20261015-01/data' OHSCANNER_TARGET_ROOTS='/home/audit/openharmony-audit/ipc-research/repos:/home/audit/openharmony-targets' .venv-web/bin/python -m uvicorn src.workbench.api:create_app --factory --host 127.0.0.1 --port 8877\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"kill 1112 2>/dev/null || true\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    }
+  ],
+  "network_actions": [],
+  "operation_details": [],
+  "process_evidence": [
+    {
+      "name": "api",
+      "pid": 1112,
+      "exit_code": 15,
+      "stdout": {
+        "path": ".codex-review-tmp/platform-real-product-browser-r18-20261015-01/process-logs/api.stdout.log",
+        "bytes": 1392,
+        "sha256": "6c3afb375c61d6abb3d0a840b5c9ade08c383b37a09b437267a6e804ba4cf1bd"
+      },
+      "stderr": {
+        "path": ".codex-review-tmp/platform-real-product-browser-r18-20261015-01/process-logs/api.stderr.log",
+        "bytes": 347,
+        "sha256": "d9e06a1f8f4dc06ee3a3bb4dc3f71d3bf0bf76eb886d1594d181a27f4bb7b414"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".codex-review-tmp/platform-real-product-browser-r18-20261015-01/data/artifacts/0bb820794d194ae2ab134795850361f6/report.json",
+      "bytes": 134760,
+      "sha256": "b4c955fdbf0f5b56fdee7f9144ef8dd6ddc81c986191b6bf6d9178b15e78e4bd"
+    },
+    {
+      "path": ".codex-review-tmp/platform-real-product-browser-r18-20261015-01/data/artifacts/0bb820794d194ae2ab134795850361f6/report.md",
+      "bytes": 11663,
+      "sha256": "263fdfdb8b6e16d896f91f80745db227166080ee56c533ccfecd6643fe716740"
+    },
+    {
+      "path": ".codex-review-tmp/platform-real-product-browser-r18-20261015-01/seed.json",
+      "bytes": 3627,
+      "sha256": "d8c999ce1b35bb4f8ab8963e23384e8f7c792b0e2a969251dc1288da650c88ef"
+    }
+  ],
+  "source_hashes": [
+    {
+      "path": "scripts/platform_real_product_browser_acceptance.mjs",
+      "sha256": "cbf66ea68103a77f4b72def6187b506bc1ac72390596030425393e0ea4efc36e"
+    },
+    {
+      "path": "scripts/platform_real_product_browser_seed.py",
+      "sha256": "bd6513b3d9ff54475e2c10bcb735c3385a058aaf1ea7df4849fd737a77d6b7f3"
+    },
+    {
+      "path": "src/workbench/operations.py",
+      "sha256": "d8d585f9668428ee660ea5b03b0c10ef61613e37fc16c977343414ee96a8ef12"
+    },
+    {
+      "path": "src/workbench/operation_worker.py",
+      "sha256": "a7a98369b078eedf5c9dc60c26f31d364eb53d82d1c059260888dcca791a99a8"
+    },
+    {
+      "path": "web/src/pages/Operations.tsx",
+      "sha256": "d6eaa19ee0ab1f76914b28eedcdc2c86fc35fa763d519bd23450e17b3bc3f4b4"
+    },
+    {
+      "path": "tests/test_workbench_operations.py",
+      "sha256": "146af4dd53ab21efd9a48d8506b74a76b8610ff6a83b7edd71a1310db3c66889"
+    }
+  ],
+  "environment": {
+    "node": "v24.19.0",
+    "playwright_core_path": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\node_modules\\playwright-core",
+    "edge_executable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+    "edge_version": "��������������Ự�д򿪡�",
+    "browser_version": "155.0.4283.45",
+    "git_version": "git version 2.55.0.windows.5",
+    "curl_version": "curl 8.21.0 (Windows) libcurl/8.21.0 Schannel zlib/1.3.2 WinIDN WinLDAP",
+    "credential_environment_values_recorded": false
+  },
+  "limitations": [
+    "Public Git tests are explicit anonymous clone/fetch/effective-URL audits, not multi-user or public-network deployment acceptance.",
+    "The real product component browser audit uses fixed Git objects; it does not modify or reset the dirty product checkout.",
+    "Candidate review, evidence and case reports remain candidate/unassessed and are not product vulnerability confirmation.",
+    "Docker validation queue state is component-harness evidence only; product reachability, privilege, CIA impact and exploitability remain unknown.",
+    "No production service was attacked; network actions were limited to public Git read operations and HEAD effective-URL audits."
+  ],
+  "unverified": [
+    "multi-user deployment",
+    "public Workbench deployment",
+    "product-level vulnerability confirmation",
+    "Precision/Recall or detector accuracy"
+  ]
+}

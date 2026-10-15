@@ -1,0 +1,937 @@
+{
+  "schema_version": 1,
+  "task": "WEB-SOURCE-SYNC-01",
+  "run_id": "web-source-sync-01-r2",
+  "started_at": "2026-10-15T06:46:16.822Z",
+  "finished_at": "2026-10-15T06:48:04.090Z",
+  "status": "passed",
+  "failure_stage": null,
+  "failures": [],
+  "diagnosis": {
+    "symptom": "browser_full_chain / source sync: Operation child exited 1",
+    "mechanism": "An uncaught source-sync Git subprocess exception escaped the operation child and was reduced by the parent to a generic child exit error.",
+    "contributing_conditions": [
+      "Git subprocess execution inherited the caller working directory and GIT_CONFIG_* environment.",
+      "The Git subprocess timeout equaled the outer hard deadline, allowing timeout-versus-supervisor races.",
+      "stdout/stderr and failure stage were not committed as structured source-sync evidence."
+    ],
+    "exact_original_stderr": "unknown; the originally failed run artifacts were not preserved in the supplied checkout",
+    "fix": [
+      "Run source-sync Git from an isolated temporary cwd and remove inherited GIT_CONFIG_* values while retaining target-local fixture URL rewrite and CA configuration.",
+      "Make the outer operation Worker the sole hard-deadline authority.",
+      "Persist git-process.json and child-error.json with command, cwd, exit code, stdout, stderr and stage."
+    ]
+  },
+  "checks": [
+    {
+      "name": "candidate_cluster_expand",
+      "status": "passed",
+      "details": "2 original candidate IDs remain addressable"
+    },
+    {
+      "name": "scan_report_downloads",
+      "status": "passed",
+      "details": "b5282906fa624b5297894428681a6d2a_report.json, b5282906fa624b5297894428681a6d2a_report.md"
+    },
+    {
+      "name": "review_and_evidence_ui",
+      "status": "passed",
+      "details": "append-only review and source-bound evidence saved from candidate drawer"
+    },
+    {
+      "name": "case_report_downloads",
+      "status": "passed",
+      "details": "ohscanner-case-74be2ac6d2ce4cc3820a4871d269b6ed.json, ohscanner-case-74be2ac6d2ce4cc3820a4871d269b6ed.md"
+    },
+    {
+      "name": "operation_cancel",
+      "status": "passed",
+      "details": "queued source_sync cancelled from browser"
+    },
+    {
+      "name": "operation_restart_recovery",
+      "status": "passed",
+      "details": "running operation became interrupted without publishing a partial result"
+    },
+    {
+      "name": "revision_range",
+      "status": "passed",
+      "details": "4e564ac99ee8..5d59e5f4a5fb"
+    },
+    {
+      "name": "date_range",
+      "status": "passed",
+      "details": "committer-date [start,end) selected two fixed commits"
+    },
+    {
+      "name": "version_matrix",
+      "status": "passed",
+      "details": "two fixed SHA observations compared; impact remains unknown"
+    },
+    {
+      "name": "source_sync",
+      "status": "passed",
+      "details": "explicit sync completed; remote refs=1"
+    },
+    {
+      "name": "operation_timeout",
+      "status": "passed",
+      "details": "10-second source-sync hard deadline published timed_out without a partial result"
+    },
+    {
+      "name": "candidate_cluster_expand",
+      "status": "passed",
+      "details": "2 original candidate IDs remain addressable"
+    },
+    {
+      "name": "case_report_downloads",
+      "status": "passed",
+      "details": "ohscanner-case-74be2ac6d2ce4cc3820a4871d269b6ed.json, ohscanner-case-74be2ac6d2ce4cc3820a4871d269b6ed.md"
+    },
+    {
+      "name": "restart_persistence",
+      "status": "passed",
+      "details": "operation, review, evidence, report hash and case report remained recoverable"
+    },
+    {
+      "name": "browser_full_chain",
+      "status": "passed",
+      "details": "browser UI drove repository operation planning, cancellation/deadline, cluster review and downloads"
+    }
+  ],
+  "network_actions": [
+    {
+      "action": "controlled loopback HTTPS Git clone/fetch under approved URL rewrite",
+      "repository": "openharmony/c_utils",
+      "requested_url": "https://github.com/openharmony/c_utils.git",
+      "effective_url": "https://127.0.0.1:9443/c_utils.git",
+      "purpose": "browser source-sync acceptance"
+    },
+    {
+      "action": "controlled loopback HTTPS Git fetch with hard deadline",
+      "repository": "openharmony/ace_napi",
+      "requested_url": "https://github.com/openharmony/ace_napi.git",
+      "effective_url": "https://127.0.0.1:9444/ace_napi.git",
+      "purpose": "browser timeout acceptance"
+    }
+  ],
+  "commands": [
+    {
+      "command": "node scripts/browser_acceptance.mjs",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && .venv-web/bin/python -m scripts.browser_acceptance_seed --root '/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2'\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && .venv-web/bin/python -m scripts.git_https_fixture_server --port 9443 --root '/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/git-fixture'\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && .venv-web/bin/python -m scripts.git_https_fixture_server --port 9444 --root '/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/git-fixture' --slow\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && env OHSCANNER_DATA='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data' OHSCANNER_TARGET_ROOTS='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/targets' .venv-web/bin/python -m uvicorn src.workbench.api:create_app --factory --host 127.0.0.1 --port 8876\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && env OHSCANNER_DATA='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data' OHSCANNER_TARGET_ROOTS='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/targets' .venv-web/bin/python -m src.workbench.worker\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && env OHSCANNER_DATA='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data' OHSCANNER_TARGET_ROOTS='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/targets' .venv-web/bin/python -m src.workbench.operation_worker\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    },
+    {
+      "command": "wsl.exe -d Ubuntu-22.04 -- bash -lc \"cd '/mnt/e/网安/CyberSecurity-Innovation-Audit' && env OHSCANNER_DATA='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data' OHSCANNER_TARGET_ROOTS='/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/targets' .venv-web/bin/python -m uvicorn src.workbench.api:create_app --factory --host 127.0.0.1 --port 8876\"",
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit"
+    }
+  ],
+  "git_state": {
+    "branch_status": "## codex/full-runtime-performance-audit-20261014...origin/codex/full-runtime-performance-audit-20261014 [ahead 1]\n M .gitignore\n M \"docs/\\345\\274\\200\\345\\217\\221\\345\\215\\217\\344\\275\\234\\344\\270\\216\\344\\272\\244\\344\\273\\230\\346\\214\\207\\345\\215\\227.md\"\n M \"docs/\\351\\235\\242\\346\\235\\277\\345\\212\\237\\350\\203\\275\\344\\270\\216\\351\\252\\214\\346\\224\\266.md\"\n M \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"\n M scripts/verify_owner_ipc_components.py\n M src/workbench/operation_worker.py\n M src/workbench/operations.py\n M src/workbench/operations_api.py\n M tests/test_workbench_operations.py\n M web/src/SourceEvidence.tsx\n M web/src/pages/Cases.tsx\n M web/src/pages/JobDetail.tsx\n M web/src/pages/Operations.tsx\n?? outputs/browser-acceptance/\n?? outputs/reports/m1_descriptor_identity/\n?? research/contracts/A-CCR-03-stable-finding-identity.md\n?? research/contracts/A-CCR-REVIEW-stable-finding-identity-readonlyfactview.md\n?? research/evidence/cpp/a_null_01_preimplementation_20261015/\n?? research/evidence/cpp/a_truth_01_freeze_20261015/\n?? research/evidence/cpp/detector_enhancement_20261015/\n?? research/evidence/cpp/four_class_controls/run-001/\n?? research/evidence/cpp/four_class_controls/run-002/\n?? research/evidence/cpp/four_class_controls/run-003/\n?? research/evidence/cpp/four_class_controls/run-004/\n?? research/evidence/cpp/four_class_controls/run-005/family_poc/\n?? research/evidence/cpp/four_class_controls/run-005/logs/\n?? research/evidence/cpp/four_class_controls/run-005/results.json\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/\n?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json\n?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/\n?? research/experiments/cpp/r0_r1_r2_20261015/\n?? research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md\n?? research/specs/\n?? research/tests/a_ccr_03_stable_finding_identity/\n?? research/tests/a_null_01/\n?? scripts/browser_acceptance.mjs\n?? scripts/browser_acceptance_seed.py\n?? scripts/git_https_fixture_server.py\n?? tests/test_workbench_browser_acceptance.py\n",
+    "full_commit_sha": "0e94ceafab1b2d79547bdf71c86e26e8b42a6b48",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty_files": [
+      " M .gitignore",
+      " M \"docs/\\345\\274\\200\\345\\217\\221\\345\\215\\217\\344\\275\\234\\344\\270\\216\\344\\272\\244\\344\\273\\230\\346\\214\\207\\345\\215\\227.md\"",
+      " M \"docs/\\351\\235\\242\\346\\235\\277\\345\\212\\237\\350\\203\\275\\344\\270\\216\\351\\252\\214\\346\\224\\266.md\"",
+      " M \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"",
+      " M scripts/verify_owner_ipc_components.py",
+      " M src/workbench/operation_worker.py",
+      " M src/workbench/operations.py",
+      " M src/workbench/operations_api.py",
+      " M tests/test_workbench_operations.py",
+      " M web/src/SourceEvidence.tsx",
+      " M web/src/pages/Cases.tsx",
+      " M web/src/pages/JobDetail.tsx",
+      " M web/src/pages/Operations.tsx",
+      "?? outputs/browser-acceptance/",
+      "?? outputs/reports/m1_descriptor_identity/",
+      "?? research/contracts/A-CCR-03-stable-finding-identity.md",
+      "?? research/contracts/A-CCR-REVIEW-stable-finding-identity-readonlyfactview.md",
+      "?? research/evidence/cpp/a_null_01_preimplementation_20261015/",
+      "?? research/evidence/cpp/a_truth_01_freeze_20261015/",
+      "?? research/evidence/cpp/detector_enhancement_20261015/",
+      "?? research/evidence/cpp/four_class_controls/run-001/",
+      "?? research/evidence/cpp/four_class_controls/run-002/",
+      "?? research/evidence/cpp/four_class_controls/run-003/",
+      "?? research/evidence/cpp/four_class_controls/run-004/",
+      "?? research/evidence/cpp/four_class_controls/run-005/family_poc/",
+      "?? research/evidence/cpp/four_class_controls/run-005/logs/",
+      "?? research/evidence/cpp/four_class_controls/run-005/results.json",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/",
+      "?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json",
+      "?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/",
+      "?? research/experiments/cpp/r0_r1_r2_20261015/",
+      "?? research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD.md",
+      "?? research/specs/",
+      "?? research/tests/a_ccr_03_stable_finding_identity/",
+      "?? research/tests/a_null_01/",
+      "?? scripts/browser_acceptance.mjs",
+      "?? scripts/browser_acceptance_seed.py",
+      "?? scripts/git_https_fixture_server.py",
+      "?? tests/test_workbench_browser_acceptance.py"
+    ]
+  },
+  "environment": {
+    "host": "Windows 11 + WSL2 Ubuntu 22.04",
+    "browser": "Microsoft Edge headless via playwright-core",
+    "backend": "/mnt/e/网安/CyberSecurity-Innovation-Audit @ current working tree",
+    "data_root": "E:\\网安\\CyberSecurity-Innovation-Audit\\.codex-review-tmp\\browser-acceptance-web-source-sync-01-r2",
+    "node": "v24.19.0",
+    "playwright_core_path": "playwright-core",
+    "edge_executable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+    "wsl_distribution": "Ubuntu-22.04",
+    "wsl_git": "2.34.1",
+    "wsl_python": "3.10.12"
+  },
+  "operation_details": [
+    {
+      "id": "624550270f584730b1a7b8446fbe3be2",
+      "kind": "revision_range",
+      "spec": {
+        "baseline": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+        "commits": [
+          "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "431467a2537f86f01447c7ead00bb33839c3a836"
+        ],
+        "date_selection": null,
+        "endpoint": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+        "memory_mb": 2048,
+        "repository_id": "2271ff7d17454b74adc44d75d0e33c27",
+        "scan_ids": [
+          "0dad1fea837f45ba97dd638a698f8e9e",
+          "a7b2dcd1a766499c9cc84785c9c5ac2e"
+        ],
+        "timeout_seconds": 1260
+      },
+      "status": "completed_with_limitations",
+      "created_at": "2026-10-15T06:47:01.571395+00:00",
+      "started_at": "2026-10-15T06:47:02.017037+00:00",
+      "finished_at": "2026-10-15T06:47:11.402715+00:00",
+      "cancel_requested": 0,
+      "result_sha256": "dbdce6fc1c41bee82771271e90450c1cb9dadf38628d253ab8228dabe0d7e741",
+      "error": null,
+      "events": [
+        {
+          "id": 3,
+          "operation_id": "624550270f584730b1a7b8446fbe3be2",
+          "created_at": "2026-10-15T06:47:01.571395+00:00",
+          "stage": "queued",
+          "message": "Operation and endpoint scans committed atomically"
+        },
+        {
+          "id": 4,
+          "operation_id": "624550270f584730b1a7b8446fbe3be2",
+          "created_at": "2026-10-15T06:47:11.546667+00:00",
+          "stage": "completed_with_limitations",
+          "message": "Operation result committed"
+        }
+      ],
+      "result": {
+        "baseline": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+        "candidate_comparison": [
+          {
+            "after": [
+              {
+                "detector_version": "0.5.0",
+                "id": "5a77134ba54ad1e066d1baba0c125d02f7ce3152818bc7c6bccfdfabe3c1ab14",
+                "source_sha256": "e365e7f1eb3d0791eca36f4a8a85768fb8ff128918225aaa54b3a56f6bf62fed"
+              },
+              {
+                "detector_version": "0.5.0",
+                "id": "3c9f20e087e3f153f93303ceaa6d1fad77fd317e37038c35d2e314ff58e06372",
+                "source_sha256": "e365e7f1eb3d0791eca36f4a8a85768fb8ff128918225aaa54b3a56f6bf62fed"
+              }
+            ],
+            "before": [],
+            "detector_id": "ohscanner.interface.ipc",
+            "file": "cluster.cpp",
+            "match_basis": "detector_rule_path_symbol",
+            "rule_id": "ipc.auth.missing",
+            "status": "new_candidate",
+            "vulnerability_introduced_or_fixed": "unknown"
+          }
+        ],
+        "changes": [
+          {
+            "new_path": "cluster.cpp",
+            "old_path": "cluster.cpp",
+            "status": "A"
+          },
+          {
+            "new_path": "common_types.h",
+            "old_path": "common_types.h",
+            "status": "A"
+          },
+          {
+            "new_path": "middle.txt",
+            "old_path": "middle.txt",
+            "status": "A"
+          }
+        ],
+        "commits": [
+          "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "431467a2537f86f01447c7ead00bb33839c3a836"
+        ],
+        "date_selection": null,
+        "endpoint": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+        "limitations": [
+          "Candidate changes do not prove vulnerability introduction or remediation."
+        ],
+        "scan_ids": [
+          "0dad1fea837f45ba97dd638a698f8e9e",
+          "a7b2dcd1a766499c9cc84785c9c5ac2e"
+        ],
+        "status": "completed_with_limitations",
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "id": "2d5fb147057b441f96021e9e1d5cb469",
+      "kind": "revision_range",
+      "spec": {
+        "baseline": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+        "commits": [
+          "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "431467a2537f86f01447c7ead00bb33839c3a836"
+        ],
+        "date_selection": {
+          "baseline": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+          "boundary": "[start,end)",
+          "end": "2025-01-04T00:00:00",
+          "endpoint": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "intervening_outside_date": [],
+          "selected_commits": [
+            "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+            "431467a2537f86f01447c7ead00bb33839c3a836"
+          ],
+          "start": "2025-01-02T00:00:00",
+          "time_basis": "committer",
+          "timezone": "UTC",
+          "tip": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "topology": "first-parent"
+        },
+        "endpoint": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+        "memory_mb": 2048,
+        "repository_id": "2271ff7d17454b74adc44d75d0e33c27",
+        "scan_ids": [
+          "0e2ec32760a64bf9b0d1c41d53923792",
+          "63102685519343969a4cef9e9c2c4004"
+        ],
+        "timeout_seconds": 1260
+      },
+      "status": "completed_with_limitations",
+      "created_at": "2026-10-15T06:47:14.918784+00:00",
+      "started_at": "2026-10-15T06:47:15.306459+00:00",
+      "finished_at": "2026-10-15T06:47:24.127702+00:00",
+      "cancel_requested": 0,
+      "result_sha256": "19ab968914475bd0540262a14d121d6b3982163526bc8f4073acdb081bbfc49d",
+      "error": null,
+      "events": [
+        {
+          "id": 5,
+          "operation_id": "2d5fb147057b441f96021e9e1d5cb469",
+          "created_at": "2026-10-15T06:47:14.918784+00:00",
+          "stage": "queued",
+          "message": "Operation and endpoint scans committed atomically"
+        },
+        {
+          "id": 6,
+          "operation_id": "2d5fb147057b441f96021e9e1d5cb469",
+          "created_at": "2026-10-15T06:47:24.301523+00:00",
+          "stage": "completed_with_limitations",
+          "message": "Operation result committed"
+        }
+      ],
+      "result": {
+        "baseline": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+        "candidate_comparison": [
+          {
+            "after": [
+              {
+                "detector_version": "0.5.0",
+                "id": "5a77134ba54ad1e066d1baba0c125d02f7ce3152818bc7c6bccfdfabe3c1ab14",
+                "source_sha256": "e365e7f1eb3d0791eca36f4a8a85768fb8ff128918225aaa54b3a56f6bf62fed"
+              },
+              {
+                "detector_version": "0.5.0",
+                "id": "3c9f20e087e3f153f93303ceaa6d1fad77fd317e37038c35d2e314ff58e06372",
+                "source_sha256": "e365e7f1eb3d0791eca36f4a8a85768fb8ff128918225aaa54b3a56f6bf62fed"
+              }
+            ],
+            "before": [],
+            "detector_id": "ohscanner.interface.ipc",
+            "file": "cluster.cpp",
+            "match_basis": "detector_rule_path_symbol",
+            "rule_id": "ipc.auth.missing",
+            "status": "new_candidate",
+            "vulnerability_introduced_or_fixed": "unknown"
+          }
+        ],
+        "changes": [
+          {
+            "new_path": "cluster.cpp",
+            "old_path": "cluster.cpp",
+            "status": "A"
+          },
+          {
+            "new_path": "common_types.h",
+            "old_path": "common_types.h",
+            "status": "A"
+          },
+          {
+            "new_path": "middle.txt",
+            "old_path": "middle.txt",
+            "status": "A"
+          }
+        ],
+        "commits": [
+          "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "431467a2537f86f01447c7ead00bb33839c3a836"
+        ],
+        "date_selection": {
+          "baseline": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+          "boundary": "[start,end)",
+          "end": "2025-01-04T00:00:00",
+          "endpoint": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "intervening_outside_date": [],
+          "selected_commits": [
+            "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+            "431467a2537f86f01447c7ead00bb33839c3a836"
+          ],
+          "start": "2025-01-02T00:00:00",
+          "time_basis": "committer",
+          "timezone": "UTC",
+          "tip": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+          "topology": "first-parent"
+        },
+        "endpoint": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+        "limitations": [
+          "Candidate changes do not prove vulnerability introduction or remediation."
+        ],
+        "scan_ids": [
+          "0e2ec32760a64bf9b0d1c41d53923792",
+          "63102685519343969a4cef9e9c2c4004"
+        ],
+        "status": "completed_with_limitations",
+        "validated_vulnerability": 0
+      }
+    },
+    {
+      "id": "d131124f310e4384be6942f4e3e246e1",
+      "kind": "version_matrix",
+      "spec": {
+        "case_id": "74be2ac6d2ce4cc3820a4871d269b6ed",
+        "commits": [
+          "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+          "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2"
+        ],
+        "memory_mb": 2048,
+        "repository_id": "2271ff7d17454b74adc44d75d0e33c27",
+        "scan_ids": [
+          "12c043ccde6d4914a67bd2ec3c872978",
+          "41cf93e625f84c6faa30f70f18d8e331"
+        ],
+        "timeout_seconds": 1320
+      },
+      "status": "completed_with_limitations",
+      "created_at": "2026-10-15T06:47:27.123944+00:00",
+      "started_at": "2026-10-15T06:47:27.470949+00:00",
+      "finished_at": "2026-10-15T06:47:37.517464+00:00",
+      "cancel_requested": 0,
+      "result_sha256": "1be2a19567e4de3040ac72eb212753dcb56c50ce6ba8a62de314e41cd3adeae4",
+      "error": null,
+      "events": [
+        {
+          "id": 7,
+          "operation_id": "d131124f310e4384be6942f4e3e246e1",
+          "created_at": "2026-10-15T06:47:27.123944+00:00",
+          "stage": "queued",
+          "message": "Operation and endpoint scans committed atomically"
+        },
+        {
+          "id": 8,
+          "operation_id": "d131124f310e4384be6942f4e3e246e1",
+          "created_at": "2026-10-15T06:47:37.739181+00:00",
+          "stage": "completed_with_limitations",
+          "message": "Operation result committed"
+        }
+      ],
+      "result": {
+        "case_id": "74be2ac6d2ce4cc3820a4871d269b6ed",
+        "comparisons": [
+          {
+            "candidate_comparison": [
+              {
+                "after": [
+                  {
+                    "detector_version": "0.5.0",
+                    "id": "5a77134ba54ad1e066d1baba0c125d02f7ce3152818bc7c6bccfdfabe3c1ab14",
+                    "source_sha256": "e365e7f1eb3d0791eca36f4a8a85768fb8ff128918225aaa54b3a56f6bf62fed"
+                  },
+                  {
+                    "detector_version": "0.5.0",
+                    "id": "3c9f20e087e3f153f93303ceaa6d1fad77fd317e37038c35d2e314ff58e06372",
+                    "source_sha256": "e365e7f1eb3d0791eca36f4a8a85768fb8ff128918225aaa54b3a56f6bf62fed"
+                  }
+                ],
+                "before": [],
+                "detector_id": "ohscanner.interface.ipc",
+                "file": "cluster.cpp",
+                "match_basis": "detector_rule_path_symbol",
+                "rule_id": "ipc.auth.missing",
+                "status": "new_candidate",
+                "vulnerability_introduced_or_fixed": "unknown"
+              }
+            ],
+            "changes": [
+              {
+                "new_path": "cluster.cpp",
+                "old_path": "cluster.cpp",
+                "status": "A"
+              },
+              {
+                "new_path": "common_types.h",
+                "old_path": "common_types.h",
+                "status": "A"
+              },
+              {
+                "new_path": "middle.txt",
+                "old_path": "middle.txt",
+                "status": "A"
+              }
+            ],
+            "from": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+            "impact": "unknown",
+            "to": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2"
+          }
+        ],
+        "limitations": [
+          "Version association is a candidate-level observation; affected/fixed requires bound evidence and review."
+        ],
+        "scan_ids": [
+          "12c043ccde6d4914a67bd2ec3c872978",
+          "41cf93e625f84c6faa30f70f18d8e331"
+        ],
+        "status": "completed_with_limitations",
+        "validated_vulnerability": 0,
+        "versions": [
+          {
+            "candidate_count": 0,
+            "commit": "4e564ac99ee852b39b6d3f7d5a0cd48c61c78e5f",
+            "impact": "unknown",
+            "reason": "Static observations are not product impact proof",
+            "source_snapshot_sha256": "244c62eb020d07c6cf779c281d7f646ba006921da83b7e952ad4565abbb1ab2a"
+          },
+          {
+            "candidate_count": 2,
+            "commit": "5d59e5f4a5fb284a421d9e4c3d793cac384bf2c2",
+            "impact": "unknown",
+            "reason": "Static observations are not product impact proof",
+            "source_snapshot_sha256": "90fbfdf361bc790160a8782fc3170d03f36b16df061478c0d6d72de0b76e88f4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "b1eb14c2ad6b454a9320c3468fe89377",
+      "kind": "source_sync",
+      "spec": {
+        "name": "openharmony/c_utils",
+        "timeout_seconds": 300,
+        "url": "https://github.com/openharmony/c_utils.git"
+      },
+      "status": "completed",
+      "created_at": "2026-10-15T06:47:38.384713+00:00",
+      "started_at": "2026-10-15T06:47:38.757046+00:00",
+      "finished_at": "2026-10-15T06:47:41.295918+00:00",
+      "cancel_requested": 0,
+      "result_sha256": "57fe9e6fdb2fe2e3c029f3f6fc94cd72f5421d0961f01d80c24b02f718c8669e",
+      "error": null,
+      "events": [
+        {
+          "id": 9,
+          "operation_id": "b1eb14c2ad6b454a9320c3468fe89377",
+          "created_at": "2026-10-15T06:47:38.682157+00:00",
+          "stage": "queued",
+          "message": "Immutable operation plan saved"
+        },
+        {
+          "id": 10,
+          "operation_id": "b1eb14c2ad6b454a9320c3468fe89377",
+          "created_at": "2026-10-15T06:47:39.483846+00:00",
+          "stage": "git_sync",
+          "message": "Explicit approved clone/fetch, no checkout/build"
+        },
+        {
+          "id": 11,
+          "operation_id": "b1eb14c2ad6b454a9320c3468fe89377",
+          "created_at": "2026-10-15T06:47:40.387931+00:00",
+          "stage": "git_sync_process",
+          "message": "{\"exit_code\": 0, \"stderr\": \"From https://127.0.0.1:9443/c_utils\\n * [new branch]      master     -> origin/master\\n\", \"stdout\": \"\", \"timed_out\": null}"
+        },
+        {
+          "id": 12,
+          "operation_id": "b1eb14c2ad6b454a9320c3468fe89377",
+          "created_at": "2026-10-15T06:47:41.544015+00:00",
+          "stage": "completed",
+          "message": "Operation result committed"
+        }
+      ],
+      "result": {
+        "advertised_remote_refs": [
+          {
+            "object": "89bd20a89659173d5997f7375755f6bd834c4662",
+            "ref": "refs/remotes/origin/master"
+          }
+        ],
+        "command": [
+          "git",
+          "-c",
+          "core.hooksPath=/dev/null",
+          "-c",
+          "protocol.file.allow=never",
+          "-c",
+          "protocol.ext.allow=never",
+          "-c",
+          "credential.helper=",
+          "-C",
+          "/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data/repo-cache/c_utils",
+          "fetch",
+          "--prune",
+          "--tags",
+          "https://github.com/openharmony/c_utils.git",
+          "+refs/heads/*:refs/remotes/origin/*"
+        ],
+        "limitations": [
+          "No checkout or scan was performed; choose a returned immutable commit explicitly."
+        ],
+        "local_head_after_sync": "89bd20a89659173d5997f7375755f6bd834c4662",
+        "repository": {
+          "created_at": "2026-10-15T06:47:40.619587+00:00",
+          "id": "c03336442b13412e9fe17fc0b984ae20",
+          "name": "openharmony/c_utils",
+          "path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data/repo-cache/c_utils"
+        },
+        "status": "completed",
+        "url": "https://github.com/openharmony/c_utils.git"
+      }
+    },
+    {
+      "id": "42e6f034268b4b1683f76d70dd10d4aa",
+      "kind": "source_sync",
+      "spec": {
+        "name": "openharmony/ace_napi",
+        "timeout_seconds": 10,
+        "url": "https://github.com/openharmony/ace_napi.git"
+      },
+      "status": "timed_out",
+      "created_at": "2026-10-15T06:47:42.319994+00:00",
+      "started_at": "2026-10-15T06:47:42.571749+00:00",
+      "finished_at": "2026-10-15T06:47:52.787134+00:00",
+      "cancel_requested": 0,
+      "result_sha256": null,
+      "error": "Operation hard deadline exceeded",
+      "events": [
+        {
+          "id": 13,
+          "operation_id": "42e6f034268b4b1683f76d70dd10d4aa",
+          "created_at": "2026-10-15T06:47:42.575415+00:00",
+          "stage": "queued",
+          "message": "Immutable operation plan saved"
+        },
+        {
+          "id": 14,
+          "operation_id": "42e6f034268b4b1683f76d70dd10d4aa",
+          "created_at": "2026-10-15T06:47:43.410252+00:00",
+          "stage": "git_sync",
+          "message": "Explicit approved clone/fetch, no checkout/build"
+        },
+        {
+          "id": 15,
+          "operation_id": "42e6f034268b4b1683f76d70dd10d4aa",
+          "created_at": "2026-10-15T06:47:53.065024+00:00",
+          "stage": "timed_out",
+          "message": "Operation hard deadline exceeded"
+        }
+      ]
+    }
+  ],
+  "process_evidence": [
+    {
+      "name": "git-https-c-utils",
+      "pid": 903,
+      "exit_code": 15,
+      "stdout": {
+        "path": "process-logs/git-https-c-utils.stdout.log",
+        "bytes": 58,
+        "sha256": "b814c1a7aeb7aae865b216675543be3ee2d8077ace0669caa3890af41b4c3b88"
+      },
+      "stderr": {
+        "path": "process-logs/git-https-c-utils.stderr.log",
+        "bytes": 105,
+        "sha256": "ba5fca5521a556024a36ba62c45d8147cf66cee1f39440793cbaa09fdfcf5495"
+      }
+    },
+    {
+      "name": "git-https-slow",
+      "pid": 910,
+      "exit_code": 15,
+      "stdout": {
+        "path": "process-logs/git-https-slow.stdout.log",
+        "bytes": 58,
+        "sha256": "f1e3048305d33848778f132e0e2d8cd5b99e2865945c518b92a38a7791e35062"
+      },
+      "stderr": {
+        "path": "process-logs/git-https-slow.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "api",
+      "pid": 905,
+      "exit_code": 15,
+      "stdout": {
+        "path": "process-logs/api.stdout.log",
+        "bytes": 57125,
+        "sha256": "649857fe0adee0fb7326f21489199b02ed5d62384804eaf579e7557e91d8658c"
+      },
+      "stderr": {
+        "path": "process-logs/api.stderr.log",
+        "bytes": 345,
+        "sha256": "9e3c1d2eb883561f2a0c7120809ef0d0420d14be91b6dbb9196a78d1381985c2"
+      }
+    },
+    {
+      "name": "scan-worker",
+      "pid": 978,
+      "exit_code": 15,
+      "stdout": {
+        "path": "process-logs/scan-worker.stdout.log",
+        "bytes": 18,
+        "sha256": "be9645ec64ca10e0ffe3f58caef9c7d72598d85805304639a058bddf0de7a1d9"
+      },
+      "stderr": {
+        "path": "process-logs/scan-worker.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "operation-worker",
+      "pid": 980,
+      "exit_code": 15,
+      "stdout": {
+        "path": "process-logs/operation-worker.stdout.log",
+        "bytes": 18,
+        "sha256": "3e458531635fe6dde63720fd12c502bb876759554f363a5a62f8db7aff3fd49e"
+      },
+      "stderr": {
+        "path": "process-logs/operation-worker.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "api-restarted",
+      "pid": 1211,
+      "exit_code": 15,
+      "stdout": {
+        "path": "process-logs/api-restarted.stdout.log",
+        "bytes": 1775,
+        "sha256": "2c4c14ec799504e8db6fbc87cd2eef308a27ee596f4deb9dd78e723ed32b4fc1"
+      },
+      "stderr": {
+        "path": "process-logs/api-restarted.stderr.log",
+        "bytes": 347,
+        "sha256": "2b8b5c996941c24c4476ab880092508db66b669a84a522c1171e3277b157f571"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "data/operations/2d5fb147057b441f96021e9e1d5cb469/child-result.json",
+      "bytes": 1829,
+      "sha256": "df0237059295fba6a64982174f94dfbccb00608231efebec243de3e8a9b784df"
+    },
+    {
+      "path": "data/operations/2d5fb147057b441f96021e9e1d5cb469/result.json",
+      "bytes": 2204,
+      "sha256": "19ab968914475bd0540262a14d121d6b3982163526bc8f4073acdb081bbfc49d"
+    },
+    {
+      "path": "data/operations/2d5fb147057b441f96021e9e1d5cb469/worker.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/operations/42e6f034268b4b1683f76d70dd10d4aa/worker.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/operations/624550270f584730b1a7b8446fbe3be2/child-result.json",
+      "bytes": 1365,
+      "sha256": "522697c53eaba6bf760dc5f500ae59a86832646e8b308aa3ce96d6bd007baadb"
+    },
+    {
+      "path": "data/operations/624550270f584730b1a7b8446fbe3be2/result.json",
+      "bytes": 1674,
+      "sha256": "dbdce6fc1c41bee82771271e90450c1cb9dadf38628d253ab8228dabe0d7e741"
+    },
+    {
+      "path": "data/operations/624550270f584730b1a7b8446fbe3be2/worker.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/operations/b1eb14c2ad6b454a9320c3468fe89377/child-result.json",
+      "bytes": 1049,
+      "sha256": "99a764808ca6972ffa998923a02d63e8f2ee4b0bf9fa39e2b47e4c7ac64d54b4"
+    },
+    {
+      "path": "data/operations/b1eb14c2ad6b454a9320c3468fe89377/git-process.json",
+      "bytes": 707,
+      "sha256": "5953cd5d16aa05d2a34a6997f0192789f0fc494e068943d0b4abcfa391f6cc2e"
+    },
+    {
+      "path": "data/operations/b1eb14c2ad6b454a9320c3468fe89377/result.json",
+      "bytes": 1188,
+      "sha256": "57fe9e6fdb2fe2e3c029f3f6fc94cd72f5421d0961f01d80c24b02f718c8669e"
+    },
+    {
+      "path": "data/operations/b1eb14c2ad6b454a9320c3468fe89377/worker.log",
+      "bytes": 648,
+      "sha256": "744ce05584cbbb336967fc41c8433022e08152e144a0193acabb63e86434cc0d"
+    },
+    {
+      "path": "data/operations/d131124f310e4384be6942f4e3e246e1/child-result.json",
+      "bytes": 1872,
+      "sha256": "cd23a5736e3c3fca8e1adf3e6789ca363e37bf904b58b70fd2639a7f8c854c02"
+    },
+    {
+      "path": "data/operations/d131124f310e4384be6942f4e3e246e1/result.json",
+      "bytes": 2443,
+      "sha256": "1be2a19567e4de3040ac72eb212753dcb56c50ce6ba8a62de314e41cd3adeae4"
+    },
+    {
+      "path": "data/operations/d131124f310e4384be6942f4e3e246e1/worker.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "git-fixture/cert.pem",
+      "bytes": 1135,
+      "sha256": "bac99e9381c2a79f89a1f33cedf88921b1a94ee576330d48a5d1170b21427ec9"
+    },
+    {
+      "path": "seed.json",
+      "bytes": 1573,
+      "sha256": "46aa89a95a363e45c9dc165496b54ceb3a42a21fa6ac5e07062a267550343d9c"
+    }
+  ],
+  "source_hashes": [
+    {
+      "path": "scripts/browser_acceptance.mjs",
+      "sha256": "09d223890a2ee8679c101c50be0905f5f16ba9b8a2350cc4b82ed328f6a10ef9"
+    },
+    {
+      "path": "scripts/browser_acceptance_seed.py",
+      "sha256": "593f660c50184dfe21a2fbfe820d017545fc31a3f7e498ba7891d3c8e21713eb"
+    },
+    {
+      "path": "scripts/git_https_fixture_server.py",
+      "sha256": "fa4d3af5d7da79b0e3de020f2364294d6e93ab7b1de3a02b31239b91f83e71d6"
+    },
+    {
+      "path": "src/workbench/operations.py",
+      "sha256": "0eaaf408a25e80734102e966957de3989f48e76a74385fa8fcea12f3ed4c22d7"
+    },
+    {
+      "path": "src/workbench/operation_worker.py",
+      "sha256": "dfde6c6beecc5e206d13aca8935ae7601a319c9ae79f09aab75384355b6fbea9"
+    },
+    {
+      "path": "tests/test_workbench_operations.py",
+      "sha256": "67718d622db12dbfba3bc46bca5628f80a87a1efc871adca474d8b58e610e8fd"
+    },
+    {
+      "path": "tests/test_workbench_browser_acceptance.py",
+      "sha256": "f40529ec868736c3381cf96e2b56b6ab64b51d3b332c3f249448fb3965b560a3"
+    }
+  ],
+  "source_sync_diagnostics": {
+    "git_process_records": [
+      {
+        "command": [
+          "git",
+          "-c",
+          "core.hooksPath=/dev/null",
+          "-c",
+          "protocol.file.allow=never",
+          "-c",
+          "protocol.ext.allow=never",
+          "-c",
+          "credential.helper=",
+          "-C",
+          "/mnt/e/网安/CyberSecurity-Innovation-Audit/.codex-review-tmp/browser-acceptance-web-source-sync-01-r2/data/repo-cache/c_utils",
+          "fetch",
+          "--prune",
+          "--tags",
+          "https://github.com/openharmony/c_utils.git",
+          "+refs/heads/*:refs/remotes/origin/*"
+        ],
+        "cwd": "/tmp",
+        "exit_code": 0,
+        "stderr": "From https://127.0.0.1:9443/c_utils\n * [new branch]      master     -> origin/master\n",
+        "stdout": "",
+        "supervisor_deadline": "outer operation Worker",
+        "timeout_seconds": 300
+      }
+    ],
+    "preserved": [
+      "loopback HTTPS fixture",
+      "target-local URL rewrite",
+      "fixture CA certificate",
+      "network action records"
+    ]
+  },
+  "limitations": [
+    "Browser acceptance covers local workbench behavior only; it is not vulnerability accuracy or product security validation.",
+    "Version matrix reports static candidate observations with impact unknown.",
+    "The timeout control uses a deterministic loopback HTTPS Git endpoint and does not create a complete repository.",
+    "Public-network GitHub/Gitee/GitCode synchronization remains unverified."
+  ],
+  "unverified": [
+    "multi-user and public-network deployment",
+    "Docker runtime validation",
+    "product reachability and CIA impact"
+  ]
+}

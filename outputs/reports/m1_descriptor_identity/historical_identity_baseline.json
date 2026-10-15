@@ -1,0 +1,898 @@
+{
+  "comparison_key": [
+    "file",
+    "line",
+    "rule_id",
+    "source_sha256"
+  ],
+  "components": [
+    {
+      "candidates": [
+        {
+          "candidate_id": "bde78135f89e015ee76086f2da3e6230c5813d1e1abe59882abbb683c786496e",
+          "current_candidate_id": "6b621a378b22783bf0533e4a5531ee638b21d8cd34de2ae967d378c9d64efe74",
+          "current_diagnostic_id": "ohscanner.interface.ipc:285805a84c933481",
+          "current_message_sha256": "78b488f1a4d1907eaff0bd70a88f0b92b9f59314feb46283c5e06a6601f53aac",
+          "diagnostic_id": "ohscanner.interface.ipc:4eb520fca8bf8799",
+          "file": "services/engine/src/update_service_stub.cpp",
+          "line": 228,
+          "message_sha256": "78b488f1a4d1907eaff0bd70a88f0b92b9f59314feb46283c5e06a6601f53aac",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.auth.guard-coverage",
+          "source_sha256": "9f0076ef97d099258e38f55568dee05d8926d5ee686336c43af3b8a268765768",
+          "symbol": "UpdateServiceStub::DoUpdateStub"
+        },
+        {
+          "candidate_id": "fbe72e62a68593c5bbe911905220840e0a213d697e0fe7cfc0c1dafe2691042c",
+          "current_candidate_id": "fb4e6248deea6fd1abbf8e533a851880f03e9e5c0803f1f86c5dd8fc5f6822a1",
+          "current_diagnostic_id": "ohscanner.interface.ipc:8ebd451c77a38dc4",
+          "current_message_sha256": "d56eb1674ae30ff8bdd446899a3591fcf5b46fa3696b46244ff130b0acf77215",
+          "diagnostic_id": "ohscanner.interface.ipc:292877590a118ec5",
+          "file": "services/engine/src/update_service_stub.cpp",
+          "line": 336,
+          "message_sha256": "d56eb1674ae30ff8bdd446899a3591fcf5b46fa3696b46244ff130b0acf77215",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.auth.guard-coverage",
+          "source_sha256": "9f0076ef97d099258e38f55568dee05d8926d5ee686336c43af3b8a268765768",
+          "symbol": "UpdateServiceStub::FactoryResetStub"
+        }
+      ],
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "component": "update_updateservice",
+      "expected_current": {
+        "candidate_count": 2,
+        "detector_version": "0.5.0",
+        "identity_projection_sha256": "c2acbf2895a9d5973960755723538c00733b206f4e8303f7b680e4f8e8e53068",
+        "model_version": "oh-ipc-2026.10-v3"
+      },
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "milestone_deltas": {
+        "added_count": 0,
+        "m1_removed_count": 0,
+        "m2_removed_count": 0
+      },
+      "post_m1_expected_count": 2,
+      "pre_m1": {
+        "candidate_count": 2,
+        "detector_version": "0.3.0",
+        "identity_projection_sha256": "92ee106c3e4f70a043665ae0e286410944c67d90c2e9123202a0b731236f7873",
+        "model_version": "oh-ipc-2026.10-v1",
+        "reconstructed_report_sha256": "384cdb84249d32188aeaab6feda4a91e3d193c7feddfa883e1bdff6bd5bf954d"
+      },
+      "repository": "openharmony/update_updateservice",
+      "source_scope": {
+        "algorithm": "src/ohscanner/detectors/interface/audit.py@f077e85:plan_scope",
+        "plan_sha256": "e5903393e19b8e7bb4aa97daf20b7fa089c10af38c5ef42163bfdbf00aa43cd6",
+        "selected_bytes": 851345,
+        "selected_files": 219,
+        "shards": [
+          {
+            "bytes": 851345,
+            "files": 219,
+            "shard_sha256": "28731a3c57d29f6d2543bd62ff274028e1b95733196d963e97c685d2f73a2883"
+          }
+        ],
+        "sorted_paths_sha256": "4ce3e553cd8d5c7d831e80d28e4d87009cb62e008f009b34122be6f234f78790"
+      }
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "8caf0832794160b50433abe27b6ef9d649a4075d525b940c5de4cd2d75028e30",
+          "diagnostic_id": "ohscanner.interface.ipc:23aa1209cbc47199",
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 78,
+          "message_sha256": "3c7c4b3daba2218b0f0f9092504725d239e8995f58b90c1840eb5593e80b6bd2",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+          "symbol": "TokenSyncCallbackStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "54fcd5b56bc5738a5e6dd05e64fcfa2100648c21693673e562f8100b43e07527",
+          "diagnostic_id": "ohscanner.interface.ipc:06be6b34668e5304",
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 81,
+          "message_sha256": "87a1ffea878346737f28e1a76030b861c224328c7e15398a3dfeb8f9e117c3b6",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+          "symbol": "TokenSyncCallbackStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "9770ee3a459abe4ccc87656cd56cd7a7b488d1a4229d2d03311297953bb50b50",
+          "diagnostic_id": "ohscanner.interface.ipc:e31c76d4c74605da",
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 84,
+          "message_sha256": "eb3c144a224ec6476fca0bc1a4c0c13639c039afe8312fef27b559e206bf2641",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+          "symbol": "TokenSyncCallbackStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "267c42721b3e26191d3523a5c6222b48bad4b26ca7599b051b4e4b4db3c8c0ff",
+          "diagnostic_id": "ohscanner.interface.ipc:b068c30f61973d3e",
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 103,
+          "message_sha256": "2e9d2be174e09756a1de99219dfbc610f26508400e218a318d29d24548bc33fe",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+          "symbol": "TokenSyncCallbackStub::GetRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "ee103ad260c794894f4441b8c3ed66221d012c7f8aaa23c56650c0d098dd2d74",
+          "diagnostic_id": "ohscanner.interface.ipc:45de52465c8cbc07",
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 116,
+          "message_sha256": "aa8ef5148edd1e3fd7333e6210108ddaab3bb4629d52b0511bf6ad6828c45d57",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+          "symbol": "TokenSyncCallbackStub::DeleteRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "2f597f302cc79d1d476d80d96365163a3be18f3221f7cfd92f5fa9063933783f",
+          "diagnostic_id": "ohscanner.interface.ipc:3c4176d1bce3d2da",
+          "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+          "line": 131,
+          "message_sha256": "ce1452fb9d0752d4b7698752e8cc3436791035bd976338f7b28fc11fe2b8527a",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "a0b148f9f0f1f06344477a9e3309c3efaa81b8b2d89be00a25f794ce66243340",
+          "symbol": "TokenSyncCallbackStub::UpdateRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "3679d715ace9e8c84e2e8ef7d715e14447c8902a0b2c19f0fce710e10d64dd33",
+          "diagnostic_id": "ohscanner.interface.ipc:ca5e170f669106ef",
+          "file": "interfaces/innerkits/privacy/src/on_permission_used_record_callback_stub.cpp",
+          "line": 45,
+          "message_sha256": "106ad66dd08cf56814a6dfc4e85240eba9f448630956288b0d9c3bc2c144b30d",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "390e9224c26d4e7200057304d89f3a554073a06d03d80869430784cc988bfc90",
+          "symbol": "OnPermissionUsedRecordCallbackStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "d0d608ced86018458efed19e7f93ee86dc840f356272ccc0e1e8c14151f4dc54",
+          "diagnostic_id": "ohscanner.interface.ipc:7ba80dbb5ab58deb",
+          "file": "interfaces/innerkits/privacy/src/on_permission_used_record_callback_stub.cpp",
+          "line": 54,
+          "message_sha256": "b9c455605c2a977550759e9e0d2340f1f87acb81b6913103458155cab6c750f3",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "390e9224c26d4e7200057304d89f3a554073a06d03d80869430784cc988bfc90",
+          "symbol": "OnPermissionUsedRecordCallbackStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "14f6147f7f8e1a1e6c9bf2b96ccbed5705a199c4baad979cd110c8abfe9bb72d",
+          "diagnostic_id": "ohscanner.interface.ipc:0cb66f2bb3c34131",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 48,
+          "message_sha256": "a1d9c906664ce5ca4f7ed2f6fe5af29f0a1892283b0e0908743c03124fe1ad8b",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "3df00b8e990986005b99714b110a9655c11cde313ac34ee751880df48d2f9385",
+          "diagnostic_id": "ohscanner.interface.ipc:f0ad892ce1047855",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 51,
+          "message_sha256": "36b2bd930cdf6fb72ebc5c35bd9579a60a31f36e06d38fc1f925c4ffd8b99d77",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "81290371421dce41e91fc509bfd6303fd97ddd2417c19a7a5dd50b491c443c88",
+          "diagnostic_id": "ohscanner.interface.ipc:ddbb6e25825566ac",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 54,
+          "message_sha256": "61ba5a65b8b604b3d4f7d387eef17acd31106f34f3d73bd7e8f165fd0df18d61",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "84ce3fe49b3fb9feda395980efc881c2020df41e8146dc7a6a869b00a471eadf",
+          "diagnostic_id": "ohscanner.interface.ipc:fde391f8dd19b6b3",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 83,
+          "message_sha256": "23e0ef2a31989cf1360e2695cc96f3d21cb11d0e7a74a3319223c42a5431c8d9",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::GetRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "af03d6429768d6c5e568abbc02233c1bfc1e5da0fc8950e299697add92f3a0d8",
+          "current_candidate_id": "4f2ea79c35d2532576cdc14c6f5bec6b2b35f703229f56a6b561d25b02251fe4",
+          "current_diagnostic_id": "ohscanner.interface.ipc:8163033a84f94224",
+          "current_message_sha256": "e4e531089288b5715e9f00643859ad800b2c33728012222d0c72b7be310bfc3e",
+          "diagnostic_id": "ohscanner.interface.ipc:98d7690e8aaa8f10",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 104,
+          "message_sha256": "e4e531089288b5715e9f00643859ad800b2c33728012222d0c72b7be310bfc3e",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.auth.missing",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::GetRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "2e89de3335a55e1371c2bd423293b3ae332e48396ddebddc7fb61a17420f1d9f",
+          "diagnostic_id": "ohscanner.interface.ipc:145251c20ac85166",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 104,
+          "message_sha256": "190ed47e737ce6d3925e9ea753c2826c5ffbd853898b98b300793939274b9793",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::GetRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "c2f99fc99b014af189a06330c7103caeb66171277ceb48c84053435a8bc37892",
+          "diagnostic_id": "ohscanner.interface.ipc:c52e4ff1374f43e2",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 110,
+          "message_sha256": "af4139ce9aa0461ef51590796666cb36a01f684f00d2a284cbf07765508c6f39",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::DeleteRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "d35e56fe3e4bcd937d92fcff446d617aa9836b13fafb83332e31f67319a5027d",
+          "current_candidate_id": "cdd24bc14ee37486d0b573b93cd89116c9f288e5fb4904f07cee8e9d1360c400",
+          "current_diagnostic_id": "ohscanner.interface.ipc:03ea0dfc1602e229",
+          "current_message_sha256": "cddca018c9a54e3e98f0caee42dddf38dfafb11fb6140c332765ace43a317986",
+          "diagnostic_id": "ohscanner.interface.ipc:91323bb537cee190",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 121,
+          "message_sha256": "cddca018c9a54e3e98f0caee42dddf38dfafb11fb6140c332765ace43a317986",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.auth.missing",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::DeleteRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "ae2596bebc015f7314ce7db0aee78bf7c5ff411a9d42682b43df754920ec72e2",
+          "diagnostic_id": "ohscanner.interface.ipc:388813f8f7bd3bfe",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 121,
+          "message_sha256": "dcb094483d50f4a0bf2bbef0862988ca36efd2b540c2d348204d2f0eae3707a2",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::DeleteRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "fcea7a168c4913c73a618a2ffa0b7cf8afb29ecfb0492c5c0af255fd98fe3b58",
+          "diagnostic_id": "ohscanner.interface.ipc:8d66cc288e5c37b6",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 127,
+          "message_sha256": "a0e464313aa901c530679536f3b414925f564088c034182be1fbd255c419606c",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::UpdateRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "aea9dfc308434c549a7ac9576043aed188cc0715ca5533c18e804f89529f8cda",
+          "current_candidate_id": "0afcb3a1222fab3a616a067dc7070361f5fb5a4730c2bcebb79671b9fbbf39fb",
+          "current_diagnostic_id": "ohscanner.interface.ipc:6ca7291f70b3fcf4",
+          "current_message_sha256": "c3fe00c08500db63d080c859547ceb2ecf8d8ad1c2b6cfedaeb08673ffbbce67",
+          "diagnostic_id": "ohscanner.interface.ipc:40dd5afbc84d98ba",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 136,
+          "message_sha256": "c3fe00c08500db63d080c859547ceb2ecf8d8ad1c2b6cfedaeb08673ffbbce67",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.auth.missing",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::UpdateRemoteHapTokenInfoInner"
+        },
+        {
+          "candidate_id": "1b742c413f3f736c092d74b259a50d8b2b3d050556a83812f2ea0be26ebe68e5",
+          "diagnostic_id": "ohscanner.interface.ipc:e3b725a02403df9f",
+          "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+          "line": 136,
+          "message_sha256": "2793b821d6bb3f08f9675c89deca73ebe4ac5672b0889a8944f3717405201c54",
+          "milestones": [
+            "pre_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "c775adcc16da96412cfbef3ae5beb44f967fc58d6279901e55388a8004636ae1",
+          "symbol": "TokenSyncManagerStub::UpdateRemoteHapTokenInfoInner"
+        }
+      ],
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "component": "security_access_token",
+      "expected_current": {
+        "candidate_count": 3,
+        "detector_version": "0.5.0",
+        "identity_projection_sha256": "b156c7c622fe6073b4c1e2ad89c5a7345234dfc0f588a00cf3754987970ecbb4",
+        "model_version": "oh-ipc-2026.10-v3"
+      },
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "milestone_deltas": {
+        "added_count": 0,
+        "m1_removed_count": 17,
+        "m2_removed_count": 0
+      },
+      "post_m1_expected_count": 3,
+      "pre_m1": {
+        "candidate_count": 20,
+        "detector_version": "0.3.0",
+        "identity_projection_sha256": "643a74ddb7497dd3e78b44c5791d1ed4ac2b18e5d45af065c312d5f361ef99f2",
+        "model_version": "oh-ipc-2026.10-v1",
+        "reconstructed_report_sha256": "42212b7173796f4eec04c6b7da16c4145c6f47976802062caa4dca0e0481d93d"
+      },
+      "repository": "openharmony/security_access_token",
+      "source_scope": {
+        "algorithm": "src/ohscanner/detectors/interface/audit.py@f077e85:plan_scope",
+        "plan_sha256": "90a5094eae710d1156538e34e7c9e1a6f2bd974abc762422a1bb78109ca9634b",
+        "selected_bytes": 3484891,
+        "selected_files": 550,
+        "shards": [
+          {
+            "bytes": 3484891,
+            "files": 550,
+            "shard_sha256": "2e150ffee5b97a3140d20b4ed10c29b150d7324c7e0c2fd8918e3df07d2999ba"
+          }
+        ],
+        "sorted_paths_sha256": "137518f412e72abe04ef5fd4060382ea90529d5065ee9d97642151c40c3fdd03"
+      }
+    },
+    {
+      "candidates": [],
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "component": "distributeddatamgr_kv_store",
+      "expected_current": {
+        "candidate_count": 0,
+        "detector_version": "0.5.0",
+        "identity_projection_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "model_version": "oh-ipc-2026.10-v3"
+      },
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "milestone_deltas": {
+        "added_count": 0,
+        "m1_removed_count": 0,
+        "m2_removed_count": 0
+      },
+      "post_m1_expected_count": 0,
+      "pre_m1": {
+        "candidate_count": 0,
+        "detector_version": "0.3.0",
+        "identity_projection_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "model_version": "oh-ipc-2026.10-v1",
+        "reconstructed_report_sha256": "7f5b3c5d1dd8f406febb35a1a78368a0b9f12db492e0dd5eb5d17e233933b1f4"
+      },
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "source_scope": {
+        "algorithm": "src/ohscanner/detectors/interface/audit.py@f077e85:plan_scope",
+        "plan_sha256": "72e9afdda3619eed13f21adba4e473fb5bb34823657c4dec05d9c3df05468f4e",
+        "selected_bytes": 11765303,
+        "selected_files": 1446,
+        "shards": [
+          {
+            "bytes": 11765303,
+            "files": 1446,
+            "shard_sha256": "6aa1a4baba749876d7d97536b0d5d31699679f37fa3a5f1ae327c3efb6590695"
+          }
+        ],
+        "sorted_paths_sha256": "a270131724cabc432d87eab4c4186be743ad8f0e32cbb9b99095377177d5a345"
+      }
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "51db2a16205c7542627ad95ad1e73fef91819ce98cfb4b989f3d4cf2374708c8",
+          "diagnostic_id": "ohscanner.interface.ipc:d254c77135e7020f",
+          "file": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+          "line": 42,
+          "message_sha256": "4d3ab2cf044f3e75bf4e924c02beac4c1d34162efb151265d11e41b934af2229",
+          "milestones": [
+            "pre_m1",
+            "post_m1"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab",
+          "symbol": "ScreenSessionManagerStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "2c5e765fbcb371b16980e3955a1fb77cdc135853c5085c982c2dc6d443e44abd",
+          "current_candidate_id": "e4edd2f2fd42e15bcadc98c562173442d49ecfddd8314c4da6d0cfcb2f77d38e",
+          "current_diagnostic_id": "ohscanner.interface.ipc:f54d804afc830dcc",
+          "current_message_sha256": "fdd29d3ec577edfbec3396f19216416e802a773c883abee78ea7d37a7eb4e6b0",
+          "diagnostic_id": "ohscanner.interface.ipc:d893af9beb2f0298",
+          "file": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+          "line": 738,
+          "message_sha256": "fdd29d3ec577edfbec3396f19216416e802a773c883abee78ea7d37a7eb4e6b0",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.auth.missing",
+          "source_sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab",
+          "symbol": "ScreenSessionManagerStub::OnRemoteRequestInner"
+        },
+        {
+          "candidate_id": "3215679cfbf41666b43f2f8842d37617621a7cd362d29a6534d72033a932e5a7",
+          "current_candidate_id": "3a941879fb636fd1186c158d465f0e4dd725218b55aadf48942e894d281549d7",
+          "current_diagnostic_id": "ohscanner.interface.ipc:eaf73b5d3dd8cbed",
+          "current_message_sha256": "dc7b54a15ecf2e9d368d15d722d26d2fef2f45a967fcadd5c17cf8efc23fbf56",
+          "diagnostic_id": "ohscanner.interface.ipc:8a6d7c37535ab938",
+          "file": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+          "line": 1778,
+          "message_sha256": "dc7b54a15ecf2e9d368d15d722d26d2fef2f45a967fcadd5c17cf8efc23fbf56",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab",
+          "symbol": "ScreenSessionManagerStub::OnRemoteRequestInner"
+        },
+        {
+          "candidate_id": "7305d98fbe7559fb4c089cb51072b5f0237dda8539863e4ce8c0147b55ba6120",
+          "current_candidate_id": "d027f84809f89fe04e9bc320d66199b5c1873e5d234edac7ee5d60ffec8a924f",
+          "current_diagnostic_id": "ohscanner.interface.ipc:1038d9212c213ebd",
+          "current_message_sha256": "43a577e66c8b45c0f64e8ffd333ddffcc7b4cd52fa3902dbf268e38aa1d87579",
+          "diagnostic_id": "ohscanner.interface.ipc:97635c39db37a455",
+          "file": "window_scene/session/container/src/zidl/session_stage_stub.cpp",
+          "line": 1252,
+          "message_sha256": "43a577e66c8b45c0f64e8ffd333ddffcc7b4cd52fa3902dbf268e38aa1d87579",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "1b66a137d5e9f5a27b41661f8441007c14efa44fd1d54f04fc6a42c4a822470a",
+          "symbol": "SessionStageStub::HandleGetUIContentRemoteObj"
+        },
+        {
+          "candidate_id": "2e168369579b37fdc1f89251d220f45a63bdc403824e69af61dbeffa7b7e5e0f",
+          "current_candidate_id": "e282d5b934d865796c160f64b43dacf52431855aa8a113d24f26aa8c368c66a5",
+          "current_diagnostic_id": "ohscanner.interface.ipc:c32e1501dc47cc1d",
+          "current_message_sha256": "f25fb1759cf1000187b8e16738d94af31594acdd951faba3732f2b7ea1f1ffda",
+          "diagnostic_id": "ohscanner.interface.ipc:57361e676e3e5103",
+          "file": "window_scene/session/host/src/zidl/session_stub.cpp",
+          "line": 592,
+          "message_sha256": "f25fb1759cf1000187b8e16738d94af31594acdd951faba3732f2b7ea1f1ffda",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "22026ae7abf14e13c07e3eedc487f693fc30da2555375fedb86045b9b5658fac",
+          "symbol": "SessionStub::HandleConnect"
+        },
+        {
+          "candidate_id": "85e9ad22d1fbec21e93ec2fd752448c38934b9ecf45dd92800199800b9722121",
+          "current_candidate_id": "7652de699e2cb580e7eacbd3d329d422d5df6ebc9388f5852bf7254ac86ec559",
+          "current_diagnostic_id": "ohscanner.interface.ipc:4d6541fff35a747d",
+          "current_message_sha256": "ae9a788d7cba222583052ad2a2b6337b478daba0203ed760de0cc7c739f84951",
+          "diagnostic_id": "ohscanner.interface.ipc:d748c5353eb44233",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 371,
+          "message_sha256": "ae9a788d7cba222583052ad2a2b6337b478daba0203ed760de0cc7c739f84951",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleCreateAndConnectSpecificSession"
+        },
+        {
+          "candidate_id": "12973d3727c2d9dc4bb5abdfc31ea9241c0df7986fbc8e1e26c8315109372269",
+          "current_candidate_id": "048a7ff9d5562ebba6fef5ede060a34f160252084f7008d51aeab0b454985757",
+          "current_diagnostic_id": "ohscanner.interface.ipc:7a743949268b8eff",
+          "current_message_sha256": "ae9a788d7cba222583052ad2a2b6337b478daba0203ed760de0cc7c739f84951",
+          "diagnostic_id": "ohscanner.interface.ipc:b46dbd81e07e1de1",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 373,
+          "message_sha256": "ae9a788d7cba222583052ad2a2b6337b478daba0203ed760de0cc7c739f84951",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleCreateAndConnectSpecificSession"
+        },
+        {
+          "candidate_id": "1b118c2258c28e69859f2855060fd16b5c40caa3609ab9ddcb2c2c6bf18a1c97",
+          "current_candidate_id": "f442b8e35c77c6cd4271fe257d75a824ccae78a9f9c5ea3d8af5dd2c65b07430",
+          "current_diagnostic_id": "ohscanner.interface.ipc:0e65b0dcf7732b2d",
+          "current_message_sha256": "15449b1d4e0e7fb9ca801d2c497c6647dd726896bbf28c8118c39ff4ddbd7e53",
+          "diagnostic_id": "ohscanner.interface.ipc:db2e65fe180d5ffb",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 421,
+          "message_sha256": "15449b1d4e0e7fb9ca801d2c497c6647dd726896bbf28c8118c39ff4ddbd7e53",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleRecoverAndConnectSpecificSession"
+        },
+        {
+          "candidate_id": "ba1be24f7c2723f23fef7d7fde41831f88a9abee80e567236d3f9c66e3d49d1a",
+          "current_candidate_id": "1d1e1a81e67597ef3e509503afaaef0ea8a7114cf6c4e92beb0035a0e0ba3264",
+          "current_diagnostic_id": "ohscanner.interface.ipc:6f0f2ccd49c6810f",
+          "current_message_sha256": "2344125079edfc2ca5ad1ec0d1203afb62183b02e5f910c5f92bfa3b28c2c025",
+          "diagnostic_id": "ohscanner.interface.ipc:d753e1163eedd12b",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 462,
+          "message_sha256": "2344125079edfc2ca5ad1ec0d1203afb62183b02e5f910c5f92bfa3b28c2c025",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleRecoverAndReconnectSceneSession"
+        },
+        {
+          "candidate_id": "f3840d5febd672c9d883d393adc4403e65abceda533490b3ad85d2fe8545fedb",
+          "current_candidate_id": "3ecd825937102351a2dfa42384d2af5ce4e8681a5938ce84eec0d793b3ebc54e",
+          "current_diagnostic_id": "ohscanner.interface.ipc:6b91440c0ffe6b43",
+          "current_message_sha256": "bdac68f657adfe50381fad092320ff23292d585217259f98641bf956d8f00287",
+          "diagnostic_id": "ohscanner.interface.ipc:9f8fde9a2affa6e5",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 1208,
+          "message_sha256": "bdac68f657adfe50381fad092320ff23292d585217259f98641bf956d8f00287",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleGetUIContentRemoteObj"
+        },
+        {
+          "candidate_id": "7729ab850c618138bf83501fc4ee213e128f79aaf1cbdba73295ad1497973551",
+          "current_candidate_id": "59024739ff471f3ab684720f03ed446e9e72e76a5173ec756398689a5f25f1f6",
+          "current_diagnostic_id": "ohscanner.interface.ipc:d132f5c1276126e9",
+          "current_message_sha256": "7020cb5a7111025880f9295177b43ca2352818e11322d7355b7078e019f739f2",
+          "diagnostic_id": "ohscanner.interface.ipc:42dca91f8f47a38c",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 1226,
+          "message_sha256": "7020cb5a7111025880f9295177b43ca2352818e11322d7355b7078e019f739f2",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleGetRootUIContentRemoteObj"
+        },
+        {
+          "candidate_id": "715ad233f96b8620b38023a6ef393e1ddd4fdf0309d027c0470df41fc3d2595f",
+          "current_candidate_id": "ff09ee62e4101312b93c14ad241d6594a19efeeeda8751da4b45937245378a4f",
+          "current_diagnostic_id": "ohscanner.interface.ipc:94c900608e54b7aa",
+          "current_message_sha256": "6feaee83151711afa7c1bce21c96d27f28995225222ef4ecc073d609cede4914",
+          "diagnostic_id": "ohscanner.interface.ipc:af7f64a8ff37a6a0",
+          "file": "window_scene/session_manager/src/zidl/scene_session_manager_stub.cpp",
+          "line": 2944,
+          "message_sha256": "6feaee83151711afa7c1bce21c96d27f28995225222ef4ecc073d609cede4914",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c8a84dffa0347c7116f4bfac211a7b17d06c5e530cdb3cfcb90a0fe54ba2e1b5",
+          "symbol": "SceneSessionManagerStub::HandleCreateUIEffectController"
+        },
+        {
+          "candidate_id": "245404c3963bc903e810b502ff78120b2e4aec7ab83b1114f60580575611afaf",
+          "current_candidate_id": "1e2142a98651003499be1d22414d3bd6a5eff6b32f60a773bd89e532e2623e1b",
+          "current_diagnostic_id": "ohscanner.interface.ipc:31c33fe3203efdf5",
+          "current_message_sha256": "30cfe3f78f5c98636e89a6d8bdfeb873e9e4112690f32aaf93a5c2d39cafe2e8",
+          "diagnostic_id": "ohscanner.interface.ipc:ac8c0c0be98cd27c",
+          "file": "window_scene/session_manager_service/src/session_manager_service_stub.cpp",
+          "line": 37,
+          "message_sha256": "30cfe3f78f5c98636e89a6d8bdfeb873e9e4112690f32aaf93a5c2d39cafe2e8",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c0d8b870925bdb11ee9bd16ae9532af35e78a11e70ad112700f9635a7a5201c9",
+          "symbol": "SessionManagerServiceStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "e0ba3f751015805522b8133c60dbf525da16f762c413d2a6196d1c4c36b5cd57",
+          "current_candidate_id": "10efbd3f6b2615c1bc88afc1e0a82604f746e41cd5861c27a6d506c6f9d4170c",
+          "current_diagnostic_id": "ohscanner.interface.ipc:fa54992e468eee84",
+          "current_message_sha256": "387c57f847e89348d0162f253b48df4831418ffe1301ef6b66177f1ec01935d5",
+          "diagnostic_id": "ohscanner.interface.ipc:0506a174999b254c",
+          "file": "window_scene/session_manager_service/src/session_manager_service_stub.cpp",
+          "line": 41,
+          "message_sha256": "387c57f847e89348d0162f253b48df4831418ffe1301ef6b66177f1ec01935d5",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "c0d8b870925bdb11ee9bd16ae9532af35e78a11e70ad112700f9635a7a5201c9",
+          "symbol": "SessionManagerServiceStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "765fa1c94fc6425cf65384edbd44f1bc7ba4d1f7f89201a9bd07c9fc0795a9dd",
+          "current_candidate_id": "0a710788ea1b170adb303c2008cc9491292d845e761aa3a8378f7ed1fd8f47fa",
+          "current_diagnostic_id": "ohscanner.interface.ipc:063da847c2334c66",
+          "current_message_sha256": "93f1dcf8b612d5dedff2d30c2838cb307a6d6f0fd6915ebd42069c663d86585e",
+          "diagnostic_id": "ohscanner.interface.ipc:aeba6efdcf318db1",
+          "file": "wmserver/src/zidl/window_manager_stub.cpp",
+          "line": 389,
+          "message_sha256": "93f1dcf8b612d5dedff2d30c2838cb307a6d6f0fd6915ebd42069c663d86585e",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "fc598e1ea89a0c62536f7b81b8ff8c04a6ae4cde830c184a2e54da02600d6b18",
+          "symbol": "WindowManagerStub::OnRemoteRequest"
+        }
+      ],
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "component": "window_window_manager",
+      "expected_current": {
+        "candidate_count": 14,
+        "detector_version": "0.5.0",
+        "identity_projection_sha256": "e75aa4f81be64b4104e37e0dd4340591ff25b0663d7dfe4984d1293c633fc410",
+        "model_version": "oh-ipc-2026.10-v3"
+      },
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "milestone_deltas": {
+        "added_count": 0,
+        "m1_removed_count": 0,
+        "m2_removed_count": 1
+      },
+      "post_m1_expected_count": 15,
+      "pre_m1": {
+        "candidate_count": 15,
+        "detector_version": "0.3.0",
+        "identity_projection_sha256": "5cd98fe578a679d9018f89c99bc3b52aa92fc3cd3da0545c50ad20d97a5f7a36",
+        "model_version": "oh-ipc-2026.10-v1",
+        "reconstructed_report_sha256": "3f7f31bc6038d490a4c56242f4b3dcce24945f23b5802825d418bc9d843200ff"
+      },
+      "repository": "openharmony/window_window_manager",
+      "source_scope": {
+        "algorithm": "src/ohscanner/detectors/interface/audit.py@f077e85:plan_scope",
+        "plan_sha256": "1cb74d9ae1297c48e5fc0c98eb87b5f47fd70053f83d4abf5ad146b76737ef96",
+        "selected_bytes": 20206691,
+        "selected_files": 1112,
+        "shards": [
+          {
+            "bytes": 20206691,
+            "files": 1112,
+            "shard_sha256": "d105f1c96367f406212ecc9b6882e6fd55eb5ff25374bf075e436b1278b08f25"
+          }
+        ],
+        "sorted_paths_sha256": "fa8f65a14b1f72d313735beb17bb67becfc0617d2c26cd7bc376f993254d9c62"
+      }
+    },
+    {
+      "candidates": [
+        {
+          "candidate_id": "804c40c184555d228c639b51425dcd95e000258d8f1f6f6d821175b6a36afb08",
+          "current_candidate_id": "001f2d6333b79a82e32050bfc855baf486d4c5f3cd7c627e6e4d7db6e6e271e9",
+          "current_diagnostic_id": "ohscanner.interface.ipc:75d93214d2ab9baa",
+          "current_message_sha256": "742514ed505ce23fafcdd4d61098bd824e63e6010541dfea3151bb014bf61dc7",
+          "diagnostic_id": "ohscanner.interface.ipc:49b850dcb2b260e0",
+          "file": "core/bus_center/extend/src/bus_center_ex_obj_stub.cpp",
+          "line": 56,
+          "message_sha256": "742514ed505ce23fafcdd4d61098bd824e63e6010541dfea3151bb014bf61dc7",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "ab27bd3035c1e6dc0da97786e3a6fb3dd80675358856b92de1ca2a89e44afd57",
+          "symbol": "BusCenterExObjStub::OnRemoteRequest"
+        },
+        {
+          "candidate_id": "46e24c16213ea900fa360057700df99cdcb4e291853634da7dde380068a348b1",
+          "current_candidate_id": "1a2f155585af101d27384849f5209bc4c4485a7923cc31a56a3a99bc38dd8756",
+          "current_diagnostic_id": "ohscanner.interface.ipc:9c68fda47255047f",
+          "current_message_sha256": "652ad9e1b0e2c173e2f60163157f6896b75e0020c27ae690ae892a8fba2ee7be",
+          "diagnostic_id": "ohscanner.interface.ipc:89e62df41a678e1b",
+          "file": "core/frame/standard/init/src/softbus_server_stub.cpp",
+          "line": 2174,
+          "message_sha256": "652ad9e1b0e2c173e2f60163157f6896b75e0020c27ae690ae892a8fba2ee7be",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "00b57796d645b1df94e6911db895da1f2db5f9e1274c2052f1579815583a0a69",
+          "symbol": "SoftBusServerStub::GetSoftbusSpecObjectInner"
+        },
+        {
+          "candidate_id": "b9e72791bc27f253c69e31a61c904baf416239ae1bb91b37520461adef18ac44",
+          "current_candidate_id": "73e677b7bcd3211b153733e16f6c434c768cc0eaa0a20f7d751765af8f332ab0",
+          "current_diagnostic_id": "ohscanner.interface.ipc:5b2bd39f336ec791",
+          "current_message_sha256": "2f1e03117ca6311838f432a533b94a601f5116ddef17b9d0afb39f19e80d11c0",
+          "diagnostic_id": "ohscanner.interface.ipc:6b5e31699d1f66ae",
+          "file": "core/frame/standard/init/src/softbus_server_stub.cpp",
+          "line": 2191,
+          "message_sha256": "2f1e03117ca6311838f432a533b94a601f5116ddef17b9d0afb39f19e80d11c0",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.capability.export",
+          "source_sha256": "00b57796d645b1df94e6911db895da1f2db5f9e1274c2052f1579815583a0a69",
+          "symbol": "SoftBusServerStub::GetBusCenterExObjInner"
+        },
+        {
+          "candidate_id": "4f7fc99f61d251884a7f8158acc83bc4410033787917b3ee11f242719ece7448",
+          "current_candidate_id": "aa13d2c7e371f57397c6e8970ca88f69a473a7d90f9450672d521872b49e999b",
+          "current_diagnostic_id": "ohscanner.interface.ipc:862c802d5aa09d5d",
+          "current_message_sha256": "5d706e6ddf93925e17c124bb443d34f1ced09a734e3dc51734b48c96b2bb2ba2",
+          "diagnostic_id": "ohscanner.interface.ipc:f5974b91945e53ba",
+          "file": "core/transmission/broadcast/src/trans_spec_object_stub.cpp",
+          "line": 62,
+          "message_sha256": "5d706e6ddf93925e17c124bb443d34f1ced09a734e3dc51734b48c96b2bb2ba2",
+          "milestones": [
+            "pre_m1",
+            "post_m1",
+            "expected_current"
+          ],
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "source_sha256": "6e9e1298812c7dbfbf1efc7c56134de25b6649b4576a6a62cd61b9e0341de17a",
+          "symbol": "TransSpecObjectStub::OnRemoteRequest"
+        }
+      ],
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "component": "communication_dsoftbus",
+      "expected_current": {
+        "candidate_count": 4,
+        "detector_version": "0.5.0",
+        "identity_projection_sha256": "230c1656b4831a95d964a465cd3ef8d6778eba32764f88dd9ab5b23a8bb9b970",
+        "model_version": "oh-ipc-2026.10-v3"
+      },
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "milestone_deltas": {
+        "added_count": 0,
+        "m1_removed_count": 0,
+        "m2_removed_count": 0
+      },
+      "post_m1_expected_count": 4,
+      "pre_m1": {
+        "candidate_count": 4,
+        "detector_version": "0.3.0",
+        "identity_projection_sha256": "0e38e3d9ac9c1851cf617001d3ca3f5f2473c8090a6721b8738c3f219718db23",
+        "model_version": "oh-ipc-2026.10-v1",
+        "reconstructed_report_sha256": "e0a07cf04a833233aca6abd9d08683721566ecc3bba31be36fb983a0e0b777bb"
+      },
+      "repository": "openharmony/communication_dsoftbus",
+      "source_scope": {
+        "algorithm": "src/ohscanner/detectors/interface/audit.py@f077e85:plan_scope",
+        "plan_sha256": "a0852581a198882d8c0cd87eb42425a350ba0b520561fc3d5b0271d15862e71e",
+        "selected_bytes": 15243597,
+        "selected_files": 1656,
+        "shards": [
+          {
+            "bytes": 15243597,
+            "files": 1656,
+            "shard_sha256": "ddd2d68d6ba48a8fcbc2d65a694cee4f1f8c92a933df58907943b2711a065aff"
+          }
+        ],
+        "sorted_paths_sha256": "73fd40d13d1959708741fb6dd520067a30080b0794cffdee74969e036498583d"
+      }
+    }
+  ],
+  "counts": {
+    "added": 0,
+    "confirmed_vulnerabilities": 0,
+    "expected_current": 23,
+    "m1_removed": 17,
+    "m2_removed": 1,
+    "post_m1": 24,
+    "pre_m1": 41
+  },
+  "historical": {
+    "historical_review_records": "Existing Workbench review rows and their IDs remain append-only and are not encoded or rewritten by this baseline.",
+    "m1_detector": "ohscanner.interface.ipc@0.4.0+oh-ipc-2026.10-v2",
+    "m1_source_commit": "3fe3537",
+    "m2_integration": "single-pass M2 adapter; one window_window_manager candidate disappeared",
+    "pre_m1_detector": "ohscanner.interface.ipc@0.3.0+oh-ipc-2026.10-v1",
+    "pre_m1_source_commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+    "published_record": {
+      "full_original_report_hashes": "unknown; original ignored report bytes were not present in the clean checkout and are not fabricated",
+      "path_at_commit": "48bce9eab77fdf22acbb708cd9bf481ca32e7667:docs/research/ipc_m1_descriptor_identity_2026-10-11.md",
+      "published_component_report_sha256_prefixes_unassigned": [
+        "48e90651",
+        "1ce71a58",
+        "e18779e9",
+        "980c42be",
+        "d7606bc3"
+      ],
+      "published_m1_delta_sha256_prefix": "bd89360893a8e7b4",
+      "published_record_sha256_prefix": "c240b56b25815620",
+      "published_removal_basis_sha256_prefix": "140b49b2862210de"
+    }
+  },
+  "interpretation": "Detector candidate identity regression only; it is not vulnerability accuracy, product security, or proof that removed candidates are false positives.",
+  "kind": "ohscanner.m1-descriptor-identity-historical-baseline-v1",
+  "purpose": "Compact clean-checkout identity baseline for scripts/verify_owner_ipc_components.py. It preserves historical diagnostic and derived Workbench candidate identities without publishing reconstructed raw reports as original historical bytes.",
+  "schema_version": 1
+}

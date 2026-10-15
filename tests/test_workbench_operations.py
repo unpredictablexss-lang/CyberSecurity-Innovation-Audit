@@ -1,4 +1,5 @@
 import json
+import subprocess
 import tempfile
 import threading
 import unittest
@@ -8,7 +9,7 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 from src.workbench.api import create_app
-from src.workbench.operations import approved_url, compare_reports, date_selection
+from src.workbench.operations import approved_url, compare_reports, date_selection, execute as execute_operation
 from src.workbench.operations_store import Operations
 from src.workbench.settings import Settings
 from src.workbench.store import Store
@@ -83,6 +84,101 @@ class OperationsStoreTests(unittest.TestCase):
         backups = list((self.settings.data_dir / "backups").glob("before-v3-*.sqlite3"))
         self.assertTrue(backups)
 
+    def test_source_sync_git_process_is_isolated_from_audit_repo_config(self):
+        target = self.settings.data_dir / "repo-cache" / "c_utils"
+        target.mkdir(parents=True)
+        task = self.ops.create("source_sync", {
+            "name": "openharmony/c_utils",
+            "url": "https://github.com/openharmony/c_utils.git",
+            "timeout_seconds": 30,
+        })
+        claimed = self.ops.claim()
+        completed = subprocess.CompletedProcess([], 0, stdout=b"", stderr=b"")
+        with patch("src.workbench.operations.service.check_repository", return_value=target), \
+             patch("src.workbench.operations.service.revisions", return_value=[]), \
+             patch("src.workbench.operations.service.revision", return_value={"commit": "a" * 40}), \
+             patch("src.workbench.operations.subprocess.run", return_value=completed) as run:
+            result = execute_operation(self.settings, self.store, self.ops, claimed)
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(run.call_args.kwargs["cwd"], Path(tempfile.gettempdir()))
+        self.assertEqual(run.call_args.kwargs["env"]["GIT_ALLOW_PROTOCOL"], "https")
+        self.assertEqual(run.call_args.kwargs["timeout"], 31)
+        self.assertNotIn("GIT_CONFIG_COUNT", run.call_args.kwargs["env"])
+        process = json.loads(
+            (self.ops.directory(task["id"]) / "git-process.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(process["exit_code"], 0)
+        self.assertEqual(process["stdout"], "")
+        self.assertEqual(process["stderr"], "")
+        self.assertEqual(self.ops.get(task["id"])["status"], "running")
+
+
+    def test_source_sync_failure_redacts_credentials_and_next_clone_recovers(self):
+        from types import SimpleNamespace
+        name = "openharmony/retry_component"
+        target = self.settings.data_dir / "repo-cache" / "retry_component"
+        sync_settings = Settings(
+            self.settings.data_dir,
+            (*self.settings.target_roots, self.settings.data_dir / "repo-cache"),
+        )
+        first = self.ops.create("source_sync", {
+            "name": name,
+            "url": "https://github.com/openharmony/retry_component.git",
+            "timeout_seconds": 30,
+        })
+        claimed = self.ops.claim()
+
+        def failed_clone(command, **kwargs):
+            staging = Path(command[-1])
+            staging.mkdir(parents=True)
+            (staging / ".partial-marker").write_text("partial", encoding="utf-8")
+            return subprocess.CompletedProcess(
+                command,
+                9,
+                stdout=b"password=do-not-persist https://user:pass@example.invalid/x",
+                stderr=b"Authorization: Bearer do-not-persist\nfatal: simulated public network failure",
+            )
+
+        fake_failed = SimpleNamespace(run=failed_clone, TimeoutExpired=subprocess.TimeoutExpired)
+        with patch("src.workbench.operations.subprocess", fake_failed):
+            with self.assertRaisesRegex(RuntimeError, "exited 9"):
+                execute_operation(sync_settings, self.store, self.ops, claimed)
+        process = json.loads(
+            (self.ops.directory(first["id"]) / "git-process.json").read_text(encoding="utf-8")
+        )
+        persisted = json.dumps(process, ensure_ascii=False)
+        self.assertNotIn("do-not-persist", persisted)
+        self.assertNotIn("user:pass@", persisted)
+        self.assertFalse(target.exists())
+        self.assertFalse(list(target.parent.glob(".retry_component.*.partial")))
+        self.assertTrue(process["clone_stage"]["failed_staging_removed"])
+
+        second = self.ops.create("source_sync", {
+            "name": name,
+            "url": "https://github.com/openharmony/retry_component.git",
+            "timeout_seconds": 30,
+        })
+        claimed = self.ops.claim()
+
+        def successful_clone(command, **kwargs):
+            staging = Path(command[-1])
+            staging.mkdir(parents=True)
+            subprocess.run(["git", "init", "-q"], cwd=staging, check=True)
+            subprocess.run(
+                ["git", "-c", "user.name=test", "-c", "user.email=test@example.invalid",
+                 "commit", "-q", "--allow-empty", "-m", "retry"],
+                cwd=staging,
+                check=True,
+            )
+            return subprocess.CompletedProcess(command, 0, stdout=b"", stderr=b"")
+
+        fake_success = SimpleNamespace(run=successful_clone, TimeoutExpired=subprocess.TimeoutExpired)
+        with patch("src.workbench.operations.subprocess", fake_success):
+            result = execute_operation(sync_settings, self.store, self.ops, claimed)
+        self.assertEqual(result["status"], "completed")
+        self.assertTrue(target.exists())
+        self.assertTrue(result["clone_stage"]["published"])
+        self.assertFalse(list(target.parent.glob(".retry_component.*.partial")))
 
 class PlanningTests(unittest.TestCase):
     def test_date_selection_uses_committer_time_and_records_topology_span(self):

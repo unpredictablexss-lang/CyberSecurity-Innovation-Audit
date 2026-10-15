@@ -44,6 +44,7 @@ export default function SourceEvidence({
         </div>
       ))}
       <Form
+        data-testid="evidence-form"
         className="section-gap"
         form={form}
         layout="vertical"
@@ -98,9 +99,9 @@ export default function SourceEvidence({
           label="证据用途与解释限制"
           rules={[{ required: true }]}
         >
-          <Input.TextArea rows={3} maxLength={4000} />
+          <Input.TextArea data-testid="evidence-note" rows={3} maxLength={4000} />
         </Form.Item>
-        <Button htmlType="submit">保存源码证据</Button>
+        <Button data-testid="save-evidence" htmlType="submit">保存源码证据</Button>
       </Form>
     </Card>
   );

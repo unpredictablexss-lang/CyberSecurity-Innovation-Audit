@@ -1,0 +1,16 @@
+{
+  "task": "PLATFORM-REAL-PRODUCT-BROWSER-01",
+  "run_id": "r16-20261015-01",
+  "files": [
+    {
+      "path": "outputs/platform-real-product-browser-01/platform_real_product_browser_acceptance_r16-20261015-01.json",
+      "bytes": 16579,
+      "sha256": "f24e40eefe4abc824bda2a26bd1cadb11830589142d40cf9ad791c864629a758"
+    },
+    {
+      "path": "outputs/platform-real-product-browser-01/platform_real_product_browser_acceptance_r16-20261015-01.md",
+      "bytes": 7953,
+      "sha256": "4469cceea9fd07720e175c9e9df857bb8e0633dd425509deaa637c7d75eff000"
+    }
+  ]
+}

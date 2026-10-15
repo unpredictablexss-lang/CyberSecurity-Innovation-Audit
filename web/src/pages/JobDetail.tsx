@@ -44,6 +44,7 @@ import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 import SourceEvidence from "../SourceEvidence";
 const { Text, Title, Paragraph } = Typography;
+const keyFilename = (jobId: string, kind: string) => jobId + "_" + kind;
 export default function JobDetail({ id }: { id: string }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
@@ -303,6 +304,7 @@ export default function JobDetail({ id }: { id: string }) {
                       ]}
                     />
                     <Button
+                      data-testid="open-case-modal"
                       disabled={!selected.length}
                       onClick={() => setCaseOpen(true)}
                     >
@@ -382,6 +384,7 @@ export default function JobDetail({ id }: { id: string }) {
                     description="仅按同一仓库快照、Detector 版本、规则、文件、符号和源码 SHA 分组；未绑定来源或缺少符号的候选保持独立。组内每条原始候选身份和源码位置都保留。"
                   />
                   <Table<any>
+                    data-testid="candidate-clusters"
                     className="section-gap"
                     rowKey="cluster_id"
                     dataSource={clusters}
@@ -397,6 +400,7 @@ export default function JobDetail({ id }: { id: string }) {
                         <Space wrap>
                           {group.candidates.map((candidate: any) => (
                             <Button
+                              data-testid="cluster-candidate"
                               key={candidate.id}
                               onClick={() => void open({ id: candidate.id })}
                             >
@@ -566,7 +570,7 @@ export default function JobDetail({ id }: { id: string }) {
                       ),
                     }))}
                   />
-                  <a href={artifact(id, "worker.log")}>下载最近 256 KiB 日志</a>
+                  <a download={keyFilename(id, "worker.log")} href={artifact(id, "worker.log")}>下载最近 256 KiB 日志</a>
                 </>
               ),
             },
@@ -586,7 +590,7 @@ export default function JobDetail({ id }: { id: string }) {
                       "review.json",
                       "review.md",
                     ].map((k) => (
-                      <Button key={k} href={artifact(id, k)}>
+                      <Button key={k} data-testid={"download-" + k} download={keyFilename(id, k)} href={artifact(id, k)}>
                         下载 {k}
                       </Button>
                     ))}
@@ -669,6 +673,7 @@ export default function JobDetail({ id }: { id: string }) {
               <Col span={12}>
                 <Card title="追加人工复核">
                   <Form
+                    data-testid="review-form"
                     form={reviewForm}
                     layout="vertical"
                     onFinish={async (values) => {
@@ -712,16 +717,16 @@ export default function JobDetail({ id }: { id: string }) {
                       label="复核人"
                       rules={[{ required: true }]}
                     >
-                      <Input maxLength={100} />
+                      <Input data-testid="review-reviewer" maxLength={100} />
                     </Form.Item>
                     <Form.Item
                       name="notes"
                       label="依据、证据位置与下一步"
                       rules={[{ required: true }]}
                     >
-                      <Input.TextArea rows={5} maxLength={8000} />
+                      <Input.TextArea data-testid="review-notes" rows={5} maxLength={8000} />
                     </Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button data-testid="save-review" type="primary" htmlType="submit">
                       保存追加记录
                     </Button>
                   </Form>
@@ -794,14 +799,14 @@ export default function JobDetail({ id }: { id: string }) {
             hidden={Boolean(existingCase)}
             rules={[{ required: !existingCase }]}
           >
-            <Input />
+            <Input data-testid="case-title" />
           </Form.Item>
           <Form.Item
             name="rationale"
             label="根因关联依据"
             rules={[{ required: true }]}
           >
-            <Input.TextArea rows={4} />
+            <Input.TextArea data-testid="case-rationale" rows={4} />
           </Form.Item>
         </Form>
       </Modal>

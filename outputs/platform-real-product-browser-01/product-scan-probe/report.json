@@ -1,0 +1,1621 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "first_party_detector_execution",
+  "status": "completed_with_limitations",
+  "repository": "openharmony/inputmethod_imf",
+  "target_id": "current-component:openharmony/inputmethod_imf",
+  "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+  "git_tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+  "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+  "provenance": "local_git_objects",
+  "profile_id": "light-ast",
+  "environment": {
+    "python": "3.10.12",
+    "git": "git version 2.34.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "scope": {
+    "tracked_entries": 95,
+    "out_of_scope": 0,
+    "non_source": 20,
+    "symlinks": 0,
+    "submodules": 0,
+    "oversize": 0,
+    "binary_or_non_utf8": 0,
+    "selected_source_files": 75,
+    "selected_source_bytes": 383632,
+    "skipped": [],
+    "git_tree": "5037e995cb4f3f29d54307b6e0fbf352cc9d6252",
+    "declared_scope": [
+      "."
+    ]
+  },
+  "source_parsing": {
+    "parsing_status": {
+      "complete": 62,
+      "not_run": 1,
+      "partial": 12
+    },
+    "languages": {
+      "cpp": 74,
+      "ts": 1
+    }
+  },
+  "detector_count": 1,
+  "diagnostic_count": 10,
+  "validated_vulnerability": 0,
+  "detector_runs": [
+    {
+      "schema_version": 2,
+      "run_id": "git-index:e663b47013d5:4e713499a9f0:ohscanner.interface.ipc",
+      "tool": "ohscanner.interface.ipc",
+      "tool_version": "0.5.0",
+      "target_id": "current-component:openharmony/inputmethod_imf",
+      "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+      "scope_files": 74,
+      "scope_loc": 10335,
+      "status": "completed",
+      "elapsed_seconds": 0.29556410800000776,
+      "peak_memory_mb": null,
+      "diagnostic_count": 10,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:b82952e7df0067cc",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+          "line": 136,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodCoreStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((48, 'descriptorToken != GetDescriptor() => False'), (53, 'switch entry'), (58, 'channelObject == nullptr => True'), (62, 'inputControlChannel == nullptr => True'), (124, 'msgHandler_ == nullptr => False'), (128, 'startInputToken == nullptr => True'), (134, 'inputControlChannel != nullptr => True'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodCoreStub::initializeInput",
+          "source_sha256": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:356ee7ee908ea090",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+          "line": 153,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodCoreStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((48, 'descriptorToken != GetDescriptor() => False'), (70, 'switch entry'), (75, 'inputDataChannel == nullptr => True'), (147, 'msgHandler_ == nullptr => False'), (151, 'inputDataChannel != nullptr => True'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodCoreStub::startInput",
+          "source_sha256": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:549e5068c8703ca5",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "frameworks/inputmethod_controller/src/input_client_stub.cpp",
+          "line": 45,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputClientStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((34, 'descriptorToken != GetDescriptor() => False'), (38, 'switch entry'), (39, 'msgHandler == nullptr => False'), (44, 'data.ReadInt32() > 0 => True'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputClientStub::OnRemoteRequest",
+          "source_sha256": "c69164d2491cd7d295d894e4c9948d0993eda8cf9803071ce0d7950e1e4da663",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:2c81bd289609837f",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "line": 185,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodSystemAbilityStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((36, 'descriptorToken != GetDescriptor() => False'), (41, 'switch entry'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodSystemAbilityStub::prepareInput",
+          "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:bd657a34455cbc88",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "line": 186,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodSystemAbilityStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((36, 'descriptorToken != GetDescriptor() => False'), (41, 'switch entry'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodSystemAbilityStub::prepareInput",
+          "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:0d80648a72eba189",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "line": 206,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodSystemAbilityStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((36, 'descriptorToken != GetDescriptor() => False'), (46, 'switch entry'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodSystemAbilityStub::releaseInput",
+          "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:a2dee5c97997f30d",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "line": 225,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodSystemAbilityStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((36, 'descriptorToken != GetDescriptor() => False'), (52, 'switch entry'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodSystemAbilityStub::startInput",
+          "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:0e3ea0d2c3d523e5",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "line": 243,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodSystemAbilityStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((36, 'descriptorToken != GetDescriptor() => False'), (58, 'switch entry'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodSystemAbilityStub::stopInput",
+          "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:ecb14b704116cf72",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "line": 262,
+          "column": null,
+          "rule_id": "ipc.capability.export",
+          "severity": "unassessed",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=InputMethodSystemAbilityStub::OnRemoteRequest; possible consequence (not established): an object reference, file descriptor or service capability may leave the authorized owner [capability_exposure CWE-668]; path=((36, 'descriptorToken != GetDescriptor() => False'), (64, 'switch entry'))",
+          "candidate_cwe": "CWE-926",
+          "confidence": "unassessed",
+          "symbol": "InputMethodSystemAbilityStub::setInputMethodCoreFromHap",
+          "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "consequence_impact": "capability_exposure",
+          "consequence_cwe": "CWE-668",
+          "source_binding": "bound"
+        },
+        {
+          "diagnostic_id": "ohscanner.interface.ipc:c590c70a85c68412",
+          "provider": "ohscanner.interface.ipc",
+          "evidence_type": "syntax",
+          "file": "services/src/platform_callback_stub.cpp",
+          "line": 46,
+          "column": null,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "severity": "unassessed",
+          "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: PlatformCallbackStub::notifyEvent Entry=PlatformCallbackStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((38, 'switch entry'),)",
+          "candidate_cwe": "CWE-441",
+          "confidence": "unassessed",
+          "symbol": "PlatformCallbackStub::OnRemoteRequest",
+          "source_sha256": "59c980bf8923fe783ab1f02ac9d999b6eb0c6a3fbcf62a16b369000b5877e043",
+          "consequence_impact": "boundary_bypass",
+          "consequence_cwe": null,
+          "source_binding": "bound"
+        }
+      ],
+      "limitations": [
+        "Model=oh-ipc-2026.10-v3; first-party bounded structured syntax interpretation, no external scanner execution.",
+        "Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.",
+        "No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is never an #include resolution, and what the expander refused is counted in the macro-expansion limitation rather than assumed away.",
+        "Unmodeled callees/authorization remain evidence obligations; no findings does not establish safety.",
+        "Interface-descriptor identity is read from the class's own base clause: a comparison is counted as this transaction's guard only when the source names the interface the class implements. A comparison against another interface, or one whose identity the analysed sources do not state, is reported with that reason instead of counting as a guard or as a proven mismatch.",
+        "Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.",
+        "Entry roots come from the name allowlist plus source-derived dispatch bindings (function-pointer tables, switch/if code dispatch, and source-declared virtual overrides). Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.",
+        "Entry-coverage measurements are published in the interface research report, not in this result.",
+        "Loops are conservatively explored zero/one iterations; no induction or termination proof.",
+        "Macro expansion: 3 invocation(s) expanded in 1 file(s), 0 of them carrying control flow; 0 file(s) left unexpanded (conditional_definition_requires_build_profile=2,variadic_stringify_or_token_paste=348). The catalogue is the scan's own sources, never #include; where a macro was expanded, quoted conditions come from the expanded form while a finding's line is mapped back to the original file.",
+        "Partial source: only error-free functions can be inspected in frameworks/inputmethod_ability/include/i_input_method_agent.h",
+        "Partial source: only error-free functions can be inspected in frameworks/inputmethod_ability/include/i_input_method_core.h",
+        "Partial source: only error-free functions can be inspected in frameworks/inputmethod_controller/include/i_input_client.h",
+        "Partial source: only error-free functions can be inspected in frameworks/inputmethod_controller/include/i_input_data_channel.h",
+        "Partial source: only error-free functions can be inspected in services/include/global.h",
+        "Partial source: only error-free functions can be inspected in services/include/i_input_control_channel.h",
+        "Partial source: only error-free functions can be inspected in services/include/i_input_method_proxy.h",
+        "Partial source: only error-free functions can be inspected in services/include/i_input_method_system_ability.h",
+        "Partial source: only error-free functions can be inspected in services/include/i_platform_api.h",
+        "Partial source: only error-free functions can be inspected in services/include/i_platform_callback.h",
+        "Partial source: only error-free functions can be inspected in unitest/src/input_method_ability_test.cpp",
+        "Partial source: only error-free functions can be inspected in unitest/src/input_method_controller_test.cpp",
+        "Private syntax models format-string macros/unresolved member-pointer dispatch; original public parse status retained: frameworks/inputmethod_ability/src/event_target.cpp",
+        "Unresolved multi-outcome helper return: InputControlChannelStub::hideKeyboardSelf",
+        "Unresolved multi-outcome helper return: InputControlChannelStub::onAgentCreated",
+        "Unresolved multi-outcome helper return: InputControlChannelStub::onKeyboardShowed",
+        "Unresolved multi-outcome helper return: InputControlChannelStub::setDisplayMode",
+        "Unresolved multi-outcome helper return: InputDataChannelStub::Close",
+        "Unresolved multi-outcome helper return: InputDataChannelStub::DeleteBackward",
+        "Unresolved multi-outcome helper return: InputDataChannelStub::InsertText",
+        "Unresolved multi-outcome helper return: InputMethodAgentStub::DispatchKey",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::getKeyboardWindowHeight",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::hideKeyboard",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::initializeInput",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::setKeyboardType",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::showKeyboard",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::startInput",
+        "Unresolved multi-outcome helper return: InputMethodCoreStub::stopInput",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbility::GetUserSession",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbility::GetUserSetting",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbilityStub::prepareInput",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbilityStub::releaseInput",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbilityStub::setInputMethodCoreFromHap",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbilityStub::startInput",
+        "Unresolved multi-outcome helper return: InputMethodSystemAbilityStub::stopInput",
+        "Unresolved multi-outcome helper return: PlatformCallbackStub::notifyEvent",
+        "Owner M2 adapter: single interpretation pass; partial source inspection is not full analysis.",
+        "Unavailable AST units: 0; cross-file context from these units is unknown.",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar."
+      ],
+      "parsing": [
+        {
+          "file": "frameworks/inputmethod_ability/include/event_target.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/i_input_method_agent.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 34, \"kind\": \"error\", \"start_line\": 34}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/i_input_method_core.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 45, \"kind\": \"error\", \"start_line\": 45}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/input_method_ability.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/input_method_agent_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/input_method_agent_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/input_method_core_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/include/input_method_core_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/src/event_target.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/src/input_method_ability.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/src/input_method_agent_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/src/input_method_agent_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/src/input_method_core_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/i_input_client.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 38, \"kind\": \"error\", \"start_line\": 38}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/i_input_data_channel.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 36, \"kind\": \"error\", \"start_line\": 36}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/input_client_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/input_client_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/input_data_channel_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/input_data_channel_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/input_method_controller.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/include/input_method_system_ability_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/src/input_client_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/src/input_client_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/src/input_data_channel_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/src/input_data_channel_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/src/input_method_controller.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "frameworks/inputmethod_controller/src/input_method_system_ability_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "interfaces/kits/js/napi/js_input_method_engine.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/global.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 36, \"kind\": \"error\", \"start_line\": 36}",
+            "{\"end_line\": 39, \"kind\": \"error\", \"start_line\": 39}",
+            "{\"end_line\": 42, \"kind\": \"error\", \"start_line\": 42}",
+            "{\"end_line\": 46, \"kind\": \"error\", \"start_line\": 46}",
+            "{\"end_line\": 49, \"kind\": \"error\", \"start_line\": 49}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/include/i_input_control_channel.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 36, \"kind\": \"error\", \"start_line\": 36}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/include/i_input_method_proxy.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 31, \"kind\": \"error\", \"start_line\": 31}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/include/i_input_method_system_ability.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 49, \"kind\": \"error\", \"start_line\": 49}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/include/i_platform_api.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 46, \"kind\": \"error\", \"start_line\": 46}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/include/i_platform_callback.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 33, \"kind\": \"error\", \"start_line\": 33}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "services/include/input_attribute.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_channel.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_control_channel_proxy.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_control_channel_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_method_ability_connection_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_method_property.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_method_setting.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_method_system_ability.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/input_method_system_ability_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/keyboard_type.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/message.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/message_handler.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/peruser_session.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/peruser_setting.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/platform.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/platform_callback_stub.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/include/utils.h",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/global.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_attribute.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_channel.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_control_channel_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_control_channel_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_method_ability_connection_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_method_agent_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_method_property.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_method_setting.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_method_system_ability.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/input_method_system_ability_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/keyboard_type.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/message.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/message_handler.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/peruser_session.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/peruser_setting.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/platform.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/platform_api_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/platform_callback_proxy.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "services/src/platform_callback_stub.cpp",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "analyzed",
+          "analysis_reason": ""
+        },
+        {
+          "file": "unitest/src/input_method_ability_test.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 66, \"kind\": \"missing\", \"start_line\": 66}",
+            "{\"end_line\": 82, \"kind\": \"missing\", \"start_line\": 82}",
+            "{\"end_line\": 98, \"kind\": \"missing\", \"start_line\": 98}",
+            "{\"end_line\": 114, \"kind\": \"missing\", \"start_line\": 114}",
+            "{\"end_line\": 125, \"kind\": \"missing\", \"start_line\": 125}",
+            "{\"end_line\": 142, \"kind\": \"missing\", \"start_line\": 142}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "unitest/src/input_method_controller_test.cpp",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 89, \"kind\": \"missing\", \"start_line\": 89}",
+            "{\"end_line\": 102, \"kind\": \"missing\", \"start_line\": 102}",
+            "{\"end_line\": 118, \"kind\": \"missing\", \"start_line\": 118}",
+            "{\"end_line\": 134, \"kind\": \"missing\", \"start_line\": 134}",
+            "{\"end_line\": 152, \"kind\": \"missing\", \"start_line\": 152}",
+            "{\"end_line\": 169, \"kind\": \"missing\", \"start_line\": 169}",
+            "{\"end_line\": 193, \"kind\": \"missing\", \"start_line\": 193}"
+          ],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        }
+      ],
+      "interpretation": "Descriptive scanner evidence only. Diagnostics are candidates/evidence, not validated vulnerabilities; an empty diagnostic list is not proof of safety."
+    }
+  ],
+  "detector_coverage": {
+    "schema_version": 1,
+    "detectors": {
+      "ohscanner.interface.ipc": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 74,
+        "analyzed_files": [
+          "frameworks/inputmethod_ability/include/event_target.h",
+          "frameworks/inputmethod_ability/include/input_method_ability.h",
+          "frameworks/inputmethod_ability/include/input_method_agent_proxy.h",
+          "frameworks/inputmethod_ability/include/input_method_agent_stub.h",
+          "frameworks/inputmethod_ability/include/input_method_core_proxy.h",
+          "frameworks/inputmethod_ability/include/input_method_core_stub.h",
+          "frameworks/inputmethod_ability/src/event_target.cpp",
+          "frameworks/inputmethod_ability/src/input_method_ability.cpp",
+          "frameworks/inputmethod_ability/src/input_method_agent_proxy.cpp",
+          "frameworks/inputmethod_ability/src/input_method_agent_stub.cpp",
+          "frameworks/inputmethod_ability/src/input_method_core_proxy.cpp",
+          "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+          "frameworks/inputmethod_controller/include/input_client_proxy.h",
+          "frameworks/inputmethod_controller/include/input_client_stub.h",
+          "frameworks/inputmethod_controller/include/input_data_channel_proxy.h",
+          "frameworks/inputmethod_controller/include/input_data_channel_stub.h",
+          "frameworks/inputmethod_controller/include/input_method_controller.h",
+          "frameworks/inputmethod_controller/include/input_method_system_ability_proxy.h",
+          "frameworks/inputmethod_controller/src/input_client_proxy.cpp",
+          "frameworks/inputmethod_controller/src/input_client_stub.cpp",
+          "frameworks/inputmethod_controller/src/input_data_channel_proxy.cpp",
+          "frameworks/inputmethod_controller/src/input_data_channel_stub.cpp",
+          "frameworks/inputmethod_controller/src/input_method_controller.cpp",
+          "frameworks/inputmethod_controller/src/input_method_system_ability_proxy.cpp",
+          "interfaces/kits/js/napi/js_input_method_engine.cpp",
+          "services/include/input_attribute.h",
+          "services/include/input_channel.h",
+          "services/include/input_control_channel_proxy.h",
+          "services/include/input_control_channel_stub.h",
+          "services/include/input_method_ability_connection_stub.h",
+          "services/include/input_method_property.h",
+          "services/include/input_method_setting.h",
+          "services/include/input_method_system_ability.h",
+          "services/include/input_method_system_ability_stub.h",
+          "services/include/keyboard_type.h",
+          "services/include/message.h",
+          "services/include/message_handler.h",
+          "services/include/peruser_session.h",
+          "services/include/peruser_setting.h",
+          "services/include/platform.h",
+          "services/include/platform_callback_stub.h",
+          "services/include/utils.h",
+          "services/src/global.cpp",
+          "services/src/input_attribute.cpp",
+          "services/src/input_channel.cpp",
+          "services/src/input_control_channel_proxy.cpp",
+          "services/src/input_control_channel_stub.cpp",
+          "services/src/input_method_ability_connection_stub.cpp",
+          "services/src/input_method_agent_proxy.cpp",
+          "services/src/input_method_property.cpp",
+          "services/src/input_method_setting.cpp",
+          "services/src/input_method_system_ability.cpp",
+          "services/src/input_method_system_ability_stub.cpp",
+          "services/src/keyboard_type.cpp",
+          "services/src/message.cpp",
+          "services/src/message_handler.cpp",
+          "services/src/peruser_session.cpp",
+          "services/src/peruser_setting.cpp",
+          "services/src/platform.cpp",
+          "services/src/platform_api_proxy.cpp",
+          "services/src/platform_callback_proxy.cpp",
+          "services/src/platform_callback_stub.cpp"
+        ],
+        "partially_inspected_files": [
+          "frameworks/inputmethod_ability/include/i_input_method_agent.h",
+          "frameworks/inputmethod_ability/include/i_input_method_core.h",
+          "frameworks/inputmethod_controller/include/i_input_client.h",
+          "frameworks/inputmethod_controller/include/i_input_data_channel.h",
+          "services/include/global.h",
+          "services/include/i_input_control_channel.h",
+          "services/include/i_input_method_proxy.h",
+          "services/include/i_input_method_system_ability.h",
+          "services/include/i_platform_api.h",
+          "services/include/i_platform_callback.h",
+          "unitest/src/input_method_ability_test.cpp",
+          "unitest/src/input_method_controller_test.cpp"
+        ],
+        "source_sha256": {
+          "frameworks/inputmethod_ability/include/event_target.h": "18cb95b066795a693170dea47a92024627fce736312a5c0376150f746f8ba578",
+          "frameworks/inputmethod_ability/include/i_input_method_agent.h": "a30194a19f0054627e9e0121cd9f93555f20252b76dd60caa34b6bee42211445",
+          "frameworks/inputmethod_ability/include/i_input_method_core.h": "313ed8f74778a8ee157ee81da494d1df9a9b21421dcfcffc7a07a12104098a84",
+          "frameworks/inputmethod_ability/include/input_method_ability.h": "151f41debdb44f726e4bd31d2babc7657c7a0b73cce89a6a02c0b7b98c592670",
+          "frameworks/inputmethod_ability/include/input_method_agent_proxy.h": "0bdbf251c98c6863de564df3bd98596a1d02e712f20fa147604839c7c1568f8d",
+          "frameworks/inputmethod_ability/include/input_method_agent_stub.h": "e1bb499fb7e30ca02470a181aaad12717e3f033731d51e93065ca1c12ab81724",
+          "frameworks/inputmethod_ability/include/input_method_core_proxy.h": "ebd1d3cad03dfaf77adfaedfbc5e46cc73bcc9861a5b0e9997c1a24f408cea4e",
+          "frameworks/inputmethod_ability/include/input_method_core_stub.h": "e25e5ce8d0d0317aaf59b1990482754155dac906d6cd33378d24475c5560edce",
+          "frameworks/inputmethod_ability/src/event_target.cpp": "6e48880b887776e902c164a46cb55b84da45bafaf69cdff1a71e43d2a38da7d6",
+          "frameworks/inputmethod_ability/src/input_method_ability.cpp": "46be1c0bf36952b2e85451db4c490744a66cdbaa08e5d591e610a680a238eeb7",
+          "frameworks/inputmethod_ability/src/input_method_agent_proxy.cpp": "69a9bf4585a2ee23dfec27c51bc6668e468fcfc610cb88f1732ca061fce72ed1",
+          "frameworks/inputmethod_ability/src/input_method_agent_stub.cpp": "32739e0b6efca6b007e5b3a14bc353ca73ef2c94ef62b3cb51b0e337111b20d1",
+          "frameworks/inputmethod_ability/src/input_method_core_proxy.cpp": "510c7a32a64e6bb24cd3528d50d54bac7c1d8d224c73a851056edeb43a7a7f99",
+          "frameworks/inputmethod_ability/src/input_method_core_stub.cpp": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18",
+          "frameworks/inputmethod_controller/include/i_input_client.h": "e22334f9e069e57a7729bc691f563859c4a7385d3b47a006d7517e5e320cf3e1",
+          "frameworks/inputmethod_controller/include/i_input_data_channel.h": "4bcbf6b65ca8a08f249e272e4b868a767b9a1a98b694241242ff1aec08e7acf4",
+          "frameworks/inputmethod_controller/include/input_client_proxy.h": "2c827209d39cdef275060d1132c398603d920fac87f87dd870bb1f8a6d751702",
+          "frameworks/inputmethod_controller/include/input_client_stub.h": "64511c0c9a59b22e460745e7e9b1bdccae268c15b29af6ab97966f168d80f549",
+          "frameworks/inputmethod_controller/include/input_data_channel_proxy.h": "82cf4197c57a8ea564e8750c9ed15b269d72c3855cba2f4d991a8050dbadd47d",
+          "frameworks/inputmethod_controller/include/input_data_channel_stub.h": "d7cf33e524cdcbb1bd050a26a29bfb43e11e3927b7608c26eeb3ec92f05867ac",
+          "frameworks/inputmethod_controller/include/input_method_controller.h": "b736dd597688d36501e7b1c1b4306264a30109b69ce911bf35c9a35234d08c19",
+          "frameworks/inputmethod_controller/include/input_method_system_ability_proxy.h": "afdbf2bb20130231343764d789131ff87017c9eb1ae38c57fd9aa432a32f1408",
+          "frameworks/inputmethod_controller/src/input_client_proxy.cpp": "0e9f0183cc91397c59cc273101540ddfc2690af0308317ee4dc81e822156e32d",
+          "frameworks/inputmethod_controller/src/input_client_stub.cpp": "c69164d2491cd7d295d894e4c9948d0993eda8cf9803071ce0d7950e1e4da663",
+          "frameworks/inputmethod_controller/src/input_data_channel_proxy.cpp": "0cc94f372a00b2268793b96f24dea39703086c21fd8af7707a832b6c40aafe80",
+          "frameworks/inputmethod_controller/src/input_data_channel_stub.cpp": "d98cefd257c1e86670625b7138f91e541dde79d325703d308831f4b15222b5bf",
+          "frameworks/inputmethod_controller/src/input_method_controller.cpp": "16e416c5fde1c50b29a1b24caf46f0015b94a6c40c6109c04f07b74d2148a1d2",
+          "frameworks/inputmethod_controller/src/input_method_system_ability_proxy.cpp": "a5abdba9c1944cdd9b426a9533d27193f7724fe93c294ba56701167aa8995716",
+          "interfaces/kits/js/napi/js_input_method_engine.cpp": "a37b1bf3d3615f40cf06ad22dca543f8c5f4c68744e3d35667cf49148c590652",
+          "services/include/global.h": "068998c9153a724b45783b53ce6e1bd6dab6e64803adc9083b991569a714fbdf",
+          "services/include/i_input_control_channel.h": "5d371c92d75634cb5715be4fb3568faf75ef238abe18aba853cdcb2e5a641ba7",
+          "services/include/i_input_method_proxy.h": "983ecd3b6de68af5eba16e545e6f255cc2fe5b8296159492d6a8d0485d6013b7",
+          "services/include/i_input_method_system_ability.h": "4182ccec4a6e76e2f1808e0bfcad9885f7c970cdf7a2215aba289d563441b2cd",
+          "services/include/i_platform_api.h": "c2985b3853e054da928cea51b12d7c7e1ddaef8fec613f4538e32ce1cb77a196",
+          "services/include/i_platform_callback.h": "5028701266b1e378f382de05bfc0a1dcdb0d734302ddb04d4dde63ec088d7b89",
+          "services/include/input_attribute.h": "c80d5be9ca32bc665a8e60c9eb7ad36834570f662f2645e73b93d041023e6dee",
+          "services/include/input_channel.h": "2d0999fbe8333cc7879aaf9e13db247378f13b070c4f0ab747aa55f6ede27cc1",
+          "services/include/input_control_channel_proxy.h": "27d915aabf4a8d97dff4ff16e35535a0c730e936775f02d6e5e5e45bb45368e7",
+          "services/include/input_control_channel_stub.h": "21a2c2eca95dc047b8475b5e5ba8a5953c40d241c66e7f4c49af19f2cc383ab8",
+          "services/include/input_method_ability_connection_stub.h": "93af8244a7e6b8b479c1262f29c63d05f98f8a5fb7e71ae65e79f3a626ebbcc6",
+          "services/include/input_method_property.h": "ecc02921cd9a6af0ca94663167d90c0311d56744188441f0b985f0bf99eead2a",
+          "services/include/input_method_setting.h": "bc9b0d5b785bfc2a38a8d02798402ebd9c53d04e770edc4e63b65342cf627640",
+          "services/include/input_method_system_ability.h": "eac9d5bacede556df516ddbcdde46b7f0c0f1383b7fb402912a4666f8e0a8ff4",
+          "services/include/input_method_system_ability_stub.h": "47e5665303655437ddcecaff3e8d3ac076017f014b330f49b032ef9bba947868",
+          "services/include/keyboard_type.h": "286ca7de42d1f88f3929bf9045e75ca539c6c5584b2877fee470e8c319158b5a",
+          "services/include/message.h": "07b811374827ee9baa281e64881f67df62720ce222646f189cdcaaf8ed49df69",
+          "services/include/message_handler.h": "4a2cf36bd67ef2a183746fe7f7373a221debd1957bb5fdd85982a61c53333cbd",
+          "services/include/peruser_session.h": "3084956ac19480b4fc22cf7f40decb719290a036a29d5f047a30dc846b6f4b94",
+          "services/include/peruser_setting.h": "e74807dbdbb1f63dc0e26a31b0443f106183e75ac54a7c201946305ce404fadc",
+          "services/include/platform.h": "517a539ff90ae5125726f59b71bb487dc8378bdf32c63821803b444f5b480a13",
+          "services/include/platform_callback_stub.h": "b18ba3c17c44e22baba503dc6d493f1d5538b2d2fe8a46204c01d5195e223650",
+          "services/include/utils.h": "9573aff2507d2068c18113f644db9a0553b4e618b652826747dfa74181d7bb37",
+          "services/src/global.cpp": "df9e8403418bca27c14b1117f8dbccf437aff805a519533d76c1bb7ab30ed26c",
+          "services/src/input_attribute.cpp": "4d51d98d2504046a02125b1601399da02fcd04325a90cc09fa3572dd3adbb5a5",
+          "services/src/input_channel.cpp": "766774299a746a423b350802c8b49280e09da65bae5a1533749952c556d9bc26",
+          "services/src/input_control_channel_proxy.cpp": "94bcc4e4886a84bf2b8af01546de7ad514d98a492b8264ad7f4d147335021c15",
+          "services/src/input_control_channel_stub.cpp": "aae07de4c75c02476fc1cb84d8cd346dd1600dca43796c199133058da9ea424f",
+          "services/src/input_method_ability_connection_stub.cpp": "8161826b45d82c54b6db233c5b85c9b350d852f8a86247dc34445568a5fb8e05",
+          "services/src/input_method_agent_proxy.cpp": "c5c3c484bd0a7bac4c26b9e092951625ecac12cda09bc6ca435a03c5f04922b4",
+          "services/src/input_method_property.cpp": "3042eca16c2808060e003a3550dc07c36745068fe5178a9df0c9a656e71fa5e0",
+          "services/src/input_method_setting.cpp": "de9a2d1f62493aa0d92f9432626126a1e39a923edafcd158b5df4f59611179c1",
+          "services/src/input_method_system_ability.cpp": "ef76b82352af9bd2ce902858db25ec3dcb68bbf5f8568a3a4c1e3d281024500b",
+          "services/src/input_method_system_ability_stub.cpp": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+          "services/src/keyboard_type.cpp": "66f0266c47cfd23ab22f5e6082fecb4b853bd05b89845f2da0fad1fa344ed5b4",
+          "services/src/message.cpp": "36cf26bc2ba0f2cdf72ca124698413945d2b673b215da030540ed7a3b176369a",
+          "services/src/message_handler.cpp": "0b31e94325780719245dbfdea78421fc089c8d89d2a6129eadf405252515cd63",
+          "services/src/peruser_session.cpp": "9e628fdf82a60edc7f6618ca8e40246401c39e9956c4198a2e2215867dd26232",
+          "services/src/peruser_setting.cpp": "45b9b1ed671775633b6c57a28db6c0350eb82ff6014d36d3cba516ad0dc65efb",
+          "services/src/platform.cpp": "7ebe67fc4bc2c51e149a79f486c8ddea792d4b590cc22045992ce702167d31f4",
+          "services/src/platform_api_proxy.cpp": "8fc23c916124bf3dd817fcd7d5d0f19f4b346bdf4855928d58250ec5a6c28a60",
+          "services/src/platform_callback_proxy.cpp": "a1948a872b95d844ea0f21599033e0f1be5434a886fc75b78fdb5d0d7e2ec7ff",
+          "services/src/platform_callback_stub.cpp": "59c980bf8923fe783ab1f02ac9d999b6eb0c6a3fbcf62a16b369000b5877e043",
+          "unitest/src/input_method_ability_test.cpp": "e5a42019e263698b7e23017df935afc3c2178fb500ba4f959f82bd58e6cbf1a9",
+          "unitest/src/input_method_controller_test.cpp": "1c64c19d4b2675990a2db21f2978dab73914e1a59f36b0a376483b67a9ed7fb1"
+        },
+        "unexamined": [
+          {
+            "file": "frameworks/inputmethod_ability/include/i_input_method_agent.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "frameworks/inputmethod_ability/include/i_input_method_core.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "frameworks/inputmethod_controller/include/i_input_client.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "frameworks/inputmethod_controller/include/i_input_data_channel.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/include/global.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/include/i_input_control_channel.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/include/i_input_method_proxy.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/include/i_input_method_system_ability.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/include/i_platform_api.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "services/include/i_platform_callback.h",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "unitest/src/input_method_ability_test.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "unitest/src/input_method_controller_test.cpp",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "frameworks/inputmethod_ability/include/event_target.h",
+          "frameworks/inputmethod_ability/include/i_input_method_agent.h",
+          "frameworks/inputmethod_ability/include/i_input_method_core.h",
+          "frameworks/inputmethod_ability/include/input_method_ability.h",
+          "frameworks/inputmethod_ability/include/input_method_agent_proxy.h",
+          "frameworks/inputmethod_ability/include/input_method_agent_stub.h",
+          "frameworks/inputmethod_ability/include/input_method_core_proxy.h",
+          "frameworks/inputmethod_ability/include/input_method_core_stub.h",
+          "frameworks/inputmethod_ability/src/event_target.cpp",
+          "frameworks/inputmethod_ability/src/input_method_ability.cpp",
+          "frameworks/inputmethod_ability/src/input_method_agent_proxy.cpp",
+          "frameworks/inputmethod_ability/src/input_method_agent_stub.cpp",
+          "frameworks/inputmethod_ability/src/input_method_core_proxy.cpp",
+          "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+          "frameworks/inputmethod_controller/include/i_input_client.h",
+          "frameworks/inputmethod_controller/include/i_input_data_channel.h",
+          "frameworks/inputmethod_controller/include/input_client_proxy.h",
+          "frameworks/inputmethod_controller/include/input_client_stub.h",
+          "frameworks/inputmethod_controller/include/input_data_channel_proxy.h",
+          "frameworks/inputmethod_controller/include/input_data_channel_stub.h",
+          "frameworks/inputmethod_controller/include/input_method_controller.h",
+          "frameworks/inputmethod_controller/include/input_method_system_ability_proxy.h",
+          "frameworks/inputmethod_controller/src/input_client_proxy.cpp",
+          "frameworks/inputmethod_controller/src/input_client_stub.cpp",
+          "frameworks/inputmethod_controller/src/input_data_channel_proxy.cpp",
+          "frameworks/inputmethod_controller/src/input_data_channel_stub.cpp",
+          "frameworks/inputmethod_controller/src/input_method_controller.cpp",
+          "frameworks/inputmethod_controller/src/input_method_system_ability_proxy.cpp",
+          "interfaces/kits/js/napi/js_input_method_engine.cpp",
+          "services/include/global.h",
+          "services/include/i_input_control_channel.h",
+          "services/include/i_input_method_proxy.h",
+          "services/include/i_input_method_system_ability.h",
+          "services/include/i_platform_api.h",
+          "services/include/i_platform_callback.h",
+          "services/include/input_attribute.h",
+          "services/include/input_channel.h",
+          "services/include/input_control_channel_proxy.h",
+          "services/include/input_control_channel_stub.h",
+          "services/include/input_method_ability_connection_stub.h",
+          "services/include/input_method_property.h",
+          "services/include/input_method_setting.h",
+          "services/include/input_method_system_ability.h",
+          "services/include/input_method_system_ability_stub.h",
+          "services/include/keyboard_type.h",
+          "services/include/message.h",
+          "services/include/message_handler.h",
+          "services/include/peruser_session.h",
+          "services/include/peruser_setting.h",
+          "services/include/platform.h",
+          "services/include/platform_callback_stub.h",
+          "services/include/utils.h",
+          "services/src/global.cpp",
+          "services/src/input_attribute.cpp",
+          "services/src/input_channel.cpp",
+          "services/src/input_control_channel_proxy.cpp",
+          "services/src/input_control_channel_stub.cpp",
+          "services/src/input_method_ability_connection_stub.cpp",
+          "services/src/input_method_agent_proxy.cpp",
+          "services/src/input_method_property.cpp",
+          "services/src/input_method_setting.cpp",
+          "services/src/input_method_system_ability.cpp",
+          "services/src/input_method_system_ability_stub.cpp",
+          "services/src/keyboard_type.cpp",
+          "services/src/message.cpp",
+          "services/src/message_handler.cpp",
+          "services/src/peruser_session.cpp",
+          "services/src/peruser_setting.cpp",
+          "services/src/platform.cpp",
+          "services/src/platform_api_proxy.cpp",
+          "services/src/platform_callback_proxy.cpp",
+          "services/src/platform_callback_stub.cpp",
+          "unitest/src/input_method_ability_test.cpp",
+          "unitest/src/input_method_controller_test.cpp"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 62,
+          "partial": 12,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:b82952e7df0067cc",
+            "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+            "source_sha256": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+              "source_sha256": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:356ee7ee908ea090",
+            "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+            "source_sha256": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "frameworks/inputmethod_ability/src/input_method_core_stub.cpp",
+              "source_sha256": "4b9302a7ef430c4d23f9c91d98b09dbd97763dd7a4af3cb05ed6ae6dfdc7df18"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:549e5068c8703ca5",
+            "file": "frameworks/inputmethod_controller/src/input_client_stub.cpp",
+            "source_sha256": "c69164d2491cd7d295d894e4c9948d0993eda8cf9803071ce0d7950e1e4da663",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "frameworks/inputmethod_controller/src/input_client_stub.cpp",
+              "source_sha256": "c69164d2491cd7d295d894e4c9948d0993eda8cf9803071ce0d7950e1e4da663"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:2c81bd289609837f",
+            "file": "services/src/input_method_system_ability_stub.cpp",
+            "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "services/src/input_method_system_ability_stub.cpp",
+              "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:bd657a34455cbc88",
+            "file": "services/src/input_method_system_ability_stub.cpp",
+            "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "services/src/input_method_system_ability_stub.cpp",
+              "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:0d80648a72eba189",
+            "file": "services/src/input_method_system_ability_stub.cpp",
+            "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "services/src/input_method_system_ability_stub.cpp",
+              "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:a2dee5c97997f30d",
+            "file": "services/src/input_method_system_ability_stub.cpp",
+            "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "services/src/input_method_system_ability_stub.cpp",
+              "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:0e3ea0d2c3d523e5",
+            "file": "services/src/input_method_system_ability_stub.cpp",
+            "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "services/src/input_method_system_ability_stub.cpp",
+              "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:ecb14b704116cf72",
+            "file": "services/src/input_method_system_ability_stub.cpp",
+            "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.capability.export",
+              "file": "services/src/input_method_system_ability_stub.cpp",
+              "source_sha256": "74badcacf9da149ab88c46c296d596492784db554fd3d480ae3b6b04b453bc56"
+            },
+            "consequence_impact": "capability_exposure",
+            "consequence_cwe": "CWE-668",
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          },
+          {
+            "diagnostic_id": "ohscanner.interface.ipc:c590c70a85c68412",
+            "file": "services/src/platform_callback_stub.cpp",
+            "source_sha256": "59c980bf8923fe783ab1f02ac9d999b6eb0c6a3fbcf62a16b369000b5877e043",
+            "analysis_status": "analyzed",
+            "source_binding": {
+              "repository": "openharmony/inputmethod_imf",
+              "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+              "snapshot_sha256": "4e713499a9f001324947a9073fc7f959d54cb0ea683e5271eaec0bf3d761b8fa",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.interface.ipc",
+              "detector_version": "0.5.0",
+              "rule_id": "ipc.relay.descriptor-boundary",
+              "file": "services/src/platform_callback_stub.cpp",
+              "source_sha256": "59c980bf8923fe783ab1f02ac9d999b6eb0c6a3fbcf62a16b369000b5877e043"
+            },
+            "consequence_impact": "boundary_bypass",
+            "consequence_cwe": null,
+            "model_version": "oh-ipc-2026.10-v3",
+            "obligations": [
+              {
+                "kind": "entry_reachability",
+                "description": "Verify actual caller reachability and product build/macro conditions.",
+                "status": "unknown"
+              },
+              {
+                "kind": "callee_and_policy",
+                "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Independently review attacker control, trust boundary and concrete effect.",
+                "status": "unknown"
+              },
+              {
+                "kind": "consequence",
+                "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+                "status": "unknown"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "files_in_scope_without_a_claiming_detector": [
+    "interfaces/kits/js/declaration/api/@ohos.inputmethodengine.d.ts"
+  ],
+  "limitations": [
+    "Diagnostics are candidates/evidence only, not proof of security impact.",
+    "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+    "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+    "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.",
+    "Some indexed source files have no claiming detector; their security analysis is unknown."
+  ]
+}

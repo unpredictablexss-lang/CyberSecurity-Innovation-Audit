@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "task": "PLATFORM-REAL-PRODUCT-BROWSER-01",
+  "purpose": "Public Git host reachability and effective URL audit before browser source-sync acceptance",
+  "credential_boundary": "No credential, token, password, or userinfo is included in commands or output; repository URLs are public HTTPS.",
+  "network_actions": [
+    {
+      "action": "public HTTPS effective-URL preflight (HEAD, redirects followed)",
+      "requested_url": "https://github.com/openharmony/c_utils.git",
+      "exact_command": "curl.exe -sS -L -I -o $env:NUL --max-time 30 -w \"%{http_code}\n%{url_effective}\n%{num_redirects}\" https://github.com/openharmony/c_utils.git",
+      "started_at": "2026-10-15T07:21:05.4300900Z",
+      "exit_code": 28,
+      "output_text": "curl: (7) Failed to connect to 0.0.0.30:80 after 0 ms: Could not connect to server\r\n000\r\ncurl: (28) Failed to connect to github.com:443 after 21053 ms: Could not connect to server\r\nhttp://0.0.0.30/\r\n0000\r\nhttps://github.com/openharmony/c_utils.git\r\n0\r\n",
+      "output_sha256": "60aef6afbb304d9e1804c339a2eb039a63705f156eb271cfbdedcf0bf8dd30be"
+    },
+    {
+      "action": "public HTTPS effective-URL preflight (HEAD, redirects followed)",
+      "requested_url": "https://gitee.com/openharmony/c_utils.git",
+      "exact_command": "curl.exe -sS -L -I -o $env:NUL --max-time 30 -w \"%{http_code}\n%{url_effective}\n%{num_redirects}\" https://gitee.com/openharmony/c_utils.git",
+      "started_at": "2026-10-15T07:21:05.7248702Z",
+      "exit_code": 0,
+      "output_text": "curl: (7) Failed to connect to 0.0.0.30:80 after 0 ms: Could not connect to server\r\n000\r\nhttp://0.0.0.30/\r\n0HTTP/1.1 405 Not Allowed\r\nServer: ADAS/1.0.214\r\nDate: Thu, 15 Oct 2026 07:21:05 GMT\r\nContent-Type: text/html; charset=utf-8\r\nConnection: keep-alive\r\nBDWAF-Request-ID: b9fc9bba-8a49-44f1-9dc1-ce868b2c6f19\r\n\r\n405\r\nhttps://gitee.com/openharmony/c_utils.git\r\n0\r\n",
+      "output_sha256": "0d9fd807d97b9ba7bb98f438b6082b79d66ab85f84740ffa97ab4ebab124d5e7"
+    },
+    {
+      "action": "public HTTPS effective-URL preflight (HEAD, redirects followed)",
+      "requested_url": "https://gitcode.com/openharmony/c_utils.git",
+      "exact_command": "curl.exe -sS -L -I -o $env:NUL --max-time 30 -w \"%{http_code}\n%{url_effective}\n%{num_redirects}\" https://gitcode.com/openharmony/c_utils.git",
+      "started_at": "2026-10-15T07:21:06.6090248Z",
+      "exit_code": 0,
+      "output_text": "curl: (7) Failed to connect to 0.0.0.30:80 after 0 ms: Could not connect to server\r\n000\r\nhttp://0.0.0.30/\r\n0HTTP/1.1 302 Moved Temporarily\r\nDate: Thu, 15 Oct 2026 07:21:06 GMT\r\nContent-Type: text/html\r\nContent-Length: 142\r\nConnection: keep-alive\r\nSet-Cookie: HWWAFSESTIME=1792048864090; path=/\r\nSet-Cookie: HWWAFSESID=ba0fb334874c661cb23; path=/\r\nLocation: https://gitcode.com/openharmony/c_utils\r\nStrict-Transport-Security: max-age=31536000; includeSubDomains; preload\r\nX-XSS-Protection: 1; mode=block\r\nX-Content-Type-Options: nosniff\r\nCache-Control: no-store\r\nSet-Cookie: gitcode_wechat_from=; Max-Age=10; Path=/; Secure; HttpOnly; domain=.gitcode.com\r\nServer: elb\r\n\r\nHTTP/1.1 404 Not Found\r\nDate: Thu, 15 Oct 2026 07:21:06 GMT\r\nContent-Type: application/json\r\nConnection: keep-alive\r\nSet-Cookie: HWWAFSESTIME=1792048864090; path=/\r\nSet-Cookie: HWWAFSESID=ba0fb35b874c661cb23; path=/\r\nSet-Cookie: uuid_tt_dd=10_1825179490-1792048866394-605799; Expires=Thu, 01 Jan 2099 00:00:00 GMT; Path=/; Secure; Domain=.gitcode.com;\r\nSet-Cookie: c_gitcode_rid=1792048866394_615404; Expires=Sat, 14-Nov-26 07:21:06 GMT; Path=/; Secure; Domain=.gitcode.com;\r\nSet-Cookie: c_gitcode_fref=-; Expires=Sat, 14-Nov-26 07:21:06 GMT; Path=/; Secure; Domain=.gitcode.com;\r\nSet-Cookie: c_gitcode_um=-; Expires=Sat, 14-Nov-26 07:21:06 GMT; Path=/; Secure; Domain=.gitcode.com;\r\ntrace-id: 025111dd7d52d34cded0ac6ea78157a8\r\nx-trace-id: 025111dd7d52d34cded0ac6ea78157a8\r\nx-spider-cache: bypass:not_bot\r\nx-canary: repo_home\r\nx-canary-whitelist: 1\r\nset-cookie: canary_bucket=5; Max-Age=2592000; Domain=.gitcode.com; Path=/; SameSite=Lax\r\nset-cookie: gitcode_lang=zh; Path=/; Expires=Fri, 15 Oct 2027 07:21:06 GMT; SameSite=Lax\r\nset-cookie: gitcode_theme=white; Max-Age=31536000; Domain=.gitcode.com; Path=/; SameSite=Lax\r\nx-content-type-options: nosniff\r\nx-frame-options: DENY\r\nreferrer-policy: no-referrer\r\ncontent-security-policy: script-src 'none'; frame-ancestors 'none';\r\ncache-control: no-cache\r\nServer: elb\r\n\r\n404\r\nhttps://gitcode.com/openharmony/c_utils\r\n1\r\n",
+      "output_sha256": "90a6200ce87470c008b0d40207dc6e42a4218e88ab0a0e5cc3d3ea04dccb9309"
+    }
+  ]
+}
