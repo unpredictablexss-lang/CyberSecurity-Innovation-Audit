@@ -1,0 +1,55 @@
+{
+  "schema_version": "ohscanner.a-exp-01-retry-accounting-contract-v1",
+  "experiment_id": "A-EXP-01",
+  "scope": "per_run",
+  "attempt_identity": {
+    "attempt_id": "Globally unique 16-character lowercase hex ID for every provider, tool, or human attempt.",
+    "logical_id": "Stable ID for the logical operation being attempted; every retry repeats the same logical_id with a new attempt_id.",
+    "retry_of_attempt_id": "Null on the initial attempt; otherwise the exact prior attempt_id. Prior records are never overwritten.",
+    "required_preservation": [
+      "initial failure",
+      "retry attempt",
+      "final result",
+      "all token/cost/wall observations"
+    ]
+  },
+  "r2_budget": {
+    "retries_max": 1,
+    "retries_counted_as_new_repetition": false,
+    "retries_count_toward_tool_calls": true,
+    "retries_count_toward_token_usage_if_any": true,
+    "retries_count_toward_cost_if_any": true,
+    "retries_count_toward_wall_time": true,
+    "retries_count_toward_tool_output_and_source_bytes": true,
+    "retries_reset_run_budget": false,
+    "retries_reset_seed_or_input_bundle": false,
+    "model_provider_attempts_max": 2
+  },
+  "budget_effects_by_attempt_kind": {
+    "human_review": {
+      "tool_call": "not_applicable",
+      "token_usage_if_any": "not_applicable",
+      "wall_time": "always",
+      "repetition": "never",
+      "source_and_output_bytes": "not_applicable"
+    },
+    "model_provider": {
+      "tool_call": "not_applicable",
+      "token_usage_if_any": "if_used",
+      "wall_time": "always",
+      "repetition": "never",
+      "source_and_output_bytes": "not_applicable"
+    },
+    "tool": {
+      "tool_call": "always",
+      "token_usage_if_any": "not_applicable",
+      "wall_time": "always",
+      "repetition": "never",
+      "source_and_output_bytes": "always"
+    }
+  },
+  "repetition_rule": "A retry stays inside the original (experiment_item_id, group, repetition, seed) run. Three repetitions remain three; retries do not create a fourth repetition or replace a failed repetition.",
+  "usage_rule": "Token and cost are summed across every attempt. Missing provider usage is unknown, never estimated, and prevents a completed within-budget status.",
+  "ledger_rule": "Attempt records and run_ledger records are append-only; failure.retries equals the number of retry_of_attempt_id values.",
+  "invalidation_rule": "More than one R2 retry, a reused attempt_id, a missing prior attempt, a mutated prior attempt, or a retry counted as a repetition invalidates the run."
+}

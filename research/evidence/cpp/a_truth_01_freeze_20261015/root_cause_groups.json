@@ -1,0 +1,260 @@
+{
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "groups": [
+    {
+      "call_boundary": "Constructors/member initializers and local wrapper access sites.",
+      "candidate_ids": [
+        "16da132f19039393f70288746451ca9bf29f3276beb08e9f4819448d60c6c710",
+        "21a7bd798474558ed52232e03e58ace103497d48a30fb6f5b11a0f3cf8df66b4",
+        "25ed03d67f1c9d5397936181c95cf65131311f145f8a9f42cd358eef8b4bf122",
+        "2c7fb8c5e56f8f2488762f1c65dec2f8a2c3cd9fb6f743df83c9e99c4687d679",
+        "2c8c1796905c2ba3189b24ea3fb4537419cfc3fa215adebc63b65a36bffba8bc",
+        "93c2385311e2c10ecbfe8c0f78776474bc6264b5cbd0baeb50e33caaf4aeeb30",
+        "a1278c524438add8635a68621e5f4b9d5bd8b9f98775d34ab6f8d39b783dc116",
+        "b7add44fd9df2d261854292572cc006c1a94a0db75a8338dd8af2162bd455ea6",
+        "cf54aeb9706c25f3043ea685b7cf3ce168c05796cb71cc36d9095d7b2a29e495"
+      ],
+      "cia_assessment": "No candidate race remains at site; no CIA claim.",
+      "classification_counts": {
+        "unrelated": 9
+      },
+      "controls": {
+        "fixed": "not_applicable",
+        "positive": "not_applicable: no same-object race pair",
+        "safe": "not_applicable",
+        "unrelated": "passed: constructor/stable-owner shape"
+      },
+      "mechanism_counts": {
+        "unrelated": 9
+      },
+      "publication_order_and_happens_before": "StatusCache constructor copies TimeUtilsProxy into timeUtilsProxy_; later code only tests/calls pointee.",
+      "review_item_count": 9,
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "sensitive_operation": "None established at the reported owner-race site.",
+      "status_counts": {
+        "refuted": 9
+      },
+      "thread_or_event_queue_model": "Reported sites are constructor/member initialization or stable owner reads. No same-object post-publication writer is observed at the candidate site; pointee behavior is outside this disposition.",
+      "title": "RC-CONSTRUCTOR-NOISE",
+      "trigger_conditions_and_race_window": "No same-object conflicting pair, hence no proven owner-race trigger window.",
+      "unique_candidate_count": 9
+    },
+    {
+      "call_boundary": "JSProxy::SetInstance/GetInstance; JsKVStoreResultSet NAPI getters; Create/CloseResultSet and GetEntry paths.",
+      "candidate_ids": [
+        "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef",
+        "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c"
+      ],
+      "cia_assessment": "Controlled TSan proves owner data race/UB in the modeled component shape. Product crash/DoS, returned-entry integrity, confidentiality and privilege effects unmeasured.",
+      "classification_counts": {
+        "unknown": 2
+      },
+      "controls": {
+        "fixed": "passed: mutex owner control clean 3/3",
+        "positive": "passed: generic race and close_get_entry TSan 3/3",
+        "safe": "passed: atomic shared_ptr patch clean 3/3",
+        "unrelated": "passed: generic unrelated control clean 1/1"
+      },
+      "mechanism_counts": {
+        "vulnerable": 2
+      },
+      "publication_order_and_happens_before": "GetResultSet execute calls SetInstance; completion returns the wrapper. Sync methods copy GetInstance. CloseResultSet execute calls GetInstance then SetInstance(nullptr). Completion serialization does not order execute against a later sync JS call.",
+      "review_item_count": 2,
+      "root_cause_group": "RC-JSPROXY",
+      "sensitive_operation": "Distributed KV result-set lifetime and Entry retrieval through a native shared_ptr wrapper.",
+      "status_counts": {
+        "candidate": 2
+      },
+      "thread_or_event_queue_model": "Sync ResultSet methods use GetCbInfoSync on the NAPI/JS call context. GetResultSet/CloseResultSet use NapiQueue::AsyncWork: execute runs on the NAPI worker pool and complete on the JS/NAPI queue. The same JSProxy owner can be read by a sync call while async CloseResultSet clears it.",
+      "title": "RC-JSPROXY",
+      "trigger_conditions_and_race_window": "Source-visible sequence getResultSet -> closeResultSet -> immediate getEntry/getCount before async close execute completes. The controlled Harness models this exact overlap.",
+      "unique_candidate_count": 2
+    },
+    {
+      "call_boundary": "PictureInPictureController{,Ani} setters/getters; UpdatePiPSourceRect/UpdateContentSize; ResetExtController; SetXComponentController.",
+      "candidate_ids": [
+        "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81",
+        "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c",
+        "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652",
+        "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d",
+        "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af",
+        "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8"
+      ],
+      "cia_assessment": "No product crash, corruption, disclosure or privilege effect measured.",
+      "classification_counts": {
+        "unknown": 6
+      },
+      "controls": {
+        "fixed": "not_run: mutex owner control",
+        "positive": "not_run: setter/reader TSan overlap",
+        "safe": "not_run: same-runner serialization",
+        "unrelated": "not_run: fresh-object control"
+      },
+      "mechanism_counts": {
+        "unknown": 6
+      },
+      "publication_order_and_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+      "review_item_count": 6,
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "sensitive_operation": "XComponent controller swap/reset, PIP source-rect/content updates and window state transitions.",
+      "status_counts": {
+        "candidate": 6
+      },
+      "thread_or_event_queue_model": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+      "title": "RC-PIP-CONTROLLERS",
+      "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace.",
+      "unique_candidate_count": 6
+    },
+    {
+      "call_boundary": "RemoteCommandManager::NotifyDeviceOnline/GetExecutorChannel -> RemoteCommandExecutor::SetChannel/GetChannel; ProcessOneCommand -> CreateChannelIfNeeded and ptrChannel_ use.",
+      "candidate_ids": [
+        "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b",
+        "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b"
+      ],
+      "cia_assessment": "No measured product crash, corruption, disclosure or privilege effect.",
+      "classification_counts": {
+        "unknown": 2
+      },
+      "controls": {
+        "fixed": "not_run: one owner mutex or atomic shared_ptr protocol",
+        "positive": "not_run: SetChannel/GetChannel or create/use TSan overlap",
+        "safe": "not_run: serialized channel protocol",
+        "unrelated": "not_run: single-thread publication control"
+      },
+      "mechanism_counts": {
+        "unknown": 2
+      },
+      "publication_order_and_happens_before": "GetOrCreateRemoteCommandExecutor publishes the executor; NotifyDeviceOnline checks GetChannel and calls SetChannel under RemoteCommandManager::mutex_. CreateChannelIfNeeded writes ptrChannel_ under RemoteCommandExecutor::recursive_mutex_; ProcessOneCommand/ExecuteRemoteCommand read it. Different locks leave no proven happens-before edge.",
+      "review_item_count": 2,
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "sensitive_operation": "Remote RPC channel construction, connection lifecycle and remote token-sync command execution.",
+      "status_counts": {
+        "candidate": 2
+      },
+      "thread_or_event_queue_model": "Send command work is posted to TokenSyncManagerService::GetSendEventHandler() on an FFRT EventRunner; device online/offline enters through SoftBus device callbacks and socket session callbacks. Exact callback thread identities and common serialization are not proven.",
+      "title": "RC-REMOTE-CHANNEL",
+      "trigger_conditions_and_race_window": "Device-online channel creation versus send-runner processing or socket callback use, with offline release/remove as a third event. Feasible product schedule and rate are not established.",
+      "unique_candidate_count": 2
+    },
+    {
+      "call_boundary": "Mock/support extension-context code under kvstoremock/external_inner_kit.",
+      "candidate_ids": [
+        "0089d85d5f9004679cf036196674b664847db9ed99f5b1bb4f74803ea2f3f427",
+        "a662e84f949b68d0fba943db9acf075d1ab54a4b4ff4934608a21a1ea9eebc2d",
+        "de8642d38c52fbba01c43f4d7425d29330fb03e273de8ab740e5b2cc00d2a1d5"
+      ],
+      "cia_assessment": "No production CIA claim.",
+      "classification_counts": {
+        "unrelated": 3
+      },
+      "controls": {
+        "fixed": "not_applicable",
+        "positive": "not_applicable",
+        "safe": "not_applicable",
+        "unrelated": "passed: non-production mock scope"
+      },
+      "mechanism_counts": {
+        "unrelated": 3
+      },
+      "publication_order_and_happens_before": "Not applicable to production vulnerability truth; retained as out-of-scope control.",
+      "review_item_count": 3,
+      "root_cause_group": "RC-SCOPE-MOCK",
+      "sensitive_operation": "None for a production component vulnerability.",
+      "status_counts": {
+        "refuted": 3
+      },
+      "thread_or_event_queue_model": "Reported source is under kvstoremock/external_inner_kit, a mock/support scope excluded from production scoring by the historical scope rule.",
+      "title": "RC-SCOPE-MOCK",
+      "trigger_conditions_and_race_window": "No production trigger in scope.",
+      "unique_candidate_count": 3
+    },
+    {
+      "call_boundary": "StreamManager constructor; CreateStreamClientChannel/CreateStreamServerChannel; SetStreamRecvListener; socket callback publication.",
+      "candidate_ids": [
+        "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7"
+      ],
+      "cia_assessment": "No product trigger or CIA consequence established.",
+      "classification_counts": {
+        "unknown": 2
+      },
+      "controls": {
+        "fixed": "not_run: common mutex or immutable publication",
+        "positive": "not_run: setter/channel creation TSan overlap",
+        "safe": "not_run: pre-publication immutable listener",
+        "unrelated": "not_run: single-thread constructor control"
+      },
+      "mechanism_counts": {
+        "unknown": 2
+      },
+      "publication_order_and_happens_before": "Constructor initializes streamListener_. Create*Channel calls SetStreamRecvListener(streamListener_), which writes it, creates StreamSocketListener(recvListener) and installs the separate copy on the socket.",
+      "review_item_count": 2,
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "sensitive_operation": "Stream receive-listener registration and socket data callback routing.",
+      "status_counts": {
+        "candidate": 1,
+        "unknown": 1
+      },
+      "thread_or_event_queue_model": "Stream setup runs on caller thread. VtpStreamSocket creates detached NotifyStreamListener/DoStreamRecv threads and invokes streamReceiver_ under streamSocketLock_. streamListener_ itself is not shown to be read by callbacks; StreamSocketListener keeps a separate listener_ copy.",
+      "title": "RC-STREAM-LISTENER",
+      "trigger_conditions_and_race_window": "Would require product caller to invoke public SetStreamRecvListener concurrently with Create*Channel or another setter. Production call-site search found setup calls and tests only.",
+      "unique_candidate_count": 1
+    },
+    {
+      "call_boundary": "Marshalling/unmarshalling helpers, constructor/member initializers, animation singletons, listeners and SurfaceCaptureFuture callback/waiter methods.",
+      "candidate_ids": [
+        "0c3d001e4abbb837b5b164bade7dfca901342fca31a94ec355667827f2376e4c",
+        "1e0688494c36112e34cd1f27f9c35be050c26bb3ffec36ed41e8b0de1cb9fa00",
+        "228aa372f6f5454101891f359b3bedcad2cc55d90afbd43d9c50f8de35f27598",
+        "385d0407467c117c1bc471deaee058fa95493080dc74d75d3b12833bac0a3eff",
+        "3f33ecdd5899ae2cbbff6aae95eeef494c583c294112752e69c72f3ab569dbba",
+        "3f69ba23ee35ab8b695eb5b3019703343504bae60835da22335e2ab165116dde",
+        "48ff783415251c95ed5e93eabe1817f941d11c8f4727222408d25a6480416e20",
+        "4e5f35efb3f6c9480e5016776b81acd7e82b5fd3aacbd5aa211c0ed7dda3dc2d",
+        "4e9afc5ec4b9b2c8418de2868780ce9c410e056cda6a5a76c803ad5216b75701",
+        "869e521a61c57900b90bc59f13ce6c298aa86da99f03996db8340bfccc09ebe9",
+        "8ab1907289a43e543ac716c3db76d8db1e06a9990741d1ecbdee109caf7f739e",
+        "91a5f46b96a11a6166bccc207946d7524912938daf1cb7058fd89d79cd8ce881",
+        "96d94fd92a003251ec386f66069c5a52f4bd88f63a0ff30d0679456ae6a3ce84",
+        "98a2ac1ba0b1d0501fe6fc17e979d887a2623f843221e9582259eac902cc7e1a",
+        "a3080f2b2c90a12166ec6d4ad76a3c7886033b47e9356f124a74c00fb1426a80",
+        "a652b1b68097421147c0051e3c8f75cd993e286907958c8c40bec5a8a4c8056a",
+        "a786eb0afcb5cd995219af27c26d2770b3d5e9560a394868769adfdbb3c03fee",
+        "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1",
+        "ead5f473d62f6d21712f7eb0ae59bc743f1d7222f5fba437120c4508668ea785",
+        "f6f50c28e7e1dd49302cecc20d4ecbd713d0e5e7f97d0e813bf3aa6c49e633f9",
+        "fc90aa9eaa7a862404445c7a7b340636035341caf97d661223a49f930f6bc5d3"
+      ],
+      "cia_assessment": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+      "classification_counts": {
+        "safe": 1,
+        "unknown": 1,
+        "unrelated": 19
+      },
+      "controls": {
+        "fixed": "not_run: move hdrPixelMap_ reset under mutex_",
+        "positive": "not_run: hdrPixelMap_ late-callback window only",
+        "safe": "passed: pixelMap_ owner accesses mutex-serialized",
+        "unrelated": "passed: constructor/single-lexical/marshalling shapes"
+      },
+      "mechanism_counts": {
+        "safe": 1,
+        "unknown": 1,
+        "unrelated": 19
+      },
+      "publication_order_and_happens_before": "Marshalling reads pair with Unmarshalling writes to a fresh object; reported owner is not rewritten in place.",
+      "review_item_count": 21,
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "sensitive_operation": "Window/UI state marshalling and surface pixel-map delivery; product effect is not established.",
+      "status_counts": {
+        "refuted": 20,
+        "unknown": 1
+      },
+      "thread_or_event_queue_model": "The source set mixes Parcel/NAPI marshalling, callback wrappers and window helpers. No common cross-thread owner pair is established except the separately noted surface HDR reset.",
+      "title": "RC-WINDOW-SINGLE",
+      "trigger_conditions_and_race_window": "No same-object post-publication mutation window for noise/unrelated sites; HDR has a separate timeout/reset candidate window.",
+      "unique_candidate_count": 21
+    }
+  ],
+  "kind": "a_truth_01_root_cause_groups",
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1"
+}

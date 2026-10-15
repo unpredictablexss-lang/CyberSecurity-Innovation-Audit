@@ -1,0 +1,19 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "/usr/bin/setarch",
+      "x86_64",
+      "-R",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-detector-controls-impl-20261015/run-001/shared-fixed-atomic-exchange-protocol/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-detector-controls-impl-20261015/run-001/shared-fixed-atomic-exchange-protocol",
+    "exit_code": 0,
+    "elapsed_seconds": 0.08524536300001273,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

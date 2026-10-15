@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.a-exp-01-preflight-unblock-record-schema-v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "record_type",
+    "record_id",
+    "experiment_id",
+    "task_id",
+    "generated_at_utc",
+    "timezone",
+    "status",
+    "corrects_record_id",
+    "checkout",
+    "resolutions",
+    "statistical_units",
+    "canonical_hash",
+    "reference_validation",
+    "retry_accounting",
+    "execution_decision",
+    "group_decisions",
+    "boundaries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ohscanner.a-exp-01-preflight-unblock-record-v1"
+    },
+    "record_type": {
+      "enum": [
+        "preflight_unblock",
+        "preflight_unblock_correction"
+      ]
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "experiment_id": {
+      "const": "A-EXP-01"
+    },
+    "task_id": {
+      "const": "A-EXP-01-PREFLIGHT-UNBLOCK"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "timezone": {
+      "const": "Asia/Shanghai"
+    },
+    "status": {
+      "enum": [
+        "contract_validation_passed_execution_blocked",
+        "failed"
+      ]
+    },
+    "corrects_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "correction_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checkout": {
+      "type": "object"
+    },
+    "resolutions": {
+      "type": "object"
+    },
+    "statistical_units": {
+      "type": "object"
+    },
+    "canonical_hash": {
+      "type": "object"
+    },
+    "reference_validation": {
+      "type": "object"
+    },
+    "retry_accounting": {
+      "type": "object"
+    },
+    "execution_decision": {
+      "type": "object",
+      "required": [
+        "R0",
+        "R1",
+        "R2",
+        "model_calls",
+        "r0_r1_r2_runs",
+        "model_results_generated",
+        "precision_recall_computed",
+        "candidate_truth_review_modified"
+      ],
+      "properties": {
+        "R0": {
+          "enum": [
+            "blocked",
+            "preflight_ready_execution_not_authorized"
+          ]
+        },
+        "R1": {
+          "enum": [
+            "blocked",
+            "preflight_ready_execution_not_authorized"
+          ]
+        },
+        "R2": {
+          "enum": [
+            "blocked",
+            "preflight_ready_execution_not_authorized"
+          ]
+        },
+        "model_calls": {
+          "const": 0
+        },
+        "r0_r1_r2_runs": {
+          "const": 0
+        },
+        "model_results_generated": {
+          "const": false
+        },
+        "precision_recall_computed": {
+          "const": false
+        },
+        "candidate_truth_review_modified": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "group_decisions": {
+      "type": "object"
+    },
+    "boundaries": {
+      "type": "object"
+    },
+    "artifact_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "report_hashes": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,1134 @@
+{
+  "schema_version": "ohscanner.a-exp-01-evidence-catalog-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_date": "2026-10-15",
+  "id_semantics": "evidence_id and fact_id are persistent IDs derived from pinned Git identity plus exact source-context hash; model claims must cite these or tool-result IDs.",
+  "item_count": 45,
+  "items": [
+    {
+      "evidence_id": "62bf5fcb985ae2414bfc42b9a0e0b2d2f228febb44569cb5fd4b71077ae737c1",
+      "fact_id": "42a10dc1c31d6284aee12ed3ffce5b4e9ecc1db26d1ea8a272c0f8973b1d14cb",
+      "authority": "git_object",
+      "experiment_item_id": "00c8ae87a8576190",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+      "source_git_blob_oid": "29db5c04bd534bcd029d702e8df7867573b6f35d",
+      "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+      "source_context_sha256": "3919e249000914081501002e5c3c0090dd5845ac3eabc273737a46fdabdd293f",
+      "locator": {
+        "line": 32,
+        "column": 22,
+        "operation": "read",
+        "symbol": "jsCallBack_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "3919e249000914081501002e5c3c0090dd5845ac3eabc273737a46fdabdd293f",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "29e08f4a054199188690a2bc9e9fb92cdb8ca6a5afdc25a780cbba5bf57a6e19",
+      "fact_id": "53b2925383c14af3cc25aa9dc21c64d71336e1eef4a89b4b884b5572efa12673",
+      "authority": "git_object",
+      "experiment_item_id": "03ac81fdf0dad858",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_context_sha256": "ce20af65475900da2171da24856664faba5b9ccb41e589a22cc2a4dab8e15cf7",
+      "locator": {
+        "line": 265,
+        "column": 37,
+        "operation": "read",
+        "symbol": "animationSystemParams"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "ce20af65475900da2171da24856664faba5b9ccb41e589a22cc2a4dab8e15cf7",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "4c6be102377bec3e35b6c1cb34feb539bd1c6a960a071da7694a48d94def70bb",
+      "fact_id": "15fad99972cdb49456875a0cd8823112aee3661a251a025d3f70d54f21b4a98d",
+      "authority": "git_object",
+      "experiment_item_id": "0984ba53e4891550",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "source_context_sha256": "f89adf158eda48c1c7e0d814832db96958757e3d889cc912863a3d9b927b4f0b",
+      "locator": {
+        "line": 117,
+        "column": 71,
+        "operation": "read",
+        "symbol": "data_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "f89adf158eda48c1c7e0d814832db96958757e3d889cc912863a3d9b927b4f0b",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "34e200b7b93cfc683fe21dd53e7ed36b3aa93dfb5de9b8f94b7f40a4692d9dd9",
+      "fact_id": "c8818b0fce923770154fb553e1567279e2f188b47c7c6a2b94566d01767df69d",
+      "authority": "git_object",
+      "experiment_item_id": "0a21bb32264c7d75",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_context_sha256": "85829ebd7157cf86df6928e9890093199479a9faa42d99a85bf8fdf0953ca486",
+      "locator": {
+        "line": 261,
+        "column": 37,
+        "operation": "read",
+        "symbol": "animationParams"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "85829ebd7157cf86df6928e9890093199479a9faa42d99a85bf8fdf0953ca486",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "063f258a2dd4b22a7cf716dbd7ba12c6cd439074d2cd8d0522301ef40a000b16",
+      "fact_id": "bcd2f9141955d9c83361c51c6a90f2b0aea684a4b59630c3cbdb4752ba843dfe",
+      "authority": "git_object",
+      "experiment_item_id": "0c076a622b333f8d",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "previewer/include/wm_animation_common.h",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_context_sha256": "b70b7a566b7e1b6c2db7af14a8bc2eae2c89d26bebe43d8f17d76ceeff469d13",
+      "locator": {
+        "line": 281,
+        "column": 54,
+        "operation": "read",
+        "symbol": "excludeFromDock"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "b70b7a566b7e1b6c2db7af14a8bc2eae2c89d26bebe43d8f17d76ceeff469d13",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "12fd3397a8db1294732a48a990b8394f0b9b15a46f955fa7a093293b377830f4",
+      "fact_id": "87530d43c81c22ada3556826dd0e4f96608e93e2fe71623d02dbd1f212b2b070",
+      "authority": "git_object",
+      "experiment_item_id": "0dcfabb07e3a819e",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+      "source_git_blob_oid": "bc968e7ce325261154cc42d57134516a94ae454d",
+      "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+      "source_context_sha256": "6c75320e552296c2d19e58a1c0828f34a9c03e42266aa9caef945c7daa6f48c0",
+      "locator": {
+        "line": 68,
+        "column": 9,
+        "operation": "write",
+        "symbol": "asyncContextPtr"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "6c75320e552296c2d19e58a1c0828f34a9c03e42266aa9caef945c7daa6f48c0",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "6a2ec04aa6487658580111ddf51a96006187670b46314d4153229c8e75786b82",
+      "fact_id": "208542889a99fa6a778d512d78250ecd88788be1f39ccfca2b652a61702f189e",
+      "authority": "git_object",
+      "experiment_item_id": "109e777bac47451e",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "source_context_sha256": "e7de298053e45eb606efdce3a67ed3d1beaf43099b5cfb0afd12a97f5f30ea57",
+      "locator": {
+        "line": 61,
+        "column": 16,
+        "operation": "read",
+        "symbol": "abilityInfo_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "e7de298053e45eb606efdce3a67ed3d1beaf43099b5cfb0afd12a97f5f30ea57",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "4ba036049d20dadebc8aa6cad63bd4c8607c75fe684a83ab4d783963a6a0e47a",
+      "fact_id": "c1e9509e77baf3cd42b1dc739c6b5ba053b7f1624ee86cc999e71c90bef7d76c",
+      "authority": "git_object",
+      "experiment_item_id": "11a9e51881bba4a3",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "file": "services/core/ability/status_cache/include/status_cache.h",
+      "source_git_blob_oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+      "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+      "source_context_sha256": "a4e06ccfc08aa1510b0c23378d4e98f4cc8279cdcbd43001cdc2c880baf9b8bf",
+      "locator": {
+        "line": 27,
+        "column": 67,
+        "operation": "read",
+        "symbol": "timeUtilsProxy_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "a4e06ccfc08aa1510b0c23378d4e98f4cc8279cdcbd43001cdc2c880baf9b8bf",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "93e8fed4e5733e6685a192d28297171dfee7c40ab99e5400946ea8c3cddb9d2f",
+      "fact_id": "0f2f0a33b1bf7b620dfd507b743c6cf2032a39f4d951d72c06b91e8bee8d6672",
+      "authority": "git_object",
+      "experiment_item_id": "189d9dc2fec1ba7c",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "source_context_sha256": "90388f9fe9918158017937856c8dcbdac5ef30139048cb175f003ada7d1dfd52",
+      "locator": {
+        "line": 57,
+        "column": 9,
+        "operation": "write",
+        "symbol": "mainWindowXComponentController_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "90388f9fe9918158017937856c8dcbdac5ef30139048cb175f003ada7d1dfd52",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "5ca6af9fb6d801cc0833213cfb9f774ba581bf7ec4404f322e9d3f3d4556b83c",
+      "fact_id": "343f8c0540eccff4810c4e55f179b5a8d4354e2489b3084b23b26ca0320125d7",
+      "authority": "git_object",
+      "experiment_item_id": "18c96f591a6dca1e",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "previewer/include/wm_animation_common.h",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_context_sha256": "cff219b08231a323b03f1e9df9da4327b1525f8b6ca7f5674b1e85fcca3c5b83",
+      "locator": {
+        "line": 257,
+        "column": 37,
+        "operation": "read",
+        "symbol": "animationSystemParams"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "cff219b08231a323b03f1e9df9da4327b1525f8b6ca7f5674b1e85fcca3c5b83",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "4133fdd665b19b7093b2d5730258199a8ad2d6aaa1d23159b77edfc244a64bca",
+      "fact_id": "84b012d730e32dc91dae3a9fe92daedf2c801bcd4ade360c872b378bac84ee30",
+      "authority": "git_object",
+      "experiment_item_id": "1fae182b80e03b31",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "source_context_sha256": "75db86aea31b68e8f7c40220d7adb0df55e306c0538b9c3467d7acc015f78f1c",
+      "locator": {
+        "line": 53,
+        "column": 16,
+        "operation": "read",
+        "symbol": "backgroundFilter_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "75db86aea31b68e8f7c40220d7adb0df55e306c0538b9c3467d7acc015f78f1c",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "033293ac2eb78541049e2ec9e057e630a9b05aafe5e705908a9766bb3863b23b",
+      "fact_id": "30b547e1638c7e89ddcef11b1ee13830376be82e8a6f4de550d65d4347f3778d",
+      "authority": "git_object",
+      "experiment_item_id": "216f43693c1ed53f",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_context_sha256": "064478c17957d5228aca4678aa5abf4ddfb1927b0c6b614ce6e1665ed2bed67c",
+      "locator": {
+        "line": 273,
+        "column": 52,
+        "operation": "read",
+        "symbol": "needAnimation"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "064478c17957d5228aca4678aa5abf4ddfb1927b0c6b614ce6e1665ed2bed67c",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "dcac19fb1d92409f6ac78984a02ee4b4e15ea897b9e0d188265027ebb7e4d5eb",
+      "fact_id": "a8dd78d509e10aaa671d8cc2a99e62156236be6cc2c0a7103003e2ca2d69c116",
+      "authority": "git_object",
+      "experiment_item_id": "262e8786de8d4855",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/picture_in_picture_controller_ani.h",
+      "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+      "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+      "source_context_sha256": "082c85907166771d517e8a12f32cec20edbb4041e26fef5bb90d0068cb607c7c",
+      "locator": {
+        "line": 53,
+        "column": 16,
+        "operation": "read",
+        "symbol": "mainWindowXComponentController_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "082c85907166771d517e8a12f32cec20edbb4041e26fef5bb90d0068cb607c7c",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "afa8de55f60cee0a28bf4230068c2738296a518ffcae645f9234395026caa0d4",
+      "fact_id": "e1bd268822d1899f6ac81d13a4a8bd7e9d0b6643059a81e3902b0addb83c724d",
+      "authority": "git_object",
+      "experiment_item_id": "28f5d974aafabd67",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+      "source_git_blob_oid": "2c5c6dcf02cf1ae7e44ff7538055057ba4cf33f9",
+      "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+      "source_context_sha256": "eaaaba6de36e2790b94e670ebeca96d281adfbcd10959f2b86c4ef135c1b1eb0",
+      "locator": {
+        "line": 61,
+        "column": 9,
+        "operation": "write",
+        "symbol": "asyncContextPtr"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "eaaaba6de36e2790b94e670ebeca96d281adfbcd10959f2b86c4ef135c1b1eb0",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "f820f6297aa62ca57cb39b82150b75ad7b976a1cbf9d495fc4b28f92a136ba46",
+      "fact_id": "2173715f4262b21432527fccee1cae65612419381dc810029c9a3cb463856c6d",
+      "authority": "git_object",
+      "experiment_item_id": "2933d6f08739598b",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+      "source_git_blob_oid": "26e4a721b1f126e33af5c9fba7c908702ea49dbd",
+      "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+      "source_context_sha256": "902b9661239dddc0c563c599cd94731e677fb1c57b9a957d4b04b8567c8c7136",
+      "locator": {
+        "line": 33,
+        "column": 22,
+        "operation": "read",
+        "symbol": "jsCallBack_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "902b9661239dddc0c563c599cd94731e677fb1c57b9a957d4b04b8567c8c7136",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "724315b0b4323d54d892a04b17d799fd0aaca347b626736f40f4bf69a949a04f",
+      "fact_id": "2aa94fe14c43a90dad1cb7e8ee8a93b26ffcd6769430762c2b665c75203b75bf",
+      "authority": "git_object",
+      "experiment_item_id": "29c57a4203eeb950",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "source_context_sha256": "6ea28b0cceec6b5dba57d65e4c5989ba862a98b8028d916b355490a425104075",
+      "locator": {
+        "line": 141,
+        "column": 16,
+        "operation": "read",
+        "symbol": "pipXComponentController_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "6ea28b0cceec6b5dba57d65e4c5989ba862a98b8028d916b355490a425104075",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "e3d7aa68aa638f56ada0ad325b392c5088e825d5f3e598de0ed9eef3ae775a8b",
+      "fact_id": "65c94211e0378d8dbc7a9c5218405c509e78daf2059f01a8e7ce1fcf0e34b7e9",
+      "authority": "git_object",
+      "experiment_item_id": "2c4b4625bf41f268",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "source_context_sha256": "5fb126a728420639e93db764b14d8b545e51d03e9629362ecba70dcba694f3ef",
+      "locator": {
+        "line": 41,
+        "column": 9,
+        "operation": "write",
+        "symbol": "ptrChannel_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "5fb126a728420639e93db764b14d8b545e51d03e9629362ecba70dcba694f3ef",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "c11fc837ef7a7e9620a5f6c119534188ec4dd8d7060866b8be3691bf534d3c37",
+      "fact_id": "4b8e6a2de2a4a3d1b47167a48b31a716a9eb22532490c59f748057788aaca247",
+      "authority": "git_object",
+      "experiment_item_id": "2fd1e3c72dcb88d7",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "previewer/include/wm_animation_common.h",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_context_sha256": "4f761d7bb31186d01960259d016b9949c002925de90c21db04d259787b82b529",
+      "locator": {
+        "line": 214,
+        "column": 37,
+        "operation": "read",
+        "symbol": "animationConfig"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "4f761d7bb31186d01960259d016b9949c002925de90c21db04d259787b82b529",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "87c2f6e3b3d36ec050dfc17a1cc204d524d0be77e5102aa95f881f38d8805cc6",
+      "fact_id": "929723615f6077f22e14a4a103a2054b9b01aae7a3a3ea00163963693ea0b2a8",
+      "authority": "git_object",
+      "experiment_item_id": "42a9712edb1f3512",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "file": "frameworks/common/js_proxy.h",
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "source_context_sha256": "b7bc00c2c3536ddad2fdc61d2361a9e7922ef05fead0c0df0896cdfbaf44d7d4",
+      "locator": {
+        "line": 42,
+        "column": 16,
+        "operation": "read",
+        "symbol": "instance_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "b7bc00c2c3536ddad2fdc61d2361a9e7922ef05fead0c0df0896cdfbaf44d7d4",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "168768c5028ae6686fd43a3db5d7396afbe0ca06eec06b9dfe682a427101156c",
+      "fact_id": "ec4f8ffa66b3e9d81b6b446e5c24cddf15b4107fbd4dce87e802e5e61b5c82b9",
+      "authority": "git_object",
+      "experiment_item_id": "43861dc7e550047d",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_context_sha256": "fa8aefacf96a3edad877482e722a5694ccd6c015e69d08805b2811941ab08634",
+      "locator": {
+        "line": 297,
+        "column": 56,
+        "operation": "read",
+        "symbol": "excludeFromRecent"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "fa8aefacf96a3edad877482e722a5694ccd6c015e69d08805b2811941ab08634",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "a00be766bf77077c35d9316da37147c84518e7060d7b273a9cbfb7c557b5748b",
+      "fact_id": "a139eb71ab0d6f3a9926ef29b8f00fea3d74edaa140772a5bbbd1919eb2ed0df",
+      "authority": "git_object",
+      "experiment_item_id": "475c88d0bbd639f7",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "source_context_sha256": "91f4f8d442c58cfd42cbf834b25956eee2d30a1018065028fe53b833cfedcbaf",
+      "locator": {
+        "line": 81,
+        "column": 16,
+        "operation": "read",
+        "symbol": "abilityInfo_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "91f4f8d442c58cfd42cbf834b25956eee2d30a1018065028fe53b833cfedcbaf",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "b37bbcbe8cd3c36b1729046fc1947c899bbe98fa8b18d00e80838bd17b8df761",
+      "fact_id": "1c6c42d237e1063080b8aea21138b873d786e937e9ebdd9f5c2ac860d5b98fad",
+      "authority": "git_object",
+      "experiment_item_id": "4d1c3c0f1eb52fed",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+      "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+      "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+      "source_context_sha256": "332b8ae8f744e43d51e1fd359f5d5f57f2916e92c8030245b0f70256eba9ef54",
+      "locator": {
+        "line": 65,
+        "column": 9,
+        "operation": "write",
+        "symbol": "abilityInfo_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "332b8ae8f744e43d51e1fd359f5d5f57f2916e92c8030245b0f70256eba9ef54",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "8ce71483f1e0aec6f258a9239a454662461b3811c28ec912a39f43ee019e6088",
+      "fact_id": "3cc15df9b7802b7dc87aba1356cc646f92ca75de68069fb24d06dd263b7140eb",
+      "authority": "git_object",
+      "experiment_item_id": "50d42b057f4213b2",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "utils/include/surface_capture_future.h",
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "source_context_sha256": "165453a0f9c904a0677cbf19b09297e61986ea8e2720a71db9fad7a284611a3e",
+      "locator": {
+        "line": 73,
+        "column": 29,
+        "operation": "read",
+        "symbol": "hdrPixelMap_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "165453a0f9c904a0677cbf19b09297e61986ea8e2720a71db9fad7a284611a3e",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "5a345ec6efc3752ab57c69fcbc510ed2ef1ea8d5a4ba20316528689594e97f2f",
+      "fact_id": "1f168b9e6721423c61a0e91e4c314150251ed8885d8030838fa4fe9be64126b2",
+      "authority": "git_object",
+      "experiment_item_id": "5c64a5975b7d348e",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wmserver/include/drag_controller.h",
+      "source_git_blob_oid": "d0fcbe8d24b7b47d83e2bf6fcf65954aac3e4428",
+      "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+      "source_context_sha256": "eaf812be3d387ddce884e7dc9cf63507d87447e73e49fbf71238412b375809c5",
+      "locator": {
+        "line": 68,
+        "column": 9,
+        "operation": "read",
+        "symbol": "vsyncCallback_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "eaf812be3d387ddce884e7dc9cf63507d87447e73e49fbf71238412b375809c5",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "1a8d78623c76c7a26ade73167949805a1e93d0222c2fd1ba88cab30f1e93b202",
+      "fact_id": "2189adf2491f489a813319bb06762af8203b04d25bcaefd768da25e71d96449c",
+      "authority": "git_object",
+      "experiment_item_id": "61fadc5b5d197135",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "previewer/include/wm_animation_common.h",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_context_sha256": "ec26b75b912317107f42b69f8db1f7868c3fdf18fec369baa4c0a72e351f862d",
+      "locator": {
+        "line": 253,
+        "column": 37,
+        "operation": "read",
+        "symbol": "animationParams"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "ec26b75b912317107f42b69f8db1f7868c3fdf18fec369baa4c0a72e351f862d",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "20e538ee0d8461e70fa8ab232e07cdb5ac05ffe60b5eb25f7520eccea78d0dcd",
+      "fact_id": "8ac77f5593df87e4091c3a1bb4b32ac9655d7b584f80653c2615673895cf0631",
+      "authority": "git_object",
+      "experiment_item_id": "6dbe3a1c389d9083",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+      "source_git_blob_oid": "93c786e28ddd7dc390dbe6a2f24c784cb2f9a872",
+      "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+      "source_context_sha256": "f374e602ef371bd2d857af817b74b1cef9f6fe61ef93f9f720c9c8062cd9d36e",
+      "locator": {
+        "line": 115,
+        "column": 86,
+        "operation": "read",
+        "symbol": "data_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "f374e602ef371bd2d857af817b74b1cef9f6fe61ef93f9f720c9c8062cd9d36e",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "9116383209577973a019fd58a71728369871d6906ebeb320549607fb21471bab",
+      "fact_id": "973fe069cc2599e8e14a469a6135d149b1d62121933614586658a4a74eeab397",
+      "authority": "git_object",
+      "experiment_item_id": "72b468b6e62a3bfc",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/picture_in_picture_controller_base.h",
+      "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+      "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+      "source_context_sha256": "2ce801682f3ff207013359de21b0df1ad96e180ca332f5bb47214bfeb4df2119",
+      "locator": {
+        "line": 145,
+        "column": 9,
+        "operation": "write",
+        "symbol": "pipXComponentController_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "2ce801682f3ff207013359de21b0df1ad96e180ca332f5bb47214bfeb4df2119",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "588c15bfcdafe8cb6781fbf9fbe35d34387fb19a3871d6bc5066ddaa4b487a1b",
+      "fact_id": "eb6240c9aef3708dbf557aab524a377da5a688a76dc135627811a6bbd37733c8",
+      "authority": "git_object",
+      "experiment_item_id": "7c0cc08d2a792c8c",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+      "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+      "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+      "source_context_sha256": "48f25d30b7b4f6a6dab635d8b725882e7e8f725277eeb2b8059296e249364c0a",
+      "locator": {
+        "line": 37,
+        "column": 16,
+        "operation": "read",
+        "symbol": "ptrChannel_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "48f25d30b7b4f6a6dab635d8b725882e7e8f725277eeb2b8059296e249364c0a",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "7dadb2b7a360a1ab610ccda70dfa953915726cc666eb182d1c69c1b0f0201a10",
+      "fact_id": "126e9fb6fe129a5fa56e41060b7d47951742551c00d72751244575fc6333fb35",
+      "authority": "git_object",
+      "experiment_item_id": "8523ddac356a47a3",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "source_context_sha256": "5cf373b8d33e2e7ed0d28ef39b69203e191fed66540deb19e013e33fe979364f",
+      "locator": {
+        "line": 67,
+        "column": 86,
+        "operation": "read",
+        "symbol": "streamListener_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "5cf373b8d33e2e7ed0d28ef39b69203e191fed66540deb19e013e33fe979364f",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "d794ccc22942a88b53a209b4477fd3ac8791ae5ada56fcb330ca4e7920028819",
+      "fact_id": "c754804536391d4ef4471fa449072791ad11463288c4add5944064a987bd259c",
+      "authority": "git_object",
+      "experiment_item_id": "8bc53a1a1abb0b3c",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "source_context_sha256": "f23d3a0dca1949589f48a97bd284f20ae67063e138ed28a5a4fe9305741e3e41",
+      "locator": {
+        "line": 54,
+        "column": 9,
+        "operation": "write",
+        "symbol": "mainWindowXComponentController_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "f23d3a0dca1949589f48a97bd284f20ae67063e138ed28a5a4fe9305741e3e41",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "f4d52d619732b2c6e983a592224080d701bc9b6b7bbb021bdd777ae59d293123",
+      "fact_id": "e6c85ac8eab0dac142288550f59a217085a061579be7c2c268114623f8d1b97c",
+      "authority": "git_object",
+      "experiment_item_id": "8bf2c12c014dda78",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_context_sha256": "d9dbc717d53d919b071986770bce17d33237bd27a256527f22f2c808bc310b10",
+      "locator": {
+        "line": 220,
+        "column": 37,
+        "operation": "read",
+        "symbol": "animationConfig"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "d9dbc717d53d919b071986770bce17d33237bd27a256527f22f2c808bc310b10",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "036a3914daa8aa04cbced641bbcfdec2bc47e0f084928f2d076182a03a959a94",
+      "fact_id": "9dc35161faca7b1e92bebd5c5d276764be31add8860299f3bfc75e2c0932cbe1",
+      "authority": "git_object",
+      "experiment_item_id": "9428dad22daecdb4",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "previewer/include/wm_animation_common.h",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_context_sha256": "201a39ff5c83e068d23e2b8de6b0c5218add8c89e732f8703da1e68f42ac677a",
+      "locator": {
+        "line": 265,
+        "column": 52,
+        "operation": "read",
+        "symbol": "needAnimation"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "201a39ff5c83e068d23e2b8de6b0c5218add8c89e732f8703da1e68f42ac677a",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "a8aa46a1661dcc4e44e17053c3b755ea12b673b7bc2bc74d3eefee2a3416efcc",
+      "fact_id": "2cc659bcbcfed52a7a5b16d8f4bfd2b534189382232fc8ad7ac6df548c5b4e53",
+      "authority": "git_object",
+      "experiment_item_id": "99ce5dad55f7c1af",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+      "source_git_blob_oid": "7828aceaf6d50c98c2b70d49f7ea17bda654a982",
+      "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+      "source_context_sha256": "9aa648711f180874777d9abe453cb5e01d9b89f1b5a30284329bc56c590ae5c9",
+      "locator": {
+        "line": 63,
+        "column": 9,
+        "operation": "write",
+        "symbol": "asyncContextPtr"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "9aa648711f180874777d9abe453cb5e01d9b89f1b5a30284329bc56c590ae5c9",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "bacc8db8c81f73e9fd76ac9a240162f274f0052a2072a8eb98f4b9d3ad2cf33a",
+      "fact_id": "bdfdcd719efebc3fca1e5838202545e0703a43facac8b7f2076a0594c13befb7",
+      "authority": "git_object",
+      "experiment_item_id": "9a7da68327154c5f",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wm/include/picture_in_picture_controller.h",
+      "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+      "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+      "source_context_sha256": "d1963c0ed00cbc0bdaecd4568dadbdd19e69bc16557abc4de72b0af271e1ef20",
+      "locator": {
+        "line": 50,
+        "column": 16,
+        "operation": "read",
+        "symbol": "mainWindowXComponentController_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "d1963c0ed00cbc0bdaecd4568dadbdd19e69bc16557abc4de72b0af271e1ef20",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "891f097461b9a7c06e19f112cec2a11d7d747d7ff573302bd2263501ca4cb00b",
+      "fact_id": "c849b9790658d8bc5a87bcd9bcd446bd677ac433f91d4b4d818e81f756cb8ac3",
+      "authority": "git_object",
+      "experiment_item_id": "9b3f9c97a527cc4e",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+      "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+      "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+      "source_context_sha256": "5cf373b8d33e2e7ed0d28ef39b69203e191fed66540deb19e013e33fe979364f",
+      "locator": {
+        "line": 67,
+        "column": 86,
+        "operation": "read",
+        "symbol": "streamListener_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "5cf373b8d33e2e7ed0d28ef39b69203e191fed66540deb19e013e33fe979364f",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "ddc43efdd945f80c4e21d4cd8d8c1ac83455556c16103fc4843116fe673f489c",
+      "fact_id": "94f539a63696d7d38043715e2e94b5304e967864551221bfa1c6e17072717b6a",
+      "authority": "git_object",
+      "experiment_item_id": "9c78273d5197f6b0",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "wmserver/include/window_common_event.h",
+      "source_git_blob_oid": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+      "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+      "source_context_sha256": "65ca1c2433b6871759116685acee6738f56cb5cacec0f9b342797c49e6a9cbfc",
+      "locator": {
+        "line": 41,
+        "column": 64,
+        "operation": "read",
+        "symbol": "eventHandler_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "65ca1c2433b6871759116685acee6738f56cb5cacec0f9b342797c49e6a9cbfc",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "e9edf1ea3bcf71f44483e902ebbd7f5b8dd00dfafc7ca99ea94ce87aeb233600",
+      "fact_id": "751118b705a6aa0d1113f01d051a86ce410a518830c24249b0b303f10c9a7c98",
+      "authority": "git_object",
+      "experiment_item_id": "a434fff861916fd3",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "file": "frameworks/common/js_proxy.h",
+      "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "source_context_sha256": "a303c433d336f736b187edc0b8109093c6ae19188eb7ca6b4c967e9bb701e6f6",
+      "locator": {
+        "line": 37,
+        "column": 9,
+        "operation": "write",
+        "symbol": "instance_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "a303c433d336f736b187edc0b8109093c6ae19188eb7ca6b4c967e9bb701e6f6",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "ad52fd3c8f576a007a2fd57135ec22e9e23617b58014c196239a2c028f0ce54a",
+      "fact_id": "5642aa25711da921a666d20c96dbf7f5d109488e7e35c17afb5762f0f8c5222f",
+      "authority": "git_object",
+      "experiment_item_id": "addd5418e89eb1f1",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+      "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+      "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+      "source_context_sha256": "49e2ec6c373305d334ecaad115002b484e11d08311c32549aa5159be8eff76a0",
+      "locator": {
+        "line": 72,
+        "column": 9,
+        "operation": "write",
+        "symbol": "asyncContextPtr"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "49e2ec6c373305d334ecaad115002b484e11d08311c32549aa5159be8eff76a0",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "98bdd7c351be0e5de870102a9f53d58a1ad5d985db0541424dedc4acd3c10d80",
+      "fact_id": "8edd3264b6a3123321dcd9f6e98d4127e5391dd6f050df3357d079f88918921a",
+      "authority": "git_object",
+      "experiment_item_id": "b578e1c0b3670993",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+      "source_git_blob_oid": "5ee7e75ff720127386ef77cc515d979613ee81b5",
+      "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+      "source_context_sha256": "3e24d6d62eb75e92414a86d680d067da88445400772f02fb6ca209b1c31f16a3",
+      "locator": {
+        "line": 51,
+        "column": 9,
+        "operation": "write",
+        "symbol": "asyncContextPtr"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "3e24d6d62eb75e92414a86d680d067da88445400772f02fb6ca209b1c31f16a3",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "07d84fce5fa4da502de178761f948f9a5303291a79a15a7fe38c753de7bcf83f",
+      "fact_id": "e4b70f999fe4cc175e92a9ea74edd3762e12b871c24ad22dc6c6dfff26c28cfe",
+      "authority": "git_object",
+      "experiment_item_id": "bc7c8154a71b4ae2",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "previewer/include/wm_animation_common.h",
+      "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+      "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+      "source_context_sha256": "fd69fb2da3b8b86881a5a6b63660d25defb5c88d44515a09285b3b7c7fd48fe4",
+      "locator": {
+        "line": 289,
+        "column": 56,
+        "operation": "read",
+        "symbol": "excludeFromRecent"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "fd69fb2da3b8b86881a5a6b63660d25defb5c88d44515a09285b3b7c7fd48fe4",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "73caf43df9d81257cafc8d9396a37e3ff48cbb048aa774f93c56a3201cf1a709",
+      "fact_id": "16993cc3f2b7f88b0f40cdfc80a95eec3ffbde73297149cc89e136b82c1d15d9",
+      "authority": "git_object",
+      "experiment_item_id": "bffe538666df990b",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+      "source_git_blob_oid": "8c6a9f3774155f25d1deb5f431faef5ca26f5f1f",
+      "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+      "source_context_sha256": "535a7b883c694fb2752b8acaed5b6ba3ce870c4331612f0b19edb6be530ea4d3",
+      "locator": {
+        "line": 32,
+        "column": 22,
+        "operation": "read",
+        "symbol": "jsCallBack_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "535a7b883c694fb2752b8acaed5b6ba3ce870c4331612f0b19edb6be530ea4d3",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "68095e14f44b10cb8fc0635b9611cb1910eec6603a6f73c06bd073df99efd3e3",
+      "fact_id": "de355b676d9ac00ff3e8750bb142d8acbebe13c1a1925691667e26c0e8df5502",
+      "authority": "git_object",
+      "experiment_item_id": "cacae956a5a61860",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "utils/include/ui_effect_controller_common.h",
+      "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+      "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+      "source_context_sha256": "75db86aea31b68e8f7c40220d7adb0df55e306c0538b9c3467d7acc015f78f1c",
+      "locator": {
+        "line": 53,
+        "column": 48,
+        "operation": "read",
+        "symbol": "effect_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "75db86aea31b68e8f7c40220d7adb0df55e306c0538b9c3467d7acc015f78f1c",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "01c32b717fd43a78b344bfd608c03be8bf44f8b090439348a2157e6c8c2bd226",
+      "fact_id": "75238693206b54558d81b34e85b9976c97c280315ec7f8d33e9ef623f54719e2",
+      "authority": "git_object",
+      "experiment_item_id": "cc38ebb39a402845",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "interfaces/innerkits/wm/wm_animation_common.h",
+      "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+      "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+      "source_context_sha256": "5d01e450cdec393b8a1ac0da6a187aab98fb489fccbbc317fb843bd045797535",
+      "locator": {
+        "line": 289,
+        "column": 54,
+        "operation": "read",
+        "symbol": "excludeFromDock"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "5d01e450cdec393b8a1ac0da6a187aab98fb489fccbbc317fb843bd045797535",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "f37b81aebe9f4d8d304fb865b24e7fce4e2167ba7760a0f470444e296a9f7743",
+      "fact_id": "b9aa9e74672e4dd76892888e252fce68cca729a8224cea52a48806a4388a71cd",
+      "authority": "git_object",
+      "experiment_item_id": "ce61b4591bfb3ad9",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+      "source_git_blob_oid": "5ac2150911a4e2cc107ce1d28f0553c93bbe0512",
+      "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+      "source_context_sha256": "dad26311f756ac19dfbba427ab420315ae242624e3a23fba07c3625138f0f162",
+      "locator": {
+        "line": 49,
+        "column": 9,
+        "operation": "write",
+        "symbol": "asyncContextPtr"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "dad26311f756ac19dfbba427ab420315ae242624e3a23fba07c3625138f0f162",
+        "git_object_provenance_verified": true
+      }
+    },
+    {
+      "evidence_id": "d983beae50008a8aa310e96b1964129fd0668f4b41d8def234085b33f6bc5ef8",
+      "fact_id": "677f9cacac61d071d95031b97e06df66ae4dfe81df9506010471c10f48a7ae68",
+      "authority": "git_object",
+      "experiment_item_id": "ea22cf515d93fc90",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "file": "utils/include/surface_capture_future.h",
+      "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+      "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+      "source_context_sha256": "165453a0f9c904a0677cbf19b09297e61986ea8e2720a71db9fad7a284611a3e",
+      "locator": {
+        "line": 73,
+        "column": 18,
+        "operation": "read",
+        "symbol": "pixelMap_"
+      },
+      "reproducibility": {
+        "source": "blind_review_packet.json",
+        "source_path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+        "source_context_sha256": "165453a0f9c904a0677cbf19b09297e61986ea8e2720a71db9fad7a284611a3e",
+        "git_object_provenance_verified": true
+      }
+    }
+  ]
+}

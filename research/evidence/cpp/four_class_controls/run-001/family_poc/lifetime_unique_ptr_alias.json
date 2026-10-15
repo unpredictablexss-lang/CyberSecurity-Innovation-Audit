@@ -1,0 +1,466 @@
+{
+  "schema_version": 1,
+  "package_id": "cpp-lifetime-unique-ptr-alias-20261014",
+  "detector": {
+    "id": "ohscanner.cpp.lifetime",
+    "version": "0.3.0",
+    "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001"
+  },
+  "candidate_status": "candidate/unassessed",
+  "candidate_cwe": "CWE-416",
+  "source_binding_status": "self_authored_harness_hash_verified",
+  "harness_sha256": "e617b9d4e9dd3efdc9c02e8604cb6d228fdd37977995ae0c4ae6ba536dfc3aad",
+  "environment": {
+    "compiler": "clang++",
+    "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "sanitizers": [
+      "address"
+    ],
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "aslr_workaround": true,
+    "variants": [
+      "reset_vulnerable",
+      "null_assignment_vulnerable",
+      "replacement_vulnerable",
+      "move_transfer_vulnerable",
+      "fixed_rebind",
+      "safe_use_before_reset"
+    ]
+  },
+  "builds": [
+    {
+      "variant": "reset_vulnerable",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address",
+        "-no-pie",
+        "-DOH_LIFETIME_VARIANT=0",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.0327566560000037,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "null_assignment_vulnerable",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address",
+        "-no-pie",
+        "-DOH_LIFETIME_VARIANT=1",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.1151114560000224,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "replacement_vulnerable",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address",
+        "-no-pie",
+        "-DOH_LIFETIME_VARIANT=2",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.0792567809999696,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "move_transfer_vulnerable",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address",
+        "-no-pie",
+        "-DOH_LIFETIME_VARIANT=3",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.1673988489999942,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "fixed_rebind",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address",
+        "-no-pie",
+        "-DOH_LIFETIME_VARIANT=4",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/fixed_rebind/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.0821159729999863,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    },
+    {
+      "variant": "safe_use_before_reset",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-g",
+        "-O1",
+        "-fno-omit-frame-pointer",
+        "-fsanitize=address",
+        "-no-pie",
+        "-DOH_LIFETIME_VARIANT=5",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp",
+        "-o",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/safe_use_before_reset/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.0295689579999703,
+      "stdout": "",
+      "stderr": "",
+      "outcome": "build_success"
+    }
+  ],
+  "runs": [
+    {
+      "variant": "reset_vulnerable",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.12294334400002072,
+      "stdout": "",
+      "stderr": "=================================================================\n==1189==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a6 bp 0x7fffffffe0f0 sp 0x7fffffffe0e8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a5 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a5 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x41d304) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x4db77d) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:456:7\n    #4 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:32:11\n    #5 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x4daf1d) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1189==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "null_assignment_vulnerable",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.13266443800000616,
+      "stdout": "",
+      "stderr": "=================================================================\n==1193==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0d0 sp 0x7fffffffe0c8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x41d304) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x4db77d) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:456:7\n    #4 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::operator=(std::nullptr_t) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:397:2\n    #5 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:34:11\n    #6 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x4daf1d) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1193==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "replacement_vulnerable",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.13552404699998988,
+      "stdout": "",
+      "stderr": "=================================================================\n==1195==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0e0 sp 0x7fffffffe0d8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x41d304) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x4db77d) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::operator=(std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:167:2\n    #4 0x4dd543 in std::__uniq_ptr_data<Widget, std::default_delete<Widget>, true, true>::operator=(std::__uniq_ptr_data<Widget, std::default_delete<Widget>, true, true>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:212:61\n    #5 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::operator=(std::unique_ptr<Widget, std::default_delete<Widget> >&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:371:51\n    #6 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:36:11\n    #7 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x4daf1d) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1195==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "move_transfer_vulnerable",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.11963561199996775,
+      "stdout": "",
+      "stderr": "=================================================================\n==1197==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0e0 sp 0x7fffffffe0d8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x41d304) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x4db77d) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::~unique_ptr() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:361:4\n    #3 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:41:5\n    #4 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x4daf1d) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1197==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "fixed_rebind",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/fixed_rebind/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.018502967000017634,
+      "stdout": "RESULT=variant_4_done\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "safe_use_before_reset",
+      "repeat": 1,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/safe_use_before_reset/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.017697815000019546,
+      "stdout": "RESULT=safe_use_before_reset\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "reset_vulnerable",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.12997678299996096,
+      "stdout": "",
+      "stderr": "=================================================================\n==1201==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a6 bp 0x7fffffffe0f0 sp 0x7fffffffe0e8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a5 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a5 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x41d304) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x4db77d) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:456:7\n    #4 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:32:11\n    #5 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x4daf1d) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1201==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "null_assignment_vulnerable",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.13080806499999653,
+      "stdout": "",
+      "stderr": "=================================================================\n==1203==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0d0 sp 0x7fffffffe0c8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x41d304) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x4db77d) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:456:7\n    #4 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::operator=(std::nullptr_t) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:397:2\n    #5 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:34:11\n    #6 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x4daf1d) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1203==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "replacement_vulnerable",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.1324162380000189,
+      "stdout": "",
+      "stderr": "=================================================================\n==1205==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0e0 sp 0x7fffffffe0d8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x41d304) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x4db77d) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::operator=(std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:167:2\n    #4 0x4dd543 in std::__uniq_ptr_data<Widget, std::default_delete<Widget>, true, true>::operator=(std::__uniq_ptr_data<Widget, std::default_delete<Widget>, true, true>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:212:61\n    #5 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::operator=(std::unique_ptr<Widget, std::default_delete<Widget> >&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:371:51\n    #6 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:36:11\n    #7 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x4daf1d) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1205==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "move_transfer_vulnerable",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.13025890500000514,
+      "stdout": "",
+      "stderr": "=================================================================\n==1207==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0e0 sp 0x7fffffffe0d8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x41d304) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x4db77d) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::~unique_ptr() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:361:4\n    #3 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:41:5\n    #4 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x4daf1d) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1207==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "fixed_rebind",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/fixed_rebind/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.016645638999989387,
+      "stdout": "RESULT=variant_4_done\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "safe_use_before_reset",
+      "repeat": 2,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/safe_use_before_reset/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.01860980600002904,
+      "stdout": "RESULT=safe_use_before_reset\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "reset_vulnerable",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.12666693900001746,
+      "stdout": "",
+      "stderr": "=================================================================\n==1211==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a6 bp 0x7fffffffe0f0 sp 0x7fffffffe0e8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a5 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a5 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x41d304) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x4db77d) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:456:7\n    #4 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:32:11\n    #5 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/reset_vulnerable/poc+0x4daf1d) (BuildId: 9d27afad9f587018f3f7563d6f5fe92dacd2c8b0)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1211==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "null_assignment_vulnerable",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.1289901580000219,
+      "stdout": "",
+      "stderr": "=================================================================\n==1213==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0d0 sp 0x7fffffffe0c8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x41d304) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x4db77d) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:456:7\n    #4 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::operator=(std::nullptr_t) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:397:2\n    #5 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:34:11\n    #6 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/null_assignment_vulnerable/poc+0x4daf1d) (BuildId: 835613558b69586697097cf82055cbbbdf5bdccd)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1213==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "replacement_vulnerable",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.12303832200001352,
+      "stdout": "",
+      "stderr": "=================================================================\n==1215==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0e0 sp 0x7fffffffe0d8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x41d304) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x4db77d) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::reset(Widget*) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:182:4\n    #3 0x4dd543 in std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >::operator=(std::__uniq_ptr_impl<Widget, std::default_delete<Widget> >&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:167:2\n    #4 0x4dd543 in std::__uniq_ptr_data<Widget, std::default_delete<Widget>, true, true>::operator=(std::__uniq_ptr_data<Widget, std::default_delete<Widget>, true, true>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:212:61\n    #5 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::operator=(std::unique_ptr<Widget, std::default_delete<Widget> >&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:371:51\n    #6 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:36:11\n    #7 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/replacement_vulnerable/poc+0x4daf1d) (BuildId: b1b6c87f7af686be6c4c25540016c60b0282ec1f)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1215==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "move_transfer_vulnerable",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc"
+      ],
+      "exit_code": -6,
+      "elapsed_seconds": 0.12842060000002675,
+      "stdout": "",
+      "stderr": "=================================================================\n==1218==ERROR: AddressSanitizer: heap-use-after-free on address 0x602000000010 at pc 0x0000004dd5a9 bp 0x7fffffffe0e0 sp 0x7fffffffe0d8\nREAD of size 4 at 0x602000000010 thread T0\n    #0 0x4dd5a8 in Widget::Touch() const /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13\n    #1 0x4dd5a8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:54:12\n    #2 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #3 0x7ffff7829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n    #4 0x41d304 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x41d304) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n\n0x602000000010 is located 0 bytes inside of 4-byte region [0x602000000010,0x602000000014)\nfreed by thread T0 here:\n    #0 0x4db77d in operator delete(void*) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x4db77d) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n    #1 0x4dd543 in std::default_delete<Widget>::operator()(Widget*) const /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85:2\n    #2 0x4dd543 in std::unique_ptr<Widget, std::default_delete<Widget> >::~unique_ptr() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:361:4\n    #3 0x4dd543 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:41:5\n    #4 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\npreviously allocated by thread T0 here:\n    #0 0x4daf1d in operator new(unsigned long) (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/move_transfer_vulnerable/poc+0x4daf1d) (BuildId: a63ffa59eda1bccdf7a4cd68e3ff033804c3e83e)\n    #1 0x4dd520 in std::_MakeUniq<Widget>::__single_object std::make_unique<Widget, int>(int&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962:30\n    #2 0x4dd520 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:28:37\n    #3 0x7ffff7829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)\n\nSUMMARY: AddressSanitizer: heap-use-after-free /mnt/e/网安/CyberSecurity-Innovation-Audit/src/ohscanner/poc/harnesses/cpp_lifetime_unique_ptr_alias/harness.cpp:16:13 in Widget::Touch() const\nShadow bytes around the buggy address:\n  0x0c047fff7fb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c047fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x0c047fff8000: fa fa[fd]fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8010: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c047fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==1218==ABORTING\n",
+      "sanitizer_detected": true,
+      "outcome": "sanitizer_triggered"
+    },
+    {
+      "variant": "fixed_rebind",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/fixed_rebind/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.01969690900000387,
+      "stdout": "RESULT=variant_4_done\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    },
+    {
+      "variant": "safe_use_before_reset",
+      "repeat": 3,
+      "command": [
+        "/usr/bin/setarch",
+        "x86_64",
+        "-R",
+        "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/family_lifetime/work/safe_use_before_reset/poc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.019142998000006628,
+      "stdout": "RESULT=safe_use_before_reset\n",
+      "stderr": "",
+      "sanitizer_detected": false,
+      "outcome": "clean"
+    }
+  ],
+  "repeats": 3,
+  "outcome": "stable_reproduced_and_patch_revalidated",
+  "evidence_level": "controlled_dynamic_reproduction",
+  "validated_vulnerability": 0,
+  "patch_revalidation": {
+    "status": "passed",
+    "variants": [
+      "fixed_rebind",
+      "safe_use_before_reset"
+    ]
+  },
+  "detector_runs": {},
+  "limitations": [
+    "PoC 是自编最小 workload，不是真实 OpenHarmony 产品组件；产品入口、权限边界、攻击者控制和 CIA 影响均未证明。",
+    "AddressSanitizer 触发证明受控生命周期破坏行为，不自动等于稳定可利用漏洞。",
+    "fixed_rebind 与 safe_use_before_reset 是本地控制/修复重验变体，不是上游补丁。",
+    "CFG、异常/提前返回、析构时序、跨函数 alias 转移和真实构建配置仍由检测器作为 unknown 保留。"
+  ]
+}

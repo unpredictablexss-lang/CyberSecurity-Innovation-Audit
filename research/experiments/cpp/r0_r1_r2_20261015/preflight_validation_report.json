@@ -1,0 +1,87 @@
+{
+  "schema_version": "ohscanner.a-exp-01-preflight-validation-report-v1",
+  "experiment_id": "A-EXP-01",
+  "task_id": "A-EXP-01-PREFLIGHT-UNBLOCK",
+  "generated_at_utc": "2026-10-15T07:21:37.416Z",
+  "status": "contract_validation_passed_execution_blocked",
+  "checkout": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "cda936a0c837575e59436118970238015d6fc56c",
+    "tree": "df60536b1d45ec514ac3c7ccaac24cd2641e861b",
+    "remote_tracking_ref": "origin/codex/full-runtime-performance-audit-20261014",
+    "dirty": true,
+    "dirty_entry_count": 45,
+    "dirty_status_sha256": "3cde242c6de5e0cded1f9101c2e255355adbbdd88e41095ab08f5862d3aaa8ef",
+    "observed_at_utc": "2026-10-15T07:21:37.416Z"
+  },
+  "structural_validation": {
+    "status": "passed",
+    "errors": [],
+    "schema_parse": {
+      "model_binding.schema.json": "passed",
+      "tool_adapter_authorization.schema.json": "passed",
+      "canonical_input_bundle.schema.json": "passed",
+      "evidence_reference_contract.json": "passed",
+      "retry_accounting_contract.json": "passed",
+      "preflight_record.schema.json": "passed",
+      "run_record.schema.json": "passed",
+      "model_output.schema.json": "passed"
+    },
+    "model_binding_contract_complete": true,
+    "tool_adapter_authorization_record_present": true,
+    "canonical_test_vectors_passed": true,
+    "statistical_counts": {
+      "review_items": 45,
+      "scope_occurrences": 45,
+      "unique_candidates": 44,
+      "scope_counts": {
+        "holdout": 34,
+        "plausible_unproven": 11
+      },
+      "cross_scope_duplicate_candidates": [
+        {
+          "candidate_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7",
+          "occurrences": [
+            {
+              "experiment_item_id": "8523ddac356a47a3",
+              "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+              "review_scope": "plausible_unproven"
+            },
+            {
+              "experiment_item_id": "9b3f9c97a527cc4e",
+              "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout",
+              "review_scope": "holdout"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "decisions": {
+    "R0": "preflight_ready_execution_not_authorized",
+    "R1": "blocked",
+    "R2": "blocked",
+    "overall": "blocked"
+  },
+  "execution_blockers": [
+    "model binding contract is complete but no exact provider/model/version/endpoint/data-processing/pricing record is bound",
+    "R2 adapter authorization record exists but execution_authorized=false",
+    "user explicitly prohibited R0/R1/R2 execution and real model calls in this task"
+  ],
+  "verification_commands": [
+    "node preflight_validator.js --check",
+    "node preflight_validator.js --require-ready",
+    "node --test preflight_tests.js",
+    "node verify_freeze.js"
+  ],
+  "boundaries": {
+    "model_calls": 0,
+    "r0_r1_r2_runs": 0,
+    "model_results_generated": false,
+    "precision_recall_computed": false,
+    "candidate_truth_review_or_diagnostic_ids_modified": false,
+    "synthetic_controls_treated_as_independent_holdout": false,
+    "push_merge_or_ready": false
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "environment": {
+    "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+  },
+  "command": {
+    "argv": [
+      "clang++",
+      "-std=c++17",
+      "-g",
+      "-O1",
+      "-fno-omit-frame-pointer",
+      "-pthread",
+      "-no-pie",
+      "-fsanitize=address",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_unrelated_raw_pointer.cpp",
+      "-o",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-detector-controls-impl-20261015/run-002/lifetime-unrelated-raw-pointer/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+    "exit_code": 0,
+    "elapsed_seconds": 2.9335998760000166,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

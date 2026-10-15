@@ -1,0 +1,77 @@
+{
+  "append_only": true,
+  "files": {
+    "research/evidence/cpp/a_truth_01_freeze_20261015/blind_holdout_key.json": {
+      "bytes": 8969,
+      "sha256": "ae901765b095e32d4ecf41003538702a05bf4c0785fcd6cf90a43b0a6dc69485"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/blind_holdout_labels.json": {
+      "bytes": 35207,
+      "sha256": "40e44537295b0efb1fa57c6b6949d2b8c356424cb8972953eb03f9a86b06eb9d"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/blind_holdout_packet.json": {
+      "bytes": 60358,
+      "sha256": "3b7730f8db8daf34514047e60ce3f1c0c834ce3e40023d00107f0ddf69bcad6f"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/blind_packet.sha256": {
+      "bytes": 92,
+      "sha256": "d711013e7cca9ee72af3fc3ad96962b430cd804a32e0e42883cc4b611f42158f"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/build_truth_set.py": {
+      "bytes": 34427,
+      "sha256": "9b5d9cf934ababb079a87030d54074d6037286f80f585080772549998777c817"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/checkout_identity.json": {
+      "bytes": 691,
+      "sha256": "c22cea6eae685144c5d69f11714c097d5e4fd16fa6d11968aa6060d77f36c58a"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/checkout_status_porcelain.txt": {
+      "bytes": 87831,
+      "sha256": "65f23e2abbceba310fd7bbdc12b1211278e2c0aa5d25dbd927ae9b65be4a3f8c"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/control_matrix.json": {
+      "bytes": 3210,
+      "sha256": "1670028e7e3e3191391a9c528eed4927a8dd321bd0a72a7fb527633260eb663c"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/failures_unknowns.json": {
+      "bytes": 17008,
+      "sha256": "df0ec6f825d76a0984cd1b660b852c66a7c64d38b1888ac1c79e7fe15bd340d7"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/independent_review_report.md": {
+      "bytes": 4832,
+      "sha256": "7c2580f0ea79a897ffb42e077a7d48dcf68c60143a4555cbe695eaca0391ac3a"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/plausible_source_packet.json": {
+      "bytes": 34626,
+      "sha256": "07ff2984cb486f139c9cd3053962b6af12d0aee7c79e83a3f3aea5655fa58743"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/reproduction.json": {
+      "bytes": 1665,
+      "sha256": "0d9db82faf4ebf372a5b244fca7996ea5ef2533516d4c4c4a6bd079b7c156dfb"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/root_cause_groups.json": {
+      "bytes": 15348,
+      "sha256": "77ceeb0d1194421c4b2e1d843a72a57cf8f4d6b98cbba6240eb53409746ef82c"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/truth_set_manifest.json": {
+      "bytes": 4682,
+      "sha256": "2e2dee5e49d99ef2723fdf3dbcb3343aaa4bbfa9320098d8186153c47f75296a"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/truth_signoff_index.json": {
+      "bytes": 21973,
+      "sha256": "29f95e66820bfc110c37435165da6118b2e36b6117c73cf35a860c4d3dacbdaa"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/truth_signoffs.jsonl": {
+      "bytes": 349611,
+      "sha256": "e7c90cfd0d559228a0a976e280837a4520bbeca466b368202b8dc813c86318cb"
+    },
+    "research/evidence/cpp/a_truth_01_freeze_20261015/verification.json": {
+      "bytes": 1277,
+      "sha256": "941a2ba2ef32dd6f3074485ce3a2047609ae6613049c3990126822e779ca4619"
+    }
+  },
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "historical_records_preserved": true,
+  "kind": "a_truth_01_artifact_manifest",
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1"
+}

@@ -1,0 +1,299 @@
+{
+  "frozen_files": {
+    "initial_candidate_set": {
+      "path": "initial_candidate_set.json",
+      "sha256": "2fb5c899980719100a6b6b0f8f0de40534b533d73e27343a0c6c5c0258e56340"
+    },
+    "evidence_catalog": {
+      "path": "evidence_catalog.json",
+      "sha256": "131be897022fd25255157388c918b1e0080c3549dcce118f2b35ffa7cebff4d3"
+    },
+    "sealed_item_key": {
+      "path": "sealed_item_key.json",
+      "sha256": "6979753494754d5c783023178f7bf9a2015b84727bf55028a3f6edbbced1383d"
+    },
+    "prompt_r1": {
+      "path": "prompt_r1.md",
+      "sha256": "dce6cd9d672c5fad2207d6968fdcbe762e4b2074678e0618b02466818db0f07e"
+    },
+    "prompt_r2": {
+      "path": "prompt_r2.md",
+      "sha256": "d3efd3bd4b90e0f9be8a93a3c57389180075f1ffa85eb3b61c6c7a082e0581b3"
+    },
+    "tool_contract": {
+      "path": "tool_contract.json",
+      "sha256": "8a11a07f25bea9618bd8bd8b80927bbdf6239c3a57c8cde30fea59bac726d2bd"
+    },
+    "budget": {
+      "path": "budget.json",
+      "sha256": "e71c1d2307aeb14dd81e70410865635f256f5504c58423f9c65f9c25b4d0a948"
+    },
+    "human_review_form": {
+      "path": "human_review_form.md",
+      "sha256": "2b76521a3cf99faf4049adb56ccac64d2c79d83a410b5275660720c688244550"
+    },
+    "human_review_form_schema": {
+      "path": "human_review_form.schema.json",
+      "sha256": "8f6022b4709a71445bb2616b25cd29c0fa7f1692e4da084b8933d9786eba9287"
+    },
+    "model_output_schema": {
+      "path": "model_output.schema.json",
+      "sha256": "8de4bfe6db9ed9e7023f6484367d606e59ed21f53192ba153261aa5899174731"
+    },
+    "run_record_schema": {
+      "path": "run_record.schema.json",
+      "sha256": "924fbd79ea627e4f1c02400a58a5357fea4a174c4e5a7895fd8248bc62b2b78d"
+    },
+    "model_binding_template": {
+      "path": "model_binding.template.json",
+      "sha256": "370aaf1b050d31fd499a2bc4892c6a6386f13c787731d713b43517d9e234a2d4"
+    },
+    "model_binding_schema": {
+      "path": "model_binding.schema.json",
+      "sha256": "42127ab60bc1e4435eabc3ccf9c9c0b21d15b582b95ff909dc06f1410c81617b"
+    },
+    "tool_adapter_authorization": {
+      "path": "tool_adapter_authorization.json",
+      "sha256": "13f7bba88496e0ff62a91ea33345d7defc1cc5ea979b11b0b2a645c907e1e88c"
+    },
+    "tool_adapter_authorization_schema": {
+      "path": "tool_adapter_authorization.schema.json",
+      "sha256": "72a70b803219d15f753ebeff506b0f873d4f9ee8ccaacc51811ff6d8bd49c7af"
+    },
+    "statistical_plan": {
+      "path": "statistical_plan.md",
+      "sha256": "eb93db7e51b8be25cdaba5912c3f18a3b98e924d26a6822a61efed6a4ebe97f1"
+    },
+    "statistical_unit_contract": {
+      "path": "statistical_unit_contract.json",
+      "sha256": "7e784c5479a3069b27994384168d1b1b0550f741f44538bd9133b67b9a2ffa5d"
+    },
+    "canonical_input_bundle_schema": {
+      "path": "canonical_input_bundle.schema.json",
+      "sha256": "d82c184b222b4e13aae75343356e94cdfa54b2fe9e9339518ba7f36337dcd5c9"
+    },
+    "canonical_hash_test_vectors": {
+      "path": "canonical_hash.test_vectors.json",
+      "sha256": "c274bf5312a3e1773d31477a29e5b39992d2d66a83661facd7cf7a1d686ae542"
+    },
+    "evidence_reference_contract": {
+      "path": "evidence_reference_contract.json",
+      "sha256": "707d62d22245cad571cfffbfdfd489583246e765d8d02135204fc6bae95e4808"
+    },
+    "retry_accounting_contract": {
+      "path": "retry_accounting_contract.json",
+      "sha256": "6d30fabd61b329c2d6c8204c6dd5dcf478430d2219354a2e3b1dc3adfb49d5d9"
+    },
+    "preflight_record_schema": {
+      "path": "preflight_record.schema.json",
+      "sha256": "811228fb582be4f92d2d175d7db2e8cd42461e0ab350e3fda043c3e454f1609e"
+    }
+  },
+  "schema_version": "ohscanner.a-exp-01-freeze-manifest-v2",
+  "experiment_id": "A-EXP-01",
+  "generated_date": "2026-10-15",
+  "status": "frozen_pre_experiment",
+  "claims_boundary": {
+    "model_effect_claimed": false,
+    "model_runs_started": false,
+    "precision_recall_computed": false,
+    "confirmed_or_reportable_mutated": false
+  },
+  "prerequisites": {
+    "independent_truth_signoff": "completed_for_11_plausible_unproven_and_34_holdout",
+    "truth_set_manifest": {
+      "path": "research/evidence/cpp/independent_truth_review_20261015/truth_set_manifest.json",
+      "sha256": "1f4666f39ddf7a043dc215b045d1d8dbc6153168bd4bcd2ce8d62609af9539c2"
+    },
+    "controls": "implementation_bound_controls_20261015/run-002 independently executed; synthetic controls are not holdout and not accuracy data",
+    "precision_recall_boundary": "explicitly not applicable to this frozen set; see statistical_plan.md"
+  },
+  "dataset": {
+    "initial_candidate_set": {
+      "path": "initial_candidate_set.json",
+      "item_count": 45,
+      "model_visible": true,
+      "labels_hidden": true
+    },
+    "sealed_item_key": {
+      "path": "sealed_item_key.json",
+      "item_count": 45,
+      "model_visible": false
+    },
+    "evidence_catalog": {
+      "path": "evidence_catalog.json",
+      "item_count": 45
+    },
+    "source_packet": {
+      "path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+      "sha256": "2fd3164586e7afdb1fd27d1ef438100d23876b6164ffff191bd31ed6339c5eb4"
+    },
+    "truth_reference": {
+      "path": "research/evidence/cpp/independent_truth_review_20261015/truth_set_manifest.json",
+      "sha256": "1f4666f39ddf7a043dc215b045d1d8dbc6153168bd4bcd2ce8d62609af9539c2"
+    },
+    "holdout_manifest": {
+      "path": "research/evidence/cpp/review_20261014/holdout_manifest.json",
+      "sha256": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a"
+    }
+  },
+  "fixed_target_set": [
+    {
+      "component": "update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "scope_manifest": "research/evidence/cpp/component_scans/update_updateservice.manifest.json",
+      "scope_manifest_sha256": "33f9ce2aab5d118c91cd3ec485987bf00e350b3f753270d735f64014c01d4e11",
+      "scope_plan_sha256": "e5903393e19b8e7bb4aa97daf20b7fa089c10af38c5ef42163bfdbf00aa43cd6",
+      "job_id": "e91c15b566f24582b76caa9083ef598a",
+      "report_sha256": "da4402db30218c5e5d6351354ada56ec75d3942ab1a24058cd638bb01d31e750"
+    },
+    {
+      "component": "security_access_token",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "scope_manifest": "research/evidence/cpp/component_scans/security_access_token.manifest.json",
+      "scope_manifest_sha256": "efe84b4b11aa36a4bf072438acd1171dd6769be1877fdfd1f8f4897b66cffe4e",
+      "scope_plan_sha256": "90a5094eae710d1156538e34e7c9e1a6f2bd974abc762422a1bb78109ca9634b",
+      "job_id": "3097947a93074475abe9c01088d948bb",
+      "report_sha256": "574cbe3549ce106f32854052da214f14d254076a0199d4c186838b1faa8289cd"
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+      "scope_manifest": "research/evidence/cpp/component_scans/distributeddatamgr_kv_store.manifest.json",
+      "scope_manifest_sha256": "0a2c104fdcfc6c1c617ca312569f923102c6bb9a433079097315b5f37f51417d",
+      "scope_plan_sha256": "72e9afdda3619eed13f21adba4e473fb5bb34823657c4dec05d9c3df05468f4e",
+      "job_id": "f261748b7eff4144bab9646a6b00b607",
+      "report_sha256": "7b191e16eff0454d64c3d4b9e3ae446f9b1415d1040c3e067d7f3fdf5890de9e"
+    },
+    {
+      "component": "window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "scope_manifest": "research/evidence/cpp/component_scans/window_window_manager.manifest.json",
+      "scope_manifest_sha256": "cf4b29be492c671369efbf8fd0e5c1959c08243841d43e0b70bc9189efb3c94f",
+      "scope_plan_sha256": "1cb74d9ae1297c48e5fc0c98eb87b5f47fd70053f83d4abf5ad146b76737ef96",
+      "job_id": "986bf3347d8a42e2a1b4468282b6b67b",
+      "report_sha256": "48c7f7985efa0cbabd5a9038bcf26041e6bd020097d9913a973534b46eb919f4"
+    },
+    {
+      "component": "communication_dsoftbus",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+      "scope_manifest": "research/evidence/cpp/component_scans/communication_dsoftbus.manifest.json",
+      "scope_manifest_sha256": "bfe5509394b8cc176849bde1a49448d8f756736442ba929a35cb84d35869281f",
+      "scope_plan_sha256": "a0852581a198882d8c0cd87eb42425a350ba0b520561fc3d5b0271d15862e71e",
+      "job_id": "8e96ef0ed3dc4b809efdb22e56746ecb",
+      "report_sha256": "0b49b21edbf4f65731f5840650fbaee0f1f6030cc700b8a40cf4e4dc1259868e"
+    }
+  ],
+  "detector_lock": {
+    "id": "ohscanner.cpp.shared_ptr_race",
+    "version_at_scan": "0.4.0",
+    "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+    "profile_id": "light-ast",
+    "candidate_source": "historical pinned scan; no rescan or candidate regeneration is allowed"
+  },
+  "groups": {
+    "R0": {
+      "method": "OHScanner fixed fact bundle + same-standard blinded human review",
+      "repetitions": 3,
+      "model": "none",
+      "tools": "same read-only contract, human-authorized, max 8 calls/item",
+      "output": "human_review_form"
+    },
+    "R1": {
+      "method": "same fixed candidates + one-turn LLM review",
+      "repetitions": 3,
+      "model_binding": "model_binding.template.json must be bound before run",
+      "tools": "none",
+      "output": "model_output.schema.json"
+    },
+    "R2": {
+      "method": "same fixed candidates + bounded tool Agent",
+      "repetitions": 3,
+      "model_binding": "model_binding.template.json must be bound before run",
+      "tools": "tool_contract.json only",
+      "output": "model_output.schema.json"
+    }
+  },
+  "fixed_evidence_gate": [
+    "fixed target identity",
+    "realistic entry/privilege boundary",
+    "reachable sensitive operation",
+    "trigger conditions",
+    "concrete CIA impact",
+    "auditable evidence"
+  ],
+  "tool_return_contract": {
+    "path": "tool_contract.json"
+  },
+  "budget": {
+    "path": "budget.json",
+    "R2_max_tool_calls_per_run": 8,
+    "R2_total_planned_runs": 135,
+    "R2_total_max_tool_calls": 1080
+  },
+  "human_review_form": {
+    "path": "human_review_form.md",
+    "schema": "human_review_form.schema.json"
+  },
+  "statistical_method": {
+    "path": "statistical_plan.md"
+  },
+  "run_logging": {
+    "schema": "run_record.schema.json",
+    "ledger": "run_ledger.jsonl",
+    "append_only": true,
+    "must_log_all_runs_and_failures": true
+  },
+  "execution_gate": {
+    "status": "structural_preflight_passed_execution_blocked",
+    "structural_validation": "passed",
+    "R0": "preflight_ready_execution_not_authorized",
+    "R1": "blocked",
+    "R2": "blocked",
+    "required": [
+      "bound exact model/provider/version/API endpoint/data-processing/pricing record",
+      "execution-authorized R2 tool adapter record",
+      "explicit user authorization for R0/R1/R2 execution",
+      "canonical input bundle hash and legal evidence reference validation",
+      "append-only retry attempt accounting"
+    ]
+  },
+  "statistical_units": {
+    "path": "statistical_unit_contract.json",
+    "review_items": 45,
+    "scope_occurrences": 45,
+    "unique_candidates": 44,
+    "planned_runs_per_group": 135,
+    "cross_scope_duplicate_disclosed": true
+  },
+  "input_bundle": {
+    "schema": "canonical_input_bundle.schema.json",
+    "serialization": "ohscanner.canonical-json-v1",
+    "implementation": "canonical.js",
+    "hash_field": "input_bundle_sha256",
+    "test_vectors": "canonical_hash.test_vectors.json"
+  },
+  "evidence_reference_gate": {
+    "contract": "evidence_reference_contract.json",
+    "executable_validator": "preflight_validator.js#validateEvidenceReferences",
+    "invalid_policy": "completed run fails or non-completed output remains unknown"
+  },
+  "retry_accounting": {
+    "contract": "retry_accounting_contract.json",
+    "schema": "run_record.schema.json",
+    "ledger": "run_ledger.jsonl",
+    "append_only": true,
+    "r2_retries_max": 1,
+    "retry_counts_as_new_repetition": false
+  }
+}

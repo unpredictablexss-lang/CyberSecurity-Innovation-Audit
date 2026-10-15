@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.a-exp-01-model-output-v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "experiment_item_id",
+    "mechanism_label",
+    "product_assessment",
+    "evidence_gate_status",
+    "claims",
+    "missing_evidence",
+    "recommended_probes",
+    "limitations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ohscanner.a-exp-01-model-output-v1"
+    },
+    "experiment_item_id": {
+      "type": "string"
+    },
+    "mechanism_label": {
+      "enum": [
+        "vulnerable",
+        "fixed",
+        "safe",
+        "unrelated",
+        "unknown"
+      ]
+    },
+    "product_assessment": {
+      "enum": [
+        "reportable_vulnerability",
+        "not_reportable",
+        "unknown"
+      ]
+    },
+    "evidence_gate_status": {
+      "enum": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ]
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "claim_id",
+          "kind",
+          "text",
+          "evidence_refs"
+        ],
+        "properties": {
+          "claim_id": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "hypothesis",
+              "observation",
+              "missing_evidence",
+              "recommended_probe",
+              "risk_statement"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "missing_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommended_probes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reference_validation": {
+      "type": "object",
+      "required": [
+        "validator",
+        "status"
+      ],
+      "properties": {
+        "validator": {
+          "const": "preflight_validator.js#validateEvidenceReferences"
+        },
+        "status": {
+          "enum": [
+            "not_run",
+            "valid",
+            "invalid"
+          ]
+        },
+        "illegal_reference_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "policy": {
+          "enum": [
+            "not_applicable",
+            "run_failed",
+            "remains_unknown"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

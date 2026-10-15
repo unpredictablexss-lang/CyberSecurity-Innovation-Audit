@@ -1,0 +1,16 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/shared-safe-explicit-lock-common-fp/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/shared-safe-explicit-lock-common-fp",
+    "exit_code": 0,
+    "elapsed_seconds": 0.05062482400001045,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

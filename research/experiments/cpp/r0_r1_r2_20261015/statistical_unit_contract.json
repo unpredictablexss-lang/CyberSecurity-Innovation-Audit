@@ -1,0 +1,78 @@
+{
+  "schema_version": "ohscanner.a-exp-01-statistical-unit-contract-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-15T07:21:37.416Z",
+  "model_visible": false,
+  "deletion_permitted": false,
+  "source": {
+    "path": "sealed_item_key.json",
+    "sha256": "6979753494754d5c783023178f7bf9a2015b84727bf55028a3f6edbbced1383d"
+  },
+  "units": {
+    "experiment_item_id": {
+      "definition": "One immutable review occurrence identified by experiment_item_id; it is the planned run and primary aggregation unit.",
+      "primary_key": [
+        "experiment_item_id"
+      ],
+      "count": 45
+    },
+    "scope_occurrence": {
+      "definition": "One (workbench_candidate_id, review_scope) occurrence. The same candidate in two scopes is two scope occurrences.",
+      "primary_key": [
+        "workbench_candidate_id",
+        "review_scope"
+      ],
+      "count": 45
+    },
+    "unique_candidate": {
+      "definition": "One distinct workbench_candidate_id after deduplicating across every review scope.",
+      "primary_key": [
+        "workbench_candidate_id"
+      ],
+      "count": 44
+    },
+    "planned_run": {
+      "definition": "One (experiment_item_id, group, repetition) run. Three repetitions produce 135 planned runs per group and 405 total.",
+      "primary_key": [
+        "experiment_item_id",
+        "group",
+        "repetition"
+      ],
+      "per_group_count": 135,
+      "total_count": 405
+    }
+  },
+  "review_item_count": 45,
+  "scope_occurrence_count": 45,
+  "unique_candidate_count": 44,
+  "scope_counts": {
+    "plausible_unproven": 11,
+    "holdout": 34
+  },
+  "cross_scope_duplicate_candidates": [
+    {
+      "candidate_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7",
+      "occurrences": [
+        {
+          "experiment_item_id": "8523ddac356a47a3",
+          "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+          "review_scope": "plausible_unproven"
+        },
+        {
+          "experiment_item_id": "9b3f9c97a527cc4e",
+          "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout",
+          "review_scope": "holdout"
+        }
+      ]
+    }
+  ],
+  "reporting_rules": [
+    "Always report 45 review items/scope occurrences and 44 unique workbench candidates together.",
+    "Never describe 45 as the number of unique candidates or as 45 independent unique root causes.",
+    "Do not delete or merge either occurrence of a cross-scope duplicate; preserve both review_item_id and experiment_item_id records.",
+    "A cross-scope duplicate is permitted only when the two review_scope values differ; a duplicate within one scope is a conflict.",
+    "Aggregate planned runs by experiment_item_id and disclose the candidate-level clustering caused by 44 unique candidates.",
+    "Do not treat synthetic controls as independent holdout data."
+  ],
+  "cross_scope_overlap_limitation": "One workbench candidate occurs in both plausible_unproven and holdout. Scope counts remain 11 and 34, but unique candidate count is 44 and independence must not be claimed at the unique-candidate level."
+}

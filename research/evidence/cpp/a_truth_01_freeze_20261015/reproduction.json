@@ -1,0 +1,52 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--exec",
+        "/bin/bash",
+        "-lc",
+        "env GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 .venv-web/bin/python research/evidence/cpp/a_truth_01_freeze_20261015/build_truth_set.py blind"
+      ],
+      "expected": "34-item label-free holdout packet frozen",
+      "phase": "blind"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--exec",
+        "/bin/bash",
+        "-lc",
+        "env GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 .venv-web/bin/python research/evidence/cpp/a_truth_01_freeze_20261015/build_truth_set.py signoff"
+      ],
+      "expected": "45 scope records and append-only signoff stream frozen",
+      "phase": "signoff"
+    },
+    {
+      "argv": [
+        "wsl.exe",
+        "-d",
+        "Ubuntu-22.04",
+        "--exec",
+        "/bin/bash",
+        "-lc",
+        "env GIT_NO_LAZY_FETCH=1 PYTHONDONTWRITEBYTECODE=1 .venv-web/bin/python research/evidence/cpp/a_truth_01_freeze_20261015/build_truth_set.py verify"
+      ],
+      "expected": "all source/object/hash/count checks pass; metrics remain not_computed",
+      "phase": "verify"
+    }
+  ],
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit",
+  "cwd_resolution": "wsl.exe inherits this Windows working directory; verified WSL pwd is /mnt/e/网安/CyberSecurity-Innovation-Audit",
+  "environment": {
+    "GIT_NO_LAZY_FETCH": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "kind": "a_truth_01_reproduction",
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1"
+}

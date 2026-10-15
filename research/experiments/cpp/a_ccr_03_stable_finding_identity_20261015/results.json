@@ -1,0 +1,124 @@
+{
+  "compatibility_tests": {
+    "command": "wsl.exe -e bash -lc \"cd /mnt/e/网安/CyberSecurity-Innovation-Audit && .venv-web/bin/python -m unittest discover -s research/tests/a_ccr_03_stable_finding_identity -v\"",
+    "failed": 0,
+    "passed": 9,
+    "total": 9
+  },
+  "generated": "2026-10-15T12:46:48.999057+08:00",
+  "kind": "a-ccr-03-stable-finding-identity-experiment",
+  "real_rescan_projection": {
+    "changed_field_counts": {
+      "diagnostic_id,message": 182
+    },
+    "counts": {
+      "added": 0,
+      "changed": 182,
+      "disappeared": 26,
+      "new": 182,
+      "old": 208,
+      "unchanged": 0
+    },
+    "current_heuristic_identity": "component|provider|rule_id|file|line|column|symbol|source_sha256",
+    "historical_id_rows_observed": 208,
+    "input_artifact_manifest_sha256": "483464735cab65c69e54a1cd3c42822d5a8acbc0c9fa88a5d96791af7034c60c",
+    "input_comparison_sha256": "c7da13895f4ed08abf19eadefdea871c1633bf9a3f15833567034129a69d62e4",
+    "interpretation": [
+      "All 182 retained rows changed only diagnostic_id and message under the current heuristic stable key.",
+      "The 26 disappeared rows are unmatched under component|provider|rule_id|file|line|column|symbol|source_sha256; they are not security-truth disappearances.",
+      "Existing comparison rows do not carry rule_lineage_id, AST fingerprints, Git byte ranges, or patch-region mappings, so proposed stable IDs cannot be reconstructed from this artifact alone."
+    ],
+    "proposed_field_availability_in_existing_comparison": {
+      "ast_fingerprint": false,
+      "byte_end": false,
+      "byte_start": false,
+      "patch_region": false,
+      "rule_lineage_id": false,
+      "source_blob_oid": false
+    }
+  },
+  "reference_model": "research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/identity_reference.py",
+  "repository": "E:\\网安\\CyberSecurity-Innovation-Audit",
+  "schema_version": 1,
+  "synthetic": {
+    "all_passed": true,
+    "cases": {
+      "detector_rule_version": {
+        "actual": {
+          "compatible": "persistent_changed_metadata",
+          "unknown": "unknown_version_boundary"
+        },
+        "expected": {
+          "compatible": "persistent_changed_metadata",
+          "unknown": "unknown_version_boundary"
+        }
+      },
+      "duplicate_anchors": {
+        "actual": "unknown_identity_ambiguous",
+        "expected": "unknown_identity_ambiguous"
+      },
+      "historical_v1": {
+        "actual": {
+          "aliases": [
+            "semgrep:historical-42"
+          ],
+          "occurrence_identity_status": "unknown",
+          "source_binding": "unbound",
+          "stable_identity_status": "unknown"
+        },
+        "expected": "unbound_but_retained"
+      },
+      "insert_comment": {
+        "actual": "persistent_moved_or_changed",
+        "expected": "persistent_moved_or_changed",
+        "occurrence_identity_equal": false,
+        "stable_identity_equal": true
+      },
+      "message_change": {
+        "actual": "persistent_changed_metadata",
+        "changed_fields": [
+          "diagnostic_id",
+          "message"
+        ],
+        "expected": "persistent_changed_metadata",
+        "historical_aliases": [
+          "semgrep:legacy-1",
+          "diag-message-before"
+        ]
+      },
+      "move_expression": {
+        "actual": "persistent_moved_or_changed",
+        "expected": "persistent_moved_or_changed",
+        "stable_identity_equal": true
+      },
+      "observation_absence": {
+        "actual": "observation_absent_comparable",
+        "expected": "observation_absent_comparable",
+        "vulnerability_effect": "unknown"
+      },
+      "partial_failed_unknown": {
+        "actual": {
+          "failed": "unknown_identity",
+          "partial": "unknown_identity",
+          "unknown": "unknown_identity"
+        },
+        "expected": "unknown_identity"
+      },
+      "same_member_names": {
+        "actual": true,
+        "expected": "distinct_stable_identity"
+      }
+    },
+    "checks": {
+      "detector_rule_version": true,
+      "duplicate_anchors": true,
+      "historical_v1": true,
+      "insert_comment": true,
+      "message_change": true,
+      "move_expression": true,
+      "observation_absence": true,
+      "partial_failed_unknown": true,
+      "same_member_names": true
+    }
+  }
+}

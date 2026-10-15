@@ -1,0 +1,392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.a-exp-01-model-binding-schema-v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "binding_id",
+    "status",
+    "execution",
+    "model",
+    "data_processing",
+    "pricing",
+    "approval"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ohscanner.a-exp-01-model-binding-v1"
+    },
+    "experiment_id": {
+      "const": "A-EXP-01"
+    },
+    "binding_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "unbound_execution_blocked",
+        "bound_pending_execution_authorization",
+        "bound_execution_authorized"
+      ]
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "model_calls_executed",
+        "model_results_generated",
+        "contract_only"
+      ],
+      "properties": {
+        "model_calls_executed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "model_results_generated": {
+          "type": "boolean"
+        },
+        "contract_only": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "required": [
+        "provider",
+        "model_name",
+        "model_version",
+        "api_version",
+        "api_endpoint",
+        "endpoint_kind"
+      ],
+      "properties": {
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "model_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "model_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "api_version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "api_endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "endpoint_kind": {
+          "enum": [
+            "remote_http_api",
+            "local_runtime",
+            null
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "data_processing": {
+      "type": "object",
+      "required": [
+        "terms_reference",
+        "terms_version",
+        "review_status",
+        "data_classes",
+        "retention",
+        "training_use",
+        "region",
+        "truth_or_sealed_data_allowed"
+      ],
+      "properties": {
+        "terms_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "terms_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review_status": {
+          "enum": [
+            "not_reviewed",
+            "approved",
+            "rejected",
+            null
+          ]
+        },
+        "data_classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "retention": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "training_use": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "region": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "truth_or_sealed_data_allowed": {
+          "type": [
+            "boolean",
+            null
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "pricing": {
+      "type": "object",
+      "required": [
+        "pricing_record_id",
+        "currency",
+        "input_token_unit_price",
+        "output_token_unit_price",
+        "effective_from",
+        "source_reference",
+        "source_sha256",
+        "reviewed_by"
+      ],
+      "properties": {
+        "pricing_record_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "input_token_unit_price": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "output_token_unit_price": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "effective_from": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_reference": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "authorizer_id",
+        "authorizer_role",
+        "authorization_reference",
+        "authorized_at",
+        "execution_authorized"
+      ],
+      "properties": {
+        "authorizer_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authorizer_role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authorization_reference": {
+          "type": "string"
+        },
+        "authorized_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "execution_authorized": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "bound_pending_execution_authorization",
+              "bound_execution_authorized"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "model",
+          "data_processing",
+          "pricing",
+          "approval"
+        ],
+        "properties": {
+          "model": {
+            "required": [
+              "provider",
+              "model_name",
+              "model_version",
+              "api_version",
+              "api_endpoint",
+              "endpoint_kind"
+            ],
+            "properties": {
+              "provider": {
+                "type": "string",
+                "minLength": 1
+              },
+              "model_name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "model_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "api_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "api_endpoint": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "data_processing": {
+            "properties": {
+              "review_status": {
+                "const": "approved"
+              },
+              "truth_or_sealed_data_allowed": {
+                "const": false
+              }
+            }
+          },
+          "pricing": {
+            "required": [
+              "pricing_record_id",
+              "currency",
+              "input_token_unit_price",
+              "output_token_unit_price",
+              "source_reference",
+              "source_sha256",
+              "reviewed_by"
+            ],
+            "properties": {
+              "source_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "bound_execution_authorized"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "approval": {
+            "required": [
+              "authorizer_id",
+              "authorizer_role",
+              "authorized_at"
+            ],
+            "properties": {
+              "execution_authorized": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

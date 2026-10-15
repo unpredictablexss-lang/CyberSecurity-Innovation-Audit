@@ -1,0 +1,26 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "clang++",
+      "-std=c++17",
+      "-g",
+      "-O1",
+      "-fno-omit-frame-pointer",
+      "-pthread",
+      "-no-pie",
+      "-fsanitize=thread",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp",
+      "-o",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-005/shared-safe-explicit-lock-common-fp/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+    "exit_code": 0,
+    "elapsed_seconds": 3.7494981080000116,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

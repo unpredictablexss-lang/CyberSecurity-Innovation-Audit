@@ -1,0 +1,81 @@
+{
+  "controlled_evidence": {
+    "checklist": {
+      "is_independent_holdout": false,
+      "path": "research/evidence/cpp/implementation_bound_controls_20261015/EVIDENCE_CHECKLIST.md",
+      "sha256": "22df3c1eb7e9d0c6a93a6bc4d0a1d9945485cdac4e2a155b8cd408653f6b47e0"
+    },
+    "implementation_bound_controls": {
+      "is_independent_holdout": false,
+      "path": "research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json",
+      "sha256": "2be497117214f5dd060d3e4f15cf68d3ebecdc025a3c03ee6ee3af4dff7345cc"
+    },
+    "jsproxy": {
+      "path": "research/evidence/cpp/shared_ptr_jsproxy_supplement_2026-10-15.json",
+      "sha256": "341728ebac082c0d43710edf10d9d2ed4159c3a0bd80407ccdb1fa253f034243"
+    }
+  },
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "kind": "a_truth_01_control_matrix",
+  "metrics_eligible": false,
+  "rows": [
+    {
+      "fixed": "not_applicable",
+      "holdout_scope": true,
+      "positive": "not_applicable: no same-object race pair",
+      "root_cause_group": "RC-CONSTRUCTOR-NOISE",
+      "safe": "not_applicable",
+      "unrelated": "passed: constructor/stable-owner shape"
+    },
+    {
+      "fixed": "passed: mutex owner control clean 3/3",
+      "holdout_scope": false,
+      "positive": "passed: generic race and close_get_entry TSan 3/3",
+      "root_cause_group": "RC-JSPROXY",
+      "safe": "passed: atomic shared_ptr patch clean 3/3",
+      "unrelated": "passed: generic unrelated control clean 1/1"
+    },
+    {
+      "fixed": "not_run: mutex owner control",
+      "holdout_scope": false,
+      "positive": "not_run: setter/reader TSan overlap",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "safe": "not_run: same-runner serialization",
+      "unrelated": "not_run: fresh-object control"
+    },
+    {
+      "fixed": "not_run: one owner mutex or atomic shared_ptr protocol",
+      "holdout_scope": false,
+      "positive": "not_run: SetChannel/GetChannel or create/use TSan overlap",
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "safe": "not_run: serialized channel protocol",
+      "unrelated": "not_run: single-thread publication control"
+    },
+    {
+      "fixed": "not_applicable",
+      "holdout_scope": true,
+      "positive": "not_applicable",
+      "root_cause_group": "RC-SCOPE-MOCK",
+      "safe": "not_applicable",
+      "unrelated": "passed: non-production mock scope"
+    },
+    {
+      "fixed": "not_run: common mutex or immutable publication",
+      "holdout_scope": true,
+      "positive": "not_run: setter/channel creation TSan overlap",
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "safe": "not_run: pre-publication immutable listener",
+      "unrelated": "not_run: single-thread constructor control"
+    },
+    {
+      "fixed": "not_run: move hdrPixelMap_ reset under mutex_",
+      "holdout_scope": true,
+      "positive": "not_run: hdrPixelMap_ late-callback window only",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "safe": "passed: pixelMap_ owner accesses mutex-serialized",
+      "unrelated": "passed: constructor/single-lexical/marshalling shapes"
+    }
+  ],
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1",
+  "synthetic_controls_are_independent_holdout": false
+}

@@ -1,0 +1,132 @@
+{
+  "append_only": true,
+  "blind_holdout": {
+    "key_after_labels": {
+      "path": "blind_holdout_key.json",
+      "sha256": "ae901765b095e32d4ecf41003538702a05bf4c0785fcd6cf90a43b0a6dc69485"
+    },
+    "labels": {
+      "path": "blind_holdout_labels.json",
+      "sha256": "40e44537295b0efb1fa57c6b6949d2b8c356424cb8972953eb03f9a86b06eb9d"
+    },
+    "packet": {
+      "path": "blind_holdout_packet.json",
+      "sha256": "3b7730f8db8daf34514047e60ce3f1c0c834ce3e40023d00107f0ddf69bcad6f"
+    }
+  },
+  "classification_counts": {
+    "safe": 1,
+    "unknown": 13,
+    "unrelated": 31
+  },
+  "freeze_statement": "A-TRUTH-01 source-first truth/signoff records are frozen; historical reports, candidate IDs, reviews and database records are preserved unchanged.",
+  "frozen": true,
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "inputs": [
+    {
+      "bytes": 1131592,
+      "path": "research/evidence/cpp/review_20261014/review_ledger.json",
+      "sha256": "6fc11cc43cd653cad449022ae16a3d5a2b110e353065d2ae53a13738f97f5404"
+    },
+    {
+      "bytes": 19268,
+      "path": "research/evidence/cpp/review_20261014/holdout_manifest.json",
+      "sha256": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a"
+    },
+    {
+      "bytes": 38837,
+      "path": "research/evidence/cpp/review_20261014/root_cause_groups.json",
+      "sha256": "0e487a981df6733a9efc7d4f72119a44dde615bb1649e66590484eb06b964166"
+    },
+    {
+      "bytes": 140400,
+      "path": "research/evidence/cpp/independent_review_20261015/blind_review_labels_frozen_20261015.json",
+      "sha256": "21104d9b9827c2877482a73b3018c43dad9abbdf63020e2c2df35a3aae09acd3"
+    },
+    {
+      "bytes": 191208,
+      "path": "research/evidence/cpp/independent_review_20261015/review_supplement.json",
+      "sha256": "5ebce2b474d66382486c5000667a0cc281c426ec6bf05bcb49a526ce9a8b1029"
+    },
+    {
+      "bytes": 232862,
+      "path": "research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.json",
+      "sha256": "408db60a66f2d86c83caec572e304fe5cd6085269422f1177e27e03f296be65f"
+    },
+    {
+      "bytes": 3948,
+      "path": "research/evidence/cpp/independent_truth_review_20261015/truth_set_manifest.json",
+      "sha256": "1f4666f39ddf7a043dc215b045d1d8dbc6153168bd4bcd2ce8d62609af9539c2"
+    },
+    {
+      "bytes": 17430,
+      "path": "research/evidence/cpp/shared_ptr_jsproxy_supplement_2026-10-15.json",
+      "sha256": "341728ebac082c0d43710edf10d9d2ed4159c3a0bd80407ccdb1fa253f034243"
+    },
+    {
+      "bytes": 496242,
+      "path": "research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json",
+      "sha256": "2be497117214f5dd060d3e4f15cf68d3ebecdc025a3c03ee6ee3af4dff7345cc"
+    },
+    {
+      "bytes": 5407,
+      "path": "research/evidence/cpp/implementation_bound_controls_20261015/EVIDENCE_CHECKLIST.md",
+      "sha256": "22df3c1eb7e9d0c6a93a6bc4d0a1d9945485cdac4e2a155b8cd408653f6b47e0"
+    },
+    {
+      "bytes": 45638,
+      "path": "src/ohscanner/detectors/cpp/shared_ptr_race_detector.py",
+      "sha256": "70197fb273054a20e2e6de82aa4eaa6bdeeaf4951ead6d5076b0e9832c65e230"
+    },
+    {
+      "bytes": 2010,
+      "path": "rules/cpp/oh_shared_ptr_uaf.yaml",
+      "sha256": "3b2f06bdb8c5f3db6bfe23c758b2b20259304c3309a853ece820b52503f269b1"
+    }
+  ],
+  "kind": "a_truth_01_truth_set_manifest",
+  "mechanism_classification_counts": {
+    "safe": 1,
+    "unknown": 11,
+    "unrelated": 31,
+    "vulnerable": 2
+  },
+  "metrics": {
+    "eligible": false,
+    "precision_recall": "not_computed",
+    "reason": "Unknown/partial product entry, trigger, synchronization and CIA evidence remain; synthetic controls are not independent holdout.",
+    "zero_fp_fn_claims": false
+  },
+  "promotion_boundary": {
+    "confirmed_reportable": false,
+    "cve": "not identified or assigned in local evidence",
+    "validated_vulnerability": 0
+  },
+  "records": {
+    "path": "truth_signoffs.jsonl",
+    "sha256": "e7c90cfd0d559228a0a976e280837a4520bbeca466b368202b8dc813c86318cb"
+  },
+  "review_item_count": 45,
+  "reviewer": {
+    "id": "codex-a-truth-01-20261015",
+    "name": "Codex independent source-first reviewer",
+    "reviewed_at": "2026-10-15T12:53:32+08:00"
+  },
+  "root_cause_group_count": 7,
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1",
+  "scope_counts": {
+    "holdout": 34,
+    "plausible_unproven": 11
+  },
+  "source_identity_verification": {
+    "all_verified": true,
+    "count": 45,
+    "method": "local pinned Git commit/tree/blob/source SHA checks with GIT_NO_LAZY_FETCH=1"
+  },
+  "status_counts": {
+    "candidate": 11,
+    "refuted": 32,
+    "unknown": 2
+  },
+  "unique_workbench_candidate_count": 44
+}

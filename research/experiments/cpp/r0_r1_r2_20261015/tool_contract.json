@@ -1,0 +1,99 @@
+{
+  "schema_version": "ohscanner.a-exp-01-tool-contract-v2",
+  "authorization": {
+    "mode": "read_only_allowlist",
+    "allowed_source": "local pinned Git objects and frozen report/evidence records",
+    "denied": [
+      "shell execution",
+      "source execution",
+      "network access",
+      "file writes",
+      "Git mutation",
+      "database mutation",
+      "historical report edits",
+      "candidate/review/confirmed state edits"
+    ],
+    "scope_rule": "requests must match one experiment_item_id and one allowed_tool_locators entry",
+    "authorization_record": "tool_adapter_authorization.json",
+    "adapter_contract": "tool_adapter_authorization.schema.json",
+    "execution_rule": "R2 remains blocked unless the authorization record is structurally valid and execution.execution_authorized=true."
+  },
+  "result_envelope": {
+    "required": [
+      "tool_call_id",
+      "attempt_id",
+      "experiment_item_id",
+      "tool_id",
+      "tool_version",
+      "request",
+      "request_sha256",
+      "status",
+      "persisted",
+      "persistence_id",
+      "artifact_sha256",
+      "evidence_ids",
+      "coverage",
+      "truncation",
+      "output_bytes",
+      "elapsed_ms"
+    ],
+    "status_values": [
+      "ok",
+      "partial",
+      "not_found",
+      "out_of_scope",
+      "failed",
+      "timed_out",
+      "budget_exhausted"
+    ],
+    "semantics": "ok is a tool execution result only; it never marks evidence_gate met and never means safe or miss. partial/not_found/out_of_scope/failed/timed_out/budget_exhausted remain unknown evidence.",
+    "citation_rule": "Each claim reference must be a supplied-catalog evidence_id/fact_id for the current experiment_item_id or an evidence_id from a persisted tool result for that same item.",
+    "persistence_rule": "A claim may cite an envelope evidence_id only after the result is persisted with a unique persistence_id, artifact_sha256, current experiment_item_id, and independent attempt_id."
+  },
+  "tools": [
+    {
+      "tool_id": "fixed_source_excerpt",
+      "tool_version": "1.0.0",
+      "purpose": "return fixed Git-object source excerpt for an allowed locator",
+      "max_calls_per_item": 4,
+      "response_limits": {
+        "max_output_bytes": 32768
+      }
+    },
+    {
+      "tool_id": "evidence_obligation_query",
+      "tool_version": "1.0.0",
+      "purpose": "return fixed evidence-gate obligation definitions and current candidate-independent statuses",
+      "max_calls_per_item": 2,
+      "response_limits": {
+        "max_output_bytes": 16384
+      }
+    },
+    {
+      "tool_id": "fixed_commit_git_history",
+      "tool_version": "1.0.0",
+      "purpose": "return bounded history/diff context for the pinned commit and allowed file",
+      "max_calls_per_item": 2,
+      "response_limits": {
+        "max_output_bytes": 16384
+      }
+    },
+    {
+      "tool_id": "detector_symbol_parse_summary",
+      "tool_version": "1.0.0",
+      "purpose": "return recorded Detector symbol/parse summary without expanding into arbitrary analysis",
+      "max_calls_per_item": 2,
+      "response_limits": {
+        "max_output_bytes": 16384
+      }
+    }
+  ],
+  "retry": {
+    "contract": "retry_accounting_contract.json",
+    "max_retries_per_R2_run": 1,
+    "every_retry_has_new_attempt_id": true,
+    "prior_failure_and_final_result_preserved": true,
+    "retry_counts_toward_tool_calls_tokens_cost_wall_and_bytes": true,
+    "retry_counts_as_new_repetition": false
+  }
+}

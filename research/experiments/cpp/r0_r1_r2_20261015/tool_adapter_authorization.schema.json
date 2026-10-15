@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.a-exp-01-tool-adapter-authorization-schema-v1",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "authorization_id",
+    "status",
+    "tool_adapter",
+    "authorizer",
+    "authorization_scope",
+    "tool_whitelist",
+    "read_only_boundary",
+    "execution"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ohscanner.a-exp-01-tool-adapter-authorization-v1"
+    },
+    "experiment_id": {
+      "const": "A-EXP-01"
+    },
+    "authorization_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "recorded_execution_not_authorized",
+        "execution_authorized",
+        "revoked"
+      ]
+    },
+    "tool_adapter": {
+      "type": "object",
+      "required": [
+        "adapter_id",
+        "adapter_version",
+        "implementation_sha256"
+      ],
+      "properties": {
+        "adapter_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adapter_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "authorizer": {
+      "type": "object",
+      "required": [
+        "authorizer_id",
+        "authorizer_role",
+        "authorization_reference",
+        "authorized_at"
+      ],
+      "properties": {
+        "authorizer_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorizer_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorization_reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authorized_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "authorization_scope": {
+      "type": "object",
+      "required": [
+        "groups",
+        "experiment_item_scope",
+        "allowed_operations",
+        "max_calls_per_item",
+        "effective_at",
+        "expires_at",
+        "revocation_rule"
+      ],
+      "properties": {
+        "groups": {
+          "const": [
+            "R2"
+          ]
+        },
+        "experiment_item_scope": {
+          "const": "all_45_frozen_review_items"
+        },
+        "allowed_operations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_calls_per_item": {
+          "const": 8
+        },
+        "effective_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "revocation_rule": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "tool_whitelist": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "fixed_source_excerpt",
+          "evidence_obligation_query",
+          "fixed_commit_git_history",
+          "detector_symbol_parse_summary"
+        ]
+      }
+    },
+    "read_only_boundary": {
+      "type": "object",
+      "required": [
+        "mode",
+        "allowed_source",
+        "denied"
+      ],
+      "properties": {
+        "mode": {
+          "const": "read_only_allowlist"
+        },
+        "allowed_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "denied": {
+          "type": "array",
+          "minItems": 6,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "r2_runs_executed",
+        "execution_authorized",
+        "preflight_only"
+      ],
+      "properties": {
+        "r2_runs_executed": {
+          "const": 0
+        },
+        "execution_authorized": {
+          "type": "boolean"
+        },
+        "preflight_only": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

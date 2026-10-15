@@ -1,0 +1,81 @@
+{
+  "schema_version": "ohscanner.a-exp-01-budget-v2",
+  "repetitions": {
+    "R0": 3,
+    "R1": 3,
+    "R2": 3
+  },
+  "seeds": [
+    20261015,
+    20261016,
+    20261017
+  ],
+  "per_item": {
+    "R0": {
+      "human_active_seconds_max": 1200,
+      "human_reviewers_per_repetition": 1,
+      "model_calls": 0,
+      "tool_calls_max": 8,
+      "wall_seconds_max": 1200,
+      "max_cost_amount_usd": 0
+    },
+    "R1": {
+      "model_calls": 1,
+      "model_turns_max": 1,
+      "tool_calls_max": 0,
+      "model_input_tokens_max": 24000,
+      "model_output_tokens_max": 2400,
+      "wall_seconds_max": 120,
+      "max_cost_amount_usd": 0.25,
+      "retries_max": 0
+    },
+    "R2": {
+      "model_calls": 1,
+      "model_turns_max": 8,
+      "tool_calls_max": 8,
+      "model_input_tokens_max": 32000,
+      "model_output_tokens_max": 4000,
+      "tool_output_bytes_max": 65536,
+      "source_bytes_max": 65536,
+      "wall_seconds_max": 300,
+      "retries_max": 1,
+      "max_cost_amount_usd": 1,
+      "model_provider_attempts_max": 2
+    }
+  },
+  "per_tool_calls_max": {
+    "fixed_source_excerpt": 4,
+    "evidence_obligation_query": 2,
+    "fixed_commit_git_history": 2,
+    "detector_symbol_parse_summary": 2
+  },
+  "totals": {
+    "items": 45,
+    "runs_per_group": 135,
+    "R1_max_model_input_tokens": 3240000,
+    "R1_max_model_output_tokens": 324000,
+    "R1_max_cost_amount_usd": 33.75,
+    "R2_max_tool_calls": 1080,
+    "R2_max_tool_output_bytes": 8847360,
+    "R2_max_source_bytes": 8847360,
+    "R2_max_model_input_tokens": 4320000,
+    "R2_max_model_output_tokens": 540000,
+    "R2_max_cost_amount_usd": 135,
+    "R2_max_model_provider_attempts": 270
+  },
+  "accounting": "Count every logical operation attempt, including initial failures and retries. Tool retries count as tool calls; provider retries count as provider attempts and consume any tokens/cost they use; every attempt consumes wall time. Retries never create or replace a repetition. Missing usage remains unknown and cannot be silently estimated.",
+  "retry_accounting": {
+    "contract": "retry_accounting_contract.json",
+    "scope": "per_run",
+    "max_retries_per_R2_run": 1,
+    "retry_counts_toward_tool_calls": true,
+    "retry_counts_toward_tokens_if_used": true,
+    "retry_counts_toward_cost_if_used": true,
+    "retry_counts_toward_wall_time": true,
+    "retry_counts_toward_tool_output_and_source_bytes": true,
+    "retry_counts_as_new_repetition": false,
+    "retry_resets_budget_or_seed": false,
+    "prior_attempt_preserved": true,
+    "separate_attempt_id_required": true
+  }
+}

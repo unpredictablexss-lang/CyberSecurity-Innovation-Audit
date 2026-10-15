@@ -1,0 +1,293 @@
+{
+  "generated_at": "2026-10-15T12:52:35+08:00",
+  "items": [
+    {
+      "reported_excerpt": "27: namespace OHOS {\n28: namespace Security {\n29: namespace AccessToken {\n30: class RemoteCommandExecutor final : public std::enable_shared_from_this<RemoteCommandExecutor>  {\n31: public:\n32:     explicit RemoteCommandExecutor(const std::string &targetNodeId);\n33:     virtual ~RemoteCommandExecutor();\n34: \n35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n36:     {\n37:         return ptrChannel_;\n38:     }\n39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n40:     {\n41:         ptrChannel_ = ptrChannel;\n42:     }\n43: \n44:     /**\n45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now.\n46:      *\n47:      * @param targetNodeId target device node id(udid)",
+      "review_item_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b:plausible_unproven",
+      "source_identity": {
+        "column": 16,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 37,
+        "operation": "read",
+        "reported_excerpt": "27: namespace OHOS {\n28: namespace Security {\n29: namespace AccessToken {\n30: class RemoteCommandExecutor final : public std::enable_shared_from_this<RemoteCommandExecutor>  {\n31: public:\n32:     explicit RemoteCommandExecutor(const std::string &targetNodeId);\n33:     virtual ~RemoteCommandExecutor();\n34: \n35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n36:     {\n37:         return ptrChannel_;\n38:     }\n39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n40:     {\n41:         ptrChannel_ = ptrChannel;\n42:     }\n43: \n44:     /**\n45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now.\n46:      *\n47:      * @param targetNodeId target device node id(udid)",
+        "reported_excerpt_lines": [
+          27,
+          47
+        ],
+        "reported_excerpt_sha256": "f0fbea10927e08af79f4899e6f8d4e187a6a85d3c52772d8d5d529f30320a30b",
+        "repository": "openharmony/security_access_token",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+        "symbol": "ptrChannel_"
+      }
+    },
+    {
+      "reported_excerpt": "31: public:\n32:     explicit RemoteCommandExecutor(const std::string &targetNodeId);\n33:     virtual ~RemoteCommandExecutor();\n34: \n35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n36:     {\n37:         return ptrChannel_;\n38:     }\n39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n40:     {\n41:         ptrChannel_ = ptrChannel;\n42:     }\n43: \n44:     /**\n45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now.\n46:      *\n47:      * @param targetNodeId target device node id(udid)\n48:      * @return Returns <b>a shared_ptr</b> if the operation is successful, returns <b>nullptr</b> otherwise.\n49:      * @see SoftBusChannel\n50:      * @since 1.0\n51:      * @version 1.0",
+      "review_item_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b:plausible_unproven",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "services/tokensyncmanager/include/remote/remote_command_executor.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 41,
+        "operation": "write",
+        "reported_excerpt": "31: public:\n32:     explicit RemoteCommandExecutor(const std::string &targetNodeId);\n33:     virtual ~RemoteCommandExecutor();\n34: \n35:     const std::shared_ptr<RpcChannel>& GetChannel() const\n36:     {\n37:         return ptrChannel_;\n38:     }\n39:     void SetChannel(const std::shared_ptr<RpcChannel>& ptrChannel)\n40:     {\n41:         ptrChannel_ = ptrChannel;\n42:     }\n43: \n44:     /**\n45:      * @brief Factory method to create a rpc channel. we will only create SoftBusChannel by now.\n46:      *\n47:      * @param targetNodeId target device node id(udid)\n48:      * @return Returns <b>a shared_ptr</b> if the operation is successful, returns <b>nullptr</b> otherwise.\n49:      * @see SoftBusChannel\n50:      * @since 1.0\n51:      * @version 1.0",
+        "reported_excerpt_lines": [
+          31,
+          51
+        ],
+        "reported_excerpt_sha256": "f6737dee71da40a7c4cbcbc0446f97885c3f41dde160b36206eb25a1d7961367",
+        "repository": "openharmony/security_access_token",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "f5f6974f1d47ed2456af573b62e975e28e499276",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "2124970c2fc77f6e1a71eeb4c567ec00eb72c2a7d3ea8dcc07cd85a7458025e7",
+        "symbol": "ptrChannel_"
+      }
+    },
+    {
+      "reported_excerpt": "27:     // It is not allowed to directly use parent class objects for construction and destruction\n28:     JSCreator() = default;\n29:     ~JSCreator() = default;\n30: };\n31: \n32: template<typename T>\n33: class JSProxy {\n34: public:\n35:     void SetInstance(std::shared_ptr<T> instance)\n36:     {\n37:         instance_ = std::move(instance);\n38:     }\n39: \n40:     std::shared_ptr<T> GetInstance() const\n41:     {\n42:         return instance_;\n43:     }\n44: \n45: protected:\n46:     // It is not allowed to directly use parent class objects for construction and destruction\n47:     JSProxy() = default;",
+      "review_item_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef:plausible_unproven",
+      "source_identity": {
+        "column": 9,
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "file": "frameworks/common/js_proxy.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "line": 37,
+        "operation": "write",
+        "reported_excerpt": "27:     // It is not allowed to directly use parent class objects for construction and destruction\n28:     JSCreator() = default;\n29:     ~JSCreator() = default;\n30: };\n31: \n32: template<typename T>\n33: class JSProxy {\n34: public:\n35:     void SetInstance(std::shared_ptr<T> instance)\n36:     {\n37:         instance_ = std::move(instance);\n38:     }\n39: \n40:     std::shared_ptr<T> GetInstance() const\n41:     {\n42:         return instance_;\n43:     }\n44: \n45: protected:\n46:     // It is not allowed to directly use parent class objects for construction and destruction\n47:     JSProxy() = default;",
+        "reported_excerpt_lines": [
+          27,
+          47
+        ],
+        "reported_excerpt_sha256": "588ba6011948d9d2b577931ec987253e86a09f57d11bf8e4de33d78b56448a73",
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store",
+        "repository_remote": "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+        "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "symbol": "instance_"
+      }
+    },
+    {
+      "reported_excerpt": "32: template<typename T>\n33: class JSProxy {\n34: public:\n35:     void SetInstance(std::shared_ptr<T> instance)\n36:     {\n37:         instance_ = std::move(instance);\n38:     }\n39: \n40:     std::shared_ptr<T> GetInstance() const\n41:     {\n42:         return instance_;\n43:     }\n44: \n45: protected:\n46:     // It is not allowed to directly use parent class objects for construction and destruction\n47:     JSProxy() = default;\n48:     ~JSProxy() = default;\n49: \n50: private:\n51:     std::shared_ptr<T> instance_;\n52: };",
+      "review_item_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c:plausible_unproven",
+      "source_identity": {
+        "column": 16,
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "file": "frameworks/common/js_proxy.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "line": 42,
+        "operation": "read",
+        "reported_excerpt": "32: template<typename T>\n33: class JSProxy {\n34: public:\n35:     void SetInstance(std::shared_ptr<T> instance)\n36:     {\n37:         instance_ = std::move(instance);\n38:     }\n39: \n40:     std::shared_ptr<T> GetInstance() const\n41:     {\n42:         return instance_;\n43:     }\n44: \n45: protected:\n46:     // It is not allowed to directly use parent class objects for construction and destruction\n47:     JSProxy() = default;\n48:     ~JSProxy() = default;\n49: \n50: private:\n51:     std::shared_ptr<T> instance_;\n52: };",
+        "reported_excerpt_lines": [
+          32,
+          52
+        ],
+        "reported_excerpt_sha256": "199b6b6b8c58a3b20860b0078397166452fe7d84d91f3a4bc2c32fef9585832d",
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store",
+        "repository_remote": "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+        "source_git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+        "symbol": "instance_"
+      }
+    },
+    {
+      "reported_excerpt": "40:     std::shared_ptr<NativeReference> GetPipContentCallbackRef(const std::string&) override;\n41:     WMError SetXComponentController(std::shared_ptr<XComponentController> xComponentController) override;\n42:     std::shared_ptr<NativeReference> GetCustomNodeController() override;\n43:     std::shared_ptr<NativeReference> GetTypeNode() const override;\n44:     bool IsTypeNodeEnabled() const override;\n45:     bool IsPullPiPAndHandleNavigation();\n46:     std::string GetPiPNavigationId() const override;\n47:     \n48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n49:     {\n50:         return mainWindowXComponentController_;\n51:     }\n52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n53:     {\n54:         mainWindowXComponentController_ = controller;\n55:     }\n56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n58: \n59: protected:\n60:     WMErrorResult CreatePictureInPictureWindow(StartPipType startType) override;",
+      "review_item_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8:plausible_unproven",
+      "source_identity": {
+        "column": 16,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wm/include/picture_in_picture_controller.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 50,
+        "operation": "read",
+        "reported_excerpt": "40:     std::shared_ptr<NativeReference> GetPipContentCallbackRef(const std::string&) override;\n41:     WMError SetXComponentController(std::shared_ptr<XComponentController> xComponentController) override;\n42:     std::shared_ptr<NativeReference> GetCustomNodeController() override;\n43:     std::shared_ptr<NativeReference> GetTypeNode() const override;\n44:     bool IsTypeNodeEnabled() const override;\n45:     bool IsPullPiPAndHandleNavigation();\n46:     std::string GetPiPNavigationId() const override;\n47:     \n48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n49:     {\n50:         return mainWindowXComponentController_;\n51:     }\n52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n53:     {\n54:         mainWindowXComponentController_ = controller;\n55:     }\n56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n58: \n59: protected:\n60:     WMErrorResult CreatePictureInPictureWindow(StartPipType startType) override;",
+        "reported_excerpt_lines": [
+          40,
+          60
+        ],
+        "reported_excerpt_sha256": "1db6754b681e70bf8e63ed381294abca9831fb99a50dd51da78ed456c1cafa83",
+        "repository": "openharmony/window_window_manager",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+        "symbol": "mainWindowXComponentController_"
+      }
+    },
+    {
+      "reported_excerpt": "44:     bool IsTypeNodeEnabled() const override;\n45:     bool IsPullPiPAndHandleNavigation();\n46:     std::string GetPiPNavigationId() const override;\n47:     \n48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n49:     {\n50:         return mainWindowXComponentController_;\n51:     }\n52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n53:     {\n54:         mainWindowXComponentController_ = controller;\n55:     }\n56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n58: \n59: protected:\n60:     WMErrorResult CreatePictureInPictureWindow(StartPipType startType) override;\n61:     void UpdateWinRectByComponent() override;\n62:     void UpdatePiPSourceRect() const override;\n63:     void SetUIContent() const override;\n64:     void ResetExtController() override;",
+      "review_item_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d:plausible_unproven",
+      "source_identity": {
+        "column": 9,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wm/include/picture_in_picture_controller.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 54,
+        "operation": "write",
+        "reported_excerpt": "44:     bool IsTypeNodeEnabled() const override;\n45:     bool IsPullPiPAndHandleNavigation();\n46:     std::string GetPiPNavigationId() const override;\n47:     \n48:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n49:     {\n50:         return mainWindowXComponentController_;\n51:     }\n52:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n53:     {\n54:         mainWindowXComponentController_ = controller;\n55:     }\n56:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n57:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n58: \n59: protected:\n60:     WMErrorResult CreatePictureInPictureWindow(StartPipType startType) override;\n61:     void UpdateWinRectByComponent() override;\n62:     void UpdatePiPSourceRect() const override;\n63:     void SetUIContent() const override;\n64:     void ResetExtController() override;",
+        "reported_excerpt_lines": [
+          44,
+          64
+        ],
+        "reported_excerpt_sha256": "3974d32658b8dbb6141b50e393a88e5b8a46eadf25aaf6eee7a3885928080940",
+        "repository": "openharmony/window_window_manager",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "02928bb18057a2485b0dfbbb83e21c88ebd7f1d8",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "5185852d3a0b6be8ac178984036863571abf1400c0f83089e29bcf10b3fa9c8c",
+        "symbol": "mainWindowXComponentController_"
+      }
+    },
+    {
+      "reported_excerpt": "43:     ani_ref GetANIPipContentCallbackRef(const std::string&) override;\n44:     WMError SetXComponentController(std::shared_ptr<XComponentController> xComponentController) override;\n45:     ani_ref GetANICustomNodeController() override;\n46:     ani_ref GetANITypeNode() const override;\n47:     bool IsTypeNodeEnabled() const override;\n48:     bool IsPullPiPAndHandleNavigation();\n49:     std::string GetPiPNavigationId() const override;\n50: \n51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n52:     {\n53:         return mainWindowXComponentController_;\n54:     }\n55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n56:     {\n57:         mainWindowXComponentController_ = controller;\n58:     }\n59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }\n62: \n63: protected:",
+      "review_item_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81:plausible_unproven",
+      "source_identity": {
+        "column": 16,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wm/include/picture_in_picture_controller_ani.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 53,
+        "operation": "read",
+        "reported_excerpt": "43:     ani_ref GetANIPipContentCallbackRef(const std::string&) override;\n44:     WMError SetXComponentController(std::shared_ptr<XComponentController> xComponentController) override;\n45:     ani_ref GetANICustomNodeController() override;\n46:     ani_ref GetANITypeNode() const override;\n47:     bool IsTypeNodeEnabled() const override;\n48:     bool IsPullPiPAndHandleNavigation();\n49:     std::string GetPiPNavigationId() const override;\n50: \n51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n52:     {\n53:         return mainWindowXComponentController_;\n54:     }\n55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n56:     {\n57:         mainWindowXComponentController_ = controller;\n58:     }\n59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }\n62: \n63: protected:",
+        "reported_excerpt_lines": [
+          43,
+          63
+        ],
+        "reported_excerpt_sha256": "4e8dedcf6c79ab1fcc3c97f95ee75720b5c8a5b465b4e7e96076ad3e5efed99a",
+        "repository": "openharmony/window_window_manager",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+        "symbol": "mainWindowXComponentController_"
+      }
+    },
+    {
+      "reported_excerpt": "47:     bool IsTypeNodeEnabled() const override;\n48:     bool IsPullPiPAndHandleNavigation();\n49:     std::string GetPiPNavigationId() const override;\n50: \n51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n52:     {\n53:         return mainWindowXComponentController_;\n54:     }\n55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n56:     {\n57:         mainWindowXComponentController_ = controller;\n58:     }\n59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }\n62: \n63: protected:\n64:     sptr<PipOptionAni> pipOption_ = nullptr;\n65:     ani_vm* vm_ = nullptr;\n66:     \n67:     ani_env* GetEnv() const;",
+      "review_item_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c:plausible_unproven",
+      "source_identity": {
+        "column": 9,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wm/include/picture_in_picture_controller_ani.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 57,
+        "operation": "write",
+        "reported_excerpt": "47:     bool IsTypeNodeEnabled() const override;\n48:     bool IsPullPiPAndHandleNavigation();\n49:     std::string GetPiPNavigationId() const override;\n50: \n51:     inline std::shared_ptr<XComponentController> GetMainWindowXComponentController() const\n52:     {\n53:         return mainWindowXComponentController_;\n54:     }\n55:     inline void SetMainWindowXComponentController(std::shared_ptr<XComponentController> controller)\n56:     {\n57:         mainWindowXComponentController_ = controller;\n58:     }\n59:     inline int32_t GetFirstHandleId() const { return firstHandleId_; }\n60:     inline void SetFirstHandleId(int32_t id) { firstHandleId_ = id; }\n61:     inline sptr<PipOptionAni> GetPipOptionAni() const { return pipOption_; }\n62: \n63: protected:\n64:     sptr<PipOptionAni> pipOption_ = nullptr;\n65:     ani_vm* vm_ = nullptr;\n66:     \n67:     ani_env* GetEnv() const;",
+        "reported_excerpt_lines": [
+          47,
+          67
+        ],
+        "reported_excerpt_sha256": "d2bc564e8977423bd0aa82288d300862e63c198e2ab43a999da62ac7504efe8e",
+        "repository": "openharmony/window_window_manager",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "d1a7f737dd18fe251713ae814bf8d817aaf96e58",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "c2b49eea47ec9bc2fb3927e59f9629d5b944cd3fbb2ac360534171fe8138227a",
+        "symbol": "mainWindowXComponentController_"
+      }
+    },
+    {
+      "reported_excerpt": "131:         mainWindowLifeCycleListener_ = listener;\n132:     }\n133:     inline const Rect& GetWindowRect() const { return windowRect_; }\n134:     inline void SetWindowRect(const Rect& rect) { windowRect_ = rect; }\n135:     inline bool GetIsAutoStartEnabled() const { return isAutoStartEnabled_; }\n136:     inline void SetIsAutoStartEnabled(bool enable) { isAutoStartEnabled_ = enable; }\n137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n140:     {\n141:         return pipXComponentController_;\n142:     }\n143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n144:     {\n145:         pipXComponentController_ = controller;\n146:     }\n147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n149:     inline int32_t GetHandleId() const { return handleId_; }\n150:     inline void SetHandleId(int32_t id) { handleId_ = id; }\n151:     inline sptr<Window> GetMainWindow() const { return mainWindow_; }",
+      "review_item_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652:plausible_unproven",
+      "source_identity": {
+        "column": 16,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wm/include/picture_in_picture_controller_base.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 141,
+        "operation": "read",
+        "reported_excerpt": "131:         mainWindowLifeCycleListener_ = listener;\n132:     }\n133:     inline const Rect& GetWindowRect() const { return windowRect_; }\n134:     inline void SetWindowRect(const Rect& rect) { windowRect_ = rect; }\n135:     inline bool GetIsAutoStartEnabled() const { return isAutoStartEnabled_; }\n136:     inline void SetIsAutoStartEnabled(bool enable) { isAutoStartEnabled_ = enable; }\n137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n140:     {\n141:         return pipXComponentController_;\n142:     }\n143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n144:     {\n145:         pipXComponentController_ = controller;\n146:     }\n147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n149:     inline int32_t GetHandleId() const { return handleId_; }\n150:     inline void SetHandleId(int32_t id) { handleId_ = id; }\n151:     inline sptr<Window> GetMainWindow() const { return mainWindow_; }",
+        "reported_excerpt_lines": [
+          131,
+          151
+        ],
+        "reported_excerpt_sha256": "03092e179a0282105d3835a04e990efe77dfbac1f61be1ce5909fda769db83bb",
+        "repository": "openharmony/window_window_manager",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+        "symbol": "pipXComponentController_"
+      }
+    },
+    {
+      "reported_excerpt": "135:     inline bool GetIsAutoStartEnabled() const { return isAutoStartEnabled_; }\n136:     inline void SetIsAutoStartEnabled(bool enable) { isAutoStartEnabled_ = enable; }\n137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n140:     {\n141:         return pipXComponentController_;\n142:     }\n143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n144:     {\n145:         pipXComponentController_ = controller;\n146:     }\n147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n149:     inline int32_t GetHandleId() const { return handleId_; }\n150:     inline void SetHandleId(int32_t id) { handleId_ = id; }\n151:     inline sptr<Window> GetMainWindow() const { return mainWindow_; }\n152: \n153:     // diffrent between normal and web\n154:     virtual WMErrorResult StartPictureInPicture(StartPipType startType) = 0;\n155:     virtual void UpdateContentSize(int32_t width, int32_t height) = 0;",
+      "review_item_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af:plausible_unproven",
+      "source_identity": {
+        "column": 9,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wm/include/picture_in_picture_controller_base.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 145,
+        "operation": "write",
+        "reported_excerpt": "135:     inline bool GetIsAutoStartEnabled() const { return isAutoStartEnabled_; }\n136:     inline void SetIsAutoStartEnabled(bool enable) { isAutoStartEnabled_ = enable; }\n137:     inline bool GetCurActiveStatus() const { return curActiveStatus_; }\n138:     inline void SetCurActiveStatus(bool status) { curActiveStatus_ = status; }\n139:     inline std::shared_ptr<XComponentController> GetPipXComponentController() const\n140:     {\n141:         return pipXComponentController_;\n142:     }\n143:     inline void SetPipXComponentController(std::shared_ptr<XComponentController> controller)\n144:     {\n145:         pipXComponentController_ = controller;\n146:     }\n147:     inline bool GetIsStoppedFromClient() const { return isStoppedFromClient_; }\n148:     inline void SetIsStoppedFromClient(bool stopped) { isStoppedFromClient_ = stopped; }\n149:     inline int32_t GetHandleId() const { return handleId_; }\n150:     inline void SetHandleId(int32_t id) { handleId_ = id; }\n151:     inline sptr<Window> GetMainWindow() const { return mainWindow_; }\n152: \n153:     // diffrent between normal and web\n154:     virtual WMErrorResult StartPictureInPicture(StartPipType startType) = 0;\n155:     virtual void UpdateContentSize(int32_t width, int32_t height) = 0;",
+        "reported_excerpt_lines": [
+          135,
+          155
+        ],
+        "reported_excerpt_sha256": "4ea70ca2618fb64043a8eb69520c8d50e7555a38c57c97ef926846b03e2dd8f8",
+        "repository": "openharmony/window_window_manager",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "c634385cff8c3b0f2704ec5d92e278c3c8057d7a",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "a0f47a883e30c7abffbf1fb49bb5f61251869b920b1aefd9a7086cae67327418",
+        "symbol": "pipXComponentController_"
+      }
+    },
+    {
+      "reported_excerpt": "57: \n58:         void OnRippleStats(const TrafficStats *data) override\n59:         {\n60:             listener_->OnRippleStats(data);\n61:         }\n62: \n63:     private:\n64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n65:     };\n66: \n67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n68:     StreamManager() = delete;\n69:     virtual ~StreamManager() = default;\n70: \n71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n73: \n74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n75:         std::pair<uint8_t*, uint32_t> sessionKey) override;\n76: \n77:     bool DestroyStreamDataChannel() override;",
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible_unproven",
+      "source_identity": {
+        "column": 86,
+        "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+        "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+        "git_object_provenance_verified": true,
+        "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+        "line": 67,
+        "operation": "read",
+        "reported_excerpt": "57: \n58:         void OnRippleStats(const TrafficStats *data) override\n59:         {\n60:             listener_->OnRippleStats(data);\n61:         }\n62: \n63:     private:\n64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n65:     };\n66: \n67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n68:     StreamManager() = delete;\n69:     virtual ~StreamManager() = default;\n70: \n71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n73: \n74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n75:         std::pair<uint8_t*, uint32_t> sessionKey) override;\n76: \n77:     bool DestroyStreamDataChannel() override;",
+        "reported_excerpt_lines": [
+          57,
+          77
+        ],
+        "reported_excerpt_sha256": "3cd0784a78ad1bd953d9577ffb65924422f3896172127c0a93df92e0f097d192",
+        "repository": "openharmony/communication_dsoftbus",
+        "repository_path_observed": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/communication_dsoftbus",
+        "repository_remote": "https://gitee.com/openharmony/communication_dsoftbus.git",
+        "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+        "source_hash_semantics": "sha256 of exact git blob bytes",
+        "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+        "symbol": "streamListener_"
+      }
+    }
+  ],
+  "kind": "a_truth_01_source_review_packet",
+  "schema_version": "ohscanner.a-truth-01-blind-holdout-v1"
+}

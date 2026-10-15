@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "append_only_records": true,
+    "historical_review_not_truth_input": true,
+    "holdout_34": true,
+    "metrics_not_computed": true,
+    "plausible_unproven_11": true,
+    "scope_records_45": true,
+    "source_identity_all_verified": true,
+    "synthetic_controls_not_holdout": true,
+    "unique_candidates_44": true,
+    "zero_fp_fn_claim_absent": true
+  },
+  "counts": {
+    "classification_counts": {
+      "safe": 1,
+      "unknown": 13,
+      "unrelated": 31
+    },
+    "review_items": 45,
+    "scope_counts": {
+      "holdout": 34,
+      "plausible_unproven": 11
+    },
+    "status_counts": {
+      "candidate": 11,
+      "refuted": 32,
+      "unknown": 2
+    }
+  },
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "kind": "a_truth_01_verification",
+  "limitations": [
+    "RC-JSPROXY is controlled-positive at component mechanism level only; product gate remains not_met.",
+    "Remote channel, PIP controllers and stream listener retain unknown queue/HB/trigger/CIA evidence.",
+    "hdrPixelMap_ late callback versus timed-out waiter remains unknown.",
+    "safe/unrelated labels are scoped to shared_ptr owner-race shape, not product safety."
+  ],
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1",
+  "status": "passed_with_unknowns"
+}

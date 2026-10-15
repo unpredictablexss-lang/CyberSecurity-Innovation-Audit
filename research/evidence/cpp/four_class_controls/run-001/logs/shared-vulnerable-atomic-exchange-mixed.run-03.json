@@ -1,0 +1,16 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/shared-vulnerable-atomic-exchange-mixed/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/shared-vulnerable-atomic-exchange-mixed",
+    "exit_code": 66,
+    "elapsed_seconds": 0.01984429600003068,
+    "stdout": "",
+    "stderr": "FATAL: ThreadSanitizer: unexpected memory mapping 0x766665072000-0x766665500000\n",
+    "timed_out": false
+  }
+}

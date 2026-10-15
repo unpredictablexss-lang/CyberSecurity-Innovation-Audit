@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-15T10:41:00.9220864+08:00",
+  "working_directory": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+  "invocation_shell": "Ubuntu-22.04 WSL2 bash -lc",
+  "outer_argv": [
+    ".venv-web/bin/python",
+    "research/experiments/cpp/run_four_class_controls.py",
+    "--manifest",
+    "research/tests/cpp_detector_controls_impl_20261015/manifest.json",
+    "--output",
+    "research/evidence/cpp/implementation_bound_controls_20261015/run-001",
+    "--work-dir",
+    "outputs/poc/cpp-detector-controls-impl-20261015/run-001",
+    "--compiler",
+    "clang++",
+    "--repeats",
+    "3"
+  ],
+  "environment": {
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/usr/lib/linux-tools/6.18.54.1-microsoft-standard-WSL2/bin:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell:/mnt/c/Users/work_work/.codex/tmp/arg0/codex-arg0wHpgUj:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/libheif/libheif/bin:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/jxrlib/jxrlib/bin:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/Library/bin:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/mnt/c/Program Files (x86)/VMware/VMware Workstation/bin/:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/WSL/:/mnt/e/DeepSeek Harness/resources/runtime/cli/bin:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell:/mnt/c/Users/work_work/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/work_work/.local/bin:/mnt/e/KimiData/daimon-share/daimon/npm-global:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/mnt/c/Users/work_work/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/git/cmd:/mnt/c/Users/work_work/AppData/Local/OpenAI/Codex/bin/77fbd4d52e601e0a:/mnt/c/Users/work_work/AppData/Local/OpenAI/Codex/bin/9614f1d9b40d9c4f",
+    "HOME": "/root",
+    "SHELL": "/bin/bash",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PYTHONHASHSEED": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1",
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "environment_capture_policy": "allowlisted reproduction variables only; secret-bearing and unrelated host variables intentionally excluded",
+  "sanitizer_environment_source": "manifest per-control overrides and family PoC runners; raw command logs retain effective overrides",
+  "repeats": 3,
+  "compiler_required": "clang++ 14",
+  "execution_scope": "four-class detector controls, zero-fuzz patch revalidation, detector regressions, DelayedSingleton family PoC, unique_ptr/raw-alias family PoC",
+  "process_exit_code": 0,
+  "outer_shell_command": "env LANG=C.UTF-8 LC_ALL=C.UTF-8 PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 ASAN_OPTIONS='abort_on_error=1:detect_leaks=0:handle_segv=1' TSAN_OPTIONS='halt_on_error=1:exitcode=66' .venv-web/bin/python research/experiments/cpp/run_four_class_controls.py --manifest research/tests/cpp_detector_controls_impl_20261015/manifest.json --output research/evidence/cpp/implementation_bound_controls_20261015/run-001 --work-dir outputs/poc/cpp-detector-controls-impl-20261015/run-001 --compiler clang++ --repeats 3"
+}

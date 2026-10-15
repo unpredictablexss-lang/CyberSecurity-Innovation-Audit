@@ -1,0 +1,16 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/shared-fixed-delayed-singleton-explicit-lock/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/shared-fixed-delayed-singleton-explicit-lock",
+    "exit_code": 66,
+    "elapsed_seconds": 0.01864394300002914,
+    "stdout": "",
+    "stderr": "FATAL: ThreadSanitizer: unexpected memory mapping 0x7c302f272000-0x7c302f700000\n",
+    "timed_out": false
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "environment": {
+    "ASAN_OPTIONS": "abort_on_error=1:detect_leaks=0:handle_segv=1"
+  },
+  "command": {
+    "argv": [
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/lifetime-vulnerable-restricted-move-transfer/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-001/lifetime-vulnerable-restricted-move-transfer",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01693128900001284,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

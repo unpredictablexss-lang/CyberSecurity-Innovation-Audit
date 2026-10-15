@@ -1,0 +1,172 @@
+{
+  "aggregate_unknowns": [
+    "Product entry/permission/attacker boundary is missing for unresolved plausible_unproven groups.",
+    "Thread/event queue and happens-before proofs are incomplete.",
+    "Concrete CIA impact and product artifact identity are missing.",
+    "hdrPixelMap_ late-callback/timed-out-waiter window remains unresolved.",
+    "Precision/Recall is not computed before complete freeze; synthetic controls are not independent holdout."
+  ],
+  "formal_command_failures": [],
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "items": [
+    {
+      "missing_evidence": {
+        "cia_impact": "No measured product crash, corruption, disclosure or privilege effect.",
+        "entry_or_privilege_boundary": "Source-visible SoftBus device and remote-command paths; privilege, trust boundary and attacker control unknown.",
+        "publication_order_or_happens_before": "GetOrCreateRemoteCommandExecutor publishes the executor; NotifyDeviceOnline checks GetChannel and calls SetChannel under RemoteCommandManager::mutex_. CreateChannelIfNeeded writes ptrChannel_ under RemoteCommandExecutor::recursive_mutex_; ProcessOneCommand/ExecuteRemoteCommand read it. Different locks leave no proven happens-before edge.",
+        "thread_or_event_queue": "Send command work is posted to TokenSyncManagerService::GetSendEventHandler() on an FFRT EventRunner; device online/offline enters through SoftBus device callbacks and socket session callbacks. Exact callback thread identities and common serialization are not proven.",
+        "trigger_conditions_and_race_window": "Device-online channel creation versus send-runner processing or socket callback use, with offline release/remove as a third event. Feasible product schedule and rate are not established."
+      },
+      "review_item_id": "0017e7042647b7ec0b39b9fc086697a7d66cd696d0dd334c05b7ca174222b77b:plausible",
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No measured product crash, corruption, disclosure or privilege effect.",
+        "entry_or_privilege_boundary": "Source-visible SoftBus device and remote-command paths; privilege, trust boundary and attacker control unknown.",
+        "publication_order_or_happens_before": "GetOrCreateRemoteCommandExecutor publishes the executor; NotifyDeviceOnline checks GetChannel and calls SetChannel under RemoteCommandManager::mutex_. CreateChannelIfNeeded writes ptrChannel_ under RemoteCommandExecutor::recursive_mutex_; ProcessOneCommand/ExecuteRemoteCommand read it. Different locks leave no proven happens-before edge.",
+        "thread_or_event_queue": "Send command work is posted to TokenSyncManagerService::GetSendEventHandler() on an FFRT EventRunner; device online/offline enters through SoftBus device callbacks and socket session callbacks. Exact callback thread identities and common serialization are not proven.",
+        "trigger_conditions_and_race_window": "Device-online channel creation versus send-runner processing or socket callback use, with offline release/remove as a third event. Feasible product schedule and rate are not established."
+      },
+      "review_item_id": "5d677d300a9ffdbe76a0ad582decd272f11d78557c140950dd03f346b830bb6b:plausible",
+      "root_cause_group": "RC-REMOTE-CHANNEL",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "Controlled TSan proves owner data race/UB in the modeled component shape. Product crash/DoS, returned-entry integrity, confidentiality and privilege effects unmeasured.",
+        "entry_or_privilege_boundary": "Source-visible distributedKVStore NAPI entries; runtime permission, package resolution, app identity, cross-app/remote reachability and attacker control partial/unknown.",
+        "publication_order_or_happens_before": "GetResultSet execute calls SetInstance; completion returns the wrapper. Sync methods copy GetInstance. CloseResultSet execute calls GetInstance then SetInstance(nullptr). Completion serialization does not order execute against a later sync JS call.",
+        "thread_or_event_queue": "Sync ResultSet methods use GetCbInfoSync on the NAPI/JS call context. GetResultSet/CloseResultSet use NapiQueue::AsyncWork: execute runs on the NAPI worker pool and complete on the JS/NAPI queue. The same JSProxy owner can be read by a sync call while async CloseResultSet clears it.",
+        "trigger_conditions_and_race_window": "Source-visible sequence getResultSet -> closeResultSet -> immediate getEntry/getCount before async close execute completes. The controlled Harness models this exact overlap."
+      },
+      "review_item_id": "7aa20f345a3a8e08566e1b7d2187ff5652e709007c2f1dcae385ce39256548ef:plausible",
+      "root_cause_group": "RC-JSPROXY",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "Controlled TSan proves owner data race/UB in the modeled component shape. Product crash/DoS, returned-entry integrity, confidentiality and privilege effects unmeasured.",
+        "entry_or_privilege_boundary": "Source-visible distributedKVStore NAPI entries; runtime permission, package resolution, app identity, cross-app/remote reachability and attacker control partial/unknown.",
+        "publication_order_or_happens_before": "GetResultSet execute calls SetInstance; completion returns the wrapper. Sync methods copy GetInstance. CloseResultSet execute calls GetInstance then SetInstance(nullptr). Completion serialization does not order execute against a later sync JS call.",
+        "thread_or_event_queue": "Sync ResultSet methods use GetCbInfoSync on the NAPI/JS call context. GetResultSet/CloseResultSet use NapiQueue::AsyncWork: execute runs on the NAPI worker pool and complete on the JS/NAPI queue. The same JSProxy owner can be read by a sync call while async CloseResultSet clears it.",
+        "trigger_conditions_and_race_window": "Source-visible sequence getResultSet -> closeResultSet -> immediate getEntry/getCount before async close execute completes. The controlled Harness models this exact overlap."
+      },
+      "review_item_id": "844d11acd6b225eb4782a2b67c1e8fcc3f5b3c3483d9cbcdf454e821ff9e148c:plausible",
+      "root_cause_group": "RC-JSPROXY",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product crash, corruption, disclosure or privilege effect measured.",
+        "entry_or_privilege_boundary": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "thread_or_event_queue": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "review_item_id": "c722752a78ed08cfb6cc59dd310836450dae9cfa7a26e6f417e84591aaf9c3d8:plausible",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product crash, corruption, disclosure or privilege effect measured.",
+        "entry_or_privilege_boundary": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "thread_or_event_queue": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "review_item_id": "91a26bea4359381a25147a29a0d7e4e7d03ff4e6c92f79138b379d98ca095d0d:plausible",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product crash, corruption, disclosure or privilege effect measured.",
+        "entry_or_privilege_boundary": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "thread_or_event_queue": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "review_item_id": "0ebba8620c4dd9cf41d5da993d590ba788befdeb941fbfca7d1aa148e3b9bf81:plausible",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product crash, corruption, disclosure or privilege effect measured.",
+        "entry_or_privilege_boundary": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "thread_or_event_queue": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "review_item_id": "610820828f23db15834dde0632174496f43cf3de75f048e3936d217363e27a7c:plausible",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product crash, corruption, disclosure or privilege effect measured.",
+        "entry_or_privilege_boundary": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "thread_or_event_queue": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "review_item_id": "6334c63528ae670fc6f7d17947c9275aa46a4a44e562a3285e0595b1ca9b6652:plausible",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product crash, corruption, disclosure or privilege effect measured.",
+        "entry_or_privilege_boundary": "Real PIP/window APIs source-visible; caller privilege, trust boundary, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Start copies main XComponentController from PipOption; reuse can replace it. SetXComponentController writes pipXComponentController_ and attaches it; ResetExtController detaches on stop. Source-rect/reset readers use the same members.",
+        "thread_or_event_queue": "NAPI/ANI PIP methods and window lifecycle/source-rect/reset callbacks are visible, but all setter/reader paths are not bound to one event runner or proven serial queue; main and PIP controller paths may differ.",
+        "trigger_conditions_and_race_window": "Concurrent Start/Update/Stop/SetX while main and PIP windows share a controller. No controlled product interleaving or runner trace."
+      },
+      "review_item_id": "951e6357190d927ffab7a4d1970a623403d3879e6d735343ef99afa480aa04af:plausible",
+      "root_cause_group": "RC-PIP-CONTROLLERS",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product trigger or CIA consequence established.",
+        "entry_or_privilege_boundary": "Stream setup/receive source-visible; product caller, privilege, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Constructor initializes streamListener_. Create*Channel calls SetStreamRecvListener(streamListener_), which writes it, creates StreamSocketListener(recvListener) and installs the separate copy on the socket.",
+        "thread_or_event_queue": "Stream setup runs on caller thread. VtpStreamSocket creates detached NotifyStreamListener/DoStreamRecv threads and invokes streamReceiver_ under streamSocketLock_. streamListener_ itself is not shown to be read by callbacks; StreamSocketListener keeps a separate listener_ copy.",
+        "trigger_conditions_and_race_window": "Would require product caller to invoke public SetStreamRecvListener concurrently with Create*Channel or another setter. Production call-site search found setup calls and tests only."
+      },
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:plausible",
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "status": "candidate"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No CIA claim for unrelated sites; pixelMap safe only for owner race; HDR unknown.",
+        "entry_or_privilege_boundary": "Not promoted from lexical sites; surface behavior remains component-level.",
+        "publication_order_or_happens_before": "Out-of-lock reset can precede FutureCall; timeout GetHDRResult may read/copy the owner.",
+        "thread_or_event_queue": "HDR/error callbacks and GetHDRResult can differ; most accesses use Future::mutex_, but OnSurfaceCapture resets hdrPixelMap_=nullptr before FutureCall locks.",
+        "trigger_conditions_and_race_window": "Potential timeout/reset overlap; exact callback schedule and product trigger unproven."
+      },
+      "review_item_id": "df1d89f286c9727a550f92b5c451d9126cd66adeb96a10be52415868b6fe2eb1:holdout",
+      "root_cause_group": "RC-WINDOW-SINGLE",
+      "status": "unknown"
+    },
+    {
+      "missing_evidence": {
+        "cia_impact": "No product trigger or CIA consequence established.",
+        "entry_or_privilege_boundary": "Stream setup/receive source-visible; product caller, privilege, attacker control and deployment unknown.",
+        "publication_order_or_happens_before": "Constructor initializes streamListener_. Create*Channel calls SetStreamRecvListener(streamListener_), which writes it, creates StreamSocketListener(recvListener) and installs the separate copy on the socket.",
+        "thread_or_event_queue": "Stream setup runs on caller thread. VtpStreamSocket creates detached NotifyStreamListener/DoStreamRecv threads and invokes streamReceiver_ under streamSocketLock_. streamListener_ itself is not shown to be read by callbacks; StreamSocketListener keeps a separate listener_ copy.",
+        "trigger_conditions_and_race_window": "Would require product caller to invoke public SetStreamRecvListener concurrently with Create*Channel or another setter. Production call-site search found setup calls and tests only."
+      },
+      "review_item_id": "1fee3a1da2302de95846358305a7b7e0c64b2241d2e1a0e831a2f58c08167cd7:holdout",
+      "root_cause_group": "RC-STREAM-LISTENER",
+      "status": "unknown"
+    }
+  ],
+  "kind": "a_truth_01_failures_unknowns",
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1",
+  "unknown_or_candidate_count": 13
+}

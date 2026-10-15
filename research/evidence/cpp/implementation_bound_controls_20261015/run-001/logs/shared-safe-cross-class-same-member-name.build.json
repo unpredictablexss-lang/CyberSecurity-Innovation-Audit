@@ -1,0 +1,26 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "clang++",
+      "-std=c++17",
+      "-g",
+      "-O1",
+      "-fno-omit-frame-pointer",
+      "-pthread",
+      "-no-pie",
+      "-fsanitize=thread",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp",
+      "-o",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-detector-controls-impl-20261015/run-001/shared-safe-cross-class-same-member-name/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+    "exit_code": 0,
+    "elapsed_seconds": 3.691712635000016,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": "ohscanner.a-exp-01-model-binding-v1",
+  "experiment_id": "A-EXP-01",
+  "binding_id": "A-EXP-01-MODEL-BINDING-PENDING-20261015",
+  "status": "unbound_execution_blocked",
+  "execution": {
+    "model_calls_executed": 0,
+    "model_results_generated": false,
+    "contract_only": true
+  },
+  "model": {
+    "provider": null,
+    "model_name": null,
+    "model_version": null,
+    "api_version": null,
+    "api_endpoint": null,
+    "endpoint_kind": null
+  },
+  "data_processing": {
+    "terms_reference": null,
+    "terms_version": null,
+    "review_status": "not_reviewed",
+    "data_classes": [],
+    "retention": null,
+    "training_use": null,
+    "region": null,
+    "truth_or_sealed_data_allowed": false
+  },
+  "pricing": {
+    "pricing_record_id": null,
+    "currency": null,
+    "input_token_unit_price": null,
+    "output_token_unit_price": null,
+    "effective_from": null,
+    "source_reference": null,
+    "source_sha256": null,
+    "reviewed_by": null
+  },
+  "approval": {
+    "authorizer_id": null,
+    "authorizer_role": null,
+    "authorization_reference": "A-EXP-01-PREFLIGHT-UNBLOCK defines the contract only; no provider/model execution was authorized.",
+    "authorized_at": null,
+    "execution_authorized": false
+  },
+  "required_before_bound_status": [
+    "exact provider/model_name/model_version/api_version/api_endpoint/endpoint_kind",
+    "approved data-processing terms, data classes, retention, training use, region, and truth/sealed exclusion",
+    "pricing record ID, currency, unit prices, effective date, source reference/hash, and reviewer",
+    "authorizer identity/role/reference/time and explicit execution authorization"
+  ],
+  "rule": "An unbound or pending record validates as a contract but leaves R1/R2 blocked. A bound record must contain every exact value; null placeholders and silent substitutions are invalid."
+}

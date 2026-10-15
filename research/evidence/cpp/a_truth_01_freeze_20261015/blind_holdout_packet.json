@@ -1,0 +1,806 @@
+{
+  "count": 34,
+  "excluded_from_packet": [
+    "historical review status",
+    "root-cause group",
+    "model output",
+    "tool warning",
+    "candidate ID"
+  ],
+  "freeze_statement": "Frozen before labels, historical review statuses, model outputs or tool warning labels are emitted in this package.",
+  "generated_at": "2026-10-15T12:52:35+08:00",
+  "inputs": {
+    "holdout_manifest_sha256": "c014f96a356a5671e6afd545e518122099c6173a7d65947ef083722741fdd30a",
+    "review_ledger_sha256": "6fc11cc43cd653cad449022ae16a3d5a2b110e353065d2ae53a13738f97f5404"
+  },
+  "items": [
+    {
+      "blind_item_id": "0af2d9aeb4c7067e",
+      "component": "window_window_manager",
+      "reported_excerpt": "58:     void OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const override;\n59: };\n60: \n61: /*\n62:  * MoveDragController is the class which is used to handle move or drag floating window\n63:  */\n64: class MoveDragController : public RefBase {\n65: public:\n66:     MoveDragController() : windowProperty_(new WindowProperty()), moveDragProperty_(new MoveDragProperty())\n67:     {\n68:         vsyncCallback_->onCallback =\n69:             [this](int64_t timeStamp, int64_t _) { this->OnReceiveVsync(timeStamp); };\n70:     }\n71:     ~MoveDragController() = default;\n72: \n73:     bool Init();\n74:     void Stop();\n75:     void HandleReadyToMoveOrDrag(uint32_t windowId, sptr<WindowProperty>& windowProperty,\n76:         sptr<MoveDragProperty>& moveDragProperty);\n77:     void HandleEndUpMovingOrDragging(uint32_t windowId);\n78:     void HandleWindowRemovedOrDestroyed(uint32_t windowId);",
+      "reported_excerpt_lines": [
+        58,
+        78
+      ],
+      "reported_excerpt_sha256": "a7bbbd330d4156e23c683ddb9b72718b3064e47bec1a1144d4c88de2494103a2",
+      "source_identity": {
+        "column": 9,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wmserver/include/drag_controller.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 68,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "d0fcbe8d24b7b47d83e2bf6fcf65954aac3e4428",
+        "source_sha256": "9e59f4470eb1d59efaa1b12643d579b4f5315dc69a61250fbf3a05823f2efa23",
+        "symbol": "vsyncCallback_"
+      }
+    },
+    {
+      "blind_item_id": "10114babc7a387c3",
+      "component": "window_window_manager",
+      "reported_excerpt": "22: #include \"wm_common.h\"\n23: \n24: namespace OHOS {\n25: namespace Rosen {\n26: \n27: class JsFloatViewListener : public IFvStateChangeObserver,\n28:                             public IFvRectChangeObserver,\n29:                             public IFvLimitsChangeObserver {\n30: public:\n31:     JsFloatViewListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n32:         : env_(env), jsCallBack_(callback) {}\n33:     ~JsFloatViewListener() override;\n34:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n35: \n36:     void OnStateChange(const FloatViewState& state, const std::string& stopReason) override;\n37:     void OnRectangleChange(const Rect& window, double scale, const std::string& reason) override;\n38:     void OnLimitsChange(const FloatViewLimits& limits) override;\n39: \n40: private:\n41:     napi_env env_ = nullptr;\n42:     std::shared_ptr<NativeReference> jsCallBack_ = nullptr;",
+      "reported_excerpt_lines": [
+        22,
+        42
+      ],
+      "reported_excerpt_sha256": "6813c9320d1c86b94c7b372e17ef9f9cdd6227a778558b960361ea9f83f8715a",
+      "source_identity": {
+        "column": 22,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/kits/napi/float_view_napi/js_float_view_listener.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 32,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "8c6a9f3774155f25d1deb5f431faef5ca26f5f1f",
+        "source_sha256": "fe3710593c477a3c4e450eee87e8ab89267a0312738bacece7f34686d7fa2e1b",
+        "symbol": "jsCallBack_"
+      }
+    },
+    {
+      "blind_item_id": "1db8e55f9c24904a",
+      "component": "distributeddatamgr_kv_store",
+      "reported_excerpt": "55: class ExtensionContext : public ContextImpl {\n56: public:\n57:     ExtensionContext() = default;\n58:     virtual ~ExtensionContext() = default;\n59: \n60:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n61:         return abilityInfo_;\n62:     }\n63: \n64:     void SetAbilityInfo(const std::shared_ptr<AppExecFwk::AbilityInfo> &abilityInfo) {\n65:         abilityInfo_ = abilityInfo;\n66:     }\n67: \n68:     using SelfType = ExtensionContext;\n69:     static const size_t CONTEXT_TYPE_ID;\n70: \n71: protected:\n72:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n73: };\n74: \n75: class AbilityContext : public Context {",
+      "reported_excerpt_lines": [
+        55,
+        75
+      ],
+      "reported_excerpt_sha256": "0e057d34d4967a4d5ed4b977d76c4d9f07ec28f9068d81d984a3e272e2adad2c",
+      "source_identity": {
+        "column": 9,
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+        "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "line": 65,
+        "operation": "write",
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "repository_remote": "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+        "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+        "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+        "symbol": "abilityInfo_"
+      }
+    },
+    {
+      "blind_item_id": "231e66c1099e69e6",
+      "component": "window_window_manager",
+      "reported_excerpt": "279:             return false;\n280:         }\n281:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n282:             return false;\n283:         }\n284: \n285:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n286:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n287:             return false;\n288:         }\n289:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n290:             return false;\n291:         }\n292:         return true;\n293:     }\n294: \n295:     static WindowCreateParams* Unmarshalling(Parcel& parcel)\n296:     {\n297:         auto windowCreateParams = std::make_unique<WindowCreateParams>();\n298:         windowCreateParams->animationParams =\n299:             std::shared_ptr<StartAnimationOptions>(parcel.ReadParcelable<StartAnimationOptions>());",
+      "reported_excerpt_lines": [
+        279,
+        299
+      ],
+      "reported_excerpt_sha256": "82ca4705acf5118a6e662032c6bc553bccbcff6d9cdc261fe4c57c77caf83a37",
+      "source_identity": {
+        "column": 56,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "previewer/include/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 289,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "symbol": "excludeFromRecent"
+      }
+    },
+    {
+      "blind_item_id": "386127263144d5e5",
+      "component": "window_window_manager",
+      "reported_excerpt": "63:         return captureErrorCode_;\n64:     }\n65:  \n66:     std::vector<std::shared_ptr<Media::PixelMap>> GetHDRResult(long timeOut)\n67:     {\n68:         std::unique_lock <std::mutex> lock(mutex_);\n69:         if (!DmUtils::safe_wait_for(conditionVariable_, lock,\n70:             std::chrono::milliseconds(timeOut), [this] { return IsReady(); })) {\n71:             TLOGE(WmsLogTag::DEFAULT, \"wait for %{public}ld, timeout.\", timeOut);\n72:         }\n73:         return { pixelMap_, hdrPixelMap_ };\n74:     }\n75: \n76: protected:\n77:     void Call(std::shared_ptr<Media::PixelMap> pixelmap) override\n78:     {\n79:         if (!flag_) {\n80:             pixelMap_ = pixelmap;\n81:             flag_ = true;\n82:         }\n83:     }",
+      "reported_excerpt_lines": [
+        63,
+        83
+      ],
+      "reported_excerpt_sha256": "a18fc1b29c2bde836aaa8d7ed61a262da623c3dd0ea5e52f4bff733d2bb19ff4",
+      "source_identity": {
+        "column": 18,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "utils/include/surface_capture_future.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 73,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+        "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+        "symbol": "pixelMap_"
+      }
+    },
+    {
+      "blind_item_id": "3a45b9fe204c40b5",
+      "component": "window_window_manager",
+      "reported_excerpt": "43: }\n44: \n45: const int32_t UIEFFECT_INVALID_ID = -1;\n46: class UIEffectParams : public Parcelable {\n47: public:\n48:     bool Marshalling(Parcel& parcel) const override;\n49:     static UIEffectParams* Unmarshalling(Parcel& parcel);\n50: \n51:     bool IsEmpty()\n52:     {\n53:         return backgroundFilter_ == nullptr && effect_ == nullptr;\n54:     }\n55: \n56:     napi_status ConvertToJsValue(napi_env env, napi_value& val);\n57:     napi_status ConvertFromJsValue(napi_env env, napi_value val);\n58: \n59: private:\n60:     std::shared_ptr<Filter> backgroundFilter_ = nullptr;\n61:     std::shared_ptr<VisualEffect> effect_ = nullptr;\n62: };\n63: } // namespace OHOS::Rosen",
+      "reported_excerpt_lines": [
+        43,
+        63
+      ],
+      "reported_excerpt_sha256": "ae1fffe6b1bf94554ec5a4ae704f2e33f109d3d46b845feaf364503fb6bc1e5f",
+      "source_identity": {
+        "column": 48,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "utils/include/ui_effect_controller_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 53,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+        "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+        "symbol": "effect_"
+      }
+    },
+    {
+      "blind_item_id": "3a820a2a793a7841",
+      "component": "security_access_token",
+      "reported_excerpt": "62: #endif\n63:     void SetErrorCode(int32_t errcode)\n64:     {\n65:         result.errorCode = errcode;\n66:     }\n67: };\n68: \n69: struct RequestAsyncContextHandle {\n70:     explicit RequestAsyncContextHandle(std::shared_ptr<RequestAsyncContext>& requestAsyncContext)\n71:     {\n72:         asyncContextPtr = requestAsyncContext;\n73:     }\n74: \n75:     std::shared_ptr<RequestAsyncContext> asyncContextPtr;\n76: };\n77: \n78: class RequestAsyncInstanceControl {\n79:     public:\n80:         static void AddCallbackByInstanceId(std::shared_ptr<RequestAsyncContext>& asyncContext);\n81:         static void ExecCallback(int32_t id);\n82:         static void CheckDynamicRequest(std::shared_ptr<RequestAsyncContext>& asyncContext, bool& isDynamic);",
+      "reported_excerpt_lines": [
+        62,
+        82
+      ],
+      "reported_excerpt_sha256": "4341bab8fca528d845f9b916b2efca132b99436111fe159005dd1116984f8b9a",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 72,
+        "operation": "write",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+        "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+        "symbol": "asyncContextPtr"
+      }
+    },
+    {
+      "blind_item_id": "3c2f768e8c8b085c",
+      "component": "window_window_manager",
+      "reported_excerpt": "31:     ~WindowCommonEvent();\n32:     void SubscriberEvent();\n33:     void UnSubscriberEvent();\n34:     void OnReceiveEvent(const EventFwk::CommonEventData& data);\n35: \n36: private:\n37:     class EventSubscriber : public EventFwk::CommonEventSubscriber {\n38:     public:\n39:         EventSubscriber(const EventFwk::CommonEventSubscribeInfo& subscriberInfo,\n40:             const std::shared_ptr<WindowCommonEvent>& eventHandler)\n41:             : EventFwk::CommonEventSubscriber(subscriberInfo), eventHandler_(eventHandler) {};\n42:         ~EventSubscriber() = default;\n43:         void OnReceiveEvent(const EventFwk::CommonEventData& data) override\n44:         {\n45:             eventHandler_->OnReceiveEvent(data);\n46:         }\n47:         \n48:     private:\n49:         std::shared_ptr<WindowCommonEvent> eventHandler_;\n50:     };\n51:     void SubscriberEventInner(int retry);",
+      "reported_excerpt_lines": [
+        31,
+        51
+      ],
+      "reported_excerpt_sha256": "873fdf81b52908e5177583875d845cf37b16632229fb157b56c07617f3719c62",
+      "source_identity": {
+        "column": 64,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "wmserver/include/window_common_event.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 41,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "40fbde49afe414ccb8efd625d05b12a1bc71daae",
+        "source_sha256": "2ff4b5f81e9305bb595477281b49ff744d516c90ac962e4c0baf8f34416eb9af",
+        "symbol": "eventHandler_"
+      }
+    },
+    {
+      "blind_item_id": "4017f6c91a0ac7d6",
+      "component": "security_access_token",
+      "reported_excerpt": "105:     void OnDestroy();\n106:     void ReleaseOrErrorHandle(int32_t code);\n107: \n108: private:\n109:     int32_t sessionId_ = 0;\n110:     std::shared_ptr<RequestAsyncContext> reqContext_ = nullptr;\n111: };\n112: \n113: class AuthorizationResult : public Security::AccessToken::TokenCallbackStub {\n114: public:\n115:     explicit AuthorizationResult(const std::shared_ptr<RequestAsyncContext>& data) : data_(data) {}\n116:     ~AuthorizationResult() override = default;\n117:     void GrantResultsCallback(const std::vector<std::string>& permissions,\n118:         const std::vector<int>& grantResults) override;\n119: \n120: private:\n121:     std::shared_ptr<RequestAsyncContext> data_ = nullptr;\n122: };\n123: \n124: class RegisterPermStateChangeScopePtr : public std::enable_shared_from_this<RegisterPermStateChangeScopePtr>,\n125:     public PermStateChangeCallbackCustomize {",
+      "reported_excerpt_lines": [
+        105,
+        125
+      ],
+      "reported_excerpt_sha256": "321d28d061402adcec72d6af0abcc939cd7b209df1935c51d89535a1b653b57f",
+      "source_identity": {
+        "column": 86,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/cj/accesstoken/include/at_manager_impl.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 115,
+        "operation": "read",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "93c786e28ddd7dc390dbe6a2f24c784cb2f9a872",
+        "source_sha256": "287d462edbeb4376031415b0e7171d409f04e4772ab819ad882341a9669a5cb1",
+        "symbol": "data_"
+      }
+    },
+    {
+      "blind_item_id": "42ab10ddfefaf9f8",
+      "component": "window_window_manager",
+      "reported_excerpt": "251: \n252:     /**\n253:      * @brief Whether application-defined window size limits are allowed to exceed system limits.\n254:      */\n255:     bool isWindowLimitsForcible = false;\n256:     bool minimizeOnStart = false;\n257: \n258:     // LCOV_EXCL_START\n259:     bool Marshalling(Parcel& parcel) const override\n260:     {\n261:         if (!parcel.WriteParcelable(animationParams.get())) {\n262:             return false;\n263:         }\n264: \n265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n266:             return false;\n267:         }\n268: \n269:         bool hasNeedAnimation = (needAnimation != nullptr);\n270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n271:             return false;",
+      "reported_excerpt_lines": [
+        251,
+        271
+      ],
+      "reported_excerpt_sha256": "9fe73df770593e4e832f8b620da8b8e978f71410d7f696706342865204999149",
+      "source_identity": {
+        "column": 37,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 261,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "symbol": "animationParams"
+      }
+    },
+    {
+      "blind_item_id": "450e759a0210137d",
+      "component": "window_window_manager",
+      "reported_excerpt": "63:         return captureErrorCode_;\n64:     }\n65:  \n66:     std::vector<std::shared_ptr<Media::PixelMap>> GetHDRResult(long timeOut)\n67:     {\n68:         std::unique_lock <std::mutex> lock(mutex_);\n69:         if (!DmUtils::safe_wait_for(conditionVariable_, lock,\n70:             std::chrono::milliseconds(timeOut), [this] { return IsReady(); })) {\n71:             TLOGE(WmsLogTag::DEFAULT, \"wait for %{public}ld, timeout.\", timeOut);\n72:         }\n73:         return { pixelMap_, hdrPixelMap_ };\n74:     }\n75: \n76: protected:\n77:     void Call(std::shared_ptr<Media::PixelMap> pixelmap) override\n78:     {\n79:         if (!flag_) {\n80:             pixelMap_ = pixelmap;\n81:             flag_ = true;\n82:         }\n83:     }",
+      "reported_excerpt_lines": [
+        63,
+        83
+      ],
+      "reported_excerpt_sha256": "a18fc1b29c2bde836aaa8d7ed61a262da623c3dd0ea5e52f4bff733d2bb19ff4",
+      "source_identity": {
+        "column": 29,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "utils/include/surface_capture_future.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 73,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "5554d63b22a4de01654c415717b13e9579ba9fdf",
+        "source_sha256": "6ddefa22004292cbb0d771f76fc317864493478b2f6366be56c259ff75a57fb7",
+        "symbol": "hdrPixelMap_"
+      }
+    },
+    {
+      "blind_item_id": "65c04b5909f4a792",
+      "component": "window_window_manager",
+      "reported_excerpt": "23: #include \"window_histogram_management.h\"\n24: \n25: \n26: namespace OHOS {\n27: namespace Rosen {\n28: class JsFbWindowListener : public IFbLifeCycle,\n29:                              public IFbClickObserver,\n30:                              public IFbDestroyObserver {\n31: public:\n32:     JsFbWindowListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n33:         : env_(env), jsCallBack_(callback) {}\n34:     ~JsFbWindowListener() override;\n35:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n36:     void OnFloatingBallStart() override;\n37:     void OnFloatingBallStop() override;\n38: \n39:     void OnClickEvent() override;\n40:     void OnDestroyEvent(const std::string& reason) override;\n41: \n42: private:\n43:     void OnFbListenerCallback(const FloatingBallState& state);",
+      "reported_excerpt_lines": [
+        23,
+        43
+      ],
+      "reported_excerpt_sha256": "7742d9e6c86e64bd11225ade35fa02e29378a785deced1ab42af1fa78b210560",
+      "source_identity": {
+        "column": 22,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/kits/napi/floating_ball_napi/js_fb_window_listener.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 33,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "26e4a721b1f126e33af5c9fba7c908702ea49dbd",
+        "source_sha256": "b2de64e2e5bb197f96b1d7693dbe7aca4c5966cd31c9133b17f412c3615a40bc",
+        "symbol": "jsCallBack_"
+      }
+    },
+    {
+      "blind_item_id": "6a9bc61e60db63dd",
+      "component": "window_window_manager",
+      "reported_excerpt": "22: \n23: namespace OHOS {\n24: namespace Rosen {\n25: class JsPiPWindowListener : public IPiPLifeCycle,\n26:                             public IPiPActionObserver,\n27:                             public IPiPControlObserver,\n28:                             public IPiPWindowSize,\n29:                             public IPiPActiveStatusObserver {\n30: public:\n31:     JsPiPWindowListener(napi_env env, const std::shared_ptr<NativeReference>& callback)\n32:         : env_(env), jsCallBack_(callback) {}\n33:     ~JsPiPWindowListener();\n34:     std::shared_ptr<NativeReference> GetCallbackRef() const;\n35:     void OnPreparePictureInPictureStart(PiPStateChangeReason reason) override;\n36:     void OnPictureInPictureStart(PiPStateChangeReason reason) override;\n37:     void OnPreparePictureInPictureStop(PiPStateChangeReason reason) override;\n38:     void OnPictureInPictureStop(PiPStateChangeReason reason) override;\n39:     void OnPictureInPictureOperationError(int32_t errorCode) override;\n40:     void OnRestoreUserInterface(PiPStateChangeReason reason) override;\n41:     void OnActionEvent(const std::string& actionEvent, int32_t statusCode) override;\n42:     void OnControlEvent(PiPControlType controlType, PiPControlStatus statusCode) override;",
+      "reported_excerpt_lines": [
+        22,
+        42
+      ],
+      "reported_excerpt_sha256": "a9c61e3945e48ee1e5b94d4ea23b162906bc77b32d965d7520cedea85007f00f",
+      "source_identity": {
+        "column": 22,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/kits/napi/picture_in_picture_napi/js_pip_window_listener.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 32,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "29db5c04bd534bcd029d702e8df7867573b6f35d",
+        "source_sha256": "20706185efad40245b844eb5b1397da2de26a1f42b5d6dc4719ea5520f300348",
+        "symbol": "jsCallBack_"
+      }
+    },
+    {
+      "blind_item_id": "82813f737e22aa93",
+      "component": "security_access_token",
+      "reported_excerpt": "53:     bool releaseFlag = false;\n54: #ifdef EVENTHANDLER_ENABLE\n55:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n56: #endif\n57:     int32_t contextType_ = static_cast<int32_t>(REQUEST_PERMISSION_ON_SETTING);\n58: };\n59: \n60: struct RequestOnSettingAsyncContextHandle {\n61:     explicit RequestOnSettingAsyncContextHandle(std::shared_ptr<RequestPermOnSettingAsyncContext>& requestAsyncContext)\n62:     {\n63:         asyncContextPtr = requestAsyncContext;\n64:     }\n65: \n66:     std::shared_ptr<RequestPermOnSettingAsyncContext> asyncContextPtr;\n67: };\n68: \n69: class RequestOnSettingAsyncInstanceControl {\n70:     public:\n71:         static void AddCallbackByInstanceId(std::shared_ptr<RequestPermOnSettingAsyncContext>& asyncContext);\n72:         static void ExecCallback(int32_t id);\n73:         static void CheckDynamicRequest(",
+      "reported_excerpt_lines": [
+        53,
+        73
+      ],
+      "reported_excerpt_sha256": "4a16fc1767b211bafca6eecc587205d9660988b2f86e0d0006545b20d59aec27",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission_on_setting.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 63,
+        "operation": "write",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "7828aceaf6d50c98c2b70d49f7ea17bda654a982",
+        "source_sha256": "c1c33169daa4d39acf5ef5f42e72c867f2d1a175e59e4917b54d1abc6b313560",
+        "symbol": "asyncContextPtr"
+      }
+    },
+    {
+      "blind_item_id": "8c45d9923df8126b",
+      "component": "window_window_manager",
+      "reported_excerpt": "43: }\n44: \n45: const int32_t UIEFFECT_INVALID_ID = -1;\n46: class UIEffectParams : public Parcelable {\n47: public:\n48:     bool Marshalling(Parcel& parcel) const override;\n49:     static UIEffectParams* Unmarshalling(Parcel& parcel);\n50: \n51:     bool IsEmpty()\n52:     {\n53:         return backgroundFilter_ == nullptr && effect_ == nullptr;\n54:     }\n55: \n56:     napi_status ConvertToJsValue(napi_env env, napi_value& val);\n57:     napi_status ConvertFromJsValue(napi_env env, napi_value val);\n58: \n59: private:\n60:     std::shared_ptr<Filter> backgroundFilter_ = nullptr;\n61:     std::shared_ptr<VisualEffect> effect_ = nullptr;\n62: };\n63: } // namespace OHOS::Rosen",
+      "reported_excerpt_lines": [
+        43,
+        63
+      ],
+      "reported_excerpt_sha256": "ae1fffe6b1bf94554ec5a4ae704f2e33f109d3d46b845feaf364503fb6bc1e5f",
+      "source_identity": {
+        "column": 16,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "utils/include/ui_effect_controller_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 53,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "eae1ac64199017f10cff98cc2a470a18b7205b41",
+        "source_sha256": "1864f6e38e779147011fadcd468da3e2594b3f883f30366f8a7e85b1ac0251cb",
+        "symbol": "backgroundFilter_"
+      }
+    },
+    {
+      "blind_item_id": "93c86eb98617f12f",
+      "component": "window_window_manager",
+      "reported_excerpt": "247:      */\n248:     bool isWindowLimitsForcible = false;\n249:     bool minimizeOnStart = false;\n250: \n251:     bool Marshalling(Parcel& parcel) const override\n252:     {\n253:         if (!parcel.WriteParcelable(animationParams.get())) {\n254:             return false;\n255:         }\n256: \n257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n258:             return false;\n259:         }\n260: \n261:         bool hasNeedAnimation = (needAnimation != nullptr);\n262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n263:             return false;\n264:         }\n265:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n266:             return false;\n267:         }",
+      "reported_excerpt_lines": [
+        247,
+        267
+      ],
+      "reported_excerpt_sha256": "88c27750672fbdadeb67d2f54dad98929729cdfeb3b9508d2698b6794fddedc9",
+      "source_identity": {
+        "column": 37,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "previewer/include/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 257,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "symbol": "animationSystemParams"
+      }
+    },
+    {
+      "blind_item_id": "957864cba1188d3f",
+      "component": "communication_dsoftbus",
+      "reported_excerpt": "57: \n58:         void OnRippleStats(const TrafficStats *data) override\n59:         {\n60:             listener_->OnRippleStats(data);\n61:         }\n62: \n63:     private:\n64:         std::shared_ptr<IStreamManagerListener> listener_ = nullptr;\n65:     };\n66: \n67:     explicit StreamManager(std::shared_ptr<IStreamManagerListener> streamListener) : streamListener_(streamListener) {}\n68:     StreamManager() = delete;\n69:     virtual ~StreamManager() = default;\n70: \n71:     int32_t CreateStreamClientChannel(IpAndPort &local, IpAndPort remote, Proto protocol,\n72:         int32_t streamType, std::pair<uint8_t*, uint32_t> sessionKey) override;\n73: \n74:     int32_t CreateStreamServerChannel(IpAndPort &local, Proto protocol, int32_t streamType,\n75:         std::pair<uint8_t*, uint32_t> sessionKey) override;\n76: \n77:     bool DestroyStreamDataChannel() override;",
+      "reported_excerpt_lines": [
+        57,
+        77
+      ],
+      "reported_excerpt_sha256": "3cd0784a78ad1bd953d9577ffb65924422f3896172127c0a93df92e0f097d192",
+      "source_identity": {
+        "column": 86,
+        "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+        "file": "sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h",
+        "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+        "line": 67,
+        "operation": "read",
+        "repository": "openharmony/communication_dsoftbus",
+        "repository_remote": "https://gitee.com/openharmony/communication_dsoftbus.git",
+        "source_git_blob_oid": "1f8eb2e331021766be3485a3b56746c074be4687",
+        "source_sha256": "66a2ddb0186f92435d1dbc4e93f8f5161461d69b5661aa33ac98f8ebe23c8100",
+        "symbol": "streamListener_"
+      }
+    },
+    {
+      "blind_item_id": "95d3ceff9ab8e444",
+      "component": "security_access_token",
+      "reported_excerpt": "51:     bool releaseFlag = false;\n52: #ifdef EVENTHANDLER_ENABLE\n53:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n54: #endif\n55:     int32_t contextType_ = static_cast<int32_t>(OPEN_PERMISSION_ON_SETTING);\n56: };\n57: \n58: struct OpenOnSettingAsyncContextHandle {\n59:     explicit OpenOnSettingAsyncContextHandle(std::shared_ptr<OpenPermOnSettingAsyncContext>& openAsyncContext)\n60:     {\n61:         asyncContextPtr = openAsyncContext;\n62:     }\n63: \n64:     std::shared_ptr<OpenPermOnSettingAsyncContext> asyncContextPtr;\n65: };\n66: \n67: class OpenOnSettingAsyncInstanceControl {\n68:     public:\n69:         static void AddCallbackByInstanceId(std::shared_ptr<OpenPermOnSettingAsyncContext>& asyncContext);\n70:         static void ExecCallback(int32_t id);\n71:         static void CheckDynamicRequest(",
+      "reported_excerpt_lines": [
+        51,
+        71
+      ],
+      "reported_excerpt_sha256": "440c5e2e55ced4510fda7e557d890d082f92323bb181e7c5d0c37770bbc757b8",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_open_permission_on_setting.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 61,
+        "operation": "write",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "2c5c6dcf02cf1ae7e44ff7538055057ba4cf33f9",
+        "source_sha256": "01ff052ab114b27d548c974d522141e6fec8bb142b5e0f4dd27366f5711153b0",
+        "symbol": "asyncContextPtr"
+      }
+    },
+    {
+      "blind_item_id": "962aecd1d21c22f8",
+      "component": "window_window_manager",
+      "reported_excerpt": "204:  */\n205: struct StartAnimationSystemOptions : public Parcelable {\n206:     AnimationType animationType = AnimationType::FADE_IN_OUT;\n207:     std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n208: \n209:     bool Marshalling(Parcel& parcel) const override\n210:     {\n211:         if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n212:             return false;\n213:         }\n214:         if (!parcel.WriteParcelable(animationConfig.get())) {\n215:             return false;\n216:         }\n217:         return true;\n218:     }\n219: \n220:     static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n221:     {\n222:         StartAnimationSystemOptions* startAnimationSystemOptions = new StartAnimationSystemOptions();\n223:         uint32_t animationType = 0;\n224:         if (!parcel.ReadUint32(animationType)) {",
+      "reported_excerpt_lines": [
+        204,
+        224
+      ],
+      "reported_excerpt_sha256": "16534a784f3dc853f72f800beb9a375445e49fb69f12a5a85deb78bd31d57917",
+      "source_identity": {
+        "column": 37,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "previewer/include/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 214,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "symbol": "animationConfig"
+      }
+    },
+    {
+      "blind_item_id": "994d5f45fbf5a078",
+      "component": "security_access_token",
+      "reported_excerpt": "107: struct ResultCallback {\n108:     std::vector<std::string> permissions;\n109:     std::vector<int32_t> grantResults;\n110:     std::vector<int32_t> errorReasons;\n111:     std::vector<bool> dialogShownResults;\n112:     std::shared_ptr<RequestAsyncContext> data = nullptr;\n113: };\n114: \n115: class AuthorizationResult : public Security::AccessToken::TokenCallbackStub {\n116: public:\n117:     AuthorizationResult(std::shared_ptr<RequestAsyncContext>& data) : data_(data) {}\n118:     ~AuthorizationResult() override = default;\n119: \n120:     void GrantResultsCallback(const std::vector<std::string>& permissionList,\n121:         const std::vector<int>& grantResults) override;\n122:     void WindowShownCallback() override;\n123: \n124: private:\n125:     std::shared_ptr<RequestAsyncContext> data_ = nullptr;\n126: };\n127: ",
+      "reported_excerpt_lines": [
+        107,
+        127
+      ],
+      "reported_excerpt_sha256": "a24ef8a1fcf1c0693c44ac7ce331f2916c0979aee6217237bd7fa937d382ef9e",
+      "source_identity": {
+        "column": 71,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 117,
+        "operation": "read",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "b6adec200d1500ae4148a5a801364fa38e81a99a",
+        "source_sha256": "ffa53ac8eb6aadafce4755afd49c2efc06164cc755e3234ba2492f440ff7a7ed",
+        "symbol": "data_"
+      }
+    },
+    {
+      "blind_item_id": "9f8cbcfeae2e30ee",
+      "component": "window_window_manager",
+      "reported_excerpt": "287:             return false;\n288:         }\n289:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n290:             return false;\n291:         }\n292: \n293:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n294:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n295:             return false;\n296:         }\n297:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n298:             return false;\n299:         }\n300:         return true;\n301:     }\n302:     // LCOV_EXCL_STOP\n303: \n304:     static WindowCreateParams* Unmarshalling(Parcel& parcel)\n305:     {\n306:         auto windowCreateParams = std::make_unique<WindowCreateParams>();\n307:         windowCreateParams->animationParams =",
+      "reported_excerpt_lines": [
+        287,
+        307
+      ],
+      "reported_excerpt_sha256": "4a5fa4b99a06d48fe24ca338e3e7bd95e02137ad3cb2f3b1f1a12be696a5aed4",
+      "source_identity": {
+        "column": 56,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 297,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "symbol": "excludeFromRecent"
+      }
+    },
+    {
+      "blind_item_id": "a14156617c863aa5",
+      "component": "window_window_manager",
+      "reported_excerpt": "271:         }\n272: \n273:         if (!parcel.WriteBool(minimizeOnStart)) {\n274:             return false;\n275:         }\n276: \n277:         bool hasExcludeFromDock = (excludeFromDock != nullptr);\n278:         if (!parcel.WriteBool(hasExcludeFromDock)) {\n279:             return false;\n280:         }\n281:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n282:             return false;\n283:         }\n284: \n285:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n286:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n287:             return false;\n288:         }\n289:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n290:             return false;\n291:         }",
+      "reported_excerpt_lines": [
+        271,
+        291
+      ],
+      "reported_excerpt_sha256": "4690322566dbb10e1d849d2ad698d08cb5371d30d3ff7caba49713a3050376f0",
+      "source_identity": {
+        "column": 54,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "previewer/include/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 281,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "symbol": "excludeFromDock"
+      }
+    },
+    {
+      "blind_item_id": "a65857d3123fb7ee",
+      "component": "security_access_token",
+      "reported_excerpt": "41:     std::shared_ptr<AbilityRuntime::UIExtensionContext> uiExtensionContext;\n42:     bool uiAbilityFlag = false;\n43:     bool releaseFlag = false;\n44:     std::function<void(RetDataBool)> callbackRef = nullptr;\n45: };\n46: \n47: struct RequestGlobalSwitchAsyncContextHandle {\n48:     explicit RequestGlobalSwitchAsyncContextHandle(\n49:         std::shared_ptr<RequestGlobalSwitchAsyncContext>& requestAsyncContext)\n50:     {\n51:         asyncContextPtr = requestAsyncContext;\n52:     }\n53: \n54:     std::shared_ptr<RequestGlobalSwitchAsyncContext> asyncContextPtr;\n55: };\n56: \n57: class SwitchOnSettingUICallback {\n58: public:\n59:     explicit SwitchOnSettingUICallback(const std::shared_ptr<RequestGlobalSwitchAsyncContext>& reqContext);\n60:     ~SwitchOnSettingUICallback();\n61:     void SetSessionId(int32_t sessionId);",
+      "reported_excerpt_lines": [
+        41,
+        61
+      ],
+      "reported_excerpt_sha256": "c56bbdcab198aab76fa94d3010688cf15b3c09eb47d7596ad163bfb3da0da21f",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/cj/accesstoken/include/request_global_switch_on_setting.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 51,
+        "operation": "write",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "5ee7e75ff720127386ef77cc515d979613ee81b5",
+        "source_sha256": "1e6804e8f930cab69885c4d8e493768ad2dc5ce33e7faa3e1a92d906e5b4e0b2",
+        "symbol": "asyncContextPtr"
+      }
+    },
+    {
+      "blind_item_id": "ac7762ff105a03f5",
+      "component": "update_updateservice",
+      "reported_excerpt": "17: #define STATUS_CACHE_H\n18: \n19: #include <cstdint>\n20: \n21: #include \"time_utils_proxy.h\"\n22: \n23: namespace OHOS {\n24: namespace UpdateEngine {\n25: class StatusCache {\n26: public:\n27:     StatusCache(std::shared_ptr<TimeUtilsProxy> timeUtilsProxy) : timeUtilsProxy_(timeUtilsProxy) {}\n28:     ~StatusCache() = default;\n29: \n30:     bool IsChecking();\n31:     void SetIsChecking(bool isChecking);\n32: \n33: private:\n34:     int64_t GetCurrentTime();\n35: \n36: private:\n37:     std::shared_ptr<TimeUtilsProxy> timeUtilsProxy_ = nullptr;",
+      "reported_excerpt_lines": [
+        17,
+        37
+      ],
+      "reported_excerpt_sha256": "5abd352c7bfbd0658d3a524dc79f5de6c574d27be98bdcb2cdda4b3451a69058",
+      "source_identity": {
+        "column": 67,
+        "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+        "file": "services/core/ability/status_cache/include/status_cache.h",
+        "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+        "line": 27,
+        "operation": "read",
+        "repository": "openharmony/update_updateservice",
+        "repository_remote": "https://github.com/openharmony/update_updateservice.git",
+        "source_git_blob_oid": "1ab7136b8fcc050976b33febff457fcc9fa04177",
+        "source_sha256": "cd9dbbd3a2e16405198c2e6bc63f8178d4c45106b5d8a31a00f713d0f66bc6d9",
+        "symbol": "timeUtilsProxy_"
+      }
+    },
+    {
+      "blind_item_id": "b29fe7cb06eb0d0a",
+      "component": "distributeddatamgr_kv_store",
+      "reported_excerpt": "71: protected:\n72:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n73: };\n74: \n75: class AbilityContext : public Context {\n76: public:\n77:     AbilityContext() = default;\n78:     virtual ~AbilityContext() = default;\n79: \n80:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n81:         return abilityInfo_;\n82:     }\n83: \n84: protected:\n85:     std::shared_ptr<AppExecFwk::AbilityInfo> abilityInfo_;\n86: };\n87: \n88: } // namespace AbilityRuntime\n89: } // namespace OHOS\n90: \n91: #endif // NAPI_INCLUDE_EXTENSION_CONTEXT_H",
+      "reported_excerpt_lines": [
+        71,
+        91
+      ],
+      "reported_excerpt_sha256": "56c69ce1ac7a95e18987fb74d22c1c2b11173aff9c9597c694df9aeadbd4519b",
+      "source_identity": {
+        "column": 16,
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+        "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "line": 81,
+        "operation": "read",
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "repository_remote": "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+        "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+        "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+        "symbol": "abilityInfo_"
+      }
+    },
+    {
+      "blind_item_id": "b5d8f22469020db7",
+      "component": "distributeddatamgr_kv_store",
+      "reported_excerpt": "51:     ContextImpl() = default;\n52:     virtual ~ContextImpl() = default;\n53: };\n54: \n55: class ExtensionContext : public ContextImpl {\n56: public:\n57:     ExtensionContext() = default;\n58:     virtual ~ExtensionContext() = default;\n59: \n60:     std::shared_ptr<AppExecFwk::AbilityInfo> GetAbilityInfo() const {\n61:         return abilityInfo_;\n62:     }\n63: \n64:     void SetAbilityInfo(const std::shared_ptr<AppExecFwk::AbilityInfo> &abilityInfo) {\n65:         abilityInfo_ = abilityInfo;\n66:     }\n67: \n68:     using SelfType = ExtensionContext;\n69:     static const size_t CONTEXT_TYPE_ID;\n70: \n71: protected:",
+      "reported_excerpt_lines": [
+        51,
+        71
+      ],
+      "reported_excerpt_sha256": "c2af1e38a5ab2695926b722f8b871e5fa051aea80951b3674f88a7647631ad65",
+      "source_identity": {
+        "column": 16,
+        "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+        "file": "kvstoremock/external_inner_kit/napi/include/extension_context.h",
+        "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+        "line": 61,
+        "operation": "read",
+        "repository": "openharmony/distributeddatamgr_kv_store",
+        "repository_remote": "https://gitee.com/openharmony/distributeddatamgr_kv_store.git",
+        "source_git_blob_oid": "6454f335e87e326ce97bfc405f15347e814aa700",
+        "source_sha256": "fa01c30d76b76bfaf6f4c927d506e8665ee14eae69b6eec6eb1be1134bd60458",
+        "symbol": "abilityInfo_"
+      }
+    },
+    {
+      "blind_item_id": "bf422299b34989ab",
+      "component": "window_window_manager",
+      "reported_excerpt": "255:     bool isWindowLimitsForcible = false;\n256:     bool minimizeOnStart = false;\n257: \n258:     // LCOV_EXCL_START\n259:     bool Marshalling(Parcel& parcel) const override\n260:     {\n261:         if (!parcel.WriteParcelable(animationParams.get())) {\n262:             return false;\n263:         }\n264: \n265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n266:             return false;\n267:         }\n268: \n269:         bool hasNeedAnimation = (needAnimation != nullptr);\n270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n271:             return false;\n272:         }\n273:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n274:             return false;\n275:         }",
+      "reported_excerpt_lines": [
+        255,
+        275
+      ],
+      "reported_excerpt_sha256": "d0b6b0eb8cd86cc9637d64ce23cbbe85352d653150e8f6e9bca7fafc89ca7d3e",
+      "source_identity": {
+        "column": 37,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 265,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "symbol": "animationSystemParams"
+      }
+    },
+    {
+      "blind_item_id": "d168939175a5048b",
+      "component": "window_window_manager",
+      "reported_excerpt": "279:         }\n280: \n281:         if (!parcel.WriteBool(minimizeOnStart)) {\n282:             return false;\n283:         }\n284: \n285:         bool hasExcludeFromDock = (excludeFromDock != nullptr);\n286:         if (!parcel.WriteBool(hasExcludeFromDock)) {\n287:             return false;\n288:         }\n289:         if (hasExcludeFromDock && !parcel.WriteBool(*excludeFromDock)) {\n290:             return false;\n291:         }\n292: \n293:         bool hasExcludeFromRecent = (excludeFromRecent != nullptr);\n294:         if (!parcel.WriteBool(hasExcludeFromRecent)) {\n295:             return false;\n296:         }\n297:         if (hasExcludeFromRecent && !parcel.WriteBool(*excludeFromRecent)) {\n298:             return false;\n299:         }",
+      "reported_excerpt_lines": [
+        279,
+        299
+      ],
+      "reported_excerpt_sha256": "d567f2c982f2895f72b8dacabddaf12e3b43e91420301d3c56fcc3753eaebbc1",
+      "source_identity": {
+        "column": 54,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 289,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "symbol": "excludeFromDock"
+      }
+    },
+    {
+      "blind_item_id": "d26e9ebe62c4a2df",
+      "component": "window_window_manager",
+      "reported_excerpt": "255:         }\n256: \n257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n258:             return false;\n259:         }\n260: \n261:         bool hasNeedAnimation = (needAnimation != nullptr);\n262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n263:             return false;\n264:         }\n265:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n266:             return false;\n267:         }\n268: \n269:         if (!parcel.WriteBool(isWindowLimitsForcible)) {\n270:             return false;\n271:         }\n272: \n273:         if (!parcel.WriteBool(minimizeOnStart)) {\n274:             return false;\n275:         }",
+      "reported_excerpt_lines": [
+        255,
+        275
+      ],
+      "reported_excerpt_sha256": "d09614397f4afbb6f726e6fa0f6b9addbc8a0c5882e700bd29fc6648046eddb0",
+      "source_identity": {
+        "column": 52,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "previewer/include/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 265,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "symbol": "needAnimation"
+      }
+    },
+    {
+      "blind_item_id": "da54bd7542f59a5e",
+      "component": "window_window_manager",
+      "reported_excerpt": "263:         }\n264: \n265:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n266:             return false;\n267:         }\n268: \n269:         bool hasNeedAnimation = (needAnimation != nullptr);\n270:         if (!parcel.WriteBool(hasNeedAnimation)) {\n271:             return false;\n272:         }\n273:         if (hasNeedAnimation && !parcel.WriteBool(*needAnimation)) {\n274:             return false;\n275:         }\n276: \n277:         if (!parcel.WriteBool(isWindowLimitsForcible)) {\n278:             return false;\n279:         }\n280: \n281:         if (!parcel.WriteBool(minimizeOnStart)) {\n282:             return false;\n283:         }",
+      "reported_excerpt_lines": [
+        263,
+        283
+      ],
+      "reported_excerpt_sha256": "4d7aee44991c1767221e139877e8d0ab6ff54443190270297291ca9ddf4d8e4a",
+      "source_identity": {
+        "column": 52,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 273,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "symbol": "needAnimation"
+      }
+    },
+    {
+      "blind_item_id": "e1d20f6b88a753b5",
+      "component": "security_access_token",
+      "reported_excerpt": "58: #ifdef EVENTHANDLER_ENABLE\n59:     std::shared_ptr<AppExecFwk::EventHandler> handler_ = nullptr;\n60: #endif\n61:     int32_t contextType_ = static_cast<int32_t>(REQUEST_GLOBAL_SWITCH_ON_SETTING);\n62: };\n63: \n64: struct RequestGlobalSwitchAsyncContextHandle {\n65:     explicit RequestGlobalSwitchAsyncContextHandle(\n66:         std::shared_ptr<RequestGlobalSwitchAsyncContext>& requestAsyncContext)\n67:     {\n68:         asyncContextPtr = requestAsyncContext;\n69:     }\n70: \n71:     std::shared_ptr<RequestGlobalSwitchAsyncContext> asyncContextPtr;\n72: };\n73: \n74: class RequestGlobalSwitchAsyncInstanceControl {\n75:     public:\n76:         static void AddCallbackByInstanceId(std::shared_ptr<RequestGlobalSwitchAsyncContext>& asyncContext);\n77:         static void ExecCallback(int32_t id);\n78:         static void CheckDynamicRequest(",
+      "reported_excerpt_lines": [
+        58,
+        78
+      ],
+      "reported_excerpt_sha256": "df9c3c4ccddebc7ac2cc69baccba8b960b43e57e73ab1ba5b1d522415bef8cf5",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/js/napi/accesstoken/include/napi_request_global_switch_on_setting.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 68,
+        "operation": "write",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "bc968e7ce325261154cc42d57134516a94ae454d",
+        "source_sha256": "96085536e15127518f88dce54536c151531eca8ec19e7fb9bae370e01acd351d",
+        "symbol": "asyncContextPtr"
+      }
+    },
+    {
+      "blind_item_id": "e6de025685ebf29e",
+      "component": "window_window_manager",
+      "reported_excerpt": "243:     std::shared_ptr<bool> excludeFromRecent = nullptr;\n244: \n245:     /**\n246:      * @brief Whether application-defined window size limits are allowed to exceed system limits.\n247:      */\n248:     bool isWindowLimitsForcible = false;\n249:     bool minimizeOnStart = false;\n250: \n251:     bool Marshalling(Parcel& parcel) const override\n252:     {\n253:         if (!parcel.WriteParcelable(animationParams.get())) {\n254:             return false;\n255:         }\n256: \n257:         if (!parcel.WriteParcelable(animationSystemParams.get())) {\n258:             return false;\n259:         }\n260: \n261:         bool hasNeedAnimation = (needAnimation != nullptr);\n262:         if (!parcel.WriteBool(hasNeedAnimation)) {\n263:             return false;",
+      "reported_excerpt_lines": [
+        243,
+        263
+      ],
+      "reported_excerpt_sha256": "1482fc9ed9baeda9d053b47029db0b9b33b32bc1d932a6745ad8c344d25d06dc",
+      "source_identity": {
+        "column": 37,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "previewer/include/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 253,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "562b504ae819cd154f515bc264038f7f3cd3100c",
+        "source_sha256": "dd6c49709e1024485adf138a6994508a54861a757430b734be48f025927cb62e",
+        "symbol": "animationParams"
+      }
+    },
+    {
+      "blind_item_id": "f167eb459cf34373",
+      "component": "security_access_token",
+      "reported_excerpt": "39:     std::shared_ptr<AbilityRuntime::AbilityContext> abilityContext;\n40:     std::shared_ptr<AbilityRuntime::UIExtensionContext> uiExtensionContext;\n41:     bool uiAbilityFlag = false;\n42:     bool releaseFlag = false;\n43:     std::function<void(RetDataCArrI32)> callbackRef =  nullptr;\n44: };\n45: \n46: struct RequestOnSettingAsyncContextHandle {\n47:     explicit RequestOnSettingAsyncContextHandle(std::shared_ptr<RequestPermOnSettingAsyncContext>& requestAsyncContext)\n48:     {\n49:         asyncContextPtr = requestAsyncContext;\n50:     }\n51: \n52:     std::shared_ptr<RequestPermOnSettingAsyncContext> asyncContextPtr;\n53: };\n54: \n55: class PermissonOnSettingUICallback {\n56: public:\n57:     explicit PermissonOnSettingUICallback(const std::shared_ptr<RequestPermOnSettingAsyncContext>& reqContext);\n58:     ~PermissonOnSettingUICallback();\n59:     void SetSessionId(int32_t sessionId);",
+      "reported_excerpt_lines": [
+        39,
+        59
+      ],
+      "reported_excerpt_sha256": "5351144af80bf4440e564cc09f4057eccfcbef04168927e7b087b45b0843cbef",
+      "source_identity": {
+        "column": 9,
+        "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+        "file": "interfaces/kits/cj/accesstoken/include/request_permission_on_setting.h",
+        "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+        "line": 49,
+        "operation": "write",
+        "repository": "openharmony/security_access_token",
+        "repository_remote": "https://github.com/openharmony/security_access_token.git",
+        "source_git_blob_oid": "5ac2150911a4e2cc107ce1d28f0553c93bbe0512",
+        "source_sha256": "a8108746a4d3f7817bdf6e95e50df46d56f9cf6871d616abf214af4d0fc62450",
+        "symbol": "asyncContextPtr"
+      }
+    },
+    {
+      "blind_item_id": "f5bfa1480b3cb2d8",
+      "component": "window_window_manager",
+      "reported_excerpt": "210: struct StartAnimationSystemOptions : public Parcelable {\n211:     AnimationType animationType = AnimationType::FADE_IN_OUT;\n212:     std::shared_ptr<WindowAnimationOption> animationConfig = nullptr;\n213: \n214:     // LCOV_EXCL_START\n215:     bool Marshalling(Parcel& parcel) const override\n216:     {\n217:         if (!parcel.WriteUint32(static_cast<uint32_t>(animationType))) {\n218:             return false;\n219:         }\n220:         if (!parcel.WriteParcelable(animationConfig.get())) {\n221:             return false;\n222:         }\n223:         return true;\n224:     }\n225:     // LCOV_EXCL_STOP\n226: \n227:     static StartAnimationSystemOptions* Unmarshalling(Parcel& parcel)\n228:     {\n229:         StartAnimationSystemOptions* startAnimationSystemOptions = new StartAnimationSystemOptions();\n230:         uint32_t animationType = 0;",
+      "reported_excerpt_lines": [
+        210,
+        230
+      ],
+      "reported_excerpt_sha256": "486eab3c8c7e4326bdde8b0046a591ba3145c44e24c3571600bbdc6a4f22e152",
+      "source_identity": {
+        "column": 37,
+        "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+        "file": "interfaces/innerkits/wm/wm_animation_common.h",
+        "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+        "line": 220,
+        "operation": "read",
+        "repository": "openharmony/window_window_manager",
+        "repository_remote": "https://github.com/openharmony/window_window_manager.git",
+        "source_git_blob_oid": "3c325423cb185f8275e3eb62853ef9c16477aef9",
+        "source_sha256": "7e61564179c0428936b29d67d556b8c94b78a79849709aa3a807827a291acdcd",
+        "symbol": "animationConfig"
+      }
+    }
+  ],
+  "kind": "a_truth_01_blind_holdout_source_packet",
+  "reviewer": {
+    "id": "codex-a-truth-01-20261015",
+    "name": "Codex independent source-first reviewer"
+  },
+  "schema_version": "ohscanner.a-truth-01-blind-holdout-v1"
+}

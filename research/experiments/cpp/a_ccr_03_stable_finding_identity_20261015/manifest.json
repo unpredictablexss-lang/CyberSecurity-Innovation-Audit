@@ -1,0 +1,27 @@
+{
+  "generated": "2026-10-15T12:46:48.999057+08:00",
+  "inputs": {
+    "artifact_manifest": {
+      "path": "outputs/reports/a_cpp_fixed_rescan_sharedptr050_lifetime040_20261015/artifact_manifest.json",
+      "sha256": "483464735cab65c69e54a1cd3c42822d5a8acbc0c9fa88a5d96791af7034c60c"
+    },
+    "comparison": {
+      "path": "outputs/reports/a_cpp_fixed_rescan_sharedptr050_lifetime040_20261015/comparison/comparison.json",
+      "sha256": "c7da13895f4ed08abf19eadefdea871c1633bf9a3f15833567034129a69d62e4"
+    },
+    "reference_model": {
+      "path": "research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/identity_reference.py",
+      "sha256": "432054fcf382143cab2be27bc403d2228821f9344ef46275909b47c61f049b30"
+    }
+  },
+  "kind": "a-ccr-03-stable-finding-identity-experiment-manifest",
+  "outputs": {
+    "results.json": {
+      "sha256": "ded06ba2a9ffd9c55b817895b3d99b69afd573d8f001ade60bc2e683d23f1fe3"
+    },
+    "results.md": {
+      "sha256": "05a48985ee7b6535fe9ee555a8da79e9b071878659e6851cdb0e33e948125c4b"
+    }
+  },
+  "schema_version": 1
+}

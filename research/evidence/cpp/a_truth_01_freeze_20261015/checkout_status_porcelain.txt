@@ -1,0 +1,1009 @@
+ M .gitattributes
+ M .github/workflows/ci.yml
+ M .gitignore
+ M AGENTS.md
+ M PROGRAM_STATUS.md
+ M README.md
+ M benchmarks/historical/README.md
+ M benchmarks/historical/c_utils_singleton_uaf.json
+ M benchmarks/historical/communication_dsoftbus_null_deref.json
+ M benchmarks/historical/kernel_liteos_a_getgroups_oob.json
+ M benchmarks/perf_scale_corpus_2026-10-10.json
+ M benchmarks/tool_comparison/README.md
+ M "benchmarks/\346\200\247\350\203\275\350\247\204\346\250\241\345\244\215\346\265\213\346\225\260\346\215\256_2026-10-14.json"
+ M "benchmarks/\347\273\204\344\273\266\346\200\247\350\203\275\350\247\204\346\250\241\345\256\236\346\265\213.md"
+ M config/README.md
+ M config/targets/README.md
+ M config/targets/template.yaml
+ M config/targets/third_party_cJSON.yaml
+ M config/workspace.local.example.json
+ M docker/validation/README.md
+ M "docs/Agent\346\226\271\346\241\210\344\270\216\345\257\271\347\205\247\345\256\236\351\252\214.md"
+ M docs/README.md
+ M docs/integration/ipc_source_import_20261011.json
+ M docs/reviews/teammate_a_review_feedback_2026-10-14.md
+ M docs/strategy/competition_deliverables_plan.md
+ M docs/testing/ohscanner_performance_scale.md
+ M "docs/\345\274\200\345\217\221\345\215\217\344\275\234\344\270\216\344\272\244\344\273\230\346\214\207\345\215\227.md"
+ M "docs/\346\236\266\346\236\204\344\270\216\345\205\254\345\205\261\345\215\217\350\256\256.md"
+ M "docs/\351\235\242\346\235\277\345\212\237\350\203\275\344\270\216\351\252\214\346\224\266.md"
+ M "docs/\351\241\271\347\233\256\347\216\260\347\212\266\344\270\216\344\270\213\344\270\200\346\255\245.md"
+ M models/README.md
+ M outputs/README.md
+ M outputs/unified-development/algorithm-integration-summary.json
+ M outputs/unified-development/v1-history-verification.json
+ M requirements-web.txt
+ M requirements.txt
+ M research/contracts/a_ccr_04/A-CCR-04-ReadOnlyFactView.md
+ M research/contracts/a_ccr_04/conformance.py
+ M research/contracts/a_ccr_04/contract.json
+ M research/contracts/a_ccr_04/verification.json
+ M research/corpus/interface/ipc/model_sources.json
+ M research/evidence/cpp/a_shared_ptr_229_erratum_2026-10-14.json
+ M research/evidence/cpp/component_scans/communication_dsoftbus.manifest.json
+ M research/evidence/cpp/component_scans/distributeddatamgr_kv_store.manifest.json
+ M research/evidence/cpp/component_scans/index.json
+ M research/evidence/cpp/component_scans/security_access_token.manifest.json
+ M research/evidence/cpp/component_scans/update_updateservice.manifest.json
+ M research/evidence/cpp/component_scans/window_window_manager.manifest.json
+ M research/evidence/cpp/implementation_bound_controls_20261015/run-002/execution.json
+ M research/evidence/cpp/implementation_bound_controls_20261015/run-002/verification.json
+ M research/evidence/cpp/independent_review_20261015/blind_review_labels_frozen_20261015.json
+ M research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.json
+ M research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.md
+ M research/evidence/cpp/independent_review_20261015/independent_signoff_template.md
+ M research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.json
+ M research/evidence/cpp/rc_jsproxy_product_gate_20261015/product-evidence.template.json
+ M research/evidence/cpp/review_20261014/verification.json
+ M research/evidence/cpp/shared_ptr_jsproxy_supplement_2026-10-15.json
+ M research/evidence/cpp/source_sync_20261014.json
+ M research/evidence/cpp/source_sync_20261014.md
+ M research/experiments/cpp/r012_preflight_20261015/README.md
+ M research/experiments/cpp/r012_preflight_20261015/experiment_budget.template.json
+ M research/experiments/cpp/r012_preflight_20261015/human_cost.template.csv
+ M research/experiments/cpp/r012_preflight_20261015/label_signoff_status.json
+ M research/experiments/cpp/r012_preflight_20261015/preflight_manifest.json
+ M research/experiments/cpp/r012_preflight_20261015/sample_manifest.template.json
+ M research/experiments/cpp/r012_preflight_20261015/sample_size.template.json
+ M research/experiments/cpp/rescan_fixed_a_same_scope_20261015.py
+ M research/experiments/interface/ipc/tool_source_manifest.json
+ M research/methods/cpp/DETECTOR_POC_MATRIX.md
+ M research/methods/cpp/LIFETIME_METHOD_CARD.md
+ M research/methods/cpp/SHARED_PTR_RACE_METHOD_CARD.md
+ M research/methods/interface/IPC_METHOD_CARD.md
+ M research/reviews/a_shared_ptr_229_erratum_2026-10-14.md
+ M research/reviews/ipc_candidate_review_2026-10-11.md
+ M research/tests/cpp_detector_controls/patches/lifetime_move_scope.patch
+ M research/tests/cpp_detector_controls/patches/lifetime_owner_null_rebind.patch
+ M research/tests/cpp_detector_controls/patches/lifetime_owner_replacement_rebind.patch
+ M research/tests/cpp_detector_controls/patches/lifetime_reset_rebind.patch
+ M research/tests/cpp_detector_controls/patches/shared_atomic_protocol.patch
+ M research/tests/cpp_detector_controls/patches/shared_delayed_singleton_explicit_lock.patch
+ M research/tests/cpp_detector_controls_impl_20261015/manifest.json
+ M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_move_scope.patch
+ M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_null_rebind.patch
+ M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_replacement_rebind.patch
+ M research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_reset_rebind.patch
+ M research/tests/cpp_detector_controls_impl_20261015/patches/shared_atomic_protocol.patch
+ M research/tests/cpp_detector_controls_impl_20261015/patches/shared_delayed_singleton_explicit_lock.patch
+ M rules/README.md
+ M samples/README.md
+ M samples/safe/demo_safe_copy.cpp
+ M samples/vulnerable/demo_overflow.cpp
+ M scripts/README.md
+ M scripts/joern_nothrow_guard.sc
+ M scripts/local_workspace.py
+ M scripts/perf_scale_scan.py
+ M scripts/replay_static_baselines.py
+ M scripts/verify_owner_ipc_components.py
+ M scripts/verify_workbench.py
+ M src/__init__.py
+ M src/analyzer/__init__.py
+ M src/baseline/__init__.py
+ M src/baseline/clang_analyzer.py
+ M src/benchmark/__init__.py
+ M src/benchmark/compare.py
+ M src/benchmark/historical.py
+ M src/benchmark/report_inputs.py
+ M src/benchmark/root_cause_matrix.py
+ M src/benchmark/scanner_compare.py
+ M src/benchmark/tool_matrix.py
+ M src/benchmark/tool_result.py
+ M src/case/assembler.py
+ M src/cli/__main__.py
+ M src/cli/main.py
+ M src/core/ast_scanner.py
+ M src/core/case.py
+ M src/core/context.py
+ M src/core/evidence.py
+ M src/core/finding.py
+ M src/core/report.py
+ M src/core/scanner.py
+ M src/evidence/from_tool_result.py
+ M src/evidence/from_triage.py
+ M src/investigation/ipc_deterministic.py
+ M src/llm/__init__.py
+ M src/ohscanner/__init__.py
+ M src/ohscanner/contracts.py
+ M src/ohscanner/detectors/__init__.py
+ M src/ohscanner/detectors/catalog.py
+ M src/ohscanner/detectors/cpp/__init__.py
+ M src/ohscanner/detectors/cpp/m2_adapter.py
+ M src/ohscanner/detectors/example.py
+ M src/ohscanner/detectors/interface/__init__.py
+ M src/ohscanner/detectors/interface/analysis.py
+ M src/ohscanner/detectors/interface/cpp_macros.py
+ M src/ohscanner/detectors/interface/detector.py
+ M src/ohscanner/detectors/interface/entry_index.py
+ M src/ohscanner/detectors/interface/m2_adapter.py
+ M src/ohscanner/detectors/interface/models.py
+ M src/ohscanner/execution.py
+ M src/ohscanner/facts.py
+ M src/ohscanner/fixture.py
+ M src/ohscanner/frontend.py
+ M src/ohscanner/git_source.py
+ M src/ohscanner/indexing.py
+ M src/ohscanner/mocks.py
+ M src/ohscanner/poc/__init__.py
+ M src/ohscanner/poc/cpp_shared_ptr_jsproxy.py
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/README.md
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/harness.cpp
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/manifest.json
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/observations.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/poc_compat.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/hilog/log.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/ipc_object_stub.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/ipc_types.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/iremote_broker.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/iremote_stub.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/message_option.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/message_parcel.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/peer_holder.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub/securec.h
+ M src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stubs.cpp
+ M src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/README.md
+ M src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/harness.cpp
+ M src/ohscanner/poc/harnesses/cpp_shared_ptr_jsproxy/manifest.json
+ M src/ohscanner/poc/rc_jsproxy_product_gate.py
+ M src/ohscanner/poc/reachability.py
+ M src/ohscanner/poc/sources.py
+ M src/ohscanner/poc/states.py
+ M src/ohscanner/runner.py
+ M src/ohscanner/smoke.py
+ M src/parser/__init__.py
+ M src/parser/ast.py
+ M src/providers/__init__.py
+ M src/providers/base.py
+ M src/providers/clang_sa.py
+ M src/providers/codeql.py
+ M src/providers/cppcheck.py
+ M src/providers/joern.py
+ M src/providers/registry.py
+ M src/providers/semgrep.py
+ M src/report/benchmark_report.py
+ M src/rules/__init__.py
+ M src/triage/__init__.py
+ M src/triage/callsite.py
+ M src/triage/review.py
+ M src/triage/review_store.py
+ M src/utils/__init__.py
+ M src/validation/__init__.py
+ M src/validation/cjson_allocator.py
+ M src/workbench/__init__.py
+ M src/workbench/__main__.py
+ M src/workbench/api.py
+ M src/workbench/child.py
+ M src/workbench/operation_worker.py
+ M src/workbench/operations.py
+ M src/workbench/operations_api.py
+ M src/workbench/operations_store.py
+ M src/workbench/service.py
+ M src/workbench/settings.py
+ M src/workbench/store.py
+ M src/workbench/validation.py
+ M src/workbench/worker.py
+ M tests/README.md
+ M tests/detectors/__init__.py
+ M tests/detectors/fixture_support.py
+ M tests/detectors/fixtures/cpp_lifetime/failed_parse_unbalanced.cpp
+ M tests/detectors/fixtures/cpp_lifetime/fixed_alias_rebind.cpp
+ M tests/detectors/fixtures/cpp_lifetime/incomplete_scope_unmodeled_owner.cpp
+ M tests/detectors/fixtures/cpp_lifetime/manifest.json
+ M tests/detectors/fixtures/cpp_lifetime/missing_symbol_unresolved_alias.cpp
+ M tests/detectors/fixtures/cpp_lifetime/not_run_parse_pending.cpp
+ M tests/detectors/fixtures/cpp_lifetime/partial_parse_macro_context.cpp
+ M tests/detectors/fixtures/cpp_lifetime/safe_shadowed_scope_bindings.cpp
+ M tests/detectors/fixtures/cpp_lifetime/safe_use_before_reset.cpp
+ M tests/detectors/fixtures/cpp_lifetime/unsupported_language_note.js
+ M tests/detectors/fixtures/cpp_lifetime/vulnerable_conditional_rebind.cpp
+ M tests/detectors/fixtures/cpp_lifetime/vulnerable_inside_mutex.cpp
+ M tests/detectors/fixtures/cpp_lifetime/vulnerable_unserialized.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/fixed_atomic_shared_ptr.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/manifest.json
+ M tests/detectors/fixtures/cpp_shared_ptr_race/not_applicable_no_matching_language.js
+ M tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_helper.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/safe_atomic_only.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_failed_parse.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_incomplete_scope.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_macro_shared_ptr.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_not_run.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unknown_partial_parse.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_plain_pointer.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/unrelated_shared_ptr_local.cpp
+ M tests/detectors/fixtures/cpp_shared_ptr_race/vulnerable_non_atomic_shared_ptr.cpp
+ M tests/detectors/shared_ptr_race_fixture_support.py
+ M tests/detectors/test_cpp_runner_integration.py
+ M tests/fixtures/ipc/auth_fixed.cpp
+ M tests/fixtures/ipc/auth_ignored_positive.cpp
+ M tests/fixtures/ipc/auth_positive.cpp
+ M tests/fixtures/ipc/cached_caller_fixed.cpp
+ M tests/fixtures/ipc/capability_fixed.cpp
+ M tests/fixtures/ipc/capability_null_safe.cpp
+ M tests/fixtures/ipc/capability_positive.cpp
+ M tests/fixtures/ipc/comments_safe.cpp
+ M tests/fixtures/ipc/common_types.h
+ M tests/fixtures/ipc/coverage_fixed.cpp
+ M tests/fixtures/ipc/coverage_late_positive.cpp
+ M tests/fixtures/ipc/coverage_positive.cpp
+ M tests/fixtures/ipc/dead_path_safe.cpp
+ M tests/fixtures/ipc/denied_complement_positive.cpp
+ M tests/fixtures/ipc/descriptor_after_positive.cpp
+ M tests/fixtures/ipc/descriptor_alias_positive.cpp
+ M tests/fixtures/ipc/descriptor_call_only_positive.cpp
+ M tests/fixtures/ipc/descriptor_inherited_fixed.cpp
+ M tests/fixtures/ipc/descriptor_interface_fixed.cpp
+ M tests/fixtures/ipc/descriptor_no_prefix_fixed.cpp
+ M tests/fixtures/ipc/descriptor_no_reject_positive.cpp
+ M tests/fixtures/ipc/descriptor_one_branch_positive.cpp
+ M tests/fixtures/ipc/descriptor_unrelated_positive.cpp
+ M tests/fixtures/ipc/descriptor_unresolved_positive.cpp
+ M tests/fixtures/ipc/descriptor_wrong_interface_positive.cpp
+ M tests/fixtures/ipc/helper_fixed.cpp
+ M tests/fixtures/ipc/helper_positive.cpp
+ M tests/fixtures/ipc/identity_fixed.cpp
+ M tests/fixtures/ipc/identity_positive.cpp
+ M tests/fixtures/ipc/manifest.json
+ M tests/fixtures/ipc/owner_fixed.cpp
+ M tests/fixtures/ipc/owner_positive.cpp
+ M tests/fixtures/ipc/parcel_fixed.cpp
+ M tests/fixtures/ipc/parcel_positive.cpp
+ M tests/fixtures/ipc/parcel_unrelated_bound_positive.cpp
+ M tests/fixtures/ipc/relay_fixed.cpp
+ M tests/fixtures/ipc/relay_inner_after_dispatch_positive.cpp
+ M tests/fixtures/ipc/relay_inner_guard_fixed.cpp
+ M tests/fixtures/ipc/relay_inner_local_guard_fixed.cpp
+ M tests/fixtures/ipc/relay_inner_nested_positive.cpp
+ M tests/fixtures/ipc/relay_inner_no_guard_positive.cpp
+ M tests/fixtures/ipc/relay_inner_no_reject_positive.cpp
+ M tests/fixtures/ipc/relay_inner_substituted_positive.cpp
+ M tests/fixtures/ipc/relay_inner_wrong_interface_positive.cpp
+ M tests/fixtures/ipc/relay_positive.cpp
+ M tests/fixtures/ipc/relay_read_only_positive.cpp
+ M tests/fixtures/ipc/request_identity_positive.cpp
+ M tests/fixtures/ipc/reset_identity_positive.cpp
+ M tests/fixtures/ipc/switch_positive.cpp
+ M tests/fixtures/ipc/wrong_parcel_positive.cpp
+ M tests/fixtures/ohscanner/bridge.ets
+ M tests/fixtures/ohscanner/sample.cpp
+ M tests/test_a_ccr_04_contract.py
+ M tests/test_ast.py
+ M tests/test_ast_scanner.py
+ M tests/test_benchmark_report.py
+ M tests/test_benchmark_report_inputs.py
+ M tests/test_case.py
+ M tests/test_case_assembler.py
+ M tests/test_clang_baseline.py
+ M tests/test_context.py
+ M tests/test_contract_v2_source_binding.py
+ M tests/test_evidence.py
+ M tests/test_historical_benchmark.py
+ M tests/test_historical_label.py
+ M tests/test_investigation_dual_layer.py
+ M tests/test_ipc_descriptor_identity.py
+ M tests/test_ipc_detector.py
+ M tests/test_ipc_disclosure_consequence.py
+ M tests/test_ipc_entry_index.py
+ M tests/test_ipc_macros.py
+ M tests/test_ipc_relay_guard.py
+ M tests/test_ohscanner_contract.py
+ M tests/test_ohscanner_m1.py
+ M tests/test_ohscanner_m15.py
+ M tests/test_ohscanner_m2.py
+ M tests/test_ohscanner_m2_a_integration.py
+ M tests/test_owner_ipc_platform.py
+ M tests/test_poc_runner.py
+ M tests/test_provider_adapters.py
+ M tests/test_rc_jsproxy_product_gate.py
+ M tests/test_review_store.py
+ M tests/test_root_cause_matrix.py
+ M tests/test_scanner.py
+ M tests/test_scanner_compare.py
+ M tests/test_shared_ptr_jsproxy_poc.py
+ M tests/test_source_preparation.py
+ M tests/test_tool_compare.py
+ M tests/test_tool_matrix.py
+ M tests/test_tool_result.py
+ M tests/test_triage.py
+ M tests/test_workbench.py
+ M tests/test_workbench_clusters.py
+ M tests/test_workbench_operations.py
+ M validation/cjson/allocator_robustness.c
+ M web/build.mjs
+ M web/index.html
+ M web/package-lock.json
+ M web/package.json
+ M web/src/SourceEvidence.tsx
+ M web/src/api.ts
+ M web/src/components.tsx
+ M web/src/main.tsx
+ M web/src/pages/Capabilities.tsx
+ M web/src/pages/Cases.tsx
+ M web/src/pages/JobDetail.tsx
+ M web/src/pages/NewScan.tsx
+ M web/src/pages/Operations.tsx
+ M web/src/pages/Repositories.tsx
+ M web/src/style.css
+ M web/tsconfig.json
+?? outputs/browser-acceptance/browser_acceptance_20261015.json
+?? research/contracts/A-CCR-03-stable-finding-identity.md
+?? research/evidence/cpp/a_truth_01_freeze_20261015/blind_holdout_key.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/blind_holdout_labels.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/blind_holdout_packet.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/blind_packet.sha256
+?? research/evidence/cpp/a_truth_01_freeze_20261015/build_truth_set.py
+?? research/evidence/cpp/a_truth_01_freeze_20261015/control_matrix.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/failures_unknowns.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/plausible_source_packet.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/root_cause_groups.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/truth_signoff_index.json
+?? research/evidence/cpp/a_truth_01_freeze_20261015/truth_signoffs.jsonl
+?? research/evidence/cpp/detector_enhancement_20261015/evidence.json
+?? research/evidence/cpp/four_class_controls/run-001/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/four_class_controls/run-001/family_poc/lifetime_unique_ptr_alias.md
+?? research/evidence/cpp/four_class_controls/run-001/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/four_class_controls/run-001/family_poc/shared_ptr_delayed_singleton.md
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/four_class_controls/run-001/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/four_class_controls/run-001/results.json
+?? research/evidence/cpp/four_class_controls/run-001/results.md
+?? research/evidence/cpp/four_class_controls/run-002/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/four_class_controls/run-002/family_poc/lifetime_unique_ptr_alias.md
+?? research/evidence/cpp/four_class_controls/run-002/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/four_class_controls/run-002/family_poc/shared_ptr_delayed_singleton.md
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-reset-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-reset-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-fixed-reset-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/four_class_controls/run-002/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/four_class_controls/run-002/results.json
+?? research/evidence/cpp/four_class_controls/run-002/results.md
+?? research/evidence/cpp/four_class_controls/run-003/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/four_class_controls/run-003/family_poc/lifetime_unique_ptr_alias.md
+?? research/evidence/cpp/four_class_controls/run-003/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/four_class_controls/run-003/family_poc/shared_ptr_delayed_singleton.md
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-reset-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-reset-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-fixed-reset-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/four_class_controls/run-003/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/four_class_controls/run-003/results.json
+?? research/evidence/cpp/four_class_controls/run-003/results.md
+?? research/evidence/cpp/four_class_controls/run-004/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/four_class_controls/run-004/family_poc/lifetime_unique_ptr_alias.md
+?? research/evidence/cpp/four_class_controls/run-004/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/four_class_controls/run-004/family_poc/shared_ptr_delayed_singleton.md
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-reset-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-reset-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-fixed-reset-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/four_class_controls/run-004/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/four_class_controls/run-004/results.json
+?? research/evidence/cpp/four_class_controls/run-005/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/four_class_controls/run-005/family_poc/lifetime_unique_ptr_alias.md
+?? research/evidence/cpp/four_class_controls/run-005/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/four_class_controls/run-005/family_poc/shared_ptr_delayed_singleton.md
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-reset-rebind-patch.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-reset-rebind-patch.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-fixed-reset-rebind-patch.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/four_class_controls/run-005/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/four_class_controls/run-005/results.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/SHA256SUMS.txt
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/execution.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/family_poc/lifetime_unique_ptr_alias.md
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/family_poc/shared_ptr_delayed_singleton.md
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-reset-rebind-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-reset-rebind-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-fixed-reset-rebind-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/results.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/results.md
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/verification.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-001/work_binaries.sha256
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/lifetime_unique_ptr_alias.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/family_poc/shared_ptr_delayed_singleton.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-move-scope-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-move-scope-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-move-scope-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-move-scope-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-null-rebind-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-null-rebind-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-null-rebind-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-null-rebind-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-owner-replacement-rebind-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-reset-rebind-patch.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-reset-rebind-patch.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-reset-rebind-patch.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-fixed-reset-rebind-patch.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-comment-false-positive.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-comment-false-positive.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-comment-false-positive.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-comment-false-positive.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-shadowed-bindings.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-shadowed-bindings.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-shadowed-bindings.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-shadowed-bindings.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-stable-owner-pointer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-stable-owner-pointer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-stable-owner-pointer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-safe-stable-owner-pointer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-unrelated-raw-pointer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-unrelated-raw-pointer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-unrelated-raw-pointer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-unrelated-raw-pointer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-null-assignment.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-null-assignment.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-null-assignment.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-null-assignment.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-replacement.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-replacement.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-replacement.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-owner-replacement.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-reset-raw-alias.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-reset-raw-alias.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-reset-raw-alias.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-reset-raw-alias.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-restricted-move-transfer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-restricted-move-transfer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-restricted-move-transfer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/lifetime-vulnerable-restricted-move-transfer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-atomic-exchange-protocol.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-atomic-exchange-protocol.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-atomic-exchange-protocol.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-atomic-exchange-protocol.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-fixed-delayed-singleton-explicit-lock.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-cross-class-same-member-name.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-cross-class-same-member-name.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-cross-class-same-member-name.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-cross-class-same-member-name.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-explicit-lock-common-fp.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-explicit-lock-common-fp.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-explicit-lock-common-fp.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-safe-explicit-lock-common-fp.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-unrelated-plain-pointer.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-unrelated-plain-pointer.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-unrelated-plain-pointer.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-unrelated-plain-pointer.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-atomic-exchange-mixed.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-atomic-exchange-mixed.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-atomic-exchange-mixed.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-atomic-exchange-mixed.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-compare-exchange-mixed.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-compare-exchange-mixed.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-compare-exchange-mixed.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-compare-exchange-mixed.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-delayed-singleton-plain.build.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-delayed-singleton-plain.run-01.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-delayed-singleton-plain.run-02.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/logs/shared-vulnerable-delayed-singleton-plain.run-03.json
+?? research/evidence/cpp/implementation_bound_controls_20261015/run-002/results.json
+?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/identity_reference.py
+?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/manifest.json
+?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/results.json
+?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/results.md
+?? research/experiments/cpp/a_ccr_03_stable_finding_identity_20261015/run_experiment.py
+?? research/experiments/cpp/r0_r1_r2_20261015/FREEZE_REPORT.md
+?? research/experiments/cpp/r0_r1_r2_20261015/artifact_manifest.json
+?? research/experiments/cpp/r0_r1_r2_20261015/budget.json
+?? research/experiments/cpp/r0_r1_r2_20261015/build_freeze.js
+?? research/experiments/cpp/r0_r1_r2_20261015/evidence_catalog.json
+?? research/experiments/cpp/r0_r1_r2_20261015/experiment_manifest.json
+?? research/experiments/cpp/r0_r1_r2_20261015/human_review_form.md
+?? research/experiments/cpp/r0_r1_r2_20261015/human_review_form.schema.json
+?? research/experiments/cpp/r0_r1_r2_20261015/initial_candidate_set.json
+?? research/experiments/cpp/r0_r1_r2_20261015/model_binding.template.json
+?? research/experiments/cpp/r0_r1_r2_20261015/model_output.schema.json
+?? research/experiments/cpp/r0_r1_r2_20261015/prompt_r1.md
+?? research/experiments/cpp/r0_r1_r2_20261015/prompt_r2.md
+?? research/experiments/cpp/r0_r1_r2_20261015/run_ledger.jsonl
+?? research/experiments/cpp/r0_r1_r2_20261015/run_record.schema.json
+?? research/experiments/cpp/r0_r1_r2_20261015/sealed_item_key.json
+?? research/experiments/cpp/r0_r1_r2_20261015/statistical_plan.md
+?? research/experiments/cpp/r0_r1_r2_20261015/tool_contract.json
+?? research/experiments/cpp/r0_r1_r2_20261015/verify_freeze.js
+?? research/tests/a_ccr_03_stable_finding_identity/test_stable_finding_identity_compatibility.py
+?? scripts/browser_acceptance.mjs
+?? scripts/browser_acceptance_seed.py
+?? src/ohscanner/detectors/cpp/null_dereference_detector.py
+?? tests/detectors/fixtures/cpp_null_dereference/coverage_failed_parse.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/coverage_not_run.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/coverage_partial_parse.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/fixed_early_return.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/fixed_nonnull_branch.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/manifest.json
+?? tests/detectors/fixtures/cpp_null_dereference/positive_error_path_continues.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/positive_local_explicit_null.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/positive_member_unchecked.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/positive_nearby_unrelated_guard.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/positive_parameter_unchecked.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/positive_return_value.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/positive_star_deref.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/safe_non_null_local.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/safe_null_check_no_deref.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/unknown_function_pointer.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/unknown_macro_guard.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/unknown_template_exception.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/unrelated_array_index.cpp
+?? tests/detectors/fixtures/cpp_null_dereference/unrelated_integer.cpp
+?? tests/detectors/null_dereference_fixture_support.py
+?? tests/detectors/test_cpp_null_dereference_detector.py
+?? tests/test_workbench_browser_acceptance.py

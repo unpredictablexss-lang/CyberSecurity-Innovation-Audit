@@ -1,0 +1,19 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "/usr/bin/setarch",
+      "x86_64",
+      "-R",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-002/shared-fixed-delayed-singleton-explicit-lock/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-002/shared-fixed-delayed-singleton-explicit-lock",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11315369399994779,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

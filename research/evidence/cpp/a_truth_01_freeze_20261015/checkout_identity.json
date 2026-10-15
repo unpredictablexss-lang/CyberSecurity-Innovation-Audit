@@ -1,0 +1,14 @@
+{
+  "branch": "codex/full-runtime-performance-audit-20261014",
+  "dirty_status_file": "checkout_status_porcelain.txt",
+  "dirty_status_line_count": 1009,
+  "dirty_status_sha256": "65f23e2abbceba310fd7bbdc12b1211278e2c0aa5d25dbd927ae9b65be4a3f8c",
+  "dirty_worktree_preserved": true,
+  "generated_at": "2026-10-15T12:53:32+08:00",
+  "head": "fb81838e1b3506f514e6ef8162111d63f6199431",
+  "kind": "a_truth_01_checkout_identity",
+  "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "root": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+  "schema_version": "ohscanner.a-truth-01-truth-signoff-v1",
+  "tree": "43b0e6ab83e54c7601ae3ec579034d227f720456"
+}

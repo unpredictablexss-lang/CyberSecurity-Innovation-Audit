@@ -1,0 +1,31 @@
+{
+  "schema_version": "ohscanner.a-exp-01-evidence-reference-contract-v1",
+  "experiment_id": "A-EXP-01",
+  "executable_validator": "preflight_validator.js#validateEvidenceReferences",
+  "reference_pattern": "^[a-f0-9]{64}$",
+  "allowed_sources": [
+    {
+      "source": "supplied_evidence_catalog",
+      "rule": "The referenced evidence_id or fact_id must exist in evidence_catalog.json and its experiment_item_id must equal the current run experiment_item_id."
+    },
+    {
+      "source": "persisted_tool_result",
+      "rule": "The referenced ID must be listed in this run persisted_tool_results, which must have persisted=true, a unique persistence_id, a valid artifact_sha256, the current experiment_item_id, and an independent attempt_id/tool_call_id."
+    }
+  ],
+  "denied_sources": [
+    "truth labels or truth manifest identifiers",
+    "sealed_item_key identifiers",
+    "diagnostic IDs",
+    "another experiment item catalog entry",
+    "another experiment item persisted tool result",
+    "forged, malformed, absent, or merely plausible hex IDs"
+  ],
+  "claim_rule": "Every claim must have at least one evidence_refs entry; each entry is validated independently.",
+  "failure_policy": {
+    "completed_run": "Any illegal reference invalidates the run and requires a failed run record; it cannot remain completed.",
+    "non_completed_run": "The output must remain evidence_gate_status=unknown and product_assessment must not be reportable_vulnerability.",
+    "no_silent_repair": "The validator never rewrites, substitutes, or removes a reference."
+  },
+  "dynamic_membership_note": "JSON Schema can enforce shape and hex syntax only; this executable validator performs catalog, item-scope, persisted-result, and denylist membership checks."
+}

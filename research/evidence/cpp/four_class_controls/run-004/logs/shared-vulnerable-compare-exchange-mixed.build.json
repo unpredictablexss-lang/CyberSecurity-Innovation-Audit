@@ -1,0 +1,26 @@
+{
+  "environment": {
+    "TSAN_OPTIONS": "halt_on_error=1:exitcode=66"
+  },
+  "command": {
+    "argv": [
+      "clang++",
+      "-std=c++17",
+      "-g",
+      "-O1",
+      "-fno-omit-frame-pointer",
+      "-pthread",
+      "-no-pie",
+      "-fsanitize=thread",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp",
+      "-o",
+      "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/cpp-four-class-controls-20261015/run-004/shared-vulnerable-compare-exchange-mixed/control"
+    ],
+    "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+    "exit_code": 0,
+    "elapsed_seconds": 3.766962114000009,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false
+  }
+}

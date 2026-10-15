@@ -1,0 +1,148 @@
+{
+  "schema_version": "ohscanner.a-exp-01-canonical-hash-test-vectors-v1",
+  "serialization": "ohscanner.canonical-json-v1",
+  "rules": {
+    "encoding": "UTF-8 without BOM; SHA-256 is over canonical bytes with no prefix and no trailing newline.",
+    "object_order": "Object keys are sorted by UTF-16 code unit order; array order is preserved except input_files, which is sorted by UTF-8 byte order of path, then role, then sha256.",
+    "unicode": "Strings must contain Unicode scalar values only; JSON escaping is emitted by the ECMAScript JSON serializer; U+2028/U+2029 and controls are represented in canonical JSON form.",
+    "numbers": "Only finite JSON numbers are accepted; -0 normalizes to 0; unsafe integers, NaN, Infinity, bigint and non-JSON numeric spellings are rejected before hashing.",
+    "newline": "The canonical byte sequence has no trailing newline; newlines inside strings are escaped.",
+    "file_order": "input_files is sorted deterministically before hashing and duplicate file records are rejected.",
+    "missing_fields": "Required fields must exist; optional fields are omitted when absent; explicit null is distinct from omission; undefined is rejected."
+  },
+  "valid_vectors": [
+    {
+      "name": "object_key_order_is_irrelevant",
+      "normalize_input_files": false,
+      "value": {
+        "zeta": 1,
+        "alpha": "A",
+        "中文": "值",
+        "nested": {
+          "b": false,
+          "a": null
+        }
+      },
+      "expected_canonical_json": "{\"alpha\":\"A\",\"nested\":{\"a\":null,\"b\":false},\"zeta\":1,\"中文\":\"值\"}",
+      "expected_sha256": "526a8496a25ea893de4ac8af9f32aba1e78195189c7d1ea6bf33c29b96f99c5c"
+    },
+    {
+      "name": "file_order_is_sorted_before_hashing",
+      "normalize_input_files": true,
+      "value": {
+        "bundle_schema_version": "ohscanner.a-exp-01-input-bundle-v1",
+        "input_files": [
+          {
+            "path": "z/last.txt",
+            "role": "source",
+            "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          {
+            "path": "a/first.txt",
+            "role": "source",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          {
+            "path": "a/first.txt",
+            "role": "prompt",
+            "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+          }
+        ]
+      },
+      "expected_canonical_json": "{\"bundle_schema_version\":\"ohscanner.a-exp-01-input-bundle-v1\",\"input_files\":[{\"path\":\"a/first.txt\",\"role\":\"prompt\",\"sha256\":\"3333333333333333333333333333333333333333333333333333333333333333\"},{\"path\":\"a/first.txt\",\"role\":\"source\",\"sha256\":\"1111111111111111111111111111111111111111111111111111111111111111\"},{\"path\":\"z/last.txt\",\"role\":\"source\",\"sha256\":\"2222222222222222222222222222222222222222222222222222222222222222\"}]}",
+      "expected_sha256": "f92ac1613ca604e9ab45d0524a21fb840da0c6a450b7db4f43eb36f093b0e888"
+    },
+    {
+      "name": "unicode_and_newlines_are_utf8_json",
+      "normalize_input_files": false,
+      "value": {
+        "text": "第一行\n第二行\r\n\tTab \u0001 🧪 café",
+        "composed": "café",
+        "decomposed": "café",
+        "separators": "line paragraph end",
+        "bom_as_content": "﻿not-a-file-bom"
+      },
+      "expected_canonical_json": "{\"bom_as_content\":\"﻿not-a-file-bom\",\"composed\":\"café\",\"decomposed\":\"café\",\"separators\":\"line paragraph end\",\"text\":\"第一行\\n第二行\\r\\n\\tTab \\u0001 🧪 café\"}",
+      "expected_sha256": "816c162efcae5ff66c07c28ac0fd13ba759056e90dfc7c4efc0d215f6f0ad72c"
+    },
+    {
+      "name": "numbers_use_ecmascript_json_number_form",
+      "normalize_input_files": false,
+      "value": {
+        "zero": 0,
+        "one": 1,
+        "exponent": 100,
+        "decimal": 0.1,
+        "negative": -2.5
+      },
+      "expected_canonical_json": "{\"decimal\":0.1,\"exponent\":100,\"negative\":-2.5,\"one\":1,\"zero\":0}",
+      "expected_sha256": "9faca8c2d33969f871e22346d08bbc64989f89555b22666801ea85e362e2b86d"
+    },
+    {
+      "name": "missing_optional_field_is_omitted",
+      "normalize_input_files": false,
+      "value": {
+        "required": "present"
+      },
+      "expected_canonical_json": "{\"required\":\"present\"}",
+      "expected_sha256": "6c4f1f2c2f701b87412d3b5f6657324805b09dc230e224e99e51686dde2d1fdc"
+    },
+    {
+      "name": "explicit_null_is_distinct_from_missing",
+      "normalize_input_files": false,
+      "value": {
+        "required": "present",
+        "optional_limitations": null
+      },
+      "expected_canonical_json": "{\"optional_limitations\":null,\"required\":\"present\"}",
+      "expected_sha256": "5a61e17fba31b52def341d2d9f23a31f47297602d111d5e48e1f86f1fa93bb16"
+    }
+  ],
+  "invalid_vectors": [
+    {
+      "name": "lone_surrogate_rejected",
+      "value": {
+        "text": "\ud800"
+      },
+      "expected_error_contains": "lone high surrogate"
+    },
+    {
+      "name": "unsafe_integer_rejected",
+      "value": {
+        "unsafe": 9007199254740992
+      },
+      "expected_error_contains": "unsafe integer is rejected"
+    },
+    {
+      "name": "missing_input_file_field_rejected",
+      "normalize_input_files": true,
+      "value": {
+        "input_files": [
+          {
+            "path": "a"
+          }
+        ]
+      },
+      "expected_error_contains": "role"
+    },
+    {
+      "name": "duplicate_input_file_rejected",
+      "normalize_input_files": true,
+      "value": {
+        "input_files": [
+          {
+            "path": "a",
+            "role": "r",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          {
+            "path": "a",
+            "role": "r",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+          }
+        ]
+      },
+      "expected_error_contains": "duplicate file record"
+    }
+  ]
+}
