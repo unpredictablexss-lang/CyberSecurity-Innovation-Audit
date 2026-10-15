@@ -1174,5 +1174,82 @@ impact 一格填不了，还会踩「把非漏洞包装成交付件」的风险�
 - 回归：`.venv/bin/python -m unittest discover -s tests` → **Ran 463 tests in 55.093s … OK**
   （此前基线 454；本轮 +9：状态机纯逻辑 5、manifest 形状 3、真编译集成 1）。
   集成用例已改为**类级共享一次运行**，避免每个用例重编三个修订——改前 79s、改后 24s。
-  HEAD 为 **`a646c59`**（本轮改动尚未提交）。**不把该结果写成「已在本轮提交上验证」**——
-  提交哈希在提交后才存在。
+- 归位：本节改动提交为 **`9f968c5`**（`feat(poc): close the AUTH-01 fix loop with a
+  project-authored patch`），已推送到 `origin/feat/interface-ipc-detector`（`a646c59..9f968c5`）。
+  上面那次 463 测试跑在提交之前；提交后未重跑全量（§41 会补跑并记录）。
+
+## 41. 2026-10-15 AUTH-01 影响范围：`inputmethod_imf` 397 条 ref 逐条判定（队友 B）
+
+交付件 **#4 影响范围**。新增工具
+`research/experiments/interface/ipc/version_impact.py`（由 A 线
+`shared_ptr_race_version_impact.py` **参数化移植**），新增单测 `tests/test_version_impact.py`
+（19 项），记录写入 `docs/research/ipc_auth01_version_impact_2026-10-15.md`。
+**`validated_vulnerability` 仍为 0**，本轮不提升任何候选。
+
+### 一、结果（全量克隆，57 tag + 340 `origin` 分支 = 397 ref）
+
+| 状态 | 条数 | tag / 分支 | 含义 |
+|---|---|---|---|
+| `affected` | **17** | 6 / 11 | 文件 blob **精确等于**漏洞版 `e90a4e77…` |
+| `fixed` | **1** | 1 / 0 | 精确等于修复版 `0f9ed2f6…` |
+| `not_present` | 317 | 36 / 281 | 该 ref 上**没有这个路径** |
+| `unknown` | 62 | 14 / 48 | 有该路径，但两边界都不等（**非答案**） |
+
+- `affected` 的 6 个 tag：`v3.0-LTS`、`v3.0.1-LTS`、`v3.0.2-LTS`、`v3.0.3-LTS`、`v3.0.5-LTS`、
+  `v3.1-Beta`；11 条分支含 `OpenHarmony-3.1-Beta` 与 9 条 `weekly_2022xxxx`。
+- `fixed` 唯一一条是 **`v3.0.6-LTS`**。这**不是**「唯一修好的版本」，只是「唯一与修复提交
+  逐字节一致的 ref」；该线上更晚的 ref 因文件又被改动而落进 `unknown`。
+- 记录摘要 `manifest_sha256 = 91f8b454b29944034c116d5138ece913d30f8e2110bb41a0faa042fe58991ea8`。
+
+### 二、一条自洽性检验（本轮最有价值的单点）
+
+17 条 `affected` 中 `fixed_commit_reachable` **全为 False（0/17）**：
+不存在「已包含修复、却仍带着漏洞版文件」的 ref。这条检验把「判定是 blob 身份」
+与「判定是版本区间推断」两种做法区分开了——后者给不出这条可证伪的断言。
+
+### 三、`unknown` 的两种成因必须分开（62 条只涉及 6 个 blob）
+
+1. **修复之后文件又被改动（3 条）**：`v3.0.7-LTS`、`v3.0.8-LTS`、`origin/OpenHarmony-3.0-LTS`
+   （blob `022e5d44f76f`，`fixed_commit_reachable = True`）。含义只到「修复后又被改过」。
+2. **从未拿到修复提交的两条线（59 条）**：3.1 线（`352b006d2405` / `7d45b1f09d98`）与
+   3.2-Beta 线（`f34e8ff7d7a9` / `866c0b6a5825`）。**这是真实的研究线索**
+   （look-alike variant），但本轮**未读内容**，因此既不算 `affected` 也不算 `fixed`。
+
+### 四、`not_present` 不是缺数据
+
+`services/` 目录在 3.2 之后被重构掉（`origin/OpenHarmony-3.2-Release` 顶层已是
+`common/ frameworks/ interfaces/`），故 3.2+ 判 `not_present`。含义是「**这个路径**不存在」，
+**不等于**「该版本没有这个接口」。
+
+### 五、移植时修掉 A 线脚本的一处真实缺陷
+
+A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source_path`**，
+于是无论调用者指定哪个文件都按模块常量 `base/include/singleton.h` 判定。
+本移植把 `source_path` 贯穿到 `_ref_blob` 与每条记录，并写了回归用例。
+另把两个边界 blob 由常量改为**从 `--vulnerable-commit` / `--fixed-commit` 现场派生**，
+推导不出**直接报错**而非猜；不传 `--fixed-commit` 时 `fixed` 在构造上不可达。
+
+### 六、未验证 / unknown（本节的诚实边界）
+
+- **`unknown` 不是安全**：62 条里 59 条的内容未读，不能声称已修复或受影响。
+- **blob 身份不是可达性**：带漏洞版文件 ≠ 该 SA 可被非特权调用者触达；可达性仍 `partial`。
+- **未扫 manifest XML**：没有把 ref 映射到产品版本；`product_manifest.py` 本地可用性未核
+  （属 owner 共享面）。
+- **未覆盖 `refs/heads/*` 本地分支**；ref 集 = tag + `refs/remotes/origin/*`。
+- **内容摘要只有 56/397 条可取**：克隆是 `blob:none` **偏克隆**，
+  `_git` 禁止惰性抓取，缺失 blob 的摘要留空（判定只用 blob OID，不受影响）。
+  17 条 `affected` 的摘要 17/17 全部取到。
+- 数据一致性仍未核（§40 已记）：`lineage.json` 标 S1 vs `verified_pairs.jsonl` 标 S2。
+
+### 七、本节检查（命令 / 结果）
+
+- 工具：`.venv/bin/python research/experiments/interface/ipc/version_impact.py --repo-root
+  ~/openharmony-audit/ipc-research/repos/inputmethod_imf --repository openharmony/inputmethod_imf
+  --kind ipc_auth01_version_impact --source-path services/src/platform_callback_stub.cpp
+  --vulnerable-commit e663b470… --fixed-commit 5eaddcab… --tags --branches --json-out
+  outputs/reports/version_impact_auth01_inputmethod_imf.json`
+  → 397 ref，12.8 s，产物 161 KB（gitignored，**不入库**）。
+- 单测：`.venv/bin/python -m unittest tests.test_version_impact` → **Ran 19 tests … OK**
+  （含真仓库边界回归：两个边界提交必须分别判成 `affected` / `fixed`）。
+- 克隆性质核实：`git config --get remote.origin.partialclonefilter` → `blob:none`；
+  `rev-parse --is-shallow-repository` → `false`。
