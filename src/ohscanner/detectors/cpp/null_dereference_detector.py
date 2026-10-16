@@ -723,6 +723,24 @@ class NullDereferenceDetector:
         if any(value in ("failed", "not_analyzed") for _, value in outcomes):
             limitations.append("No absence, safety, miss or product conclusion is published for failed/not-analyzed coverage.")
         limitations.append("Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown.")
+        # The shared diagnostic identity intentionally excludes column and symbol.
+        # Two same-line sinks with identical explanatory text therefore collide in
+        # runner.py. Keep the first deterministic occurrence rather than failing the
+        # whole detector or manufacturing distinct messages to evade the contract.
+        unique_findings: Dict[Tuple[str, str, int, str, str], DetectorFinding] = {}
+        for finding in findings:
+            identity = (
+                finding.source_sha256,
+                finding.file,
+                finding.line,
+                finding.rule_id,
+                finding.message,
+            )
+            unique_findings.setdefault(identity, finding)
+        findings = sorted(
+            unique_findings.values(),
+            key=lambda item: (item.file, item.line, item.column or 0, item.message),
+        )
         return DetectorRun(
             detector_id=self.detector_id,
             version=self.version,

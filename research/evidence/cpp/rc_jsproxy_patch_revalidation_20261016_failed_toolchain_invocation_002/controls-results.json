@@ -1,0 +1,2336 @@
+{
+  "schema_version": 1,
+  "package_id": "cpp-detector-four-class-controls-impl-20261015-shared-ptr-0.5.0-lifetime-0.4.0",
+  "generated_at": "2026-10-16T03:32:28.896849+00:00",
+  "evidence_scope": "synthetic_development_controls",
+  "candidate_status": "candidate/unassessed",
+  "validated_vulnerability": 0,
+  "is_independent_holdout": false,
+  "accuracy_metrics_permitted": false,
+  "manifest": {
+    "path": "research/tests/cpp_detector_controls_impl_20261015/manifest.json",
+    "sha256": "b12711b567fa59c2b562fa1f353fd1bd1ee31d2780ad6f6cb597e4e9cb70eb3a"
+  },
+  "checkout": {
+    "head": "993cfdc21877440f5d4a4ad345ee9ec236e098fa",
+    "tree": "5d228d0d895f29acfc841191f4f9a5167356cc3e",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "status": []
+  },
+  "source_identities": [
+    {
+      "control_id": "shared-vulnerable-delayed-singleton-plain",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+      "bytes": 1724,
+      "sha256": "828181240b4a8dfda6124f5f840a66321eb6ae25f02b013d249774f91ba2cc7f",
+      "git_blob_sha1": "a17cc68358f93941cc0ca56a0ddd5ad88f429e44"
+    },
+    {
+      "control_id": "shared-vulnerable-atomic-exchange-mixed",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+      "bytes": 1110,
+      "sha256": "5631b27b265ae1e3eae6f3d3ba6870c7081b2ab6274460ef090af92dac94a9a3",
+      "git_blob_sha1": "27ecbe104a94324ad741e0d6a3c56c1291c6f620"
+    },
+    {
+      "control_id": "shared-vulnerable-compare-exchange-mixed",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp",
+      "bytes": 1218,
+      "sha256": "f52c6cb811a5942797a9203c9d7b884ca733af981c769bafbab6e9dae8b78d6d",
+      "git_blob_sha1": "3fbac944eb1936fa50e773b1ebb50425795637c8"
+    },
+    {
+      "control_id": "shared-fixed-delayed-singleton-explicit-lock",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+      "bytes": 1576,
+      "sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+      "git_blob_sha1": "b702fc14dfbd8bc49ab53737380b74ed1fbe7857"
+    },
+    {
+      "control_id": "shared-fixed-atomic-exchange-protocol",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+      "bytes": 1363,
+      "sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+      "git_blob_sha1": "ab9d98fe74204b2e872b442729680ced311db540"
+    },
+    {
+      "control_id": "shared-safe-explicit-lock-common-fp",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp",
+      "bytes": 1130,
+      "sha256": "00e610d1aef2a05676d41f4b55d2799e79ef72fa95fa7df233f743162a26c09f",
+      "git_blob_sha1": "68af0db7041806548622bcd608c9737763d5055a"
+    },
+    {
+      "control_id": "shared-safe-cross-class-same-member-name",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp",
+      "bytes": 923,
+      "sha256": "3e15889c0a5ec5a29f8b7a65c101bbb3ce4e84eff7cbdb88fb67393e305727f8",
+      "git_blob_sha1": "a770a62d52f60cee9f8ade81bb2fe5755b257d76"
+    },
+    {
+      "control_id": "shared-unrelated-plain-pointer",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_unrelated_plain_pointer.cpp",
+      "bytes": 501,
+      "sha256": "a5b69f618655bc9dfb72589260f074216ef0fb7cb1f77c50ab8cebf1e3b2a079",
+      "git_blob_sha1": "d457ed7e70e64f476acab10a781705370cbf9721"
+    },
+    {
+      "control_id": "lifetime-vulnerable-reset-raw-alias",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+      "bytes": 295,
+      "sha256": "524ce9c678151acb7948f32ecc05677af28a07d0c22c57750416777deaa48821",
+      "git_blob_sha1": "4b8693f4e5ccced2571a7291e8251b8984d1fe5d"
+    },
+    {
+      "control_id": "lifetime-vulnerable-owner-null-assignment",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+      "bytes": 297,
+      "sha256": "a1a5bb8469b762e5215a8c6dbac6c7217986739a9120462ceb104fcab8c29282",
+      "git_blob_sha1": "3c2a89e13454bee3bfff3a54a3a997d13f39924e"
+    },
+    {
+      "control_id": "lifetime-vulnerable-owner-replacement",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+      "bytes": 316,
+      "sha256": "a73d7dcf4a5a55139913953d4c3bac05677df559b83df9d0561539e989031012",
+      "git_blob_sha1": "669a05e2f720b4a045bfc82d89319a05a42faf67"
+    },
+    {
+      "control_id": "lifetime-vulnerable-restricted-move-transfer",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+      "bytes": 384,
+      "sha256": "fad07a93bfa9db30f6b88a4aa449500db368aff59d6dcea446cea01582dfe4b3",
+      "git_blob_sha1": "ab13961fa7c62b88cf55c08e650ce6c1a7e19fc7"
+    },
+    {
+      "control_id": "lifetime-fixed-reset-rebind-patch",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+      "bytes": 332,
+      "sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+      "git_blob_sha1": "2ca375d68290c9c56ffcb8bc23e2d7b1929bf138"
+    },
+    {
+      "control_id": "lifetime-fixed-owner-null-rebind-patch",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+      "bytes": 341,
+      "sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+      "git_blob_sha1": "d7e9606584a4508d21b81a498264e98ba4829489"
+    },
+    {
+      "control_id": "lifetime-fixed-owner-replacement-rebind-patch",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+      "bytes": 341,
+      "sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+      "git_blob_sha1": "d7e9606584a4508d21b81a498264e98ba4829489"
+    },
+    {
+      "control_id": "lifetime-fixed-move-scope-patch",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+      "bytes": 388,
+      "sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+      "git_blob_sha1": "62d4c42e9c206843a8e46526797ed4a3ed1a59f0"
+    },
+    {
+      "control_id": "lifetime-safe-stable-owner-pointer",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_stable_owner_pointer.cpp",
+      "bytes": 295,
+      "sha256": "58974f4a31b7d01e376452335d7a6321ddde32fbc1d0be3d638472b3612ac807",
+      "git_blob_sha1": "db20f167b722fabb7dbb83f1cd5c3f068e7430cb"
+    },
+    {
+      "control_id": "lifetime-safe-shadowed-bindings",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_shadowed_bindings.cpp",
+      "bytes": 478,
+      "sha256": "892f453ba1a65b146ed5b876a45f7d706debd20c7ce8abf9bba243a9310b749e",
+      "git_blob_sha1": "0cdf4b8dfae42d215b57775205cdd39dea309dd1"
+    },
+    {
+      "control_id": "lifetime-safe-comment-false-positive",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_comment_false_positive.cpp",
+      "bytes": 432,
+      "sha256": "61eef20c87f98c9b9f7ae98a25c221d21bb8848e26768f41ead3ac0b7401b3b7",
+      "git_blob_sha1": "ff700857133973a91124d201096dc5adca21f1d8"
+    },
+    {
+      "control_id": "lifetime-unrelated-raw-pointer",
+      "path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_unrelated_raw_pointer.cpp",
+      "bytes": 208,
+      "sha256": "983a3d6994fd2e4a6c69ea49684c7507835c8d7c44cca4f39d2590e01a4f3b86",
+      "git_blob_sha1": "cbc622b4db843c30d8a2617dcad80ba09c452054"
+    }
+  ],
+  "detector_version_observations": [
+    {
+      "control_id": "shared-vulnerable-delayed-singleton-plain",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-vulnerable-atomic-exchange-mixed",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-vulnerable-compare-exchange-mixed",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-fixed-delayed-singleton-explicit-lock",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-fixed-atomic-exchange-protocol",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-safe-explicit-lock-common-fp",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-safe-cross-class-same-member-name",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "shared-unrelated-plain-pointer",
+      "manifest": "0.4.0",
+      "observed": "0.5.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-vulnerable-reset-raw-alias",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-vulnerable-owner-null-assignment",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-vulnerable-owner-replacement",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-vulnerable-restricted-move-transfer",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-fixed-reset-rebind-patch",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-fixed-owner-null-rebind-patch",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-fixed-owner-replacement-rebind-patch",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-fixed-move-scope-patch",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-safe-stable-owner-pointer",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-safe-shadowed-bindings",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-safe-comment-false-positive",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    },
+    {
+      "control_id": "lifetime-unrelated-raw-pointer",
+      "manifest": "0.3.0",
+      "observed": "0.4.0",
+      "matches": false
+    }
+  ],
+  "toolchain": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "compiler": {
+      "command": "/usr/lib/llvm-14/bin/clang",
+      "version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+      "full_output": [
+        "Ubuntu clang version 14.0.0-1ubuntu1.1",
+        "Target: x86_64-pc-linux-gnu",
+        "Thread model: posix",
+        "InstalledDir: /usr/lib/llvm-14/bin"
+      ]
+    },
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "patch_tool": "/usr/bin/patch",
+    "aslr_workaround": true,
+    "repeats": 3
+  },
+  "stages": {
+    "manifest": {
+      "status": "passed",
+      "source_count": 20,
+      "snapshot_sha256": "b7f1225c0701afb064e790c6d1b346f4ce68fef4d1eac5f2d2c570ce06b9948f"
+    },
+    "patch_revalidation": {
+      "status": "passed",
+      "items": [
+        {
+          "control_id": "shared-vulnerable-delayed-singleton-plain",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "shared-vulnerable-atomic-exchange-mixed",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "shared-vulnerable-compare-exchange-mixed",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "shared-fixed-delayed-singleton-explicit-lock",
+          "status": "passed",
+          "patch_path": "research/tests/cpp_detector_controls_impl_20261015/patches/shared_delayed_singleton_explicit_lock.patch",
+          "patch_sha256": "2431a6d245aa6eef9e3da86305cf78a71e3a4b5241ea44f12ec7ebcf7da448f4",
+          "base_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+          "base_sha256": "828181240b4a8dfda6124f5f840a66321eb6ae25f02b013d249774f91ba2cc7f",
+          "fixed_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+          "fixed_sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+          "patched_sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+          "patch_kind": "authored_control_remediation_patch",
+          "upstream_status": "not_claimed_as_upstream_product_patch",
+          "command": {
+            "argv": [
+              "patch",
+              "-p1",
+              "--fuzz=0",
+              "--batch",
+              "-i",
+              "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/patches/shared_delayed_singleton_explicit_lock.patch"
+            ],
+            "cwd": "/tmp/ohscanner-control-patch-l4e6tu6p",
+            "exit_code": 0,
+            "elapsed_seconds": 0.005829518000041389,
+            "stdout": "(Stripping trailing CRs from patch; use --binary to disable.)\npatching file research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp\n",
+            "stderr": "",
+            "timed_out": false
+          },
+          "failures": []
+        },
+        {
+          "control_id": "shared-fixed-atomic-exchange-protocol",
+          "status": "passed",
+          "patch_path": "research/tests/cpp_detector_controls_impl_20261015/patches/shared_atomic_protocol.patch",
+          "patch_sha256": "975ecf745c7bd6fae3a8f35e3b6664b13a07f5384a4ea168e54bce35f31571c1",
+          "base_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+          "base_sha256": "5631b27b265ae1e3eae6f3d3ba6870c7081b2ab6274460ef090af92dac94a9a3",
+          "fixed_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+          "fixed_sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+          "patched_sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+          "patch_kind": "authored_control_remediation_patch",
+          "upstream_status": "not_claimed_as_upstream_product_patch",
+          "command": {
+            "argv": [
+              "patch",
+              "-p1",
+              "--fuzz=0",
+              "--batch",
+              "-i",
+              "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/patches/shared_atomic_protocol.patch"
+            ],
+            "cwd": "/tmp/ohscanner-control-patch-kvzpn0h7",
+            "exit_code": 0,
+            "elapsed_seconds": 0.005811579999999594,
+            "stdout": "(Stripping trailing CRs from patch; use --binary to disable.)\npatching file research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp\n",
+            "stderr": "",
+            "timed_out": false
+          },
+          "failures": []
+        },
+        {
+          "control_id": "shared-safe-explicit-lock-common-fp",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "shared-safe-cross-class-same-member-name",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "shared-unrelated-plain-pointer",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-vulnerable-reset-raw-alias",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-vulnerable-owner-null-assignment",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-vulnerable-owner-replacement",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-vulnerable-restricted-move-transfer",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-fixed-reset-rebind-patch",
+          "status": "passed",
+          "patch_path": "research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_reset_rebind.patch",
+          "patch_sha256": "29355f8a7870c2db3d2a3e1c1461dfbb5c938d7e198b006f5fa2f3a366d9b166",
+          "base_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+          "base_sha256": "524ce9c678151acb7948f32ecc05677af28a07d0c22c57750416777deaa48821",
+          "fixed_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+          "fixed_sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+          "patched_sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+          "patch_kind": "authored_control_remediation_patch",
+          "upstream_status": "not_claimed_as_upstream_product_patch",
+          "command": {
+            "argv": [
+              "patch",
+              "-p1",
+              "--fuzz=0",
+              "--batch",
+              "-i",
+              "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_reset_rebind.patch"
+            ],
+            "cwd": "/tmp/ohscanner-control-patch-pnr6xqfy",
+            "exit_code": 0,
+            "elapsed_seconds": 0.005085536000024149,
+            "stdout": "(Stripping trailing CRs from patch; use --binary to disable.)\npatching file research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp\n",
+            "stderr": "",
+            "timed_out": false
+          },
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-owner-null-rebind-patch",
+          "status": "passed",
+          "patch_path": "research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_null_rebind.patch",
+          "patch_sha256": "53174b11cbe31781897ac697e0f158f54fc29d206c0757c9eb0a83187a1f2d85",
+          "base_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+          "base_sha256": "a1a5bb8469b762e5215a8c6dbac6c7217986739a9120462ceb104fcab8c29282",
+          "fixed_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+          "fixed_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "patched_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "patch_kind": "authored_control_remediation_patch",
+          "upstream_status": "not_claimed_as_upstream_product_patch",
+          "command": {
+            "argv": [
+              "patch",
+              "-p1",
+              "--fuzz=0",
+              "--batch",
+              "-i",
+              "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_null_rebind.patch"
+            ],
+            "cwd": "/tmp/ohscanner-control-patch-q8ykjukm",
+            "exit_code": 0,
+            "elapsed_seconds": 0.00439914899999394,
+            "stdout": "(Stripping trailing CRs from patch; use --binary to disable.)\npatching file research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp\n",
+            "stderr": "",
+            "timed_out": false
+          },
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-owner-replacement-rebind-patch",
+          "status": "passed",
+          "patch_path": "research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_replacement_rebind.patch",
+          "patch_sha256": "d25f6fefbddab5894a2f2986b71306d00cc456c97027f7f8c29aeb746f0eaaf6",
+          "base_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+          "base_sha256": "a73d7dcf4a5a55139913953d4c3bac05677df559b83df9d0561539e989031012",
+          "fixed_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+          "fixed_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "patched_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "patch_kind": "authored_control_remediation_patch",
+          "upstream_status": "not_claimed_as_upstream_product_patch",
+          "command": {
+            "argv": [
+              "patch",
+              "-p1",
+              "--fuzz=0",
+              "--batch",
+              "-i",
+              "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_owner_replacement_rebind.patch"
+            ],
+            "cwd": "/tmp/ohscanner-control-patch-1s9wn28i",
+            "exit_code": 0,
+            "elapsed_seconds": 0.004954028999975435,
+            "stdout": "(Stripping trailing CRs from patch; use --binary to disable.)\npatching file research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp\n",
+            "stderr": "",
+            "timed_out": false
+          },
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-move-scope-patch",
+          "status": "passed",
+          "patch_path": "research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_move_scope.patch",
+          "patch_sha256": "da45c112aa1deb23d285fbafd3b5a9ed71692633bf987039fdfaeb6ce3fa0e47",
+          "base_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+          "base_sha256": "fad07a93bfa9db30f6b88a4aa449500db368aff59d6dcea446cea01582dfe4b3",
+          "fixed_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+          "fixed_sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+          "patched_sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+          "patch_kind": "authored_control_remediation_patch",
+          "upstream_status": "not_claimed_as_upstream_product_patch",
+          "command": {
+            "argv": [
+              "patch",
+              "-p1",
+              "--fuzz=0",
+              "--batch",
+              "-i",
+              "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/patches/lifetime_move_scope.patch"
+            ],
+            "cwd": "/tmp/ohscanner-control-patch-nm7v1hzh",
+            "exit_code": 0,
+            "elapsed_seconds": 0.005622010000024602,
+            "stdout": "(Stripping trailing CRs from patch; use --binary to disable.)\npatching file research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp\n",
+            "stderr": "",
+            "timed_out": false
+          },
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-safe-stable-owner-pointer",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-safe-shadowed-bindings",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-safe-comment-false-positive",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        },
+        {
+          "control_id": "lifetime-unrelated-raw-pointer",
+          "status": "not_applicable",
+          "reason": "negative control has no remediation patch"
+        }
+      ]
+    },
+    "detector_matrix": {
+      "status": "passed",
+      "passed": 20,
+      "failed": 0,
+      "items": [
+        {
+          "control_id": "shared-vulnerable-delayed-singleton-plain",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 16,
+              "column": 44,
+              "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+              "candidate_cwe": "CWE-362",
+              "symbol": "instance_",
+              "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''instance_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: one-sided mutex leaves one access unprotected; one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown.",
+              "evidence_obligations": [
+                {
+                  "kind": "synchronization_proof",
+                  "status": "unknown"
+                }
+              ]
+            }
+          ],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp: 5 potential conflicting pair(s) for 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp::DelayedSingletonControl::instance_' share reliable lexical mutex 'mutex_'; remaining pairs were not suppressed.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp: pairwise analysis of 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp::DelayedSingletonControl::instance_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "candidate/unknown"
+            ],
+            "unknown_obligation_kinds": [
+              "synchronization_proof"
+            ],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-vulnerable-atomic-exchange-mixed",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 20,
+              "column": 16,
+              "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+              "candidate_cwe": "CWE-362",
+              "symbol": "instance_",
+              "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''instance_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: mixed atomic/non-atomic access pair has no proven common synchronization protocol; cross-function synchronization protocol is unknown.",
+              "evidence_obligations": [
+                {
+                  "kind": "synchronization_proof",
+                  "status": "unknown"
+                }
+              ]
+            }
+          ],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp: pairwise analysis of 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp::Holder::instance_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "candidate/unknown"
+            ],
+            "unknown_obligation_kinds": [
+              "synchronization_proof"
+            ],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-vulnerable-compare-exchange-mixed",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 22,
+              "column": 16,
+              "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+              "candidate_cwe": "CWE-362",
+              "symbol": "instance_",
+              "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''instance_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: mixed atomic/non-atomic access pair has no proven common synchronization protocol; cross-function synchronization protocol is unknown.",
+              "evidence_obligations": [
+                {
+                  "kind": "synchronization_proof",
+                  "status": "unknown"
+                }
+              ]
+            }
+          ],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp: pairwise analysis of 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp::Holder::instance_' leaves synchronization unproven for the mixed atomic/non-atomic synchronization protocol, different or one-sided mutexes, conditional/deferred locks, unresolved lock aliases or cross-function paths."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "candidate/unknown"
+            ],
+            "unknown_obligation_kinds": [
+              "synchronization_proof"
+            ],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-fixed-delayed-singleton-explicit-lock",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp: all potential conflicting access pairs to 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp::DelayedSingletonControl::instance_' share reliable lexical mutex 'mutex_'; pairwise suppression is limited to this translation unit and lexical lock model."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-fixed-atomic-exchange-protocol",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp: modeled accesses to 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp::Holder::instance_' use only the atomic shared_ptr API; this narrow atomic-only shape is not a concurrency proof."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-safe-explicit-lock-common-fp",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp: all potential conflicting access pairs to 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp::Holder::instance_' share reliable lexical mutex 'mutex_'; pairwise suppression is limited to this translation unit and lexical lock model."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-safe-cross-class-same-member-name",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp: modeled non-atomic accesses to 'research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp::ReadOnlyHolder::instance_' are read-only and do not form a potential conflicting pair in this narrow model."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-unrelated-plain-pointer",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "unrelated",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_unrelated_plain_pointer.cpp",
+          "detector_version_binding": {
+            "manifest": "0.4.0",
+            "observed": "0.5.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_unrelated_plain_pointer.cpp: research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_unrelated_plain_pointer.cpp: no class-member shared_ptr declaration was observed in the narrow lexical scope; absence of a finding is not a safe verdict."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-vulnerable-reset-raw-alias",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 16,
+              "column": 5,
+              "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+              "candidate_cwe": "CWE-416",
+              "symbol": "alias",
+              "message": "Candidate only: raw alias 'alias' is dereferenced after 'owner.reset()' invalidated the unique_ptr-owned object and without a later unconditional straight-line 'alias = owner.get()' rebinding; syntax evidence; sync_scope=no_same_scoped_mutex_lock_observed; not proof of UAF. Constraints: same_function_explicit_unique_ptr_owner, raw_alias_bound_with_owner_get, owner_reset_precedes_alias_dereference, lexical_binding_identity=owner-e5a597d01a95:alias-9dbbd317b919, function=main, sync_scope=no_same_scoped_mutex_lock_observed.",
+              "evidence_obligations": []
+            }
+          ],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "not proof of UAF"
+            ],
+            "unknown_obligation_kinds": [],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-vulnerable-owner-null-assignment",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 16,
+              "column": 5,
+              "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+              "candidate_cwe": "CWE-416",
+              "symbol": "alias",
+              "message": "Candidate only: raw alias 'alias' is dereferenced after owner assignment to 'owner' replaced or cleared the unique_ptr-owned object and without a later unconditional straight-line 'alias = owner.get()' rebinding; syntax evidence; sync_scope=no_same_scoped_mutex_lock_observed; not proof of UAF. Constraints: same_function_explicit_unique_ptr_owner, raw_alias_bound_with_owner_get, owner_owner assignment_precedes_alias_dereference, lexical_binding_identity=owner-e8f676449d40:alias-27e0d465181d, function=main, sync_scope=no_same_scoped_mutex_lock_observed.",
+              "evidence_obligations": []
+            }
+          ],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "owner assignment",
+              "not proof of UAF"
+            ],
+            "unknown_obligation_kinds": [],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-vulnerable-owner-replacement",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 16,
+              "column": 5,
+              "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+              "candidate_cwe": "CWE-416",
+              "symbol": "alias",
+              "message": "Candidate only: raw alias 'alias' is dereferenced after owner assignment to 'owner' replaced or cleared the unique_ptr-owned object and without a later unconditional straight-line 'alias = owner.get()' rebinding; syntax evidence; sync_scope=no_same_scoped_mutex_lock_observed; not proof of UAF. Constraints: same_function_explicit_unique_ptr_owner, raw_alias_bound_with_owner_get, owner_owner assignment_precedes_alias_dereference, lexical_binding_identity=owner-1bdd3fbd1440:alias-b36206dff716, function=main, sync_scope=no_same_scoped_mutex_lock_observed.",
+              "evidence_obligations": []
+            }
+          ],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "owner assignment",
+              "not proof of UAF"
+            ],
+            "unknown_obligation_kinds": [],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-vulnerable-restricted-move-transfer",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 1,
+          "findings": [
+            {
+              "line": 20,
+              "column": 5,
+              "rule_id": "ohcpp-lifetime-unique-raw-alias-reset-001",
+              "candidate_cwe": "CWE-416",
+              "symbol": "alias",
+              "message": "Candidate only: raw alias 'alias' is dereferenced after std::move transfer from owner 'owner' changed ownership; the raw alias remains live until the destination owner scope ends and without a later unconditional straight-line 'alias = owner.get()' rebinding; syntax evidence; sync_scope=no_same_scoped_mutex_lock_observed; not proof of UAF. Constraints: same_function_explicit_unique_ptr_owner, raw_alias_bound_with_owner_get, owner_move transfer_precedes_alias_dereference, lexical_binding_identity=owner-3f4b2f735823:alias-03f0994fd692, function=main, sync_scope=no_same_scoped_mutex_lock_observed.",
+              "evidence_obligations": []
+            }
+          ],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 1,
+            "message_contains": [
+              "move transfer",
+              "not proof of UAF"
+            ],
+            "unknown_obligation_kinds": [],
+            "interpretation": "candidate/unassessed"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-reset-rebind-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-owner-null-rebind-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-owner-replacement-rebind-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-fixed-move-scope-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-safe-stable-owner-pointer",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_stable_owner_pointer.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-safe-shadowed-bindings",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_shadowed_bindings.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-safe-comment-false-positive",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_comment_false_positive.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-unrelated-raw-pointer",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "unrelated",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_unrelated_raw_pointer.cpp",
+          "detector_version_binding": {
+            "manifest": "0.3.0",
+            "observed": "0.4.0",
+            "matches": false
+          },
+          "status": "completed",
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Detector Contract v1 remains unfrozen; this is a proposed implementation against the current M0 interface.",
+            "Dominating CFG paths, exception/early-return behavior, destructor timing, escaping aliases, and cross-function transfers are not modeled.",
+            "Empty findings are not proof of safety and are never benchmark misses.",
+            "Lock ordering, condition variables, callbacks, and concurrent alias publication are not modeled.",
+            "Partial/failed/not_run parse coverage remains unknown and is never a benchmark miss.",
+            "Sync scope classification is descriptive; a lock does not preserve destroyed-object lifetime."
+          ],
+          "expected": {
+            "status": "completed",
+            "finding_count": 0,
+            "message_contains": [],
+            "unknown_obligation_kinds": [],
+            "interpretation": "negative control only; not a safe verdict"
+          },
+          "status_result": "passed",
+          "failures": []
+        }
+      ]
+    },
+    "detector_regression": {
+      "status": "passed",
+      "items": []
+    },
+    "native_controls": {
+      "status": "failed",
+      "passed": 3,
+      "failed": 17,
+      "items": [
+        {
+          "control_id": "shared-vulnerable-delayed-singleton-plain",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+          "source_sha256": "828181240b4a8dfda6124f5f840a66321eb6ae25f02b013d249774f91ba2cc7f",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_delayed_singleton_plain.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-vulnerable-delayed-singleton-plain/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.217050935999964,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `main':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text+0x76): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0xb4): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x144): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x16d): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x1ab): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x227): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x272): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x2b0): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x335): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x35f): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x39d): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x419): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x464): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x4b4): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x4d5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x4da): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x4e5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x4ea): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x4f6): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x502): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x534): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x554): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x559): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x561): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x5a7): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x5c1): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x5ca): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x5cf): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x5d7): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text+0x646): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x64e): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::~_State_impl()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text+0x7e6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text+0x7ee): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `DelayedSingletonControl::DestroyInstance()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text._ZN23DelayedSingletonControl15DestroyInstanceEv[_ZN23DelayedSingletonControl15DestroyInstanceEv]+0x144): undefined reference to `std::__throw_system_error(int)'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `__clang_call_terminate':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `DelayedSingletonControl::GetInstance()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text._ZN23DelayedSingletonControl11GetInstanceEv[_ZN23DelayedSingletonControl11GetInstanceEv]+0x172): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_delayed_singleton_plain.cpp:(.text._ZN23DelayedSingletonControl11GetInstanceEv[_ZN23DelayedSingletonControl11GetInstanceEv]+0x410): undefined reference to `std::__throw_system_error(int)'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()':\nshared_vulnerable_delayed_singleton_plain.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro+0x50): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro+0x68): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro+0x78): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_vulnerable_delayed_singleton_plain-1a0bcd.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-vulnerable-delayed-singleton-plain/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-vulnerable-delayed-singleton-plain.build.json",
+            "log_sha256": "95717318bfa49f3cd49980accab721b3607a64c7a8c961e588de1c97c1f46b88"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "shared-vulnerable-atomic-exchange-mixed",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+          "source_sha256": "5631b27b265ae1e3eae6f3d3ba6870c7081b2ab6274460ef090af92dac94a9a3",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_atomic_exchange_mixed.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-vulnerable-atomic-exchange-mixed/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.1651997120000033,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `main':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4e): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x8c): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x11f): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x149): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x187): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x209): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x241): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x27f): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x312): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x33c): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x37a): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x3f9): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x444): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x494): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4b5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4c0): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4c5): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4ca): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4d6): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x4e2): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x522): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x543): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x548): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x588): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x5a4): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x5ac): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x5b1): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x5b9): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x5cb): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x636): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x63e): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::~_State_impl()':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x6e6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text+0x6ee): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `__clang_call_terminate':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `Holder::Exchange()':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZN6Holder8ExchangeEv[_ZN6Holder8ExchangeEv]+0x1d): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZN6Holder8ExchangeEv[_ZN6Holder8ExchangeEv]+0x87): undefined reference to `std::_Sp_locker::_Sp_locker(void const*)'\n/usr/bin/ld: shared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZN6Holder8ExchangeEv[_ZN6Holder8ExchangeEv]+0xc3): undefined reference to `std::_Sp_locker::~_Sp_locker()'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()':\nshared_vulnerable_atomic_exchange_mixed.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro+0x50): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro+0x68): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro+0x78): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_vulnerable_atomic_exchange_mixed-fdd89f.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-vulnerable-atomic-exchange-mixed/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-vulnerable-atomic-exchange-mixed.build.json",
+            "log_sha256": "6d962b636089b9af0d252cac01ef809b069870be1f29f1d299c6ea52030650ed"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "shared-vulnerable-compare-exchange-mixed",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp",
+          "source_sha256": "f52c6cb811a5942797a9203c9d7b884ca733af981c769bafbab6e9dae8b78d6d",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_vulnerable_compare_exchange_mixed.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-vulnerable-compare-exchange-mixed/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.2181201319999673,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `main':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4e): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x8c): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x11f): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x149): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x187): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x209): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x241): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x27f): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x312): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x33c): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x37a): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x3f9): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x444): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x494): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4b5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4c0): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4c5): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4ca): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4d6): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x4e2): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x522): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x543): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x548): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x588): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x5a4): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x5ac): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x5b1): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x5b9): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x5cb): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text+0x636): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x63e): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::~_State_impl()':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text+0x6e6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text+0x6ee): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `__clang_call_terminate':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `Holder::CompareExchange()':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text._ZN6Holder15CompareExchangeEv[_ZN6Holder15CompareExchangeEv]+0x30): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `bool std::atomic_compare_exchange_strong_explicit<Widget>(std::shared_ptr<Widget>*, std::shared_ptr<Widget>*, std::shared_ptr<Widget>, std::memory_order, std::memory_order)':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text._ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_[_ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_]+0x2e): undefined reference to `std::_Sp_locker::_Sp_locker(void const*, void const*)'\n/usr/bin/ld: shared_vulnerable_compare_exchange_mixed.cpp:(.text._ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_[_ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_]+0x293): undefined reference to `std::_Sp_locker::~_Sp_locker()'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()':\nshared_vulnerable_compare_exchange_mixed.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro+0x50): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro+0x68): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro+0x78): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_vulnerable_compare_exchange_mixed-cf48ce.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-vulnerable-compare-exchange-mixed/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-vulnerable-compare-exchange-mixed.build.json",
+            "log_sha256": "150c291749e7149df870154e71ebb342e79433cd4370a111f70e881dc3572b22"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "shared-fixed-delayed-singleton-explicit-lock",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+          "source_sha256": "bcf80cc41a3cf5a77783b1dd4ffbabde98def19fa9a95ff15168395c2a76fc58",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_delayed_singleton_explicit_lock.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-fixed-delayed-singleton-explicit-lock/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.334483732000024,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `main':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x76): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0xb4): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x144): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x16d): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x1ab): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x227): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x272): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x2b0): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x335): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x35f): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x39d): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x419): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x464): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x4b4): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x4d5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x4da): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x4e5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x4ea): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x4f6): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x502): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x534): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x554): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x559): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x561): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x5a7): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x5c1): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x5ca): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x5cf): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x5d7): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x646): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x64e): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::~_State_impl()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x7e6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text+0x7ee): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `DelayedSingletonControl::DestroyInstance()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZN23DelayedSingletonControl15DestroyInstanceEv[_ZN23DelayedSingletonControl15DestroyInstanceEv]+0x144): undefined reference to `std::__throw_system_error(int)'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `__clang_call_terminate':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `DelayedSingletonControl::GetInstance()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZN23DelayedSingletonControl11GetInstanceEv[_ZN23DelayedSingletonControl11GetInstanceEv]+0xcf): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZN23DelayedSingletonControl11GetInstanceEv[_ZN23DelayedSingletonControl11GetInstanceEv]+0x273): undefined reference to `std::__throw_system_error(int)'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()':\nshared_fixed_delayed_singleton_explicit_lock.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro+0x50): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro+0x68): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro+0x78): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_fixed_delayed_singleton_explicit_lock-287a89.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-fixed-delayed-singleton-explicit-lock/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-fixed-delayed-singleton-explicit-lock.build.json",
+            "log_sha256": "1b0d1e53a43ca2f8a885df3e5dc2814c16975e758da7c3efbfba7bac2f95e3ad"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "shared-fixed-atomic-exchange-protocol",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+          "source_sha256": "821dc07005e07b262d562d0ee56ac2c07a7a66b2e788eab5ab6e6bae5587123d",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_fixed_atomic_exchange_protocol.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-fixed-atomic-exchange-protocol/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.208877153000003,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `main':\nshared_fixed_atomic_exchange_protocol.cpp:(.text+0x4e): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x8c): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x11f): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x149): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x187): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x209): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x241): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x27f): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x312): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x33c): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x37a): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x3f9): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x444): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x494): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x4b5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x4c0): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x4c5): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x4ca): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x4d6): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x4e2): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x522): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x543): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x548): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x588): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x5a4): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x5ac): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x5b1): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x5b9): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x5cb): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text+0x636): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x63e): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::~_State_impl()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text+0x6e6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x6ee): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::_M_run()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text+0x754): undefined reference to `std::_Sp_locker::~_Sp_locker()'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x76d): undefined reference to `std::_Sp_locker::_Sp_locker(void const*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text+0x7d6): undefined reference to `std::_Sp_locker::~_Sp_locker()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `__clang_call_terminate':\nshared_fixed_atomic_exchange_protocol.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `Holder::Exchange()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text._ZN6Holder8ExchangeEv[_ZN6Holder8ExchangeEv]+0x1d): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text._ZN6Holder8ExchangeEv[_ZN6Holder8ExchangeEv]+0x87): undefined reference to `std::_Sp_locker::_Sp_locker(void const*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text._ZN6Holder8ExchangeEv[_ZN6Holder8ExchangeEv]+0xc3): undefined reference to `std::_Sp_locker::~_Sp_locker()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `Holder::CompareExchange()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text._ZN6Holder15CompareExchangeEv[_ZN6Holder15CompareExchangeEv]+0x30): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr_inplace()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EED0Ev]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `std::_Sp_counted_ptr_inplace<Widget, std::allocator<Widget>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()':\nshared_fixed_atomic_exchange_protocol.cpp:(.text._ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv[_ZNSt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv]+0x16): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o: in function `bool std::atomic_compare_exchange_strong_explicit<Widget>(std::shared_ptr<Widget>*, std::shared_ptr<Widget>*, std::shared_ptr<Widget>, std::memory_order, std::memory_order)':\nshared_fixed_atomic_exchange_protocol.cpp:(.text._ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_[_ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_]+0x2e): undefined reference to `std::_Sp_locker::_Sp_locker(void const*, void const*)'\n/usr/bin/ld: shared_fixed_atomic_exchange_protocol.cpp:(.text._ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_[_ZSt39atomic_compare_exchange_strong_explicitI6WidgetEbPSt10shared_ptrIT_ES4_S3_St12memory_orderS5_]+0x293): undefined reference to `std::_Sp_locker::~_Sp_locker()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro+0x50): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro+0x68): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro+0x78): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI6WidgetSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'\n/usr/bin/ld: /tmp/shared_fixed_atomic_exchange_protocol-8a0c1a.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-fixed-atomic-exchange-protocol/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-fixed-atomic-exchange-protocol.build.json",
+            "log_sha256": "5d0bff694929c972c9e538c5ec9032e5ee96ed93f21d446ef62920a917aee297"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "shared-safe-explicit-lock-common-fp",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp",
+          "source_sha256": "00e610d1aef2a05676d41f4b55d2799e79ef72fa95fa7df233f743162a26c09f",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_explicit_lock_common_fp.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-explicit-lock-common-fp/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.1810728040000527,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `main':\nshared_safe_explicit_lock_common_fp.cpp:(.text+0x74): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0xa1): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x138): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x162): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x18c): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x207): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x252): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x27c): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x301): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x327): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x355): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x3d9): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x404): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x454): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x475): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x47a): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x485): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x48a): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x496): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x4a2): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x4d4): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x4f2): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x4f7): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x4ff): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x540): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x55b): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x564): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x569): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x571): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_safe_explicit_lock_common_fp.cpp:(.text+0x5e6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x5ee): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::_M_run()':\nshared_safe_explicit_lock_common_fp.cpp:(.text+0x7a9): undefined reference to `std::__throw_system_error(int)'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::~_State_impl()':\nshared_safe_explicit_lock_common_fp.cpp:(.text+0x7d6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text+0x7de): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_safe_explicit_lock_common_fp.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `__clang_call_terminate':\nshared_safe_explicit_lock_common_fp.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_safe_explicit_lock_common_fp.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o: in function `Holder::Reset()':\nshared_safe_explicit_lock_common_fp.cpp:(.text._ZN6Holder5ResetEv[_ZN6Holder5ResetEv]+0x144): undefined reference to `std::__throw_system_error(int)'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.rel.ro+0x50): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.rel.ro+0x68): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.rel.ro+0x78): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_safe_explicit_lock_common_fp-2d2026.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-explicit-lock-common-fp/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-safe-explicit-lock-common-fp.build.json",
+            "log_sha256": "1fce18508d85a9aa834066fe89f438550f5551c254c879166d7b1e0c908d8d61"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "shared-safe-cross-class-same-member-name",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp",
+          "source_sha256": "3e15889c0a5ec5a29f8b7a65c101bbb3ce4e84eff7cbdb88fb67393e305727f8",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_safe_cross_class_same_member_name.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 0,
+              "elapsed_seconds": 2.9815016920000517,
+              "stdout": "",
+              "stderr": "",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name/control",
+            "binary_sha256": "8eb91e98a65f094217d0d82eeea31644de32db2f6197e0ae37746eb8fbf261fc",
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-safe-cross-class-same-member-name.build.json",
+            "log_sha256": "c029b5869a8c187072c743b6fceb2f7832028910d69eb58743ce1861cd4e1fa7"
+          },
+          "runs": [
+            {
+              "repeat": 1,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name",
+                "exit_code": 0,
+                "elapsed_seconds": 0.02141961600000286,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-safe-cross-class-same-member-name.run-01.json",
+              "log_sha256": "3c19191d3694033c678a2d11036821763f5c2bcf6fa605f3dff470e3bac0d2ae"
+            },
+            {
+              "repeat": 2,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name",
+                "exit_code": 0,
+                "elapsed_seconds": 0.023274506999996447,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-safe-cross-class-same-member-name.run-02.json",
+              "log_sha256": "4d7ed1e79376114a4e3ea8b4be18bd55c752066a54acf071daf2f4cb34280f6b"
+            },
+            {
+              "repeat": 3,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-safe-cross-class-same-member-name",
+                "exit_code": 0,
+                "elapsed_seconds": 0.024903669000025275,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-safe-cross-class-same-member-name.run-03.json",
+              "log_sha256": "58d2574270fb27eaaa30b5dbf5f24b6c4276c4949c04937a20fb1623842f4e5c"
+            }
+          ],
+          "status": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "shared-unrelated-plain-pointer",
+          "detector_id": "ohscanner.cpp.shared_ptr_race",
+          "category": "unrelated",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_unrelated_plain_pointer.cpp",
+          "source_sha256": "a5b69f618655bc9dfb72589260f074216ef0fb7cb1f77c50ab8cebf1e3b2a079",
+          "sanitizer": "thread",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=thread",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/shared_ptr/shared_unrelated_plain_pointer.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-unrelated-plain-pointer/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 3.1409038360000068,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x23\n/tmp/shared_unrelated_plain_pointer-5b85b3.o: in function `main':\nshared_unrelated_plain_pointer.cpp:(.text+0x78): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0xb9): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x148): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x172): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x1b0): undefined reference to `std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)())'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x237): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x274): undefined reference to `std::thread::join()'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x2c4): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x2e5): undefined reference to `std::__throw_bad_array_new_length()'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x2ea): undefined reference to `std::__throw_bad_alloc()'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x2f6): undefined reference to `std::__throw_length_error(char const*)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x328): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x343): undefined reference to `std::terminate()'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x34c): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x351): undefined reference to `__cxa_rethrow'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x359): undefined reference to `__cxa_end_catch'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o: in function `std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::~_State_impl()':\nshared_unrelated_plain_pointer.cpp:(.text+0x3c6): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text+0x3ce): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o: in function `std::vector<std::thread, std::allocator<std::thread> >::~vector()':\nshared_unrelated_plain_pointer.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x68): undefined reference to `operator delete(void*)'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text._ZNSt6vectorISt6threadSaIS0_EED2Ev[_ZNSt6vectorISt6threadSaIS0_EED2Ev]+0x7d): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o: in function `__clang_call_terminate':\nshared_unrelated_plain_pointer.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x12): undefined reference to `__cxa_begin_catch'\n/usr/bin/ld: shared_unrelated_plain_pointer.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x17): undefined reference to `std::terminate()'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o:(.data.rel.ro+0x10): undefined reference to `std::thread::_State::~_State()'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o:(.data.rel.ro+0x28): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o:(.data.rel.ro+0x38): undefined reference to `typeinfo for std::thread::_State'\n/usr/bin/ld: /tmp/shared_unrelated_plain_pointer-5b85b3.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/shared-unrelated-plain-pointer/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/shared-unrelated-plain-pointer.build.json",
+            "log_sha256": "4e60ff1145ec11d1ebb78e3e6f5f58d1332982468cc9339bbc7bd027da5a7d4d"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-vulnerable-reset-raw-alias",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+          "source_sha256": "524ce9c678151acb7948f32ecc05677af28a07d0c22c57750416777deaa48821",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_reset_raw_alias.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-reset-raw-alias/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.879824862000021,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_vulnerable_reset_raw_alias-00e4aa.o: in function `main':\nlifetime_vulnerable_reset_raw_alias.cpp:(.text+0xd): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_vulnerable_reset_raw_alias.cpp:(.text+0x41): undefined reference to `operator delete(void*)'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-reset-raw-alias/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-vulnerable-reset-raw-alias.build.json",
+            "log_sha256": "a49da37bbdd26be1a705a1299c9b8b0408440e4ed7f5700423e90cdd59c1ea62"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-vulnerable-owner-null-assignment",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+          "source_sha256": "a1a5bb8469b762e5215a8c6dbac6c7217986739a9120462ceb104fcab8c29282",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_null_assignment.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-owner-null-assignment/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.846974393000039,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_vulnerable_owner_null_assignment-28faee.o: in function `main':\nlifetime_vulnerable_owner_null_assignment.cpp:(.text+0xd): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_vulnerable_owner_null_assignment.cpp:(.text+0x41): undefined reference to `operator delete(void*)'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-owner-null-assignment/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-vulnerable-owner-null-assignment.build.json",
+            "log_sha256": "466b44eacbe50e19fadc5093f8208ca35d9c78631eab049648915903e06c7a92"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-vulnerable-owner-replacement",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+          "source_sha256": "a73d7dcf4a5a55139913953d4c3bac05677df559b83df9d0561539e989031012",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_owner_replacement.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-owner-replacement/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.9703156090000107,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_vulnerable_owner_replacement-16547c.o: in function `main':\nlifetime_vulnerable_owner_replacement.cpp:(.text+0x10): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_vulnerable_owner_replacement.cpp:(.text+0x48): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_vulnerable_owner_replacement.cpp:(.text+0x77): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_vulnerable_owner_replacement.cpp:(.text+0x8d): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_vulnerable_owner_replacement.cpp:(.text+0x11c): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x22\n/tmp/lifetime_vulnerable_owner_replacement-16547c.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-owner-replacement/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-vulnerable-owner-replacement.build.json",
+            "log_sha256": "79a8efdc758c1dd5f035203486efbf6fa2808a0572fb0ec1eb027a9a2a1f737b"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-vulnerable-restricted-move-transfer",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "vulnerable",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+          "source_sha256": "fad07a93bfa9db30f6b88a4aa449500db368aff59d6dcea446cea01582dfe4b3",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_vulnerable_restricted_move_transfer.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-restricted-move-transfer/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.8270939680000424,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_vulnerable_restricted_move_transfer-286c81.o: in function `main':\nlifetime_vulnerable_restricted_move_transfer.cpp:(.text+0xd): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_vulnerable_restricted_move_transfer.cpp:(.text+0x41): undefined reference to `operator delete(void*)'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-vulnerable-restricted-move-transfer/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-vulnerable-restricted-move-transfer.build.json",
+            "log_sha256": "e523eedefa1571e2b05a5fc065871905512f7da2c7c676e419af2e5b359ffaed"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-fixed-reset-rebind-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+          "source_sha256": "4dbc4e817d6daff47f13bda6a7b87e602c4607002dc75d5d073debff0809694b",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_reset_rebind_patch.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-reset-rebind-patch/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.8322368710000205,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_fixed_reset_rebind_patch-eb5728.o: in function `main':\nlifetime_fixed_reset_rebind_patch.cpp:(.text+0x10): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_reset_rebind_patch.cpp:(.text+0x47): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_reset_rebind_patch.cpp:(.text+0x7b): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_fixed_reset_rebind_patch.cpp:(.text+0x90): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_fixed_reset_rebind_patch.cpp:(.text+0x125): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x22\n/tmp/lifetime_fixed_reset_rebind_patch-eb5728.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-reset-rebind-patch/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-fixed-reset-rebind-patch.build.json",
+            "log_sha256": "a66c02afb2818e4619d17928f615c891fc873322e75d7ada9473cabf22728a62"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-fixed-owner-null-rebind-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+          "source_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_null_assignment_patch.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-owner-null-rebind-patch/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.8451704139999947,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_fixed_owner_null_assignment_patch-994958.o: in function `main':\nlifetime_fixed_owner_null_assignment_patch.cpp:(.text+0x10): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_owner_null_assignment_patch.cpp:(.text+0x47): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_owner_null_assignment_patch.cpp:(.text+0x7b): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_fixed_owner_null_assignment_patch.cpp:(.text+0x90): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_fixed_owner_null_assignment_patch.cpp:(.text+0x125): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x22\n/tmp/lifetime_fixed_owner_null_assignment_patch-994958.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-owner-null-rebind-patch/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-fixed-owner-null-rebind-patch.build.json",
+            "log_sha256": "6d456ca766604df521a15efc2a0fdb42eb74ac59680148cc445005687f701589"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-fixed-owner-replacement-rebind-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+          "source_sha256": "a757c50118b09949d43659b3a2d6ba656ce8568ea672dfbb83493a3ddc92e8d5",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_owner_replacement_patch.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-owner-replacement-rebind-patch/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.8545759220000377,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_fixed_owner_replacement_patch-23fe63.o: in function `main':\nlifetime_fixed_owner_replacement_patch.cpp:(.text+0x10): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_owner_replacement_patch.cpp:(.text+0x47): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_owner_replacement_patch.cpp:(.text+0x7b): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_fixed_owner_replacement_patch.cpp:(.text+0x90): undefined reference to `operator delete(void*)'\n/usr/bin/ld: lifetime_fixed_owner_replacement_patch.cpp:(.text+0x125): undefined reference to `operator delete(void*)'\n/usr/bin/ld: /usr/bin/ld: DWARF error: invalid or unhandled FORM value: 0x22\n/tmp/lifetime_fixed_owner_replacement_patch-23fe63.o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-owner-replacement-rebind-patch/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-fixed-owner-replacement-rebind-patch.build.json",
+            "log_sha256": "cd5c0612dfa2dffbe2d8be0631c4724fd73cc48abeaf902de970331e00bd3b09"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-fixed-move-scope-patch",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "fixed",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+          "source_sha256": "e91f5559f9a1b6c3a91f4150af8693150951fda8ac77721b20565d3682c5f021",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_fixed_move_scope_patch.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-move-scope-patch/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.9170312199999557,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_fixed_move_scope_patch-37109b.o: in function `main':\nlifetime_fixed_move_scope_patch.cpp:(.text+0xa): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_fixed_move_scope_patch.cpp:(.text+0x49): undefined reference to `operator delete(void*)'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-fixed-move-scope-patch/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-fixed-move-scope-patch.build.json",
+            "log_sha256": "057b80c2d48eaf4512634a13fdee329799b11bb99d164170bac04ac3589f9409"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-safe-stable-owner-pointer",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_stable_owner_pointer.cpp",
+          "source_sha256": "58974f4a31b7d01e376452335d7a6321ddde32fbc1d0be3d638472b3612ac807",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_stable_owner_pointer.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-stable-owner-pointer/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.820310145999997,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_safe_stable_owner_pointer-80415f.o: in function `main':\nlifetime_safe_stable_owner_pointer.cpp:(.text+0xa): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_safe_stable_owner_pointer.cpp:(.text+0x49): undefined reference to `operator delete(void*)'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-stable-owner-pointer/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-safe-stable-owner-pointer.build.json",
+            "log_sha256": "aaab16dc1456ee626bfa4ef64310f4b45b6d927adfd36907486663f37a5508ef"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-safe-shadowed-bindings",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_shadowed_bindings.cpp",
+          "source_sha256": "892f453ba1a65b146ed5b876a45f7d706debd20c7ce8abf9bba243a9310b749e",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_shadowed_bindings.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 0,
+              "elapsed_seconds": 3.019890772999986,
+              "stdout": "",
+              "stderr": "",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings/control",
+            "binary_sha256": "3a89bbc43b3267292f79dbb90a679b3b48724fa823816bac7fd7a4bc16d359e9",
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-safe-shadowed-bindings.build.json",
+            "log_sha256": "9211cc9241cc15a067cb44a425874b1549d7716e4b6f6a52b7cd00c3847cb8c1"
+          },
+          "runs": [
+            {
+              "repeat": 1,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings",
+                "exit_code": 0,
+                "elapsed_seconds": 0.014843327999983558,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-safe-shadowed-bindings.run-01.json",
+              "log_sha256": "865f134cb68612397149e5c6ee5bb7fb567c4f5c747abc989afc04843d31c3a3"
+            },
+            {
+              "repeat": 2,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings",
+                "exit_code": 0,
+                "elapsed_seconds": 0.014808281999989958,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-safe-shadowed-bindings.run-02.json",
+              "log_sha256": "d22c0ad5743943d74e78487a00126bd8f9dcb24ecf1256dc642d83b606d13e34"
+            },
+            {
+              "repeat": 3,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-shadowed-bindings",
+                "exit_code": 0,
+                "elapsed_seconds": 0.01721221999997624,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-safe-shadowed-bindings.run-03.json",
+              "log_sha256": "65afbc70cfc433c8b87e57df923d169fab407986232f8fe5457d79307492365a"
+            }
+          ],
+          "status": "passed",
+          "failures": []
+        },
+        {
+          "control_id": "lifetime-safe-comment-false-positive",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "safe",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_comment_false_positive.cpp",
+          "source_sha256": "61eef20c87f98c9b9f7ae98a25c221d21bb8848e26768f41ead3ac0b7401b3b7",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_safe_comment_false_positive.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-comment-false-positive/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 1,
+              "elapsed_seconds": 2.9757165949999944,
+              "stdout": "",
+              "stderr": "/usr/bin/ld: /tmp/lifetime_safe_comment_false_positive-a7f41e.o: in function `main':\nlifetime_safe_comment_false_positive.cpp:(.text+0xa): undefined reference to `operator new(unsigned long)'\n/usr/bin/ld: lifetime_safe_comment_false_positive.cpp:(.text+0x49): undefined reference to `operator delete(void*)'\nclang: error: linker command failed with exit code 1 (use -v to see invocation)\n",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-safe-comment-false-positive/control",
+            "binary_sha256": null,
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-safe-comment-false-positive.build.json",
+            "log_sha256": "c3f5945f8457f38c62307c27bfc50188c72ed480637dbe5333cc03019d928457"
+          },
+          "runs": [],
+          "status": "failed",
+          "failures": [
+            "native build failed",
+            "native runs were not executed for every repeat"
+          ]
+        },
+        {
+          "control_id": "lifetime-unrelated-raw-pointer",
+          "detector_id": "ohscanner.cpp.lifetime",
+          "category": "unrelated",
+          "source_path": "research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_unrelated_raw_pointer.cpp",
+          "source_sha256": "983a3d6994fd2e4a6c69ea49684c7507835c8d7c44cca4f39d2590e01a4f3b86",
+          "sanitizer": "address",
+          "build": {
+            "command": {
+              "argv": [
+                "/usr/lib/llvm-14/bin/clang",
+                "-std=c++17",
+                "-g",
+                "-O1",
+                "-fno-omit-frame-pointer",
+                "-pthread",
+                "-no-pie",
+                "-fsanitize=address",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/research/tests/cpp_detector_controls_impl_20261015/samples/lifetime/lifetime_unrelated_raw_pointer.cpp",
+                "-o",
+                "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer/control"
+              ],
+              "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+              "exit_code": 0,
+              "elapsed_seconds": 2.8790221289999636,
+              "stdout": "",
+              "stderr": "",
+              "timed_out": false
+            },
+            "binary_path": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer/control",
+            "binary_sha256": "cdc6702083165865fd33e41e98784519a80f1c280fc70eec915d5bcc2affe309",
+            "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-unrelated-raw-pointer.build.json",
+            "log_sha256": "ba8daa1f7b82fbf40ac88f91da411202ca41171a6d7ba921c879b28591b897a1"
+          },
+          "runs": [
+            {
+              "repeat": 1,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer",
+                "exit_code": 0,
+                "elapsed_seconds": 0.015114510999978847,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-unrelated-raw-pointer.run-01.json",
+              "log_sha256": "3b1db71b73ceb8ec48a7eadba687037c54d00851c88f0a0a2fc52e5e262aa4f8"
+            },
+            {
+              "repeat": 2,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer",
+                "exit_code": 0,
+                "elapsed_seconds": 0.016018301000030988,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-unrelated-raw-pointer.run-02.json",
+              "log_sha256": "16a0a4af933c7093401a49fca4e5b89ee80ed8c4c73f72ae8ecaf6caa967e76b"
+            },
+            {
+              "repeat": 3,
+              "command": {
+                "argv": [
+                  "/usr/bin/setarch",
+                  "x86_64",
+                  "-R",
+                  "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer/control"
+                ],
+                "cwd": "/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/native/lifetime-unrelated-raw-pointer",
+                "exit_code": 0,
+                "elapsed_seconds": 0.014128420000020014,
+                "stdout": "",
+                "stderr": "",
+                "timed_out": false
+              },
+              "sanitizer_detected": false,
+              "observed_outcome": "clean",
+              "expected_outcome": "clean",
+              "status": "passed",
+              "log_path": "outputs/poc/rc-jsproxy-patch-revalidation-20261016/controls/evidence/logs/lifetime-unrelated-raw-pointer.run-03.json",
+              "log_sha256": "b29bc6974d213a9559b7b7697d572d5bc6056bdf32e710ef13331a46e3ed86fd"
+            }
+          ],
+          "status": "passed",
+          "failures": []
+        }
+      ]
+    },
+    "family_poc_harnesses": {
+      "status": "skipped",
+      "items": []
+    }
+  },
+  "limitations": [
+    "所有样本为自编 synthetic development controls，不是独立 holdout，也不能计算 Precision/Recall。",
+    "fixed 项绑定可执行、零 fuzz 的 authored_control_remediation_patch，并要求 Detector 稳定拒绝；不冒充上游产品补丁。",
+    "TSan/ASan 只证明受控 workload 中的局部内存/并发行为，不证明真实产品入口、攻击者控制、CIA 影响或可利用性。",
+    "shared_ptr Detector 的原子 API 和互斥身份仍是窄词法模型，跨函数协议、锁别名、模板实例化和真实构建配置保持 unknown。",
+    "lifetime Detector 不建模完整 CFG、异常、析构时序、跨函数 alias 或真实所有权图；0 告警不是安全证明。",
+    "sanitizer 结果受编译器、调度、迭代数和 allocator 影响；必须记录 exact argv、版本、重复次数和全部运行。",
+    "实际 worktree 中 Detector 版本与控制基线版本存在漂移；行为矩阵记录 observed/manifest 两个版本，不把 observed 冒充基线版本。"
+  ]
+}

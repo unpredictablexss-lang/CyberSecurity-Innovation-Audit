@@ -204,6 +204,39 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
                 self.assertNotIn("no vulnerability", joined)
                 self.assertNotIn("expected miss", joined)
 
+    def test_same_line_identical_sinks_keep_one_runner_identity(self) -> None:
+        import hashlib
+
+        from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
+        from src.ohscanner.fixture import snapshot_digest
+        from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
+
+        text = "int f(int *p) { return *p + *p; }\n"
+        unit = SourceUnit(
+            "duplicate.cpp",
+            "cpp",
+            text,
+            hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            "complete",
+        )
+        context = ScanContext(
+            ScanRequest(
+                "null-duplicate-identity",
+                "fixture/null-duplicate",
+                "synthetic-null-v1",
+                snapshot_digest((unit,)),
+                "current-component:fixture/null-duplicate",
+            ),
+            (unit,),
+            {},
+        )
+        registry = DetectorRegistry()
+        registry.register(make_detector())
+        reports, _sidecar = run_all_with_coverage(context, registry)
+        self.assertEqual(reports[0].status, "completed")
+        self.assertEqual(reports[0].diagnostic_count, 1)
+        self.assertEqual(len(reports[0].diagnostics), 1)
+
     def test_output_is_deterministic_across_replays(self) -> None:
         first = self.detector.detect(self.package.context, self.package.units)
         second = self.detector.detect(self.package.context, self.package.units)

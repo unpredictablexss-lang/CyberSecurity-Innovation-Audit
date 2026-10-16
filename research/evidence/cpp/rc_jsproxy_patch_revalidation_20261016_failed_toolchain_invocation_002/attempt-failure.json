@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "kind": "failed_revalidation_attempt",
+  "attempt": 2,
+  "status": "failed_before_runtime_replays",
+  "reason": "Compiler invocation was resolved through the clang++ symlink to clang, so the driver did not add the C++ runtime. Control patch checks passed but native builds failed. Metrics parsing also failed to recognize GNU time tab output.",
+  "decision": "Preserve this failed attempt. Invoke /usr/bin/clang++ by its driver name, separately hash its resolved binary, and correct the GNU time metrics parser before rerunning."
+}

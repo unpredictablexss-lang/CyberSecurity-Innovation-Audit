@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-16T03:55:29.383Z",
+  "evidence_dir": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016",
+  "files": [
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/controls-results.json",
+      "sha256": "1517b0479effcc0ef01f5ad55b275da15c0d754c5f4a37467027038e37be2d82",
+      "bytes": 323240
+    },
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/controls-results.md",
+      "sha256": "9f59b42c11d4d89e8be1649051551637c2e51b25cc542c2e3bf3a8b82c7a0b6f",
+      "bytes": 6219
+    },
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/patch-review.md",
+      "sha256": "c75aaa259d0fa5622997af32e18b5265929586c74e28628c1e483b369e8508ae",
+      "bytes": 3637
+    },
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/patch.diff",
+      "sha256": "3b04fd4e5575e224df35f77be487f3cd90d0a40501b1ff65f5d01886037124c9",
+      "bytes": 658
+    },
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/revalidation.json",
+      "sha256": "93d7e4fcbd2925ae9dca8713016caf406368d1ffa082f56caaa5df846c051174",
+      "bytes": 523279
+    },
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/revalidation.md",
+      "sha256": "78e621d1daebbb71b18d7cdb062a0dd866a68f1b67aa883a518835a23870ae7f",
+      "bytes": 5115
+    },
+    {
+      "path": "research/evidence/cpp/rc_jsproxy_patch_revalidation_20261016/verification.json",
+      "sha256": "4ceadb78449569cb438c08e74852094b6933916ff80c81d7b83e03ac813865dc",
+      "bytes": 2604
+    }
+  ],
+  "raw_work_dir": "outputs/poc/rc-jsproxy-patch-revalidation-20261016"
+}

@@ -1,6 +1,7 @@
 import argparse
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 from src.baseline.clang_analyzer import run_clang_analyzer, write_reports as write_clang_reports
@@ -168,6 +169,39 @@ def main() -> None:
     m2_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m2.json")
     m2_parser.add_argument("--md-out", default="outputs/reports/ohscanner_m2.md")
 
+    halfyear_parser = subparsers.add_parser(
+        "ohscan-halfyear",
+        help="Bounded first-parent half-year changed-source candidate MVP",
+    )
+    halfyear_parser.add_argument("--repo-dir", required=True,
+                                 help="Local Git repository with complete pinned objects")
+    halfyear_parser.add_argument("--repository", required=True,
+                                 help="Owner/repository declaration such as openharmony/commonlibrary_c_utils")
+    halfyear_parser.add_argument("--branch", default="HEAD",
+                                 help="Local branch/ref to select; default HEAD")
+    halfyear_parser.add_argument("--start", required=True,
+                                 help="Inclusive ISO-8601 committer-time window start")
+    halfyear_parser.add_argument("--end", required=True,
+                                 help="Exclusive ISO-8601 committer-time window end")
+    halfyear_parser.add_argument("--timezone", default="Asia/Shanghai",
+                                 help="Timezone for naive timestamps; default Asia/Shanghai")
+    halfyear_parser.add_argument("--detector", action="append", required=True,
+                                 help="Explicit approved detector ID; repeatable")
+    halfyear_parser.add_argument("--max-commits", type=int, default=5000,
+                                 help="Maximum first-parent commits to inspect; default 5000")
+    halfyear_parser.add_argument("--out-dir",
+                                 default="outputs/reports/halfyear_candidate_mvp",
+                                 help="Output directory for aggregate and per-commit evidence")
+    cross_version_parser = subparsers.add_parser(
+        "ohscan-cross-version",
+        help="Build an evidence-gated cross-version impact package from fixed local objects",
+    )
+    cross_version_parser.add_argument("--manifest", required=True,
+                                      help="Cross-version comparison manifest JSON")
+    cross_version_parser.add_argument("--repo-dir", required=True,
+                                      help="Local Git repository with complete pinned objects")
+    cross_version_parser.add_argument("--out-dir", required=True,
+                                      help="Output directory for the evidence package")
     historical_parser = subparsers.add_parser(
         "benchmark-historical",
         help="Replay one published vulnerable/fixed commit pair as historical ground truth",
@@ -384,6 +418,50 @@ def main() -> None:
         print(f"[OK] Markdown report: {args.md_out}")
         return
 
+    if args.command == "ohscan-halfyear":
+        from src.ohscanner.halfyear import run_halfyear_candidate_mvp
+
+        try:
+            report = run_halfyear_candidate_mvp(
+                repo_dir=Path(args.repo_dir),
+                repository=args.repository,
+                branch=args.branch,
+                start=args.start,
+                end=args.end,
+                timezone=args.timezone,
+                detector_ids=tuple(args.detector),
+                out_dir=Path(args.out_dir),
+                max_commits=args.max_commits,
+                argv=tuple(sys.argv),
+            )
+        except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
+            halfyear_parser.error(str(error))
+        totals = report["totals"]
+        print("[OK] half-year changed-source candidate MVP; NOT validated vulnerabilities")
+        print(f"[OK] repository: {report['repository']}")
+        print(f"[OK] selected commits: {totals['selected_commits']}")
+        print(f"[OK] scanned commits: {totals['scanned_commits']}")
+        print(f"[OK] blocked commits: {totals['blocked_commits']}")
+        print(f"[OK] candidate observations: {totals['candidate_observations']}")
+        print(f"[OK] report status: {report['status']}")
+        print(f"[OK] JSON report: {Path(args.out_dir) / 'halfyear_candidates.json'}")
+        print(f"[OK] Markdown report: {Path(args.out_dir) / 'halfyear_candidates.md'}")
+        return
+    if args.command == "ohscan-cross-version":
+        from src.ohscanner.cross_version import build_package
+
+        try:
+            report = build_package(
+                Path(args.manifest),
+                Path(args.repo_dir),
+                Path(args.out_dir),
+            )
+        except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
+            cross_version_parser.error(str(error))
+        print("[OK] cross-version impact evidence package; NOT a confirmed vulnerability")
+        print(f"[OK] candidates: {len(report['candidates'])}")
+        print(f"[OK] JSON report: {Path(args.out_dir) / 'impact_evidence.json'}")
+        return
     if args.command == "ohscan-index":
         from src.ohscanner.indexing import run_git_index
 

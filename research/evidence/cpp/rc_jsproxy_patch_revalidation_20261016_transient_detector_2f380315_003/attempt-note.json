@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "kind": "completed_transient_worktree_state",
+  "attempt": 3,
+  "status": "completed_but_superseded",
+  "detector_source_sha256": "2f380315f49c60b4b3f3cc1cbe7a0d517f30ba874233bfcc895905f0a23321e9",
+  "outcome": "stable_reproduced_and_patch_revalidated",
+  "reason": "The run completed while a transient dirty shared_ptr detector implementation was present. The worktree later returned to the historical manifest-bound detector SHA-256 70197fb273054a20e2e6de82aa4eaa6bdeeaf4951ead6d5076b0e9832c65e230. Preserve this run, then revalidate against the final current checkout.",
+  "historical_reports_modified": false
+}

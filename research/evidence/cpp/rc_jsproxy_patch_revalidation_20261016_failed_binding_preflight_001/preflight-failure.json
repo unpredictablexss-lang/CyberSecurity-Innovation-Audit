@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "kind": "failed_binding_preflight",
+  "attempt": 1,
+  "status": "failed_before_variant_generation",
+  "reason": "Current dirty shared_ptr detector implementation SHA-256 differs from the historical JSProxy Harness manifest binding. This is preserved as a preflight failure and is not rewritten as historical evidence.",
+  "current_detector_sha256": "2232de1dbf85a70f076d0c86a0fa34bf70dc96ef64b649bede44670dcc13d43d",
+  "historical_manifest_detector_sha256": "70197fb273054a20e2e6de82aa4eaa6bdeeaf4951ead6d5076b0e9832c65e230",
+  "decision": "Continue with current code, record manifest drift explicitly, and keep harness/PoC/manifest historical hashes unchanged."
+}
