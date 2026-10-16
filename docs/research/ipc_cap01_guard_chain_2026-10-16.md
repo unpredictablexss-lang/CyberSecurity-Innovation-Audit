@@ -128,11 +128,13 @@
 （blob `2442c62f00c2`，3,795 行）
 
 ```cpp
-1006  sptr<IRemoteObject> ScreenSession::GetRenderSession()
-1007  {
-1008      return renderSession_;
-1009  }
+1007  sptr<IRemoteObject> ScreenSession::GetRenderSession()
+1008  {
+1009      return renderSession_;
+1010  }
 ```
+
+（行号已在 `w178.py` 里对 `2442c62f00c2` 复核；本节早前印成 `1006-1009`，**差一行，已更正**。）
 
 纯 getter，不校验调用者，也不校验状态。
 
@@ -204,7 +206,7 @@ CAP-01 是**描述符校验在位、但没有权限校验**。两者在报告里
 
 ### 5.3 「`renderSession_` 的真实接口在仓库外」—— 只对一半
 
-`ScreenSession::GetRenderSession()` 的**实现就在仓库内**（`screen_session.cpp:1006`）。
+`ScreenSession::GetRenderSession()` 的**实现就在仓库内**（`screen_session.cpp:1007`，见 §3 第 3 帧）。
 在仓库外的是这个远程对象**被拿到之后能做什么**（渲染服务的接口能力）。
 
 ## 6. 证据门现状（逐字段，不粉饰）
@@ -212,7 +214,7 @@ CAP-01 是**描述符校验在位、但没有权限校验**。两者在报告里
 | 门字段 | 状态 | 依据 |
 |---|---|---|
 | `target_bound` | **True** | 仓库 + `8b0d8fe1b973` + 路径，blob 自检一致 |
-| `entry_controlled` | **未建立** | 描述符校验在位，但**「哪类调用者在什么权限下能发这个事务」没有证据**。`sa_profile/4607.json` 的 blob `bb2aec03568e` **不在本地**，读不到 |
+| `entry_controlled` | **未建立** | 描述符校验在位，但**「哪类调用者在什么权限下能发这个事务」没有证据**。三份 `sa_profile` 声明已读到（§10），**都没有 `<permission>` 元素**；但 SA profile 本就不是放权限闸的地方，这条路取不到证据 |
 | `reachable_sensitive_operation` | **半** | 操作可达**已证**（三帧链）；「敏感」**未证** —— 取决于 `renderSession_` 交出去后能做什么 |
 | `exploitation_conditions` | **半** | 条件只有「接口描述符正确」，而这不是特权；其余条件未证 |
 | `security_impact` | **未建立** | C/I/A 影响无证据。拿到一个远程对象 ≠ 拿到某个能力 |
@@ -225,8 +227,10 @@ CAP-01 是**描述符校验在位、但没有权限校验**。两者在报告里
 
 - **没有**证明非系统调用者能发这个事务。这是与 AUTH-01 共同的瓶颈：`AGENTS.md` 明令
   不得把「存在 `OnRemoteRequest` 分支」等同于「任意应用可达」。
-- **没有**读 `sa_profile/4607.json` / `sa_profile/scene_board/4607.json`（两者 blob 均不在本地）
-  ——它们才是判断该 SA 暴露面的关键。
+- **已读**那三份 `sa_profile` 声明（§10，blob 都在盘上），**都没有 `<permission>` 元素**。
+  但 SA profile 本就不是放权限闸的地方（与 AUTH-01 同一形态），所以这**不是**
+  「该 SA 无权限控制」的证明，而是「这条路取不到 `entry_controlled` 的证据」。
+  **仍未确定**该 SA 在 scene_board 构建下实际安装哪一份声明（§10.2）。
 - **没有**证明 `renderSession_` 交出去后的能力边界，因此没有 C/I/A 影响。
 - **没有**读 174 条 `unknown` 里的任何变体内容（431 个 ref 里只有 5 个 blob 可读）。
   因此**不能**说这些变体是安全的。
@@ -248,6 +252,13 @@ cd "$B"
 .venv/bin/python /home/audit/wtmp/w160.py   # GetRenderSession 定义体 + Proc* 统计
 .venv/bin/python /home/audit/wtmp/w161.py   # 同组件对照组（会拦截的两个方法）
 .venv/bin/python /home/audit/wtmp/w163.py   # ScreenSession::GetRenderSession + sa_profile 可得性
+
+# §10：改用 perf-corpus/window_window_manager 这份非 blob 过滤克隆（全树可读）
+.venv/bin/python /home/audit/wtmp/w174.py   # 三份 sa_profile + 四个原本读不到的头文件
+.venv/bin/python /home/audit/wtmp/w175.py   # 全树可读性 1917/1917 + GetRenderSession/SetRenderSession 逐条
+.venv/bin/python /home/audit/wtmp/w176.py   # 逐文件 IsSystemCalling 计数 + 三帧原文
+.venv/bin/python /home/audit/wtmp/w177.py   # 哪个 sa_profile 被安装（全树 grep，零命中）
+.venv/bin/python /home/audit/wtmp/w178.py   # 三帧 blob oid 两库一致性 + 第 3 帧行号复核
 ```
 
 产物：`outputs/reports/version_impact_cap01_window_window_manager.json`（不入库）。
@@ -261,6 +272,108 @@ cd "$B"
 | 锚定 blob | `26df3196683976a9f175292fcbf54efef262eaa0` |
 | guard 链三帧 blob | `26df31966839`（stub）/ `b1b6226de888`（manager）/ `2442c62f00c2`（session） |
 | 影响范围 | 431 refs：affected 2 / fixed 0 / not_present 255 / unknown 174 |
+| 全树可读性（§10.1） | `perf-corpus/window_window_manager`（浅克隆、非 blob 过滤、HEAD = `8b0d8fe1b973`）**全树 2450 路径 / 源码 1917 个全部可读**（不可读 0） |
+| `sa_profile` blob（§10.2） | `bb2aec03568e`（`sa_profile/4607.json`）/ `091a0ed22a33`（`sa_profile/scene_board/4607.json`）/ `58cd27ad45b2`（`sa_profile/4606.json`）——三者**本就在盘上**（§5.1 早前误记「不在本地」） |
+| `renderSession_` 来源（§10.3） | `screen_session.cpp:72` `renderSession_(config.renderSession)` ← `ScreenSessionConfig` |
 | 工具 | `research/experiments/interface/ipc/version_impact.py`（#4 参数化版，未改动） |
 | CWE | 家族 `CAP-01` → `CWE-926`（`src/ohscanner/detectors/interface/detector.py:7` 的 `_CWE`）；后果 `capability_exposure` → `CWE-668`（`src/ohscanner/detectors/interface/models.py:57`） |
 | 状态 | **`candidate`** —— 证据门未过，不得写成已确认漏洞 |
+
+## 10. 当段追加（2026-10-16）：SA 声明已读、全树可读、`renderSession_` 的来源
+
+### 10.1 全树可读性 —— 「仓库里没有」从本节起可以当全树结论用
+
+数据源换成 `perf-corpus/window_window_manager`（**浅克隆但非 blob 过滤**，无 promisor，
+故读它不会触发惰性抓取；全部读取仍经 `src/ohscanner/git_source.py:_git`）：
+
+| 项 | 值 |
+|---|---|
+| HEAD | `8b0d8fe1b973`（= `origin/master`，与 §2 的 affected 之一同一提交） |
+| 全树路径 | 2450 |
+| C/C++ 源码 | **1917 个，可读 1917 / 不可读 0** |
+
+因此 §4 的对照不再受「可读子集」限制。已用全树重算复核 §5.1 的计数：
+`screen_session_manager.cpp` **132**、`screen_session_manager_stub.cpp` **1** —— 与早前一致。
+
+### 10.2 三份 `sa_profile` 声明（原文照录）
+
+```json
+sa_profile/scene_board/4607.json   (blob 091a0ed22a33, 345 B)
+{
+    "process": "foundation",
+    "systemability": [
+        {
+            "name": 4607,
+            "libpath": "libscreen_session_manager.z.so",
+            "run-on-create": true,
+            "distributed": false,
+            "bootphase": "CoreStartPhase",
+            "dump_level": 1,
+            "min_hdi_proxy_version": []
+        }
+    ]
+}
+```
+
+```json
+sa_profile/4607.json   (blob bb2aec03568e, 326 B)
+{
+    "process": "foundation",
+    "systemability": [
+        {
+            "name": 4607,
+            "libpath": "libwms.z.so",
+            "run-on-create": true,
+            "distributed": false,
+            "bootphase": "CoreStartPhase",
+            "dump_level": 1,
+            "min_hdi_proxy_version": []
+        }
+    ]
+}
+```
+
+`sa_profile/4606.json`（blob `58cd27ad45b2`，326 B）与上者同形，仅 `<name>` 为 **4606**、
+`libpath` 为 `libwms.z.so`。
+
+三份**都只描述 SA 叫什么、加载哪个库、是否随创建启动、是否分布式、boot 阶段、dump 级别**，
+**没有任何权限字段**（无 `<permission>`、无 `exported`、无 `allow-update`）。
+这一点与 AUTH-01 的 `profile/3703.xml` **完全同形**。
+
+**未解决的一点（如实记）**：`sa_profile/4607.json` 与 `sa_profile/scene_board/4607.json`
+**声明同一个 SA 号 4607**，但 `libpath` 不同。哪一个在 scene_board 构建下真正安装，
+**本仓库里查不到** —— 全树没有任何 `.gn` / `.gni` / `.cfg` / `.json` 提到 `sa_profile`
+（`w177.py` 零命中），profile 的安装由 OpenHarmony 构建系统在本仓库之外完成。
+可说的是：本候选所在的模块是 `window_scene/screen_session_manager/`，
+**只有 `scene_board/4607.json` 的 `libpath` 与它对应**。这是对应关系，**不是**安装证明。
+
+### 10.3 `renderSession_` 从哪来 —— 这个事务交出去的到底是什么
+
+| 位置 | 原文 |
+|---|---|
+| `window_scene/session/screen/include/screen_session.h:565` | `sptr<IRemoteObject> renderSession_ = nullptr;` |
+| `screen_session.cpp:72` | `renderSession_(config.renderSession)` —— 构造时从 `ScreenSessionConfig` 取 |
+| `screen_session.cpp:1007-1010` | 取回它 |
+
+```cpp
+ 1007  sptr<IRemoteObject> ScreenSession::GetRenderSession()
+ 1008  {
+ 1009      return renderSession_;
+ 1010  }
+```
+
+即交出去的**不是本服务新建的对象，而是创建该 ScreenSession 时随 config 传进来的那个远程对象**
+（`screen_session.h:451` 有 `SetRenderSession`；全树 `SetRenderSession` 8 处 / `renderSession_` 14 处，
+调用方清单可枚举）。**「交出去之后能做什么」由上游注入者决定** —— 与 AUTH-01 的注入式形态同类。
+因此 §6 的 `security_impact` 依旧只能算**未建立**。
+
+### 10.4 落在这里的更正
+
+- §5.1 与 §6 早前写 `sa_profile/4607.json` 的 blob `bb2aec03568e` **「不在本地」** —— **错**。
+  三个 blob 一直都在 `perf-corpus/window_window_manager`。
+  这与 AUTH-01 那 34 个 blob 是**同一个错误、同一条教训**：判断「本地有没有」**必须扫盘**，
+  不能只问一份克隆。（AUTH-01 侧的完整更正见
+  `docs/research/ipc_auth01_entry_controlled_evidence_2026-10-16.md` §0。）
+- **明确区分**：`sa_profile` 无权限字段 **≠** 该 SA 无权限控制。
+  这条边界与 AUTH-01 文档 §1.1 一字不差地适用。
+- 状态**未变**：门字段一个都没移动，CAP-01 仍是 `candidate`。

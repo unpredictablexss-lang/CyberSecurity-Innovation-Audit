@@ -1383,11 +1383,12 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - 交付件 **#6 报告渲染**：等 owner 对 §43 申请的答复，B 未动共享面。
 - **24 条 `unknown` ref**：要读内容必须显式取 blob（github 不通、gitcode 通）。
   在共享研究克隆上做显式 fetch 会改动别的会话依赖的对象库 → 由 owner 决定，B 不单方面做。
+  **（本条已作废，见 §49：那 5 个 blob 已在 `~/openharmony-targets/inputmethod_imf` 盘上，无需取数。）**
 - **S1 vs S2 数据不一致**（2026-10-10 起未解）：`ipc-research/pairs/cve-2023-0036/lineage.json`
   标 `verification_level: S1`，而 `research/corpus/interface/ipc/verified_pairs.jsonl` 标
   `S2 / patch_root_cause_review` —— 需队伍核对哪一份为准，B 不擅自改任一份。
 
-## 46. 2026-10-16 CAP-01：版本影响扫描 + guard 链按原文读实
+## 46. 2026-10-16 CAP-01：版本影响扫描 + guard 链按原文读实（**一处事实错误当日已更正，见 §49**）
 
 记录写入 `docs/research/ipc_cap01_guard_chain_2026-10-16.md`。
 交付件 #4 的工具 `version_impact.py` **一字未改**，只是参数化后用到第二个候选上。
@@ -1410,6 +1411,7 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   ① `screen_session_manager_stub.cpp:1775-1780` 事务臂内**无权限判断**，直调 `GetRenderSession`；
   ② `screen_session_manager.cpp:3200-3208` 定义体**只有 null 检查**，四个权限串一个都没有；
   ③ `screen_session.cpp:1006-1009` 是 `return renderSession_;` 纯 getter。
+  （**行号差一，已更正为 `1007-1010`** —— 见 §49 末条；blob `2442c62f00c2` 复核过。）
   → `reply.WriteRemoteObject(renderSession)` 把内部对象交回给发起方，**全路径不问「谁在调」**。
 - **同组件对照（本节最有力的证据）**：同一 impl 文件里 `SetScreenSkipProtectedWindow`
   （16347）与 `GetIsRealScreen`（16395）**都会**用 `SessionPermission::IsSystemCalling()` 拦截；
@@ -1429,7 +1431,9 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - **为什么仍是 `candidate`**（逐门见文档 §6）：`target_bound` 为真；`dynamic_reproduced` 为假
   （无 PoC）；**`entry_controlled` 未建立** —— 描述符校验不等于权限校验，
   「哪类调用者在什么权限下能发这个事务」拿不出证据，而
-  `sa_profile/4607.json`（`bb2aec03568e`）等 3 个 blob **不在本地**，离线核不到权限声明。
+  ~~`sa_profile/4607.json`（`bb2aec03568e`）等 3 个 blob **不在本地**，离线核不到权限声明。~~
+  **（错，见 §49：3 个 blob 都在 `perf-corpus/window_window_manager` 里，已读到；
+  三份声明的共同点正是「没有任何权限字段」。）**
   `reachable_sensitive_operation` / `exploitation_conditions` 只到「半」，
   `security_impact` 未建立（拿到一个远程对象 ≠ 拿到某个能力）。
   → 与 AUTH-01 共享同一瓶颈：**不得**把「存在 `OnRemoteRequest` 分支」等同于「任意应用可达」。
@@ -1439,7 +1443,11 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   **均不入库**；`git diff --cached --name-only` 自检共享面（`src/report|src/case|src/evidence|src/benchmark`）
   零命中。
 
-## 47. 2026-10-16 AUTH-01：`entry_controlled` 的证据清单（已定位到 blob，本地 0 个）
+## 47. 2026-10-16 AUTH-01：`entry_controlled` 的证据清单（**本节结论当日已更正，见 §48**）
+
+> **更正提示**：本节写于发现 `openharmony-targets/inputmethod_imf` 之前，其中
+> 「34 个 blob，本地 0 个」与据此提出的取数申请**是错的**（只对 `ipc-research` 那份偏克隆成立）。
+> 本节原文保留以便追溯；准确结论见 **§48**。
 
 记录写入 `docs/research/ipc_auth01_entry_controlled_evidence_2026-10-16.md`。
 起因是先把 `reportable` 的三个条件逐条对账，发现**只剩证据门**在挡：
@@ -1466,17 +1474,126 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   + `unitest/**` 2 + `js_input_method_engine.cpp` 1。**要回答这一层的那层，恰好是偏克隆没有的那层。**
 - **SA 暴露面也读不到**：`profile/3703.xml`（SA id 3703）、
   `etc/init/inputmethodservice.{cfg,rc}`、`bundle.json` —— **全部 not-local**。
-- **产出：一份按 blob 点名的取数清单**，共 **34 个 blob，本地 0 个**（完整 OID 见文档 §4，分三组：
-  暴露面/拉起方式 4、app 侧入口层 15、IME ability 层 15）。
-  它把「未知」变成「已定位但不可得」——这是**必要不充分**：拿到这 34 个 blob 也还要在其中
-  读出「哪类调用者、在什么权限或注册状态下能走到注入点」并写成带行号原文的关系条目。
+- ~~**产出：一份按 blob 点名的取数清单**，共 **34 个 blob，本地 0 个**~~
+  **（错，见 §48：那 34 个 blob 在 `~/openharmony-targets/inputmethod_imf` 里全部可读。）**
+  清单本身仍然有用（它是对「要读哪些文件」的准确枚举），但「本地 0 个」这个前提是错的。
 - **明确没有主张的事**：**没有**说这个 SA 不可达，也**没有**说它可达 ——「读不到」两个方向都不支持；
   **没有**把「可读子集无调用方」升格为「本仓库无调用方」；
   **没有**改任何 PoC 结论（`stable_reproduced` 与 `patch_revalidation = passed` 不变，
   `validated_vulnerability` 仍为 **0**，六个门字段**一个都没有**因本节置真）；
   **没有**推测 SA 3703 的权限语义；**没有**动 `version_impact.py` 或任何共享面。
-- **需要 owner 决定**：是否授权对这 34 个 blob 做一次显式取数
-  （github 不通、gitcode 通；在共享研究克隆上显式 fetch 会改动别的会话依赖的对象库）。
-  与 §45 同一条纪律：B 不单方面做。
+- ~~**需要 owner 决定**：是否授权对这 34 个 blob 做一次显式取数~~
+  **（撤回，见 §48：无需取数，已全部读到。真正的决定项换成了「实现 `IPlatformApi` 的组件是哪个」。）**
 - **本节检查**：全部命令在文档 §7 可复现；脚本在 `/home/audit/wtmp/`，**不入库**；
   共享面 `git status` 零命中。
+
+## 48. 2026-10-16 更正 §47：那 34 个 blob 就在盘上，而且答案不在本仓库
+
+**这是一次对我自己已推送结论的更正。** §47（提交 `6d99e44`）说 AUTH-01 的入口证据
+「34 个 blob，本地 0 个」，并据此请 owner 授权显式取数 —— **前提前提就错了**。
+文档 `docs/research/ipc_auth01_entry_controlled_evidence_2026-10-16.md` 已整体修订。
+
+- **错在哪**：§47 只在 `ipc-research/repos/inputmethod_imf`（`blob:none` 偏克隆）上统计。
+  本机另有一份 **`/home/audit/openharmony-targets/inputmethod_imf`**：**浅克隆但非 blob 过滤**
+  （`is-shallow=true`，无 `partialclonefilter`、无 `promisor`），对象库 54,344 对象，
+  `cat-file -t e663b470…` 返回 `commit`。**那 34 个 blob 可读 34 / 缺失 0；全树源码 74/74 可读。**
+- **教训（写下来以免再犯）**：§47 把「**这一份克隆**没有」写成了「**本地**没有」。
+  差一步就让 owner 去授权取已经躺在盘上的对象。**判断「本地有没有」必须扫盘，不能只问一个对象库。**
+  —— 同一条教训已同步到 CAP-01 那 3 个 `sa_profile` blob：**先扫盘，再谈取数。**
+- **fixture 自检（读结论之前先做）**：在 targets 克隆上按 manifest 钉住的 sha256 重算，
+  vulnerable `59c980bf…e043` **MATCH**、fixed `b6d7f66a…c444` **MATCH**；
+  且该克隆的 vulnerable blob oid `e90a4e77e9be` 与 `ipc-research` 克隆**完全一致** →
+  两个对象库同源，读到的是钉住版本的内容，不是近似版本。
+- **读到了什么（正面证据）**：
+  - `profile/3703.xml`（blob `d7736f4d42c9`）：SA 3703，`run-on-create=true`、`distributed=false`；
+    **没有 `<permission>` 元素**。边界：OpenHarmony 的 SA profile 本来就不放调用者权限闸，
+    所以这是「这条路取不到证据」，**不是**「该 SA 无权限控制」。
+  - `etc/init/inputmethodservice.{cfg,rc}`：进程 **`uid system`**、`gid [system, shell]`、
+    `caps SYS_TIME`、随 boot 启动。
+  - `bundle.json`：subsystem `miscservices`，syscap `SystemCapability.MiscServices.InputMethod`。
+- **关键结论升级（比 §47 更强，且这次站得住）**：74/74 全可读之后，§47 的
+  「只能说可读子集里没有调用方」这个 caveat **被清除了** —— **`SetPlatform` 在钉住提交的整棵树里
+  没有任何调用方**（只有 `platform.h:34` 声明与 `platform.cpp:22` 定义）；
+  **`IPlatformApi` 在本仓库只有 proxy（`PlatformApiProxy`），没有 stub 实现。**
+- **于是 `entry_controlled` 的形态变了**：不是「缺 34 个 blob」，而是
+  **「答案不在这个仓库」——谁实现 `ohos.miscservices.inputmethod.IPlatformApi`。
+  而该组件在本地不存在**（已扫 `~/openharmony-targets/` 与 `perf-corpus/`，
+  既无实现者也无 `SetPlatform` 调用方）。
+- **旁证（绑定的是另一个版本，不作钉住版本的证据）**：targets 克隆的 HEAD `09a9da45`（2025-09-13）上
+  `services/src/platform.cpp` 与 `IPlatformApi`/`SetPlatform`/`PlatformCallback` 已全部消失
+  （`services/src/` 换成完全不同的文件集），SA 声明改成 `profile/3703.json` ——
+  而**新版 profile 同样没有权限字段**。即**两个版本的 SA profile 都不携带调用者权限闸**。
+  本页**不**据此推断「该设计因缺陷被删」。
+- **一个必须一起记的对照**：该 SA **自己的事务入口确实检查调用者** ——
+  `input_method_system_ability.cpp`（208/227/251/279/307/335）与
+  `input_method_system_ability_stub.cpp`（177/178/202/221/239/258）共 **11 处**
+  `IPCSkeleton::GetCallingUid()`。而回调路径的句柄是被 `registerCallback` 交出去的，
+  落到 `OnRemoteRequest` 的调用者不经过这些入口检查。
+  **这是机制描述，不是可达性证明。**
+- **门状态未移动**：`entry_controlled` **仍未建立**，`validated_vulnerability` 仍为 **0**，
+  `poc_state = stable_reproduced` 与 `patch_revalidation = passed` 不变，
+  **没有任何门字段**因本次置真。**没有**主张该 SA 可达或不可达。
+- **决定项（替换 §47 的取数申请）**：不再需要取那 34 个 blob。
+  需要的是**确定并取得实现 `IPlatformApi` 的组件**；现有线索（接口描述符
+  `ohos.miscservices.inputmethod.IPlatformApi` + 调用点 `platform.cpp:26`）**不足以定位仓库**，
+  **需要队伍判断或上游检索**。
+- **本节检查**：命令在文档 §8 可复现；脚本 `/home/audit/wtmp/w170-172.py` **不入库**；
+  共享面 `git status` 零命中；`version_impact.py` 与全部检测规则未改。
+
+## 49. 2026-10-16 兑现 §48 的教训：CAP-01 的 `sa_profile` 本就在盘上，且该仓库全树可读（队友 B）
+
+§48 记下的教训是「判断『本地有没有』**必须扫盘**」。本节立刻把它兑现到另外两处，
+并顺手把 CAP-01 的 SA 暴露面补上。文档 `docs/research/ipc_cap01_guard_chain_2026-10-16.md`
+新增 §10。**门字段一个都没移动，CAP-01 仍是 `candidate`。**
+
+- **两处「待取数」全部作废**（`w173.py`，扫 `ipc-research/repos/`、`openharmony-targets/`、
+  `perf-corpus/` 三处对象库）：
+  - AUTH-01 §45 的 5 个 `unknown` blob（`022e5d44f76f` / `352b006d2405` / `7d45b1f09d98` /
+    `866c0b6a5825` / `14a849f73d0e`）→ **全部在 `~/openharmony-targets/inputmethod_imf`**；
+  - CAP-01 的 3 个 `sa_profile` blob（`bb2aec03568e` / `091a0ed22a33` / `58cd27ad45b2`）→
+    **全部在 `~/openharmony-audit/perf-corpus/window_window_manager`**。
+
+  → §45 那条「需 owner 决定是否显式取 blob」与 §47 的取数申请**都不成立**。
+- **CAP-01 换数据源：全树可读**。`perf-corpus/window_window_manager` 是**浅克隆但非 blob 过滤**
+  （无 `partialclonefilter`、无 `promisor`，读取不会触发惰性抓取；全部读取仍经
+  `src/ohscanner/git_source.py:_git`），HEAD `8b0d8fe1b973`（= `origin/master`）：
+  **全树 2450 路径、C/C++ 源码 1917 个，可读 1917 / 不可读 0**。
+  于是 §46 的「impl 132 处 / stub 1 处」与同组件对照**不再受可读子集限制**
+  （已全树重算复核，数值一致）。
+- **三份 `sa_profile` 声明读到**（原文照录见文档 §10.2）：
+  - `sa_profile/scene_board/4607.json` → SA **4607**，`libpath libscreen_session_manager.z.so`，
+    `process foundation`，`run-on-create true`，`distributed false`，`bootphase CoreStartPhase`；
+  - `sa_profile/4607.json` → SA **4607**，`libpath libwms.z.so`（其余字段同）；
+  - `sa_profile/4606.json` → SA **4606**，`libpath libwms.z.so`（其余字段同）。
+
+  三份**都只描述 SA 叫什么 / 加载哪个库 / 是否随创建启动 / 是否分布式 / boot 阶段 / dump 级别**，
+  **没有任何权限字段**（无 `<permission>`、无 `exported`、无 `allow-update`）——与 AUTH-01 的
+  `profile/3703.xml` **完全同形**。边界同样适用：**profile 无权限字段 ≠ 该 SA 无权限控制**；
+  这是「这条路取不到 `entry_controlled` 的证据」，**不是**「没有控制」。
+- **一处如实留白的未解决项**：`sa_profile/4607.json` 与 `sa_profile/scene_board/4607.json`
+  **声明同一个 SA 号 4607 而 `libpath` 不同**。哪一份在 scene_board 构建下真正安装，
+  **本仓库查不到** —— 全树 `.gn` / `.gni` / `.cfg` / `.json` 里 grep `sa_profile` **零命中**
+  （`w177.py`），安装由 OpenHarmony 构建系统在本仓库之外完成。可说的只有：
+  本候选所在模块是 `window_scene/screen_session_manager/`，**只有 `scene_board/4607.json`
+  的 `libpath` 与它对应** —— 这是对应关系，**不是**安装证明。
+- **补上 `renderSession_` 的来源（文档 §10.3）**：`screen_session.h:565`
+  `sptr<IRemoteObject> renderSession_ = nullptr;`，在 `screen_session.cpp:72` 由构造参数
+  `config.renderSession` 初始化，`screen_session.cpp:1007-1010` 是纯 getter。
+  即这个事务交出去的**不是服务新建的对象，而是创建 ScreenSession 时随 config 注入的那个远程对象** ——
+  与 AUTH-01 的注入式形态同类。因此 `security_impact` **依旧未建立**。
+  （全树 `GetRenderSession` 53 处 / `SetRenderSession` 8 处 / `renderSession_` 14 处，调用方清单可枚举。）
+- **门状态未移动**：`target_bound` 为真；`dynamic_reproduced` 为假（无 PoC）；
+  **`entry_controlled` 仍未建立**；`reachable_sensitive_operation` / `exploitation_conditions`
+  仍只到「半」；`security_impact` 未建立。**CAP-01 仍是 `candidate`**；
+  **没有任何门字段**因本节置真。也**没有**主张该 SA 可达或不可达。
+- **同时更正 §46 的另两处**：
+  ① §46 写那 3 个 `sa_profile` blob「不在本地」——**错**，见上。
+  更正方式与 §47 相同：**原文加删除线保留**、指向本节，**不删除记录**。
+  ② 第 3 帧的行号写成 `1006-1009`，**差一行**。`w178.py` 在 blob `2442c62f00c2` 上复核，
+  真实区间是 **`1007-1010`**（`screen_session.cpp:1007` 是函数定义行）。
+  两个克隆给出的该 blob oid 完全一致（`2442c62f00c2`，3,795 行），所以这不是版本差异，是抄错。
+  CAP-01 文档 §3 / §5.3 已同步更正。
+  **这不是新证据，只是把引用改准** —— 三帧的结论一个字都没变。
+- **本节检查**：命令在 CAP-01 文档 §8 可复现（`w173.py`–`w177.py`，均在 `/home/audit/wtmp/`，
+  **不入库**）；`version_impact.py` 与全部检测规则未改；共享面
+  （`src/report|src/case|src/evidence|src/benchmark`）零改动；回归见提交说明。

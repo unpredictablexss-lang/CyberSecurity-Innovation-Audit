@@ -1,185 +1,218 @@
-# AUTH-01：`entry_controlled` 到底缺哪些证据（2026-10-16）
+# AUTH-01：`entry_controlled` 缺什么 —— 以及对本页上一版结论的更正（2026-10-16）
 
 - 对象：AUTH-01 / `CVE-2023-0036` / `openharmony/inputmethod_imf` @
   `e663b47013d534a56165ab7467fbb3e14bf7172b`（harness manifest 钉住的 vulnerable 提交）。
 - 问题：**谁能把事务发到 `PlatformCallbackStub::OnRemoteRequest`** —— 即证据门的 `entry_controlled`。
-- 方法：全离线，全部 git 调用经 `src/ohscanner/git_source.py:_git`
-  （promisor / lazy fetch / 全部 transport 关闭），**零 fetch**、**零写操作**。
-- **结论：这一格缺的证据不是「还没找」，而是「已定位到具体 blob、但内容不在本地对象库」。**
-  需要 **34 个 blob，本地有 0 个**。清单见 §4。
+- **本页已修订一次。** 上一版（提交 `6d99e44`）的结论「所需证据 34 个 blob、本地 0 个，
+  需 owner 授权取数」**是错的**，只对 `ipc-research` 那一份偏克隆成立。更正见 §0。
+- 修订后的结论：**证据已在盘上、已读完；`entry_controlled` 的剩余问题不是「取不到数据」，
+  而是「答案不在这个仓库里」——它是一个跨仓库问题。**
 
-## 0. 为什么打这一格
+## 0. 更正：34 个 blob 其实都在本地
 
-`reportable` 需要三个条件同时成立：
+**上一版说了什么**：在 `ipc-research/repos/inputmethod_imf` 上统计出 74 个源码文件里 31 个不可读，
+把需要补的证据整理成 34 个 blob 的清单，并写明「本地 0 个」，据此请 owner 决定是否授权显式取数。
 
-| 条件 | 现状 |
+**错在哪**：那只说明**那一份克隆**没有这些 blob。`ipc-research` 用的是 `blob:none` 偏克隆，
+而本机另有一份 **`/home/audit/openharmony-targets/inputmethod_imf`**：
+
+| 属性 | 值 |
 |---|---|
-| `poc_state == "stable_reproduced"` | **已满足**（replay 3/3 触发） |
-| `patch_revalidation == "passed"` | **已满足**（`patches/auth01-descriptor-guard-v1`，三例全对，含正向对照） |
-| 六个证据门字段全为 True | **不满足**：目前只有 `target_bound` + `dynamic_reproduced` |
+| 类型 | **浅克隆但非 blob 过滤**（`--is-shallow-repository = true`；无 `partialclonefilter`、无 `promisor`） |
+| HEAD | `09a9da45055831e81be6cb8d0ca3d9bfa12f79d9`（2025-09-13） |
+| 对象库 | in-pack **54,344** 对象，11.7 MB |
+| 钉住提交 | `cat-file -t e663b470…` → **`commit`**，且 `ls-tree` 可列出全部 95 个路径 |
+| **那 34 个 blob** | **可读 34 / 缺失 0** |
+| **全树源码** | **可读 74 / 74** |
 
-前两项已经付清且记录在 `outputs/reports/poc_auth01_descriptor_bypass.json` 里。
-**卡住 `reportable` 的只剩证据门，而证据门的瓶颈是 `entry_controlled`。**
-本页就是去查：这一格到底还差什么，差的东西能不能离线拿到。
+**因为无 promisor，读它是惰性抓取安全的**（全部读取仍经 `src/ohscanner/git_source.py:_git`）。
 
-## 1. 可达路径的第一个事实：对端是「被注入」的
+**教训**：上一版把「这一份克隆没有」直接写成了「本地没有」，并据此发起了一次网络取数申请。
+差一步就让 owner 去授权取已经在盘上的对象。**判断「本地有没有」必须扫盘，不能只问一个对象库。**
 
-`services/src/platform.cpp`（LOCAL，blob `046a6a570cc1`，189 行）：
+### 0.1 fixture 自检（在读任何结论之前）
 
-```cpp
-22      void Platform::SetPlatform(const sptr < IPlatformApi >& platformApi)
-23      {
-24          this->platformApi = platformApi;
-25          sptr < IPlatformCallback > cb = new PlatformCallbackStub();
-26          this->platformApi->registerCallback(cb);
+按 harness manifest 钉住的两份 sha256 现场重算，在 **targets 克隆**上：
+
+| 修订 | blob | 重算 sha256 | 结论 |
+|---|---|---|---|
+| vulnerable | `e90a4e77e9be` | `59c980bf…e043` | **MATCH** |
+| fixed | `0f9ed2f660ec` | `b6d7f66a…c444` | **MATCH** |
+
+且 targets 克隆给出的 vulnerable blob oid `e90a4e77e9be` 与 `ipc-research` 克隆**完全相同**
+（该克隆上此文件也是可读的）—— 两个对象库在此文件上一致，
+所以从 targets 读到的确实是钉住版本的内容，不是近似版本。
+
+## 1. 读到的正面证据
+
+### 1.1 SA 声明：`profile/3703.xml`（blob `d7736f4d42c9`，982 B）
+
+```xml
+<info>
+    <process>inputmethod_service</process>
+    <systemability>
+        <name>3703</name>
+        <libpath>libinputmethod_service.z.so</libpath>
+        <run-on-create>true</run-on-create>
+        <distributed>false</distributed>
+        <dump-level>1</dump-level>
+    </systemability>
+</info>
 ```
 
-即：`Platform`（imf 服务侧）**不自己找** `IPlatformApi`，是**别人把实现注进来**；然后
-`Platform` 把 `PlatformCallbackStub` 的句柄通过 `registerCallback` **交给注入方**。
-`IPlatformApi` 的 proxy 在本仓库（`services/src/platform_api_proxy.cpp:42`），
-stub 实现不在本仓库。
+**这份声明里没有 `<permission>` 元素，也没有 `exported` / `allow-update` 之类的字段。**
+它只描述 SA 叫什么、加载哪个库、是否随创建启动、是否分布式、dump 级别。
 
-**所以「谁持有回调句柄」= 「谁调用 `SetPlatform` 把 `IPlatformApi` 注进来」。**
+**边界（不能过度解读）**：OpenHarmony 的 SA profile 本来就不是放调用者权限闸的地方 ——
+权限判断通常写在实现里。所以「profile 无 permission 字段」**不等于**「该 SA 无权限控制」，
+它只说明**这条路取不到 `entry_controlled` 的证据**（见 §4：更版格式同样无此字段）。
 
-## 2. 本次能读到的，与读不到的
+### 1.2 进程与启动方式
 
-`ls-tree`：该提交下共 **95 个文件**，其中源码 74 个 → **可读 43 / 不可读 31**。
+`etc/init/inputmethodservice.cfg`：
 
-在**可读的 43 个**里，`SetPlatform` / `registerCallback` 的每一处出现只有 5 行：
+```json
+"services" : [{
+        "name" : "inputmethod_service",
+        "path" : ["/system/bin/sa_main", "/system/profile/inputmethod_service.xml"],
+        "uid" : "system",
+        "gid" : ["system", "shell"],
+        "caps" : ["SYS_TIME"]
+    }]
+```
+
+`etc/init/inputmethodservice.rc` 同样内容（`user system` / `group system shell` /
+`capabilities SYS_TIME` / `seclabel u:r:time_service:s0` / `class z_core`）。
+
+即 **imf SA 以 `uid system` 运行**，随 boot 启动。
+（`seclabel` 的值按原文照录，本页不对它作解释。）
+
+### 1.3 `bundle.json`
+
+`subsystem: miscservices`，`syscap: ["SystemCapability.MiscServices.InputMethod"]`，
+`adapted_system_type: ["standard"]`，`repository: https://gitee.com/openharmony/miscservices_inputmethod`
+（该仓库即后来的 `inputmethod_imf`）。
+
+## 2. 关键结论升级：现在可以定论「本仓库没有调用方」
+
+上一版只能说「**可读子集里**没有 `SetPlatform` 调用方」（因为 31 个文件读不到）。
+
+**现在 74/74 全可读，那个 caveat 被清除了。** 在钉住提交的**整棵树**里：
 
 ```text
+services/include/i_platform_api.h   32  class IPlatformApi : public IRemoteBroker {
+services/include/i_platform_api.h   46  DECLARE_INTERFACE_DESCRIPTOR(u"ohos.miscservices.inputmethod.IPlatformApi");
 services/include/i_platform_api.h   48  virtual int32_t registerCallback(const sptr<IPlatformCallback>& cb) = 0;
 services/include/platform.h         34  void SetPlatform(const sptr<IPlatformApi>& platformApi);
+services/include/platform.h         55  sptr<IPlatformApi> platformApi;
 services/src/platform.cpp           22  void Platform::SetPlatform(const sptr < IPlatformApi >& platformApi)
 services/src/platform.cpp           26  this->platformApi->registerCallback(cb);
+services/src/platform_api_proxy.cpp 32  class PlatformApiProxy : public IRemoteProxy<IPlatformApi> {
 services/src/platform_api_proxy.cpp 42  int32_t registerCallback(const sptr<IPlatformCallback>& cb)
 ```
 
-**必须说清的边界**：这只说明「可读子集里没有调用方」。**不能**说「本仓库没有调用方」——
-因为有 31 个源码文件读不到，调用方可能就在其中。
+- **`SetPlatform` 只有声明与定义，没有任何调用方** —— 这次是**全树**结论，不是子集结论。
+- **`IPlatformApi` 在本仓库只有 proxy（`PlatformApiProxy`），没有 stub 实现**
+  —— 没有任何类 `: public IPlatformApi` 且不是 proxy 的。
 
-而那 31 个不可读的文件，**分布不是随机的**：
+**合起来**：`Platform` 把一个 callback stub 的句柄经 `registerCallback` 交给**注入进来的**
+`IPlatformApi` 实现，而**那个实现在本仓库之外**。
 
-| 目录 | 不可读源码数 | 这一层是干什么的 |
-|---|---:|---|
-| `frameworks/inputmethod_controller/**` | 13（另有 `BUILD.gn` 1 个） | **app 侧入口层**：应用经此与 imf 服务交互 |
-| `frameworks/inputmethod_ability/**` | 14（另有 `BUILD.gn` 1 个） | IME ability 层，注入 `IPlatformApi` 的一侧 |
-| `unitest/**` | 2 | 测试 |
-| `interfaces/kits/js/napi/js_input_method_engine.cpp` | 1 | JS 入口 |
-| 其余 | 0 | — |
+## 3. 因此 `entry_controlled` 的剩余问题是跨仓库的
 
-**要回答「谁能到达这个回调」的那一层，恰恰就是这个偏克隆没有的那一层。**
+要回答「谁能到达这个回调」，必须知道**哪个组件实现了 `IPlatformApi`**。
+本仓库没有答案，于是扫盘找：
 
-此外，三份与「服务暴露面 / 进程怎么被拉起」直接相关的文件也都不在本地：
-
-- `profile/3703.xml` —— SA 声明（SA id **3703**），权限与暴露面应当写在这里
-- `etc/init/inputmethodservice.cfg`、`etc/init/inputmethodservice.rc` —— 进程拉起方式
-- `bundle.json` —— 组件声明
-
-## 3. 这一格为什么不能靠推理补上
-
-`AGENTS.md` 明令禁止把「存在 `OnRemoteRequest`」等同于「任意应用可达」。
-本页的证据形态让它更明确：**「不可读」既不是可达的证据，也不是不可达的证据。**
-
-harness manifest 自己已经写了这条边界（`known_limitations` 第一条、`reachability.status = "partial"`）：
-> Not reachability: the harness calls the stub directly. That a remote caller can reach this stub
-> over real IPC, and under which ability registration and permission state, is not established here.
-
-本页做的是把「not established」拆成**逐 blob 的点名清单**，好让它成为一个可决定的事项。
-
-## 4. 取数清单（34 个 blob，本地 0 个）
-
-全部位于 `openharmony/inputmethod_imf` @ `e663b47013d534a56165ab7467fbb3e14bf7172b`。
-按用途分三组：
-
-### A. 服务暴露面 / 拉起方式（4 个）—— 最直接、也最该先看
-
-| blob | 路径 |
+| 搜索范围 | 结果 |
 |---|---|
-| `8fad871480ce49d225f2058fd5faac291a157909` | `bundle.json` |
-| `d7736f4d42c90153c75937772039c8a71fe1d64a` | `profile/3703.xml`（SA id 3703） |
-| `9f9a783ed26bfb66ae328099f8a6f1930ad3d799` | `etc/init/inputmethodservice.cfg` |
-| `fbfbcc447b5c3012cbad11eacf296ba9e6e61762` | `etc/init/inputmethodservice.rc` |
+| `IPlatformApi` 的实现（排除 inputmethod_imf 自身） | **无** |
+| `SetPlatform` 的调用方（排除 inputmethod_imf 自身） | **无** |
+| 搜索盘 | `/home/audit/openharmony-targets/`、`/home/audit/openharmony-audit/perf-corpus/` |
 
-### B. app 侧入口层 `frameworks/inputmethod_controller/**`（15 个）——「调用者怎么到这里」
+即**盘上没有实现 `IPlatformApi` 的组件**。
 
-```text
-71457b1784d173ec8ccfd012ecfeeae9a8763f86  BUILD.gn
-0a984c419ad94e34d5c3aa7afd3d986f5ae81335  include/i_input_client.h
-39e0a4fc734d2637fa9480dbf7d7cc89d1c7702f  include/i_input_data_channel.h
-a6324edf847d0dc46371f6c09ec09f289d4da39a  include/input_client_proxy.h
-08fa114acb709b7edbf296f65c9d92821eceeaca  include/input_client_stub.h
-23c695129331650a00e8a3d95be22d948e9167f6  include/input_data_channel_proxy.h
-c0a7b9eeb5a84db0380163f1f11f74e1ebadbb73  include/input_data_channel_stub.h
-f1ec5d6c5ae9e735717227a440e2045ec7861c05  include/input_method_controller.h
-2bda76ed189c2aee8ff77d5478fc31457c605748  include/input_method_system_ability_proxy.h
-c4185f6c8b9a3102f56c47155d51623813ad6dc7  src/input_client_proxy.cpp
-b2764d5d39ca249e72324789a1965bd6c63af5e7  src/input_client_stub.cpp
-9026e96c4231fe82be411b606ab3c148ebf6039c  src/input_data_channel_proxy.cpp
-9c91dad865909779cd21c4eb65d96698954bdbcc  src/input_data_channel_stub.cpp
-5aac6ce82b855203e2e5d5811eee3493e34e7743  src/input_method_controller.cpp
-3ae9c12a797af7641830f25f2e1de17397fd7ee9  src/input_method_system_ability_proxy.cpp
+**所以这一格的形态变了**：不是「本地缺 34 个 blob，请授权取数」，
+而是「**需要另一个仓库** ——实现 `ohos.miscservices.inputmethod.IPlatformApi` 的那个组件，
+它在本地不存在」，并且**需要先确定它是哪一个**。
+
+## 4. 该接口在后续版本被整体移除（旁证，非钉住版本的证据）
+
+targets 克隆的 HEAD（`09a9da45`，2025-09-13）上：
+
+- `services/src/platform.cpp` **不存在**，`services/src/` 已换成完全不同的文件集
+  （`ime_state_manager.cpp` / `client_group.cpp` / `notify_service_impl.cpp` / `user_session_manager.cpp` …）；
+- `IPlatformApi` / `SetPlatform` / `PlatformCallback` 在整个 `services/` 树里**零命中**；
+- SA 声明已从 `profile/3703.xml` 改为 `profile/3703.json` + `3703_ondemand.json`。
+
+而**新版 `3703.json` 同样没有权限字段**（字段为
+`process` / `systemability[{name, libpath, run-on-create, distributed, dump_level, extension}]`）。
+
+**含义**：无论钉住版本还是后续版本，**SA profile 这条路都取不到 `entry_controlled`**；
+而对钉住版本，唯一的路是外部 `IPlatformApi` 实现者。
+
+**这条是旁证不是证据**：它绑定的是 `09a9da45`，**不能**用来推断钉住提交的行为，
+也不构成「该设计有缺陷所以被删」——本页不作该推断。
+
+## 5. 一个必须一起记的对照
+
+该 SA **自己的事务入口确实检查调用者**：
+
+```
+services/src/input_method_system_ability.cpp       208/227/251/279/307/335   int32_t uid = IPCSkeleton::GetCallingUid();
+services/src/input_method_system_ability_stub.cpp  177/178/202/221/239/258   int32_t pid/uid = IPCSkeleton::GetCallingPid()/GetCallingUid();
 ```
 
-### C. IME ability 层 `frameworks/inputmethod_ability/**`（15 个）—— 注入 `IPlatformApi` 的一侧
+共 11 处 `IPCSkeleton::GetCallingUid()`。而回调路径的特点是：
+**它的句柄是被 `registerCallback` 交给对端的**，因此落到 `OnRemoteRequest` 的调用者
+不经过这些入口检查。
 
-```text
-79032a1149604957ce8f611cfbf0dee1e7cfa91b  BUILD.gn
-afd0c49248d0e9a3902cc980759bcfb03d83a338  include/event_target.h
-e9eb80a8172e0595869e129e69d5d176554aa9fa  include/i_input_method_agent.h
-eb73f9cc4b83b1c56b577e1052e9cdab9f1e0b72  include/i_input_method_core.h
-01bfd5357178505127bcb94cdc9c795bc3cfca59  include/input_method_ability.h
-038f3abae221c25b175398158311e953da674e09  include/input_method_agent_proxy.h
-c26922a011b3bd606b70e4b77e512b562c3fb4dc  include/input_method_agent_stub.h
-be50db285e23fc6e09157fb85dda31bd6574c886  include/input_method_core_proxy.h
-72dea34e58f8d89172d9989e937789ff439cf8d2  include/input_method_core_stub.h
-4c6f1b032f04058bf1d970829101b6c5b40eb1f8  src/event_target.cpp
-c14fd5ff083bae4e7634b44ef7aab4f755bcc780  src/input_method_ability.cpp
-1e06f7e0fee51d11551dde38f4d2beb030e6038d  src/input_method_agent_proxy.cpp
-f562d973ce734018c7fd50635748afb59dfc547b  src/input_method_agent_stub.cpp
-58dc01ac53609eddf0cd0a056c23aff6ae7d0ff6  src/input_method_core_proxy.cpp
-8e114cc4f0558c68153b91e7f41c38a18c19418e  src/input_method_core_stub.cpp
-```
+**这句是机制描述，不是可达性证明**：它说明「为什么缺少描述符校验会被视为防线缺失」，
+但**不**说明攻击者能拿到那个句柄 —— 那仍然是 §3 的跨仓库问题。
 
-## 5. 为什么是「按 blob 取」而不是「拉仓库」
+## 6. 门状态（未因本页移动）
 
-- 在共享研究克隆上做显式 fetch 会改动别的会话依赖的对象库（github 不通、gitcode 通），
-  **属 owner 决定，B 不单方面做**（与 §45 同一条）。
-- 但把请求收窄到 **34 个 blob / 1 个已钉住的提交**，远比「把仓库拉全」更容易被批准，
-  也更容易在事后核对「读到的确实是钉住的那个版本」——每个 blob 都有 OID 可复核。
-- 拿到这 34 个 blob **也不等于** `entry_controlled` 就能置真：还要在其中读出
-  「哪一类调用者、在什么权限或注册状态下能走到注入点」，并把该结论写成带行号与原文的关系条目。
-  这一步是**必要不充分**。
+| 门字段 | 状态 |
+|---|---|
+| `target_bound` | 真 |
+| `entry_controlled` | **仍未建立**（答案为跨仓库，见 §3） |
+| `reachable_sensitive_operation` | 半 |
+| `exploitation_conditions` | 半 |
+| `security_impact` | 未建立 |
+| `dynamic_reproduced` | 真（PoC 已跑） |
 
-## 6. 本页明确没有主张的事
+`poc_state = stable_reproduced` 与 `patch_revalidation = passed` **不变**；
+`validated_vulnerability` 仍为 **0**；**没有任何门字段**因本页置真。
 
-- **没有**主张这个 SA 不可达，也**没有**主张它可达。「读不到」两个方向都不支持。
-- **没有**把「可读子集里没有 `SetPlatform` 调用方」写成「本仓库没有调用方」（31 个文件读不到）。
-- **没有**改动任何 PoC 结论：`stable_reproduced` 与 `patch_revalidation = passed` 不变，
-  `validated_vulnerability` 仍为 **0**，六门字段**一个都没有**因为本页而置真。
-- **没有**改 `version_impact.py` 或任何共享面文件。
-- **没有**推测 SA 3703 的权限语义 —— `profile/3703.xml` 内容未读到。
+## 7. 现在的决定项（已替换上一版的取数申请）
 
-## 7. 复现命令
+- **不需要**为那 34 个 blob 申请取数 —— 它们已在 `openharmony-targets/inputmethod_imf` 里，已读完。
+- **需要**确定并取得**实现 `IPlatformApi` 的组件**。可用的线索只有接口描述符
+  `ohos.miscservices.inputmethod.IPlatformApi` 与它在钉住版本的调用点
+  （`services/src/platform.cpp:26`）。**该线索不足以定位仓库**，需要队伍判断或检索上游。
+- 在此之前，AUTH-01 到不了 `reportable`；CAP-01 的对应缺口是它那 3 个 `sa_profile` blob
+  （同样应先在盘上扫，再谈取数 —— 见 §0 的教训）。
+
+## 8. 复现命令
 
 ```bash
 B=~/openharmony-audit/CyberSecurity-Innovation-Audit-b
 cd "$B"
-.venv/bin/python /home/audit/wtmp/w166.py   # IPlatformApi 实现者与 sa_profile 路径排查
-.venv/bin/python /home/audit/wtmp/w167.py   # 全树文件清单 + SetPlatform 调用方检索
-.venv/bin/python /home/audit/wtmp/w168.py   # 可读/不可读切分 + profile/3703.xml 可得性
-.venv/bin/python /home/audit/wtmp/w169.py   # 34 个 blob 的点名清单（含完整 OID）
+.venv/bin/python /home/audit/wtmp/w170.py   # targets 克隆上那 34 个 blob 的可得性（34/34）
+.venv/bin/python /home/audit/wtmp/w171.py   # SA 声明 / 启动配置 / 全树关键词命中（74/74 可读）
+.venv/bin/python /home/audit/wtmp/w172.py   # fixture 自检：两份 sha256 重算
 ```
 
 脚本在 `/home/audit/wtmp/`，**不入库**。
 
-## 8. 版本绑定
+## 9. 版本绑定
 
 | 项 | 值 |
 |---|---|
 | 目标 | `openharmony/inputmethod_imf` @ `e663b47013d534a56165ab7467fbb3e14bf7172b` |
-| 该提交文件数 | 95（源码 74；可读 43 / 不可读 31） |
-| 注入点 | `services/src/platform.cpp:22` `SetPlatform`；`:26` `registerCallback(cb)` |
-| SA 声明 | `profile/3703.xml`（blob `d7736f4d42c9…`，**not-local**） |
-| 所需 blob | **34 个，本地 0 个** |
+| 读取所用的对象库 | `~/openharmony-targets/inputmethod_imf`（浅克隆、非 blob 过滤） |
+| 内容一致性 | vulnerable/fixed 两份 sha256 重算 **MATCH**；blob oid 与 `ipc-research` 克隆一致 |
+| 证据可得性 | 34/34 blob 可读；74/74 源码可读 |
+| `SetPlatform` 调用方 | **全树无**（74/74 覆盖，非子集） |
+| `IPlatformApi` stub 实现 | **本仓库无；盘上亦无** |
+| SA 声明 | `profile/3703.xml`（无 `<permission>` 元素）；进程 `uid system` |
 | 门字段 | `entry_controlled` **仍未建立**；`validated_vulnerability` 仍为 **0** |
