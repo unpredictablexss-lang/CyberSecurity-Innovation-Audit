@@ -1,0 +1,466 @@
+From 77784b21f37c306b5f780201d18d719d7a1cbdb5 Mon Sep 17 00:00:00 2001
+From: baldnotstronger <17770177822@163.com>
+Date: Fri, 16 Oct 2026 21:50:00 +0800
+Subject: [PATCH] fix(workbench): guard stale operation detail responses
+
+---
+ .github/workflows/ci.yml                   |   3 +
+ web/package.json                           |   4 +-
+ web/src/pages/Operations.tsx               |  42 ++++-
+ web/tests/operations-handler.test.mjs      | 151 ++++++++++++++++++
+ web/tests/operations-selection.browser.mjs | 177 +++++++++++++++++++++
+ 5 files changed, 369 insertions(+), 8 deletions(-)
+ create mode 100644 web/tests/operations-handler.test.mjs
+ create mode 100644 web/tests/operations-selection.browser.mjs
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 9332d41..c12f60e 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -58,6 +58,9 @@ jobs:
+       - name: Build frontend assets
+         working-directory: web
+         run: npm run build
++      - name: Run Operations handler regression
++        working-directory: web
++        run: npm run test:operations-handler
+       - name: Show frontend artifact paths
+         run: |
+           test -f web/dist/index.html
+diff --git a/web/package.json b/web/package.json
+index c7cc76f..8bfe8ce 100644
+--- a/web/package.json
++++ b/web/package.json
+@@ -4,7 +4,9 @@
+   "private": true,
+   "type": "module",
+   "scripts": {
+-    "build": "tsc --noEmit && node build.mjs"
++    "build": "tsc --noEmit && node build.mjs",
++    "test:operations-handler": "node tests/operations-handler.test.mjs",
++    "test:operations-browser": "node tests/operations-selection.browser.mjs"
+   },
+   "dependencies": {
+     "@ant-design/icons": "^5.0.0",
+diff --git a/web/src/pages/Operations.tsx b/web/src/pages/Operations.tsx
+index 5caac7d..86d005c 100644
+--- a/web/src/pages/Operations.tsx
++++ b/web/src/pages/Operations.tsx
+@@ -1,4 +1,4 @@
+-import React, { useEffect, useState } from "react";
++import React, { useEffect, useRef, useState } from "react";
+ import { Alert, Button, Card, Form, Input, InputNumber, Select, Space, Table, Tabs, Tag, Typography, message } from "antd";
+ import { api, terminal } from "../api";
+ import { Header, Hash } from "../components";
+@@ -17,19 +17,47 @@ export default function OperationsPage() {
+   const [cases, setCases] = useState<any[]>([]);
+   const [rows, setRows] = useState<any[]>([]);
+   const [selected, setSelected] = useState<any>(null);
++  const selectedIdRef = useRef<string | null>(null);
+   const [busy, setBusy] = useState(false);
+-  const refresh = async () => {
++  const setSelectedOperation = (item: any | null) => {
++    selectedIdRef.current = item?.id ?? null;
++    setSelected(item);
++  };
++  const refreshQueue = async () => {
+     const [r, d, c, o] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations")]);
+     setRepos(r); setDetectors(d); setCases(c); setRows(o);
+-    if (selected) setSelected(await api("/operations/" + selected.id));
+   };
+-  useEffect(() => { void refresh().catch((e) => message.error(String(e))); const t = setInterval(() => void refresh().catch(() => {}), 2500); return () => clearInterval(t); }, [selected?.id]);
++  const refreshSelectedOperation = async (id: string | null = selectedIdRef.current) => {
++    if (!id) return;
++    const item = await api("/operations/" + id);
++    if (selectedIdRef.current === id) setSelectedOperation(item);
++  };
++  const refresh = async () => {
++    await refreshQueue();
++    await refreshSelectedOperation();
++  };
++  useEffect(() => {
++    void refresh().catch((e) => message.error(String(e)));
++    const t = setInterval(() => void refresh().catch(() => {}), 2500);
++    return () => clearInterval(t);
++  }, []);
+   const submit = async (path: string, values: any, transform: (v: any) => any = (v) => v) => {
+     setBusy(true);
+-    try { const item = await api(path, transform(values)); setSelected(item); await refresh(); message.success("任务已加入队列"); }
++    try {
++      const item = await api(path, transform(values));
++      setSelectedOperation(item);
++      await refreshQueue();
++      await refreshSelectedOperation(item.id);
++      message.success("任务已加入队列");
++    }
+     catch (e) { message.error(String(e)); }
+     finally { setBusy(false); }
+   };
++  const openOperation = async (id: string) => {
++    selectedIdRef.current = id;
++    setSelected(null);
++    await refreshSelectedOperation(id);
++  };
+   const common = <>
+     <Form.Item name="repository_id" label="已登记仓库" rules={[{ required: true }]}><Select data-testid="repository-select" options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))} /></Form.Item>
+     <Form.Item name="detector_ids" label="检测器" rules={[{ required: true }]}><Select data-testid="detector-select" mode="multiple" options={detectors.map((d) => ({ value: d.id, label: d.id }))} /></Form.Item>
+@@ -110,14 +138,14 @@ export default function OperationsPage() {
+     { title: "种类", dataIndex: "kind" },
+     { title: "状态", dataIndex: "status", render: (s: string) => <Tag data-testid={"operation-status-" + s} color={s === "blocked" ? "orange" : ["failed", "timed_out"].includes(s) ? "red" : ["cancelled", "interrupted"].includes(s) ? "default" : s.startsWith("completed") ? "green" : "blue"}>{s}</Tag> },
+     { title: "创建时间", dataIndex: "created_at", render: (s: string) => new Date(s).toLocaleString() },
+-    { title: "操作", render: (_: any, row: any) => <Space><Button data-testid="view-operation" onClick={async () => setSelected(await api("/operations/" + row.id))}>查看</Button>{!terminal.has(row.status) && !["blocked", "completed_with_limitations"].includes(row.status) && <Button data-testid="cancel-operation" danger onClick={() => api("/operations/" + row.id + "/cancel", {}).then(refresh)}>取消</Button>}</Space> },
++    { title: "操作", render: (_: any, row: any) => <Space><Button data-testid="view-operation" onClick={() => openOperation(row.id)}>查看</Button>{!terminal.has(row.status) && !["blocked", "completed_with_limitations"].includes(row.status) && <Button data-testid="cancel-operation" danger onClick={async () => { await api("/operations/" + row.id + "/cancel", {}); await refreshQueue(); await refreshSelectedOperation(); }}>取消</Button>}</Space> },
+   ];
+   return <>
+     <Header title="源码运营与证据闭环" description="同步与扫描分开；区间按两个固定 SHA；验证只运行注册的 Docker Harness；调查工具只读。" />
+     <Alert className="section-gap" type="info" showIcon message="结果边界" description="版本差异是候选变化，不自动说明漏洞引入/修复。动态组件复现也不等于产品可达或可报告漏洞。" />
+     <Card className="section-gap"><Tabs items={items} /></Card>
+     <Card className="section-gap" title="持久化操作队列"><Table data-testid="operations-table" rowKey="id" columns={columns} dataSource={rows} pagination={{ pageSize: 8 }} /></Card>
+-    {selected && <Card data-testid="operation-detail" className="section-gap" title={<Space>操作详情 <Text type="secondary">{selected.id}</Text></Space>} extra={<Button onClick={() => setSelected(null)}>收起</Button>}>
++    {selected && <Card data-testid="operation-detail" className="section-gap" title={<Space>操作详情 <Text data-testid="operation-detail-id" type="secondary">{selected.id}</Text></Space>} extra={<Button onClick={() => setSelectedOperation(null)}>收起</Button>}>
+       <Space className="section-gap"><Tag>{selected.kind}</Tag><Tag>{selected.status}</Tag>{selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
+       {selected.error && <Alert type="error" message={selected.error} />}
+       <pre data-testid="operation-result" className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>
+diff --git a/web/tests/operations-handler.test.mjs b/web/tests/operations-handler.test.mjs
+new file mode 100644
+index 0000000..85e3080
+--- /dev/null
++++ b/web/tests/operations-handler.test.mjs
+@@ -0,0 +1,151 @@
++import assert from "node:assert/strict";
++import fs from "node:fs/promises";
++import os from "node:os";
++import path from "node:path";
++import { fileURLToPath, pathToFileURL } from "node:url";
++import { build } from "esbuild";
++
++const webRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
++const mocks = {
++  react: `
++    let hookIndex = 0;
++    export const hooks = [];
++    export const changes = [];
++    export const paths = [];
++    export const pendingOldGets = [];
++    export function useState(initial) {
++      const index = hookIndex++;
++      if (!hooks[index]) {
++        hooks[index] = [initial, (value) => {
++          hooks[index][0] = value;
++          if (value && value.id) changes.push(value.id);
++        }];
++      }
++      return hooks[index];
++    }
++    export function useRef(initial) {
++      const index = hookIndex++;
++      if (!hooks[index]) hooks[index] = { current: initial };
++      return hooks[index];
++    }
++    export function useEffect() {}
++    export default {
++      Fragment: "Fragment",
++      createElement: (type, props, ...children) => ({ type, props: props || {}, children }),
++    };
++  `,
++  antd: `
++    export const Alert = "Alert", Button = "Button", Card = "Card", InputNumber = "InputNumber";
++    export const Select = "Select", Space = "Space", Table = "Table", Tabs = "Tabs", Tag = "Tag";
++    export const Form = Object.assign("Form", { Item: "Form.Item" });
++    export const Input = Object.assign("Input", { TextArea: "Input.TextArea" });
++    export const Typography = { Text: "Text", Title: "Title" };
++    export const message = { success() {}, error() {} };
++  `,
++  "../api": `
++    import { paths, pendingOldGets } from "react";
++    export const terminal = new Set();
++    export async function api(path, body) {
++      paths.push(path);
++      if (body !== undefined) return { id: "new-operation" };
++      if (path === "/operations/old-operation") {
++        return new Promise((resolve) => pendingOldGets.push(resolve));
++      }
++      if (path.startsWith("/operations/")) return { id: path.slice("/operations/".length) };
++      return [];
++    }
++  `,
++  "../components": `export const Header = "Header", Hash = "Hash";`,
++};
++
++function findNode(node, type) {
++  if (!node || typeof node !== "object") return null;
++  if (node.type === type) return node;
++  for (const child of (node.children || []).flat()) {
++    const hit = findNode(child, type);
++    if (hit) return hit;
++  }
++  return null;
++}
++
++async function flush() {
++  await new Promise((resolve) => setTimeout(resolve, 0));
++}
++
++const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "ohscanner-operations-handler-"));
++try {
++  const outfile = path.join(temporary, "operations-handler.mjs");
++  const source = await fs.readFile(path.join(webRoot, "src/pages/Operations.tsx"), "utf8");
++  await build({
++    stdin: {
++      contents: source + "\nexport { changes, paths, pendingOldGets } from 'react';",
++      loader: "tsx",
++      resolveDir: path.join(webRoot, "src/pages"),
++    },
++    bundle: true,
++    format: "esm",
++    outfile,
++    plugins: [{
++      name: "operations-handler-mocks",
++      setup(pluginBuild) {
++        pluginBuild.onResolve({ filter: /.*/ }, (args) =>
++          args.path in mocks ? { path: args.path, namespace: "mock" } : undefined,
++        );
++        pluginBuild.onLoad({ filter: /.*/, namespace: "mock" }, (args) =>
++          ({ contents: mocks[args.path], loader: "js" }),
++        );
++      },
++    }],
++  });
++
++  const module = await import(pathToFileURL(outfile));
++  const tree = module.default();
++  const table = findNode(tree, "Table");
++  const operationColumn = table.props.columns.at(-1);
++  const oldRow = { id: "old-operation", status: "queued" };
++  const operationCell = operationColumn.render(null, oldRow);
++  const viewButton = operationCell.children[0];
++
++  viewButton.props.onClick();
++  await flush();
++  assert.equal(module.pendingOldGets.length, 1);
++  module.pendingOldGets.shift()({ id: "old-operation" });
++  await flush();
++  assert.deepEqual(module.changes, ["old-operation"]);
++
++  viewButton.props.onClick();
++  await flush();
++  assert.equal(module.pendingOldGets.length, 1);
++  module.changes.length = 0;
++  const requestStart = module.paths.length;
++
++  const tabs = findNode(tree, "Tabs");
++  const matrix = tabs.props.items.find((item) => item.key === "matrix");
++  const submitted = matrix.children.props.onFinish({
++    case_id: "case",
++    repository_id: "repo",
++    detector_ids: ["detector"],
++    commits_text: "a".repeat(40) + "," + "b".repeat(40),
++    include_paths_text: ".",
++    timeout_seconds: 600,
++    memory_mb: 2048,
++  });
++
++  await flush();
++  assert.ok(module.paths.includes("/operations/version-matrices"));
++  for (const resolve of module.pendingOldGets.splice(0)) resolve({ id: "old-operation" });
++  await submitted;
++  await flush();
++
++  assert.ok(module.changes.length >= 1);
++  assert.ok(module.changes.every((id) => id === "new-operation"));
++  assert.ok(!module.paths.slice(requestStart).includes("/operations/old-operation"));
++  console.log(JSON.stringify({
++    scenario: "old detail request is still pending when a new operation is created",
++    selection_writes: module.changes,
++    api_paths_after_submit_started: module.paths.slice(requestStart),
++    kind: "actual Operations.tsx form/view handlers with mocked React primitives and API transport; not browser E2E",
++  }, null, 2));
++} finally {
++  await fs.rm(temporary, { recursive: true, force: true });
++}
+diff --git a/web/tests/operations-selection.browser.mjs b/web/tests/operations-selection.browser.mjs
+new file mode 100644
+index 0000000..41db922
+--- /dev/null
++++ b/web/tests/operations-selection.browser.mjs
+@@ -0,0 +1,177 @@
++import fs from "node:fs";
++import path from "node:path";
++import { createRequire } from "node:module";
++
++const require = createRequire(import.meta.url);
++const playwrightPath = process.env.PLAYWRIGHT_CORE_PATH || "playwright-core";
++const { chromium } = require(playwrightPath);
++
++const baseUrl = process.env.OHSCANNER_BROWSER_BASE_URL || "http://127.0.0.1:8876";
++const executablePath =
++  process.env.BROWSER_EXECUTABLE ||
++  "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
++const evidencePath =
++  process.env.BROWSER_EVIDENCE_PATH ||
++  path.resolve("operations-selection-browser.json");
++const screenshotPath =
++  process.env.BROWSER_SCREENSHOT_PATH ||
++  path.resolve("operations-selection-browser.png");
++const oldDetailDelayMs = Number(process.env.OLD_DETAIL_DELAY_MS || 2500);
++const headers = { "X-OHScanner-Client": "workbench-v1" };
++const observedDetailIds = [];
++const requestLog = [];
++
++async function api(pathname, body) {
++  const response = await fetch(baseUrl + "/api/v1" + pathname, {
++    method: body === undefined ? "GET" : "POST",
++    headers: body === undefined ? {} : { ...headers, "Content-Type": "application/json" },
++    body: body === undefined ? undefined : JSON.stringify(body),
++  });
++  if (!response.ok) {
++    throw new Error(`${pathname} ${response.status}: ${await response.text()}`);
++  }
++  return response.json();
++}
++
++async function createOperation(repository = "openharmony/c_utils") {
++  return api("/operations/source-sync", {
++    repository,
++    url: `https://github.com/${repository}.git`,
++    timeout_seconds: 900,
++  });
++}
++
++async function readDetailId(page) {
++  const detail = page.getByTestId("operation-detail");
++  await detail.waitFor();
++  const text = (await detail.textContent()) || "";
++  const id = text.match(/\b[0-9a-f]{32}\b/)?.[0];
++  if (!id) throw new Error(`operation detail did not expose a 32-digit id: ${text}`);
++  return id;
++}
++
++function writeEvidence(result) {
++  fs.mkdirSync(path.dirname(evidencePath), { recursive: true });
++  fs.writeFileSync(evidencePath, JSON.stringify(result, null, 2) + "\n");
++}
++
++async function main() {
++  const startedAt = new Date().toISOString();
++  let browser;
++  let page;
++  let oldOperation;
++  let newOperation;
++  try {
++    oldOperation = await createOperation();
++    browser = await chromium.launch({ executablePath, headless: true });
++    page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
++    page.on("request", (request) => {
++      if (request.url().includes("/api/v1/operations")) {
++        requestLog.push({
++          method: request.method(),
++          url: request.url().replace(baseUrl, ""),
++          at: new Date().toISOString(),
++        });
++      }
++    });
++
++    await page.goto(`${baseUrl}/#/operations`, { waitUntil: "networkidle" });
++    await page.getByTestId("view-operation").first().click();
++    const openedId = await readDetailId(page);
++    if (openedId !== oldOperation.id) {
++      throw new Error(`opened ${openedId}, expected old operation ${oldOperation.id}`);
++    }
++    observedDetailIds.push(openedId);
++    await page.route(`**/api/v1/operations/${oldOperation.id}`, async (route) => {
++      if (route.request().method() !== "GET") {
++        await route.continue();
++        return;
++      }
++      await new Promise((resolve) => setTimeout(resolve, oldDetailDelayMs));
++      await route.continue();
++    });
++    const idsBeforeSubmit = new Set((await api("/operations")).map((item) => item.id));
++
++    await page.getByTestId("sync-repository").fill("openharmony/c_utils");
++    await page.getByTestId("sync-url").fill("https://github.com/openharmony/c_utils.git");
++    await page.getByTestId("submit-source-sync").click();
++    const submitDeadline = Date.now() + 10000;
++    while (Date.now() < submitDeadline && !newOperation) {
++      const rows = await api("/operations");
++      newOperation = rows.find((item) => !idsBeforeSubmit.has(item.id));
++      if (!newOperation) await page.waitForTimeout(100);
++    }
++    if (!newOperation) {
++      const errors = await page.locator(".ant-form-item-explain-error").allTextContents();
++      await page.screenshot({ path: screenshotPath, fullPage: true });
++      throw new Error(`browser submit did not create a second operation; validation=${JSON.stringify(errors)}`);
++    }
++
++    const observationDeadline = Date.now() + 5000;
++    while (Date.now() < observationDeadline) {
++      const id = await readDetailId(page);
++      if (observedDetailIds.at(-1) !== id) observedDetailIds.push(id);
++      await page.waitForTimeout(100);
++    }
++    const finalId = await readDetailId(page);
++    if (observedDetailIds.at(-1) !== finalId) observedDetailIds.push(finalId);
++    await page.screenshot({ path: screenshotPath, fullPage: true });
++
++    const newSelectedAt = observedDetailIds.indexOf(newOperation.id);
++    const staleOverwrite = observedDetailIds.some(
++      (id, index) => id === oldOperation.id && index > newSelectedAt && newSelectedAt >= 0,
++    );
++
++    const result = {
++      task: "old operation detail open before creating a new operation",
++      status: finalId === newOperation.id && !staleOverwrite ? "passed" : "failed",
++      started_at: startedAt,
++      finished_at: new Date().toISOString(),
++      base_url: baseUrl,
++      browser: { kind: "chromium-compatible real browser", executable_path: executablePath },
++      old_operation_id: oldOperation.id,
++      new_operation_id: newOperation.id,
++      observed_detail_ids: observedDetailIds,
++      final_detail_id: finalId,
++      stale_old_response_overwrote_new_selection: staleOverwrite,
++      request_log: requestLog,
++      screenshot: screenshotPath,
++      old_detail_response_delay_ms: oldDetailDelayMs,
++      boundary: "Real browser UI against the real local FastAPI backend. The old detail response is delayed but not replaced; no response mocks or handler replay.",
++    };
++    writeEvidence(result);
++    console.log(JSON.stringify(result, null, 2));
++    if (result.status !== "passed") {
++      throw new Error(
++        `selection regression: final=${finalId}, stale_overwrite=${staleOverwrite}, observed=${observedDetailIds.join(",")}`,
++      );
++    }
++  } catch (error) {
++    const result = {
++      task: "old operation detail open before creating a new operation",
++      status: "failed",
++      started_at: startedAt,
++      finished_at: new Date().toISOString(),
++      base_url: baseUrl,
++      browser: { kind: "chromium-compatible real browser", executable_path: executablePath },
++      old_operation_id: oldOperation?.id ?? null,
++      new_operation_id: newOperation?.id ?? null,
++      observed_detail_ids: observedDetailIds,
++      request_log: requestLog,
++      screenshot: screenshotPath,
++      old_detail_response_delay_ms: oldDetailDelayMs,
++      error: String(error),
++      boundary: "Real browser UI against the real local FastAPI backend. The old detail response is delayed but not replaced; no response mocks or handler replay.",
++    };
++    if (page) {
++      await page.screenshot({ path: screenshotPath, fullPage: true }).catch(() => {});
++    }
++    writeEvidence(result);
++    console.error(JSON.stringify(result, null, 2));
++    process.exitCode = 1;
++  } finally {
++    await browser?.close();
++  }
++}
++
++await main();
+-- 
+2.55.0.windows.5
+

@@ -1,0 +1,125 @@
+{
+  "schema": "ohscanner.owner-platform-r1-r2-r3-fixpack.v1",
+  "generated_at": "2026-10-16T21:56:20.3155054+08:00",
+  "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit-fixpack-20261016",
+  "branch": "codex/owner-platform-r1-r2-r3-fixpack-20261016",
+  "base_commit": "8e97f152ef747c1e1d21ae179a048910f147e07a",
+  "head": "0b8faea14325fb0c687a345127ab7444c939d8ff",
+  "commits": [
+    "8620592e6250dad0a2b99139a0488dc45c8b1058",
+    "77784b21f37c306b5f780201d18d719d7a1cbdb5",
+    "0b8faea14325fb0c687a345127ab7444c939d8ff"
+  ],
+  "files": [
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/platform-regression.log",
+      "bytes": 8918,
+      "sha256": "ef49a2506bac2a32065e520ba280e746e5ce31185df5bd76b2187a72901121b7"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/python-regression-after-r1.log",
+      "bytes": 94487,
+      "sha256": "b0a8724e606053b864402df944c93c627652283d3bc672fad1d07af90fa70811"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r1-after.log",
+      "bytes": 436,
+      "sha256": "501175072b1c5992ab9fa3a952e9c99a20e4d9451459c22ab6dfd1ea8010a8ce"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r1-artifacts.log",
+      "bytes": 476,
+      "sha256": "a7ddc317560425fe168828ebeaedfd08ab8c11ce558c078d4792c0d01c464feb"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r1-clean-before.log",
+      "bytes": 972,
+      "sha256": "94e67799eb9129060f2c940bd320723a4eb58fe2a4c685eaf2736b27f361eac5"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r1-npm-ci.log",
+      "bytes": 147,
+      "sha256": "e10cc150c2ef44efb1189a7ca78e1b6f1c7c04185ea9a01057e29708eb91792a"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r1-web-build.log",
+      "bytes": 73,
+      "sha256": "120a45e3854bfa9273b699aeb14d8feb26f4178443f6999df8f8ac15342140c5"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-browser-after.json",
+      "bytes": 2251,
+      "sha256": "78bf61956fb9723b5790266be7621eb74695d13fbcbbdfb430fd0c106f760d47"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-browser-after.log",
+      "bytes": 2320,
+      "sha256": "cd86ef506c2edd89bc0facc4e0492148f13255e7a73e291dc5aa1ac21be70796"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-browser-after.png",
+      "bytes": 153468,
+      "sha256": "7ef636d8c3a9509d9208d78867d660f3412af0bffb1b6d16e330977e9dd6e1a6"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-browser-before.json",
+      "bytes": 2758,
+      "sha256": "82782a8525e4ec9900cba6175940d72da9e8f61e5a7bd2c8c1b6b124b2329728"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-browser-before.log",
+      "bytes": 2847,
+      "sha256": "b90d62f1e2ff84903a941648faf78145409d8014de2547ba68db94d68f7f15d5"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-browser-before.png",
+      "bytes": 153132,
+      "sha256": "2b08571117b2adc9973f2917eec4b58c105fe4dccbc4570cd81ec3b2bfa227f7"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-handler-after-npm.log",
+      "bytes": 574,
+      "sha256": "7d1ea9f907c1a0983cf034e0c6c2cfab2237a491a88df818f29ae001146073c5"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-handler-after.log",
+      "bytes": 475,
+      "sha256": "bc2ffddd3e9d8fae1451b9295054eab08e5f605a6b629d2b536a2b7b6bad2a28"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-handler-before.log",
+      "bytes": 572,
+      "sha256": "2998d996cf921ff66ceb593e96129c822ba715cc89b7964bcd36094137e2feef"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r2-web-build-after.log",
+      "bytes": 73,
+      "sha256": "120a45e3854bfa9273b699aeb14d8feb26f4178443f6999df8f8ac15342140c5"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/r3-docs-budget.log",
+      "bytes": 94,
+      "sha256": "8eaf1ea94fca47e0b8e861cb7b541c67904dbb18e2b12b6bf5477a44fada1d25"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0001-ci-build-frontend-before-served-ui-tests.patch",
+      "bytes": 3098,
+      "sha256": "01cb3be21a3c64369ffc31858f7723005a79980a628e88bc2dc7efe79dd726cb"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0002-fix-workbench-guard-stale-operation-detail-responses.patch",
+      "bytes": 21741,
+      "sha256": "2fd1e1efd6ab3590d0f3bf182bfe353a87570ce7561c1446e1069aa6e5452cd7"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0003-docs-correct-owner-unittest-statistics.patch",
+      "bytes": 3806,
+      "sha256": "1c5531d3b5f5dbe26fbe738a98fee258b2115825a655e1f49e79a432f8a20c62"
+    },
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/README.md",
+      "bytes": 5766,
+      "sha256": "d239f14c53ac9c235a354a79adfe1f4c728703c70951d57bd77206929df75c7c"
+    }
+  ]
+}

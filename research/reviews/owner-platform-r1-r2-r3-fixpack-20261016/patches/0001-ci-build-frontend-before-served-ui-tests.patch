@@ -1,0 +1,86 @@
+From 8620592e6250dad0a2b99139a0488dc45c8b1058 Mon Sep 17 00:00:00 2001
+From: baldnotstronger <17770177822@163.com>
+Date: Fri, 16 Oct 2026 21:35:05 +0800
+Subject: [PATCH] ci: build frontend before served UI tests
+
+---
+ .github/workflows/ci.yml   | 19 ++++++++++++++++---
+ tests/ui/test_served_ui.py | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 3 deletions(-)
+ create mode 100644 tests/ui/test_served_ui.py
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index a230816..9332d41 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -42,8 +42,8 @@ jobs:
+       - name: Run unit tests
+         run: python -m unittest discover -s tests -v
+ 
+-  workbench-web:
+-    name: Workbench TypeScript and production build
++  workbench-web-ui:
++    name: Workbench frontend build and served UI tests
+     runs-on: ubuntu-22.04
+     steps:
+       - uses: actions/checkout@v4
+@@ -55,6 +55,19 @@ jobs:
+       - name: Install locked UI dependencies
+         working-directory: web
+         run: npm ci
+-      - name: Type-check and bundle offline UI assets
++      - name: Build frontend assets
+         working-directory: web
+         run: npm run build
++      - name: Show frontend artifact paths
++        run: |
++          test -f web/dist/index.html
++          find web/dist -maxdepth 2 -type f -print | sort
++      - uses: actions/setup-python@v5
++        with:
++          python-version: '3.10'
++      - name: Install Python dependencies for served UI tests
++        run: |
++          python -m pip install --upgrade pip
++          python -m pip install -r requirements-web.txt
++      - name: Run tests that require the built homepage
++        run: python -m unittest discover -s tests/ui -p 'test_*.py' -v
+diff --git a/tests/ui/test_served_ui.py b/tests/ui/test_served_ui.py
+new file mode 100644
+index 0000000..728acf8
+--- /dev/null
++++ b/tests/ui/test_served_ui.py
+@@ -0,0 +1,30 @@
++from pathlib import Path
++import tempfile
++import unittest
++
++from fastapi.testclient import TestClient
++
++from src.workbench.api import create_app
++from src.workbench.settings import Settings
++
++
++class ServedUiTests(unittest.TestCase):
++    def test_built_frontend_and_assets_are_served(self):
++        with tempfile.TemporaryDirectory() as directory:
++            settings = Settings(Path(directory) / "data", (Path(directory) / "targets",))
++            client = TestClient(create_app(settings))
++            self.addCleanup(client.close)
++
++            page = client.get("/")
++            self.assertEqual(page.status_code, 200, page.text)
++            self.assertIn('id="root"', page.text)
++            self.assertIn("/assets/app.js", page.text)
++
++            for asset in ("/assets/app.js", "/assets/app.css"):
++                response = client.get(asset)
++                self.assertEqual(response.status_code, 200, response.text)
++                self.assertGreater(len(response.content), 0)
++
++
++if __name__ == "__main__":
++    unittest.main()
+-- 
+2.55.0.windows.5
+

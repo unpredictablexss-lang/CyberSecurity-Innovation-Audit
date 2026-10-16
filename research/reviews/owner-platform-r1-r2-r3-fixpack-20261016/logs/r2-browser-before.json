@@ -1,0 +1,89 @@
+{
+  "task": "old operation detail open before creating a new operation",
+  "status": "passed",
+  "started_at": "2026-10-16T13:44:35.393Z",
+  "finished_at": "2026-10-16T13:44:42.419Z",
+  "base_url": "http://127.0.0.1:8876",
+  "browser": {
+    "kind": "chromium-compatible real browser",
+    "executable_path": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+  },
+  "old_operation_id": "51fbc6b3e0e74c56bee84c05d0922e5f",
+  "new_operation_id": "edb69ca59486446da00de1b135d03a9c",
+  "observed_detail_ids": [
+    "51fbc6b3e0e74c56bee84c05d0922e5f",
+    "edb69ca59486446da00de1b135d03a9c"
+  ],
+  "final_detail_id": "edb69ca59486446da00de1b135d03a9c",
+  "stale_old_response_overwrote_new_selection": false,
+  "request_log": [
+    {
+      "method": "GET",
+      "url": "/api/v1/operations",
+      "at": "2026-10-16T13:44:36.412Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations/51fbc6b3e0e74c56bee84c05d0922e5f",
+      "at": "2026-10-16T13:44:36.961Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations",
+      "at": "2026-10-16T13:44:36.983Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations/51fbc6b3e0e74c56bee84c05d0922e5f",
+      "at": "2026-10-16T13:44:36.994Z"
+    },
+    {
+      "method": "POST",
+      "url": "/api/v1/operations/source-sync",
+      "at": "2026-10-16T13:44:37.103Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations",
+      "at": "2026-10-16T13:44:37.135Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations",
+      "at": "2026-10-16T13:44:37.151Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations/51fbc6b3e0e74c56bee84c05d0922e5f",
+      "at": "2026-10-16T13:44:37.152Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations/edb69ca59486446da00de1b135d03a9c",
+      "at": "2026-10-16T13:44:37.168Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations",
+      "at": "2026-10-16T13:44:39.655Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations/edb69ca59486446da00de1b135d03a9c",
+      "at": "2026-10-16T13:44:39.692Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations",
+      "at": "2026-10-16T13:44:42.160Z"
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/operations/edb69ca59486446da00de1b135d03a9c",
+      "at": "2026-10-16T13:44:42.173Z"
+    }
+  ],
+  "screenshot": "E:\\网安\\CyberSecurity-Innovation-Audit-fixpack-20261016\\research\\reviews\\owner-platform-r1-r2-r3-fixpack-20261016\\logs\\r2-browser-before.png",
+  "old_detail_response_delay_ms": 2500,
+  "boundary": "Real browser UI against the real local FastAPI backend. The old detail response is delayed but not replaced; no response mocks or handler replay."
+}
