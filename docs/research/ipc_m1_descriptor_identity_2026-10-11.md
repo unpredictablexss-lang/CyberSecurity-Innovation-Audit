@@ -3,7 +3,9 @@
 - 输入：`docs/research/ipc_candidate_review_2026-10-11.md` 的候选集——41 条候选中**被明确归因到 M1 的 17 条**。
 - 产出：**一处源码级修复 + 11 个正反例 + 五组件修复前后候选差异（每条消失候选注明依据）**，不是新的漏洞结论。
 - 三个数分开报：**测试 391 项 OK**（接口线分支，含组件审计）/ **候选 41 → 24 条** / **确认漏洞 0 条**。
-- 未推送。分支与提交见 §9。
+- ~~未推送。~~ **（2026-10-16 更正）写作当时属实；该分支后已推到远端** ——
+  `origin/feat/interface-m1-descriptor-identity` = `8464151`，修复提交 `3fe3537` 已随它到远端。
+  **该分支的远端 CI 未经本线核验**，不得称「CI 已通过」。分支与提交见 §9。
 
 ## 0. 一句话结论
 
@@ -250,7 +252,12 @@ fixture 语义矩阵 `tests/test_ipc_detector.py` **17 项**。
 - 修复提交：`3fe3537`（`feat/interface-m1-descriptor-identity`，**基于负责人已本地验证并推送的
   集成分支 `feat/owner-ipc-platform-integration` 的顶端 `86fbf99`**）。
 - 同一份树改动在接口线上：`3d88ffc`（`feat/interface-ipc-detector`）。
-- 两条**均未推送、未合并**；是否推送/开 PR/合并由项目负责人决定。
+- ~~两条**均未推送、未合并**~~；**（2026-10-16 更正）该判断已过期**：
+  `feat/interface-m1-descriptor-identity` 已在远端（= `8464151`，含 `3fe3537`），
+  接口线 `feat/interface-ipc-detector` 亦已在远端（其上的 `3d88ffc` 已随本分支推送）。
+  **均仍未合并**。「是否推送/开 PR/合并由项目负责人决定」这一原则**不变**。
+- **远端 CI 状态（2026-10-16 独立审查口径）**：M1/M2 分支的 head 未查询到 PR workflow run / status，
+  **不得称其 CI 已通过**。它们的测试数是**本地回归**结果，不是远端 CI 结果。
 - 顺带一行：`.gitignore` 增加 `outputs/reports/m1_descriptor_identity/`（与既有两条实验目录同格式）。
 - 观察（未处理）：工作区有一个**未跟踪且未被忽略**的目录 `research/experiments/interface/ipc/results/`
   （内含 `evidence_manifest.json` / `synthetic.csv` / `historical.csv` 等），仓库里没有脚本会写它。

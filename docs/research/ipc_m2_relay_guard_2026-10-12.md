@@ -4,7 +4,11 @@
   `screen_session_manager_stub.cpp:42`（AUTH-01）。
 - 产出：**一处源码级修复 + 8 个正反例 + 五组件修复前后候选差异（唯一消失候选注明依据）**，不是新的漏洞结论。
 - 三个数分开报：**测试 401 项 OK**（接口线分支，含组件审计；修复前 391）/ **候选 24 → 23 条** / **确认漏洞 0 条**。
-- 未推送。分支与提交见 §9。
+- ~~未推送。~~ **（2026-10-16 更正）写作当时属实；该分支后已推到远端** ——
+  `origin/feat/interface-m2-relay-guard` = `54a4d98`，修复提交 `642ae1c` 已随它到远端，
+  并以 **Draft PR #11** 形式存在（base 为 `feat/interface-m1-descriptor-identity`）。
+  **该 head 未查询到 PR workflow run / status / review，不得称「CI 已通过」**；§6 的 401 项是**本地回归**。
+  分支与提交见 §9。
 
 ## 0. 一句话结论
 
@@ -220,7 +224,14 @@ M2 只动「入口同文件一次调用之外、被委托方体内的那一次�
 ## 9. 状态
 
 - 修复提交：`ffa27d7`（`feat/interface-ipc-detector`）；本记录与其复现脚本：`1bff189`。
-- **未推送、未合并**；是否推送/开 PR/合并由项目负责人决定。
+- ~~**未推送、未合并**~~；**（2026-10-16 更正）该判断已过期**：
+  - `ffa27d7` 在 `feat/interface-ipc-detector` 上，该分支已在远端 → 该提交已推送；
+  - 本记录的 `1bff189` 已在 `feat/interface-m2-relay-guard` 上（远端 = `54a4d98`），**Draft PR #11**。
+  - **仍未合并**。「是否推送/开 PR/合并由项目负责人决定」这一原则**不变**。
+- **远端 CI 状态（2026-10-16 独立审查口径）**：PR #11 的 head `54a4d98`
+  **未返回 PR workflow run / status / review**，**不能称为 CI 已通过**。
+  独立审查同时记录：该 head 虽不是 `main` 祖先，但**整个 interface 检测包、relay 测试及核对 fixture
+  与 `main` 无差异**，因此**无需再整支合并**（该判断属负责人/main 侧决定，B 不据此行动）。
 - 顺带一行：`.gitignore` 增加 `outputs/reports/m2_relay_guard/`。
 - 观察（未处理）：工作区存在**未跟踪且未被忽略**的目录
   `research/experiments/interface/ipc/results/`（M1 报告已记录过），本次没有添加它；
