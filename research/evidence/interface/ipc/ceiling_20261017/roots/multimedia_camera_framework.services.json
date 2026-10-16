@@ -1,0 +1,272 @@
+{
+ "mode": "strict",
+ "side": "services",
+ "owner": "service",
+ "functions_seen": 20033,
+ "added_roots": [
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::GetNaturalDirectionCorrect",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::GetAppNaturalDirection",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::FillCameras",
+   "names": [
+    "GetCallingFullTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::ChooseDeFaultCameras",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::SetControlCenterInVideo",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CreateCaptureSession",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CreateDeferredPhotoProcessingSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CreateDeferredVideoProcessingSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CreateMechSession",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CreateCameraSwitchSession",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CreatePreviewOutput",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::OnCameraStatus",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::GetCameraIdByDisPlugin",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CheckControlCenterPermission",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::MuteCamera",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::MuteCameraPersist",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "SetMutePolicy"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::SetPrelaunchConfig",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::AllowOpenByOHSide",
+   "names": [
+    "CheckPermission",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::NotifyCameraState",
+   "names": [
+    "CheckPermission",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::GetDmDeviceInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CheckWhiteList",
+   "names": [
+    "GetCallingFullTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::GetCameraStorageSize",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::PrelaunchScanCamera",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::SetPrelaunchScanCameraConfig",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::SetSpectrumCallback",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::UnsetSpectrumCallback",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/camera_service/src/hcamera_service.cpp",
+   "function": "HCameraService::CheckPermissionForBroker",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "services",
+   "line": 0
+  }
+ ],
+ "already_roots": 21,
+ "skipped_by_side": 14,
+ "skipped_by_owner": 75
+}

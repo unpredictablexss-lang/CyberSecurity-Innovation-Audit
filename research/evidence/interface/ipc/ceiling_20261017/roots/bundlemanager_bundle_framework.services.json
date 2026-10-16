@@ -1,0 +1,10 @@
+{
+ "mode": "strict",
+ "side": "services",
+ "owner": "service",
+ "functions_seen": 17597,
+ "added_roots": [],
+ "already_roots": 311,
+ "skipped_by_side": 172,
+ "skipped_by_owner": 405
+}

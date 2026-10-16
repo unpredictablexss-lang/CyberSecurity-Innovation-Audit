@@ -1,0 +1,32 @@
+{
+ "mode": "strict",
+ "side": "services",
+ "owner": "service",
+ "functions_seen": 1636,
+ "added_roots": [
+  {
+   "file": "services/engine/src/update_service_stub.cpp",
+   "function": "UpdateServiceStub::IsCallerValid",
+   "names": [
+    "GetCallingFullTokenID",
+    "GetCallingTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/engine/src/update_service_stub.cpp",
+   "function": "UpdateServiceStub::IsPermissionGranted",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  }
+ ],
+ "already_roots": 25,
+ "skipped_by_side": 0,
+ "skipped_by_owner": 0
+}

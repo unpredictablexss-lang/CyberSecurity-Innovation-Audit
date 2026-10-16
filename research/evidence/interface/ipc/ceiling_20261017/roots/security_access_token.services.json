@@ -1,0 +1,2055 @@
+{
+ "mode": "strict",
+ "side": "services",
+ "owner": "service",
+ "functions_seen": 5914,
+ "added_roots": [
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::PreCheckPermissionStatusDetails",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionUsedType",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::InitCliToken",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteToolTokenByPid",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHostTokenId",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetReqPermissions",
+   "names": [
+    "GetCallingTokenID",
+    "GetReqPermissions",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetSelfPermissionStatus",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetSelfPermissionsState",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionsStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionStatusDetails",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionFlag",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetPermissionRequestToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionRequestToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GrantPermission",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RevokePermission",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GrantPermissionForSpecifiedTime",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ClearUserGrantedPermissionState",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ClearUserGrantedPermStateByBundle",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetPermissionStatusWithPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RegisterPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UnRegisterPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RegisterSelfPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UnRegisterSelfPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::AllocHapToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::InitHapToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetTokenType",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::AllocLocalTokenID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UpdateHapToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetTokenIDByUserID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenInfoExtension",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetNativeTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ReloadNativeTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetNativeTokenId",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenInfoFromRemote",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetRemoteHapTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteRemoteToken",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetRemoteNativeTokenID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteRemoteDeviceTokens",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RegisterTokenSyncCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UnRegisterTokenSyncCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DumpTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetVersion",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetPermDialogCap",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetUserPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ClearUserPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UpdatePolicyWhiteList",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPolicyWhiteList",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetKernelPermissions",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetReqPermissionByName",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ResetDatabaseRecoveryStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsPrivilegedCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsAccessTokenCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsNativeProcessCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsShellProcessCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsShellCallingForDebugHap",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsSystemAppCalling",
+   "names": [
+    "GetCallingFullTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ValidateGetCliPermissionRequestInfoCaller",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ValidateGetCliPermissionsCaller",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsSecCompServiceCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::QueryStatusByPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::QueryStatusByTokenID",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetCliPermissionRequestInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetCliPermissions",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GenerateCliAuthResult",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::GenerateAppKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::DeleteAppKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::SetFilePathPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::RegisterCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::GenerateGroupIDKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::DeleteGroupIDKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::IsSystemApp",
+   "names": [
+    "GetCallingFullTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::CheckReqLockPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::AddPermissionUsedRecord",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetPermissionUsedRecordToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedRecordToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StartUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StartUsingPermissionCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StopUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StartRemoteUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StopRemoteUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::AddRemotePermissionUsedRecord",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetRemotePermissionUsedRecords",
+   "names": [
+    "GetCallingTokenID",
+    "GetCallingUid",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::RemovePermissionUsedRecords",
+   "names": [
+    "GetCallingTokenID",
+    "RemovePermissionUsedRecords",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedRecords",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedRecordsAsync",
+   "names": [
+    "GetCallingTokenID",
+    "GetPermissionUsedRecordsAsync",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::RegisterPermActiveStatusCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::UnRegisterPermActiveStatusCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsAllowedUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "IsAllowedUsingPermission",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetMutePolicy",
+   "names": [
+    "GetCallingTokenID",
+    "SetMutePolicy",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetHapWithFGReminder",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedTypeInfos",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetDisablePolicy",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetDisablePolicy",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetCurrUsingPermInfo",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::CheckPermissionInUse",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::RegisterPermDisablePolicyCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::UnRegisterPermDisablePolicyCallback",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsPrivilegedCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsAccessTokenCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsSystemAppCalling",
+   "names": [
+    "GetCallingFullTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::VerifyPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+   "function": "TokenSyncManagerStub::IsNativeProcessCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+   "function": "TokenSyncManagerStub::IsRootCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::PreCheckPermissionStatusDetails",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionUsedType",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::InitCliToken",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteToolTokenByPid",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHostTokenId",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetReqPermissions",
+   "names": [
+    "GetCallingTokenID",
+    "GetReqPermissions",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetSelfPermissionStatus",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetSelfPermissionsState",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionsStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionStatusDetails",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionFlag",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetPermissionRequestToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPermissionRequestToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GrantPermission",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RevokePermission",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GrantPermissionForSpecifiedTime",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ClearUserGrantedPermissionState",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ClearUserGrantedPermStateByBundle",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetPermissionStatusWithPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RegisterPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UnRegisterPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RegisterSelfPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UnRegisterSelfPermStateChangeCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::AllocHapToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::InitHapToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetTokenType",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::AllocLocalTokenID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UpdateHapToken",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetTokenIDByUserID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenInfoExtension",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetNativeTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ReloadNativeTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetNativeTokenId",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetHapTokenInfoFromRemote",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetRemoteHapTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteRemoteToken",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetRemoteNativeTokenID",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DeleteRemoteDeviceTokens",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::RegisterTokenSyncCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UnRegisterTokenSyncCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::DumpTokenInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetVersion",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetPermDialogCap",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::SetUserPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ClearUserPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::UpdatePolicyWhiteList",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetPolicyWhiteList",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetKernelPermissions",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetReqPermissionByName",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ResetDatabaseRecoveryStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsPrivilegedCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsAccessTokenCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsNativeProcessCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsShellProcessCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsShellCallingForDebugHap",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsSystemAppCalling",
+   "names": [
+    "GetCallingFullTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ValidateGetCliPermissionRequestInfoCaller",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::ValidateGetCliPermissionsCaller",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::IsSecCompServiceCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::QueryStatusByPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::QueryStatusByTokenID",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetCliPermissionRequestInfo",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GetCliPermissions",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+   "function": "AccessTokenManagerService::GenerateCliAuthResult",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::GenerateAppKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::DeleteAppKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::SetFilePathPolicy",
+   "names": [
+    "GetCallingTokenID",
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::RegisterCallback",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::GenerateGroupIDKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::DeleteGroupIDKey",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::IsSystemApp",
+   "names": [
+    "GetCallingFullTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/el5filekeymanager/src/el5_filekey_manager_service.cpp",
+   "function": "El5FilekeyManagerService::CheckReqLockPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::AddPermissionUsedRecord",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetPermissionUsedRecordToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedRecordToggleStatus",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StartUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StartUsingPermissionCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StopUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StartRemoteUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::StopRemoteUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::AddRemotePermissionUsedRecord",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetRemotePermissionUsedRecords",
+   "names": [
+    "GetCallingTokenID",
+    "GetCallingUid",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::RemovePermissionUsedRecords",
+   "names": [
+    "GetCallingTokenID",
+    "RemovePermissionUsedRecords",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedRecords",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedRecordsAsync",
+   "names": [
+    "GetCallingTokenID",
+    "GetPermissionUsedRecordsAsync",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::RegisterPermActiveStatusCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::UnRegisterPermActiveStatusCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsAllowedUsingPermission",
+   "names": [
+    "GetCallingTokenID",
+    "IsAllowedUsingPermission",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetMutePolicy",
+   "names": [
+    "GetCallingTokenID",
+    "SetMutePolicy",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetHapWithFGReminder",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetPermissionUsedTypeInfos",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::SetDisablePolicy",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetDisablePolicy",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::GetCurrUsingPermInfo",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::CheckPermissionInUse",
+   "names": [
+    "CheckPermission",
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::RegisterPermDisablePolicyCallback",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::UnRegisterPermDisablePolicyCallback",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsPrivilegedCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsAccessTokenCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::IsSystemAppCalling",
+   "names": [
+    "GetCallingFullTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+   "function": "PrivacyManagerService::VerifyPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyAccessToken"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+   "function": "TokenSyncManagerStub::IsNativeProcessCalling",
+   "names": [
+    "GetCallingTokenID"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/tokensyncmanager/src/service/token_sync_manager_stub.cpp",
+   "function": "TokenSyncManagerStub::IsRootCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  }
+ ],
+ "already_roots": 54,
+ "skipped_by_side": 57,
+ "skipped_by_owner": 75
+}

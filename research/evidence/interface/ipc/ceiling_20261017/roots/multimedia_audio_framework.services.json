@@ -1,0 +1,715 @@
+{
+ "mode": "strict",
+ "side": "services",
+ "owner": "service",
+ "functions_seen": 33362,
+ "added_roots": [
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::WriteCallSessionEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::ActivateAudioSessionErrorEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::AddActiveInterruptToSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DeactivateAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::AudioSessionStateChangeCallbackEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::FindAudioInterruptByPid",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DelayToDeactivateStreamsInAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DeactivateStreamsInAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DeactivateAudioSessionFakeInterruptInternal",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::HasAudioSessionFakeInterrupt",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::RemovePlaceholderInterruptForSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::SetAudioInterruptCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::UnsetAudioInterruptCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::VerifyFocusPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::ProcessFocusEntryForAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::HandleExistStreamsForSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::CheckIncommingFoucsValidity",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DispatchInterruptEventWithStreamId",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::GetClientTypeByStreamId",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::WriteFocusMigrateEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/zone/src/audio_zone_service.cpp",
+   "function": "AudioZoneService::DeactivateAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SelectOutputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::ConnectVirtualDeviceIfNeeded",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SelectOutputDeviceLog",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SetRenderDeviceForUsage",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SelectInputDeviceInner",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_suite/server/src/audio_suite_service.cpp",
+   "function": "AudioSuiteService::RegisterDownloadInterfaceCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_suite/server/src/audio_suite_service.cpp",
+   "function": "AudioSuiteService::UnregisterDownloadInterfaceCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_suite/server/src/audio_suite_service.cpp",
+   "function": "AudioSuiteService::OnDownloadStatusChanged",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::WriteCallSessionEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::ActivateAudioSessionErrorEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::AddActiveInterruptToSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DeactivateAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::AudioSessionStateChangeCallbackEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::FindAudioInterruptByPid",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DelayToDeactivateStreamsInAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DeactivateStreamsInAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DeactivateAudioSessionFakeInterruptInternal",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::HasAudioSessionFakeInterrupt",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::RemovePlaceholderInterruptForSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::SetAudioInterruptCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::UnsetAudioInterruptCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::VerifyFocusPermission",
+   "names": [
+    "GetCallingTokenID",
+    "VerifyPermission"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::ProcessFocusEntryForAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::HandleExistStreamsForSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::CheckIncommingFoucsValidity",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::DispatchInterruptEventWithStreamId",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::GetClientTypeByStreamId",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/interrupt/src/audio_interrupt_service.cpp",
+   "function": "AudioInterruptService::WriteFocusMigrateEvent",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/session/src/audio_session_service.cpp",
+   "function": "AudioSessionService::DeactivateAudioSessionInternal",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/session/src/audio_session_service.cpp",
+   "function": "AudioSessionService::GenerateFakeAudioInterrupt",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/session/src/audio_session_service.cpp",
+   "function": "AudioSessionService::EnableMuteSuggestionWhenMixWithOthers",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/session/src/audio_session_service.cpp",
+   "function": "AudioSessionService::SetAudioSessionCapturerMuteHint",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/domain/zone/src/audio_zone_service.cpp",
+   "function": "AudioZoneService::DeactivateAudioSession",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::ParsePreferredInputDeviceHistory",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SetDeviceActive",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SkipDeviceTypes",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SetAudioRouteCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::UnsetAudioRouteCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SelectOutputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SetMediaOutputDeviceByUid",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SelectInputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::NotifyRemoteRenderState",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service.cpp",
+   "function": "AudioCoreService::SetRingerMode",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service_private.cpp",
+   "function": "AudioCoreService::AddSessionId",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service_private.cpp",
+   "function": "AudioCoreService::MoveToNewOutputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service_private.cpp",
+   "function": "AudioCoreService::MoveToRemoteOutputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service_private.cpp",
+   "function": "AudioCoreService::MoveToNewInputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service_private.cpp",
+   "function": "AudioCoreService::MoveToLocalInputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_core_service_private.cpp",
+   "function": "AudioCoreService::MoveToRemoteInputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SelectOutputDevice",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::ConnectVirtualDeviceIfNeeded",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SelectOutputDeviceLog",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SetRenderDeviceForUsage",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_policy/server/service/service_main/src/audio_select_interface_service.cpp",
+   "function": "AudioSelectInterfaceService::SelectInputDeviceInner",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_suite/server/src/audio_suite_service.cpp",
+   "function": "AudioSuiteService::RegisterDownloadInterfaceCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_suite/server/src/audio_suite_service.cpp",
+   "function": "AudioSuiteService::UnregisterDownloadInterfaceCallback",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  },
+  {
+   "file": "services/audio_suite/server/src/audio_suite_service.cpp",
+   "function": "AudioSuiteService::OnDownloadStatusChanged",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "services",
+   "line": 0
+  }
+ ],
+ "already_roots": 12,
+ "skipped_by_side": 29,
+ "skipped_by_owner": 271
+}

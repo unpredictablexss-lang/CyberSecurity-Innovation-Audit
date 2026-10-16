@@ -1,0 +1,481 @@
+{
+ "mode": "strict",
+ "side": "interfaces",
+ "owner": "any",
+ "functions_seen": 5914,
+ "added_roots": [
+  {
+   "file": "frameworks/js/napi/privacy/src/permission_record_manager_napi.cpp",
+   "function": "CheckPermissionInUse",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+   "function": "TokenSyncCallbackStub::IsAccessTokenCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_compat_client.cpp",
+   "function": "AccessTokenCompatClient::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_compat_kit.cpp",
+   "function": "AccessTokenCompatKit::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::RemovePermissionUsedRecords",
+   "names": [
+    "RemovePermissionUsedRecords"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::IsAllowedUsingPermission",
+   "names": [
+    "IsAllowedUsingPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::SetMutePolicy",
+   "names": [
+    "SetMutePolicy"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::CheckPermissionInUse",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::ReStartUsing",
+   "names": [
+    "StartUsingPermissionCallback"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::StartUsingPermission",
+   "names": [
+    "StartUsingPermissionCallback"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::RemovePermissionUsedRecords",
+   "names": [
+    "RemovePermissionUsedRecords"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::GetPermissionUsedRecords",
+   "names": [
+    "GetPermissionUsedRecordsAsync"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::IsAllowedUsingPermission",
+   "names": [
+    "IsAllowedUsingPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::SetMutePolicy",
+   "names": [
+    "SetMutePolicy"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::CheckPermissionInUse",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/kits/capi/accesstoken/src/ability_access_control.cpp",
+   "function": "OH_AT_CheckSelfPermission",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/kits/cj/accesstoken/src/ability_access_ctrl_ffi.cpp",
+   "function": "FfiOHOSAbilityAccessCtrlCheckAccessTokenSync",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/kits/cj/accesstoken/src/at_manager_impl.cpp",
+   "function": "AtManagerImpl::VerifyAccessTokenSync",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/ets/ani/accesstoken/src/ani_ability_access_ctrl.cpp",
+   "function": "UpdateGrantStatusCache",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/ets/ani/accesstoken/src/ani_ability_access_ctrl.cpp",
+   "function": "CheckAccessTokenExecute",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/ets/ani/privacy/src/privacy_manager.cpp",
+   "function": "CheckPermissionInUseExecute",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/ets/ani/privacy/src/privacy_manager.cpp",
+   "function": "InitPrivacyFunction",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::Init",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::VerifyAccessTokenExecute",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken",
+    "VerifyPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::CheckAccessTokenExecute",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::CheckAccessToken",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::UpdatePermissionCache",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::VerifyAccessTokenSync",
+   "names": [
+    "VerifyAccessToken",
+    "VerifyPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/accesstoken/src/napi_atmanager.cpp",
+   "function": "NapiAtManager::GetPermissionFlags",
+   "names": [
+    "VerifyPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "frameworks/js/napi/privacy/src/permission_record_manager_napi.cpp",
+   "function": "CheckPermissionInUse",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp",
+   "function": "TokenSyncCallbackStub::IsAccessTokenCalling",
+   "names": [
+    "GetCallingUid"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_compat_client.cpp",
+   "function": "AccessTokenCompatClient::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_compat_kit.cpp",
+   "function": "AccessTokenCompatKit::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+   "function": "AccessTokenKit::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+   "function": "AccessTokenKit::GetReqPermissions",
+   "names": [
+    "GetReqPermissions"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_manager_client.cpp",
+   "function": "AccessTokenManagerClient::VerifyAccessToken",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/accesstoken/src/accesstoken_manager_client.cpp",
+   "function": "AccessTokenManagerClient::GetReqPermissions",
+   "names": [
+    "GetReqPermissions"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::RemovePermissionUsedRecords",
+   "names": [
+    "RemovePermissionUsedRecords"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::IsAllowedUsingPermission",
+   "names": [
+    "IsAllowedUsingPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::SetMutePolicy",
+   "names": [
+    "SetMutePolicy"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+   "function": "PrivacyKit::CheckPermissionInUse",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::ReStartUsing",
+   "names": [
+    "StartUsingPermissionCallback"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::StartUsingPermission",
+   "names": [
+    "StartUsingPermissionCallback"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::RemovePermissionUsedRecords",
+   "names": [
+    "RemovePermissionUsedRecords"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::GetPermissionUsedRecords",
+   "names": [
+    "GetPermissionUsedRecordsAsync"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::IsAllowedUsingPermission",
+   "names": [
+    "IsAllowedUsingPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::SetMutePolicy",
+   "names": [
+    "SetMutePolicy"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+   "function": "PrivacyManagerClient::CheckPermissionInUse",
+   "names": [
+    "CheckPermission"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/kits/capi/accesstoken/src/ability_access_control.cpp",
+   "function": "OH_AT_CheckSelfPermission",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/kits/cj/accesstoken/src/ability_access_ctrl_ffi.cpp",
+   "function": "FfiOHOSAbilityAccessCtrlCheckAccessTokenSync",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  },
+  {
+   "file": "interfaces/kits/cj/accesstoken/src/at_manager_impl.cpp",
+   "function": "AtManagerImpl::VerifyAccessTokenSync",
+   "names": [
+    "VerifyAccessToken"
+   ],
+   "side": "interfaces",
+   "line": 0
+  }
+ ],
+ "already_roots": 54,
+ "skipped_by_side": 299,
+ "skipped_by_owner": 0
+}

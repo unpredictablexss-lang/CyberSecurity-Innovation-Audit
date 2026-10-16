@@ -1,0 +1,453 @@
+{
+ "baseline_candidates": 166,
+ "baseline_candidates_by_rule": {
+  "ipc.auth.guard-coverage": 8,
+  "ipc.auth.missing": 21,
+  "ipc.auth.object-owner": 2,
+  "ipc.capability.export": 43,
+  "ipc.relay.descriptor-boundary": 92
+ },
+ "baseline_components": 30,
+ "baseline_root": "/home/audit/wtmp/ipc-audit",
+ "how_to_read": "Each reading differs only in which counterfactual roots were added: `all` = every function naming a policy predicate, `services` = only methods of a `*Service`/`*Stub` class, `interfaces` = the client-side tree. `new_candidates_detail` carries the file, line and `Entry=` root of every added candidate so each one can be read against its source; the candidate count is not evidence that any of them is real. The `Entry=` field is parsed out of the message because the pinned reports carry no per-candidate mechanism field; a later detector in the same tree adds a per-family mechanism CWE that these reports predate.",
+ "instrument": "research/deliveries/ipc/ceiling_probe_site/sitecustomize.py",
+ "instrument_sha256": "54ff14ab39f8dcd48703cb9aa32978408429aac015f7e796bebf329826378a5c",
+ "readings": {
+  "interfaces": {
+   "added_roots": 52,
+   "added_roots_by_owner_suffix": {
+    "(free)": 10,
+    "TokenKit": 2,
+    "agerImpl": 2,
+    "atClient": 2,
+    "backStub": 2,
+    "erClient": 16,
+    "ivacyKit": 8,
+    "ompatKit": 2,
+    "tManager": 8
+   },
+   "added_roots_by_side": {
+    "interfaces": 52
+   },
+   "baseline_candidates_by_rule_over_the_same_components": {},
+   "baseline_candidates_over_the_same_components": 0,
+   "candidates": 22,
+   "candidates_by_rule": {
+    "ipc.auth.caller-class": 11,
+    "ipc.auth.missing": 11
+   },
+   "components": 1,
+   "components_compared_against_baseline": [
+    "security_access_token"
+   ],
+   "components_in_the_reading_but_not_the_baseline": [],
+   "components_with_a_log": 1,
+   "delta_by_rule": {
+    "ipc.auth.caller-class": 11,
+    "ipc.auth.missing": 11
+   },
+   "delta_total": 22,
+   "new_candidates": 22,
+   "new_candidates_by_component": {
+    "security_access_token": 22
+   },
+   "new_candidates_by_rule": {
+    "ipc.auth.caller-class": 11,
+    "ipc.auth.missing": 11
+   },
+   "new_candidates_detail": [
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenKit::GetReqPermissions",
+     "entry_owner": "AccessTokenKit",
+     "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+     "line": 561,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "AccessTokenKit::GetReqPermissions"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerClient::GetReqPermissions",
+     "entry_owner": "AccessTokenManagerClient",
+     "file": "interfaces/innerkits/accesstoken/src/accesstoken_manager_client.cpp",
+     "line": 353,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "AccessTokenManagerClient::GetReqPermissions"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyKit::RemovePermissionUsedRecords",
+     "entry_owner": "PrivacyKit",
+     "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+     "line": 220,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyKit::RemovePermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyKit::IsAllowedUsingPermission",
+     "entry_owner": "PrivacyKit",
+     "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+     "line": 384,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyKit::IsAllowedUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyKit::SetMutePolicy",
+     "entry_owner": "PrivacyKit",
+     "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+     "line": 407,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyKit::SetMutePolicy"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::ReStartUsing",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 196,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerClient::ReStartUsing"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::StartUsingPermission",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 368,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerClient::StartUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::RemovePermissionUsedRecords",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 641,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerClient::RemovePermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::GetPermissionUsedRecords",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 681,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerClient::GetPermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::IsAllowedUsingPermission",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 796,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerClient::IsAllowedUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::SetMutePolicy",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 831,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerClient::SetMutePolicy"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenKit::GetReqPermissions",
+     "entry_owner": "AccessTokenKit",
+     "file": "interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp",
+     "line": 561,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "AccessTokenKit::GetReqPermissions"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerClient::GetReqPermissions",
+     "entry_owner": "AccessTokenManagerClient",
+     "file": "interfaces/innerkits/accesstoken/src/accesstoken_manager_client.cpp",
+     "line": 353,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "AccessTokenManagerClient::GetReqPermissions"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyKit::RemovePermissionUsedRecords",
+     "entry_owner": "PrivacyKit",
+     "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+     "line": 220,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyKit::RemovePermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyKit::IsAllowedUsingPermission",
+     "entry_owner": "PrivacyKit",
+     "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+     "line": 384,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyKit::IsAllowedUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyKit::SetMutePolicy",
+     "entry_owner": "PrivacyKit",
+     "file": "interfaces/innerkits/privacy/src/privacy_kit.cpp",
+     "line": 407,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyKit::SetMutePolicy"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::ReStartUsing",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 196,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyManagerClient::ReStartUsing"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::StartUsingPermission",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 368,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyManagerClient::StartUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::RemovePermissionUsedRecords",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 641,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyManagerClient::RemovePermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::GetPermissionUsedRecords",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 681,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyManagerClient::GetPermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::IsAllowedUsingPermission",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 796,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyManagerClient::IsAllowedUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerClient::SetMutePolicy",
+     "entry_owner": "PrivacyManagerClient",
+     "file": "interfaces/innerkits/privacy/src/privacy_manager_client.cpp",
+     "line": 831,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "PrivacyManagerClient::SetMutePolicy"
+    }
+   ],
+   "root": "/home/audit/wtmp/ceiling-out-interfaces-any"
+  },
+  "services": {
+   "added_roots": 321,
+   "added_roots_by_owner_suffix": {
+    "aService": 27,
+    "agerStub": 4,
+    "eService": 34,
+    "nService": 4,
+    "rService": 210,
+    "tService": 40,
+    "viceStub": 2
+   },
+   "added_roots_by_side": {
+    "services": 321
+   },
+   "baseline_candidates_by_rule_over_the_same_components": {
+    "ipc.auth.guard-coverage": 8,
+    "ipc.auth.missing": 8,
+    "ipc.capability.export": 14,
+    "ipc.relay.descriptor-boundary": 16
+   },
+   "baseline_candidates_over_the_same_components": 46,
+   "candidates": 57,
+   "candidates_by_rule": {
+    "ipc.auth.caller-class": 5,
+    "ipc.auth.guard-coverage": 11,
+    "ipc.auth.missing": 11,
+    "ipc.capability.export": 14,
+    "ipc.relay.descriptor-boundary": 16
+   },
+   "components": 5,
+   "components_compared_against_baseline": [
+    "bundlemanager_bundle_framework",
+    "multimedia_audio_framework",
+    "multimedia_camera_framework",
+    "security_access_token",
+    "update_updateservice"
+   ],
+   "components_in_the_reading_but_not_the_baseline": [],
+   "components_with_a_log": 5,
+   "delta_by_rule": {
+    "ipc.auth.caller-class": 5,
+    "ipc.auth.guard-coverage": 3,
+    "ipc.auth.missing": 3
+   },
+   "delta_total": 11,
+   "new_candidates": 11,
+   "new_candidates_by_component": {
+    "multimedia_camera_framework": 3,
+    "security_access_token": 8
+   },
+   "new_candidates_by_rule": {
+    "ipc.auth.caller-class": 5,
+    "ipc.auth.guard-coverage": 3,
+    "ipc.auth.missing": 3
+   },
+   "new_candidates_detail": [
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerService::GetReqPermissions",
+     "entry_owner": "AccessTokenManagerService",
+     "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+     "line": 936,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "AccessTokenManagerService::GetReqPermissions"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "multimedia_camera_framework",
+     "entry": "HCameraService::MuteCameraPersist",
+     "entry_owner": "HCameraService",
+     "file": "services/camera_service/src/hcamera_service.cpp",
+     "line": 2621,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "HCameraService::MuteCameraPersist"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerService::RemovePermissionUsedRecords",
+     "entry_owner": "PrivacyManagerService",
+     "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+     "line": 462,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerService::RemovePermissionUsedRecords"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerService::GetPermissionUsedRecordsAsync",
+     "entry_owner": "PrivacyManagerService",
+     "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+     "line": 503,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerService::GetPermissionUsedRecordsAsync"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "PrivacyManagerService::IsAllowedUsingPermission",
+     "entry_owner": "PrivacyManagerService",
+     "file": "services/privacymanager/src/service/privacy_manager_service.cpp",
+     "line": 633,
+     "rule_id": "ipc.auth.caller-class",
+     "symbol": "PrivacyManagerService::IsAllowedUsingPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerService::GrantPermission",
+     "entry_owner": "AccessTokenManagerService",
+     "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+     "line": 1249,
+     "rule_id": "ipc.auth.guard-coverage",
+     "symbol": "AccessTokenManagerService::GrantPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerService::RevokePermission",
+     "entry_owner": "AccessTokenManagerService",
+     "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+     "line": 1274,
+     "rule_id": "ipc.auth.guard-coverage",
+     "symbol": "AccessTokenManagerService::RevokePermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "multimedia_camera_framework",
+     "entry": "HCameraService::MuteCameraPersist",
+     "entry_owner": "HCameraService",
+     "file": "services/camera_service/src/hcamera_service.cpp",
+     "line": 2621,
+     "rule_id": "ipc.auth.guard-coverage",
+     "symbol": "HCameraService::MuteCameraPersist"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerService::GrantPermission",
+     "entry_owner": "AccessTokenManagerService",
+     "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+     "line": 1249,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "AccessTokenManagerService::GrantPermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "security_access_token",
+     "entry": "AccessTokenManagerService::RevokePermission",
+     "entry_owner": "AccessTokenManagerService",
+     "file": "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_service.cpp",
+     "line": 1274,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "AccessTokenManagerService::RevokePermission"
+    },
+    {
+     "candidate": "unassessed",
+     "component": "multimedia_camera_framework",
+     "entry": "HCameraService::MuteCameraPersist",
+     "entry_owner": "HCameraService",
+     "file": "services/camera_service/src/hcamera_service.cpp",
+     "line": 2621,
+     "rule_id": "ipc.auth.missing",
+     "symbol": "HCameraService::MuteCameraPersist"
+    }
+   ],
+   "root": "/home/audit/wtmp/ceiling-out-services-service"
+  }
+ },
+ "what": "Per-rule candidate delta between the detector as it stands and the same detector with counterfactual entry roots. Every delta is an upper bound on a coverage fix, not a candidate the detector makes."
+}
