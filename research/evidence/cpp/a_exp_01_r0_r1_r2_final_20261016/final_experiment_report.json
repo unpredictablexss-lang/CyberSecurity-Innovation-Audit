@@ -1,0 +1,804 @@
+{
+  "ablations": [
+    {
+      "ablation_id": "ABL-NO-AST",
+      "completed": 130,
+      "completion_rate": 0.962963,
+      "evidence_gate_status": {
+        "missing_or_invalid": 4,
+        "not_met": 64,
+        "partial": 22,
+        "unknown": 45
+      },
+      "failed": 5,
+      "failure_codes": {
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 1,
+        "R2_AGENT_FAILED": 4,
+        "none": 130
+      },
+      "failure_rate": 0.037037,
+      "independent_new_facts": {
+        "all_claims": 1226,
+        "new_fact_claim_ratio": 0.5799347471451876,
+        "new_fact_claims": 711,
+        "tool_result_evidence_ratio": 0.8160676532769556,
+        "unique_cited_tool_result_evidence_ids": 386
+      },
+      "labels": {
+        "missing_or_invalid": 4,
+        "unknown": 131
+      },
+      "per_repetition": [
+        {
+          "completed": 45,
+          "distinct_output_hashes": 45,
+          "failed": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 1
+        },
+        {
+          "completed": 43,
+          "distinct_output_hashes": 44,
+          "failed": 2,
+          "planned": 45,
+          "present": 45,
+          "repetition": 2
+        },
+        {
+          "completed": 42,
+          "distinct_output_hashes": 42,
+          "failed": 3,
+          "planned": 45,
+          "present": 45,
+          "repetition": 3
+        }
+      ],
+      "planned": 135,
+      "present": 135,
+      "provider_attempts": 270,
+      "reference_cost_usd_upper_bound": 0.8989696949999999,
+      "references": {
+        "claims": 1226,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 1,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 4,
+        "unique_cited_evidence_ids": 473
+      },
+      "run_validation": {
+        "invalid": 1,
+        "valid": 134
+      },
+      "tool_calls": 410,
+      "usage": {
+        "input_tokens": 1373265,
+        "output_tokens": 346666,
+        "total_tokens": 1719931
+      },
+      "wall_ms": {
+        "count": 135,
+        "max": 67540,
+        "mean": 38587.2,
+        "median": 37600,
+        "min": 17238,
+        "p95": 54984,
+        "variance": 89347849.52296293
+      }
+    },
+    {
+      "ablation_id": "ABL-NO-HISTORY-PATCH",
+      "completed": 113,
+      "completion_rate": 0.837037,
+      "evidence_gate_status": {
+        "missing_or_invalid": 5,
+        "not_met": 57,
+        "partial": 27,
+        "unknown": 46
+      },
+      "failed": 22,
+      "failure_codes": {
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 17,
+        "R2_AGENT_FAILED": 5,
+        "none": 113
+      },
+      "failure_rate": 0.162963,
+      "independent_new_facts": {
+        "all_claims": 1197,
+        "new_fact_claim_ratio": 0.5146198830409356,
+        "new_fact_claims": 616,
+        "tool_result_evidence_ratio": 0.8030634573304157,
+        "unique_cited_tool_result_evidence_ids": 367
+      },
+      "labels": {
+        "missing_or_invalid": 5,
+        "unknown": 130
+      },
+      "per_repetition": [
+        {
+          "completed": 37,
+          "distinct_output_hashes": 43,
+          "failed": 8,
+          "planned": 45,
+          "present": 45,
+          "repetition": 1
+        },
+        {
+          "completed": 38,
+          "distinct_output_hashes": 43,
+          "failed": 7,
+          "planned": 45,
+          "present": 45,
+          "repetition": 2
+        },
+        {
+          "completed": 38,
+          "distinct_output_hashes": 44,
+          "failed": 7,
+          "planned": 45,
+          "present": 45,
+          "repetition": 3
+        }
+      ],
+      "planned": 135,
+      "present": 135,
+      "provider_attempts": 270,
+      "reference_cost_usd_upper_bound": 0.9524820899999998,
+      "references": {
+        "claims": 1197,
+        "illegal_reference_count": 2,
+        "invalid_reference_runs": 17,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 5,
+        "unique_cited_evidence_ids": 457
+      },
+      "run_validation": {
+        "invalid": 17,
+        "valid": 118
+      },
+      "tool_calls": 405,
+      "usage": {
+        "input_tokens": 1473308,
+        "output_tokens": 358153,
+        "total_tokens": 1831461
+      },
+      "wall_ms": {
+        "count": 135,
+        "max": 63548,
+        "mean": 37346.985185185185,
+        "median": 37313,
+        "min": 13036,
+        "p95": 51855,
+        "variance": 94639887.62941013
+      }
+    },
+    {
+      "ablation_id": "ABL-ONE-TURN",
+      "completed": 135,
+      "completion_rate": 1.0,
+      "evidence_gate_status": {
+        "not_met": 71,
+        "unknown": 64
+      },
+      "failed": 0,
+      "failure_codes": {
+        "none": 135
+      },
+      "failure_rate": 0.0,
+      "independent_new_facts": {
+        "all_claims": 1302,
+        "new_fact_claim_ratio": 0,
+        "new_fact_claims": 0,
+        "tool_result_evidence_ratio": 0,
+        "unique_cited_tool_result_evidence_ids": 0
+      },
+      "labels": {
+        "unknown": 135
+      },
+      "per_repetition": [
+        {
+          "completed": 45,
+          "distinct_output_hashes": 45,
+          "failed": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 1
+        },
+        {
+          "completed": 45,
+          "distinct_output_hashes": 45,
+          "failed": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 2
+        },
+        {
+          "completed": 45,
+          "distinct_output_hashes": 45,
+          "failed": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 3
+        }
+      ],
+      "planned": 135,
+      "present": 135,
+      "provider_attempts": 135,
+      "reference_cost_usd_upper_bound": 0.5365964249999999,
+      "references": {
+        "claims": 1302,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 0,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 0,
+        "unique_cited_evidence_ids": 90
+      },
+      "run_validation": {
+        "invalid": 0,
+        "valid": 135
+      },
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 645081,
+        "output_tokens": 294237,
+        "total_tokens": 939318
+      },
+      "wall_ms": {
+        "count": 135,
+        "max": 63973,
+        "mean": 32994.27407407408,
+        "median": 32228,
+        "min": 9626,
+        "p95": 45864,
+        "variance": 60214534.64340192
+      }
+    }
+  ],
+  "comparison": {
+    "R0_agent_blinded_supplement": {
+      "completed_agent_blinded_reviews": 135,
+      "confidence": {
+        "counts": {
+          "0.6": 114,
+          "0.9": 21
+        },
+        "mean": 0.646667
+      },
+      "evidence_gate_status": {
+        "partial": 135
+      },
+      "executed_agent_blinded_reviews": 135,
+      "executed_human_reviews": 0,
+      "failed_agent_blinded_reviews": 0,
+      "human_review_eligibility": "ineligible_not_independent_human",
+      "independent_new_facts": {
+        "all_claims": 405,
+        "new_fact_claim_ratio": 0.0,
+        "new_fact_claims": 0,
+        "tool_result_evidence_ratio": 0.0,
+        "unique_cited_tool_result_evidence_ids": 0
+      },
+      "invalid_references": [],
+      "labels": {
+        "unknown": 114,
+        "unrelated": 21
+      },
+      "lock": {
+        "evidence_obligation_contract_sha256": [
+          "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f"
+        ],
+        "experiment_id": "A-EXP-01",
+        "fact_bundle_sha256": [
+          "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01"
+        ],
+        "generator_sha256": "66e27d13822440e71c663ace7b647d911eb10e623d8b2cfe9e6e2b0eeb577a0e",
+        "group": "R0",
+        "human_review_eligibility": "ineligible_not_independent_human",
+        "input_bundle_sha256_count": 135,
+        "locked_at_utc": "2026-10-16T13:14:41.685425+00:00",
+        "record_count": 135,
+        "records_sha256": "2f2075ebc310d1c145f8a0ecc0465da0eca286be1a137956ee88b8ed9d4a443b",
+        "repetition_counts": {
+          "1": 45,
+          "2": 45,
+          "3": 45
+        },
+        "reviewer_kind": "agent_not_human",
+        "schema_version": "ohscanner.a-exp-01-r0-agent-blind-review-lock-v1",
+        "timing_status": "unknown_not_measured_by_independent_human_reviewer",
+        "truth_exposure": "after_lock_only",
+        "unique_experiment_items": 45
+      },
+      "planned_human_reviews": 135,
+      "product_assessments": {
+        "unknown": 135
+      },
+      "record_count": 135,
+      "records_sha256": "2f2075ebc310d1c145f8a0ecc0465da0eca286be1a137956ee88b8ed9d4a443b",
+      "references": {
+        "claims": 405,
+        "claims_with_nonempty_refs": 405,
+        "illegal_or_out_of_scope_references": 0,
+        "invalid_reference_runs": 0,
+        "references": 540,
+        "unique_cited_ids": 90
+      },
+      "repetition_variance": {
+        "items": 45,
+        "note": "All three records use the same non-human reviewer and are not independent human repetitions.",
+        "stable_assessment_items": 45,
+        "stable_mechanism_label_items": 45,
+        "unstable_assessment_items": 0
+      },
+      "reviewer_kind": "agent_not_human",
+      "schema_version": "ohscanner.a-exp-01-r0-agent-review-summary-v1",
+      "timing": {
+        "active_seconds": null,
+        "paused_seconds": null,
+        "status": "unknown_not_measured_by_independent_human_reviewer"
+      }
+    },
+    "R0_independent_human": {
+      "completed": 0,
+      "completion_rate": 0.0,
+      "failed_recorded_attempts": 0,
+      "failure_rate": null,
+      "human_active_seconds": null,
+      "human_paused_seconds": null,
+      "missing_or_unexecuted": 135,
+      "missing_rate": 1.0,
+      "planned": 135,
+      "present": 0,
+      "reason": "No independent human review session executed; failure rate is not interpretable from zero attempts."
+    },
+    "R1": {
+      "completed": 128,
+      "completion_rate": 0.948148,
+      "evidence_gate_status": {
+        "missing_or_invalid": 6,
+        "partial": 87,
+        "unknown": 42
+      },
+      "failed": 7,
+      "failure_codes": {
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 1,
+        "MODEL_OUTPUT_SCHEMA_INVALID": 6,
+        "none": 128
+      },
+      "failure_rate": 0.051852,
+      "independent_new_facts": {
+        "all_claims": 996,
+        "definition": "A claim is independently tool-added when it cites at least one persisted R2 tool-result evidence ID not present in the initial evidence catalog.",
+        "new_fact_claim_ratio": 0,
+        "new_fact_claims": 0,
+        "tool_result_evidence_ratio": 0,
+        "unique_cited_evidence_ids": 51,
+        "unique_cited_tool_result_evidence_ids": 0
+      },
+      "item_stability": {
+        "all_three_completed": 38,
+        "all_three_present": 45,
+        "items": 45,
+        "stable_mechanism_label_items": 44,
+        "stable_output_hash_items": 0
+      },
+      "labels": {
+        "missing_or_invalid": 6,
+        "shared_ptr_owner_race_candidate": 1,
+        "unknown": 128
+      },
+      "missing": 0,
+      "per_repetition": [
+        {
+          "completed": 43,
+          "cost_reference_usd_upper_bound": 0.14729361,
+          "distinct_output_hashes": 44,
+          "failed": 2,
+          "missing": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 1
+        },
+        {
+          "completed": 42,
+          "cost_reference_usd_upper_bound": 0.14692733999999996,
+          "distinct_output_hashes": 42,
+          "failed": 3,
+          "missing": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 2
+        },
+        {
+          "completed": 43,
+          "cost_reference_usd_upper_bound": 0.14749023000000003,
+          "distinct_output_hashes": 43,
+          "failed": 2,
+          "missing": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 3
+        }
+      ],
+      "planned": 135,
+      "present": 135,
+      "provider_attempts": 135,
+      "reference_cost_usd_upper_bound": 0.4417111799999999,
+      "references": {
+        "claims": 996,
+        "claims_with_nonempty_refs": 996,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 1,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 7,
+        "total_missing_or_illegal_reference_errors": 7
+      },
+      "run_validation": {
+        "invalid": 1,
+        "invalid_runs": [
+          {
+            "errors": [
+              "at least one claim is required for reference validation"
+            ],
+            "run_id": "A-EXP-01-main-R1-R1-S20261015-00c8ae87a8576190"
+          }
+        ],
+        "valid": 134
+      },
+      "timing_wall_ms": {
+        "count": 135,
+        "max": 38594,
+        "mean": 27011.155555555557,
+        "median": 26981,
+        "min": 12084,
+        "p95": 35936,
+        "variance": 23989255.079506166
+      },
+      "tool_calls": 0,
+      "usage": {
+        "input_tokens": 553710,
+        "missing_usage_runs": 0,
+        "output_tokens": 230859,
+        "total_tokens": 784569
+      }
+    },
+    "R2": {
+      "completed": 123,
+      "completion_rate": 0.911111,
+      "evidence_gate_status": {
+        "missing_or_invalid": 7,
+        "not_met": 21,
+        "partial": 39,
+        "unknown": 68
+      },
+      "failed": 12,
+      "failure_codes": {
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 5,
+        "R2_AGENT_FAILED": 7,
+        "none": 123
+      },
+      "failure_rate": 0.088889,
+      "independent_new_facts": {
+        "all_claims": 1115,
+        "definition": "A claim is independently tool-added when it cites at least one persisted R2 tool-result evidence ID not present in the initial evidence catalog.",
+        "new_fact_claim_ratio": 0.49955156950672647,
+        "new_fact_claims": 557,
+        "tool_result_evidence_ratio": 0.8448905109489051,
+        "unique_cited_evidence_ids": 548,
+        "unique_cited_tool_result_evidence_ids": 463
+      },
+      "item_stability": {
+        "all_three_completed": 34,
+        "all_three_present": 45,
+        "items": 45,
+        "stable_mechanism_label_items": 45,
+        "stable_output_hash_items": 1
+      },
+      "labels": {
+        "missing_or_invalid": 7,
+        "unknown": 128
+      },
+      "missing": 0,
+      "per_repetition": [
+        {
+          "completed": 39,
+          "cost_reference_usd_upper_bound": 0.32609688000000003,
+          "distinct_output_hashes": 41,
+          "failed": 6,
+          "missing": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 1
+        },
+        {
+          "completed": 44,
+          "cost_reference_usd_upper_bound": 0.32760285000000006,
+          "distinct_output_hashes": 45,
+          "failed": 1,
+          "missing": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 2
+        },
+        {
+          "completed": 40,
+          "cost_reference_usd_upper_bound": 0.32073811499999993,
+          "distinct_output_hashes": 42,
+          "failed": 5,
+          "missing": 0,
+          "planned": 45,
+          "present": 45,
+          "repetition": 3
+        }
+      ],
+      "planned": 135,
+      "present": 135,
+      "provider_attempts": 270,
+      "reference_cost_usd_upper_bound": 0.974437845,
+      "references": {
+        "claims": 1115,
+        "claims_with_nonempty_refs": 1115,
+        "illegal_reference_count": 3,
+        "invalid_reference_runs": 5,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 7,
+        "total_missing_or_illegal_reference_errors": 10
+      },
+      "run_validation": {
+        "invalid": 5,
+        "invalid_runs": [
+          {
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ],
+            "run_id": "A-EXP-01-main-R2-R2-S20261016-18c96f591a6dca1e"
+          },
+          {
+            "errors": [
+              "claims[4] has malformed evidence reference",
+              "claims[6] has malformed evidence reference",
+              "claims[7] has malformed evidence reference"
+            ],
+            "run_id": "A-EXP-01-main-R2-R1-S20261015-2fd1e3c72dcb88d7"
+          },
+          {
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ],
+            "run_id": "A-EXP-01-main-R2-R3-S20261017-42a9712edb1f3512"
+          },
+          {
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ],
+            "run_id": "A-EXP-01-main-R2-R3-S20261017-9a7da68327154c5f"
+          },
+          {
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ],
+            "run_id": "A-EXP-01-main-R2-R1-S20261015-a434fff861916fd3"
+          }
+        ],
+        "valid": 130
+      },
+      "timing_wall_ms": {
+        "count": 135,
+        "max": 62308,
+        "mean": 41492.96296296296,
+        "median": 41449,
+        "min": 15636,
+        "p95": 56768,
+        "variance": 74781380.49492453
+      },
+      "tool_calls": 540,
+      "usage": {
+        "input_tokens": 1523527,
+        "missing_usage_runs": 0,
+        "output_tokens": 358280,
+        "total_tokens": 1881807
+      }
+    }
+  },
+  "experiment_id": "A-EXP-01",
+  "failure_record_count": 66,
+  "failure_summary": [
+    {
+      "code_or_status": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+      "count": 1,
+      "failure_kind": "run_failure",
+      "variant": "ABL-NO-AST"
+    },
+    {
+      "code_or_status": "R2_AGENT_FAILED",
+      "count": 4,
+      "failure_kind": "run_failure",
+      "variant": "ABL-NO-AST"
+    },
+    {
+      "code_or_status": "failed",
+      "count": 1,
+      "failure_kind": "tool_failure",
+      "variant": "ABL-NO-AST"
+    },
+    {
+      "code_or_status": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+      "count": 17,
+      "failure_kind": "run_failure",
+      "variant": "ABL-NO-HISTORY-PATCH"
+    },
+    {
+      "code_or_status": "R2_AGENT_FAILED",
+      "count": 5,
+      "failure_kind": "run_failure",
+      "variant": "ABL-NO-HISTORY-PATCH"
+    },
+    {
+      "code_or_status": "failed",
+      "count": 15,
+      "failure_kind": "tool_failure",
+      "variant": "ABL-NO-HISTORY-PATCH"
+    },
+    {
+      "code_or_status": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+      "count": 1,
+      "failure_kind": "run_failure",
+      "variant": "R1"
+    },
+    {
+      "code_or_status": "MODEL_OUTPUT_SCHEMA_INVALID",
+      "count": 6,
+      "failure_kind": "run_failure",
+      "variant": "R1"
+    },
+    {
+      "code_or_status": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+      "count": 5,
+      "failure_kind": "run_failure",
+      "variant": "R2"
+    },
+    {
+      "code_or_status": "R2_AGENT_FAILED",
+      "count": 7,
+      "failure_kind": "run_failure",
+      "variant": "R2"
+    },
+    {
+      "code_or_status": "failed",
+      "count": 4,
+      "failure_kind": "tool_failure",
+      "variant": "R2"
+    }
+  ],
+  "fixed_conditions": {
+    "evidence_obligation_contract_sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+    "evidence_obligations": [
+      "fixed target identity",
+      "realistic entry/privilege boundary",
+      "reachable sensitive operation",
+      "trigger conditions",
+      "concrete CIA impact",
+      "auditable evidence"
+    ],
+    "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+    "repetitions": [
+      1,
+      2,
+      3
+    ],
+    "review_items": 45,
+    "scope_occurrences": 45,
+    "seeds": [
+      20261015,
+      20261016,
+      20261017
+    ],
+    "unique_candidates": 44
+  },
+  "generated_at_utc": "2026-10-16T13:43:48.179093+00:00",
+  "limitations": [
+    "R0 independent human arm was not executed. The 135 locked R0 records are non-human Codex-agent blinded assessments and cannot substitute for human outcomes or human cost.",
+    "All three R0 agent repetitions use one agent and therefore do not provide independent human repetition variance.",
+    "The 45 review items represent 45 scope occurrences but only 44 unique candidates; one candidate appears in two scopes and creates clustering.",
+    "Public or historical vulnerability material may be present in model training data; no contamination-clean unseen set was supplied.",
+    "Frozen/synthetic truth, historical review labels, and model agreement are not eligible ground truth.",
+    "R2 receives extra provider turns, tool calls, tokens and wall time. Its comparison with R1 is budget-confounded.",
+    "Provider cost is a USD pay-as-you-go list-price upper bound. Actual Token Plan credit consumption and billing currency are unknown.",
+    "All missing, failed, invalid, partial and unknown outcomes remain in planned denominators; no best-run selection was used."
+  ],
+  "precision_recall": {
+    "false_negative_count": null,
+    "false_positive_count": null,
+    "precision": null,
+    "reason": "The frozen truth set is explicitly not eligible for accuracy metrics and no independent labelled accuracy dataset was supplied.",
+    "recall": null,
+    "status": "not_computed",
+    "zero_fp_fn_claim": false
+  },
+  "r2_extra_budget_actual": {
+    "actual_per_run_mean": {
+      "input_tokens_delta": 7183.82963,
+      "mean_wall_ms_delta": 14481.807407,
+      "output_tokens_delta": 943.859259,
+      "provider_attempts_delta": 1.0,
+      "reference_cost_usd_upper_bound_delta": 0.003946123444,
+      "tool_calls_delta": 4.0,
+      "total_tokens_delta": 8127.688889
+    },
+    "actual_total": {
+      "input_tokens_delta": 969817,
+      "mean_wall_ms_delta": 14481.807407,
+      "output_tokens_delta": 127421,
+      "provider_attempts_delta": 135,
+      "reference_cost_usd_upper_bound_delta": 0.532726665,
+      "run_failure_delta": 5,
+      "tool_calls_delta": 540,
+      "tool_failed_calls": 4,
+      "total_tokens_delta": 1097238
+    },
+    "comparison": "R2 minus R1, actual recorded main runs",
+    "interpretation": "R2 received two provider turns and four tool calls per run on average. Method effects cannot be separated from this additional budget. Reference cost is a pay-as-you-go upper bound, not observed Token Plan billing.",
+    "planned_135_run_maxima": {
+      "additional_provider_attempts_max": 135,
+      "max_cost_amount_usd": 101.25,
+      "model_input_tokens_max": 1080000,
+      "model_output_tokens_max": 216000,
+      "source_bytes_max": 8847360,
+      "tool_calls_max": 1080,
+      "tool_output_bytes_max": 8847360
+    },
+    "schema_version": "ohscanner.a-exp-01-r2-extra-budget-actual-v1"
+  },
+  "repo_identity": {
+    "branch_at_start": "codex/full-runtime-performance-audit-20261014",
+    "checkout": "/mnt/e/网安/CyberSecurity-Innovation-Audit",
+    "head": "8e97f152ef747c1e1d21ae179a048910f147e07a",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "schema_version": "ohscanner.a-exp-01-final-experiment-summary-v1",
+  "truth_eligibility": {
+    "complete_predictions_for_all_groups": false,
+    "independent_reliable_truth_present": false,
+    "reason": "R0 independent human predictions are absent; the frozen truth set is explicitly not an independent labelled accuracy dataset; model agreement/history/synthetic controls are not truth.",
+    "status": "ineligible_unknown"
+  },
+  "validation": {
+    "docs_context_budget": {
+      "command": ".venv-web/bin/python scripts/check_docs_context_budget.py",
+      "exit_code": 0,
+      "requested_command": "python scripts/check_docs_context_budget.py",
+      "substitution": "python is not on the Windows PowerShell PATH; the frozen .venv-web/bin/python interpreter was used."
+    },
+    "git_diff_check": {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "note": "The exact command was run. Failures in teammate/concurrent dirty files were preserved and not rewritten.",
+      "status": "pass"
+    },
+    "git_diff_check_owned_docs": {
+      "command": "git diff --check -- docs/项目现状与下一步.md",
+      "exit_code": 0
+    },
+    "human_assignment_packages": {
+      "count": 3,
+      "package_validation": "pass",
+      "planned_reviews": 135,
+      "status": "awaiting_independent_human_reviewers"
+    },
+    "schema_version": "ohscanner.a-exp-01-final-validation-v1",
+    "unit_tests": {
+      "command": "PYTHONPATH=. .venv-web/bin/python -m unittest discover -s tests -q",
+      "elapsed_seconds": 128.66,
+      "exit_code": 0,
+      "failed": 0,
+      "note": "Final current-state rerun observed tool exit code 0 and unittest output OK (skipped=8).",
+      "passed": 676,
+      "ran": 684,
+      "skipped": 8
+    }
+  }
+}

@@ -12,6 +12,10 @@ Agent 输入固定候选、来源证据和义务，只能建议调查步骤并�
 
 每次实验记录 model/provider/version、prompt/tool version、参数/采样、输入 hash、工具 evidence ID、Token/费用/耗时、失败/重试和最终假设。模型输出是 untrusted content，不能改扫描结果、Git 对象、review 或确认状态，也不能自证。向第三方发送源码前必须确定数据处理约束。
 
+## 实验源码来源与复现边界
+
+已有真实组件实验使用 OHScanner 仓库外的预固定 checkout，不从 `/download` 下载，也不现场 `repo sync`。五组件仓库、full commit/tree、GitCode `refs/keep-around` 来源及本地路径见《开发、协作、复现与最终打包》的“既有实验来源”。R0/R1/R2 和消融读取冻结候选包、源码摘录和 Git identity。A-NULL-02 是独立 vulnerable/fixed `communication_dsoftbus` 快照；RC-JSPROXY 绑定 `distributeddatamgr_kv_store` 的固定 commit。synthetic fixture 和 Harness 控制来自本仓库测试资产。新 `repo sync` 只能作为新 acquisition run，不能回填旧实验 provenance。
+
 ## 主实验
 
 | 组 | 方法 | 问题 |

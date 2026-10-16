@@ -1,0 +1,35 @@
+{
+  "schema_version": "ohscanner.a-exp-01-final-validation-v1",
+  "unit_tests": {
+    "command": "PYTHONPATH=. .venv-web/bin/python -m unittest discover -s tests -q",
+    "exit_code": 0,
+    "ran": 684,
+    "passed": 676,
+    "skipped": 8,
+    "failed": 0,
+    "elapsed_seconds": 128.66,
+    "note": "Final current-state rerun observed tool exit code 0 and unittest output OK (skipped=8)."
+  },
+  "docs_context_budget": {
+    "command": ".venv-web/bin/python scripts/check_docs_context_budget.py",
+    "requested_command": "python scripts/check_docs_context_budget.py",
+    "exit_code": 0,
+    "substitution": "python is not on the Windows PowerShell PATH; the frozen .venv-web/bin/python interpreter was used."
+  },
+  "git_diff_check": {
+    "command": "git diff --check",
+    "exit_code": 0,
+    "status": "pass",
+    "note": "The exact command was run. Failures in teammate/concurrent dirty files were preserved and not rewritten."
+  },
+  "git_diff_check_owned_docs": {
+    "command": "git diff --check -- docs/项目现状与下一步.md",
+    "exit_code": 0
+  },
+  "human_assignment_packages": {
+    "count": 3,
+    "planned_reviews": 135,
+    "package_validation": "pass",
+    "status": "awaiting_independent_human_reviewers"
+  }
+}

@@ -1,0 +1,4 @@
+Command: PYTHONPATH=. .venv-web/bin/python -m unittest discover -s tests -q
+Observed exit code: 0
+Ran 684 tests in 128.660s
+OK (skipped=8)

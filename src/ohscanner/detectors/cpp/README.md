@@ -4,9 +4,9 @@
 
 `ohscanner.cpp.null_dereference` v0.2.0 recognizes a narrow same-function C/C++
 null-source and pointer-dereference shape. It records local, parameter, member and
-function-return pointer roles, pointer/reference aliases, bounded guard/error-path
+function-return pointer roles, `new (std::nothrow)` allocation results, pointer/reference aliases, bounded guard/error-path
 relations and source-bound candidate evidence. It handles multi-statement terminal
-error paths, local non-null rebinding and narrow short-circuit guards. It is not a
+error paths, local non-null rebinding, nothrow allocation guards and narrow short-circuit guards. It is not a
 complete CFG, type, alias, macro, template, exception, destructor or build-context
 analysis. Candidate results require the A-NULL-01 EvidenceObligation gate; zero
 findings are not a safe verdict. The detector enforces 1 MiB per unit and 32 MiB per

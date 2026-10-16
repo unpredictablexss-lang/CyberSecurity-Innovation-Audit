@@ -1,0 +1,86 @@
+{
+  "schema_version": "ohscanner.a-exp-01-r0-human-assignment-artifact-manifest-v1",
+  "generated_at_utc": "2026-10-16T13:38:50.1854146Z",
+  "artifacts": [
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/assignment_set_manifest.json",
+      "sha256": "52c19ea5823bd95f0148e1b4d5b6d1992a5b841e20502504cca1a45804bf1ee1",
+      "bytes": 3564
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/build_human_assignments.py",
+      "sha256": "45181047907d3b0b7438f90c13b3e3f8c5981b940c37ef93ee766fd4be8c19ca",
+      "bytes": 13594
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/README.md",
+      "sha256": "40942181d2d3e079878ed065334017340a5b5570babf4c0124774b109f837ad7",
+      "bytes": 1654
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_1/assignment_manifest.json",
+      "sha256": "24bff2994d686beb2ab130c5ff2689c874b9b877e1774a7736702851a3ea09c6",
+      "bytes": 2435
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_1/README.md",
+      "sha256": "4b0aab3d5dc90ec290690a6516f2625df63e39f6882cce39563dcc5313889599",
+      "bytes": 1437
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_1/review_items.jsonl",
+      "sha256": "56dc47dee428a8920889d37a00dd952103c5bd9ca5b0bdb793c80bf314b968be",
+      "bytes": 289533
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_1/submission_template.jsonl",
+      "sha256": "730e5ff3febdef69a6b69d1f9818a55069f194c1749b84d07d3c28a8db04be58",
+      "bytes": 99855
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_2/assignment_manifest.json",
+      "sha256": "f77defd8840a927e23f870e3b5758125d130cbe52f15af4af995bb5de1b2c44b",
+      "bytes": 2435
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_2/README.md",
+      "sha256": "9ca0b419b60cc6d45ce1664d4543c2c362379451e2a43032fe448122ddbf86d4",
+      "bytes": 1437
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_2/review_items.jsonl",
+      "sha256": "7f2247914a547ffddad7bedbf791cffab58a000621e1d939fb668288b6a0a0bd",
+      "bytes": 289533
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_2/submission_template.jsonl",
+      "sha256": "99013737cd192d6ab11e74b7d0821dfdc3762d8b794a6f10cb5cefef9dd1cd77",
+      "bytes": 99855
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_3/assignment_manifest.json",
+      "sha256": "9708b57e42f3fd07ef71d3c57b1267d28b04c5bdff4988697a7c97b8f2f29fd6",
+      "bytes": 2435
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_3/README.md",
+      "sha256": "40cd15ef4dc8317bd128815bcd9d29a3330cf3dbc2a95a3a2ab30dea0bb09acc",
+      "bytes": 1437
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_3/review_items.jsonl",
+      "sha256": "da396424eee16d9b9cafd956a071dcad23133230d3dcc3029c3435d5b4868efa",
+      "bytes": 289533
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_3/submission_template.jsonl",
+      "sha256": "b6edf65c63b0429e0777528a415631c3294349217c9bf059ed7d4005c6247e03",
+      "bytes": 99855
+    },
+    {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/validate_human_submission.py",
+      "sha256": "90e866cf56768de21b272c61e415a84440527510d8d52503c70730a4a9469c8c",
+      "bytes": 11048
+    }
+  ]
+}

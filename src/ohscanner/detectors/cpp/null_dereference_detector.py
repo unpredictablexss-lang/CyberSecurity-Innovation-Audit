@@ -22,7 +22,7 @@ from src.ohscanner.contracts import (
 
 
 RULE_ID = "ohcpp-null-dereference-candidate-001"
-RULE_VERSION = "1.1.0"
+RULE_VERSION = "1.2.0"
 RULE_LINEAGE_ID = "A-NULL-01:ohcpp-null-dereference-candidate"
 MAX_UNIT_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
@@ -367,6 +367,33 @@ def _local_and_return_sources(unit: SourceUnit, function: _FunctionShape, masked
         if "*" in masked[statement_start:absolute_name]:
             pointer_names.add(match.group(1))
 
+    for match in re.finditer(
+        r"\b([A-Za-z_]\w*)\s*=\s*new\s*\(\s*(?:std::)?nothrow\s*\)\s+[^;]+;",
+        body_text,
+    ):
+        name = match.group(1)
+        absolute_name = function.body.start + match.start(1)
+        statement_start = max(
+            masked.rfind(";", function.body.start, absolute_name),
+            masked.rfind("{", function.body.start, absolute_name),
+            masked.rfind("}", function.body.start, absolute_name),
+        )
+        statement_start = max(statement_start, function.body.start) + 1
+        prefix = masked[statement_start:absolute_name]
+        sources.append(
+            NullSource(
+                name,
+                "nothrow_allocation",
+                absolute_name,
+                "may_be_null",
+                (statement_start, function.body.start + match.end() + 1),
+                f"nothrow:{unit.path}:{function.span.start}:{name}",
+                unit.path,
+                unit.sha256,
+                prefix.strip(),
+            )
+        )
+
     for match in assignments:
         name = match.group(1)
         rhs = match.group(2).strip()
@@ -378,6 +405,8 @@ def _local_and_return_sources(unit: SourceUnit, function: _FunctionShape, masked
         known_pointer = name in pointer_names
         if (has_pointer_declarator or known_pointer) and rhs in _NULLPTR_WORDS:
             sources.append(NullSource(name, "local", absolute_name, "explicit_null", (statement_start, function.body.start + match.end() + 1), f"local:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, prefix.strip()))
+            continue
+        if _is_nothrow_allocation(rhs):
             continue
         if (has_pointer_declarator or known_pointer) and _is_call_expression(rhs):
             sources.append(NullSource(name, "return_value", absolute_name, "unknown", (statement_start, function.body.start + match.end() + 1), f"return:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, prefix.strip()))
@@ -567,8 +596,19 @@ def _branch_terminates_error_path(branch_text: str) -> bool:
     return bool(terminal.search(inner))
 
 
+def _is_nothrow_allocation(rhs: str) -> bool:
+    return bool(
+        re.fullmatch(
+            r"new\s*\(\s*(?:std::)?nothrow\s*\)\s+[^;]+",
+            rhs.strip(),
+        )
+    )
+
+
 def _assignment_expression_is_non_null(rhs: str) -> bool:
     value = rhs.strip()
+    if _is_nothrow_allocation(value):
+        return False
     return bool(
         value.startswith("&")
         or re.fullmatch(r"new\s+[^;]+", value)
@@ -764,6 +804,8 @@ def _evaluate_guard(source: NullSource, sink: DereferenceSink, guards: Sequence[
 def _source_role(source: NullSource) -> str:
     if "unique_ptr" in source.type_text or "shared_ptr" in source.type_text:
         return "smart_pointer_value_unknown_nullability"
+    if source.kind == "nothrow_allocation" and source.nullability == "may_be_null":
+        return "nothrow_allocation_may_be_null"
     if source.kind == "local" and source.nullability == "explicit_null":
         return "local_pointer_explicit_null"
     if source.kind == "parameter" and source.nullability == "may_be_null":

@@ -1,0 +1,63 @@
+{
+  "blindness": {
+    "historical_review_labels_hidden": true,
+    "model_labels_hidden": true,
+    "no_candidate_review_or_vulnerability_mutation": true,
+    "other_reviewer_answers_hidden": true,
+    "r1_r2_outputs_hidden": true,
+    "sealed_truth_hidden": true
+  },
+  "common_hashes": {
+    "evidence_obligation_contract_sha256": [
+      "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f"
+    ],
+    "fact_bundle_sha256": [
+      "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01"
+    ]
+  },
+  "completion_rule": "Submit exactly 45 reviewed records; keep failures, abandoned, timeout, partial and unknown records with explicit reasons.",
+  "experiment_id": "A-EXP-01",
+  "group": "R0",
+  "items_sha256": "7f2247914a547ffddad7bedbf791cffab58a000621e1d939fb668288b6a0a0bd",
+  "metric_rule": "Do not compute TP/FP/FN/TN or Precision/Recall unless independent reliable truth and complete predictions are both available.",
+  "planned_reviews": 45,
+  "repetition": 2,
+  "reviewer_id": null,
+  "reviewer_kind_required": "independent_human",
+  "schema_version": "ohscanner.a-exp-01-r0-human-assignment-v1",
+  "seed": 20261016,
+  "source_inputs": [
+    {
+      "bytes": 209258,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/initial_candidate_set.json",
+      "role": "initial_candidate_set",
+      "sha256": "2fb5c899980719100a6b6b0f8f0de40534b533d73e27343a0c6c5c0258e56340"
+    },
+    {
+      "bytes": 56455,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/evidence_catalog.json",
+      "role": "evidence_catalog",
+      "sha256": "131be897022fd25255157388c918b1e0080c3549dcce118f2b35ffa7cebff4d3"
+    },
+    {
+      "bytes": 87763,
+      "path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+      "role": "blind_review_packet",
+      "sha256": "2fd3164586e7afdb1fd27d1ef438100d23876b6164ffff191bd31ed6339c5eb4"
+    },
+    {
+      "bytes": 231780,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/r0_review_queue.jsonl",
+      "role": "r0_review_queue",
+      "sha256": "7930e200cf71b4bba6bf0ce0bee16a35524ee55a3fd1b6f723b09c1e9bb3ca83"
+    }
+  ],
+  "status": "awaiting_independent_human_reviewer",
+  "submission_template_sha256": "99013737cd192d6ab11e74b7d0821dfdc3762d8b794a6f10cb5cefef9dd1cd77",
+  "timing_required_per_item": [
+    "started_at",
+    "ended_at",
+    "active_seconds",
+    "paused_seconds"
+  ]
+}

@@ -1,0 +1,1 @@
+warning: in the working copy of 'docs/项目现状与下一步.md', LF will be replaced by CRLF the next time Git touches it

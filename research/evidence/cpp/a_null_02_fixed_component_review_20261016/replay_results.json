@@ -1,0 +1,1154 @@
+{
+  "candidate_index_only": {
+    "authority": "candidate index only; historical verdict and CVE are not used as truth or upgrade evidence",
+    "benchmark_path": "benchmarks/historical/communication_dsoftbus_null_deref.json",
+    "sample_id": "communication_dsoftbus_null_deref_001"
+  },
+  "candidate_review_rows": [
+    {
+      "classification": "plausible_unproven",
+      "classification_reason": "Exact nothrow allocation to immediate pointer sink is present; allocation-failure null path is plausible. Entry, trigger, attacker control, product reachability and CIA remain unproven.",
+      "fixed_finding_count": 0,
+      "fixed_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnNodeOnlineStateChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 71,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 75,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 70
+      },
+      "function": "ClinetOnNodeOnlineStateChanged",
+      "refutation_scope": "fixed local guard relation only; not proof of product safety",
+      "review_row_id": "A-NULL-02-ROW-01",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnNodeOnlineStateChanged",
+        "guard_error_path": "none_before_sink",
+        "guard_expression": null,
+        "guard_line": null,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_pointer_sink",
+        "sink_line": 71,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 70
+      },
+      "vulnerable_finding": {
+        "ast_fingerprint": "9cf247539dcdb76d167de58c6e8c82d8a0b517ae1012362095b5b4f85a36f237",
+        "candidate_cwe": "CWE-476",
+        "column": 9,
+        "evidence_obligations": [
+          {
+            "kind": "guard_dominance",
+            "status": "unknown"
+          },
+          {
+            "kind": "cross_function_alias",
+            "status": "unknown"
+          },
+          {
+            "kind": "compile_context",
+            "status": "missing"
+          },
+          {
+            "kind": "entry_or_privilege_boundary",
+            "status": "missing"
+          },
+          {
+            "kind": "attacker_control",
+            "status": "missing"
+          },
+          {
+            "kind": "sensitive_operation_reachability",
+            "status": "missing"
+          },
+          {
+            "kind": "trigger_conditions",
+            "status": "missing"
+          },
+          {
+            "kind": "cia_impact",
+            "status": "missing"
+          }
+        ],
+        "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "identity_quality": "complete",
+        "line": 71,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "symbol": "clientProxy",
+        "symbol_identity": "<free-function>::ClinetOnNodeOnlineStateChanged::clientProxy"
+      }
+    },
+    {
+      "classification": "plausible_unproven",
+      "classification_reason": "Exact nothrow allocation to immediate pointer sink is present; allocation-failure null path is plausible. Entry, trigger, attacker control, product reachability and CIA remain unproven.",
+      "fixed_finding_count": 0,
+      "fixed_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnNodeBasicInfoChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 86,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 90,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 85
+      },
+      "function": "ClinetOnNodeBasicInfoChanged",
+      "refutation_scope": "fixed local guard relation only; not proof of product safety",
+      "review_row_id": "A-NULL-02-ROW-02",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnNodeBasicInfoChanged",
+        "guard_error_path": "none_before_sink",
+        "guard_expression": null,
+        "guard_line": null,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_pointer_sink",
+        "sink_line": 82,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 81
+      },
+      "vulnerable_finding": {
+        "ast_fingerprint": "928e3c0f8c3a499b601e79c034897bd6b245428fbec266faef55bfb7ac08bf46",
+        "candidate_cwe": "CWE-476",
+        "column": 9,
+        "evidence_obligations": [
+          {
+            "kind": "guard_dominance",
+            "status": "unknown"
+          },
+          {
+            "kind": "cross_function_alias",
+            "status": "unknown"
+          },
+          {
+            "kind": "compile_context",
+            "status": "missing"
+          },
+          {
+            "kind": "entry_or_privilege_boundary",
+            "status": "missing"
+          },
+          {
+            "kind": "attacker_control",
+            "status": "missing"
+          },
+          {
+            "kind": "sensitive_operation_reachability",
+            "status": "missing"
+          },
+          {
+            "kind": "trigger_conditions",
+            "status": "missing"
+          },
+          {
+            "kind": "cia_impact",
+            "status": "missing"
+          }
+        ],
+        "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "identity_quality": "complete",
+        "line": 82,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "symbol": "clientProxy",
+        "symbol_identity": "<free-function>::ClinetOnNodeBasicInfoChanged::clientProxy"
+      }
+    },
+    {
+      "classification": "plausible_unproven",
+      "classification_reason": "Exact nothrow allocation to immediate pointer sink is present; allocation-failure null path is plausible. Entry, trigger, attacker control, product reachability and CIA remain unproven.",
+      "fixed_finding_count": 0,
+      "fixed_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClientOnNodeStatusChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 105,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 109,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 104
+      },
+      "function": "ClientOnNodeStatusChanged",
+      "refutation_scope": "fixed local guard relation only; not proof of product safety",
+      "review_row_id": "A-NULL-02-ROW-03",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClientOnNodeStatusChanged",
+        "guard_error_path": "none_before_sink",
+        "guard_expression": null,
+        "guard_line": null,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_pointer_sink",
+        "sink_line": 97,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 96
+      },
+      "vulnerable_finding": {
+        "ast_fingerprint": "e39959085f3b31efed8d5131ab97e0ecdbc70b069c696ce19a341897b1c01b25",
+        "candidate_cwe": "CWE-476",
+        "column": 9,
+        "evidence_obligations": [
+          {
+            "kind": "guard_dominance",
+            "status": "unknown"
+          },
+          {
+            "kind": "cross_function_alias",
+            "status": "unknown"
+          },
+          {
+            "kind": "compile_context",
+            "status": "missing"
+          },
+          {
+            "kind": "entry_or_privilege_boundary",
+            "status": "missing"
+          },
+          {
+            "kind": "attacker_control",
+            "status": "missing"
+          },
+          {
+            "kind": "sensitive_operation_reachability",
+            "status": "missing"
+          },
+          {
+            "kind": "trigger_conditions",
+            "status": "missing"
+          },
+          {
+            "kind": "cia_impact",
+            "status": "missing"
+          }
+        ],
+        "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "identity_quality": "complete",
+        "line": 97,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "symbol": "clientProxy",
+        "symbol_identity": "<free-function>::ClientOnNodeStatusChanged::clientProxy"
+      }
+    },
+    {
+      "classification": "plausible_unproven",
+      "classification_reason": "Exact nothrow allocation to immediate pointer sink is present; allocation-failure null path is plausible. Entry, trigger, attacker control, product reachability and CIA remain unproven.",
+      "fixed_finding_count": 0,
+      "fixed_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnLocalNetworkIdChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 120,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 124,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 119
+      },
+      "function": "ClinetOnLocalNetworkIdChanged",
+      "refutation_scope": "fixed local guard relation only; not proof of product safety",
+      "review_row_id": "A-NULL-02-ROW-04",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnLocalNetworkIdChanged",
+        "guard_error_path": "none_before_sink",
+        "guard_expression": null,
+        "guard_line": null,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_pointer_sink",
+        "sink_line": 108,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 107
+      },
+      "vulnerable_finding": {
+        "ast_fingerprint": "c24959d2c72d1fa3197c588ffd70a4ca349ad4e3594a68a793d1ba60981c289a",
+        "candidate_cwe": "CWE-476",
+        "column": 9,
+        "evidence_obligations": [
+          {
+            "kind": "guard_dominance",
+            "status": "unknown"
+          },
+          {
+            "kind": "cross_function_alias",
+            "status": "unknown"
+          },
+          {
+            "kind": "compile_context",
+            "status": "missing"
+          },
+          {
+            "kind": "entry_or_privilege_boundary",
+            "status": "missing"
+          },
+          {
+            "kind": "attacker_control",
+            "status": "missing"
+          },
+          {
+            "kind": "sensitive_operation_reachability",
+            "status": "missing"
+          },
+          {
+            "kind": "trigger_conditions",
+            "status": "missing"
+          },
+          {
+            "kind": "cia_impact",
+            "status": "missing"
+          }
+        ],
+        "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "identity_quality": "complete",
+        "line": 108,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "symbol": "clientProxy",
+        "symbol_identity": "<free-function>::ClinetOnLocalNetworkIdChanged::clientProxy"
+      }
+    },
+    {
+      "classification": "plausible_unproven",
+      "classification_reason": "Exact nothrow allocation to immediate pointer sink is present; allocation-failure null path is plausible. Entry, trigger, attacker control, product reachability and CIA remain unproven.",
+      "fixed_finding_count": 0,
+      "fixed_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetNotifyDeviceNotTrusted",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 139,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 143,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 138
+      },
+      "function": "ClinetNotifyDeviceNotTrusted",
+      "refutation_scope": "fixed local guard relation only; not proof of product safety",
+      "review_row_id": "A-NULL-02-ROW-05",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetNotifyDeviceNotTrusted",
+        "guard_error_path": "none_before_sink",
+        "guard_expression": null,
+        "guard_line": null,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_pointer_sink",
+        "sink_line": 123,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 122
+      },
+      "vulnerable_finding": {
+        "ast_fingerprint": "948b72e58efc3e07f9236e1871d2799e47115ddcbba3246fc29eaf86021cd1e6",
+        "candidate_cwe": "CWE-476",
+        "column": 9,
+        "evidence_obligations": [
+          {
+            "kind": "guard_dominance",
+            "status": "unknown"
+          },
+          {
+            "kind": "cross_function_alias",
+            "status": "unknown"
+          },
+          {
+            "kind": "compile_context",
+            "status": "missing"
+          },
+          {
+            "kind": "entry_or_privilege_boundary",
+            "status": "missing"
+          },
+          {
+            "kind": "attacker_control",
+            "status": "missing"
+          },
+          {
+            "kind": "sensitive_operation_reachability",
+            "status": "missing"
+          },
+          {
+            "kind": "trigger_conditions",
+            "status": "missing"
+          },
+          {
+            "kind": "cia_impact",
+            "status": "missing"
+          }
+        ],
+        "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "identity_quality": "complete",
+        "line": 123,
+        "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+        "rule_id": "ohcpp-null-dereference-candidate-001",
+        "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+        "rule_version": "1.2.0",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "symbol": "clientProxy",
+        "symbol_identity": "<free-function>::ClinetNotifyDeviceNotTrusted::clientProxy"
+      }
+    }
+  ],
+  "change_request_id": "A-NULL-02",
+  "classification_counts": {
+    "insufficient_evidence": 1,
+    "likely_false_positive": 0,
+    "plausible_unproven": 5,
+    "refuted": 5
+  },
+  "classification_policy": {
+    "insufficient_evidence": "Coverage, parse, macro/template, cross-function alias, build context or evidence obligations prevent a stronger classification.",
+    "likely_false_positive": "A detector output contradicted by a fixed, safe, unrelated or non-pointer control.",
+    "plausible_unproven": "Exact bounded source/sink relation is present, but product trigger, attacker control, reachability or CIA impact is unproven.",
+    "refuted": "The candidate relation is absent or a local repair guard is present in the pinned comparison source; this is not a product safety proof."
+  },
+  "control_noise_summary": {
+    "categories": {
+      "fixed": {
+        "classification": "refuted",
+        "control_count": 5,
+        "expected_finding_count": 0,
+        "observed_finding_count": 0,
+        "unexpected_findings": []
+      },
+      "positive": {
+        "classification": "plausible_unproven",
+        "control_count": 6,
+        "expected_finding_count": 6,
+        "observed_finding_count": 6,
+        "unexpected_findings": []
+      },
+      "safe": {
+        "classification": "refuted",
+        "control_count": 4,
+        "expected_finding_count": 0,
+        "observed_finding_count": 0,
+        "unexpected_findings": []
+      },
+      "unrelated": {
+        "classification": "refuted",
+        "control_count": 4,
+        "expected_finding_count": 0,
+        "observed_finding_count": 0,
+        "unexpected_findings": []
+      }
+    },
+    "noise_conclusion": "All six positive controls retained one candidate each; no fixed, safe or unrelated control produced an unexpected finding. This is control evidence, not a precision/recall estimate.",
+    "source": "research/tests/a_null_02_controls/control_manifest.json"
+  },
+  "detector_identity": {
+    "ast_scope": "per_file",
+    "detector_id": "ohscanner.cpp.null_dereference",
+    "profile_id": "light-ast",
+    "rule_id": "ohcpp-null-dereference-candidate-001",
+    "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+    "rule_version": "1.2.0",
+    "version": "0.2.0"
+  },
+  "fixed_review_rows": [
+    {
+      "classification": "refuted",
+      "classification_reason": "The pinned fixed source adds a local nullptr guard before the same pointer sink; this refutes the local missing-guard candidate relation only.",
+      "fixed_finding_count": 0,
+      "function": "ClinetOnNodeOnlineStateChanged",
+      "review_row_id": "A-NULL-02-FIXED-01",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnNodeOnlineStateChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 71,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 75,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 70
+      }
+    },
+    {
+      "classification": "refuted",
+      "classification_reason": "The pinned fixed source adds a local nullptr guard before the same pointer sink; this refutes the local missing-guard candidate relation only.",
+      "fixed_finding_count": 0,
+      "function": "ClinetOnNodeBasicInfoChanged",
+      "review_row_id": "A-NULL-02-FIXED-02",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnNodeBasicInfoChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 86,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 90,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 85
+      }
+    },
+    {
+      "classification": "refuted",
+      "classification_reason": "The pinned fixed source adds a local nullptr guard before the same pointer sink; this refutes the local missing-guard candidate relation only.",
+      "fixed_finding_count": 0,
+      "function": "ClientOnNodeStatusChanged",
+      "review_row_id": "A-NULL-02-FIXED-03",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClientOnNodeStatusChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 105,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 109,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 104
+      }
+    },
+    {
+      "classification": "refuted",
+      "classification_reason": "The pinned fixed source adds a local nullptr guard before the same pointer sink; this refutes the local missing-guard candidate relation only.",
+      "fixed_finding_count": 0,
+      "function": "ClinetOnLocalNetworkIdChanged",
+      "review_row_id": "A-NULL-02-FIXED-04",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetOnLocalNetworkIdChanged",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 120,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 124,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 119
+      }
+    },
+    {
+      "classification": "refuted",
+      "classification_reason": "The pinned fixed source adds a local nullptr guard before the same pointer sink; this refutes the local missing-guard candidate relation only.",
+      "fixed_finding_count": 0,
+      "function": "ClinetNotifyDeviceNotTrusted",
+      "review_row_id": "A-NULL-02-FIXED-05",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "source_relation": {
+        "alias_relation": "direct_binding_no_bounded_alias",
+        "function": "ClinetNotifyDeviceNotTrusted",
+        "guard_error_path": "local_early_return_shape",
+        "guard_expression": "if (clientProxy == nullptr)",
+        "guard_line": 139,
+        "local_rebinding_before_sink": false,
+        "pointer_sink": "clientProxy->",
+        "relation": "source_then_guard_then_pointer_sink",
+        "sink_line": 143,
+        "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+        "source_kind": "nothrow_allocation_may_be_null",
+        "source_line": 138
+      }
+    }
+  ],
+  "non_upgrade_statement": "candidate/unassessed only; validated_vulnerability=0; no confirmed/reportable, CVE or product-safety claim",
+  "replay": {
+    "fixed_repo_object_reads": "offline local Git objects only; no fetch/checkout",
+    "snapshots": {
+      "fixed": {
+        "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+        "coverage": {
+          "languages": {
+            "cpp": 1
+          },
+          "parsing_status": {
+            "complete": 1
+          }
+        },
+        "detector": {
+          "detector_id": "ohscanner.cpp.null_dereference",
+          "file_outcomes": {
+            "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp": "complete"
+          },
+          "finding_count": 0,
+          "findings": [],
+          "limitations": [
+            "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+            "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+            "Zero findings under this bounded rule are not a safe verdict.",
+            "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+          ],
+          "runner_diagnostic_count": 0,
+          "status": "completed",
+          "version": "0.2.0"
+        },
+        "local_repository_path": "/mnt/e/网安/_wsl_targets_stage/communication_dsoftbus",
+        "object_inventory": {
+          "binary_or_non_utf8": 0,
+          "declared_scope": [
+            "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+          ],
+          "git_blob_read_mode": "cat-file --batch",
+          "git_tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa",
+          "non_source": 0,
+          "out_of_scope": 2515,
+          "oversize": 0,
+          "selected_source_bytes": 9387,
+          "selected_source_files": 1,
+          "skipped": [],
+          "submodules": 0,
+          "symlinks": 0,
+          "tracked_entries": 2516
+        },
+        "parse_issues": [],
+        "parse_status": "complete",
+        "profile_id": "light-ast",
+        "repository": "openharmony/communication_dsoftbus",
+        "snapshot_sha256": "c8867f500a082ea923b8aede2735e12d409149f8071900098ee3f96f55e8bf11",
+        "source_blob_oid": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+        "source_byte_length": 9387,
+        "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "source_sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+        "source_sites": [
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetOnNodeOnlineStateChanged",
+            "guard_error_path": "local_early_return_shape",
+            "guard_expression": "if (clientProxy == nullptr)",
+            "guard_line": 71,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_guard_then_pointer_sink",
+            "sink_line": 75,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 70
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetOnNodeBasicInfoChanged",
+            "guard_error_path": "local_early_return_shape",
+            "guard_expression": "if (clientProxy == nullptr)",
+            "guard_line": 86,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_guard_then_pointer_sink",
+            "sink_line": 90,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 85
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClientOnNodeStatusChanged",
+            "guard_error_path": "local_early_return_shape",
+            "guard_expression": "if (clientProxy == nullptr)",
+            "guard_line": 105,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_guard_then_pointer_sink",
+            "sink_line": 109,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 104
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetOnLocalNetworkIdChanged",
+            "guard_error_path": "local_early_return_shape",
+            "guard_expression": "if (clientProxy == nullptr)",
+            "guard_line": 120,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_guard_then_pointer_sink",
+            "sink_line": 124,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 119
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetNotifyDeviceNotTrusted",
+            "guard_error_path": "local_early_return_shape",
+            "guard_expression": "if (clientProxy == nullptr)",
+            "guard_line": 139,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_guard_then_pointer_sink",
+            "sink_line": 143,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 138
+          }
+        ],
+        "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa"
+      },
+      "vulnerable": {
+        "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+        "coverage": {
+          "languages": {
+            "cpp": 1
+          },
+          "parsing_status": {
+            "complete": 1
+          }
+        },
+        "detector": {
+          "detector_id": "ohscanner.cpp.null_dereference",
+          "file_outcomes": {
+            "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp": "complete"
+          },
+          "finding_count": 5,
+          "findings": [
+            {
+              "ast_fingerprint": "9cf247539dcdb76d167de58c6e8c82d8a0b517ae1012362095b5b4f85a36f237",
+              "candidate_cwe": "CWE-476",
+              "column": 9,
+              "evidence_obligations": [
+                {
+                  "kind": "guard_dominance",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "cross_function_alias",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "compile_context",
+                  "status": "missing"
+                },
+                {
+                  "kind": "entry_or_privilege_boundary",
+                  "status": "missing"
+                },
+                {
+                  "kind": "attacker_control",
+                  "status": "missing"
+                },
+                {
+                  "kind": "sensitive_operation_reachability",
+                  "status": "missing"
+                },
+                {
+                  "kind": "trigger_conditions",
+                  "status": "missing"
+                },
+                {
+                  "kind": "cia_impact",
+                  "status": "missing"
+                }
+              ],
+              "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+              "identity_quality": "complete",
+              "line": 71,
+              "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+              "rule_id": "ohcpp-null-dereference-candidate-001",
+              "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+              "rule_version": "1.2.0",
+              "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+              "symbol": "clientProxy",
+              "symbol_identity": "<free-function>::ClinetOnNodeOnlineStateChanged::clientProxy"
+            },
+            {
+              "ast_fingerprint": "928e3c0f8c3a499b601e79c034897bd6b245428fbec266faef55bfb7ac08bf46",
+              "candidate_cwe": "CWE-476",
+              "column": 9,
+              "evidence_obligations": [
+                {
+                  "kind": "guard_dominance",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "cross_function_alias",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "compile_context",
+                  "status": "missing"
+                },
+                {
+                  "kind": "entry_or_privilege_boundary",
+                  "status": "missing"
+                },
+                {
+                  "kind": "attacker_control",
+                  "status": "missing"
+                },
+                {
+                  "kind": "sensitive_operation_reachability",
+                  "status": "missing"
+                },
+                {
+                  "kind": "trigger_conditions",
+                  "status": "missing"
+                },
+                {
+                  "kind": "cia_impact",
+                  "status": "missing"
+                }
+              ],
+              "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+              "identity_quality": "complete",
+              "line": 82,
+              "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+              "rule_id": "ohcpp-null-dereference-candidate-001",
+              "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+              "rule_version": "1.2.0",
+              "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+              "symbol": "clientProxy",
+              "symbol_identity": "<free-function>::ClinetOnNodeBasicInfoChanged::clientProxy"
+            },
+            {
+              "ast_fingerprint": "e39959085f3b31efed8d5131ab97e0ecdbc70b069c696ce19a341897b1c01b25",
+              "candidate_cwe": "CWE-476",
+              "column": 9,
+              "evidence_obligations": [
+                {
+                  "kind": "guard_dominance",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "cross_function_alias",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "compile_context",
+                  "status": "missing"
+                },
+                {
+                  "kind": "entry_or_privilege_boundary",
+                  "status": "missing"
+                },
+                {
+                  "kind": "attacker_control",
+                  "status": "missing"
+                },
+                {
+                  "kind": "sensitive_operation_reachability",
+                  "status": "missing"
+                },
+                {
+                  "kind": "trigger_conditions",
+                  "status": "missing"
+                },
+                {
+                  "kind": "cia_impact",
+                  "status": "missing"
+                }
+              ],
+              "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+              "identity_quality": "complete",
+              "line": 97,
+              "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+              "rule_id": "ohcpp-null-dereference-candidate-001",
+              "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+              "rule_version": "1.2.0",
+              "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+              "symbol": "clientProxy",
+              "symbol_identity": "<free-function>::ClientOnNodeStatusChanged::clientProxy"
+            },
+            {
+              "ast_fingerprint": "c24959d2c72d1fa3197c588ffd70a4ca349ad4e3594a68a793d1ba60981c289a",
+              "candidate_cwe": "CWE-476",
+              "column": 9,
+              "evidence_obligations": [
+                {
+                  "kind": "guard_dominance",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "cross_function_alias",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "compile_context",
+                  "status": "missing"
+                },
+                {
+                  "kind": "entry_or_privilege_boundary",
+                  "status": "missing"
+                },
+                {
+                  "kind": "attacker_control",
+                  "status": "missing"
+                },
+                {
+                  "kind": "sensitive_operation_reachability",
+                  "status": "missing"
+                },
+                {
+                  "kind": "trigger_conditions",
+                  "status": "missing"
+                },
+                {
+                  "kind": "cia_impact",
+                  "status": "missing"
+                }
+              ],
+              "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+              "identity_quality": "complete",
+              "line": 108,
+              "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+              "rule_id": "ohcpp-null-dereference-candidate-001",
+              "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+              "rule_version": "1.2.0",
+              "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+              "symbol": "clientProxy",
+              "symbol_identity": "<free-function>::ClinetOnLocalNetworkIdChanged::clientProxy"
+            },
+            {
+              "ast_fingerprint": "948b72e58efc3e07f9236e1871d2799e47115ddcbba3246fc29eaf86021cd1e6",
+              "candidate_cwe": "CWE-476",
+              "column": 9,
+              "evidence_obligations": [
+                {
+                  "kind": "guard_dominance",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "cross_function_alias",
+                  "status": "unknown"
+                },
+                {
+                  "kind": "compile_context",
+                  "status": "missing"
+                },
+                {
+                  "kind": "entry_or_privilege_boundary",
+                  "status": "missing"
+                },
+                {
+                  "kind": "attacker_control",
+                  "status": "missing"
+                },
+                {
+                  "kind": "sensitive_operation_reachability",
+                  "status": "missing"
+                },
+                {
+                  "kind": "trigger_conditions",
+                  "status": "missing"
+                },
+                {
+                  "kind": "cia_impact",
+                  "status": "missing"
+                }
+              ],
+              "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+              "identity_quality": "complete",
+              "line": 123,
+              "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+              "rule_id": "ohcpp-null-dereference-candidate-001",
+              "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+              "rule_version": "1.2.0",
+              "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+              "symbol": "clientProxy",
+              "symbol_identity": "<free-function>::ClinetNotifyDeviceNotTrusted::clientProxy"
+            }
+          ],
+          "limitations": [
+            "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+            "Zero findings under this bounded rule are not a safe verdict.",
+            "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+          ],
+          "runner_diagnostic_count": 5,
+          "status": "completed",
+          "version": "0.2.0"
+        },
+        "local_repository_path": "/mnt/e/网安/_wsl_targets_stage/communication_dsoftbus",
+        "object_inventory": {
+          "binary_or_non_utf8": 0,
+          "declared_scope": [
+            "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+          ],
+          "git_blob_read_mode": "cat-file --batch",
+          "git_tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8",
+          "non_source": 0,
+          "out_of_scope": 2515,
+          "oversize": 0,
+          "selected_source_bytes": 8502,
+          "selected_source_files": 1,
+          "skipped": [],
+          "submodules": 0,
+          "symlinks": 0,
+          "tracked_entries": 2516
+        },
+        "parse_issues": [],
+        "parse_status": "complete",
+        "profile_id": "light-ast",
+        "repository": "openharmony/communication_dsoftbus",
+        "snapshot_sha256": "25102a7c1fde5d072f082828ed60bbc586309724014d42d6df042845a977b8db",
+        "source_blob_oid": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+        "source_byte_length": 8502,
+        "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "source_sites": [
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetOnNodeOnlineStateChanged",
+            "guard_error_path": "none_before_sink",
+            "guard_expression": null,
+            "guard_line": null,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_pointer_sink",
+            "sink_line": 71,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 70
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetOnNodeBasicInfoChanged",
+            "guard_error_path": "none_before_sink",
+            "guard_expression": null,
+            "guard_line": null,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_pointer_sink",
+            "sink_line": 82,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 81
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClientOnNodeStatusChanged",
+            "guard_error_path": "none_before_sink",
+            "guard_expression": null,
+            "guard_line": null,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_pointer_sink",
+            "sink_line": 97,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 96
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetOnLocalNetworkIdChanged",
+            "guard_error_path": "none_before_sink",
+            "guard_expression": null,
+            "guard_line": null,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_pointer_sink",
+            "sink_line": 108,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 107
+          },
+          {
+            "alias_relation": "direct_binding_no_bounded_alias",
+            "function": "ClinetNotifyDeviceNotTrusted",
+            "guard_error_path": "none_before_sink",
+            "guard_expression": null,
+            "guard_line": null,
+            "local_rebinding_before_sink": false,
+            "pointer_sink": "clientProxy->",
+            "relation": "source_then_pointer_sink",
+            "sink_line": 123,
+            "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+            "source_kind": "nothrow_allocation_may_be_null",
+            "source_line": 122
+          }
+        ],
+        "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8"
+      }
+    },
+    "stable_across_two_detector_runs": true
+  },
+  "root_cause_groups": [
+    {
+      "basis": "same nothrow BusCenterClientProxy allocation family, same immediate clientProxy pointer sink and same local nullptr guard repair shape",
+      "candidate_site_count": 5,
+      "counting_rule": "count one root-cause group, not five alert lines",
+      "fixed_site_count": 5,
+      "independent_root_cause_count": 1,
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "validated_vulnerability_count": 0
+    }
+  ],
+  "schema_version": "ohscanner.a-null-02-fixed-component-review-v1",
+  "unknown_rows": [
+    {
+      "classification": "insufficient_evidence",
+      "classification_reason": "The replay binds source facts and local lexical relations but does not establish build context, product entry/privilege boundary, attacker control, trigger conditions, reachable sensitive operation or CIA impact.",
+      "review_row_id": "A-NULL-02-UNKNOWN-001",
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "unknowns": [
+        "compile_context",
+        "entry_or_privilege_boundary",
+        "attacker_control",
+        "sensitive_operation_reachability",
+        "trigger_conditions",
+        "cia_impact",
+        "cross_function_alias",
+        "macro_expansion",
+        "template_instantiation",
+        "partial_failed_not_analyzed_semantics"
+      ]
+    }
+  ],
+  "upgrade_blockers": [
+    "No real product entry or privilege boundary was established.",
+    "No attacker-controlled allocation-failure trigger was demonstrated.",
+    "No product build, macro/template instantiation or complete alias/CFG context was bound.",
+    "No concrete confidentiality, integrity or availability impact was demonstrated.",
+    "A historical advisory/CVE and fixed commit are context only and cannot upgrade a candidate."
+  ]
+}

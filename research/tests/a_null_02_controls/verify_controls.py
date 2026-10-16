@@ -72,7 +72,7 @@ def build_manifest() -> dict:
             "detector_id": "ohscanner.cpp.null_dereference",
             "detector_version": "0.2.0",
             "rule_id": "ohcpp-null-dereference-candidate-001",
-            "rule_version": "1.1.0",
+            "rule_version": "1.2.0",
         },
         "categories": {
             "positive": "must retain a bounded candidate",

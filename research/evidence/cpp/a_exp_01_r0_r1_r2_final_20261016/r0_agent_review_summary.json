@@ -1,0 +1,83 @@
+{
+  "completed_agent_blinded_reviews": 135,
+  "confidence": {
+    "counts": {
+      "0.6": 114,
+      "0.9": 21
+    },
+    "mean": 0.646667
+  },
+  "evidence_gate_status": {
+    "partial": 135
+  },
+  "executed_agent_blinded_reviews": 135,
+  "executed_human_reviews": 0,
+  "failed_agent_blinded_reviews": 0,
+  "human_review_eligibility": "ineligible_not_independent_human",
+  "independent_new_facts": {
+    "all_claims": 405,
+    "new_fact_claim_ratio": 0.0,
+    "new_fact_claims": 0,
+    "tool_result_evidence_ratio": 0.0,
+    "unique_cited_tool_result_evidence_ids": 0
+  },
+  "invalid_references": [],
+  "labels": {
+    "unknown": 114,
+    "unrelated": 21
+  },
+  "lock": {
+    "evidence_obligation_contract_sha256": [
+      "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f"
+    ],
+    "experiment_id": "A-EXP-01",
+    "fact_bundle_sha256": [
+      "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01"
+    ],
+    "generator_sha256": "66e27d13822440e71c663ace7b647d911eb10e623d8b2cfe9e6e2b0eeb577a0e",
+    "group": "R0",
+    "human_review_eligibility": "ineligible_not_independent_human",
+    "input_bundle_sha256_count": 135,
+    "locked_at_utc": "2026-10-16T13:14:41.685425+00:00",
+    "record_count": 135,
+    "records_sha256": "2f2075ebc310d1c145f8a0ecc0465da0eca286be1a137956ee88b8ed9d4a443b",
+    "repetition_counts": {
+      "1": 45,
+      "2": 45,
+      "3": 45
+    },
+    "reviewer_kind": "agent_not_human",
+    "schema_version": "ohscanner.a-exp-01-r0-agent-blind-review-lock-v1",
+    "timing_status": "unknown_not_measured_by_independent_human_reviewer",
+    "truth_exposure": "after_lock_only",
+    "unique_experiment_items": 45
+  },
+  "planned_human_reviews": 135,
+  "product_assessments": {
+    "unknown": 135
+  },
+  "record_count": 135,
+  "records_sha256": "2f2075ebc310d1c145f8a0ecc0465da0eca286be1a137956ee88b8ed9d4a443b",
+  "references": {
+    "claims": 405,
+    "claims_with_nonempty_refs": 405,
+    "illegal_or_out_of_scope_references": 0,
+    "invalid_reference_runs": 0,
+    "references": 540,
+    "unique_cited_ids": 90
+  },
+  "repetition_variance": {
+    "items": 45,
+    "note": "All three records use the same non-human reviewer and are not independent human repetitions.",
+    "stable_assessment_items": 45,
+    "stable_mechanism_label_items": 45,
+    "unstable_assessment_items": 0
+  },
+  "reviewer_kind": "agent_not_human",
+  "schema_version": "ohscanner.a-exp-01-r0-agent-review-summary-v1",
+  "timing": {
+    "active_seconds": null,
+    "paused_seconds": null,
+    "status": "unknown_not_measured_by_independent_human_reviewer"
+  }
+}

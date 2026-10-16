@@ -1,0 +1,96 @@
+{
+  "ast_scope": "per_file",
+  "candidate_cwe": "CWE-476",
+  "candidate_status": "candidate/unassessed",
+  "change_request_id": "A-NULL-02",
+  "confidence": "unassessed",
+  "coverage_semantics": [
+    "complete",
+    "partial",
+    "failed",
+    "not_analyzed"
+  ],
+  "coverage_unknowns": [
+    "compile_context",
+    "entry_or_privilege_boundary",
+    "attacker_control",
+    "sensitive_operation_reachability",
+    "trigger_conditions",
+    "cia_impact",
+    "cross_function_alias",
+    "macro_expansion",
+    "template_instantiation",
+    "partial_failed_not_analyzed_semantics"
+  ],
+  "detector_id": "ohscanner.cpp.null_dereference",
+  "detector_version": "0.2.0",
+  "evidence_obligation_policy": {
+    "attacker_control": "missing",
+    "cia_impact": "missing",
+    "compile_context": "missing",
+    "cross_function_alias": "unknown",
+    "entry_or_privilege_boundary": "missing",
+    "guard_dominance": "unknown",
+    "sensitive_operation_reachability": "missing",
+    "trigger_conditions": "missing"
+  },
+  "kind": "research_candidate",
+  "notes": [
+    "Registration is a proposal only; public catalog remains unchanged.",
+    "Historical benchmark labels and CVE are not used as detector truth.",
+    "AST/pattern source relations do not prove dominance, attacker control or CIA impact."
+  ],
+  "profile_id": "light-ast",
+  "root_cause_groups": [
+    {
+      "basis": "same nothrow BusCenterClientProxy allocation family, same immediate clientProxy pointer sink and same local nullptr guard repair shape",
+      "candidate_site_count": 5,
+      "counting_rule": "count one root-cause group, not five alert lines",
+      "fixed_site_count": 5,
+      "independent_root_cause_count": 1,
+      "root_cause_group": "A-NULL-02-RC-NOTHROW-CLIENTPROXY-ALLOC",
+      "validated_vulnerability_count": 0
+    }
+  ],
+  "rule_id": "ohcpp-null-dereference-candidate-001",
+  "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+  "rule_version": "1.2.0",
+  "schema_version": "ohscanner.catalog-research-candidate-suggestion-v1",
+  "severity": "unassessed",
+  "source_binding": {
+    "repository": "openharmony/communication_dsoftbus",
+    "snapshots": {
+      "fixed": {
+        "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+        "parse_status": "complete",
+        "profile_id": "light-ast",
+        "snapshot_sha256": "c8867f500a082ea923b8aede2735e12d409149f8071900098ee3f96f55e8bf11",
+        "source_blob_oid": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+        "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "source_sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+        "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa"
+      },
+      "vulnerable": {
+        "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+        "parse_status": "complete",
+        "profile_id": "light-ast",
+        "snapshot_sha256": "25102a7c1fde5d072f082828ed60bbc586309724014d42d6df042845a977b8db",
+        "source_blob_oid": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+        "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+        "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+        "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8"
+      }
+    }
+  },
+  "supported_languages": [
+    "c",
+    "cpp"
+  ],
+  "upgrade_blockers": [
+    "No real product entry or privilege boundary was established.",
+    "No attacker-controlled allocation-failure trigger was demonstrated.",
+    "No product build, macro/template instantiation or complete alias/CFG context was bound.",
+    "No concrete confidentiality, integrity or availability impact was demonstrated.",
+    "A historical advisory/CVE and fixed commit are context only and cannot upgrade a candidate."
+  ]
+}

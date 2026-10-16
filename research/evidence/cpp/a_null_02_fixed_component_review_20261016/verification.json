@@ -1,0 +1,609 @@
+{
+  "artifact_sha256": {
+    "docs/项目现状与下一步.md": "ee54d48f8560e4def881ba901d086a6168ad1eb31a535044ebdea7798c0fd483",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/DELIVERABLES.md": "1abd40f3d14fef30b10b736ea0c87c97a30db78fc08879621b115fabbf9f5177",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/candidate_review.md": "1d8ee5dcc30b9bf0c2968e0a0c6c64ae23f8a0e47e1df41e869fe3cc59040720",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/catalog_metadata_suggestion.json": "94961a0e9837a1f353ecda491349df2faf228f6676ebc9f36372114b1941cf97",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/collect_verification.py": "3dd8b863537702d03f03e0aa27bc40f0c147516a7899a3c953e5af50f34b439a",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/control_manifest_check.txt": "ebb7b9723add665043b6d955bcb2a8532cf4f373f981fe3d7463d2574ec90cc8",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/docs_context_budget.txt": "89c02fad98e0d98a19deab7e2d55bc0a833f226b3e890cd3faad63f2f8bf8491",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/git_diff_check.txt": "2682ea3b41ef5828cff0e93cb238d8e8470aff9087663c4636f2b7dc945d56c0",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/replay_check.txt": "1e70ed679217b0b7617d8a3d0c8557ed3c78012b50ef915e8c7c12cb7b2234e7",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/replay_results.json": "f82dfb205d934e07a367e66966384755f0171f872471583f56b8ba27cc864c72",
+    "research/evidence/cpp/a_null_02_fixed_component_review_20261016/targeted_test_run.txt": "84638c78f7861027c737f923bbaf24516f79a028430106b1fbd32d32e2c60c3f",
+    "research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md": "8c8f2c5c8584f6460345e00e85cca615087f1d639f887cdbec99a9d36046e3e6",
+    "research/tests/a_null_02_controls/control_manifest.json": "4a0b3b751e46cebe8e3c107a63b7c8e363db8a9efccd6ad2e3ffe5aeb925f39a",
+    "research/tests/a_null_02_controls/replay_fixed_component.py": "2d7454376ef677069b4b916beca364e2f2098e5b3a0a2d7bf06dc3e490dda277",
+    "research/tests/a_null_02_controls/verify_controls.py": "ddc05b1563884adf884d41c3e10be31cc42a7baf79e92f19ce2e4942971a2729",
+    "src/ohscanner/detectors/cpp/README.md": "122cc8671a29ba948431f1f5c633740948e6b75a763fdbf70f4d29a58fd0e785",
+    "src/ohscanner/detectors/cpp/null_dereference_detector.py": "fc8ece1ebf202e11c5eada43b3d2eee22f173fb4a486fa344b44370031887662",
+    "tests/detectors/test_cpp_null_dereference_signal_controls.py": "651444db18c1d40b3fef75ffff579c0c38b7344e11675ffb12e5d01b3fc88d78"
+  },
+  "checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "dirty_status_porcelain": "# branch.oid 8e97f152ef747c1e1d21ae179a048910f147e07a\n# branch.head codex/full-runtime-performance-audit-20261014\n# branch.upstream origin/codex/full-runtime-performance-audit-20261014\n# branch.ab +0 -0\n1 .M N... 100644 100644 100644 20473ccb197c782e72264172df6ed6381a59ab49 20473ccb197c782e72264172df6ed6381a59ab49 \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"\n1 .M N... 100644 100644 100644 5f798e7dd9e58fd8e500d2e399964197a3da0272 5f798e7dd9e58fd8e500d2e399964197a3da0272 research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md\n1 .M N... 100644 100644 100644 abac8f883dcea29629b24d60b2abae5cba484609 abac8f883dcea29629b24d60b2abae5cba484609 research/tests/a_null_02_controls/control_manifest.json\n1 .M N... 100644 100644 100644 c92175cb089708fe8101bc17cd49f4e8bb4a6b50 c92175cb089708fe8101bc17cd49f4e8bb4a6b50 research/tests/a_null_02_controls/verify_controls.py\n1 .M N... 100644 100644 100644 a0fc2f7668969d0db920277c0788a1114ccbfeb0 a0fc2f7668969d0db920277c0788a1114ccbfeb0 src/ohscanner/detectors/cpp/README.md\n1 .M N... 100644 100644 100644 83a956abc053d9c9c39c5c031bcbcd43e5ef012b 83a956abc053d9c9c39c5c031bcbcd43e5ef012b src/ohscanner/detectors/cpp/null_dereference_detector.py\n1 .M N... 100644 100644 100644 2eef524ea61ee86c82d5c0fc135162646e3697ef 2eef524ea61ee86c82d5c0fc135162646e3697ef tests/detectors/test_cpp_null_dereference_signal_controls.py\n? outputs/cache/\n? outputs/local-deploy-smoke-20261016/\n? research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/\n? research/evidence/cpp/a_exp_01_r1_r2_20261016.partial-incomplete-001/\n? research/evidence/cpp/a_exp_01_r1_r2_20261016.partial-incomplete-002/\n? research/evidence/cpp/a_null_02_fixed_component_review_20261016/\n? research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/\n? research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_agent_blind_nonhuman/\n? research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/\n? research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/\n? research/tests/a_null_02_controls/replay_fixed_component.py",
+    "dirty_status_sha256": "10c3793153399232ca51bba306c3d74a59d1251da8b8126335dfb2423896df2f",
+    "head": "8e97f152ef747c1e1d21ae179a048910f147e07a",
+    "head_tree": "e50c111e3b487b048e8807dafe06625a87f296ad",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "claims": {
+    "catalog_registration_changed": false,
+    "confirmed_or_reportable": false,
+    "default_output_state": "candidate/unassessed",
+    "precision_recall_computed": false,
+    "public_contract_or_runner_changed": false,
+    "zero_fp_fn_claimed": false
+  },
+  "control_manifest": {
+    "fixtures": 19,
+    "status": "passed"
+  },
+  "docs_context_budget": {
+    "default_limit": 13500,
+    "default_used": 10615,
+    "docs_limit": 32500,
+    "docs_used": 16953,
+    "observed_exit_code": 0,
+    "raw_log_sha256": "89c02fad98e0d98a19deab7e2d55bc0a833f226b3e890cd3faad63f2f8bf8491"
+  },
+  "environment": {
+    "executable": "/mnt/e/网安/CyberSecurity-Innovation-Audit/.venv-web/bin/python",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]"
+  },
+  "fixed_snapshots": {
+    "fixed": {
+      "commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+      "coverage": {
+        "languages": {
+          "cpp": 1
+        },
+        "parsing_status": {
+          "complete": 1
+        }
+      },
+      "detector": {
+        "detector_id": "ohscanner.cpp.null_dereference",
+        "file_outcomes": {
+          "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp": "complete"
+        },
+        "finding_count": 0,
+        "findings": [],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "narrow negative only: no bounded source/sink candidate matched; compile_context and product evidence remain missing; not a safe verdict.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ],
+        "runner_diagnostic_count": 0,
+        "status": "completed",
+        "version": "0.2.0"
+      },
+      "local_repository_path": "/mnt/e/网安/_wsl_targets_stage/communication_dsoftbus",
+      "object_inventory": {
+        "binary_or_non_utf8": 0,
+        "declared_scope": [
+          "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+        ],
+        "git_blob_read_mode": "cat-file --batch",
+        "git_tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa",
+        "non_source": 0,
+        "out_of_scope": 2515,
+        "oversize": 0,
+        "selected_source_bytes": 9387,
+        "selected_source_files": 1,
+        "skipped": [],
+        "submodules": 0,
+        "symlinks": 0,
+        "tracked_entries": 2516
+      },
+      "parse_issues": [],
+      "parse_status": "complete",
+      "profile_id": "light-ast",
+      "repository": "openharmony/communication_dsoftbus",
+      "snapshot_sha256": "c8867f500a082ea923b8aede2735e12d409149f8071900098ee3f96f55e8bf11",
+      "source_blob_oid": "13ddbe93a7f617784dec0f3761e09f66b5c3217c",
+      "source_byte_length": 9387,
+      "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+      "source_sha256": "5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81",
+      "source_sites": [
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetOnNodeOnlineStateChanged",
+          "guard_error_path": "local_early_return_shape",
+          "guard_expression": "if (clientProxy == nullptr)",
+          "guard_line": 71,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_guard_then_pointer_sink",
+          "sink_line": 75,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 70
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetOnNodeBasicInfoChanged",
+          "guard_error_path": "local_early_return_shape",
+          "guard_expression": "if (clientProxy == nullptr)",
+          "guard_line": 86,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_guard_then_pointer_sink",
+          "sink_line": 90,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 85
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClientOnNodeStatusChanged",
+          "guard_error_path": "local_early_return_shape",
+          "guard_expression": "if (clientProxy == nullptr)",
+          "guard_line": 105,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_guard_then_pointer_sink",
+          "sink_line": 109,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 104
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetOnLocalNetworkIdChanged",
+          "guard_error_path": "local_early_return_shape",
+          "guard_expression": "if (clientProxy == nullptr)",
+          "guard_line": 120,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_guard_then_pointer_sink",
+          "sink_line": 124,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 119
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetNotifyDeviceNotTrusted",
+          "guard_error_path": "local_early_return_shape",
+          "guard_expression": "if (clientProxy == nullptr)",
+          "guard_line": 139,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_guard_then_pointer_sink",
+          "sink_line": 143,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 138
+        }
+      ],
+      "tree": "1d58ba0ef706a6f69dd372bd496c8058810882aa"
+    },
+    "vulnerable": {
+      "commit": "258662cd9840b55a31546a72d91027f6368cea84",
+      "coverage": {
+        "languages": {
+          "cpp": 1
+        },
+        "parsing_status": {
+          "complete": 1
+        }
+      },
+      "detector": {
+        "detector_id": "ohscanner.cpp.null_dereference",
+        "file_outcomes": {
+          "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp": "complete"
+        },
+        "finding_count": 5,
+        "findings": [
+          {
+            "ast_fingerprint": "9cf247539dcdb76d167de58c6e8c82d8a0b517ae1012362095b5b4f85a36f237",
+            "candidate_cwe": "CWE-476",
+            "column": 9,
+            "evidence_obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ],
+            "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+            "identity_quality": "complete",
+            "line": 71,
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+            "rule_version": "1.2.0",
+            "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+            "symbol": "clientProxy",
+            "symbol_identity": "<free-function>::ClinetOnNodeOnlineStateChanged::clientProxy"
+          },
+          {
+            "ast_fingerprint": "928e3c0f8c3a499b601e79c034897bd6b245428fbec266faef55bfb7ac08bf46",
+            "candidate_cwe": "CWE-476",
+            "column": 9,
+            "evidence_obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ],
+            "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+            "identity_quality": "complete",
+            "line": 82,
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+            "rule_version": "1.2.0",
+            "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+            "symbol": "clientProxy",
+            "symbol_identity": "<free-function>::ClinetOnNodeBasicInfoChanged::clientProxy"
+          },
+          {
+            "ast_fingerprint": "e39959085f3b31efed8d5131ab97e0ecdbc70b069c696ce19a341897b1c01b25",
+            "candidate_cwe": "CWE-476",
+            "column": 9,
+            "evidence_obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ],
+            "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+            "identity_quality": "complete",
+            "line": 97,
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+            "rule_version": "1.2.0",
+            "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+            "symbol": "clientProxy",
+            "symbol_identity": "<free-function>::ClientOnNodeStatusChanged::clientProxy"
+          },
+          {
+            "ast_fingerprint": "c24959d2c72d1fa3197c588ffd70a4ca349ad4e3594a68a793d1ba60981c289a",
+            "candidate_cwe": "CWE-476",
+            "column": 9,
+            "evidence_obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ],
+            "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+            "identity_quality": "complete",
+            "line": 108,
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+            "rule_version": "1.2.0",
+            "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+            "symbol": "clientProxy",
+            "symbol_identity": "<free-function>::ClinetOnLocalNetworkIdChanged::clientProxy"
+          },
+          {
+            "ast_fingerprint": "948b72e58efc3e07f9236e1871d2799e47115ddcbba3246fc29eaf86021cd1e6",
+            "candidate_cwe": "CWE-476",
+            "column": 9,
+            "evidence_obligations": [
+              {
+                "kind": "guard_dominance",
+                "status": "unknown"
+              },
+              {
+                "kind": "cross_function_alias",
+                "status": "unknown"
+              },
+              {
+                "kind": "compile_context",
+                "status": "missing"
+              },
+              {
+                "kind": "entry_or_privilege_boundary",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_control",
+                "status": "missing"
+              },
+              {
+                "kind": "sensitive_operation_reachability",
+                "status": "missing"
+              },
+              {
+                "kind": "trigger_conditions",
+                "status": "missing"
+              },
+              {
+                "kind": "cia_impact",
+                "status": "missing"
+              }
+            ],
+            "file": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+            "identity_quality": "complete",
+            "line": 123,
+            "message": "Bounded same-function NULL-dereference candidate/unassessed: null_source=nothrow_allocation_may_be_null; sink=method_dereference; guard_relation=none; error_path=not_applicable; syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact.",
+            "rule_id": "ohcpp-null-dereference-candidate-001",
+            "rule_lineage_id": "A-NULL-01:ohcpp-null-dereference-candidate",
+            "rule_version": "1.2.0",
+            "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+            "symbol": "clientProxy",
+            "symbol_identity": "<free-function>::ClinetNotifyDeviceNotTrusted::clientProxy"
+          }
+        ],
+        "limitations": [
+          "Bounded lexical C/C++ analysis only; CFG/dominance, cross-function alias, macro, template, exception, destructor and build context may remain unknown.",
+          "Zero findings under this bounded rule are not a safe verdict.",
+          "Member bindings are matched only by one lexically enclosing class and qualified member name; cross-class or shadowed identity remains unknown."
+        ],
+        "runner_diagnostic_count": 5,
+        "status": "completed",
+        "version": "0.2.0"
+      },
+      "local_repository_path": "/mnt/e/网安/_wsl_targets_stage/communication_dsoftbus",
+      "object_inventory": {
+        "binary_or_non_utf8": 0,
+        "declared_scope": [
+          "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
+        ],
+        "git_blob_read_mode": "cat-file --batch",
+        "git_tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8",
+        "non_source": 0,
+        "out_of_scope": 2515,
+        "oversize": 0,
+        "selected_source_bytes": 8502,
+        "selected_source_files": 1,
+        "skipped": [],
+        "submodules": 0,
+        "symlinks": 0,
+        "tracked_entries": 2516
+      },
+      "parse_issues": [],
+      "parse_status": "complete",
+      "profile_id": "light-ast",
+      "repository": "openharmony/communication_dsoftbus",
+      "snapshot_sha256": "25102a7c1fde5d072f082828ed60bbc586309724014d42d6df042845a977b8db",
+      "source_blob_oid": "a82b71fb5520b02278a4af695bbe918d14c1048e",
+      "source_byte_length": 8502,
+      "source_path": "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",
+      "source_sha256": "5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6",
+      "source_sites": [
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetOnNodeOnlineStateChanged",
+          "guard_error_path": "none_before_sink",
+          "guard_expression": null,
+          "guard_line": null,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_pointer_sink",
+          "sink_line": 71,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 70
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetOnNodeBasicInfoChanged",
+          "guard_error_path": "none_before_sink",
+          "guard_expression": null,
+          "guard_line": null,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_pointer_sink",
+          "sink_line": 82,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 81
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClientOnNodeStatusChanged",
+          "guard_error_path": "none_before_sink",
+          "guard_expression": null,
+          "guard_line": null,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_pointer_sink",
+          "sink_line": 97,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 96
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetOnLocalNetworkIdChanged",
+          "guard_error_path": "none_before_sink",
+          "guard_expression": null,
+          "guard_line": null,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_pointer_sink",
+          "sink_line": 108,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 107
+        },
+        {
+          "alias_relation": "direct_binding_no_bounded_alias",
+          "function": "ClinetNotifyDeviceNotTrusted",
+          "guard_error_path": "none_before_sink",
+          "guard_expression": null,
+          "guard_line": null,
+          "local_rebinding_before_sink": false,
+          "pointer_sink": "clientProxy->",
+          "relation": "source_then_pointer_sink",
+          "sink_line": 123,
+          "source_expression": "clientProxy = new (std::nothrow) BusCenterClientProxy(proxy.second);",
+          "source_kind": "nothrow_allocation_may_be_null",
+          "source_line": 122
+        }
+      ],
+      "tree": "366a4ced9400653c9628c0b677e4ae657c0e7bd8"
+    }
+  },
+  "git_diff_check": {
+    "note": "LF/CRLF advisory only; no whitespace error",
+    "observed_exit_code": 0,
+    "raw_log_sha256": "2682ea3b41ef5828cff0e93cb238d8e8470aff9087663c4636f2b7dc945d56c0"
+  },
+  "limitations": [
+    "No real product entry or privilege boundary was established.",
+    "No attacker-controlled allocation-failure trigger was demonstrated.",
+    "No product build, macro/template instantiation or complete alias/CFG context was bound.",
+    "No concrete confidentiality, integrity or availability impact was demonstrated.",
+    "A historical advisory/CVE and fixed commit are context only and cannot upgrade a candidate."
+  ],
+  "recorded_at": "2026-10-16T21:44:06+08:00",
+  "replay_check": {
+    "candidate_sites": 5,
+    "root_cause_groups": 1,
+    "status": "passed"
+  },
+  "review_summary": {
+    "candidate_site_count": 5,
+    "classification_counts": {
+      "insufficient_evidence": 1,
+      "likely_false_positive": 0,
+      "plausible_unproven": 5,
+      "refuted": 5
+    },
+    "fixed_site_count": 5,
+    "root_cause_group_count": 1,
+    "validated_vulnerability_count": 0
+  },
+  "schema_version": "ohscanner.a-null-02-fixed-component-review-verification-v1",
+  "target_repository": {
+    "branch": "master",
+    "dirty_status_porcelain": "",
+    "head": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "head_tree": "bd915661eedd139df17f249191e2a691e76f7565",
+    "path": "/mnt/e/网安/_wsl_targets_stage/communication_dsoftbus",
+    "pinned_reads": "offline local Git objects only; no fetch/checkout",
+    "remote": "https://github.com/openharmony/communication_dsoftbus.git"
+  },
+  "tests": {
+    "argv": "PYTHONPATH=.:tests .venv-web/bin/python -m unittest tests.detectors.test_cpp_null_dereference_detector tests.detectors.test_cpp_null_dereference_signal_controls -v",
+    "environment": "WSL2 Python 3.10 via .venv-web",
+    "errors": 0,
+    "failed": 0,
+    "observed_exit_code": 0,
+    "passed": 19,
+    "raw_log_sha256": "84638c78f7861027c737f923bbaf24516f79a028430106b1fbd32d32e2c60c3f",
+    "skipped": 0,
+    "total": 19
+  }
+}

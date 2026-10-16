@@ -1,0 +1,96 @@
+{
+  "artifacts": [
+    {
+      "bytes": 8310,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/FINAL_EXPERIMENT_REPORT.md",
+      "sha256": "e1b576b7a99ed3be760aa61e92f0a3b042e3682ad9ed67a8e5e075e68551f8c2"
+    },
+    {
+      "bytes": 1026,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/EVIDENCE_INDEX.md",
+      "sha256": "5e9ce1318e29ee2de228344db7b8962694221cc5f88de8b6d736cc16fe04f663"
+    },
+    {
+      "bytes": 24895,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/final_experiment_report.json",
+      "sha256": "1e630388e8fbe01a309ef1d9b795898fe2ba6b14ee8e0ac0d4e6f2962bd7c4d5"
+    },
+    {
+      "bytes": 2594,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/r0_agent_review_summary.json",
+      "sha256": "fb0bde2601f3d682d5442b315e0beca37f26e39dba32fbd7e3f19b13c3c11cac"
+    },
+    {
+      "bytes": 1316,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/r2_extra_budget_actual.json",
+      "sha256": "3a8e8b7d9c09472fa0c3b771cee190d9ee14d91b75609689a1c6938700420998"
+    },
+    {
+      "bytes": 37913,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/all_failures.jsonl",
+      "sha256": "816e0a6dbbf78a574d0218156093099943ed97c193b8e25d9761555bac4c9b12"
+    },
+    {
+      "bytes": 912090,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_agent_blind_nonhuman/r0_agent_blind_reviews.jsonl",
+      "sha256": "2f2075ebc310d1c145f8a0ecc0465da0eca286be1a137956ee88b8ed9d4a443b"
+    },
+    {
+      "bytes": 953,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_agent_blind_nonhuman/R0_AGENT_REVIEW_LOCK.json",
+      "sha256": "e185dd6f0cffb8eae8e6c961bee788fcc9174aeb4cc83f0bc3e0a65f24018c2f"
+    },
+    {
+      "bytes": 66234,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/metrics.json",
+      "sha256": "8665758ff61d783ffcd07dcd88d2c52a8d1c812005e6aab8f713444cc9945df6"
+    },
+    {
+      "bytes": 1719,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/run_validation.json",
+      "sha256": "fb9718c131a8cc4e221c76c13771b260f6e8266bec12d9896f0da6e96b723958"
+    },
+    {
+      "bytes": 1273,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/validation/validation_summary.json",
+      "sha256": "ed062f9c5b17dc21e9720a81deaea72cf72b574f70a0eb0740a37a8ce759d6a7"
+    },
+    {
+      "bytes": 3201,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/validation/unittest.stdout.txt",
+      "sha256": "cb6d24e42a1b1b27f13c8ed6142fc7d11ff64f12d8584e47b54f3c9724371c87"
+    },
+    {
+      "bytes": 143,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/validation/unittest_rerun_summary.txt",
+      "sha256": "d1adf39d05dc25580fba25718640f27fb9e2da93962c5c330ca6661000093076"
+    },
+    {
+      "bytes": 3564,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/assignment_set_manifest.json",
+      "sha256": "52c19ea5823bd95f0148e1b4d5b6d1992a5b841e20502504cca1a45804bf1ee1"
+    },
+    {
+      "bytes": 4125,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/assignment_artifact_manifest.json",
+      "sha256": "024a071a8619c9ae686429b4ee07e957d86c09a5a2f4fb3f80cba268bcb7b670"
+    },
+    {
+      "bytes": 11048,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/validate_human_submission.py",
+      "sha256": "90e866cf56768de21b272c61e415a84440527510d8d52503c70730a4a9469c8c"
+    },
+    {
+      "bytes": 71,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/validation/docs_budget.stdout.txt",
+      "sha256": "8d778af4afe68320a6af6957f15021f8e89108350d76b3aabdb40ece1e657633"
+    },
+    {
+      "bytes": 192765,
+      "path": "research/evidence/cpp/a_exp_01_r0_r1_r2_final_20261016/validation/git_diff_check.stdout.txt",
+      "sha256": "f08aa12739f5870dc7cd77b815b415dfac377007bae34590b9f9e3c69a293298"
+    }
+  ],
+  "generated_at_utc": "2026-10-16T13:43:48.179093+00:00",
+  "schema_version": "ohscanner.a-exp-01-final-artifact-manifest-v1"
+}

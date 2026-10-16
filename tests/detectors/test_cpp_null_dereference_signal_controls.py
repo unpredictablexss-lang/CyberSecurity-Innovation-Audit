@@ -109,7 +109,7 @@ class NullDereferenceSignalControlTests(unittest.TestCase):
                 self.assertEqual(len(run.findings), case["expected_finding_count"])
                 for finding in run.findings:
                     self.assertEqual(finding.source_sha256, unit.sha256)
-                    self.assertEqual(finding.rule_version, "1.1.0")
+                    self.assertEqual(finding.rule_version, "1.2.0")
                     self.assertEqual(
                         finding.rule_lineage_id,
                         "A-NULL-01:ohcpp-null-dereference-candidate",
@@ -152,6 +152,36 @@ class NullDereferenceSignalControlTests(unittest.TestCase):
             if next(case for case in self.manifest["cases"] if case["fixture"] == item["path"].rsplit("/", 1)[-1])["category"] == "positive"
         }
         self.assertEqual({finding.file for finding in run.findings}, positive_paths)
+
+    def test_nothrow_allocation_source_and_fixed_guard_are_modeled(self) -> None:
+        positive = make_unit(
+            "controls/positive_nothrow_allocation.cpp",
+            "int positive_nothrow_allocation() {\n"
+            "    int *value = new (std::nothrow) int;\n"
+            "    return *value;\n"
+            "}\n",
+        )
+        positive_run = self.detector.detect(make_context((positive,)), (positive,))
+        self.assertEqual(len(positive_run.findings), 1)
+        self.assertIn(
+            "null_source=nothrow_allocation_may_be_null",
+            positive_run.findings[0].message,
+        )
+        self.assertEqual(positive_run.findings[0].rule_version, "1.2.0")
+
+        fixed = make_unit(
+            "controls/fixed_nothrow_allocation_guard.cpp",
+            "int fixed_nothrow_allocation_guard() {\n"
+            "    int *value = new (std::nothrow) int;\n"
+            "    if (value == nullptr) {\n"
+            "        return -1;\n"
+            "    }\n"
+            "    return *value;\n"
+            "}\n",
+        )
+        fixed_run = self.detector.detect(make_context((fixed,)), (fixed,))
+        self.assertEqual(fixed_run.findings, ())
+        self.assertEqual(dict(fixed_run.file_outcomes), {fixed.path: "complete"})
 
     def test_partial_failed_and_not_analyzed_fail_closed_without_safety_claims(self) -> None:
         partial_text = "int partial_read(int *p) {\n    return *p;\n}\n"

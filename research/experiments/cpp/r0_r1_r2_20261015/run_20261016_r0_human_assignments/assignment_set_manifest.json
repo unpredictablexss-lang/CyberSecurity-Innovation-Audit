@@ -1,0 +1,82 @@
+{
+  "assignments": [
+    {
+      "directory": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_1",
+      "items_sha256": "56dc47dee428a8920889d37a00dd952103c5bd9ca5b0bdb793c80bf314b968be",
+      "planned_reviews": 45,
+      "repetition": 1,
+      "seed": 20261015,
+      "submission_template_sha256": "730e5ff3febdef69a6b69d1f9818a55069f194c1749b84d07d3c28a8db04be58"
+    },
+    {
+      "directory": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_2",
+      "items_sha256": "7f2247914a547ffddad7bedbf791cffab58a000621e1d939fb668288b6a0a0bd",
+      "planned_reviews": 45,
+      "repetition": 2,
+      "seed": 20261016,
+      "submission_template_sha256": "99013737cd192d6ab11e74b7d0821dfdc3762d8b794a6f10cb5cefef9dd1cd77"
+    },
+    {
+      "directory": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_r0_human_assignments/repetition_3",
+      "items_sha256": "da396424eee16d9b9cafd956a071dcad23133230d3dcc3029c3435d5b4868efa",
+      "planned_reviews": 45,
+      "repetition": 3,
+      "seed": 20261017,
+      "submission_template_sha256": "b6edf65c63b0429e0777528a415631c3294349217c9bf059ed7d4005c6247e03"
+    }
+  ],
+  "evidence_obligation_contract_sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+  "experiment_id": "A-EXP-01",
+  "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+  "generated_at_utc": "2026-10-16T13:36:42.813934+00:00",
+  "generator_sha256": "45181047907d3b0b7438f90c13b3e3f8c5981b940c37ef93ee766fd4be8c19ca",
+  "planned_total_reviews": 135,
+  "prohibited_sources_not_read": [
+    "research/experiments/cpp/r0_r1_r2_20261015/sealed_item_key.json",
+    "research/evidence/cpp/independent_review_20261015/blind_review_labels_frozen_20261015.json",
+    "research/evidence/cpp/independent_review_20261015/independent_review_comparison_20261015.json",
+    "research/evidence/cpp/independent_review_20261015/review_supplement.json",
+    "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/raw_model_requests",
+    "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/raw_model_responses",
+    "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/tool_results"
+  ],
+  "repetitions": [
+    1,
+    2,
+    3
+  ],
+  "review_items": 45,
+  "schema_version": "ohscanner.a-exp-01-r0-human-assignment-set-v1",
+  "seeds": [
+    20261015,
+    20261016,
+    20261017
+  ],
+  "source_inputs": [
+    {
+      "bytes": 209258,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/initial_candidate_set.json",
+      "role": "initial_candidate_set",
+      "sha256": "2fb5c899980719100a6b6b0f8f0de40534b533d73e27343a0c6c5c0258e56340"
+    },
+    {
+      "bytes": 56455,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/evidence_catalog.json",
+      "role": "evidence_catalog",
+      "sha256": "131be897022fd25255157388c918b1e0080c3549dcce118f2b35ffa7cebff4d3"
+    },
+    {
+      "bytes": 87763,
+      "path": "research/evidence/cpp/independent_review_20261015/blind_review_packet.json",
+      "role": "blind_review_packet",
+      "sha256": "2fd3164586e7afdb1fd27d1ef438100d23876b6164ffff191bd31ed6339c5eb4"
+    },
+    {
+      "bytes": 231780,
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/r0_review_queue.jsonl",
+      "role": "r0_review_queue",
+      "sha256": "7930e200cf71b4bba6bf0ce0bee16a35524ee55a3fd1b6f723b09c1e9bb3ca83"
+    }
+  ],
+  "status": "awaiting_three_independent_human_reviewers"
+}

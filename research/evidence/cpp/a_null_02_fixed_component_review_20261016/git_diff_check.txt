@@ -1,0 +1,7 @@
+warning: in the working copy of 'docs/项目现状与下一步.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'research/tests/a_null_02_controls/control_manifest.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'research/tests/a_null_02_controls/verify_controls.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/detectors/cpp/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/detectors/cpp/null_dereference_detector.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/detectors/test_cpp_null_dereference_signal_controls.py', LF will be replaced by CRLF the next time Git touches it

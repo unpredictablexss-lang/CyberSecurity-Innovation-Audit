@@ -1,0 +1,34 @@
+{
+  "actual_per_run_mean": {
+    "input_tokens_delta": 7183.82963,
+    "mean_wall_ms_delta": 14481.807407,
+    "output_tokens_delta": 943.859259,
+    "provider_attempts_delta": 1.0,
+    "reference_cost_usd_upper_bound_delta": 0.003946123444,
+    "tool_calls_delta": 4.0,
+    "total_tokens_delta": 8127.688889
+  },
+  "actual_total": {
+    "input_tokens_delta": 969817,
+    "mean_wall_ms_delta": 14481.807407,
+    "output_tokens_delta": 127421,
+    "provider_attempts_delta": 135,
+    "reference_cost_usd_upper_bound_delta": 0.532726665,
+    "run_failure_delta": 5,
+    "tool_calls_delta": 540,
+    "tool_failed_calls": 4,
+    "total_tokens_delta": 1097238
+  },
+  "comparison": "R2 minus R1, actual recorded main runs",
+  "interpretation": "R2 received two provider turns and four tool calls per run on average. Method effects cannot be separated from this additional budget. Reference cost is a pay-as-you-go upper bound, not observed Token Plan billing.",
+  "planned_135_run_maxima": {
+    "additional_provider_attempts_max": 135,
+    "max_cost_amount_usd": 101.25,
+    "model_input_tokens_max": 1080000,
+    "model_output_tokens_max": 216000,
+    "source_bytes_max": 8847360,
+    "tool_calls_max": 1080,
+    "tool_output_bytes_max": 8847360
+  },
+  "schema_version": "ohscanner.a-exp-01-r2-extra-budget-actual-v1"
+}
