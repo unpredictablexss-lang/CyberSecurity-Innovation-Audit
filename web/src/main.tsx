@@ -201,7 +201,7 @@ function App() {
           type="info"
           showIcon
           message="候选 ≠ 已确认漏洞"
-          description="保留解析、覆盖与证据缺口。0 条候选不是安全证明；当前工作台不执行动态验证或自动升级漏洞结论。"
+          description="保留解析、覆盖与证据缺口。0 条候选不是安全证明；动态验证只允许注册的 Docker Harness，环境不满足时会 blocked，且不会自动升级漏洞结论。"
         />
         <Card
           className="section-gap"
@@ -240,7 +240,7 @@ function App() {
           <Col span={10}>
             <Card title="研发能力边界">
               <Paragraph>
-                Agent 调查、隔离验证与版本影响将在后续模块接入。
+                只读调查、区间与版本矩阵入口已接入；真实模型未接入，动态验证受 Docker 环境约束，版本影响仍需人工证据。
               </Paragraph>
               <Button onClick={() => go("/capabilities")}>
                 查看能力与限制
@@ -321,7 +321,7 @@ function App() {
           {content}
         </Layout.Content>
         <Layout.Footer className="footer">
-          OHScanner · 候选、覆盖、证据分别记录 · 时间按浏览器本地时区显示
+          OHScanner · 候选、覆盖、证据分别记录 · 时间按浏览器本地时区显示 · 界面字体优先使用本机 MiSans
         </Layout.Footer>
       </Layout>
     </Layout>
@@ -334,7 +334,8 @@ createRoot(document.getElementById("root")!).render(
       token: {
         colorPrimary: "#176b63",
         borderRadius: 10,
-        fontFamily: "Inter, Segoe UI, Microsoft YaHei, sans-serif",
+        fontFamily:
+          '"MiSans", "MiSans L3", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif',
         colorBgLayout: "#f4f6f9",
       },
     }}

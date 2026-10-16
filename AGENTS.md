@@ -49,3 +49,12 @@ Resource-limited static subprocesses are not an untrusted-build/PoC sandbox.
   update docs/项目现状与下一步.md. PROGRAM_STATUS.md remains only a pointer.
 - Do not mark Draft Ready or merge without user authorization.
 - Keep docs to six current Markdown guides; historical evidence lives in Git or research assets.
+
+## Parallel development lanes (2026-10-17)
+Read research/coordination/parallel-20261017/README.md and your lane task before editing.
+The integrator supplies the full immutable base SHA and lane from the local workspace manifest.
+config/collaboration/ownership.json defines delivery scope; run scripts.check_change_scope
+against the integrator-provided base before handoff. Never relax the base policy to pass a check.
+Each lane uses its own environment, port and data/artifacts; do not launch the owner wrapper
+from a lane worktree. Original A/B and owner worktrees remain untouched.
+Shared integration changes need a separate concrete request, not an out-of-scope edit.

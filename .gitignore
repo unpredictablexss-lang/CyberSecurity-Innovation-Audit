@@ -239,3 +239,6 @@ web/dist/
 *.sqlite3
 *.sqlite3-*
 outputs/reports/workbench/
+
+# Independent workbench Python environment in each development lane
+.venv-web/

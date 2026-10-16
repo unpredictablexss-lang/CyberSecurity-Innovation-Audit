@@ -5,6 +5,7 @@ body {
   margin: 0;
   color: #1c283a;
   background: #f4f6f9;
+  font-family: "MiSans", "MiSans L3", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
 }
 .app {
   min-height: 100vh;

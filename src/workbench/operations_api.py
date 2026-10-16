@@ -7,7 +7,7 @@ from typing import Literal
 from fastapi import APIRouter, FastAPI
 from fastapi.responses import Response
 from pydantic import BaseModel, ConfigDict, Field
-from .operations import approved_url, date_selection, enqueue_range
+from .operations import approved_url, date_selection, enqueue_branch_comparison, enqueue_range
 from .operations_store import Operations, END
 from . import service
 
@@ -44,10 +44,28 @@ class DateRangeRequest(Strict):
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
+class DateRangePreviewRequest(Strict):
+    repository_id: str
+    branch: str = Field(min_length=1, max_length=200)
+    start: str = Field(min_length=10, max_length=40)
+    end: str = Field(min_length=10, max_length=40)
+    timezone: str = Field(min_length=1, max_length=100)
+
+
 class MatrixRequest(Strict):
     case_id: str
     repository_id: str
     commits: list[str] = Field(min_length=2, max_length=8)
+    include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
+    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    timeout_seconds: int = Field(default=600, ge=30, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
+
+
+class BranchComparisonRequest(Strict):
+    repository_id: str
+    baseline_ref: str = Field(min_length=1, max_length=200)
+    endpoint_ref: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(default_factory=lambda: ["."], min_length=1, max_length=100)
     detector_ids: list[str] = Field(min_length=1, max_length=10)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
@@ -111,6 +129,15 @@ def install_routes(app: FastAPI, settings, store):
         spec.update({"baseline": selection["baseline"], "endpoint": selection["endpoint"],
                      "date_selection": selection})
         return enqueue_range(settings, store, ops, spec)
+
+    @router.post("/operations/date-ranges/preview")
+    def date_range_preview(body: DateRangePreviewRequest):
+        return date_selection(settings, store, body.repository_id, body.branch,
+                              body.start, body.end, body.timezone)
+
+    @router.post("/operations/branch-comparisons", status_code=201)
+    def branch_comparison(body: BranchComparisonRequest):
+        return enqueue_branch_comparison(settings, store, ops, body.model_dump())
 
     @router.post("/operations/version-matrices", status_code=201)
     def version_matrix(body: MatrixRequest):

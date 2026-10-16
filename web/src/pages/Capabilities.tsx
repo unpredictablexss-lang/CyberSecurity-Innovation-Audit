@@ -48,7 +48,7 @@ export default function Capabilities({ detectors }: { detectors: any[] }) {
     <>
       <Header
         title="能力与研发状态"
-        description="只展示已实现能力，未接入模块不模拟成功。"
+        description="区分已接入的操作、运行条件与仍未验证的安全结论。"
       />
       <Row gutter={20}>
         <Col span={14}>
@@ -64,20 +64,23 @@ export default function Capabilities({ detectors }: { detectors: any[] }) {
           </Card>
         </Col>
         <Col span={10}>
-          <Card title="后续模块">
+          <Card title="平台模块状态">
             <Timeline
               items={[
                 {
-                  color: "gray",
-                  children: "Agent 调查：待实现。当前不发送源码到模型服务。",
+                  color: "blue",
+                  children:
+                    "只读调查：固定源码摘录、证据义务、Git 历史与有限符号事实已接入；不调用模型、不执行任意命令、不升级结论。",
                 },
                 {
-                  color: "gray",
-                  children: "动态验证：待接入已审查 Harness 与独立隔离环境。",
+                  color: "orange",
+                  children:
+                    "动态验证：AUTH-01 已接入固定 Docker Harness 与独立 Worker；缺少 Docker daemon 或固定镜像时返回 blocked。A 线 PoC 尚未接入此 Worker。",
                 },
                 {
-                  color: "gray",
-                  children: "版本影响与修复重验：待实现。告警消失不代表修复。",
+                  color: "blue",
+                  children:
+                    "源码同步、双 SHA / 日期区间与版本矩阵已接入；输出候选观察差异，affected / fixed / not_present 仍需证据，当前为 unknown。",
                 },
               ]}
             />
@@ -85,8 +88,8 @@ export default function Capabilities({ detectors }: { detectors: any[] }) {
           <Alert
             type="info"
             className="section-gap"
-            message="当前支持快照审计与人工调查"
-            description="队友的新算法和验证模块继续独立审查接入。"
+            message="平台入口已接通，证据闭环仍在建设"
+            description="当前环境 Docker CLI 不可用，隔离验证无法在此重跑；组件 Harness 历史通过记录不代表产品入口可达或漏洞已确认。"
           />
         </Col>
       </Row>

@@ -44,7 +44,7 @@ class Operations:
         return self.store.root / "operations" / key
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "revision_range", "version_matrix", "validation", "investigation"}:
+        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation"}:
             raise ValueError("unknown operation kind")
         key = uuid.uuid4().hex
         with self.store.connect() as db:
@@ -58,7 +58,7 @@ class Operations:
 
     def create_with_scans(self, kind, spec, repository_id, scan_specs):
         """Create an operation and its immutable endpoint jobs in one DB transaction."""
-        if kind not in {"revision_range", "version_matrix"} or not scan_specs:
+        if kind not in {"revision_range", "version_matrix", "branch_comparison"} or not scan_specs:
             raise ValueError("invalid scan operation")
         key = uuid.uuid4().hex
         job_ids = [uuid.uuid4().hex for _ in scan_specs]

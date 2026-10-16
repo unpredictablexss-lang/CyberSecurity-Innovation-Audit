@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit && node build.mjs"
+    "build": "tsc --noEmit && node build.mjs",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.0",

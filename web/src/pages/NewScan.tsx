@@ -54,6 +54,10 @@ export default function NewScan({
 }) {
   const [form] = Form.useForm();
   const [refs, setRefs] = useState<any[]>([]);
+  const [selectedRef, setSelectedRef] = useState("");
+  const [selectedRepository, setSelectedRepository] = useState("");
+  const [refsByRepository, setRefsByRepository] = useState<Record<string, any[]>>({});
+  const refsRequest = useRef(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   return (
@@ -102,20 +106,33 @@ export default function NewScan({
               >
                 <Select
                   placeholder="选择已登记仓库"
-                  options={repos.map((r) => ({ value: r.id, label: r.name }))}
-                  onChange={(id) =>
-                    api("/repositories/" + id + "/revisions")
-                      .then(setRefs)
-                      .catch((e) => setError(String(e)))
-                  }
+                  showSearch
+                  optionFilterProp="label"
+                  options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))}
+                  onOpenChange={(open) => { if (open) void refresh().catch((e) => setError(String(e))); }}
+                  onChange={(id) => {
+                    setSelectedRepository(id);
+                    setSelectedRef("");
+                    setRefs([]);
+                    form.setFieldValue("revision", undefined);
+                    const request = ++refsRequest.current;
+                    void api("/repositories/" + id + "/revisions")
+                      .then((items) => {
+                        setRefsByRepository((previous) => ({ ...previous, [id]: items }));
+                        if (refsRequest.current === request) setRefs(items);
+                      })
+                      .catch((e) => { if (refsRequest.current === request) setError(String(e)); });
+                  }}
                 />
               </Form.Item>
-              <Form.Item label="从 Ref 选择（可选）">
+              <Form.Item label="从当前仓库 Ref 选择（可选）">
                 <Select
                   showSearch
                   allowClear
-                  options={refs.map((r) => ({ value: r.ref, label: r.ref }))}
-                  onChange={(r) => r && form.setFieldValue("revision", r)}
+                  value={selectedRef || undefined}
+                  optionFilterProp="label"
+                  options={(refsByRepository[selectedRepository] || refs).map((r) => ({ value: r.ref, label: r.ref }))}
+                  onChange={(r) => { setSelectedRef(r || ""); form.setFieldValue("revision", r || undefined); }}
                 />
               </Form.Item>
               <Form.Item

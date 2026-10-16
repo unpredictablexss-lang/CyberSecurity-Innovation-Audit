@@ -100,6 +100,25 @@ class WorkbenchTests(unittest.TestCase):
         self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
         return job
 
+    def test_prebuilt_homepage_api_worker_and_report_artifacts(self):
+        page = self.client.get("/")
+        self.assertEqual(page.status_code, 200)
+        self.assertIn("OHScanner", page.text)
+        self.assertIn("assets/app", page.text)
+
+        job = self.completed()
+        detail = self.client.get(f"/api/v1/scans/{job['id']}")
+        self.assertEqual(detail.status_code, 200, detail.text)
+        report = self.client.get(f"/api/v1/scans/{job['id']}/artifacts/report.json")
+        markdown = self.client.get(f"/api/v1/scans/{job['id']}/artifacts/report.md")
+        manifest = self.client.get(f"/api/v1/scans/{job['id']}/artifacts/manifest.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        self.assertEqual(markdown.status_code, 200, markdown.text)
+        self.assertEqual(manifest.status_code, 200, manifest.text)
+        self.assertEqual(manifest.json()["artifacts"]["report.json"], job["report_sha256"])
+        self.assertEqual(json.loads(report.text)["commit"], self.commit)
+        self.assertIn("OHScanner", markdown.text)
+
     def test_catalog_research_only(self):
         r = self.client.get("/api/v1/detectors")
         self.assertEqual({x["id"] for x in r.json()}, set(IDS))
