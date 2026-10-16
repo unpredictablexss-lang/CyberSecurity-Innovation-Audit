@@ -1,0 +1,212 @@
+{
+  "schema_version": "ohscanner.cap01-source-manifest.v1",
+  "candidate_id": "ohscanner.interface.ipc:eaf73b5d3dd8cbed",
+  "repository_identity": {
+    "repository": "openharmony/window_window_manager",
+    "declared_remote": "https://github.com/openharmony/window_window_manager.git",
+    "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+    "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617"
+  },
+  "scan_identity": {
+    "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.5.0",
+    "rule_id": "ipc.capability.export",
+    "rule_version": null,
+    "profile_id": "light-ast",
+    "scope_files": 1079,
+    "scope_loc": 472214,
+    "report_path": "outputs/reports/community_scan_20261016/window_window_manager_production_scope/report.json"
+  },
+  "source_observation": {
+    "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+    "line": 1778,
+    "byte_start": 83689,
+    "byte_end": 83741,
+    "blob": "26df3196683976a9f175292fcbf54efef262eaa0",
+    "sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab"
+  },
+  "sources": [
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "blob": "26df3196683976a9f175292fcbf54efef262eaa0",
+      "bytes": 95874,
+      "sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab",
+      "role": "IPC entry, dispatch and capability handoff"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+      "blob": "f36a03ddbca81a55e25e56d8cd6d8b324ccc7760",
+      "bytes": 202800,
+      "sha256": "8bab03aaba0db4b0ce1fb7d47b98215a5c32cf07e45be6e031f4484218c8e754",
+      "role": "transaction construction and returned remote object"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/screen_session_manager.cpp",
+      "blob": "b1b6226de88882fd654389fb45a1579f6954bea5",
+      "bytes": 796200,
+      "sha256": "f0d8bd17948136540a0b4fabe4dc94c551cf6cfdd2d85a2437c5f7b63beeb805",
+      "role": "SystemAbility registration and render-session lookup"
+    },
+    {
+      "path": "window_scene/session/screen/src/screen_session.cpp",
+      "blob": "2442c62f00c293ae9f0437c4f46f7c7609c5eeaa",
+      "bytes": 142062,
+      "sha256": "c3f5d1942808c50f880cb302a8f0f62a5ecd0ab76709904963636804d73d3274",
+      "role": "stored render-session remote object"
+    },
+    {
+      "path": "window_scene/common/include/session_permission.h",
+      "blob": "707976aeb1cd12c36a5235cba40d8f97c1cd22e7",
+      "bytes": 3659,
+      "sha256": "abd47fd6c02a86c176c2e522557465cff0c238d3cc6a4fcde3e44b1d41a40a4c",
+      "role": "existing authorization interface"
+    },
+    {
+      "path": "window_scene/common/src/session_permission.cpp",
+      "blob": "4be110940cf954f6ff5f511566b0160723b0593e",
+      "bytes": 15132,
+      "sha256": "42d5f9ec4370d578788228ddc8c506b230ea90d186d006c15d49df970a934b6e",
+      "role": "existing caller-token authorization implementation"
+    },
+    {
+      "path": "dmserver/include/display_manager_interface_code.h",
+      "blob": "931c25e655c0407784dd3c2e8e484f7ecc2dc2ed",
+      "bytes": 9024,
+      "sha256": "ab9bf36e633a0b487656f837da2ba161b855d40eb8c90fd6a58033642013fc83",
+      "role": "transaction code enum"
+    },
+    {
+      "path": "window_scene/screen_session_manager_client/src/screen_session_manager_client.cpp",
+      "blob": "35bb84bf836c016c2e37d1debb1388a8b02a23ee",
+      "bytes": 72979,
+      "sha256": "6eecb28e8f725791322b1dc19b9b802bf5607025f20980153d3768463d05fb6e",
+      "role": "SystemAbility client acquisition"
+    },
+    {
+      "path": "window_scene/screen_session_manager/include/screen_session_manager.h",
+      "blob": "76110d9dc26567fee4aa0cb76d9b2cb7b213bd20",
+      "bytes": 89312,
+      "sha256": "e8c21106e0a4fd7fa8fe891a9809e5140742d4ddd25a95a403ff1b6198431e48",
+      "role": "SystemAbility and stub inheritance"
+    },
+    {
+      "path": "window_scene/screen_session_manager/BUILD.gn",
+      "blob": "913c185826855195782c94ed99682a3550c9d737",
+      "bytes": 11502,
+      "sha256": "4e2cf3ec0a3fab91bc4f5dbb1114c95e6c9e1d6a85d0b3ec6d598c216421bb77",
+      "role": "build dependencies"
+    }
+  ],
+  "relations": [
+    {
+      "path": "dmserver/include/display_manager_interface_code.h",
+      "line": 211,
+      "contains": "TRANS_ID_GET_RENDER_SESSION,",
+      "relation": "attacker-controlled transaction code selector"
+    },
+    {
+      "path": "window_scene/screen_session_manager_client/src/screen_session_manager_client.cpp",
+      "line": 64,
+      "contains": "GetSystemAbility(DISPLAY_MANAGER_SERVICE_SA_ID)",
+      "relation": "source-visible remote service acquisition"
+    },
+    {
+      "path": "window_scene/screen_session_manager_client/src/screen_session_manager_client.cpp",
+      "line": 70,
+      "contains": "iface_cast<IScreenSessionManager>(remoteObject)",
+      "relation": "remote object becomes ScreenSessionManager proxy"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/screen_session_manager.cpp",
+      "line": 374,
+      "contains": "SystemAbility::MakeAndRegisterAbility",
+      "relation": "component registers a SystemAbility"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+      "line": 5568,
+      "contains": "WriteInterfaceToken(GetDescriptor())",
+      "relation": "proxy writes the interface descriptor"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+      "line": 5572,
+      "contains": "WriteUint64(static_cast<uint64_t>(screenId))",
+      "relation": "caller controls screenId input"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+      "line": 5576,
+      "contains": "TRANS_ID_GET_RENDER_SESSION",
+      "relation": "proxy sends the selected transaction"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+      "line": 5581,
+      "contains": "return reply.ReadRemoteObject();",
+      "relation": "caller receives returned remote object"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "line": 42,
+      "contains": "OnRemoteRequestInner(code, data, reply, option)",
+      "relation": "remote entry delegates to dispatcher"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "line": 50,
+      "contains": "data.ReadInterfaceToken() != GetDescriptor()",
+      "relation": "only source-visible request validation is descriptor equality"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "line": 1775,
+      "contains": "case DisplayManagerMessage::TRANS_ID_GET_RENDER_SESSION",
+      "relation": "dispatch reaches render-session branch"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "line": 1777,
+      "contains": "GetRenderSession(screenId)",
+      "relation": "attacker-selected screenId reaches lookup"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "line": 1778,
+      "contains": "reply.WriteRemoteObject(renderSession)",
+      "relation": "sensitive capability handoff"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/screen_session_manager.cpp",
+      "line": 3207,
+      "contains": "return screenSession->GetRenderSession();",
+      "relation": "lookup returns stored render-session object"
+    },
+    {
+      "path": "window_scene/session/screen/src/screen_session.cpp",
+      "line": 1009,
+      "contains": "return renderSession_;",
+      "relation": "render-session remote object source"
+    },
+    {
+      "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "line": 2028,
+      "contains": "SessionPermission::IsSystemCalling()",
+      "relation": "same translation unit has a caller authorization pattern"
+    },
+    {
+      "path": "window_scene/common/src/session_permission.cpp",
+      "line": 79,
+      "contains": "IPCSkeleton::GetCallingTokenID()",
+      "relation": "existing authorization consumes caller token identity"
+    },
+    {
+      "path": "window_scene/common/src/session_permission.cpp",
+      "line": 84,
+      "contains": "IsSystemAppByFullTokenID",
+      "relation": "existing authorization distinguishes system-app identity"
+    }
+  ],
+  "checkout_note": "The source checkout is dirty and is not used as provenance. All identities and quoted relations are read from the pinned local Git object store."
+}

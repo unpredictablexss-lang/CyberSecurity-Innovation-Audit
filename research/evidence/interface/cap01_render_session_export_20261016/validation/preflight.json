@@ -1,0 +1,53 @@
+{
+  "schema_version": "ohscanner.cap01-preflight.v1",
+  "timestamp_client": "2026-10-16 Asia/Shanghai",
+  "target": {
+    "repository": "openharmony/window_window_manager",
+    "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+    "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+    "declared_remote": "https://github.com/openharmony/window_window_manager.git",
+    "checkout_dirty": true,
+    "provenance": "pinned local Git objects only; dirty checkout bytes were not used"
+  },
+  "source_verification": {
+    "status": "passed",
+    "source_count": 10,
+    "relation_count": 18,
+    "primary_blob": "26df3196683976a9f175292fcbf54efef262eaa0",
+    "primary_sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab"
+  },
+  "patch_check": {
+    "status": "passed",
+    "git_apply_check_exit_code": 0,
+    "git_apply_exit_code": 0,
+    "patched_source_sha256": "2b379e4427071b3536583c9f0e16ccd90d7389953a534be87dae087ec74b9295",
+    "minimal_guard_present": true,
+    "temporary_worktree_removed": true
+  },
+  "poc_static_checks": {
+    "runner_ast_parse": "passed",
+    "host_guard_exit_code": 1,
+    "host_guard_stderr": "container_required: PoC build/run is allowed only in the isolated Docker validation Worker",
+    "host_build_or_run_performed": false
+  },
+  "dynamic_validation": {
+    "required_isolation": "local Docker/Worker",
+    "docker_binary": null,
+    "dockerenv_visible_in_wsl": false,
+    "status": "unexecuted_blocked",
+    "reason": "No Docker CLI or daemon is available in the current Windows/WSL environment; the container-only runner refused host execution before any PoC build/run.",
+    "component_model_dynamic_validation": "unexecuted",
+    "product_dynamic_validation": "unexecuted",
+    "stable_replay": false,
+    "sanitizer_logs": "unexecuted",
+    "vulnerable_fixed_patched_execution": "unexecuted"
+  },
+  "environment": {
+    "platform": "Windows host with WSL Python 3.10.12",
+    "target_git": "git version 2.34.1",
+    "python": "3.10.12",
+    "network_used": false
+  },
+  "candidate_status": "candidate/unknown",
+  "validated_vulnerability": 0
+}

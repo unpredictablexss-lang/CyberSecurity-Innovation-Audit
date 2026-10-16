@@ -1,0 +1,15 @@
+diff --git a/window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp b/window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp
+index 26df3196683976a9f175292fcbf54efef262eaa0..0000000000000000000000000000000000000000 100644
+--- a/window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp
++++ b/window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp
+@@ -1773,6 +1773,10 @@ int32_t ScreenSessionManagerStub::OnRemoteRequestInner(uint32_t code, MessagePar
+             break;
+         }
+         case DisplayManagerMessage::TRANS_ID_GET_RENDER_SESSION: {
++            if (!SessionPermission::IsSystemCalling()) {
++                TLOGE(WmsLogTag::DMS, "only support system calling.");
++                break;
++            }
+             ScreenId screenId = static_cast<ScreenId>(data.ReadUint64());
+             sptr<IRemoteObject> renderSession = GetRenderSession(screenId);
+             reply.WriteRemoteObject(renderSession);

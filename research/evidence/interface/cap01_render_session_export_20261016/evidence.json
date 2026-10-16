@@ -1,0 +1,188 @@
+{
+  "schema_version": "ohscanner.competition-candidate-evidence.v2",
+  "generated_date_client": "2026-10-16",
+  "candidate_status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "promotion": {
+    "confirmed": false,
+    "reportable": false,
+    "reason": "Product build, deployed permission/identity boundary, product runtime trace, CIA impact and affected version/branch evidence are missing."
+  },
+  "selection": {
+    "priority_attempted": "RC-JSPROXY",
+    "priority_status": "product_gate_blocked_component_revalidation_complete",
+    "priority_blockers": [
+      "No complete product source/toolchain/GN dependency closure",
+      "No vulnerable/fixed_control/patched product artifacts or artifact hashes",
+      "No product permission, caller identity, UID/user/sandbox or deployment-policy evidence",
+      "No product interleaving trace or CIA measurements",
+      "2026-10-16 attempt 1 failed before variant generation because current detector hash drifted from the historical Harness manifest",
+      "2026-10-16 attempt 2 failed before runtime replay because clang++ symlink invocation omitted the C++ runtime"
+    ],
+    "fallback_candidate": "ohscanner.interface.ipc:eaf73b5d3dd8cbed",
+    "fallback_rationale": "The community scan candidate is selected because RC-JSPROXY still lacks product source/build/permission/deployment evidence despite complete component-model patch revalidation; the fallback has the clearest source-bound SystemAbility path to a returned remote-object capability.",
+    "component_revalidation": {
+      "status": "stable_reproduced_and_patch_revalidated",
+      "scope": "controlled component model only",
+      "vulnerable_race": "3/3 ThreadSanitizer triggered",
+      "vulnerable_close_get_entry": "3/3 ThreadSanitizer triggered",
+      "fixed_control_mutex": "3/3 clean",
+      "patched_atomic_minimal": "3/3 clean",
+      "four_class_controls": "20/20 passed",
+      "product_validation": false
+    }
+  },
+  "project_checkout": {
+    "repository": "CyberSecurity-Innovation-Audit",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "993cfdc21877440f5d4a4ad345ee9ec236e098fa",
+    "tree": "5d228d0d895f29acfc841191f4f9a5167356cc3e",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty": true,
+    "dirty_note": "Teammate and generated worktree changes were preserved; no push or merge was performed."
+  },
+  "target": {
+    "repository": "openharmony/window_window_manager",
+    "declared_remote": "https://github.com/openharmony/window_window_manager.git",
+    "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+    "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+    "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+    "commit_time": "2026-10-08T11:45:03+08:00",
+    "source_provenance": "verified pinned local Git objects",
+    "checkout_dirty": true,
+    "checkout_used_as_provenance": false,
+    "shallow_local_history": true,
+    "branch": "unknown",
+    "version": "unknown"
+  },
+  "detector_binding": {
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.5.0",
+    "rule_id": "ipc.capability.export",
+    "rule_version": null,
+    "profile_id": "light-ast",
+    "scope_files": 1079,
+    "scope_loc": 472214,
+    "candidate_cwe": "CWE-926",
+    "consequence_cwe": "CWE-668",
+    "evidence_type": "syntax",
+    "confidence": "unassessed",
+    "severity": "unassessed"
+  },
+  "primary_source": {
+    "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+    "blob": "26df3196683976a9f175292fcbf54efef262eaa0",
+    "bytes": 95874,
+    "sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab",
+    "line": 1778,
+    "byte_start": 83689,
+    "byte_end": 83741
+  },
+  "entry_and_call_path": {
+    "entry": "ScreenSessionManagerStub::OnRemoteRequest",
+    "dispatcher": "ScreenSessionManagerStub::OnRemoteRequestInner",
+    "transaction": "DisplayManagerMessage::TRANS_ID_GET_RENDER_SESSION",
+    "attacker_controlled_inputs": [
+      "transaction code",
+      "screenId"
+    ],
+    "sensitive_operation": "reply.WriteRemoteObject(renderSession)",
+    "path_status": "static_source_verified",
+    "product_runtime_trace": "unexecuted"
+  },
+  "boundaries": {
+    "identity": "unknown",
+    "permission": "unknown",
+    "deployment": "unknown",
+    "attacker_control": "conditional_unknown",
+    "source_visible_auth_on_branch": "interface descriptor only",
+    "compared_local_authorization_pattern": "SessionPermission::IsSystemCalling exists in the same translation unit but is not used by the render-session branch",
+    "outer_samgr_selinux_or_api_policy": "unknown"
+  },
+  "trigger": {
+    "type": "synchronous binder request",
+    "concurrency_required": false,
+    "lifecycle_window": "ScreenSession exists and renderSession_ is non-null",
+    "preconditions": [
+      "SystemAbility is registered",
+      "caller can obtain IScreenSessionManager proxy",
+      "caller sends valid descriptor and TRANS_ID_GET_RENDER_SESSION",
+      "screenId resolves to a ScreenSession with renderSession_"
+    ]
+  },
+  "cia": {
+    "confidentiality": "unknown",
+    "integrity": "unknown",
+    "availability": "unknown",
+    "observed_capability_handoff": true,
+    "product_impact": "unknown"
+  },
+  "cve": {
+    "status": "not_assigned",
+    "public_assignment_verified": false
+  },
+  "affected_scope": {
+    "modules": [
+      "window_scene/screen_session_manager",
+      "window_scene/session/screen",
+      "window_scene/screen_session_manager_client"
+    ],
+    "versions": "unknown",
+    "branches": "unknown",
+    "other_versions_or_branches": "unknown"
+  },
+  "patch": {
+    "path": "patch/minimal.patch",
+    "strategy": "Reuse SessionPermission::IsSystemCalling before render-session lookup and capability handoff.",
+    "git_apply_check": "passed",
+    "git_apply_to_exact_blob": "passed",
+    "patched_source_sha256": "2b379e4427071b3536583c9f0e16ccd90d7389953a534be87dae087ec74b9295",
+    "upstream_fix": false
+  },
+  "poc": {
+    "kind": "source_bound_component_model",
+    "product_build": false,
+    "variants": [
+      "vulnerable",
+      "fixed_control",
+      "patched"
+    ],
+    "scenarios": [
+      "unauthorized_export",
+      "authorized_export",
+      "wrong_descriptor",
+      "unknown_screen"
+    ],
+    "planned_repeats": 3,
+    "sanitizers": [
+      "AddressSanitizer",
+      "UndefinedBehaviorSanitizer"
+    ],
+    "build_status": "unexecuted",
+    "run_status": "unexecuted",
+    "runtime_logs": "unexecuted",
+    "stable_replay": false,
+    "host_guard": "passed_before_build_and_run"
+  },
+  "validation": {
+    "required_isolation": "local Docker/Worker",
+    "docker_available": false,
+    "dynamic_status": "unexecuted_blocked",
+    "network_used": false,
+    "source_bindings_verified": 10,
+    "relations_verified": 18,
+    "preflight_path": "validation/preflight.json",
+    "host_preflight_log": "validation/host-preflight.log"
+  },
+  "unknowns": [
+    "Product build artifact and module hash",
+    "Product version and affected branch/tag",
+    "SAMGR, SELinux and API-level service access policy",
+    "Caller identity, UID/user/sandbox and permission grant/deny behavior",
+    "Whether an unprivileged or unrelated caller can acquire the IScreenSessionManager proxy",
+    "Actual render-session remote-object capability surface",
+    "Product runtime reachability and stable trigger",
+    "Confidentiality, integrity and availability impact",
+    "Product vulnerable/fixed/patched builds and three-repeat replay"
+  ]
+}

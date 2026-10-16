@@ -1,0 +1,66 @@
+{
+  "schema_version": "ohscanner.cap01-package-manifest.v1",
+  "candidate_id": "ohscanner.interface.ipc:eaf73b5d3dd8cbed",
+  "candidate_status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "package_files": [
+    {
+      "path": "README.md",
+      "bytes": 1924,
+      "sha256": "7dba51eab2636ddea0b7d3419e96f3c29e0450640911baa3e635c0744a0b9c48"
+    },
+    {
+      "path": "candidate-closure.md",
+      "bytes": 12086,
+      "sha256": "4bae0837a0d56c63a29791c6428c158f8dd7513094ca79359cca787a0550396b"
+    },
+    {
+      "path": "evidence.json",
+      "bytes": 7606,
+      "sha256": "854a62cde57b8990a1e66cdacad58f1aaed29e46a7dde665d5064e5d25159f14"
+    },
+    {
+      "path": "patch/minimal.patch",
+      "bytes": 1008,
+      "sha256": "8161da67e2a2d1256e737d91d674a9cc8c0fe8ac80d3d739c31b0aeb25d55372"
+    },
+    {
+      "path": "poc/README.md",
+      "bytes": 2752,
+      "sha256": "f5ed1912ccf4073ef1360e909b898565cd41de6eb1f397cd7aa3c5b8ae8b5ad6"
+    },
+    {
+      "path": "poc/harness.cpp",
+      "bytes": 4218,
+      "sha256": "a9a54a3f746c5ebea9bb74d3dec16cc7011f11d9e6b440425571c50499c383c5"
+    },
+    {
+      "path": "poc/run_poc.py",
+      "bytes": 10407,
+      "sha256": "34a1cb641857d153a16bfa22839637d3f6f85d76bec7dc5218fe806f8964a8c9"
+    },
+    {
+      "path": "source-manifest.json",
+      "bytes": 8831,
+      "sha256": "07df594d252b6c7c83cb3b9938cfe1d04389daa09b65d2e812a6569b2815205f"
+    },
+    {
+      "path": "validation/host-preflight.log",
+      "bytes": 1036,
+      "sha256": "1ac682fa8251aca7fd71dd6e861b906f03404c13773a62b5f210f6188396007d"
+    },
+    {
+      "path": "validation/preflight.json",
+      "bytes": 2108,
+      "sha256": "6e3b5af09893b4fbc76de09b9bca05cb0315f4f730b088c459742deec891a971"
+    }
+  ],
+  "external_files": [
+    {
+      "path": "tests/test_cap01_render_session_export_poc.py",
+      "bytes": 5232,
+      "sha256": "144176761e7df67b0ccb2bae4ab327c0eb1475bb2caca14987ee2d7b69f26ef0"
+    }
+  ],
+  "note": "package-manifest.json excludes only its own bytes"
+}
