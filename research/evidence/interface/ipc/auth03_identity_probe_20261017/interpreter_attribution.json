@@ -1,0 +1,97 @@
+{
+ "candidates_by_rule": {
+  "ipc.auth.guard-coverage": 8,
+  "ipc.auth.missing": 21,
+  "ipc.auth.object-owner": 2,
+  "ipc.capability.export": 43,
+  "ipc.relay.descriptor-boundary": 92
+ },
+ "components_with_reports": 30,
+ "conjunction_counts_by_entailment": {
+  "caller_class_sensitive_calls_reached_without_a_caller_class": 0,
+  "how": "Zero candidates for a rule implies zero emissions for that rule (emit() appends unconditionally; observation->finding is one-to-one), so these are read from the reports, not from a second instrumented run.",
+  "identity_rules_whose_conjunction_was_satisfied": 0,
+  "rules_read": [
+   "ipc.auth.identity-domain",
+   "ipc.auth.service-identity",
+   "ipc.auth.request-identity",
+   "ipc.auth.caller-class"
+  ]
+ },
+ "instrument": {
+  "mechanism": "A PYTHONPATH sitecustomize wraps Interpreter.value in the pinned read-only tree; the driver's argv is otherwise unchanged.",
+  "sitecustomize": "research/deliveries/ipc/probe_site/sitecustomize.py",
+  "sitecustomize_sha256": "1705a5c21a8737b59a840034a8f56e616694696ff51c4b426bd72b894940306b"
+ },
+ "value_attribution": {
+  "components_probed": 30,
+  "components_that_evaluated_any_predicate": 9,
+  "distinct_sites_by_subject": {
+   "": 4,
+   "caller": 10,
+   "request": 2,
+   "unknown": 13
+  },
+  "evaluations_by_subject": {
+   "": 8,
+   "caller": 102,
+   "request": 4,
+   "unknown": 31
+  },
+  "per_component_evaluations": {
+   "ability_ability_runtime": {
+    "request": 2
+   },
+   "bundlemanager_bundle_framework": {
+    "request": 2
+   },
+   "distributeddatamgr_data_share": {
+    "caller": 20
+   },
+   "filemanagement_dfs_service": {
+    "unknown": 31
+   },
+   "multimedia_camera_framework": {
+    "caller": 2
+   },
+   "multimedia_player_framework": {
+    "": 4,
+    "caller": 28
+   },
+   "systemabilitymgr_samgr": {
+    "": 4,
+    "caller": 4
+   },
+   "telephony_call_manager": {
+    "caller": 44
+   },
+   "update_updateservice": {
+    "caller": 4
+   }
+  },
+  "records_reported_as_errors": [],
+  "sites": {
+   "caller_uid": [],
+   "request": [
+    {
+     "component": "ability_ability_runtime",
+     "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+     "git_commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+     "line": 3465,
+     "predicate": "VerifyPermission",
+     "source_sha256": "7b59dfcac3b9fc4dd98c1fedfdb788fa1689bdfc252e7fde1b4a6c11307e6867"
+    },
+    {
+     "component": "bundlemanager_bundle_framework",
+     "file": "services/bundlemgr/src/bundle_installer_host.cpp",
+     "git_commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+     "line": 1838,
+     "predicate": "VerifyPermission",
+     "source_sha256": "28091a6a1d267a20ca45d8efcd48e1fb72eeb72bb09419bc6fa1802970947852"
+    }
+   ],
+   "self": []
+  }
+ },
+ "what": "What the interpreter attributed to every permission-predicate call it evaluated. Detector-internal: the wrapper reads the value the analysis computed and re-evaluates nothing."
+}

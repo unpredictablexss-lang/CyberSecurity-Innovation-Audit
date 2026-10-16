@@ -1,6 +1,6 @@
 {
   "experiment": "AUTH-03 identity rules: does the shape alone raise a candidate, and if not which precondition is missing",
-  "question": "ability_ability_runtime @ 4ae23f04b8f4, services/abilitymgr/src/ability_manager_stub.cpp:3464-3467 reads a permission name, a pid and a uid out of the parcel and hands them to VerifyPermission, yet no ipc.auth.request-identity candidate came out of the component. Is the rule unable to see request-derived identity, or is a precondition unmet?",
+  "question": "ability_ability_runtime @ 4ae23f04b8f4, services/abilitymgr/src/ability_manager_stub.cpp:3461-3465 reads a permission name, a pid and a uid out of the parcel and hands them to VerifyPermission, yet no ipc.auth.request-identity candidate came out of the component. Is the rule unable to see request-derived identity, or is a precondition unmet?",
   "target": {
     "repository": "openharmony/ability_ability_runtime",
     "origin": "https://gitee.com/openharmony/ability_ability_runtime.git",
@@ -9,7 +9,8 @@
     "working_tree": "clean (git status --porcelain empty)",
     "site": {
       "file": "services/abilitymgr/src/ability_manager_stub.cpp",
-      "lines": [3464, 3467],
+      "lines": [3461, 3465],
+      "line_note": "Corrected 2026-10-17 from the earlier [3464, 3467], which was a transcription slip of three lines; the file's sha256 is unchanged, so the source did not drift. Re-verified live against corpus-ipc-shape: ReadString=3461, ReadInt32(pid)=3462, ReadInt32(uid)=3463, VerifyPermission=3465.",
       "source_sha256": "7b59dfcac3b9fc4dd98c1fedfdb788fa1689bdfc252e7fde1b4a6c11307e6867",
       "statements": [
         "std::string permission = data.ReadString();",
@@ -37,7 +38,9 @@
     "The shape alone is not enough. The identical statements with nothing modelled after them (case 1) raise nothing at all -- the predicate is collected into state.identity_issues and only emitted when a call in sensitive_calls is reached on that path (analysis.py action()).",
     "A helper whose name ends in Inner is not a barrier when it is in the same file and called by name (case 7). So the real component's silence is not explained by the handler's name.",
     "The real file is parsed complete on both sides and still raises nothing for request-identity, although the shape is at :3465. Its caller is the IDL-generated dispatcher, which is not in the source tree, so the body is not on a path from any entry root: the same coverage gap as ipc.auth.caller-class, plus the missing sensitive effect.",
-    "Both-side control: the caller-token form (case 4) is silent while the request form (case 2) fires, so the rule is not simply flagging every predicate call."
+    "Both-side control: the caller-token form (case 4) is silent while the request form (case 2) fires, so the rule is not simply flagging every predicate call.",
+    "CORRECTION (2026-10-17, by the detector-internal measurement). Cases 5 and 6 are synthetic: they prove the rules CAN fire, not why the corpus is silent. The earlier reading of the 16 self sites as 'shape exists, the sensitive-effect precondition is unmet' is wrong for service-identity -- every one of the 17 identity census sites is inside a scope shard of its component, yet the interpreter evaluates none of them, because each enclosing function is client/kit/utility code never reached from an entry root. service-identity's silence is a COVERAGE gap of the same class as caller-class and position-underflow, not a precondition the corpus fails. See interpreter_attribution.json and 交付项 7 section 4. Only request-identity remains a precondition-class silence.",
+    "The sensitive-effect precondition is doing real work, not padding. The second request-derived site the interpreter binds (bundle_installer_host.cpp:1838, see interpreter_attribution.json) is a benign administrative check of another bundle's permission, taking its value from a parameter; without the precondition the rule would report it, and it is not a vulnerability. This is corpus-internal evidence against loosening the rule to raise the count."
   ],
   "counts_over_the_corpus": {
     "components": 30,
@@ -46,15 +49,17 @@
     "permission_predicate_arguments_classified": 1608,
     "caller_uid": 0,
     "request": 1,
+    "request_note": "LOWER BOUND. The detector-internal measurement in this directory (interpreter_attribution.json, from the probe_site instrument) binds 2 request-derived sites: this one plus bundle_installer_host.cpp:1838, whose argument arrives through a parameter and which the text classifier above reports as unresolved. Both sites still emit nothing, so no candidate moved.",
     "self": 16,
     "self_in_a_file_that_also_resets_identity": 1,
     "caller_token": 260,
-    "reproduce": "research/deliveries/ipc/permission_arg_classes.py --audit-root <reports> --corpus-root <root> ... --list-sites"
+    "reproduce": "research/deliveries/ipc/permission_arg_classes.py --audit-root <reports> --corpus-root <root> ... --list-sites",
+    "interpreter_measurement": "research/evidence/interface/ipc/auth03_identity_probe_20261017/interpreter_attribution.json"
   },
   "scope_limits": [
     "Static re-run only. No build, no PoC, no dynamic validation.",
     "Cases 1-7 are built from statement text and fixture declarations, not from the component's real translation unit; they establish which precondition the rule requires, not what the component's behaviour is.",
-    "The single request-derived site found by the text census is the permission check itself; nothing here says the component is vulnerable, and VerifyPermission's semantics are not established.",
+    "The one request-derived site this text census resolves (the interpreter binds two) is the permission check itself; nothing here says the component is vulnerable, and VerifyPermission's semantics are not established.",
     "The argument census resolves one local-assignment hop. A value travelling through a container, a member or a function is counted as unresolved, so 0 caller_uid is a statement about this method, not a proof of absence."
   ]
 }

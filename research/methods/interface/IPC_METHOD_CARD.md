@@ -134,6 +134,26 @@ Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. D
 
 # IPC method card — a shape count is an upper bound: 30 components, and what the identity rules actually require (2026-10-17)
 
+> **Corrected the same day by [交付项 7](../../deliveries/ipc/20261017-interpreter-attribution-auth03.md)**, which
+> measured the interpreter's own attribution instead of a text classifier. Three points below are
+> superseded:
+>
+> 1. The bullet "these rules also require a modelled sensitive effect" holds for **`request-identity`
+>    only**. `service-identity` fails earlier: all 17 census sites are **in scope** and the walk evaluates
+>    **none** of them (every enclosing function is client/kit/utility code), so it is a **coverage**
+>    gap like `caller-class`, not a precondition the corpus fails. Measured over the same 30 components:
+>    **145** predicate calls evaluated, `caller` 102, unattributable 31, same-file-shadowed 8,
+>    `request` 4 — and **`caller_uid` 0, `self` 0**. The silence is the interpreter's, not the corpus's.
+> 2. `ability_manager_stub.cpp:3464-3467` should read **3461/3465** (the four statements; file sha256
+>    `7b59dfca…` unchanged, so it was transcription, not drift).
+> 3. `request` **1** is a **lower bound**. `bundle_installer_host.cpp:1838` is a second request-derived
+>    binding the text classifier refused (its argument arrives via a parameter) and the interpreter
+>    resolves it; measured 2, and no candidate moved — both sites still emit nothing.
+>
+> The both-side control also got stronger: the 102 `caller` evaluations are the negative side (a
+> predicate handed the caller's own identity stays silent) as against the 4 `request` bindings that
+> *did* record identity issues.
+
 Second deliverable of lane `lanes.ipc` on `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
 (`0.8.0`, `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0`). Records:
 `research/deliveries/ipc/20261017-data01-mechanism.md`,
