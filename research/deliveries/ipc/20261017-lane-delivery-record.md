@@ -6,14 +6,15 @@
 
 - lane `lanes.ipc`；branch `work/ipc-20261017`
 - base `6a41dc9b1aa030158e09be6241e2b14341f9256d`（integration base，本线**未** rebase）
-- head：**本记录所在提交**。本线在本 base 上共 7 个提交，按提交信息依次是
+- head：**本记录所在提交**。本线在本 base 上共 8 个提交，按提交信息依次是
   "per-rule controls for the six families, and an 18-component measurement"（`bb24978`）→
   "census the shapes the six silent rules key on"（`09f49d7`）→
   "why the six silent rules are silent, and 12 more components"（`46d4f64`）→
   "measure the interpreter's own identity attribution, and correct two mechanisms"（`df7bd8e`）→
   "measure why caller-class never emitted"（`400751e`）→
   "measure the coverage ceiling instead of assuming it"（`24c7f6c`）→
-  "widen the corpus by mechanism, and measure the loudest rule"（本提交）——
+  "widen the corpus by mechanism, and measure the loudest rule"（`629f047`）→
+  "screen every emitting rule with the same modes, and read every flagged row"（本提交）——
   本提交的确切 SHA 会随 `--amend` 变化，故此处不写死；**未 push、未开 PR、未标 Ready、未 merge**
 - worktree `/home/audit/ohscanner/worktrees/parallel-ipc-20261017`
 
@@ -56,6 +57,7 @@ research/deliveries/ipc/20261017-interpreter-attribution-auth03.md
 research/deliveries/ipc/20261017-caller-class-walk-coverage.md
 research/deliveries/ipc/20261017-coverage-ceiling-measured.md
 research/deliveries/ipc/20261017-widen-corpus-and-precision.md  (交付项 10)
+research/deliveries/ipc/20261017-rule-precision-screen.md      (交付项 11)
 research/deliveries/ipc/20261017-lane-delivery-record.md      (本文件)
 research/evidence/interface/ipc/component_audit_20261017/     (components.json, index.json, 18×manifest)
 research/evidence/interface/ipc/component_audit_shape_20261017/ (components.json, index.json, 12×manifest)
@@ -66,10 +68,12 @@ research/evidence/interface/ipc/auth01_precision_probe_20261017/ (precision_prob
 research/evidence/interface/ipc/copy_range_counterfactual_20261017/ (counterfactual.json, patch.diff,
                                                                    patched_analysis.sha256)
 research/evidence/interface/ipc/caller_class_walk_20261017/   (caller_class_walk.json)
+research/evidence/interface/ipc/rule_precision_screen_20261017/ (rule_precision_screen.json)
 research/evidence/interface/ipc/ceiling_20261017/             (ceiling_yield.json, roots/6×json)
 research/deliveries/ipc/silent_rule_shape_census.py             (只读，形状取自 IpcPolicy)
 research/deliveries/ipc/widen_shape_census.py                   (只读，全语料形状普查，多语料同法可比)
 research/deliveries/ipc/auth01_precision_probe.py               (只读，筛查 + pinned-blob 摘录 + relay_guard 六出口实测)
+research/deliveries/ipc/rule_precision_screen.py                (只读，同一套模式套到全部 6 条会响的规则 + path 形状普查)
 research/deliveries/ipc/copy_range_counterfactual.py            (只读，副本打补丁 + 全语料附带影响比对)
 research/deliveries/ipc/copy_range_arg_classes.py               (只读，拷贝长度实参分类)
 research/deliveries/ipc/permission_arg_classes.py               (只读，授权谓词实参分类)
@@ -89,22 +93,24 @@ tests/test_ipc_family_depth.py                                 (12 项测试)
 ```console
 $ .venv-web/bin/python scripts/check_change_scope.py \
     --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc
-  "checked_paths": 138 项
+  "checked_paths": 141 项
   "violations": []
   exit 0
 ```
 
-（`checked_paths` 76 → 96 → 100 → 104 → 114 → **138**：第二批新增 12 份 manifest、两份证据 JSON
+（`checked_paths` 76 → 96 → 100 → 104 → 114 → 138 → **141**：第二批新增 12 份 manifest、两份证据 JSON
 与两个只读脚本；第三批新增交付项 7、`interpreter_arg_attribution.py`、`probe_site/sitecustomize.py`
 与 `auth03_identity_probe_20261017/interpreter_attribution.json`；第四批（`400751e`）新增
 交付项 8、`caller_class_walk.py`、`root_probe_site/sitecustomize.py` 与
 `caller_class_walk_20261017/caller_class_walk.json`；第五批新增交付项 9、`ceiling_yield.py`、
 `ceiling_probe_site/sitecustomize.py`、`ceiling_20261017/ceiling_yield.json`
-与 `ceiling_20261017/roots/` 6 份仪器记录；本批（交付项 10）新增三份只读脚本、
+与 `ceiling_20261017/roots/` 6 份仪器记录；前一批（交付项 10）新增三份只读脚本、
 `component_audit_bline_20261017/` 的 12 份 manifest 与两份汇总 JSON、
-`auth01_precision_probe_20261017/` 三份、`copy_range_counterfactual_20261017/` 三份。
+`auth01_precision_probe_20261017/` 三份、`copy_range_counterfactual_20261017/` 三份；
+本批（交付项 11）新增交付项 11 本身、`rule_precision_screen.py`
+与 `rule_precision_screen_20261017/rule_precision_screen.json` 各一份。）
 `--no-renames` 与策略取自 base 提交，本线**没有**为过检查改过策略。
-这份 138 项的清单同时含**三个来源**：本线六个提交新增的文件；并发 import 留在
+这份 141 项的清单同时含**三个来源**：本线七个提交新增的文件；并发 import 留在
 `src/ohscanner/detectors/interface/**` 与 `tests/**` 的既有脏文件（本线从未 stage 过它们，
 见"选择性迁入来源提交"一节）；以及本线的夹具/测试。
 三者都落在 `lanes.ipc` 的策略范围内，故 `violations` 为空。）
@@ -420,6 +426,20 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
    未删）并用重新生成的副本整份重跑。重跑与第一版**逐组件完全相同（42/42，含 scope 哈希）**，
    故上列数字未变——但这一点现在是量出来的，不是从"差异只在注释"推出来的。
    同时修掉 `report()` 把 `removed`/`added` 写成净差（会打印 `added=-1`）。
+8. **交付项 11 的三处成因都落在 `analysis.py`，本线不动** —— 把 AUTH-01 的筛查原样套到
+   全部 6 条会响的规则后，179 条里 23 行命中，其中 **12 行的报告自身字段就与自己的
+   `message` 相矛盾**。三处成因同一个归属：
+   - 8 行把**校验调用本身**当成"未被校验的 handler"（`symbol` 与 `message` 互斥）；
+   - 1 行（`raw_parcel_callback_stub.cpp:44`）跳不进**同一文件、被调用者第一层**的守卫；
+   - 1 行（`pasteboard_disposable_observer_stub.cpp:48`）的守卫写成宏
+     `PASTEBOARD_CHECK_AND_RETURN_RET_LOGE`，于是 `path=()` 为空——**591 条 path 条件里
+     0 条宏形条件**，而字面 `if (descriptor != token)` 会被记进 path（同组件有实例）。
+   三处都在 `src/ohscanner/detectors/interface/analysis.py`，属共享面，**需集成人另开请求**。
+   本项只测量与记录，未改检测器、未撤任何候选。
+   另需记住口径：**交付项 10 §6 的 `empty_path` 口径被本项收窄**——11 行里 10 行
+   `path=()` 准确、1 行不准确（即上面第三处）。按旧口径"一律准确"会漏掉那 1 行。
+   还有一条限制：`ipc.auth.missing` 的 21 条零命中只说明**它没命中这 4 种模式**，
+   不等于这 21 条都对。
 
 ## 本地提交完成；push/merge/Ready 需另有明确授权
 

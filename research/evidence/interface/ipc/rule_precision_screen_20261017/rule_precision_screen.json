@@ -1,0 +1,803 @@
+{
+  "rows": [
+    {
+      "component": "ability_ability_runtime",
+      "rule_id": "ipc.capability.export",
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "line": 2851,
+      "symbol": "AbilityManagerStub::GetTopAbilityTokenInner",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "int AbilityManagerStub::GetTopAbilityTokenInner(MessageParcel &data, MessageParcel &reply)",
+        "{",
+        "    sptr<IRemoteObject> token;",
+        "    auto result = GetTopAbility(token);",
+        "    if (!reply.WriteRemoteObject(token)) {",
+        "        TAG_LOGE(AAFwkTag::ABILITYMGR, \"data write fail\");",
+        "        return ERR_INVALID_VALUE;",
+        "    }",
+        "    reply.WriteInt32(result);"
+      ],
+      "excerpt_blob_oid": "d66a2194eae70f0176edcb55040cfca97ebe4d42"
+    },
+    {
+      "component": "ability_dmsfwk",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/dtbschedmgr/src/distributed_sched_stub.cpp",
+      "line": 266,
+      "symbol": "DistributedSchedStub::OnRemoteRequest",
+      "modes": [
+        "line_is_guard"
+      ],
+      "path_items": [
+        [
+          264,
+          "iter != funcsMap.end() => True"
+        ]
+      ],
+      "excerpt": [
+        "    const auto& funcsMap = IsLocalCalling ? localFuncsMap_ : remoteFuncsMap_;",
+        "    auto iter = funcsMap.find(code);",
+        "    if (iter != funcsMap.end()) {",
+        "        auto func = iter->second;",
+        "        if (!EnforceInterfaceToken(data)) {",
+        "            HILOGW(\"OnRemoteRequest interface token check failed!\");",
+        "            return DMS_PERMISSION_DENIED;",
+        "        }",
+        "        if (func != nullptr) {"
+      ],
+      "excerpt_blob_oid": "7084030f865373840d69ae6c2e009e591a6daf6d"
+    },
+    {
+      "component": "ability_dmsfwk",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/dtbschedmgr/src/distributed_sched_stub.cpp",
+      "line": 271,
+      "symbol": "DistributedSchedStub::OnRemoteRequest",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          264,
+          "iter != funcsMap.end() => True"
+        ],
+        [
+          266,
+          "EnforceInterfaceToken(data) => True"
+        ],
+        [
+          270,
+          "func != nullptr => True"
+        ]
+      ],
+      "excerpt": [
+        "            HILOGW(\"OnRemoteRequest interface token check failed!\");",
+        "            return DMS_PERMISSION_DENIED;",
+        "        }",
+        "        if (func != nullptr) {",
+        "            return (this->*func)(data, reply);",
+        "        }",
+        "    }",
+        "",
+        "    HILOGW(\"OnRemoteRequest default case, need check.\");"
+      ],
+      "excerpt_blob_oid": "7084030f865373840d69ae6c2e009e591a6daf6d"
+    },
+    {
+      "component": "communication_ipc",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "line": 231,
+      "symbol": "ANIRemoteObject::OnRemoteRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "    jsReply->AddJsObjWeakRef(jsReply);",
+        "    auto jsOption = taihe::make_holder<MessageOptionImpl, ::ohos::rpc::rpc::MessageOption>(option.GetFlags(),",
+        "        option.GetWaitTime());",
+        "    ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion res =",
+        "        callOnRemoteMessageRequest(code, jsData, jsReply, jsOption);",
+        "    if (res.holds_booleanValue()) {",
+        "        bool boolRes = res.get_booleanValue_ref();",
+        "        return boolRes ? OHOS::ERR_NONE : OHOS::ERR_UNKNOWN_TRANSACTION;",
+        "    } else {"
+      ],
+      "excerpt_blob_oid": "2c2e6db30c858b41b4166267df3f2b07794bc869"
+    },
+    {
+      "component": "communication_wifi",
+      "rule_id": "ipc.parcel.copy-range",
+      "file": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+      "line": 385,
+      "symbol": "WifiP2pCallbackStub::RemoteOnConfigChanged",
+      "modes": [
+        "bound_recorded"
+      ],
+      "path_items": [
+        [
+          365,
+          "cfgLen <= 0 => False"
+        ],
+        [
+          369,
+          "cfgLen > 1024 => False"
+        ],
+        [
+          375,
+          "dataBuffer == nullptr => False"
+        ],
+        [
+          381,
+          "cfgData == nullptr => False"
+        ]
+      ],
+      "excerpt": [
+        "    if (cfgData == nullptr) {",
+        "        WIFI_LOGE(\"new buffer error!\");",
+        "        return;",
+        "    }",
+        "    if (memcpy_s(cfgData, cfgLen, dataBuffer, cfgLen) != EOK) {",
+        "        delete[] cfgData;",
+        "        cfgData = nullptr;",
+        "        WIFI_LOGE(\"memcpy_s failed!\");",
+        "        return;"
+      ],
+      "excerpt_blob_oid": "1cc8c5c0c0e60a17f49332a7bf7ea1d7d1115b91"
+    },
+    {
+      "component": "communication_wifi",
+      "rule_id": "ipc.capability.export",
+      "file": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_stub.cpp",
+      "line": 40,
+      "symbol": "WifiDeviceMgrStub::GetWifiRemoteInner",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "    uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)",
+        "{",
+        "    int instId = data.ReadInt32();",
+        "    sptr<IRemoteObject> obj = GetWifiRemote(instId);",
+        "    int ret = reply.WriteRemoteObject(obj);",
+        "    return ret;",
+        "}",
+        "",
+        "int WifiDeviceMgrStub::OnRemoteRequest("
+      ],
+      "excerpt_blob_oid": "6106eb782ab6ffb605ec6ebff9e47ed5df923375"
+    },
+    {
+      "component": "distributeddatamgr_pasteboard",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/zidl/src/pasteboard_disposable_observer_stub.cpp",
+      "line": 48,
+      "symbol": "PasteboardDisposableObserverStub::OnRemoteRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "    auto memberFunc = iter->second;",
+        "    PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(memberFunc != nullptr,",
+        "        static_cast<int32_t>(PasteboardError::INVALID_PARAM_ERROR), PASTEBOARD_MODULE_SERVICE,",
+        "        \"func is null, code=%{public}u\", code);",
+        "    return (this->*memberFunc)(data, reply);",
+        "}",
+        "",
+        "int32_t PasteboardDisposableObserverStub::OnTextReceivedStub(MessageParcel &data, MessageParcel &reply)",
+        "{"
+      ],
+      "excerpt_blob_oid": "f64091305979e944a98036370b926f7f967c55e2"
+    },
+    {
+      "component": "multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "line": 215,
+      "symbol": "RecorderServiceStub::OnRemoteRequest",
+      "modes": [
+        "line_is_guard"
+      ],
+      "path_items": [
+        [
+          205,
+          "code == SET_AUDIO_SOURCE => True"
+        ],
+        [
+          214,
+          "AUDIO_REQUEST.count(code) != 0 => True"
+        ]
+      ],
+      "excerpt": [
+        "    }",
+        "",
+        "    int32_t permissionResult = Security::AccessToken::PERMISSION_GRANTED;",
+        "    if (AUDIO_REQUEST.count(code) != 0) {",
+        "        permissionResult = CheckPermission();",
+        "        needAudioPermissionCheck = true;",
+        "    } else if (COMMON_REQUEST.count(code) != 0 && needAudioPermissionCheck) {",
+        "        permissionResult = CheckPermission();",
+        "    } else {"
+      ],
+      "excerpt_blob_oid": "86a0a21d700fa7a7db5ad0a063c31c155eed9477"
+    },
+    {
+      "component": "multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "line": 218,
+      "symbol": "RecorderServiceStub::OnRemoteRequest",
+      "modes": [
+        "line_is_guard"
+      ],
+      "path_items": [
+        [
+          205,
+          "code == SET_AUDIO_SOURCE => True"
+        ],
+        [
+          214,
+          "AUDIO_REQUEST.count(code) != 0 => False"
+        ],
+        [
+          217,
+          "COMMON_REQUEST.count(code) != 0 => True"
+        ],
+        [
+          217,
+          "needAudioPermissionCheck => True"
+        ]
+      ],
+      "excerpt": [
+        "    if (AUDIO_REQUEST.count(code) != 0) {",
+        "        permissionResult = CheckPermission();",
+        "        needAudioPermissionCheck = true;",
+        "    } else if (COMMON_REQUEST.count(code) != 0 && needAudioPermissionCheck) {",
+        "        permissionResult = CheckPermission();",
+        "    } else {",
+        "        // none audio request no need to check permission in recorder server",
+        "    }",
+        "    if (permissionResult == Security::AccessToken::PERMISSION_DENIED) {"
+      ],
+      "excerpt_blob_oid": "86a0a21d700fa7a7db5ad0a063c31c155eed9477"
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "rule_id": "ipc.auth.object-owner",
+      "file": "services/continuous_task/src/bg_continuous_task_mgr.cpp",
+      "line": 907,
+      "symbol": "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          890,
+          "isSysReady_.load() => True"
+        ],
+        [
+          895,
+          "taskParam => True"
+        ],
+        [
+          901,
+          "CheckPermissionForInner(taskParam, callingUid) => True"
+        ],
+        [
+          906,
+          "taskParam->isStart_ => True"
+        ]
+      ],
+      "excerpt": [
+        "        return ERR_BGTASK_CHECK_TASK_PARAM;",
+        "    }",
+        "    BGTASK_LOGI(\"continuous task param uid %{public}d, real %{public}d\", taskParam->uid_, callingUid);",
+        "    if (taskParam->isStart_) {",
+        "        return StartBackgroundRunningForInner(taskParam, callingUid);",
+        "    }",
+        "    return StopBackgroundRunningForInner(taskParam, callingUid);",
+        "}",
+        ""
+      ],
+      "excerpt_blob_oid": "461aeea228fd57472acb7c6fdfc89f4695e8249e"
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "rule_id": "ipc.auth.object-owner",
+      "file": "services/continuous_task/src/bg_continuous_task_mgr.cpp",
+      "line": 909,
+      "symbol": "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          890,
+          "isSysReady_.load() => True"
+        ],
+        [
+          895,
+          "taskParam => True"
+        ],
+        [
+          901,
+          "CheckPermissionForInner(taskParam, callingUid) => True"
+        ],
+        [
+          906,
+          "taskParam->isStart_ => False"
+        ]
+      ],
+      "excerpt": [
+        "    BGTASK_LOGI(\"continuous task param uid %{public}d, real %{public}d\", taskParam->uid_, callingUid);",
+        "    if (taskParam->isStart_) {",
+        "        return StartBackgroundRunningForInner(taskParam, callingUid);",
+        "    }",
+        "    return StopBackgroundRunningForInner(taskParam, callingUid);",
+        "}",
+        "",
+        "bool BgContinuousTaskMgr::CheckPermissionForInner(const sptr<ContinuousTaskParamForInner> &taskParam,",
+        "    int32_t callingUid)"
+      ],
+      "excerpt_blob_oid": "461aeea228fd57472acb7c6fdfc89f4695e8249e"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/source/system_ability_load_callback_stub.cpp",
+      "line": 36,
+      "symbol": "SystemAbilityLoadCallbackStub::OnRemoteRequest",
+      "modes": [
+        "empty_path",
+        "line_is_guard"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "int32_t SystemAbilityLoadCallbackStub::OnRemoteRequest(uint32_t code,",
+        "    MessageParcel& data, MessageParcel& reply, MessageOption& option)",
+        "{",
+        "    HILOGD(\"SystemAbilityLoadCallbackStub::OnRemoteRequest, code = %{public}u\", code);",
+        "    if (!EnforceInterceToken(data)) {",
+        "        HILOGW(\"SystemAbilityLoadCallbackStub::OnRemoteRequest check interface token failed!\");",
+        "        return ERR_PERMISSION_DENIED;",
+        "    }",
+        "    switch (code) {"
+      ],
+      "excerpt_blob_oid": "63f0a9659a29afc4c1dc3d3927e1b062cb82da88"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/source/system_ability_status_change_stub.cpp",
+      "line": 46,
+      "symbol": "SystemAbilityStatusChangeStub::OnRemoteRequest",
+      "modes": [
+        "empty_path",
+        "line_is_guard"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "int32_t SystemAbilityStatusChangeStub::OnRemoteRequest(uint32_t code,",
+        "    MessageParcel& data, MessageParcel& reply, MessageOption& option)",
+        "{",
+        "    HILOGD(\"SystemAbilityStatusChangeStub::code:%{public}u, flags:%{public}d\", code, option.GetFlags());",
+        "    if (!EnforceInterceToken(data)) {",
+        "        HILOGW(\"check interface token failed!\");",
+        "        return ERR_PERMISSION_DENIED;",
+        "    }",
+        "    auto iter = memberFuncMap_.find(code);"
+      ],
+      "excerpt_blob_oid": "36bc0da9364b179d8818e38e687933836995688e"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/source/system_process_status_change_stub.cpp",
+      "line": 39,
+      "symbol": "SystemProcessStatusChangeStub::OnRemoteRequest",
+      "modes": [
+        "empty_path",
+        "line_is_guard"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "int32_t SystemProcessStatusChangeStub::OnRemoteRequest(uint32_t code,",
+        "    MessageParcel& data, MessageParcel& reply, MessageOption& option)",
+        "{",
+        "    HILOGD(\"ProcStaChange,code:%{public}u,flags:%{public}d\", code, option.GetFlags());",
+        "    if (!EnforceInterceToken(data)) {",
+        "        HILOGW(\"check interface token failed!\");",
+        "        return ERR_PERMISSION_DENIED;",
+        "    }",
+        "    auto iter = memberFuncMap_.find(code);"
+      ],
+      "excerpt_blob_oid": "414ced3f25adc989fea646f25f4a4c3c9de6c7a8"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 222,
+      "symbol": "SystemAbilityManagerStub::OnRemoteRequest",
+      "modes": [
+        "empty_path",
+        "line_is_guard"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "{",
+        "    HILOGD(\"SAMStub::OnReceived, code = %{public}u, callerPid = %{public}d\",",
+        "        code, IPCSkeleton::GetCallingPid());",
+        "    Samgr::MemoryGuard cacheGuard;",
+        "    if (!EnforceInterceToken(data)) {",
+        "        HILOGE(\"SAMStub::OnReceived, code = %{public}u, check interfaceToken failed\", code);",
+        "        return ERR_PERMISSION_DENIED;",
+        "    }",
+        "    auto itFunc = memberFuncMap_.find(code);"
+      ],
+      "excerpt_blob_oid": "1f8bb91464df550d7d5b9d622a6303f7474d5b78"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 387,
+      "symbol": "SystemAbilityManagerStub::CheckRemtSystemAbilityInner",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          347,
+          "CanRequest() => True"
+        ],
+        [
+          353,
+          "ret => True"
+        ],
+        [
+          356,
+          "CheckInputSysAbilityId(systemAbilityId) => True"
+        ],
+        [
+          361,
+          "preproc #ifdef SUPPORT_PENGLAI_MODE"
+        ],
+        [
+          362,
+          "isPengLai_ => False"
+        ],
+        [
+          369,
+          "CheckGetRemoteSAPermission(systemAbilityId) => True"
+        ],
+        [
+          377,
+          "ret => True"
+        ],
+        [
+          383,
+          "remoteObject == nullptr => False"
+        ]
+      ],
+      "excerpt": [
+        "    if (remoteObject == nullptr) {",
+        "        HILOGD(\"CheckRemtSystemAbilityInner SA:%{public}d GetSystemAbility failed.\", systemAbilityId);",
+        "        return ERR_NULL_OBJECT;",
+        "    }",
+        "    ret = reply.WriteRemoteObject(remoteObject);",
+        "    if (!ret) {",
+        "        HILOGE(\"CheckRemtSystemAbilityInner SA:%{public}d write reply failed.\", systemAbilityId);",
+        "        return ERR_FLATTEN_OBJECT;",
+        "    }"
+      ],
+      "excerpt_blob_oid": "1f8bb91464df550d7d5b9d622a6303f7474d5b78"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 474,
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityImmeInner",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          440,
+          "ret => True"
+        ],
+        [
+          443,
+          "CheckInputSysAbilityId(systemAbilityId) => True"
+        ],
+        [
+          448,
+          "preproc #ifdef SUPPORT_PENGLAI_MODE"
+        ],
+        [
+          449,
+          "isPengLai_ => False"
+        ],
+        [
+          456,
+          "CheckGetSAPermission(systemAbilityId) => True"
+        ],
+        [
+          464,
+          "ret => True"
+        ],
+        [
+          470,
+          "remoteObject == nullptr => False"
+        ]
+      ],
+      "excerpt": [
+        "    if (remoteObject == nullptr) {",
+        "        HILOGD(\"CheckSystemAbilityImmeInner SA:%{public}d CheckSystemAbility failed.\", systemAbilityId);",
+        "        return ERR_NULL_OBJECT;",
+        "    }",
+        "    ret = reply.WriteRemoteObject(remoteObject);",
+        "    if (!ret) {",
+        "        HILOGE(\"CheckSystemAbilityImmeInner SA:%{public}d, callpid:%{public}d, write obj fail, spend %{public}\"",
+        "            PRId64 \" ms\", systemAbilityId, OHOS::IPCSkeleton::GetCallingPid(), OHOS::GetTickCount() - begin);",
+        "        return ERR_FLATTEN_OBJECT;"
+      ],
+      "excerpt_blob_oid": "1f8bb91464df550d7d5b9d622a6303f7474d5b78"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 591,
+      "symbol": "SystemAbilityManagerStub::GetSystemAbilityInner",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          565,
+          "ret => True"
+        ],
+        [
+          568,
+          "CheckInputSysAbilityId(systemAbilityId) => True"
+        ],
+        [
+          573,
+          "preproc #ifdef SUPPORT_PENGLAI_MODE"
+        ],
+        [
+          574,
+          "isPengLai_ => False"
+        ],
+        [
+          581,
+          "CheckGetSAPermission(systemAbilityId) => True"
+        ],
+        [
+          587,
+          "remoteObject == nullptr => False"
+        ]
+      ],
+      "excerpt": [
+        "    if (remoteObject == nullptr) {",
+        "        HILOGD(\"GetSystemAbilityInner SA:%{public}d GetSystemAbility failed.\", systemAbilityId);",
+        "        return ERR_NULL_OBJECT;",
+        "    }",
+        "    ret = reply.WriteRemoteObject(remoteObject);",
+        "    if (!ret) {",
+        "        HILOGE(\"GetSystemAbilityInner SA:%{public}d write reply failed.\", systemAbilityId);",
+        "        return ERR_FLATTEN_OBJECT;",
+        "    }"
+      ],
+      "excerpt_blob_oid": "1f8bb91464df550d7d5b9d622a6303f7474d5b78"
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 629,
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityInner",
+      "modes": [
+        "enforced_path"
+      ],
+      "path_items": [
+        [
+          603,
+          "ret => True"
+        ],
+        [
+          606,
+          "CheckInputSysAbilityId(systemAbilityId) => True"
+        ],
+        [
+          611,
+          "preproc #ifdef SUPPORT_PENGLAI_MODE"
+        ],
+        [
+          612,
+          "isPengLai_ => False"
+        ],
+        [
+          619,
+          "CheckGetSAPermission(systemAbilityId) => True"
+        ],
+        [
+          625,
+          "remoteObject == nullptr => False"
+        ]
+      ],
+      "excerpt": [
+        "    if (remoteObject == nullptr) {",
+        "        HILOGD(\"CheckSystemAbilityInner SA:%{public}d CheckSystemAbility failed.\", systemAbilityId);",
+        "        return ERR_NULL_OBJECT;",
+        "    }",
+        "    ret = reply.WriteRemoteObject(remoteObject);",
+        "    if (!ret) {",
+        "        HILOGE(\"CheckSystemAbilityInner SA:%{public}d write reply failed.\", systemAbilityId);",
+        "        return ERR_FLATTEN_OBJECT;",
+        "    }"
+      ],
+      "excerpt_blob_oid": "1f8bb91464df550d7d5b9d622a6303f7474d5b78"
+    },
+    {
+      "component": "telephony_core_service",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/src/iesim_service_callback_stub.cpp",
+      "line": 219,
+      "symbol": "IEsimServiceCallbackStub::OnRemoteRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "int IEsimServiceCallbackStub::OnRemoteRequest(",
+        "    uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)",
+        "{",
+        "    TELEPHONY_LOGI(\"IEsimServiceCallbackStub::OnRemoteRequest requestId:%{public}d\", code);",
+        "    return OnEsimServiceCallback(static_cast<EsimServiceCallback>(code), data);",
+        "}",
+        "void IEsimServiceCallbackStub::OnGetEuiccInfo(const EuiccInfo &result, const int32_t errorCode)",
+        "{}",
+        ""
+      ],
+      "excerpt_blob_oid": "8d8d9b922155709af33ecc0ebc38c2b8c10af2fc"
+    },
+    {
+      "component": "telephony_core_service",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/src/raw_parcel_callback_stub.cpp",
+      "line": 31,
+      "symbol": "RawParcelCallbackStub::Transfer",
+      "modes": [
+        "line_is_guard"
+      ],
+      "path_items": [
+        [
+          28,
+          "writer => False"
+        ]
+      ],
+      "excerpt": [
+        "{",
+        "    if (writer) { // same process ipc call",
+        "        writer(data);",
+        "    } else {",
+        "        if (!CheckCurrentDescriptor(data)) {",
+        "            return;",
+        "        }",
+        "    }",
+        "    if (reader_) {"
+      ],
+      "excerpt_blob_oid": "9af2c3bff9e0137642f9f080955a85d92b9ce186"
+    },
+    {
+      "component": "telephony_core_service",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/src/raw_parcel_callback_stub.cpp",
+      "line": 44,
+      "symbol": "RawParcelCallbackStub::OnRemoteRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "",
+        "int RawParcelCallbackStub::OnRemoteRequest(",
+        "    uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)",
+        "{",
+        "    Transfer(nullptr, data);",
+        "    return TELEPHONY_ERR_SUCCESS;",
+        "}",
+        "",
+        "bool RawParcelCallbackStub::WaitForResult(int64_t timeoutMs)"
+      ],
+      "excerpt_blob_oid": "9af2c3bff9e0137642f9f080955a85d92b9ce186"
+    },
+    {
+      "component": "update_updateservice",
+      "rule_id": "ipc.auth.guard-coverage",
+      "file": "services/engine/src/update_service_stub.cpp",
+      "line": 228,
+      "symbol": "UpdateServiceStub::DoUpdateStub",
+      "modes": [
+        "empty_path"
+      ],
+      "path_items": [],
+      "excerpt": [
+        "    MessageParcelHelper::ReadUpgradeInfo(data, upgradeInfo);",
+        "    MessageParcelHelper::ReadVersionDigestInfo(data, versionDigestInfo);",
+        "    MessageParcelHelper::ReadUpgradeOptions(data, upgradeOptions);",
+        "",
+        "    int32_t ret = service->Upgrade(upgradeInfo, versionDigestInfo, upgradeOptions, businessError);",
+        "    ENGINE_CHECK(ret == INT_CALL_SUCCESS, return ret, \"Failed to Upgrade\");",
+        "    MessageParcelHelper::WriteBusinessError(reply, businessError);",
+        "    return INT_CALL_SUCCESS;",
+        "}"
+      ],
+      "excerpt_blob_oid": "51ab923c63520965b13c95cab7c1674d799c93e9"
+    }
+  ],
+  "per_rule": {
+    "ipc.relay.descriptor-boundary": {
+      "-": 90,
+      "line_is_guard": 4,
+      "enforced_path": 1,
+      "empty_path": 4,
+      "empty_path/line_is_guard": 4
+    },
+    "ipc.capability.export": {
+      "-": 38,
+      "empty_path": 2,
+      "enforced_path": 4
+    },
+    "ipc.auth.missing": {
+      "-": 21
+    },
+    "ipc.auth.guard-coverage": {
+      "-": 7,
+      "empty_path": 1
+    },
+    "ipc.parcel.copy-range": {
+      "bound_recorded": 1
+    },
+    "ipc.auth.object-owner": {
+      "enforced_path": 2
+    }
+  },
+  "blob_checked": 179,
+  "blob_mismatch": 0,
+  "blob_unchecked": 0,
+  "cond_shapes": {
+    "path_conditions": 591,
+    "candidates_with_empty_path": 11,
+    "buckets": {
+      "other": 571,
+      "call": 20
+    },
+    "examples": {
+      "other": [
+        "descriptor != token => False",
+        "switch entry",
+        "descriptor != token => False",
+        "switch entry",
+        "token.compare(IConnectCallback::GetDescriptor()) != 0 => False"
+      ],
+      "call": [
+        "system::GetBoolParameter(DISABLE_INTENT_SERVICE, false) => False",
+        "EnforceInterfaceToken(data) => True",
+        "IPCProcessSkeleton::GetCurrent() == nullptr => False",
+        "IPCProcessSkeleton::GetCurrent() == nullptr => False",
+        "IPCProcessSkeleton::GetCurrent() == nullptr => False"
+      ]
+    }
+  }
+}
