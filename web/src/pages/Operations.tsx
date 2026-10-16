@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Form, Input, InputNumber, Select, Space, Table, Tabs, Tag, Typography, message } from "antd";
 import { api, terminal } from "../api";
 import { Header, Hash } from "../components";
@@ -17,18 +17,46 @@ export default function OperationsPage() {
   const [cases, setCases] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
+  const selectedIdRef = useRef<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const refresh = async () => {
+  const setSelectedOperation = (item: any | null) => {
+    selectedIdRef.current = item?.id ?? null;
+    setSelected(item);
+  };
+  const refreshQueue = async () => {
     const [r, d, c, o] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations")]);
     setRepos(r); setDetectors(d); setCases(c); setRows(o);
-    if (selected) setSelected(await api("/operations/" + selected.id));
   };
-  useEffect(() => { void refresh().catch((e) => message.error(String(e))); const t = setInterval(() => void refresh().catch(() => {}), 2500); return () => clearInterval(t); }, [selected?.id]);
+  const refreshSelectedOperation = async (id: string | null = selectedIdRef.current) => {
+    if (!id) return;
+    const item = await api("/operations/" + id);
+    if (selectedIdRef.current === id) setSelectedOperation(item);
+  };
+  const refresh = async () => {
+    await refreshQueue();
+    await refreshSelectedOperation();
+  };
+  useEffect(() => {
+    void refresh().catch((e) => message.error(String(e)));
+    const t = setInterval(() => void refresh().catch(() => {}), 2500);
+    return () => clearInterval(t);
+  }, []);
   const submit = async (path: string, values: any, transform: (v: any) => any = (v) => v) => {
     setBusy(true);
-    try { const item = await api(path, transform(values)); setSelected(item); await refresh(); message.success("任务已加入队列"); }
+    try {
+      const item = await api(path, transform(values));
+      setSelectedOperation(item);
+      await refreshQueue();
+      await refreshSelectedOperation(item.id);
+      message.success("任务已加入队列");
+    }
     catch (e) { message.error(String(e)); }
     finally { setBusy(false); }
+  };
+  const openOperation = async (id: string) => {
+    selectedIdRef.current = id;
+    setSelected(null);
+    await refreshSelectedOperation(id);
   };
   const common = <>
     <Form.Item name="repository_id" label="已登记仓库" rules={[{ required: true }]}><Select data-testid="repository-select" options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))} /></Form.Item>
@@ -110,14 +138,14 @@ export default function OperationsPage() {
     { title: "种类", dataIndex: "kind" },
     { title: "状态", dataIndex: "status", render: (s: string) => <Tag data-testid={"operation-status-" + s} color={s === "blocked" ? "orange" : ["failed", "timed_out"].includes(s) ? "red" : ["cancelled", "interrupted"].includes(s) ? "default" : s.startsWith("completed") ? "green" : "blue"}>{s}</Tag> },
     { title: "创建时间", dataIndex: "created_at", render: (s: string) => new Date(s).toLocaleString() },
-    { title: "操作", render: (_: any, row: any) => <Space><Button data-testid="view-operation" onClick={async () => setSelected(await api("/operations/" + row.id))}>查看</Button>{!terminal.has(row.status) && !["blocked", "completed_with_limitations"].includes(row.status) && <Button data-testid="cancel-operation" danger onClick={() => api("/operations/" + row.id + "/cancel", {}).then(refresh)}>取消</Button>}</Space> },
+    { title: "操作", render: (_: any, row: any) => <Space><Button data-testid="view-operation" onClick={() => openOperation(row.id)}>查看</Button>{!terminal.has(row.status) && !["blocked", "completed_with_limitations"].includes(row.status) && <Button data-testid="cancel-operation" danger onClick={async () => { await api("/operations/" + row.id + "/cancel", {}); await refreshQueue(); await refreshSelectedOperation(); }}>取消</Button>}</Space> },
   ];
   return <>
     <Header title="源码运营与证据闭环" description="同步与扫描分开；区间按两个固定 SHA；验证只运行注册的 Docker Harness；调查工具只读。" />
     <Alert className="section-gap" type="info" showIcon message="结果边界" description="版本差异是候选变化，不自动说明漏洞引入/修复。动态组件复现也不等于产品可达或可报告漏洞。" />
     <Card className="section-gap"><Tabs items={items} /></Card>
     <Card className="section-gap" title="持久化操作队列"><Table data-testid="operations-table" rowKey="id" columns={columns} dataSource={rows} pagination={{ pageSize: 8 }} /></Card>
-    {selected && <Card data-testid="operation-detail" className="section-gap" title={<Space>操作详情 <Text type="secondary">{selected.id}</Text></Space>} extra={<Button onClick={() => setSelected(null)}>收起</Button>}>
+    {selected && <Card data-testid="operation-detail" className="section-gap" title={<Space>操作详情 <Text data-testid="operation-detail-id" type="secondary">{selected.id}</Text></Space>} extra={<Button onClick={() => setSelectedOperation(null)}>收起</Button>}>
       <Space className="section-gap"><Tag>{selected.kind}</Tag><Tag>{selected.status}</Tag>{selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert type="error" message={selected.error} />}
       <pre data-testid="operation-result" className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>

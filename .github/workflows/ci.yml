@@ -58,6 +58,9 @@ jobs:
       - name: Build frontend assets
         working-directory: web
         run: npm run build
+      - name: Run Operations handler regression
+        working-directory: web
+        run: npm run test:operations-handler
       - name: Show frontend artifact paths
         run: |
           test -f web/dist/index.html
