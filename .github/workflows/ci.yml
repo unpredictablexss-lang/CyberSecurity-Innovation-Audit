@@ -16,6 +16,23 @@ on:
       - feat/workbench-integration
 
 jobs:
+  operations-handler:
+    name: Operations handler regression
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install locked UI dependencies
+        working-directory: web
+        run: npm ci
+      - name: Run Operations handler regression
+        working-directory: web
+        run: npm run test:operations-handler
+
   unit-tests:
     name: Python unit tests
     runs-on: ubuntu-22.04
