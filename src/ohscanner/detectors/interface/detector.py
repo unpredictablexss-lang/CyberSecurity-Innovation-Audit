@@ -59,7 +59,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.5.0"
+    version = "0.8.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -84,7 +84,7 @@ class IpcInterfaceDetector:
             return DetectorRun(self.detector_id,self.version,"blocked",limitations=(
                 "Shared AST outline is required for every supported unit; missing/failed coverage is unknown. "
                 "Unsupported languages are outside this detector's declared scope.",))
-        analysis = Interpreter(applicable,self.policy)
+        analysis = Interpreter(applicable,self.policy,context.request)
         observations, extra = analysis.run()
         findings = tuple(DetectorFinding(
             file=o.file,line=o.line,symbol=o.symbol,rule_id=o.rule,

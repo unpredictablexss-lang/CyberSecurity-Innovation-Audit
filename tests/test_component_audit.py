@@ -409,19 +409,19 @@ class TwoPassAuditTests(ComponentAuditTestCase):
             self.assertEqual(item["repository"], REPOSITORY)
             self.assertEqual(item["commit"], self.commit)
             self.assertEqual(item["detector_id"], "ohscanner.interface.ipc")
-            self.assertEqual(item["detector_version"], "0.5.0")
-            self.assertEqual(item["model_version"], "oh-ipc-2026.10-v3")
+            self.assertEqual(item["detector_version"], "0.8.0")
+            self.assertEqual(item["model_version"], "oh-ipc-2026.10-v6")
             # The identity names the interpretation, not the pass variant: both
             # passes apply the same rule set, so a rule change (not a scope
             # change) is what moves this string.
             self.assertEqual(item["interpretation_id"], "ohscanner.interface.ipc")
             self.assertEqual(item["rule_version"],
-                             "ohscanner.interface.ipc@0.5.0+oh-ipc-2026.10-v3")
+                             "ohscanner.interface.ipc@0.8.0+oh-ipc-2026.10-v6")
             # One interpretation version (both passes apply the same rules), but
             # two variant ids -- the split that must NOT reach the identity.
             self.assertEqual(
                 item["observed_detector_versions"],
-                ["ohscanner.interface.ipc@0.5.0+oh-ipc-2026.10-v3"],
+                ["ohscanner.interface.ipc@0.8.0+oh-ipc-2026.10-v6"],
             )
             expected_ids = sorted({
                 "complete-ast": "ohscanner.interface.ipc.complete-ast",

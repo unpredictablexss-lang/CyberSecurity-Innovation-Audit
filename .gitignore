@@ -230,5 +230,7 @@ outputs/bin/
 outputs/reports/static_baselines/
 outputs/reports/m1_descriptor_identity/
 outputs/reports/m2_relay_guard/
+outputs/reports/interface_perf/
 .tmp/
 .cache/
+

@@ -1793,3 +1793,407 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   （审查的 R1/R2/R3 属负责人，由负责人自行处理）。
 - 没有改 A 目录或 A 分支；没有重新联网查询远端（全部事实取自本地远端跟踪引用 + 审查记录）。
 - **门状态、`validated_vulnerability`、候选数、`poc_state`、`patch_revalidation` 全部未变。**
+
+## 54. 2026-10-16 P0-1（M3 授权谓词语义）关闭，并记录 entry_controlled 的上游追索结果（队友 B）
+
+本轮按交接说明的优先级推进 **P0-1（M3）**，并同步追 `entry_controlled`。**只动 B 自有代码与 B 自有 fixture**；
+未切分支、未碰 A 目录与负责人共享面、未 push/PR/merge、未做动态验证。
+
+### 54.0 交接核对：两处与交接说明不符
+
+- **HEAD 不符**：交接说明写 `87e6ed0a1849cd19b6170789b0ad3c53ddce4d42`，实测 HEAD =
+  `818d3eb8d9760505a67eee7c2cca600ff783e152`（`docs(status): correct B's stale "not pushed"
+  claims and record PR #11's CI state`）。二者是**父链关系**（`git log --oneline 87e6ed0a..HEAD` 只有
+  `818d3eb` 一个提交），即交接说明**落后 §53 本身一个提交**，不是分叉。分支仍是
+  `feat/interface-ipc-detector`。
+- **未跟踪目录仍在**（交接要求核实）：`outputs/reports/interface_perf/` 存在，15 个文件（5 组件 ×
+  `json`/`md`/`manifest.json`，2026-10-15 23:49–23:51 生成），`git ls-files` 为空 → **确认未跟踪、不入库**。
+
+### 54.1 P0-1 是两处独立根因，不是一处
+
+**(a) 函数体内的预处理条件使授权谓词不可判**（上一轮已修）。旧实现对函数体内的 `#if/#else` 整体报
+`Unsupported control construct: preproc_ifdef` 并跳过，于是 `IsRootCalling()` 这类**返回值即授权判定**的
+helper 被记为「多结果未解析」，其调用点因此拿不到授权事实。修法：有界预处理分支探索（把两条臂当备选，
+因为构建变体未知）+ 帮助函数「返回 true 的路径」摘要。
+
+**(b) `relay_guard` 的前瞻会为不可达路径发缺陷**（本轮新发现）。`relay_guard` 为了找回描述符比较，
+从**处理器自身的守卫之前**的状态把处理器体读一遍；该读取会走到顶层声明初始化式里的值计算，从而在
+`value()` 中触发 `action()`，为一条真实遍历不会走到的路径发出 `AUTH-02`/`AUTH-04`。
+**调用栈证据**（插桩追踪，非推断）：
+`analysis.py:609 action ← analysis.py:870 value ← analysis.py:777 relay_guard ← analysis.py:872 value
+← analysis.py:1179 statement ← … ← detector.py:88 detect`。
+修法：新增 `lookahead()` 上下文管理器，在前瞻期间把 `emit` / `limitations` / `seen_permissions`
+换成惰性接收器——前瞻只需要它算出的值，不构成一次路径遍历，所以它期间看到的权限读取不能算作被分析路径的读取。
+
+**因此上一轮「sat 3 → 0」的表述不完整**：只做 (a) 时真实测量是 12 → 11 条 finding、`auth.missing` 3 → 2；
+(a)+(b) 都到位后才到 3 → 0。此处更正。
+
+### 54.2 语料候选逐项差异（10 组件，每组件 5270 文件）
+
+- **候选总数 72 → 69**，`detector_version` 由 `0.5.0` 记为 `0.6.0`。
+- **消失 3 条**，全部是 `security_access_token` 的 `ipc.auth.missing`（AUTH-02），
+  路径 `services/tokensyncmanager/src/service/token_sync_manager_stub.cpp` 第 **104 / 121 / 136** 行，
+  符号 `TokenSyncManagerStub::{GetRemoteHapTokenInfoInner, DeleteRemoteHapTokenInfoInner,
+  UpdateRemoteHapTokenInfoInner}`；其记录的 path 前缀均为
+  `((37,'IPCSkeleton::IsLocalCalling() => True'), (42,'descriptor != ITokenSyncManager::Ge…`，
+  即**授权事实此前由该 helper 供给、现在由预处理分支探索正确供给**，于是候选合法消失。
+- **新增 0 条**。
+- **7/10 组件候选集逐字节相同**；`security_access_token` 是唯一候选集变化的组件（3 → 0）。
+
+### 54.3 限制文本的变化（按实列出，不写「减少了 N 条」）
+
+- **移除**：`Unsupported control construct: preproc_ifdef; guards not proved through it.`
+  （5 组件）；`Unresolved multi-outcome helper return: TokenSyncManagerStub::IsRootCalling`
+  （`security_access_token`）。
+- **新增**：`Path budget exceeded: conservative state join; path precision reduced.`
+  （`communication_ipc`、`multimedia_camera_framework`）；
+  `Preprocessor conditional inside a function body: arms are explored as alternatives …`
+  （9 组件）——这是 54.1(a) 的代价：分支探索**声明**为限制，而不是假装构建变体已知。
+- **只有 model 版本变化的组件**：`multimedia_player_framework`、`notification_common_event_service`、
+  `update_updateservice`。
+
+### 54.4 控制样例（正向 / 固定 / 无关）
+
+`tests/fixtures/ipc/` 新增 7 个 fixture：6 条入 `manifest.json`（1 固定 + 5 正向，均属 AUTH-02 族、
+`synthetic` 来源），第 7 个 `relay_lookahead_declaration_fixed.cpp` **刻意不入 manifest**（它合法保留中继候选，
+不适合「`expected_rule: null` 即断言无 finding」的矩阵），改用独立测试
+`test_relay_lookahead_does_not_report_a_call_it_could_not_reach`。
+每个 fixture 都单独探过前后：`helper_preproc_guard_fixed` 1 → 0；4 个正向对照与 `no_else` 对照**保留**其候选；
+lookahead fixture 在修复前 5 → 修复后 3（`ipc.auth.missing` 与 `ipc.auth.guard-coverage` 消失，中继候选保留）。
+**已核实**：`manifest.json` 只被 `test_synthetic_semantic_matrix` 当清单遍历，**不存在**「每个 fixture 文件必须
+出现在 manifest 里」的断言，故排除该 fixture 不会造成覆盖缺口。
+
+### 54.5 版本提升
+
+`IpcInterfaceDetector.version` `0.5.0` → `0.6.0`；`MODEL_VERSION` `oh-ipc-2026.10-v3` → `oh-ipc-2026.10-v4`；
+`tests/test_component_audit.py` 中三处固定字面量同步。依据 `IPC_METHOD_CARD.md`：规则集变更必须使检测器身份移动。
+**触及的共享面仅 `tests/test_component_audit.py` 的版本字面量**，已在此列明供负责人复核。
+
+### 54.6 回归
+
+`.venv/bin/python -m unittest discover -s tests`（**在仓库根执行；不能加 `-I`** —— 隔离模式把 cwd 从
+`sys.path` 摘掉，`discover` 会以 `Start directory is not importable` 失败，这一点值得写下来免得下次再踩）
+→ **Ran 486 tests in 44.751s … OK**（基线 485，本轮新增 1 项）。
+
+**一个容易误引的坑**：测试输出里的 `[OK] manifest_sha256: …` 来自 `tests/test_version_impact.py` 调用
+`version_impact.main()`，而该 hash 覆盖的是**测试自建的临时仓库**（提交 oid 含创建时间），**不是固定值**——
+同一棵树两次运行分别是 `8ee73055…` 与 `3d8956f8…`。**不得**把它当作证据锚点或 fixture 清单指纹引用。
+
+### 54.7 entry_controlled：从「找不到实现者」升级为「按设计不可能在本仓找到」
+
+- **接口形态**（公共镜像 pinned SHA `8dac508bdc06caa03bd966890c40748a28a204bb` 的只读正文）：
+  `IPlatformApi : public IRemoteBroker`，`DECLARE_INTERFACE_DESCRIPTOR(u"ohos.miscservices.inputmethod.IPlatformApi")`，
+  9 个 transaction（`REGISTER_CALLBACK`…`SET_INPUT_METHOD_SETTING`）；`IPlatformCallback : public IRemoteBroker`
+  （`…IPlatformCallback`）；本仓只有 `PlatformCallbackStub : public IRemoteStub<IPlatformCallback>`。
+  → 这条依赖是**跨进程 broker**，框架侧只持有远端代理，**实现者按设计不在本仓**。
+- **本仓可见的入站入口**：`PlatformCallbackStub::OnRemoteRequest` → `notifyEvent` → `MessageHandler::SendMessage`；
+  从 parcel 读 `eventId`/`userId`/`eventContent` 后直接投递，**没有 `IPCSkeleton::GetCallingUid()` 一类调用方校验**。
+  **可达性与影响未建立**（需先持有该 stub 的引用），等级仍是 **unknown**，不作为候选。
+- **证据强度**：本仓无调用者这一点由两层独立事实支撑——(i) 磁盘扫描：`/home/audit` 下 37 个 git 对象存储 +
+  全树 `grep`，`IPlatformApi`/`IPlatformCallback` 的实现者**磁盘上任何位置都不存在**；
+  (ii) 本仓全 ref 历史（5356 提交，`3.0-LTS`…`6.0-Release`）：`SetPlatform` 在任何修订版中**都没有调用者**。
+- **证据来源与限制**：上述 4 个头/源文件正文取自**公共镜像的只读 HTTP GET**（`raw.gitcode.com`，pinned SHA），
+  **不是** `_git` 读取、**未**新建 clone、**未**写入任何对象存储、**未**入库；`xrefandroid.com`（OpenGrok）
+  被 WebFetch 策略阻断，未能用作交叉引用。
+- **结论**：`entry_controlled` **仍未建立**，`validated_vulnerability` **仍为 0**。本仓路径已穷尽，
+  下一步只能依靠负责人/队伍判断是否认定上游实现组件在闭源或产品侧。
+
+### 54.8 本节没有做的事
+
+- 没有 push、没有开/改/合并 PR、没有把 Draft 标 Ready。
+- 没有改 `catalog.py`、`src/report/`、`src/case/`、`src/benchmark/`、`src/evidence/` 等共享面；
+  没有改 A 目录或 A 分支。
+- 没有做任何动态验证；没有把新生成的产物入库（`outputs/reports/interface_perf/` 与 `/home/audit/wtmp/` 脚本均不入库）。
+- **门状态与候选等级全部未变**：AUTH-01、CAP-01 仍是 `candidate`；本轮只改检测算法与其控制样例。
+
+## 55. 2026-10-16 P0-2（M6 跨 TU 一跳）落地：跨 TU 实现者守卫的读取、逐项差异清单与控制样例（队友 B）
+
+本轮按交接优先级推进 **P0-2（M6）**。**只动 B 自有代码与 B 自有 fixture**；未切分支、未碰 A 目录与负责人共享面、
+未 push/PR/merge、未做动态验证；`validated_vulnerability` 仍为 0。
+
+### 55.1 M6 是什么，本轮改了哪四处
+
+**机制**：OpenHarmony 的 stub 模式是 `class ScreenSessionManager : public SystemAbility,
+public ScreenSessionManagerStub` —— 具体服务**派生自自己的 stub**，所以处理器里一句非限定的
+`GetDisplaySnapshot(displayId, &errCode, …)` 是虚调用，函数体在**另一个 TU** 里。`EntryIndex.one_hop_definition(owner, name)`
+沿 `_derived` 找**唯一**的覆盖定义；`analysis.one_hop_dispatch` 把那个体当成一跳的函数帧来读，`dispatch_guard`
+判定它开头的门**是否真的在回答"调用方是谁"**。
+
+**credit 的判定是双向的**（这是 M6 的实质，单看一例会写歪）：*离开*分支必须离开事务、且在**每条**路径上都不携带
+调用方角色；*继续*分支必须可达、且**每一条**出口都携带角色。另有 `_modelled_before`（门只覆盖它之后的东西）与
+`_decisive`（调用方自定的合取项，如 `&errorCode`）。
+
+本轮四处修正：
+
+- **(a) 出参的 const 判定是错的**（真实缺陷，非风格问题）：`ref_params` 只读 declarator 文本，而 tree-sitter 把
+  `const sptr<T> &x` 的 `const` 放在 type 节点的**兄弟**位置（declarator 的文本只有 `&x`），于是 const 引用被当成
+  非 const 出参，把**调用方自己的实参**标上"被写回"。修法：在整条参数声明上找 `const`；方向取保守（指向 const 的
+  出参干脆不跟）。**语料影响为 0**（见 55.2 末尾的逐项比对），它改的是 `ref_params` 这个契约本身。
+- **(b) 宿主类自己也定义同名方法时拒绝跳转**：`Base::Handle` 里的虚调用跑在 `this` 上，未覆盖的子类会跑 `Base` 的体；
+  一个派生定义 + 宿主自身定义等于"不唯一"，两个体都不读，并把原因记下来。
+- **(c) 一跳被拒的原因此前只写在 `EntryIndex.limitations` 上，而没有任何地方读它** —— 于是"拒绝了"与"从未尝试"在看输出
+  的人眼里无法区分。现在只把 `One-hop callee is not unique…` 合并进 `DetectorRun.limitations`，并补一句"因此该调用点
+  保持候选"。
+- **(d) 0.7.1 追加**：被复审的 caller-role 谓词名如果在扫描源码里自带定义，就记录"替名的那份 body"。为什么需要，见 55.3。
+  这一步第一次跑出来的是 `…at <file>:0 (…)` —— `Function.line` 只由一跳索引填充，从源码直接读出来的帧它是 0。
+  引用一个不存在的行号等于没引用，改成用定义节点自己的行，并把"必须是非 0 行"写进测试。
+
+### 55.2 语料逐项差异（10 组件；baseline = 0.6.0 的这次运行）
+
+- 候选 **69 → 67 条原始记录**，`detector_version` `0.6.0` → `0.7.1`。**逐项比对按"唯一样本"**
+  （`component`+`file`+`line`+`symbol`）做，两次运行都是 **67 → 65**：差的 2 条是同一身份上挂了两条规则的重复记录，
+  两次运行**完全相同**、已核对——`communication_ipc` 的 `dbinder_callback_stub.cpp:139`（`ipc.auth.missing` +
+  `ipc.relay.descriptor-boundary`）与 `multimedia_camera_framework` 的 `hcamera_service.cpp:1098`
+  （`ipc.auth.guard-coverage` + `ipc.auth.missing`）。所以下面按组件判"集合是否移动"，不引原始记录数当结论。
+- **消失 5 条**，全部在 `window_window_manager`，每条附上被 credit 的那一跳（stub 调用点 → 实现者 → 门的位置）：
+
+| 消失的候选 | 一跳的源码依据（credit 原文） |
+|---|---|
+| `ScreenSessionManagerStub::OnRemoteRequestInner` AUTH-02，`screen_session_manager_stub.cpp:738` | 调用点 `:738` → `ScreenSessionManager::GetDisplaySnapshot` @ `screen_session_manager.cpp:10914`，门在 `:10918`，admits `<shell-caller>, <system-caller>` |
+| `SessionStageStub::HandleGetUIContentRemoteObj` CAP-01，`session_stage_stub.cpp:1252` | 调用点 `:1251` → `WindowSessionImpl::GetUIContentRemoteObj` @ `wm/src/window_session_impl.cpp:5062`，门在 `:5064`，admits `<system-caller>` |
+| `SceneSessionManagerStub::HandleGetUIContentRemoteObj` CAP-01，`scene_session_manager_stub.cpp:1208` | 调用点 `:1207` → `SceneSessionManager::GetUIContentRemoteObj` @ `scene_session_manager.cpp:12969`，门在 `:12971`，admits `<sa-caller>` |
+| `SceneSessionManagerStub::HandleGetRootUIContentRemoteObj` CAP-01，`:1226` | 调用点 `:1221` → `SceneSessionManager::GetRootUIContentRemoteObj` @ `:12984`，门在 `:12986`，admits `<sa-caller>` |
+| `SceneSessionManagerStub::HandleCreateUIEffectController` CAP-01，`:2944` | 调用点 `:2928` → `SceneSessionManager::CreateUIEffectController` @ `:4779`，门在 `:4782`，admits `<system-caller>` |
+
+  逐一回原文核对（不是只看 credit 文本）：`screen_session_manager.cpp:10918` 是
+  `if (!SessionPermission::IsSystemCalling() && !SessionPermission::IsShellCall() && errorCode) { *errorCode =
+  DmErrorCode::DM_ERROR_NOT_SYSTEM_APP; return nullptr; }`，调用点传的 `&errCode` 是它自己的局部变量（`_decisive`）；
+  `wm/src/window_session_impl.cpp:5064` 是 `if (!SessionPermission::IsSystemCalling()) { …; return
+  WSError::WS_ERROR_NOT_SYSTEM_APP; }`；`session_stage_stub.cpp:1251` 调用的下一行就是
+  `reply.WriteRemoteObject(uiContentRemoteObj)`（CAP-01 的锚点）。三处都在写回任何东西**之前**离开事务。
+- **新增 3 条**，全在 `security_access_token`，全部是 `ipc.auth.missing`（AUTH-02）：
+  `interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp` 第 **103 / 116 / 131** 行，
+  符号 `TokenSyncCallbackStub::{GetRemoteHapTokenInfoInner, DeleteRemoteHapTokenInfoInner,
+  UpdateRemoteHapTokenInfoInner}`，路径均为 `((70,'descriptor != ITokenSyncCallback::GetDescriptor() => False'),
+  (77/80/83,'switch entry'), (94/109/122,'IsAccessTokenCalling() => True'))`。这三条的处置见 55.3。
+- **其余 8/10 组件的候选集逐字节相同**（按"组件集合是否移动"判定，不按总数）。
+- **本轮的两个修正对语料候选集的影响**：`ref_params` 的 const 修正 **0 条移动**（0.7.0 中间态 vs 0.7.0 末态逐项比对：
+  65 → 65，无组件移动）；owner-body 守卫 **0 条移动**（5 条拒绝、涉及 4 个文件，两次运行的候选集在这 4 个文件上都是 0 条）。
+- **一跳统计**：credited **90 条（全部在 wwm）**，refused **74 条**（wwm 60、sat 10、update 2、telephony 1、camera 1）。
+  90 条 credit 里只有 5 条改变了候选 —— credit 只在调用点本来有候选时才有差别，这是"90"与"5"不相称的原因。
+  **74 条拒绝既不新增也不消失**：0.6.0 根本没有一跳分析，拒绝等于维持原状；3 条新增的成因另由 55.3 的因果实验单独锁定，
+  两者不重叠。
+
+### 55.3 新增的 3 条为什么保留，而不是被 credit 掉
+
+**源码依据**（全部来自 `accesstoken_callback_stubs.cpp`）：三个处理器开头都是
+`:94/:109/:122 if (!IsAccessTokenCalling()) { LOGE(…); reply.WriteInt32(ERR_IDENTITY_CHECK_FAILED); return; }`；
+名字在本文件里**有定义**：`:136 bool TokenSyncCallbackStub::IsAccessTokenCalling() const { int callingUid =
+IPCSkeleton::GetCallingUid(); return callingUid == ACCESSTOKEN_UID; }`，常量在 `:34 static const int32_t
+ACCESSTOKEN_UID = 3020;`。
+
+**因果实验**（`/home/audit/wtmp/b_exp_credit.py`，**只在内存里 patch** `Interpreter.resolve`，工作树不动）：
+把复审名单里的名字改回"先按名字 credit"（0.6.0 的顺序）→ 该组件 3 → 0 条 finding，且**没有别的移动**。
+所以差异的成因就是"名字在本文件里有定义，因此按 body 读、不按名字 credit"，不是别的东西。
+
+**为什么不在本轮把它 credit 掉**：把 `GetCallingUid() == 3020` 当成授权事实，需要一条**被复审过的**声明"UID 3020 是特权
+UID"。本语料能给的证据只有三处 `ACCESSTOKEN_UID = 3020`（`accesstoken_manager_service.h:240`、
+`privacy_manager_service.h:103`、`accesstoken_callback_stubs.cpp:34`）的**命名与用法**，**没有 UID 分配表**——
+未证实的假设不进策略。若要补，改动是 `models.py:135` 的 `trusted_uids` 加一处字符串，留给负责人判定。
+本轮取"保守 + 有记录"：候选保留，同时把"是哪个 body 顶替了那个名字"写进 `DetectorRun.limitations`，
+于是这条候选读起来是"这个 body 需要人看"，而不是"这里没有守卫"。
+
+**全语料上一共命中 4 处**（同一份定义只记一次）：`TokenSyncCallbackStub::IsAccessTokenCalling`（sat，
+就是新增的这 3 条的守卫）、`TokenSyncManagerStub::IsRootCalling` 与 `::IsNativeProcessCalling`（sat，
+§54 里被抑制的 3 条正是靠这两份**自带 body** 建立的复审事实）、`CallManagerService::CheckCallerIsSystemApp`
+（telephony）。也就是说这条记录既覆盖"body 建立了事实"的情形，也覆盖"没建立"的情形 —— 这不是缺陷，
+而是这个规则本身的样子：它记录"名字没有按名单 credit"，不预判 body 的结论。
+
+### 55.4 控制样例（正向 / 固定 / 无关）
+
+- 新增 `tests/fixtures/ipc/role_predicate_shadowed_positive.cpp`（AUTH-02，入 manifest，
+  `expected_rule: ipc.auth.missing`）：处理器用复审名单里的名字做门，而本文件自己定义了这个名字、答的是一个复审集合
+  没有角色的 UID。配对的是已有的 `helper_preproc_guard_fixed`（同类同名 body、但**建立了**复审事实 → 抑制）。
+  新增测试 `test_a_reviewed_role_name_defined_here_is_read_as_the_body_it_is` **同时断言两侧**，防止以后把
+  "读本地 body"改成"按名字 credit"而不自知。
+- M6 主体（六个 fixture：1 固定 + 5 正向）与三条测试在上一轮已落，本轮只补这一对；测试数 **494 → 495**。
+- 已核实：owner-body 守卫在语料上**没有移动任何候选**（见 55.2），它的作用是"把'不唯一'写成记录"。
+
+### 55.5 一跳 credit 的残留（已写进运行摘要的 limitation）
+
+- 每个被 credit 的 stub 宿主在扫描集内**只有一个生产子类**（已核实）：`SceneSessionManagerStub` → `SceneSessionManager`
+  (`scene_session_manager.h:236`)、`ScreenSessionManagerStub` → `ScreenSessionManager` (`screen_session_manager.h:64`)、
+  `SessionStageStub` → `WindowSessionImpl` (`wm/include/window_session_impl.h:93`)；其余子类都在 `/test/` 下，被语料装载器跳过。
+- 接口自己带**默认体**，而且就在扫描集里：`wmserver/include/zidl/window_manager_interface.h:213`
+  (`GetUIContentRemoteObj` → `WSError::WS_OK`)、`:217` (`GetRootUIContentRemoteObj` → `WMError::WM_DO_NOTHING`)、
+  `:442` (`CreateUIEffectController` → `WM_ERROR_DEVICE_NOT_SUPPORT`)。若存在第三个不覆盖的子类，调用会落到这些默认体
+  （它们都不产出被写回的对象）。credit 陈述的是"为那次虚调用读到的实现者"，这条残留写进了运行摘要。
+- 指向 const 的出参不跟：经出参写回的对象不会被追到产生它的那次调用。
+
+### 55.6 版本与回归
+
+- `IpcInterfaceDetector.version` `0.7.0` → `0.7.1`（0.7.0 是本轮 M6 的中间态）；`MODEL_VERSION` **未动**（规则集未变，
+  只多了记录）。`tests/test_component_audit.py` 三处固定字面量同步 —— **触及的共享面仅此三处字面量**，列明供负责人复核。
+- `.venv/bin/python -m unittest discover -s tests`（在仓库根执行；**不能加 `-I`**）→ **Ran 495 tests … OK**。
+- 0.7.0 与 0.7.1 两次全语料运行的候选集**逐项比对 0 条移动**（不是只比总数）：0.7.1 只增加了 limitation 文本。
+  55.1(d) 的行号修正补完后**再跑一次全语料**（`candidates_071b.json`）：仍是 67 条原始 / 65 条唯一样本、逐项 0 移动，
+  4 条记录引用的定义行分别是 `accesstoken_callback_stubs.cpp:136`、`token_sync_manager_stub.cpp:62` / `:70`、
+  `call_manager_service.cpp:2175` —— 与人工读到的定义行**逐一对上**（修正前这四处全是 `:0`）。
+
+### 55.7 本节没有做的事
+
+- 没有 push、没有开/改/合并 PR、没有把 Draft 标 Ready。
+- 没有改 `catalog.py`、`src/report/`、`src/case/`、`src/benchmark/`、`src/evidence/` 等共享面；没有改 A 目录或 A 分支。
+- 没有做动态验证；新生成的产物不入库（`outputs/reports/interface_perf/` 与 `/home/audit/wtmp/` 下脚本均不入库）。
+- **门状态与候选等级全部未变**：`entry_controlled` 仍未建立、`validated_vulnerability` 仍为 0，AUTH-01 与 CAP-01 仍是
+  `candidate`。
+- 未做 P1 的 M4/M5、独立留出集、WebView/ArkTS 检测器与只读 Agent 适配。
+
+## 56. 2026-10-16 M8：UID 3020 的 source-bound 常量解析与限定账户角色，§55.3 的三条候选撤销，以及 5 棵未见树的通用性运行（队友 B）
+
+本轮按负责人指定推进 **M8**：不给全局 `trusted_uids` 加白名单，而是把 §55.3 留下的"UID 3020 是不是特权 UID"变成一个
+**只在源码能自证时才成立、且只对三个操作成立的账户角色**。**只动 B 自有代码与 B 自有 fixture**；未切分支、未碰 A 目录
+与负责人共享面、未 push/PR/merge、未做动态验证；`validated_vulnerability` 仍为 0、`entry_controlled` 仍未建立。
+
+### 56.1 为什么不是往白名单里加一行
+
+`trusted_uids` 是一条**与源码无关的全局声明**：一旦加进去，任何地方出现 `GetCallingUid() == <那个 UID>` 都会被读成
+"调用方是特权方"，与这个 UID 在该处**是否真的是**特权方、以及它**被允许做哪些操作**都无关。本轮改成三条同时成立的
+**source-bound** 条件（`analysis.py:account_role`）：
+
+1. 被比较的一侧必须是**调用方 UID**（`IPCSkeleton::GetCallingUid()`，且路径上身份未被重置）。调用方 **TokenID** 是另一个
+   身份域，**请求报文里读出来的值**不是调用方 —— 两者都不得建立事实；
+2. 另一侧必须是**复审记录点名的常量名**（`ACCESSTOKEN_UID`）。裸字面量 `3020` 没有可引用的复审绑定；
+3. 该常量名必须**在本次扫描的源码里解析到记录的那个值**（`EntryIndex.define_constant`，同名同值优先），并且
+   只有 `const` / `constexpr` 初始化器与对象式 `#define` 参与解析；同名但解析出**多个不同值**时返回 None 并记一条
+   limitation（宁可不判也不猜）。
+
+模型形状（`models.py`）：新增冻结数据类 `ServiceAccountRole(constant, uid, role, accepted_operations, origin)`，
+策略字段 `service_account_roles`（当前只有一条：`ACCESSTOKEN_UID` / `3020` / `<caller-account:access-token-service>` /
+三个操作 / 一条写明"值由源码确认、账户归属是**复审声明**"的 `origin`）。**`trusted_uids` 一行未动。**
+
+角色只进入一个**新开的**事实通道 `State.service_account`（`bounded()` 的交集、`refine()` 的 kind→属性映射都已登记），
+`authorized()` 里也只有 `GetRemoteHapTokenInfo / DeleteRemoteHapTokenInfo / UpdateRemoteHapTokenInfo` 三个操作会接受它。
+**它不进 `state.auth`、不进 capability、不进 relay、不进跨 TU 一跳的 dispatch 判定** —— "账户不是权限"这句在这一轮是
+代码结构上的事实，不是注释里的声明。
+
+### 56.2 逐项语料差异（10 组件；baseline = `candidates_071b.json` 0.7.1 / 模型 v5）
+
+runner 换成 `w_b_corpus_provenance.py`：每个组件按语料记录里的 `openharmony/<组件>` 与**固定提交**建 `ScanRequest`
+（多数组件是性能文档记录的 12 位前缀，`security_access_token` / `update_updateservice` 用研究文档里的完整 40 位），
+`snapshot_sha256` 改为按实际 unit 求 `snapshot_digest`。这样新笔记里的 `target` 字段指的是真正读过的那棵树，
+而不是 `local/perf-corpus@0000…` 这种无法核对的占位。
+
+- 候选 **67 → 64 条原始记录**（`detector_version` 0.7.1 → 0.8.0，模型 v5 → v6）。**逐项比对：消失 3 条、新增 0 条。**
+- 消失的 3 条，全在 `security_access_token`，全部是 `ipc.auth.missing`，全部由同一条 credit 撤销：
+
+| 消失的候选 | credit 的源码依据（运行输出原文） |
+|---|---|
+| `TokenSyncCallbackStub::GetRemoteHapTokenInfoInner`，`accesstoken_callback_stubs.cpp:103` | 守卫 `IsAccessTokenCalling` @ `:139`，常量绑定见文件自身 `:34` |
+| `TokenSyncCallbackStub::DeleteRemoteHapTokenInfoInner`，`:116` | 同上 |
+| `TokenSyncCallbackStub::UpdateRemoteHapTokenInfoInner`，`:131` | 同上 |
+
+  运行输出原文（`candidates_m8.json`，`security_access_token` 的 limitations）：
+
+  > Service-account role credited: caller-UID guard in `TokenSyncCallbackStub::IsAccessTokenCalling` at
+  > `interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp:139` compares the calling UID with
+  > `ACCESSTOKEN_UID`, which the scanned sources bind to `3020` at
+  > `…/accesstoken_callback_stubs.cpp:34` (`OHOS::Security::AccessToken::ACCESSTOKEN_UID`,
+  > `"static const int32_t ACCESSTOKEN_UID = 3020;"`). The role `<caller-account:access-token-service>` is accepted for
+  > `GetRemoteHapTokenInfo, DeleteRemoteHapTokenInfo, UpdateRemoteHapTokenInfo` and for nothing else; target
+  > `openharmony/security_access_token@17d88bfb36bea6c9370ba919ac41a22d16dd66b3`; policy origin: …
+- **其余 9 组件的候选集逐字节相同**：`communication_ipc` 12、`inputmethod_imf` 4、`multimedia_camera_framework` 9、
+  `multimedia_player_framework` 24、`notification_common_event_service` 0、`resourceschedule_background_task_mgr` 2、
+  `telephony_call_manager` 2、`update_updateservice` 2、`window_window_manager` 9 —— 与 0.7.1 一致。
+- 笔记层面的移动只有三类，逐条查明、无一条改变候选：**(a)** 10 个组件都有一条 `Model=…v5` → `…v6` 的模型版本行；
+  **(b)** §55 的"被复审角色名在本文件有定义"那条笔记多了一句（说明该 body 若与复审账户比对会**另记一行**）；
+  **(c)** sat 多出两行 —— 一条 `Service-account model:` 说明行，一条上面的 credit。**(a)(b)(c) 都不新增/不消失候选。**
+- **全语料只有 1 条 credit**（就是 sat 的这条），没有任何别处的比较被读成账户事实：这是"没有给所有敏感 API 注入通用
+  auth"在语料尺度上的对照组，不是只在 fixture 上成立。
+
+### 56.3 那三条的复审结论：可以作为本条规则的误报撤销，撤销不等于组件安全
+
+- **作为 `ipc.auth.missing` 的候选：撤销。** 该规则的陈述是"这个 IPC 操作上没有回答'调用方是谁'的守卫"。原文里
+  三个处理器开头各有 `if (!IsAccessTokenCalling()) { …; reply.WriteInt32(ERR_IDENTITY_CHECK_FAILED); return; }`
+  （`:94/:109/:122`，均在写回任何东西之前离开事务），而 `IsAccessTokenCalling` 读的是**调用方 UID**、比的是文件自身
+  绑定的 `3020`。按本条规则的定义，这三条是该规则在本例上的**误报**，不是待复核的真候选。
+- **撤销的边界**：credit 陈述的只是"这次比较建立了调用方是 access-token 服务账户这一事实，且该事实只覆盖记录里的三个
+  操作"。它**没有**陈述 (i) `ACCESSTOKEN_UID = 3020` 这个**账户归属**本身正确 —— 那是复审带入的声明（`origin` 里写明
+  "the account assignment is the reviewed claim it carries"），语料能自证的只有"值确实是 3020"；(ii) 这三个操作在
+  这个账户下**应当**可达 —— 授权策略本身（谁该被允许调 TokenSync 的这三个操作）不在静态分析能回答的范围里。
+- **因此审查台账上三条仍是 `candidate` / `unknown`，并注明"存在 UID 守卫，授权策略待复核"**：它们从检测器的 findings
+  里退出，但没有从"待人工复核的授权问题"里退出。**撤销静态候选不等于证明整个组件安全** —— `security_access_token`
+  的其余候选、`entry_controlled`、`validated_vulnerability=0` 全部未变。
+- §55.3 与本轮的差别要写清：§55 的 3 条（sat 的 `IsRootCalling` / `IsNativeProcessCalling`，§54 抑制）靠的是
+  **第一方角色谓词**；本轮这 3 条靠的是**新的账户通道**。两条规则都在，互不替代。
+- 本轮**没有**为降低候选数加任何白名单：删掉的 3 条不是"豁免"，而是三个条件同时成立的推论；条件不成立时
+  （见 56.4）候选照旧保留。
+
+### 56.4 控制样例：一正四反 + 固定样例
+
+新增 5 个 fixture（全部入 `tests/fixtures/ipc/manifest.json`，五个文件都带说明性头注释，用
+`IRemoteStub<…>` + descriptor 检查 + switch 分发 + `this->Operation(…)` 的真实 stub 形状）：
+
+| fixture | 构造 | 期望 |
+|---|---|---|
+| `account_role_authorized_fixed` | 三个 Inner 处理器都由 `GetCallingUid() == ACCESSTOKEN_UID`（本文件绑定 3020）把门，调用分别是记录里的三个操作 | **无 finding**，且 credit 笔记逐字断言（守卫函数与行、定义自己的 **`:11`** 行与声明原文、三个操作、`target fixture/ipc@synthetic-ipc-v1`、`policy origin`） |
+| `account_role_wrong_value_positive` | 同名常量绑到 **4096** | 保留 `ipc.auth.missing`；笔记写 "bind to 4096 at sample.cpp:10"；**无 credit** |
+| `account_role_tokenid_positive` | `GetCallingTokenID() == ACCESSTOKEN_UID` | 保留；笔记写 "against a caller TokenID"；**无 credit** |
+| `account_role_request_value_positive` | `data.ReadUint32() == ACCESSTOKEN_UID` | 保留；笔记写 "against a request-derived value"；**无 credit** |
+| `account_role_unrelated_call_positive` | 科目成立、命令不理：同一守卫后调 `SetPermission` | 保留；**有** credit，且 credit 只列那三个操作 —— 这是"账户不是权限"的对照组 |
+
+两条新测试（`tests/test_ipc_detector.py`）：`test_service_account_role_is_credited_only_where_the_source_binds_it`
+（同时断言"无 finding"与 credit 的可核对性），
+`test_service_account_controls_that_must_not_supply_the_guard`（三条"不得建立事实"+ 一条"建立了也不覆盖"）。
+
+**本轮另外发现并修掉一个真实文本缺陷**：credit 笔记**缺右括号**。原文写作 `… + definition.text + "\"")`，
+末尾那个 `)` 是**闭 Python 分组**的，不是写进文本的字符，于是输出成了 `(ACCESSTOKEN_UID, "static const int32_t
+ACCESSTOKEN_UID = 3020;". The role …`。它不影响任何判定（判定与文本构造无关），但引用一段没读完的原文同样是引用缺陷，
+改成 `"\"")"` 并重跑确认三处引用（credit / 值不符 / 值无法解析）现在都闭合。**逐项语料差异对这条修正为 0**
+（重跑全语料仍是 64 条、组件集合不动）。
+
+### 56.5 未见过的 5 棵树：通用性运行（含一个被点名的覆盖缺口）
+
+按负责人要求"多测试几个仓库"，从 `https://gitcode.com/openharmony/` 浅克隆 5 棵**从未参与调参**的树
+（`usb_usb_manager` / `account_os_account` / `distributedhardware_device_manager` / `useriam_user_auth_framework` /
+`sensors_sensor`，共 1,668 个源文件，均以**完整 commit SHA + `git_object` + `light-ast`** 建请求，脚本
+`w_gitcode_scan.py`，产物 `b_runs/gitcode_5.json`）：
+
+- **不崩、不空转、产出与语料同形的候选**：18 条候选 —— `distributedhardware_device_manager` 12 条、
+  `usb_usb_manager` 6 条，其中 17 条是 `ipc.relay.descriptor-boundary`、1 条 `ipc.parcel.copy-range`。
+  新出现的是 `3rd/interfaces/src/ipc/ipc_client_stub_3rd.cpp` 这类**第三方回调 stub**，以及
+  `ipc_server_stub.cpp:309` 一个函数里 8 条（同一分发表连续 relay 的已知形状）。这些是**新线索**，等级仍是
+  `candidate`，尚未逐条读原文。
+- **`0 条候选` 不等于"安全"，本轮把它解释到了证据层**：三棵树 0 条（`account_os_account` /
+  `useriam_user_auth_framework` / `sensors_sensor`）。用 `measure_entry_coverage.py --corpus <新目录>` 量入口：
+
+| 树 | `.idl` 数 | 已提交 `*stub*.cpp` | 非测试分发器定义 | 识别到的 entry roots | 候选 |
+|---|---:|---:|---:|---:|---:|
+| `account_os_account` | 27 | 0 | 1 | 2 | 0 |
+| `distributedhardware_device_manager` | 0 | 4 | 4 | 14 | 12 |
+| `sensors_sensor` | 1 | 1 | 1 | 1 | 0 |
+| `usb_usb_manager` | 2 | 1 | 2 | 4 | 6 |
+| `useriam_user_auth_framework` | 18 | 1 | 0 | 0 | 0 |
+
+  分发器定义数按"非测试、非调用（`return X::…` / `->`）、非声明"的 `X::OnRemoteRequest(…)` 定义行统计
+  （`b_stub_generality3.sh`）。**定义数为 0 的那棵树 roots 也是 0，定义数不为 0 的树 roots 都不为 0**
+  （1→2、4→14、1→1、2→4、0→0）—— 这 5 棵树上没有出现"仓库里有分发器、检测器却识别不到"的情形。
+  反过来，`account_os_account` 450 个文件只识别出 2 个 root，
+  原因是它的 IPC 面**由 IDL 生成**（27 个 `.idl`、**0 个已提交的 stub .cpp**；全树提到 `OnRemoteRequest` 的文件
+  除一个回调 stub 外**全在 `/test/` 下**，被语料装载器按设计跳过）。`useriam` 同理（18 个 `.idl`、0 个定义）。
+- **结论（写进 limitation 的形状）**：对"分发器由 IDL 生成、不随仓库提交"的组件，当前检测器看**不见**入口，
+  于是 `0 条候选` 是**覆盖陈述**而非安全陈述。这是一条**被点名的缺口**，补法是二选一：把 `*.idl` 作为入口声明来源，
+  或把生成产物纳入扫描集。本轮**未实现**，只是把它量化并记下来。
+- **账户模型的跨树对照**：5 棵树里 `Service-account role credited` 与 `Service-account model:` 行**都是 0 条** ——
+  新通道在这些树上什么都没建立、也什么都没抑制。加上 56.2 的"全语料只有 1 条 credit"，"不给所有敏感 API 注入通用
+  auth"这条在 **5 棵新树 1,668 个文件 + 语料 10 组件 5,270 个文件 = 6,938 个文件**上有了对照组（其中 credit 恰好 1 次，
+  且那 1 次的常量定义、比较点、目标提交都能逐字核对）。
+
+### 56.6 版本与回归
+
+- `IpcInterfaceDetector.version` `0.7.1` → `0.8.0`；`MODEL_VERSION` `oh-ipc-2026.10-v5` → `…-v6`。
+  `tests/test_component_audit.py` 四处固定字面量同步（0.8.0 / v6 / `ohscanner.interface.ipc@0.8.0+oh-ipc-2026.10-v6`）
+  —— **触及的共享面仅此四处字面量**，列明供负责人复核。
+- `.venv/bin/python -m unittest discover -s tests`（仓库根执行，**不加 `-I`**）→ **Ran 497 tests … OK**（494 → 495（§55）
+  → 497）。
+- 全语料两次运行逐项比对见 56.2；本轮新增脚本与产物（`w_b_corpus_provenance.py` / `w_diff_candidates.py` /
+  `w_gitcode_scan.py` / `w_dump_headers.py` / `w_show_notes.py` 与 `b_runs/*`）**全部在 `/home/audit/wtmp/` 下，不入库**。
+
+### 56.7 本节没有做的事
+
+- 没有 push、没有开/改/合并 PR、没有把 Draft 标 Ready。
+- 没有改 `catalog.py`、`src/report/`、`src/case/`、`src/benchmark/`、`src/evidence/` 等共享面；没有改 A 目录或 A 分支。
+- **没有修改全局 `trusted_uids`**；没有为降低候选数加入任何白名单。
+- 没有做动态验证；没有把 56.5 的 18 条新线索升级为任何更高等级（全部仍是 `candidate`）。
+- **门状态与候选等级全部未变**：`entry_controlled` 仍未建立、`validated_vulnerability` 仍为 0；§56.3 撤销的三条在
+  检测器输出里退出，但在审查台账上仍是 `candidate`/`unknown`（"存在 UID 守卫，授权策略待复核"）。
