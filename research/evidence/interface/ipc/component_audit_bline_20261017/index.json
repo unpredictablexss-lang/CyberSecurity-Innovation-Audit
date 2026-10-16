@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_component_scan_manifest_index",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector_version": "0.8.0",
+  "manifests": [
+    {
+      "component": "ability_dmsfwk",
+      "repository": "openharmony/ability_dmsfwk",
+      "commit": "aa1b0347b10700d761def383c08749420dd3f71a",
+      "git_tree": "9ddc65935d17567b0a79cb0b1e7c8e6ea058c4b1",
+      "selected_files": 433,
+      "selected_bytes": 3302746,
+      "plan_sha256": "9fae50556c6ebac6d47f6cd2b07f14252d14dff806e82872e195b26102079241",
+      "candidates_total": 6
+    },
+    {
+      "component": "commonlibrary_c_utils",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "commit": "7a9af76276aca8f53347fb89c07850e014905521",
+      "git_tree": "90ba79ba1a0bd9723d3c886e519edad47a308649",
+      "selected_files": 62,
+      "selected_bytes": 429359,
+      "plan_sha256": "132ba3df505ac7f4c09b8fc7aafee55551d0aad5accda931c50885351d6dc22e",
+      "candidates_total": 0
+    },
+    {
+      "component": "communication_nfc",
+      "repository": "openharmony/communication_nfc",
+      "commit": "331bfd2661490c996d495ab2b656f79d81ae931c",
+      "git_tree": "67fb3b038bb164a1049eb8c214b7e7ace3929612",
+      "selected_files": 273,
+      "selected_bytes": 1765731,
+      "plan_sha256": "15b954e01a678a10637da81ed80c7aa6a7528281a486d64d78c836070ea96cbe",
+      "candidates_total": 0
+    },
+    {
+      "component": "communication_wifi",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "git_tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "selected_files": 776,
+      "selected_bytes": 8360932,
+      "plan_sha256": "bc267661b8ae981e5a49b828387e4eacc37709a45e3b513381da7ad79badb7a5",
+      "candidates_total": 2
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "64e48eb1d97b45f44125761f16811f78be609a4a",
+      "git_tree": "f8c90f1ed61a0899fb03a0410ea4842ef50e1300",
+      "selected_files": 1446,
+      "selected_bytes": 11766077,
+      "plan_sha256": "0ec75ef82290f8ecd3132c41477582b860a7f53d59f4df2b9a188e5ed3803559",
+      "candidates_total": 0
+    },
+    {
+      "component": "distributeddatamgr_relational_store",
+      "repository": "openharmony/distributeddatamgr_relational_store",
+      "commit": "9fa3a57e6657275d03e25f2e319dab55f894d1e8",
+      "git_tree": "62948e6923a91a0f9ed7c054bbf069fdae376332",
+      "selected_files": 921,
+      "selected_bytes": 7083002,
+      "plan_sha256": "3845c594ebfd22cb8fa9f5525de994c5c3a4cbb12ac871f40838390d6aeb361a",
+      "candidates_total": 0
+    },
+    {
+      "component": "filemanagement_file_api",
+      "repository": "openharmony/filemanagement_file_api",
+      "commit": "103df5c4911e7fcddcccc7ae34894c5a2871d3a7",
+      "git_tree": "0c0700b937193c8923d77df5582a884960e828cc",
+      "selected_files": 688,
+      "selected_bytes": 2718900,
+      "plan_sha256": "ae7cb6a3bc8e5ae8f251689fbe148516dae8dbc7558da81aa5d700c991854249",
+      "candidates_total": 0
+    },
+    {
+      "component": "powermgr_power_manager",
+      "repository": "openharmony/powermgr_power_manager",
+      "commit": "06d1f3d19a59fcdb744b179d1158f65b75ad572d",
+      "git_tree": "bd6a0767c63a6093a9b54d9f4febb62ef78fb0c0",
+      "selected_files": 299,
+      "selected_bytes": 1573713,
+      "plan_sha256": "82c8ba5a4fff44d659e2d4726b661b416a74e57d7b4f4b4146d164edee2f4d64",
+      "candidates_total": 0
+    },
+    {
+      "component": "security_certificate_manager",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "git_tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "selected_files": 310,
+      "selected_bytes": 1768293,
+      "plan_sha256": "7a45ef54a3f88f8b53a0e20c607c632ef5c70b08901a829e78133a116a39d374",
+      "candidates_total": 1
+    },
+    {
+      "component": "security_device_auth",
+      "repository": "openharmony/security_device_auth",
+      "commit": "21a357fe07ac0a61ce0929040251a712f94adef3",
+      "git_tree": "911f1f5afa7c54018392b2a8129a8e301bb837a9",
+      "selected_files": 491,
+      "selected_bytes": 3654739,
+      "plan_sha256": "ab2191fe04571e3bbf57cd0c07eab9a8772b498f41784a88fcbcf5ecccb7e898",
+      "candidates_total": 0
+    },
+    {
+      "component": "security_huks",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "git_tree": "9c922a60d815a34eb96c060274ed863fd3a6fea8",
+      "selected_files": 538,
+      "selected_bytes": 4529210,
+      "plan_sha256": "adda3c625ddea1013d10d980886b270e3ce0a556fd3ade8ded30bd4fdb2b9959",
+      "candidates_total": 0
+    },
+    {
+      "component": "telephony_core_service",
+      "repository": "openharmony/telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "git_tree": "cd3d76976a30b4b04962cdb13da9e6693e30cd4e",
+      "selected_files": 556,
+      "selected_bytes": 5479778,
+      "plan_sha256": "d7efc09bfab41f1c548169928b11d2694f7dda4dda24830db721f1218fbde5d8",
+      "candidates_total": 4
+    }
+  ],
+  "source_object_note": "Each component is a local clone pinned by rev-parse (gitee.org/openharmony); the driver reads pinned Git objects and does not fetch. Source repositories stay outside Git.",
+  "validated_vulnerability": 0
+}

@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T22:16:40+00:00",
+  "repository": "openharmony/communication_wifi",
+  "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+  "git_tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+  "snapshot_sha256": "5c43df631caa231c8259e5a04365fc15c4dad6ab7314a50e4b1bbca440d8e1f1",
+  "plan_sha256": "bc267661b8ae981e5a49b828387e4eacc37709a45e3b513381da7ad79badb7a5",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-bline/communication_wifi",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-bline/communication_wifi",
+    "--repository",
+    "openharmony/communication_wifi",
+    "--commit",
+    "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit-bline/communication_wifi",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit-bline/communication_wifi/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit-bline/communication_wifi/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 776,
+    "candidates": 2,
+    "candidates_with_runner_obligations": 2,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 776,
+    "parse_complete": 596,
+    "parse_partial": 165,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 15,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 776,
+    "bytes_selected": 8360932,
+    "parse_complete": 596,
+    "parse_partial": 165,
+    "files_analyzed": 596
+  },
+  "performance": {
+    "elapsed_seconds": 41.473,
+    "peak_rss_kb": 762960,
+    "files_per_second": 18.71,
+    "bytes_per_second": 201599.4,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/communication_wifi/report.json",
+      "sha256": "2725188dd247bf530769f810873703b4773921720ed8d1a64b87f28cb3d639db"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/communication_wifi/report.md",
+      "sha256": "46bf23fa387689c46431c8ff916194691093e22cc892c435d7b51a2731bfd884"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

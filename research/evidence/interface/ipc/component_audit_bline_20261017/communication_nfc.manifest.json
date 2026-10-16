@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T22:17:35+00:00",
+  "repository": "openharmony/communication_nfc",
+  "commit": "331bfd2661490c996d495ab2b656f79d81ae931c",
+  "git_tree": "67fb3b038bb164a1049eb8c214b7e7ace3929612",
+  "snapshot_sha256": "253dd003d9ed9e4205989bb03181aab2b99d5acbf4847aaa78db0265044d1fe4",
+  "plan_sha256": "15b954e01a678a10637da81ed80c7aa6a7528281a486d64d78c836070ea96cbe",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-bline/communication_nfc",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-bline/communication_nfc",
+    "--repository",
+    "openharmony/communication_nfc",
+    "--commit",
+    "331bfd2661490c996d495ab2b656f79d81ae931c",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit-bline/communication_nfc",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit-bline/communication_nfc/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit-bline/communication_nfc/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 273,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 273,
+    "parse_complete": 251,
+    "parse_partial": 22,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 0,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 273,
+    "bytes_selected": 1765731,
+    "parse_complete": 251,
+    "parse_partial": 22,
+    "files_analyzed": 251
+  },
+  "performance": {
+    "elapsed_seconds": 9.204,
+    "peak_rss_kb": 178760,
+    "files_per_second": 29.66,
+    "bytes_per_second": 191843.87,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/communication_nfc/report.json",
+      "sha256": "b3a4f4b19f17431f5b703e63597294961ef2867d111112be5b82bd29d935715f"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/communication_nfc/report.md",
+      "sha256": "9cb4a5361a514b623314fd8cde9ea8f3dc13c4b70120622cc122502c193ae212"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

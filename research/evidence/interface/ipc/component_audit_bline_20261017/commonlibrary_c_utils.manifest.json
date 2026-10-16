@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T22:14:48+00:00",
+  "repository": "openharmony/commonlibrary_c_utils",
+  "commit": "7a9af76276aca8f53347fb89c07850e014905521",
+  "git_tree": "90ba79ba1a0bd9723d3c886e519edad47a308649",
+  "snapshot_sha256": "5ed8cf108873d57e6a5aeeb08376f2b8569d3f81edae78e1910bcff4d7334dc1",
+  "plan_sha256": "132ba3df505ac7f4c09b8fc7aafee55551d0aad5accda931c50885351d6dc22e",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-bline/commonlibrary_c_utils",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-bline/commonlibrary_c_utils",
+    "--repository",
+    "openharmony/commonlibrary_c_utils",
+    "--commit",
+    "7a9af76276aca8f53347fb89c07850e014905521",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit-bline/commonlibrary_c_utils",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit-bline/commonlibrary_c_utils/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit-bline/commonlibrary_c_utils/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 62,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 62,
+    "parse_complete": 56,
+    "parse_partial": 6,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 0,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 62,
+    "bytes_selected": 429359,
+    "parse_complete": 56,
+    "parse_partial": 6,
+    "files_analyzed": 56
+  },
+  "performance": {
+    "elapsed_seconds": 1.842,
+    "peak_rss_kb": 59344,
+    "files_per_second": 33.66,
+    "bytes_per_second": 233093.92,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/commonlibrary_c_utils/report.json",
+      "sha256": "d0fd4496ea192127ac3e8efa621b5331b8bc679ae5cb5080ea6590af49c17ee9"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/commonlibrary_c_utils/report.md",
+      "sha256": "de9df5170a4729f11a6a64feb231dc1e6dbdd82876fd65b4654c42d0420c7608"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

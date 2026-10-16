@@ -6,13 +6,14 @@
 
 - lane `lanes.ipc`；branch `work/ipc-20261017`
 - base `6a41dc9b1aa030158e09be6241e2b14341f9256d`（integration base，本线**未** rebase）
-- head：**本记录所在提交**。本线在本 base 上共 6 个提交，按提交信息依次是
+- head：**本记录所在提交**。本线在本 base 上共 7 个提交，按提交信息依次是
   "per-rule controls for the six families, and an 18-component measurement"（`bb24978`）→
   "census the shapes the six silent rules key on"（`09f49d7`）→
   "why the six silent rules are silent, and 12 more components"（`46d4f64`）→
   "measure the interpreter's own identity attribution, and correct two mechanisms"（`df7bd8e`）→
   "measure why caller-class never emitted"（`400751e`）→
-  "measure the coverage ceiling instead of assuming it"（本提交）——
+  "measure the coverage ceiling instead of assuming it"（`24c7f6c`）→
+  "widen the corpus by mechanism, and measure the loudest rule"（本提交）——
   本提交的确切 SHA 会随 `--amend` 变化，故此处不写死；**未 push、未开 PR、未标 Ready、未 merge**
 - worktree `/home/audit/ohscanner/worktrees/parallel-ipc-20261017`
 
@@ -54,14 +55,22 @@ research/deliveries/ipc/20261017-shape-corpus-and-auth03-identity.md
 research/deliveries/ipc/20261017-interpreter-attribution-auth03.md
 research/deliveries/ipc/20261017-caller-class-walk-coverage.md
 research/deliveries/ipc/20261017-coverage-ceiling-measured.md
+research/deliveries/ipc/20261017-widen-corpus-and-precision.md  (交付项 10)
 research/deliveries/ipc/20261017-lane-delivery-record.md      (本文件)
 research/evidence/interface/ipc/component_audit_20261017/     (components.json, index.json, 18×manifest)
 research/evidence/interface/ipc/component_audit_shape_20261017/ (components.json, index.json, 12×manifest)
+research/evidence/interface/ipc/component_audit_bline_20261017/ (components.json, index.json, 12×manifest)
 research/evidence/interface/ipc/hitrace_guard_pair_20261017/  (pair.json)
 research/evidence/interface/ipc/auth03_identity_probe_20261017/ (probe.json, interpreter_attribution.json)
+research/evidence/interface/ipc/auth01_precision_probe_20261017/ (precision_probe.json/.md, relay_guard_cause.json)
+research/evidence/interface/ipc/copy_range_counterfactual_20261017/ (counterfactual.json, patch.diff,
+                                                                   patched_analysis.sha256)
 research/evidence/interface/ipc/caller_class_walk_20261017/   (caller_class_walk.json)
 research/evidence/interface/ipc/ceiling_20261017/             (ceiling_yield.json, roots/6×json)
 research/deliveries/ipc/silent_rule_shape_census.py             (只读，形状取自 IpcPolicy)
+research/deliveries/ipc/widen_shape_census.py                   (只读，全语料形状普查，多语料同法可比)
+research/deliveries/ipc/auth01_precision_probe.py               (只读，筛查 + pinned-blob 摘录 + relay_guard 六出口实测)
+research/deliveries/ipc/copy_range_counterfactual.py            (只读，副本打补丁 + 全语料附带影响比对)
 research/deliveries/ipc/copy_range_arg_classes.py               (只读，拷贝长度实参分类)
 research/deliveries/ipc/permission_arg_classes.py               (只读，授权谓词实参分类)
 research/deliveries/ipc/interpreter_arg_attribution.py          (只读，把探针记录汇成证据 JSON)
@@ -80,20 +89,22 @@ tests/test_ipc_family_depth.py                                 (12 项测试)
 ```console
 $ .venv-web/bin/python scripts/check_change_scope.py \
     --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc
-  "checked_paths": 114 项
+  "checked_paths": 138 项
   "violations": []
   exit 0
 ```
 
-（`checked_paths` 76 → 96 → 100 → 104 → **114**：第二批新增 12 份 manifest、两份证据 JSON
+（`checked_paths` 76 → 96 → 100 → 104 → 114 → **138**：第二批新增 12 份 manifest、两份证据 JSON
 与两个只读脚本；第三批新增交付项 7、`interpreter_arg_attribution.py`、`probe_site/sitecustomize.py`
 与 `auth03_identity_probe_20261017/interpreter_attribution.json`；第四批（`400751e`）新增
 交付项 8、`caller_class_walk.py`、`root_probe_site/sitecustomize.py` 与
-`caller_class_walk_20261017/caller_class_walk.json`；本批新增交付项 9、`ceiling_yield.py`、
+`caller_class_walk_20261017/caller_class_walk.json`；第五批新增交付项 9、`ceiling_yield.py`、
 `ceiling_probe_site/sitecustomize.py`、`ceiling_20261017/ceiling_yield.json`
-与 `ceiling_20261017/roots/` 6 份仪器记录。
+与 `ceiling_20261017/roots/` 6 份仪器记录；本批（交付项 10）新增三份只读脚本、
+`component_audit_bline_20261017/` 的 12 份 manifest 与两份汇总 JSON、
+`auth01_precision_probe_20261017/` 三份、`copy_range_counterfactual_20261017/` 三份。
 `--no-renames` 与策略取自 base 提交，本线**没有**为过检查改过策略。
-这份 114 项的清单同时含**三个来源**：本线五个提交新增的文件；并发 import 留在
+这份 138 项的清单同时含**三个来源**：本线六个提交新增的文件；并发 import 留在
 `src/ohscanner/detectors/interface/**` 与 `tests/**` 的既有脏文件（本线从未 stage 过它们，
 见"选择性迁入来源提交"一节）；以及本线的夹具/测试。
 三者都落在 `lanes.ipc` 的策略范围内，故 `violations` 为空。）
@@ -154,6 +165,20 @@ $ .venv-web/bin/python scripts/check_change_scope.py \
    本线证据由 `0.8.0` 产出、早于该字段，故**不回溯改写**报告去补字段。
 5. **`copy_calls` 取参下标**：`ReadRawData`（139 次）/`ReadBuffer`（45 次）的真实长度实参
    在第 0 位，规则当前的 `index=2` 够不着 —— 属规则定义改动（交付项 6 §7）。
+6. **AUTH-01 的 `relay_guard` 只认分发器形状的守卫**（交付项 10 §6，**本线实测**）：
+   这是**候选最多的那条规则**（103/179）里的体系性误报源。`relay_guard`
+   （`analysis.py:1159`）本意是"relayed-to function 就是守卫 ⇒ 此调用点不是未守卫边界"，
+   但它的六个出口里有三个只接受**内层分发器**的形状，于是把**谓词助手**当成了未守卫的 handler。
+   实测 10 条 `guard_symbol` 误报分布在三个不同出口：
+   - `:1182` 要求调用**至少携带一个入口实参** ⇒ 零实参守卫（`CheckPermission()`、
+     `IsImeInUse()`、`CheckandDoUnFreeze()`）在**读函数体之前**就被判负（4 条）；
+   - `:1199` 只在被调函数顶层找 `if_statement` ⇒ 守卫写成
+     `return interfaceToken == GetDescriptor();` 时无 `if` 可找（5 条，samgr/dmsfwk）；
+   - `:1225` 要求检查之后跟一个 `switch_statement` ⇒ 形状齐全的纯谓词仍被否（1 条，
+     `CheckCurrentDescriptor`：`if` 有、mismatch 分支也确实 `return`，只在出口 6 被卡）。
+   三项互相独立，**名字表加名字对任何一项都不是修复**（出口 2 发生在读体之前，
+   出口 3 是形状而非名字，出口 6 是"谓词 vs 分发器"的建模混淆）。
+   本线只给成因与实测分布，**未改检测器**；改法由集成人裁定。
 
 另有一项**数据面**请求与一项**语料面**建议：共享 `tests/fixtures/ipc/manifest.json` 的
 `account_role_authorized_fixed` 行（见"下一项"第 4 条）；以及按**文件语言**而非仓库名挑语料
@@ -384,6 +409,17 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
    `index=2` 对这两个名字够不着它们真正的长度实参（第 0 个）：`ReadRawData` 139 次、
    `ReadBuffer` 45 次取不到。这是**规则定义改动**，落在 `analysis.py`。
 6. **未做的动态验证 / PoC** —— 本交付只到静态候选与测量，无 PoC、无动态验证。
+7. **反事实证据的两处来源缺陷（已修，交付项 10 §5.1.1）** —— 这两处**都没有产出错的数字**，
+   但都让"这个数字由那份补丁造成"这句话不可检验，所以记在这里而不是当作小事：
+   - `copy_range_counterfactual.py` 的 `build()` 没建证据目录就写 `patch.diff`，
+     直接抛 `FileNotFoundError`。上一会话据此认为 `patch.diff` 已落盘，实际**从未写过**。
+   - 跑出 42 组件比对结果的那份副本，与 `--build` 现在产出的副本 `analysis.py`
+     sha256 不一致（差异**只在两处注释措辞**，代码逐字相同）。
+   处置：`build()` 补建目录并把副本哈希写进 `patched_analysis.sha256`；`--report`
+   比对前校验磁盘副本哈希等于记录值，不等即报错退出；归档第一版输出（`cf-out-all-run1/`，
+   未删）并用重新生成的副本整份重跑。重跑与第一版**逐组件完全相同（42/42，含 scope 哈希）**，
+   故上列数字未变——但这一点现在是量出来的，不是从"差异只在注释"推出来的。
+   同时修掉 `report()` 把 `removed`/`added` 写成净差（会打印 `added=-1`）。
 
 ## 本地提交完成；push/merge/Ready 需另有明确授权
 

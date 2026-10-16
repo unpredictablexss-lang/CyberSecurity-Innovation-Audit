@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "kind": "ipc_auth01_relay_guard_cause",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "rule": "ipc.relay.descriptor-boundary",
+  "method": "relay_guard in a copy of the pinned tree was instrumented to label each of its six exits; the copy was run on the components carrying flagged candidates and the verdicts were joined onto the candidates by file and line. Nothing was inferred.",
+  "suppression_path": "src/ohscanner/detectors/interface/analysis.py:1159 relay_guard",
+  "exits_in_order": [
+    ":1178 helper.body is None or helper.file != fn.file",
+    ":1182 no argument carried, or a carried argument is not an entry parameter",
+    ":1199 no top-level if_statement whose condition is a descriptor predicate",
+    ":1211 comparison found but its subject is not in _DESCRIPTOR_ACCEPTED",
+    ":1222 the mismatch branch does not leave",
+    ":1225 the check is not followed by a switch_statement"
+  ],
+  "cause_tally": {
+    "2_args_not_carried": 4,
+    "3_no_descriptor_if": 5,
+    "6_no_switch_after_check": 1
+  },
+  "handler_by_cause": {
+    "2_args_not_carried": {
+      "CheckPermission": 2,
+      "CheckandDoUnFreeze": 1,
+      "IsImeInUse": 1
+    },
+    "3_no_descriptor_if": {
+      "EnforceInterceToken": 4,
+      "EnforceInterfaceToken": 1
+    },
+    "6_no_switch_after_check": {
+      "CheckCurrentDescriptor": 1
+    }
+  },
+  "rows": [
+    {
+      "batch": "baseline30",
+      "component": "communication_ipc",
+      "repository": "openharmony/communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "file": "ipc/native/src/taihe/src/ohos.rpc.rpc.impl.cpp",
+      "line": 231,
+      "symbol": "ANIRemoteObject::OnRemoteRequest",
+      "named_handler": "ANIRemoteObject::callOnRemoteMessageRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "2527026b8a744f9bb1ae4d9af98e991386ec07887af4310f2309c57a1674ba08",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: ANIRemoteObject::callOnRemoteMessageRequest Entry=ANIRemoteObject::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "   226     auto jsReply = taihe::make_holder<MessageSequenceImpl, ::ohos::rpc::rpc::MessageSequence>(&reply);\n   227     jsReply->AddJsObjWeakRef(jsReply);\n   228     auto jsOption = taihe::make_holder<MessageOptionImpl, ::ohos::rpc::rpc::MessageOption>(option.GetFlags(),\n   229         option.GetWaitTime());\n   230     ::ohos::rpc::rpc::OnRemoteMessageRequestResultUnion res =\n   231         callOnRemoteMessageRequest(code, jsData, jsReply, jsOption);\n   232     if (res.holds_booleanValue()) {\n   233         bool boolRes = res.get_booleanValue_ref();\n   234         return boolRes ? OHOS::ERR_NONE : OHOS::ERR_UNKNOWN_TRANSACTION;\n   235     } else {\n   236         res.get_promiseValue_ref().on_complete(",
+      "excerpt_error": null,
+      "cause": "entry_named_not_a_guard",
+      "cause_note": "not applicable: the message names the entry, not a guard"
+    },
+    {
+      "batch": "baseline30",
+      "component": "distributeddatamgr_pasteboard",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+      "file": "services/zidl/src/pasteboard_disposable_observer_stub.cpp",
+      "line": 48,
+      "symbol": "PasteboardDisposableObserverStub::OnRemoteRequest",
+      "named_handler": "PasteboardDisposableObserverStub::OnRemoteRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "3c1a2400d5a498fbe66669003f7283d24a182d4c6ea1891016c0d83570e3e885",
+      "message": "AUTH-01 candidate: Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown. Entry=PasteboardDisposableObserverStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "    43         \"invalid code, code=%{public}u\", code);\n    44     auto memberFunc = iter->second;\n    45     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(memberFunc != nullptr,\n    46         static_cast<int32_t>(PasteboardError::INVALID_PARAM_ERROR), PASTEBOARD_MODULE_SERVICE,\n    47         \"func is null, code=%{public}u\", code);\n    48     return (this->*memberFunc)(data, reply);\n    49 }\n    50 \n    51 int32_t PasteboardDisposableObserverStub::OnTextReceivedStub(MessageParcel &data, MessageParcel &reply)\n    52 {\n    53     std::string text = data.ReadString();",
+      "excerpt_error": null,
+      "cause": "entry_named_not_a_guard",
+      "cause_note": "not applicable: the message names the entry, not a guard"
+    },
+    {
+      "batch": "baseline30",
+      "component": "inputmethod_imf",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "file": "services/src/input_method_system_ability.cpp",
+      "line": 168,
+      "symbol": "InputMethodSystemAbility::ResetDelayUnloadTask",
+      "named_handler": "InputMethodSystemAbility::IsImeInUse",
+      "modes": [
+        "guard_symbol"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "c4e47e26f04ec7da93d112f2a2b0d9014b2d5859dbe58b9029af3a35c51dcd6b",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: InputMethodSystemAbility::IsImeInUse Entry=InputMethodSystemAbility::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((216, 'preproc #ifdef IMF_ON_DEMAND_START_STOP_SA_ENABLE'), (219, 'code != st",
+      "excerpt": "   163 }\n   164 void InputMethodSystemAbility::ResetDelayUnloadTask(uint32_t code)\n   165 {\n   166     auto task = [this]() {\n   167         IMSA_HILOGI(\"start unload task\");\n   168         if (IsImeInUse()) {\n   169             IMSA_HILOGI(\"ime in use\");\n   170             return;\n   171         }\n   172         auto onDemandStartStopSa = std::make_shared<OnDemandStartStopSa>();\n   173         onDemandStartStopSa->UnloadInputMethodSystemAbility();",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "2_args_not_carried"
+      ],
+      "relay_verdict_passes": 32,
+      "cause": "2_args_not_carried",
+      "cause_note": "no argument carried, or a carried argument is not an entry parameter (a nullary guard can never be recognised)"
+    },
+    {
+      "batch": "baseline30",
+      "component": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "file": "services/services/player/ipc/player_service_stub.cpp",
+      "line": 376,
+      "symbol": "PlayerServiceStub::OnRemoteRequest",
+      "named_handler": "PlayerServiceStub::CheckandDoUnFreeze",
+      "modes": [
+        "guard_symbol"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "479d554f58f059143ce595521d6c6e40f832b6b49b673ba836cf363ce09de746",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: PlayerServiceStub::CheckandDoUnFreeze Entry=PlayerServiceStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((363, 'itFunc != playerFuncs_.end() => True'), (366, 'funcName.compare(\"Player::Set",
+      "excerpt": "   371                 FAKE_POINTER(this), funcName.c_str());\n   372         }\n   373         if (memberFunc != nullptr) {\n   374             auto task = std::make_shared<TaskHandler<int>>([&, this] {\n   375                 (void)IpcRecovery(false);\n   376                 auto res = CheckandDoUnFreeze();\n   377                 CHECK_AND_RETURN_RET_LOG(res == MSERR_OK, res, \"UnFreeze failed\");\n   378                 int32_t ret = -1;\n   379                 ret = memberFunc(data, reply);\n   380                 return ret;\n   381             });",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "2_args_not_carried"
+      ],
+      "relay_verdict_passes": 6,
+      "cause": "2_args_not_carried",
+      "cause_note": "no argument carried, or a carried argument is not an entry parameter (a nullary guard can never be recognised)"
+    },
+    {
+      "batch": "baseline30",
+      "component": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "line": 215,
+      "symbol": "RecorderServiceStub::OnRemoteRequest",
+      "named_handler": "RecorderServiceStub::CheckPermission",
+      "modes": [
+        "guard_symbol"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: RecorderServiceStub::CheckPermission Entry=RecorderServiceStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((205, 'code == SET_AUDIO_SOURCE => True'), (214, 'AUDIO_REQUEST.count(code) != 0 =",
+      "excerpt": "   210         audioSourceType_ = static_cast<AudioSourceType>(type);\n   211     }\n   212 \n   213     int32_t permissionResult = Security::AccessToken::PERMISSION_GRANTED;\n   214     if (AUDIO_REQUEST.count(code) != 0) {\n   215         permissionResult = CheckPermission();\n   216         needAudioPermissionCheck = true;\n   217     } else if (COMMON_REQUEST.count(code) != 0 && needAudioPermissionCheck) {\n   218         permissionResult = CheckPermission();\n   219     } else {\n   220         // none audio request no need to check permission in recorder server",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "2_args_not_carried"
+      ],
+      "relay_verdict_passes": 4,
+      "cause": "2_args_not_carried",
+      "cause_note": "no argument carried, or a carried argument is not an entry parameter (a nullary guard can never be recognised)"
+    },
+    {
+      "batch": "baseline30",
+      "component": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "line": 218,
+      "symbol": "RecorderServiceStub::OnRemoteRequest",
+      "named_handler": "RecorderServiceStub::CheckPermission",
+      "modes": [
+        "guard_symbol"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "30ca38f8cb2372ed82bb666714593a629dc929bc67c5b4c21edc5bf3ed2f84ad",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: RecorderServiceStub::CheckPermission Entry=RecorderServiceStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((205, 'code == SET_AUDIO_SOURCE => True'), (214, 'AUDIO_REQUEST.count(code) != 0 =",
+      "excerpt": "   213     int32_t permissionResult = Security::AccessToken::PERMISSION_GRANTED;\n   214     if (AUDIO_REQUEST.count(code) != 0) {\n   215         permissionResult = CheckPermission();\n   216         needAudioPermissionCheck = true;\n   217     } else if (COMMON_REQUEST.count(code) != 0 && needAudioPermissionCheck) {\n   218         permissionResult = CheckPermission();\n   219     } else {\n   220         // none audio request no need to check permission in recorder server\n   221     }\n   222     if (permissionResult == Security::AccessToken::PERMISSION_DENIED) {\n   223         MEDIA_LOGE(\"User do not have the required permissions for the current operation.\");",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "2_args_not_carried"
+      ],
+      "relay_verdict_passes": 4,
+      "cause": "2_args_not_carried",
+      "cause_note": "no argument carried, or a carried argument is not an entry parameter (a nullary guard can never be recognised)"
+    },
+    {
+      "batch": "baseline30",
+      "component": "systemabilitymgr_samgr",
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "file": "frameworks/native/source/system_ability_load_callback_stub.cpp",
+      "line": 36,
+      "symbol": "SystemAbilityLoadCallbackStub::OnRemoteRequest",
+      "named_handler": "SystemAbilityLoadCallbackStub::EnforceInterceToken",
+      "modes": [
+        "guard_symbol",
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "650b9775acd25677e15c529407981dfa69cad203572dca407626f27273dbde9c",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: SystemAbilityLoadCallbackStub::EnforceInterceToken Entry=SystemAbilityLoadCallbackStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "    31 }\n    32 int32_t SystemAbilityLoadCallbackStub::OnRemoteRequest(uint32_t code,\n    33     MessageParcel& data, MessageParcel& reply, MessageOption& option)\n    34 {\n    35     HILOGD(\"SystemAbilityLoadCallbackStub::OnRemoteRequest, code = %{public}u\", code);\n    36     if (!EnforceInterceToken(data)) {\n    37         HILOGW(\"SystemAbilityLoadCallbackStub::OnRemoteRequest check interface token failed!\");\n    38         return ERR_PERMISSION_DENIED;\n    39     }\n    40     switch (code) {\n    41         case ON_LOAD_SYSTEM_ABILITY_SUCCESS:",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "3_no_descriptor_if"
+      ],
+      "relay_verdict_passes": 4,
+      "cause": "3_no_descriptor_if",
+      "cause_note": "no top-level `if` whose condition is a descriptor predicate -- the guard is written as a bare returned comparison"
+    },
+    {
+      "batch": "baseline30",
+      "component": "systemabilitymgr_samgr",
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "file": "frameworks/native/source/system_ability_status_change_stub.cpp",
+      "line": 46,
+      "symbol": "SystemAbilityStatusChangeStub::OnRemoteRequest",
+      "named_handler": "SystemAbilityStatusChangeStub::EnforceInterceToken",
+      "modes": [
+        "guard_symbol",
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "9359834c0cd42b8fc6c428126bd96e28ca81cf122b3c5d90f0e7c3b77845c086",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: SystemAbilityStatusChangeStub::EnforceInterceToken Entry=SystemAbilityStatusChangeStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "    41 \n    42 int32_t SystemAbilityStatusChangeStub::OnRemoteRequest(uint32_t code,\n    43     MessageParcel& data, MessageParcel& reply, MessageOption& option)\n    44 {\n    45     HILOGD(\"SystemAbilityStatusChangeStub::code:%{public}u, flags:%{public}d\", code, option.GetFlags());\n    46     if (!EnforceInterceToken(data)) {\n    47         HILOGW(\"check interface token failed!\");\n    48         return ERR_PERMISSION_DENIED;\n    49     }\n    50     auto iter = memberFuncMap_.find(code);\n    51     if (iter != memberFuncMap_.end()) {",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "3_no_descriptor_if"
+      ],
+      "relay_verdict_passes": 4,
+      "cause": "3_no_descriptor_if",
+      "cause_note": "no top-level `if` whose condition is a descriptor predicate -- the guard is written as a bare returned comparison"
+    },
+    {
+      "batch": "baseline30",
+      "component": "systemabilitymgr_samgr",
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "file": "frameworks/native/source/system_process_status_change_stub.cpp",
+      "line": 39,
+      "symbol": "SystemProcessStatusChangeStub::OnRemoteRequest",
+      "named_handler": "SystemProcessStatusChangeStub::EnforceInterceToken",
+      "modes": [
+        "guard_symbol",
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "437bc4acbc44e1c60c113fae2038caaf33e4ae1eb8666307713637f136005b61",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: SystemProcessStatusChangeStub::EnforceInterceToken Entry=SystemProcessStatusChangeStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "    34 \n    35 int32_t SystemProcessStatusChangeStub::OnRemoteRequest(uint32_t code,\n    36     MessageParcel& data, MessageParcel& reply, MessageOption& option)\n    37 {\n    38     HILOGD(\"ProcStaChange,code:%{public}u,flags:%{public}d\", code, option.GetFlags());\n    39     if (!EnforceInterceToken(data)) {\n    40         HILOGW(\"check interface token failed!\");\n    41         return ERR_PERMISSION_DENIED;\n    42     }\n    43     auto iter = memberFuncMap_.find(code);\n    44     if (iter != memberFuncMap_.end()) {",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "3_no_descriptor_if"
+      ],
+      "relay_verdict_passes": 8,
+      "cause": "3_no_descriptor_if",
+      "cause_note": "no top-level `if` whose condition is a descriptor predicate -- the guard is written as a bare returned comparison"
+    },
+    {
+      "batch": "baseline30",
+      "component": "systemabilitymgr_samgr",
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "line": 222,
+      "symbol": "SystemAbilityManagerStub::OnRemoteRequest",
+      "named_handler": "SystemAbilityManagerStub::EnforceInterceToken",
+      "modes": [
+        "guard_symbol",
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "d403a69a02d916b94cdbdd39cbbf989934564a2e02644c0ba9428845eca1fcc3",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: SystemAbilityManagerStub::EnforceInterceToken Entry=SystemAbilityManagerStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "   217     MessageParcel& data, MessageParcel& reply, MessageOption &option)\n   218 {\n   219     HILOGD(\"SAMStub::OnReceived, code = %{public}u, callerPid = %{public}d\",\n   220         code, IPCSkeleton::GetCallingPid());\n   221     Samgr::MemoryGuard cacheGuard;\n   222     if (!EnforceInterceToken(data)) {\n   223         HILOGE(\"SAMStub::OnReceived, code = %{public}u, check interfaceToken failed\", code);\n   224         return ERR_PERMISSION_DENIED;\n   225     }\n   226     auto itFunc = memberFuncMap_.find(code);\n   227     if (itFunc != memberFuncMap_.end()) {",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "3_no_descriptor_if"
+      ],
+      "relay_verdict_passes": 4,
+      "cause": "3_no_descriptor_if",
+      "cause_note": "no top-level `if` whose condition is a descriptor predicate -- the guard is written as a bare returned comparison"
+    },
+    {
+      "batch": "bline12",
+      "component": "ability_dmsfwk",
+      "repository": "openharmony/ability_dmsfwk",
+      "commit": "aa1b0347b10700d761def383c08749420dd3f71a",
+      "file": "services/dtbschedmgr/src/distributed_sched_stub.cpp",
+      "line": 266,
+      "symbol": "DistributedSchedStub::OnRemoteRequest",
+      "named_handler": "DistributedSchedStub::EnforceInterfaceToken",
+      "modes": [
+        "guard_symbol"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "de5000436465b1134631558b3e3b2ca3ca5a182f637ff7b36bbcc0ab1d4f5d3e",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: DistributedSchedStub::EnforceInterfaceToken Entry=DistributedSchedStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((264, 'iter != funcsMap.end() => True'),)",
+      "excerpt": "   261 \n   262     const auto& funcsMap = IsLocalCalling ? localFuncsMap_ : remoteFuncsMap_;\n   263     auto iter = funcsMap.find(code);\n   264     if (iter != funcsMap.end()) {\n   265         auto func = iter->second;\n   266         if (!EnforceInterfaceToken(data)) {\n   267             HILOGW(\"OnRemoteRequest interface token check failed!\");\n   268             return DMS_PERMISSION_DENIED;\n   269         }\n   270         if (func != nullptr) {\n   271             return (this->*func)(data, reply);",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "3_no_descriptor_if"
+      ],
+      "relay_verdict_passes": 4,
+      "cause": "3_no_descriptor_if",
+      "cause_note": "no top-level `if` whose condition is a descriptor predicate -- the guard is written as a bare returned comparison"
+    },
+    {
+      "batch": "bline12",
+      "component": "ability_dmsfwk",
+      "repository": "openharmony/ability_dmsfwk",
+      "commit": "aa1b0347b10700d761def383c08749420dd3f71a",
+      "file": "services/dtbschedmgr/src/distributed_sched_stub.cpp",
+      "line": 271,
+      "symbol": "DistributedSchedStub::OnRemoteRequest",
+      "named_handler": "DistributedSchedStub::OnRemoteRequest",
+      "modes": [
+        "enforced_path"
+      ],
+      "enforced_condition": "EnforceInterfaceToken(data) => True",
+      "source_sha256": "de5000436465b1134631558b3e3b2ca3ca5a182f637ff7b36bbcc0ab1d4f5d3e",
+      "message": "AUTH-01 candidate: Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown. Entry=DistributedSchedStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((264, 'iter != funcsMap.end() => True'), (266, 'EnforceInterfaceToken(data) => True'), (270, 'func != ",
+      "excerpt": "   266         if (!EnforceInterfaceToken(data)) {\n   267             HILOGW(\"OnRemoteRequest interface token check failed!\");\n   268             return DMS_PERMISSION_DENIED;\n   269         }\n   270         if (func != nullptr) {\n   271             return (this->*func)(data, reply);\n   272         }\n   273     }\n   274 \n   275     HILOGW(\"OnRemoteRequest default case, need check.\");\n   276     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);",
+      "excerpt_error": null,
+      "cause": "entry_named_not_a_guard",
+      "cause_note": "not applicable: the message names the entry, not a guard"
+    },
+    {
+      "batch": "bline12",
+      "component": "telephony_core_service",
+      "repository": "openharmony/telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "file": "frameworks/native/src/iesim_service_callback_stub.cpp",
+      "line": 219,
+      "symbol": "IEsimServiceCallbackStub::OnRemoteRequest",
+      "named_handler": "IEsimServiceCallbackStub::OnRemoteRequest",
+      "modes": [
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "8ddd8cdefc0520ae4e3f418d218f7b8d662161029f5f3ec5870cb1fcac3071b9",
+      "message": "AUTH-01 candidate: IPC dispatch/callback reaches OnEsimServiceCallback without a matched interface-descriptor guard; relay/exposure still requires review. Entry=IEsimServiceCallbackStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "   214 \n   215 int IEsimServiceCallbackStub::OnRemoteRequest(\n   216     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n   217 {\n   218     TELEPHONY_LOGI(\"IEsimServiceCallbackStub::OnRemoteRequest requestId:%{public}d\", code);\n   219     return OnEsimServiceCallback(static_cast<EsimServiceCallback>(code), data);\n   220 }\n   221 void IEsimServiceCallbackStub::OnGetEuiccInfo(const EuiccInfo &result, const int32_t errorCode)\n   222 {}\n   223 \n   224 void IEsimServiceCallbackStub::OnDeleteProfile(const int32_t &result, const int32_t errorCode)",
+      "excerpt_error": null,
+      "cause": "entry_named_not_a_guard",
+      "cause_note": "not applicable: the message names the entry, not a guard"
+    },
+    {
+      "batch": "bline12",
+      "component": "telephony_core_service",
+      "repository": "openharmony/telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "file": "frameworks/native/src/raw_parcel_callback_stub.cpp",
+      "line": 31,
+      "symbol": "RawParcelCallbackStub::Transfer",
+      "named_handler": "RawParcelCallbackStub::CheckCurrentDescriptor",
+      "modes": [
+        "guard_symbol"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "995061d2fe890071f909daa4173b6c8415f5a43a9686389e23f02a510d5e650f",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: RawParcelCallbackStub::CheckCurrentDescriptor Entry=RawParcelCallbackStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((28, 'writer => False'),)",
+      "excerpt": "    26 void RawParcelCallbackStub::Transfer(std::function<void(MessageParcel&)> writer, MessageParcel &data)\n    27 {\n    28     if (writer) { // same process ipc call\n    29         writer(data);\n    30     } else {\n    31         if (!CheckCurrentDescriptor(data)) {\n    32             return;\n    33         }\n    34     }\n    35     if (reader_) {\n    36         reader_(data);",
+      "excerpt_error": null,
+      "relay_verdicts": [
+        "6_no_switch_after_check"
+      ],
+      "relay_verdict_passes": 8,
+      "cause": "6_no_switch_after_check",
+      "cause_note": "the check is not followed by a `switch` -- the helper is a pure predicate, not a dispatching inner handler"
+    },
+    {
+      "batch": "bline12",
+      "component": "telephony_core_service",
+      "repository": "openharmony/telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "file": "frameworks/native/src/raw_parcel_callback_stub.cpp",
+      "line": 44,
+      "symbol": "RawParcelCallbackStub::OnRemoteRequest",
+      "named_handler": "RawParcelCallbackStub::Transfer",
+      "modes": [
+        "empty_path"
+      ],
+      "enforced_condition": "",
+      "source_sha256": "995061d2fe890071f909daa4173b6c8415f5a43a9686389e23f02a510d5e650f",
+      "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: RawParcelCallbackStub::Transfer Entry=RawParcelCallbackStub::OnRemoteRequest; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=()",
+      "excerpt": "    39 }\n    40 \n    41 int RawParcelCallbackStub::OnRemoteRequest(\n    42     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)\n    43 {\n    44     Transfer(nullptr, data);\n    45     return TELEPHONY_ERR_SUCCESS;\n    46 }\n    47 \n    48 bool RawParcelCallbackStub::WaitForResult(int64_t timeoutMs)\n    49 {",
+      "excerpt_error": null,
+      "cause": "entry_named_not_a_guard",
+      "cause_note": "not applicable: the message names the entry, not a guard"
+    }
+  ],
+  "note": "A cause reading, not a detector change. The suppression path itself is source-verified; these verdicts say which condition of it did not hold. confirmed_vulnerabilities stays 0."
+}

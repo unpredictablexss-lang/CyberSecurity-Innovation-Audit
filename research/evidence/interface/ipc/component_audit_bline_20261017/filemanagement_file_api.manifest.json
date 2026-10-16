@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T22:17:26+00:00",
+  "repository": "openharmony/filemanagement_file_api",
+  "commit": "103df5c4911e7fcddcccc7ae34894c5a2871d3a7",
+  "git_tree": "0c0700b937193c8923d77df5582a884960e828cc",
+  "snapshot_sha256": "2b30efb415bfb469bf6deef1fa9ca6684a3af68792b5edf45a75592ae437c4f6",
+  "plan_sha256": "ae7cb6a3bc8e5ae8f251689fbe148516dae8dbc7558da81aa5d700c991854249",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-bline/filemanagement_file_api",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-bline/filemanagement_file_api",
+    "--repository",
+    "openharmony/filemanagement_file_api",
+    "--commit",
+    "103df5c4911e7fcddcccc7ae34894c5a2871d3a7",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit-bline/filemanagement_file_api",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit-bline/filemanagement_file_api/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit-bline/filemanagement_file_api/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 688,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 688,
+    "parse_complete": 592,
+    "parse_partial": 90,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 6,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 688,
+    "bytes_selected": 2718900,
+    "parse_complete": 592,
+    "parse_partial": 90,
+    "files_analyzed": 592
+  },
+  "performance": {
+    "elapsed_seconds": 17.546,
+    "peak_rss_kb": 282296,
+    "files_per_second": 39.21,
+    "bytes_per_second": 154958.4,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/filemanagement_file_api/report.json",
+      "sha256": "861e45a2e28b150db14f989679e999c5f62e1a4eb06bd4ee872ddca33f2d4228"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/filemanagement_file_api/report.md",
+      "sha256": "a351c52382479ece4fc9488f0d831bcfcbd4e2a25a5e98026f24b9f5ed9d21a6"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

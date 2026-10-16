@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T22:18:36+00:00",
+  "repository": "openharmony/distributeddatamgr_relational_store",
+  "commit": "9fa3a57e6657275d03e25f2e319dab55f894d1e8",
+  "git_tree": "62948e6923a91a0f9ed7c054bbf069fdae376332",
+  "snapshot_sha256": "09e47fa15fa47522718beb8c242a94c8722c60c2f5679200622dfd6368e692ea",
+  "plan_sha256": "3845c594ebfd22cb8fa9f5525de994c5c3a4cbb12ac871f40838390d6aeb361a",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-bline/distributeddatamgr_relational_store",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-bline/distributeddatamgr_relational_store",
+    "--repository",
+    "openharmony/distributeddatamgr_relational_store",
+    "--commit",
+    "9fa3a57e6657275d03e25f2e319dab55f894d1e8",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit-bline/distributeddatamgr_relational_store",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit-bline/distributeddatamgr_relational_store/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit-bline/distributeddatamgr_relational_store/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 921,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 921,
+    "parse_complete": 676,
+    "parse_partial": 243,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 2,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 921,
+    "bytes_selected": 7083002,
+    "parse_complete": 676,
+    "parse_partial": 243,
+    "files_analyzed": 676
+  },
+  "performance": {
+    "elapsed_seconds": 37.707,
+    "peak_rss_kb": 505288,
+    "files_per_second": 24.43,
+    "bytes_per_second": 187843.16,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/distributeddatamgr_relational_store/report.json",
+      "sha256": "b715593f91010b834e321dd98d41e516c332086f0f8b38c55d110f45d34b2fa7"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit-bline/distributeddatamgr_relational_store/report.md",
+      "sha256": "320311d4ef629f9ef1bde18f4e983573da049b7e58e778196cdfea473b2c91cb"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

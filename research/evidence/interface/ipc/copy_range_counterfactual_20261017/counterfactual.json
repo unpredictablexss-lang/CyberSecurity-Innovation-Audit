@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "kind": "ipc_copy_range_counterfactual",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector_version": "0.8.0",
+  "model_version": "oh-ipc-2026.10-v6",
+  "baseline": "read-only pinned interface tree at 635b3e04 (unmodified)",
+  "counterfactual": "a copy of the same tree with four narrow edits, run from the copy; the pinned tree is never written to",
+  "pinned_analysis_sha256": "bb395f1cf3733721cb78ba3de8bffba5a111f4bc9dc44848e6600681fafac3d5",
+  "patched_analysis_sha256": "ba79a1524af050d4d05ab6efa298741d7f9888e55c071f1eb0037ef360516e22",
+  "outputs_pinned_to_patch": "the run tree hashed to the value build() recorded before any output was compared; a drifted tree aborts the report instead of being attributed to this patch",
+  "edits": [
+    "new-key",
+    "new-capacity",
+    "exact-fit",
+    "le-zero-lower"
+  ],
+  "compared_components": 42,
+  "baseline_candidates": 179,
+  "patched_candidates": 178,
+  "removed": 1,
+  "added": 0,
+  "net_change": -1,
+  "removed_by_rule": {
+    "ipc.parcel.copy-range": 1
+  },
+  "added_by_rule": {},
+  "components_with_any_change": [
+    "communication_wifi"
+  ],
+  "components_not_compared": [],
+  "rows": [
+    {
+      "component": "ability_ability_runtime",
+      "status": "compared",
+      "baseline_candidates": 48,
+      "patched_candidates": 48,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "account_os_account",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "applications_permission_manager",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "bundlemanager_bundle_framework",
+      "status": "compared",
+      "baseline_candidates": 29,
+      "patched_candidates": 29,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "communication_bluetooth",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "communication_dsoftbus",
+      "status": "compared",
+      "baseline_candidates": 4,
+      "patched_candidates": 4,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "communication_ipc",
+      "status": "compared",
+      "baseline_candidates": 12,
+      "patched_candidates": 12,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "device_manager",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "distributeddatamgr_data_share",
+      "status": "compared",
+      "baseline_candidates": 4,
+      "patched_candidates": 4,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "distributeddatamgr_datamgr_service",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "distributeddatamgr_pasteboard",
+      "status": "compared",
+      "baseline_candidates": 1,
+      "patched_candidates": 1,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "distributeddatamgr_udmf",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "distributedhardware_device_manager",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "filemanagement_dfs_service",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "inputmethod_imf",
+      "status": "compared",
+      "baseline_candidates": 4,
+      "patched_candidates": 4,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "multimedia_audio_framework",
+      "status": "compared",
+      "baseline_candidates": 6,
+      "patched_candidates": 6,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "multimedia_camera_framework",
+      "status": "compared",
+      "baseline_candidates": 9,
+      "patched_candidates": 9,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "multimedia_player_framework",
+      "status": "compared",
+      "baseline_candidates": 24,
+      "patched_candidates": 24,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "multimodalinput_input",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "notification_common_event_service",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "notification_distributed_notification_service",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "status": "compared",
+      "baseline_candidates": 2,
+      "patched_candidates": 2,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "security_access_token",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "security_dlp_permission_service",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "sensors_sensor",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "status": "compared",
+      "baseline_candidates": 9,
+      "patched_candidates": 9,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "telephony_call_manager",
+      "status": "compared",
+      "baseline_candidates": 2,
+      "patched_candidates": 2,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "update_updateservice",
+      "status": "compared",
+      "baseline_candidates": 2,
+      "patched_candidates": 2,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "useriam_user_auth_framework",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "window_window_manager",
+      "status": "compared",
+      "baseline_candidates": 10,
+      "patched_candidates": 10,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "ability_dmsfwk",
+      "status": "compared",
+      "baseline_candidates": 6,
+      "patched_candidates": 6,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "commonlibrary_c_utils",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "communication_nfc",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "communication_wifi",
+      "status": "compared",
+      "baseline_candidates": 2,
+      "patched_candidates": 1,
+      "removed": [
+        {
+          "file": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+          "line": 385,
+          "rule_id": "ipc.parcel.copy-range"
+        }
+      ],
+      "added": []
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "distributeddatamgr_relational_store",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "filemanagement_file_api",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "powermgr_power_manager",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "security_certificate_manager",
+      "status": "compared",
+      "baseline_candidates": 1,
+      "patched_candidates": 1,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "security_device_auth",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "security_huks",
+      "status": "compared",
+      "baseline_candidates": 0,
+      "patched_candidates": 0,
+      "removed": [],
+      "added": []
+    },
+    {
+      "component": "telephony_core_service",
+      "status": "compared",
+      "baseline_candidates": 4,
+      "patched_candidates": 4,
+      "removed": [],
+      "added": []
+    }
+  ],
+  "note": "Candidate sets are compared by (file, line, rule_id) after checking both runs share snapshot_sha256 and plan_sha256, so a difference cannot come from scope. An addition would be the dangerous direction and is reported as loudly as a removal. confirmed_vulnerabilities stays 0."
+}

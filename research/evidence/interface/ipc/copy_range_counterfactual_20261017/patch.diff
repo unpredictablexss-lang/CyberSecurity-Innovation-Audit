@@ -1,0 +1,78 @@
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/baseline: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/benchmark: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/case: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/cli: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/core: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/evidence: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/detectors: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/detectors/cpp: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/detectors/interface: __pycache__
+diff -u -r /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/detectors/interface/analysis.py /home/audit/wtmp/detector-cf/src/ohscanner/detectors/interface/analysis.py
+--- /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/detectors/interface/analysis.py	2026-10-16 23:44:09.961815200 +0800
++++ /home/audit/wtmp/detector-cf/src/ohscanner/detectors/interface/analysis.py	2026-10-17 06:58:27.993009674 +0800
+@@ -1064,8 +1064,14 @@
+             if len(args) > index and args[index].kind == "request":
+                 length = args[index].key
+                 cap = args[1].key if index == 3 else self.capacities.get(args[0].key)
++                # A `memcpy_s(dst, n, src, n)` whose destination was allocated with
++                # capacity n matches its own destMax by construction -- met by
++                # construction, not by a branch the walk would have had to record.
++                exact_fit = (index == 3 and cap == length
++                             and self.capacities.get(args[0].key) == length)
+                 upper = any(key == length and (cap is not None and bound in (cap,"sizeof("+args[0].key+")"))
+                             for key, bound in state.upper)
++                upper = upper or exact_fit
+                 if not upper or length not in state.lower:
+                     self.emit("DATA-01", "ipc.parcel.copy-range", fn, node, state,
+                               "Parcel-derived copy length " + length + " lacks matched nonnegative/destination-capacity bounds.",
+@@ -1446,7 +1452,9 @@
+             if typ=="HCameraDevice":
+                 self.action(fn,node,state,"CreateCameraDevice",[])
+             for child in node.named_children:self.value(fn,child,state,depth)
+-            return UNKNOWN
++            # Keep the expression as the value's identity: a later `dst` assigned
++            # this expression then still names the allocation.
++            return Value("constant",text)
+         if node.type=="field_expression" and fn.text(node.child_by_field_name("field"))=="processName":
+             base=self.value(fn,node.child_by_field_name("argument"),state,depth)
+             if base.kind=="caller_info":return Value("caller_process",base.key)
+@@ -1528,6 +1536,12 @@
+             if truth==when and accepted:
+                 attr={"auth":"auth","descriptor":"descriptor","owner":"owner","lower":"lower","upper":"upper","size_lower":"size_lower","caller_class":"caller_class","account":"service_account"}[kind]
+                 setattr(out,attr,getattr(out,attr)|{key})
++            if when and not truth and accepted and kind=="upper" and key[1]=="0":
++                # The walk records `x <= 0` as an upper bound on its true branch.
++                # Falling through that branch -- what `if (x <= 0) { return; }`
++                # does -- establishes the lower bound x > 0, which is the form
++                # this code base uses most often and the model did not record.
++                out.lower=out.lower|{key[0]}
+         out.trace=(out.trace+((node.start_point[0]+1,fn.text(node)+" => "+str(truth)),))[-20:]
+         return [out]
+ 
+@@ -1620,7 +1634,16 @@
+                         d=dec.child_by_field_name("declarator")
+                         ids=list(walk(d,"identifier")) if d else []
+                         name=fn.text(ids[-1] if ids else d)
+-                        self.assign(s,name,self.value(fn,dec.child_by_field_name("value"),s,depth))
++                        _v=dec.child_by_field_name("value")
++                        _val=self.value(fn,_v,s,depth)
++                        if _v is not None and _v.type=="new_expression":
++                            # `new T[n]` -- the destination holds n elements, and
++                            # the code that reads it back uses the same n.
++                            import re as _re
++                            _m=_re.search(r"\[\s*([^\[\]]+?)\s*\]\s*$",fn.text(_v))
++                            if _m:
++                                self.capacities[_val.key]=_re.sub(r"\s+","",_m.group(1))
++                        self.assign(s,name,_val)
+                     elif dec.type=="array_declarator":
+                         name=fn.text(dec.child_by_field_name("declarator"));size=fn.text(dec.child_by_field_name("size"))
+                         self.capacities[name]=size
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/detectors/interface/families: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/ohscanner/poc: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/parser: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/providers: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/report: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/triage: __pycache__
+Only in /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b/src/validation: __pycache__
