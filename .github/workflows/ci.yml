@@ -31,6 +31,9 @@ jobs:
       - name: Show Python version
         run: python --version
 
+      - name: Check documentation context budgets
+        run: python scripts/check_docs_context_budget.py
+
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
