@@ -1597,3 +1597,42 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - **本节检查**：命令在 CAP-01 文档 §8 可复现（`w173.py`–`w177.py`，均在 `/home/audit/wtmp/`，
   **不入库**）；`version_impact.py` 与全部检测规则未改；共享面
   （`src/report|src/case|src/evidence|src/benchmark`）零改动；回归见提交说明。
+
+## 50. 2026-10-16 AUTH-01：#4 遗留的 62 条 `unknown` 全部结案（队友 B）
+
+承接 §49 的教训（「本地有没有」**必须扫盘**），把 triage 文档 §5 剩下的那 24 条也读实。
+记录写入 `docs/research/ipc_auth01_unknown_refs_triage_2026-10-16.md` 新增 §10，
+该文档 §0 / §1 / §5 / §7 里「读不到」的说法已就地更正（原文加删除线保留）。
+**`version_impact.py` 一字未改，#4 产物也一个字未改。**
+
+- **那 5 个 blob 一直在盘上**：`022e5d44f76f` / `352b006d2405` / `7d45b1f09d98` /
+  `866c0b6a5825` / `14a849f73d0e` 都在 `~/openharmony-targets/inputmethod_imf`
+  （浅克隆、非 blob 过滤，读取不触网、全部经 `_git`）。
+  triage 文档原写「没有去 fetch 那 24 条」—— 它隐含的前提「要读就得 fetch」**是错的**。
+- **fixture 自检**：vulnerable `59c980bf…e043` **MATCH**、fixed `b6d7f66a…c444` **MATCH**
+  （104 行 / 108 行）；`vulnerable → fixed` 的差异仍**只有描述符校验那 4 行**。
+- **结果：5 个 blob 全部携带描述符校验** ——
+  `ReadInterfaceToken` / `GetDescriptor` / `ERROR_STATUS_UNKNOWN_TRANSACTION` 三者全在。
+  - `352b006d2405`（7 条 ref）与 fixed **逐字节相同**；
+  - 其余 4 个在修复版之上**还多了边界校验**（`if (size < 0) … ERROR_STATUS_BAD_VALUE`
+    与 `static_cast<size_t>(size) > data.GetReadableBytes() … ERROR_STATUS_BAD_VALUE`），
+    是**比修复版更强**的加固。它们仍是不同的 blob，所以**不判 `fixed`**。
+- **24 条 ref 已逐条点名**（由 #4 产物的 `records` 提取，非估算）：
+  3.0-LTS 线 3 条（`origin/OpenHarmony-3.0-LTS`、`v3.0.7-LTS`、`v3.0.8-LTS`）、
+  3.1 线 11 条（`3.1-API8-SDK-Public`、`3.1-API9-SDK-Canary`、`origin/OpenHarmony-3.1-Release`、
+  `v3.1-Release`、`v3.1.1`–`v3.1.7`）、3.2-Beta4 + 2022-11 weekly 7 条、2022-10 weekly 3 条。
+- **因此 62 条 `unknown` 全部结案**：38（§44）+ 24（本节）= **62**，
+  **无一条携带 AUTH-01 缺陷**。判定状态按 triage 文档 §6 的原则**仍写 `unknown`**
+  （blob 身份与 `fixed_blob` 不同，判 `fixed` 会篡改四态语义、判 `affected` 是误报）；
+  是否需要第五态**属 owner 的契约决定，B 未动共享面**。
+- **三条不越界的保留**：
+  ① `unknown` 仍是 `unknown` —— 本节只把解释从「未读」升级为「已读且不含缺陷」；
+  ② 这 24 条里 **21 条 `fixed_commit_reachable = False`**（只有 3.0-LTS 那 3 条为 True），
+  「修复提交不可达」**既不是**漏洞证据**也不是**安全证据 —— 本节读的是**内容**，不是祖先关系；
+  ③ 本节只覆盖 #4 扫描的 397 个 ref 里的这 62 条，**不构成「该缺陷已被完全清除」的结论**
+  （未扫的 ref 与其它路径不在范围内）。
+- **对 AUTH-01 状态的影响：没有。** `entry_controlled` 仍未建立、`validated_vulnerability` 仍为 **0**、
+  `poc_state = stable_reproduced` 与 `patch_revalidation = passed` 不变，
+  **没有任何门字段**因本节置真。交付件 #4 的解释更完整了，但**结论等级不变**。
+- **本节检查**：命令在 triage 文档 §10.5 可复现（`w179.py`）；脚本在 `/home/audit/wtmp/`，
+  **不入库**；共享面零改动；回归 485 tests OK（见提交说明）。

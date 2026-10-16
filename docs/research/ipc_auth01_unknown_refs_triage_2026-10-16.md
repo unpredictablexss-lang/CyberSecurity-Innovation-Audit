@@ -4,12 +4,16 @@
 > 该记录把 397 个 ref 判成 `affected 17 / fixed 1 / not_present 317 / unknown 62`，
 > 并留了一句「62 条只涉 6 个 blob，是 look-alike 线索，**本轮未读内容，不得声称受影响**」。
 > 本篇就是去读它。**结论：38 条已结案，24 条仍无从判定。**
+> **（2026-10-16 当日补记：那 24 条也已结案 —— 见 §10。它们的 blob 本来就在盘上，
+> 只是不在本文所用的那一份克隆里。本文 §1 / §5 / §7 关于「读不到」的说法据此更正。）**
 
 ## 0. 一句话结论
 
 62 条 `unknown` 中的 **38 条（3.2-Beta1/2/3 + 35 个 weekly）可以结案：不是缺陷版本** ——
 它们的文件与修复版**逐字节相同，只差两行 namespace 结尾注释**。
-剩下 **24 条（5 个 blob）在离线对象库里没有内容，本轮读不到，维持 `unknown`**。
+~~剩下 **24 条（5 个 blob）在离线对象库里没有内容，本轮读不到，维持 `unknown`**。~~
+**（当日已结案，见 §10：5 个 blob 全部在 `~/openharmony-targets/inputmethod_imf`，
+且全部携带描述符校验 → 这 24 条也不含 AUTH-01 缺陷。判定状态按 §6 的原则仍写 `unknown`。）**
 
 ## 1. 方法：为什么只能读一个，以及为什么不去抓
 
@@ -32,6 +36,11 @@
 **没有去 fetch 那 24 条**，这是刻意的：对象读取的既定纪律是经 `_git` 禁掉全部 transport，
 在共享研究克隆上做一次显式 fetch 会改动别的会话依赖的对象库。需要就由 owner 决定，
 不由 B 单方面做。
+
+> **当日更正（见 §10）**：这段的前提「要读就得 fetch」**是错的**。
+> 那 5 个 blob 已在 `~/openharmony-targets/inputmethod_imf` 里，**无需任何网络操作**。
+> 本文把「**这一份克隆**没有」当成了「**本地**没有」。教训：判断「本地有没有」**必须扫盘**。
+> 不过上面的纪律本身仍然成立 —— 只是这次根本用不上。
 
 ## 2. 自检：我读到的确实是钉住的那两份源码
 
@@ -106,7 +115,7 @@ if (descriptorToken != GetDescriptor()) {
 本来就带着这个前置。本次追查**只证明**：这些 ref 上不存在 AUTH-01 的缺陷，
 **不证明**它是不是由 `5eaddcab` 带过去的。
 
-## 5. 结果三：剩下 24 条仍无从判定
+## 5. 结果三：剩下 24 条仍无从判定（**当日已结案，见 §10**）
 
 | blob | ref 条数 | vulnerable 可达 | fixed 可达 |
 |---|---:|---|---|
@@ -142,9 +151,12 @@ B 不在共享面上动它。
 
 ## 7. 没有证明的事
 
-- **没有**证明 3.1 线（11 条）与 3.0.7/3.0.8（3 条）是否受影响 —— 内容读不到。
-- **没有**证明 3.2-Beta4 与 2022-10/11 的 weekly（10 条）是否受影响 —— 同上。
+- ~~**没有**证明 3.1 线（11 条）与 3.0.7/3.0.8（3 条）是否受影响 —— 内容读不到。~~
+  **（当日已读，见 §10：3.1 线 11 条 + 3.0 线 3 条全部携带描述符校验。）**
+- ~~**没有**证明 3.2-Beta4 与 2022-10/11 的 weekly（10 条）是否受影响 —— 同上。~~
+  **（当日已读，见 §10：这 10 条也全部携带描述符校验。）**
   注意 3.2-Beta3 是安全的，**推不出** Beta4 安全：内容是另一个 blob。
+  这条推理方向本身仍然成立，只是 §10 已把 Beta4 的内容读实。
 - **没有**证明这 38 条 ref 的安全性来自上游修复的传播（见 §4.1）。
 - **没有**改动 `version_impact.py` 的判定，也**没有**改 #4 的产物。
 - **没有**触网：本次全部 git 调用经 `_git`，transport 关闭。
@@ -170,3 +182,74 @@ cd "$B"
 `path does not exist in 'HEAD'`；该 ref 的 `services/src/` 已被 20 个完全不同的文件取代
 （`ime_lifecycle_manager.cpp`、`notify_service_impl.cpp`、`push_to_talk_manager.cpp` …）。
 这解释了为什么最新 ref 不在 `affected` 里 —— **不是被修掉，是文件被重构掉了**。
+
+## 10. 当日补记（2026-10-16）：剩下 24 条也已结案 —— 内容一直在盘上
+
+**触发**：同日的另一条更正
+（`docs/research/ipc_auth01_entry_controlled_evidence_2026-10-16.md` §0）说明
+「这一份克隆没有」**不等于**「本地没有」。把同一条教训用到本文，扫盘后发现：
+本文 §5 的 5 个 blob **全部可读**，就在 `~/openharmony-targets/inputmethod_imf`。
+
+### 10.1 5 个 blob 的读法（原文比对，不是评分）
+
+数据源：`/home/audit/openharmony-targets/inputmethod_imf`
+（**浅克隆但非 blob 过滤**，无 promisor，读取不会触发惰性抓取；全部读取仍经 `_git`）。
+路径 `services/src/platform_callback_stub.cpp`。先做 fixture 自检：
+vulnerable `59c980bf…e043` **MATCH**、fixed `b6d7f66a…c444` **MATCH**（104 行 / 108 行）。
+
+`vulnerable → fixed` 的差异仍然**只有描述符校验那 4 行**：
+
+```text
+@@ -36,2 +36,6 @@
+     {
++        auto descriptorToken = data.ReadInterfaceToken();
++        if (descriptorToken != GetDescriptor()) {
++            return ErrorCode::ERROR_STATUS_UNKNOWN_TRANSACTION;
++        }
+         switch (code) {
+```
+
+### 10.2 逐条结果：**5 个 blob 全部携带描述符校验**
+
+| blob | ref 条数 | 行数 | sha256 前缀 | 相对 vulnerable | 相对 fixed |
+|---|---:|---:|---|---|---|
+| `022e5d44f76f` | 3 | 115 | `4b8d95ac…` | +描述符校验 +边界校验 | +边界校验 |
+| `352b006d2405` | 7 | 108 | `16fe0c99…` | +描述符校验 | **0（逐字节相同）** |
+| `7d45b1f09d98` | 4 | 116 | `82ae1d53…` | +描述符校验 +边界校验 | +边界校验 |
+| `866c0b6a5825` | 7 | 116 | `a4692b29…` | +描述符校验 +边界校验 +namespace 注释 | +边界校验 +namespace 注释 |
+| `14a849f73d0e` | 3 | 116 | `2d2b789f…` | +描述符校验 +边界校验 +namespace 注释 | +边界校验 +namespace 注释 |
+
+**5 个 blob 全都含 `ReadInterfaceToken` / `GetDescriptor` / `ERROR_STATUS_UNKNOWN_TRANSACTION`。**
+
+- 其中 4 个在修复版之上**还多了边界校验**（`if (size < 0) return …BAD_VALUE;` 与
+  `size_t availSize = data.GetReadableBytes(); if (size > availSize) return …BAD_VALUE;`）——
+  这是**比修复版更强的加固**，但它们仍是不同的 blob，**不判 `fixed`**。
+- `352b006d2405`（7 条）与 fixed **逐字节相同**。
+
+### 10.3 因此：**62 条 `unknown` 全部结案，无一条携带 AUTH-01 缺陷**
+
+38（§4）+ 24（本节）= **62**。判定状态按 §6 的原则**仍写 `unknown`** ——
+这些 blob 与 `fixed_blob` 身份不同，判 `fixed` 会篡改四态语义，判 `affected` 是误报。
+**`version_impact.py` 与 #4 产物一个字未改**；变的只是「对 62 条 `unknown` 的解释」。
+
+### 10.4 三条不能越界的保留
+
+- **`unknown` 仍是 `unknown`**：本节只把解释从「未读」升级为「已读且不含缺陷」。
+  四态是否需要第五态（「内容不同但前置在位」）**是 owner 的契约决定**，B 未动。
+- **仍然不能反推修复的传播路径**（§4.1 的保留原样成立）：这 24 条里有 **21 条**
+  `fixed_commit_reachable = False`（`352b006d2405` / `7d45b1f09d98` / `866c0b6a5825` /
+  `14a849f73d0e` 覆盖的全部 ref；只有 `022e5d44f76f` 那 3 条 3.0-LTS ref 为 True）。
+  「修复提交不可达」**既不是**漏洞证据**也不是**安全证据 ——
+  本节读的是**内容**，不是祖先关系。
+- **不构成「该缺陷已被完全清除」的结论**：本节只覆盖 #4 扫描的 397 个 ref 里的这 62 条，
+  未扫的 ref 与其它路径不在本节范围内。
+
+### 10.5 复现命令
+
+```bash
+B=~/openharmony-audit/CyberSecurity-Innovation-Audit-b
+cd "$B"
+.venv/bin/python /home/audit/wtmp/w179.py   # fixture 自检 + 5 个 blob 逐条比对 + 24 条 ref 点名
+```
+
+脚本在 `/home/audit/wtmp/`，**不入库**。
