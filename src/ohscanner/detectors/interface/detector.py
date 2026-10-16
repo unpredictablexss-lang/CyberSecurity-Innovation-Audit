@@ -2,9 +2,14 @@
 from typing import Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
 from .analysis import Interpreter
-from .models import IMPACT_DESCRIPTION, IpcPolicy, MODEL_VERSION, reviewed_consequence
+from .families import cwes, merge_policy
+from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 
-_CWE = {"AUTH-01":"CWE-441", "AUTH-02":"CWE-862", "AUTH-03":"CWE-863", "AUTH-04":"CWE-863", "DATA-01":"CWE-20", "CAP-01":"CWE-926"}
+# Which family reports which mechanism CWE. Read from the family modules rather
+# than repeated here, so a family's id, its rules and its CWE land together and a
+# new family cannot be emitted without declaring the CWE it reports.
+_CWE = cwes()
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -71,7 +76,11 @@ class IpcInterfaceDetector:
     ast_scope = "per_file"
 
     def __init__(self, policy=None):
-        self.policy = policy or IpcPolicy()
+        # The reviewed policy is the catalogue's defaults plus the families'
+        # additions; a caller-supplied policy is merged rather than replaced, so a
+        # narrowed harness (`IpcPolicy(max_paths=2)`) still runs under the facts
+        # the families were reviewed for. See families.merge_policy.
+        self.policy = merge_policy(policy)
 
     def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
         ast = context.shared_facts.get("ast", {})

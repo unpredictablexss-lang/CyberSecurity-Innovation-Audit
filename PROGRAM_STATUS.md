@@ -2197,3 +2197,85 @@ ACCESSTOKEN_UID = 3020;". The role …`。它不影响任何判定（判定与�
 - 没有做动态验证；没有把 56.5 的 18 条新线索升级为任何更高等级（全部仍是 `candidate`）。
 - **门状态与候选等级全部未变**：`entry_controlled` 仍未建立、`validated_vulnerability` 仍为 0；§56.3 撤销的三条在
   检测器输出里退出，但在审查台账上仍是 `candidate`/`unknown`（"存在 UID 守卫，授权策略待复核"）。
+
+## 57. 2026-10-16 六 family 可插拔框架：family 自述其规则与策略片段，组合收在一个入口（队友 B）
+
+为支撑"六条 family 线并行"，本轮把"哪个 family 负责哪些规则、持有哪条策略事实"从**两个所有线都会改的文件**
+（`models.py` / `detector.py`）拆成**六个各自独立的模块**。**只动 B 自有代码与 B 自有测试**；未切分支、未碰 A 目录与
+负责人共享面、未 push/PR/merge、未做动态验证；`validated_vulnerability` 仍为 0、`entry_controlled` 仍未建立。
+
+### 57.1 为什么要有这一层
+
+六条线各自要加的东西是同一类：一条新规则、一条复审过的调用方角色、一个敏感调用名、一个新入口名。改这些以前都必须
+落在 `models.py` 与 `detector.py` 上 —— 六个会话改同一对文件就是天天解冲突，而且冲突的内容是**语义**（谁拥有哪条规则），
+不是文本。现在每个 family 在自己的 `families/<family>.py` 里声明：
+
+```
+FAMILY   findings 上带的 family id（"AUTH-02"）
+TITLE    一句话说清这条信任边界
+CWE      该 family 报的机制 CWE
+RULES    该 family 发出的规则 id
+POLICY   可选：IpcPolicy 字段 -> 追加项（复审过的调用方角色、敏感调用名……）
+```
+
+`families/__init__.py` 自动发现本包内所有非私有模块，**没有手工注册表**，并在 **import 时**（不是首次扫描时）校验：
+
+- 六个 family 的 `RULES` 合起来**恰好等于** `models.IMPACT_BY_RULE` 的键集 —— 少一条就是"没人认领的规则"，多一条就是
+  "catalogue 里没有的规则"，两者都直接抛 `ValueError`，绝不会静默少跑一个 family；
+- family id 唯一、CWE 形状为 `CWE-\d+`、`RULES` 非空、每条规则**只属一个** family；
+- `POLICY` 只能追加到**元组/冻结集合**字段（标量是 catalogue 自己的值），且**两个 family 不得对同一字段追加同一个值**
+  —— 这是编译器看不见的那一类跨线冲突（同一个调用方角色、同一个敏感调用名），必须由评审决定而不是由合并顺序决定。
+
+`merge_policy(base)` 把各 family 的片段合到给定策略上，且是**幂等**的：任何进入接口内核的策略都会被合并一次
+（`detector` / `Interpreter` / `EntryIndex` 三个入口），已经带过片段再合一次结果不变。这样"检测器跑"和"脚本自己跑"
+读到的策略是同一个，不会出现"fixture 在检测器下干净、在 harness 里变脏"。`families/__main__.py` 提供一条自检命令：
+
+```
+.venv/bin/python -m src.ohscanner.detectors.interface.families
+```
+
+### 57.2 3020 账户角色从 `models.py` 搬到 `families/auth02.py`
+
+§56 的 `ServiceAccountRole(ACCESSTOKEN_UID / 3020 / <caller-account:access-token-service> / 三个操作 / origin)`
+是 **AUTH-02 那条线对它所 credit 的守卫的声明**，所以它随该 family 走：
+
+- `IpcPolicy().service_account_roles` 的**默认值改为空元组**（`models.py` 不再含账号事实，只留类型 `ServiceAccountRole`）；
+- 条目原文**逐字**移入 `families/auth02.py:POLICY`，`origin` 里"值由源码确认、账户归属是复审声明"这句照旧；
+- **有效策略逐字节不变**：`merge_policy` 后 `service_account_roles` 仍是这一条，`trusted_uids` 一行未动；
+- 因此 `detector.version` 保持 **0.8.0**、`MODEL_VERSION` 保持 **`oh-ipc-2026.10-v6`** —— 解释与判定能力没有变化，
+  变的只是这条策略事实**存在哪个文件**，版本号不跟着文件搬家而变。
+
+`detector._CWE` 也不再是手写字典，而是从注册表读（`families.cwes()`），并保留一条 import 断言要求它恰好是
+AUTH-01/02/03/04、DATA-01、CAP-01 六个键。
+
+### 57.3 回归证据（框架必须一条候选都不动）
+
+- `.venv/bin/python -m unittest discover -s tests`（仓库根，**不加 `-I`**）→ **Ran 510 tests … OK**（497 → 510，
+  新增 `tests/test_ipc_family_matrix.py` 13 条）。
+- 新测试文件测的不是"框架能跑"，而是**框架的守卫本身**：规则集不构成划分 → 报错（两个方向都测）；同一规则被两个
+  family 认领 → 报错；少一个 family 留下无人认领的规则 → 报错；两个 family 追加同一策略值 → 报错**且同一划分去掉冲突后
+  能加载**（阳性对照）；family 模块缺声明、追加未知字段、追加标量字段、追加裸字符串 → 各自报错；`merge_policy` 幂等且
+  保留调用方自己的收窄（`max_paths=4` 仍是 4 而角色仍在）；`IpcPolicy()` 不带账号、`default_policy()` 带 1 条、
+  该条属于 AUTH-02。CWE 表在测试里是**写死的字面量**，family 改 CWE 必须同时改表。
+- **10 组件语料：64 → 64 原始候选，逐项比对 `REMOVED 0 / ADDED 0`，10 个组件的 limitations 逐条无移动**
+  （含 `security_access_token` 那条 §56.2 的 credit 原文，逐字未变）。
+- **5 棵 gitcode 新树：18 → 18 候选，逐项比对 `REMOVED 0 / ADDED 0`，limitations 无移动。**
+- 验收口径：**行为保持**——框架本身不新增、不撤销任何候选；新能力的入口是各 family 自己的 `POLICY` 与后续的内核请求，
+  不是这一轮的重构。两次运行产物在 `/home/audit/wtmp/families_corpus.json` / `families_gitcode.json`，不入库。
+
+### 57.4 六条 family 线的文件边界（相对 §56 的唯一变化）
+
+- **可写**：`families/<family>.py`（自己的策略片段与规则声明）、`tests/fixtures/ipc/<fixture_dir>/`（`fixture_dir` = family id
+  去掉连字符并小写，如 `AUTH-01` → `auth01/`）、`tests/test_ipc_<family>.py`、`docs/research/<family>_*.md`；
+- **仍禁止改**：`models.py`、`analysis.py`、`entry_index.py`、`detector.py`、`families/__init__.py`、
+  `tests/fixtures/ipc/manifest.json`、`tests/test_ipc_detector.py`、`PROGRAM_STATUS.md`，以及负责人共享面；
+- 需要新 State 通道、新入口识别或新策略字段时，写 `docs/research/<family>_kernel_request.md` 交给 S0 合并；
+- family 自己目录下的 `manifest.json` 会**自动**被 `tests/test_ipc_family_matrix.py` 按同一套断言读（目录名决定它属于哪个
+  family，fixture 不得申报别的 family 的规则），因此新增 fixture 不需要任何人给共享 manifest 补一行。
+
+### 57.5 本节没有做的事
+
+- 没有 push、没有开/改/合并 PR；worktree/branch 说明写在仓库外的 `artifacts-2026-10-16/README-sessions.md`。
+- 没有改 A 目录或 A 分支；没有改 `catalog.py`、`src/report/`、`src/case/`、`src/benchmark/`、`src/evidence/`。
+- **没有修改全局 `trusted_uids`**；没有为降低候选数加入任何白名单；没有新增/撤销任何候选。
+- 没有做动态验证；门状态与候选等级全部未变：`entry_controlled` 仍未建立、`validated_vulnerability` 仍为 0。

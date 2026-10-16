@@ -188,24 +188,12 @@ class IpcPolicy:
     )
     # Reviewed service-account roles, keyed by the constant a guard compares the
     # calling UID with. Kept out of `trusted_uids` on purpose; see
-    # ServiceAccountRole. The entry below is the access-token service: the three
-    # ITokenSyncCallback operations are the ones that interface exists to serve,
-    # so the UID comparison inside `TokenSyncCallbackStub` is that interface's
-    # admission test -- and those three operations are the only ones that accept
-    # the role, which is what keeps one service's account from authorizing
-    # everything behind a guard that happens to name it.
-    service_account_roles: Tuple[ServiceAccountRole, ...] = (
-        ServiceAccountRole(
-            constant="ACCESSTOKEN_UID",
-            uid="3020",
-            role="<caller-account:access-token-service>",
-            accepted_operations=("GetRemoteHapTokenInfo", "DeleteRemoteHapTokenInfo",
-                                 "UpdateRemoteHapTokenInfo"),
-            origin="access-token service account, ACCESSTOKEN_UID = 3020 (reviewed account "
-                   "assignment, 2026-10-16); the value is confirmed against the scanned "
-                   "definitions, the account assignment is the reviewed claim it carries",
-        ),
-    )
+    # ServiceAccountRole. The reviewed entry (the access-token service, UID 3020)
+    # sits with AUTH-02 in `families/auth02.py`: the account assignment is that
+    # family's claim about the guards it credits, so the family owns it and can be
+    # read, tested and changed without touching this file. The default here is
+    # empty, and merge_policy restores the reviewed policy wherever one is built.
+    service_account_roles: Tuple[ServiceAccountRole, ...] = ()
     service_entries: FrozenSet[str] = frozenset({"HCameraService::CreateCameraDevice", "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",

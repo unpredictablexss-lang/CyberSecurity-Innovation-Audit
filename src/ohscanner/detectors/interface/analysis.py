@@ -18,6 +18,7 @@ import tree_sitter_c
 
 from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
+from .families import merge_policy
 from .models import IpcPolicy, consequence_for
 
 
@@ -382,7 +383,10 @@ def _top_level_arguments(source, open_index, close_index):
 
 class Interpreter:
     def __init__(self, units, policy: IpcPolicy, request=None):
-        self.policy = policy
+        # A harness may hand this walk a hand-built policy; the families' reviewed
+        # additions are merged in either way, so a walk through the detector and a
+        # walk through a script interpret the same sources under the same policy.
+        self.policy = merge_policy(policy)
         # The scan this walk belongs to, when the caller bound one. Only used to
         # name the target a service-account claim was read against; a walk without
         # it still runs, and says the target is unstated rather than inventing one.

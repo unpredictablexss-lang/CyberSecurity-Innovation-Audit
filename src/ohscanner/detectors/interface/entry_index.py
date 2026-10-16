@@ -37,7 +37,7 @@ from tree_sitter import Language, Parser
 import tree_sitter_c
 import tree_sitter_cpp
 
-from .models import IpcPolicy
+from .families import merge_policy
 
 # Evidence grades, strongest first.
 SOURCE_DISPATCH = "source_dispatch"                        # map / switch-return / if-return
@@ -257,7 +257,10 @@ class EntryIndex:
 
     def __init__(self, units, policy=None, *, max_files=2000, max_map_entries=4096,
                  max_class_depth=16, max_roots=512):
-        self.policy = policy or IpcPolicy()
+        # Entry discovery reads policy fields too (`entry_names`, `service_entries`,
+        # `caller_role_guards`), and a family may add to them, so the index is built
+        # under the merged policy as well -- see families.merge_policy.
+        self.policy = merge_policy(policy)
         self.limitations = set()
         self._max_map_entries = max_map_entries
         self._max_class_depth = max_class_depth
