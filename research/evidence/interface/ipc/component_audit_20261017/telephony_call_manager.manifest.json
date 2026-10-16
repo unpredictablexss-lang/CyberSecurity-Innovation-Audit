@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:11:36+00:00",
+  "repository": "openharmony/telephony_call_manager",
+  "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+  "git_tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+  "snapshot_sha256": "5632035759f7f5acf4eaad2f94d81d1a0e1f068ef8b4003b7f2d89030eead886",
+  "plan_sha256": "f125b7cb554b00ace511a5eb7b562acf86e588a540babd7de9247b0309b37047",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/openharmony-audit/perf-corpus/telephony_call_manager",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/openharmony-audit/perf-corpus/telephony_call_manager",
+    "--repository",
+    "openharmony/telephony_call_manager",
+    "--commit",
+    "6638d1b37f278d7ed380d907674820e7467cedf8",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/telephony_call_manager",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/telephony_call_manager/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/telephony_call_manager/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 395,
+    "candidates": 2,
+    "candidates_with_runner_obligations": 2,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 395,
+    "parse_complete": 324,
+    "parse_partial": 69,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 2,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 395,
+    "bytes_selected": 3683469,
+    "parse_complete": 324,
+    "parse_partial": 69,
+    "files_analyzed": 324
+  },
+  "performance": {
+    "elapsed_seconds": 20.467,
+    "peak_rss_kb": 324148,
+    "files_per_second": 19.3,
+    "bytes_per_second": 179971.12,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/telephony_call_manager/report.json",
+      "sha256": "7fec9a6118be29666a7e6ddff2225f126464089c91aee7b33edf51a811a0dfe5"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/telephony_call_manager/report.md",
+      "sha256": "9200aad8ab0a94f831e6c4ea017149e328e58bdfcbe0a377291e13243736f014"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

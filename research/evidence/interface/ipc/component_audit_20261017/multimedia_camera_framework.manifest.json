@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:09:45+00:00",
+  "repository": "openharmony/multimedia_camera_framework",
+  "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+  "git_tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+  "snapshot_sha256": "f7f508f82d90eb258dea9c6855d860c562e6159906e3033d4fd4cc8886c2b876",
+  "plan_sha256": "9c2effd98a9263606ec1940fb92130a9e015f2d966bebd153f4f2eae4915498b",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/openharmony-audit/perf-corpus/multimedia_camera_framework",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/openharmony-audit/perf-corpus/multimedia_camera_framework",
+    "--repository",
+    "openharmony/multimedia_camera_framework",
+    "--commit",
+    "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/multimedia_camera_framework",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/multimedia_camera_framework/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/multimedia_camera_framework/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 1123,
+    "candidates": 9,
+    "candidates_with_runner_obligations": 9,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 1123,
+    "parse_complete": 932,
+    "parse_partial": 173,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 18,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 1123,
+    "bytes_selected": 10791619,
+    "parse_complete": 932,
+    "parse_partial": 173,
+    "files_analyzed": 932
+  },
+  "performance": {
+    "elapsed_seconds": 56.715,
+    "peak_rss_kb": 937496,
+    "files_per_second": 19.8,
+    "bytes_per_second": 190278.04,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/multimedia_camera_framework/report.json",
+      "sha256": "0bb7ed8e490e0d770ddb705332e649050f321c7cf26760a910dcd057e3621848"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/multimedia_camera_framework/report.md",
+      "sha256": "82f3b6551b0cc944803b9754de218c79f9690b0946e86c75986806cbbd0e1704"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

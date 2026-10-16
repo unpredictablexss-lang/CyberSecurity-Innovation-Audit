@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:19:11+00:00",
+  "repository": "openharmony/communication_bluetooth",
+  "commit": "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+  "git_tree": "ec8695dbeee43b0ec34ef3bb8b03713cf28460e8",
+  "snapshot_sha256": "e249d6981b3900be96e6d52bf1169ff7b7bddc197a81e5a0c1fde2a23cd1ca49",
+  "plan_sha256": "b0f112814e92c8e0e52aa8fd0105946421b9c6f843ca21be80d86a796ffc377c",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-widen/communication_bluetooth",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-widen/communication_bluetooth",
+    "--repository",
+    "openharmony/communication_bluetooth",
+    "--commit",
+    "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/communication_bluetooth",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/communication_bluetooth/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/communication_bluetooth/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 640,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 640,
+    "parse_complete": 466,
+    "parse_partial": 160,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 14,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 640,
+    "bytes_selected": 4656131,
+    "parse_complete": 466,
+    "parse_partial": 160,
+    "files_analyzed": 466
+  },
+  "performance": {
+    "elapsed_seconds": 23.546,
+    "peak_rss_kb": 418344,
+    "files_per_second": 27.18,
+    "bytes_per_second": 197746.16,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/communication_bluetooth/report.json",
+      "sha256": "12d90485601ed0a7d9b4a266abcb2986ca6d71efa5d8dcfd3b9ba4ffae3a5156"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/communication_bluetooth/report.md",
+      "sha256": "916469a113314b04ee1a309e3f8ac997540e482aa86624c4b90982fad0896d33"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

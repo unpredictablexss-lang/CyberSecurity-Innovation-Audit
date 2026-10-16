@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:10:49+00:00",
+  "repository": "openharmony/resourceschedule_background_task_mgr",
+  "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+  "git_tree": "0a18669abd454ae51f19adcf445eeb57888d2f3e",
+  "snapshot_sha256": "a13b403944c87b221fdb62a70eaba18db37eb22e3dd897a6c752601ac0aaa9ca",
+  "plan_sha256": "432706dc770fcd47358b2c03fa4707e51fa23f8c589af317433ea1a4f9e858e4",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
+    "--repository",
+    "openharmony/resourceschedule_background_task_mgr",
+    "--commit",
+    "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/resourceschedule_background_task_mgr",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/resourceschedule_background_task_mgr/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/resourceschedule_background_task_mgr/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 196,
+    "candidates": 2,
+    "candidates_with_runner_obligations": 2,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 196,
+    "parse_complete": 162,
+    "parse_partial": 26,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 8,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 196,
+    "bytes_selected": 1451786,
+    "parse_complete": 162,
+    "parse_partial": 26,
+    "files_analyzed": 162
+  },
+  "performance": {
+    "elapsed_seconds": 6.945,
+    "peak_rss_kb": 149796,
+    "files_per_second": 28.22,
+    "bytes_per_second": 209040.46,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/resourceschedule_background_task_mgr/report.json",
+      "sha256": "cc9ae5c4634e9595c9dcd33072c8efd93304435d7d84fdeba5e5cbffe5135fd4"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/resourceschedule_background_task_mgr/report.md",
+      "sha256": "be5ba25d27ad8535c286ee38d97698e9b10b5eda60b3e567137686f207a96b88"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:08:30+00:00",
+  "repository": "openharmony/communication_ipc",
+  "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+  "git_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+  "snapshot_sha256": "974b760b1d5ddb211cb98f00c6137ab7f83730ae2a39993483a04a0b34bf9512",
+  "plan_sha256": "1b286b1cb2a13cbb8e522e0ea55f59f156a083b6aa35e33aa3109ba9214b93ff",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/openharmony-audit/perf-corpus/communication_ipc",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/openharmony-audit/perf-corpus/communication_ipc",
+    "--repository",
+    "openharmony/communication_ipc",
+    "--commit",
+    "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/communication_ipc",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/communication_ipc/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/communication_ipc/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 252,
+    "candidates": 12,
+    "candidates_with_runner_obligations": 12,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 252,
+    "parse_complete": 154,
+    "parse_partial": 97,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 1,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 252,
+    "bytes_selected": 2189480,
+    "parse_complete": 154,
+    "parse_partial": 97,
+    "files_analyzed": 154
+  },
+  "performance": {
+    "elapsed_seconds": 12.179,
+    "peak_rss_kb": 235944,
+    "files_per_second": 20.69,
+    "bytes_per_second": 179775.02,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/communication_ipc/report.json",
+      "sha256": "fd744a0270e08cd970e73101616262ad0b05be90375d5c0a10a6de5f024eb69c"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/communication_ipc/report.md",
+      "sha256": "6f70a642ad9112d8a1e314eba92e0f676cbd320d922ee7d7bbf5ad91ad59a690"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

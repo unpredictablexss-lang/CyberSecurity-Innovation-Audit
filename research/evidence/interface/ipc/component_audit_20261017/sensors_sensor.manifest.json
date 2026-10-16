@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:20:57+00:00",
+  "repository": "openharmony/sensors_sensor",
+  "commit": "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+  "git_tree": "4f8e45441c4e38c3b67f0b3d1369b8e740e47258",
+  "snapshot_sha256": "46166648b98d495a24de5d7e5de5f2a800970063274d2e3ec950c2fc189f863a",
+  "plan_sha256": "fb0f256cdcffa1fc1ea46073c12a0dd646576d1722e2e6ab7ed430f32f1ef014",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-widen/sensors_sensor",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-widen/sensors_sensor",
+    "--repository",
+    "openharmony/sensors_sensor",
+    "--commit",
+    "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/sensors_sensor",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/sensors_sensor/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/sensors_sensor/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 152,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 152,
+    "parse_complete": 131,
+    "parse_partial": 21,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 0,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 152,
+    "bytes_selected": 1157109,
+    "parse_complete": 131,
+    "parse_partial": 21,
+    "files_analyzed": 131
+  },
+  "performance": {
+    "elapsed_seconds": 4.372,
+    "peak_rss_kb": 130184,
+    "files_per_second": 34.77,
+    "bytes_per_second": 264663.54,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/sensors_sensor/report.json",
+      "sha256": "e08ae5b8f1d1f257799948ec70cd48ba6912ab4651dd0293b86267431a9bfcf3"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/sensors_sensor/report.md",
+      "sha256": "51b87924c50bbfbe3a5ff4341c6aea74c41aed31747977b1f00c6b2fbb053863"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:10:33+00:00",
+  "repository": "openharmony/multimedia_player_framework",
+  "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+  "git_tree": "8127c94e52db3a65df214a215d94bbaf29e1a928",
+  "snapshot_sha256": "52952abfba410310eea1f9307e3470278fdacc563c2662bd8feccaea30ebd716",
+  "plan_sha256": "581fc27f5e0eb3ab146b5dca8c6403e81e3f1a72733bc7658b7944ad4e292a90",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/openharmony-audit/perf-corpus/multimedia_player_framework",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/openharmony-audit/perf-corpus/multimedia_player_framework",
+    "--repository",
+    "openharmony/multimedia_player_framework",
+    "--commit",
+    "9f9a285ff489afa66861a85dcc4213336a463b36",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/multimedia_player_framework",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/multimedia_player_framework/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/multimedia_player_framework/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 920,
+    "candidates": 24,
+    "candidates_with_runner_obligations": 24,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 920,
+    "parse_complete": 578,
+    "parse_partial": 342,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 0,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 920,
+    "bytes_selected": 9576375,
+    "parse_complete": 578,
+    "parse_partial": 342,
+    "files_analyzed": 578
+  },
+  "performance": {
+    "elapsed_seconds": 44.771,
+    "peak_rss_kb": 900436,
+    "files_per_second": 20.55,
+    "bytes_per_second": 213896.83,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/multimedia_player_framework/report.json",
+      "sha256": "54ae24ebf5ea6d6a62284b0dd828aed9c66f63b7b8a4a490a8a2a0a3293c1050"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/multimedia_player_framework/report.md",
+      "sha256": "ae929b9804922a9c6f3875e77288ed0cc726d609d917ee88e7249a27618db8ac"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

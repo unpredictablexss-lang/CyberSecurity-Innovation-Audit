@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_component_scan_manifest_index",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector_version": "0.8.0",
+  "manifests": [
+    {
+      "component": "bundlemanager_bundle_framework",
+      "repository": "openharmony/bundlemanager_bundle_framework",
+      "commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+      "git_tree": "873c60770238bc854b10acf8c9146fc90caf34f1",
+      "selected_files": 1069,
+      "selected_bytes": 13767172,
+      "plan_sha256": "0c4179e08f253da2c2d8f38b43c0773e47dda1a7b9282c60c7f09241f5a3295e",
+      "candidates_total": 29
+    },
+    {
+      "component": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "git_tree": "8127c94e52db3a65df214a215d94bbaf29e1a928",
+      "selected_files": 920,
+      "selected_bytes": 9576375,
+      "plan_sha256": "581fc27f5e0eb3ab146b5dca8c6403e81e3f1a72733bc7658b7944ad4e292a90",
+      "candidates_total": 24
+    },
+    {
+      "component": "communication_ipc",
+      "repository": "openharmony/communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "git_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+      "selected_files": 252,
+      "selected_bytes": 2189480,
+      "plan_sha256": "1b286b1cb2a13cbb8e522e0ea55f59f156a083b6aa35e33aa3109ba9214b93ff",
+      "candidates_total": 12
+    },
+    {
+      "component": "window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "selected_files": 1112,
+      "selected_bytes": 20206691,
+      "plan_sha256": "1cb74d9ae1297c48e5fc0c98eb87b5f47fd70053f83d4abf5ad146b76737ef96",
+      "candidates_total": 10
+    },
+    {
+      "component": "multimedia_camera_framework",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "git_tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "selected_files": 1123,
+      "selected_bytes": 10791619,
+      "plan_sha256": "9c2effd98a9263606ec1940fb92130a9e015f2d966bebd153f4f2eae4915498b",
+      "candidates_total": 9
+    },
+    {
+      "component": "multimedia_audio_framework",
+      "repository": "openharmony/multimedia_audio_framework",
+      "commit": "3a2688e805df970739e3b0cebf9cc05d8cb24e9b",
+      "git_tree": "8295736f6357e727bc9b3e38afa3cecb7212f653",
+      "selected_files": 1510,
+      "selected_bytes": 17905337,
+      "plan_sha256": "cff8acabdf7ce7df48d981210256732bef3249989bc513e99004fc64c8487c6c",
+      "candidates_total": 6
+    },
+    {
+      "component": "inputmethod_imf",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "git_tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "selected_files": 412,
+      "selected_bytes": 3191273,
+      "plan_sha256": "f4238840a3922c580e79dd6022ec6977eddbe0f6a3c4fd604f06da06d1fb42b2",
+      "candidates_total": 4
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "git_tree": "0a18669abd454ae51f19adcf445eeb57888d2f3e",
+      "selected_files": 196,
+      "selected_bytes": 1451786,
+      "plan_sha256": "432706dc770fcd47358b2c03fa4707e51fa23f8c589af317433ea1a4f9e858e4",
+      "candidates_total": 2
+    },
+    {
+      "component": "telephony_call_manager",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "git_tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "selected_files": 395,
+      "selected_bytes": 3683469,
+      "plan_sha256": "f125b7cb554b00ace511a5eb7b562acf86e588a540babd7de9247b0309b37047",
+      "candidates_total": 2
+    },
+    {
+      "component": "update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "selected_files": 219,
+      "selected_bytes": 851345,
+      "plan_sha256": "e5903393e19b8e7bb4aa97daf20b7fa089c10af38c5ef42163bfdbf00aa43cd6",
+      "candidates_total": 2
+    },
+    {
+      "component": "account_os_account",
+      "repository": "openharmony/account_os_account",
+      "commit": "af2e349854d83ffd0f4e766e0a8b315388d7315a",
+      "git_tree": "0bf196874a7ba13dc2e60ce390ee149f463a2357",
+      "selected_files": 451,
+      "selected_bytes": 4486203,
+      "plan_sha256": "9d4d5e31b53d838ebf05a39e2171cc00fb769922bdc2a3f8d41b863d50814703",
+      "candidates_total": 0
+    },
+    {
+      "component": "communication_bluetooth",
+      "repository": "openharmony/communication_bluetooth",
+      "commit": "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+      "git_tree": "ec8695dbeee43b0ec34ef3bb8b03713cf28460e8",
+      "selected_files": 640,
+      "selected_bytes": 4656131,
+      "plan_sha256": "b0f112814e92c8e0e52aa8fd0105946421b9c6f843ca21be80d86a796ffc377c",
+      "candidates_total": 0
+    },
+    {
+      "component": "device_manager",
+      "repository": "openharmony/device_manager",
+      "commit": "53654dce7302f41d55695fcda8155846aeef7e83",
+      "git_tree": "cfcda6faa393046c544371513fa364b57db75365",
+      "selected_files": 213,
+      "selected_bytes": 991415,
+      "plan_sha256": "d3f9c2e32cdd7caa4b101940c14234face6e2628b805d6b90310c488b54425fb",
+      "candidates_total": 0
+    },
+    {
+      "component": "distributeddatamgr_datamgr_service",
+      "repository": "openharmony/distributeddatamgr_datamgr_service",
+      "commit": "a6ba8ce1ec700c1a07e80dcc146f40b179d519af",
+      "git_tree": "223c1ab5151250b746edcfa39a2b44929e77a36f",
+      "selected_files": 631,
+      "selected_bytes": 3281118,
+      "plan_sha256": "20516ae03d60a0cac3af50dcdd3ce5914dfe4c42e74c9fe58300584f607c0ee8",
+      "candidates_total": 0
+    },
+    {
+      "component": "notification_common_event_service",
+      "repository": "openharmony/notification_common_event_service",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "git_tree": "bca5f636d88a314c82f52a564b7dbf3b5d4aa1cc",
+      "selected_files": 146,
+      "selected_bytes": 1531573,
+      "plan_sha256": "9c53dd618007390e598cdf79f09bf58e33a634a195f40aa2dfb704ca0edd5c78",
+      "candidates_total": 0
+    },
+    {
+      "component": "security_access_token",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "selected_files": 550,
+      "selected_bytes": 3484891,
+      "plan_sha256": "90a5094eae710d1156538e34e7c9e1a6f2bd974abc762422a1bb78109ca9634b",
+      "candidates_total": 0
+    },
+    {
+      "component": "sensors_sensor",
+      "repository": "openharmony/sensors_sensor",
+      "commit": "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+      "git_tree": "4f8e45441c4e38c3b67f0b3d1369b8e740e47258",
+      "selected_files": 152,
+      "selected_bytes": 1157109,
+      "plan_sha256": "fb0f256cdcffa1fc1ea46073c12a0dd646576d1722e2e6ab7ed430f32f1ef014",
+      "candidates_total": 0
+    },
+    {
+      "component": "useriam_user_auth_framework",
+      "repository": "openharmony/useriam_user_auth_framework",
+      "commit": "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+      "git_tree": "670afd8061df0083d62c91009205188dd9a61e05",
+      "selected_files": 422,
+      "selected_bytes": 2094442,
+      "plan_sha256": "2530b35d1f729334bf7774bcc931cd22f092eb008008c8197bc7e523762630be",
+      "candidates_total": 0
+    }
+  ],
+  "source_object_note": "Each component is a local shallow clone pinned by rev-parse; the driver reads pinned Git objects and does not fetch. Source repositories stay outside Git.",
+  "validated_vulnerability": 0
+}

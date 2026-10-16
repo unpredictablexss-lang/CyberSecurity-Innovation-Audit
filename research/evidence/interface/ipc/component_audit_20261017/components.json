@@ -1,0 +1,624 @@
+{
+  "schema_version": 1,
+  "kind": "ipc_component_audit_measurement",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector": {
+    "path": "src/ohscanner/detectors/interface",
+    "version": "0.8.0",
+    "model_version": "oh-ipc-2026.10-v6",
+    "source": "read-only pinned tree of the interface branch",
+    "source_commit": "635b3e0449c552f0ccc25118850d245962845568",
+    "driver": "src/ohscanner/detectors/interface/audit.py",
+    "passes": [
+      "complete-ast",
+      "all-files"
+    ]
+  },
+  "totals": {
+    "selected_files": 10413,
+    "selected_bytes": 105297429,
+    "loc": 1528120,
+    "parsed_complete": 8364,
+    "parsed_partial": 1874,
+    "seconds": 719.323,
+    "candidates": 100
+  },
+  "per_rule": {
+    "ipc.auth.guard-coverage": {
+      "openharmony/bundlemanager_bundle_framework": 5,
+      "openharmony/multimedia_camera_framework": 1,
+      "openharmony/update_updateservice": 2
+    },
+    "ipc.auth.missing": {
+      "openharmony/bundlemanager_bundle_framework": 7,
+      "openharmony/communication_ipc": 2,
+      "openharmony/multimedia_camera_framework": 1,
+      "openharmony/telephony_call_manager": 2
+    },
+    "ipc.auth.object-owner": {
+      "openharmony/resourceschedule_background_task_mgr": 2
+    },
+    "ipc.capability.export": {
+      "openharmony/bundlemanager_bundle_framework": 14,
+      "openharmony/window_window_manager": 10
+    },
+    "ipc.relay.descriptor-boundary": {
+      "openharmony/bundlemanager_bundle_framework": 3,
+      "openharmony/communication_ipc": 10,
+      "openharmony/inputmethod_imf": 4,
+      "openharmony/multimedia_audio_framework": 6,
+      "openharmony/multimedia_camera_framework": 7,
+      "openharmony/multimedia_player_framework": 24
+    }
+  },
+  "components": [
+    {
+      "component": "bundlemanager_bundle_framework",
+      "repository": "openharmony/bundlemanager_bundle_framework",
+      "commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+      "git_tree": "873c60770238bc854b10acf8c9146fc90caf34f1",
+      "plan_sha256": "0c4179e08f253da2c2d8f38b43c0773e47dda1a7b9282c60c7f09241f5a3295e",
+      "scope": {
+        "tracked_entries": 10877,
+        "excluded_by_pattern": 9658,
+        "non_source": 150,
+        "selected_files": 1069,
+        "selected_bytes": 13767172,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 912,
+        "parsed_partial": 102,
+        "analyzed_files": 912,
+        "scope_loc": 224602,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 102
+        }
+      },
+      "candidates": {
+        "ipc.auth.guard-coverage": 5,
+        "ipc.auth.missing": 7,
+        "ipc.capability.export": 14,
+        "ipc.relay.descriptor-boundary": 3
+      },
+      "candidates_total": 29,
+      "candidates_with_runner_obligations": 29,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 174.525,
+      "report_sha256": "1d09d373864ede8d713bbdfa6f105b9edf807f9f3711b1f8afe66c4b29b4b3a1"
+    },
+    {
+      "component": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "git_tree": "8127c94e52db3a65df214a215d94bbaf29e1a928",
+      "plan_sha256": "581fc27f5e0eb3ab146b5dca8c6403e81e3f1a72733bc7658b7944ad4e292a90",
+      "scope": {
+        "tracked_entries": 2902,
+        "excluded_by_pattern": 1830,
+        "non_source": 152,
+        "selected_files": 920,
+        "selected_bytes": 9576375,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 578,
+        "parsed_partial": 342,
+        "analyzed_files": 578,
+        "scope_loc": 87428,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 342
+        }
+      },
+      "candidates": {
+        "ipc.relay.descriptor-boundary": 24
+      },
+      "candidates_total": 24,
+      "candidates_with_runner_obligations": 24,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 44.771,
+      "report_sha256": "54ae24ebf5ea6d6a62284b0dd828aed9c66f63b7b8a4a490a8a2a0a3293c1050"
+    },
+    {
+      "component": "communication_ipc",
+      "repository": "openharmony/communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "git_tree": "125ecbfa21f430f2f977f0026ab97b70cd27a726",
+      "plan_sha256": "1b286b1cb2a13cbb8e522e0ea55f59f156a083b6aa35e33aa3109ba9214b93ff",
+      "scope": {
+        "tracked_entries": 1389,
+        "excluded_by_pattern": 1077,
+        "non_source": 60,
+        "selected_files": 252,
+        "selected_bytes": 2189480,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 154,
+        "parsed_partial": 97,
+        "analyzed_files": 154,
+        "scope_loc": 27365,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 97
+        }
+      },
+      "candidates": {
+        "ipc.auth.missing": 2,
+        "ipc.relay.descriptor-boundary": 10
+      },
+      "candidates_total": 12,
+      "candidates_with_runner_obligations": 12,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 12.179,
+      "report_sha256": "fd744a0270e08cd970e73101616262ad0b05be90375d5c0a10a6de5f024eb69c"
+    },
+    {
+      "component": "window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "plan_sha256": "1cb74d9ae1297c48e5fc0c98eb87b5f47fd70053f83d4abf5ad146b76737ef96",
+      "scope": {
+        "tracked_entries": 2450,
+        "excluded_by_pattern": 1157,
+        "non_source": 181,
+        "selected_files": 1112,
+        "selected_bytes": 20206691,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 811,
+        "parsed_partial": 268,
+        "analyzed_files": 811,
+        "scope_loc": 165340,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 268
+        }
+      },
+      "candidates": {
+        "ipc.capability.export": 10
+      },
+      "candidates_total": 10,
+      "candidates_with_runner_obligations": 10,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 201.536,
+      "report_sha256": "4d1043992050934e49527046a6b80529638dd9e458117f22a9987fd631ce07a6"
+    },
+    {
+      "component": "multimedia_camera_framework",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "git_tree": "daef3c4c6bc50ead50610846a958c29ae669f0f3",
+      "plan_sha256": "9c2effd98a9263606ec1940fb92130a9e015f2d966bebd153f4f2eae4915498b",
+      "scope": {
+        "tracked_entries": 2262,
+        "excluded_by_pattern": 980,
+        "non_source": 159,
+        "selected_files": 1123,
+        "selected_bytes": 10791619,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 932,
+        "parsed_partial": 173,
+        "analyzed_files": 932,
+        "scope_loc": 156092,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 173
+        }
+      },
+      "candidates": {
+        "ipc.auth.guard-coverage": 1,
+        "ipc.auth.missing": 1,
+        "ipc.relay.descriptor-boundary": 7
+      },
+      "candidates_total": 9,
+      "candidates_with_runner_obligations": 9,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 56.715,
+      "report_sha256": "0bb7ed8e490e0d770ddb705332e649050f321c7cf26760a910dcd057e3621848"
+    },
+    {
+      "component": "multimedia_audio_framework",
+      "repository": "openharmony/multimedia_audio_framework",
+      "commit": "3a2688e805df970739e3b0cebf9cc05d8cb24e9b",
+      "git_tree": "8295736f6357e727bc9b3e38afa3cecb7212f653",
+      "plan_sha256": "cff8acabdf7ce7df48d981210256732bef3249989bc513e99004fc64c8487c6c",
+      "scope": {
+        "tracked_entries": 3603,
+        "excluded_by_pattern": 1938,
+        "non_source": 155,
+        "selected_files": 1510,
+        "selected_bytes": 17905337,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 1317,
+        "parsed_partial": 193,
+        "analyzed_files": 1317,
+        "scope_loc": 281931,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 193
+        }
+      },
+      "candidates": {
+        "ipc.relay.descriptor-boundary": 6
+      },
+      "candidates_total": 6,
+      "candidates_with_runner_obligations": 6,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 70.804,
+      "report_sha256": "fecf14cb45c7e81651600597eb8e886f423b7e027d391ca98e5ac0129335fca0"
+    },
+    {
+      "component": "inputmethod_imf",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "git_tree": "3edaf7b3825158e13177a8ed61fa1689905229ba",
+      "plan_sha256": "f4238840a3922c580e79dd6022ec6977eddbe0f6a3c4fd604f06da06d1fb42b2",
+      "scope": {
+        "tracked_entries": 1032,
+        "excluded_by_pattern": 515,
+        "non_source": 105,
+        "selected_files": 412,
+        "selected_bytes": 3191273,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 330,
+        "parsed_partial": 72,
+        "analyzed_files": 330,
+        "scope_loc": 44574,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 72
+        }
+      },
+      "candidates": {
+        "ipc.relay.descriptor-boundary": 4
+      },
+      "candidates_total": 4,
+      "candidates_with_runner_obligations": 4,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 13.943,
+      "report_sha256": "3cd908a7489345a4baebaa00c7b0e12dc602eb901f88341597dd105d8a89280a"
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "git_tree": "0a18669abd454ae51f19adcf445eeb57888d2f3e",
+      "plan_sha256": "432706dc770fcd47358b2c03fa4707e51fa23f8c589af317433ea1a4f9e858e4",
+      "scope": {
+        "tracked_entries": 490,
+        "excluded_by_pattern": 166,
+        "non_source": 128,
+        "selected_files": 196,
+        "selected_bytes": 1451786,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 162,
+        "parsed_partial": 26,
+        "analyzed_files": 162,
+        "scope_loc": 24289,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 26
+        }
+      },
+      "candidates": {
+        "ipc.auth.object-owner": 2
+      },
+      "candidates_total": 2,
+      "candidates_with_runner_obligations": 2,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 6.945,
+      "report_sha256": "cc9ae5c4634e9595c9dcd33072c8efd93304435d7d84fdeba5e5cbffe5135fd4"
+    },
+    {
+      "component": "telephony_call_manager",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "git_tree": "3eb7742bdcd1507ad75cfe9c580ff7fefe4f9d41",
+      "plan_sha256": "f125b7cb554b00ace511a5eb7b562acf86e588a540babd7de9247b0309b37047",
+      "scope": {
+        "tracked_entries": 621,
+        "excluded_by_pattern": 195,
+        "non_source": 31,
+        "selected_files": 395,
+        "selected_bytes": 3683469,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 324,
+        "parsed_partial": 69,
+        "analyzed_files": 324,
+        "scope_loc": 71008,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 69
+        }
+      },
+      "candidates": {
+        "ipc.auth.missing": 2
+      },
+      "candidates_total": 2,
+      "candidates_with_runner_obligations": 2,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 20.467,
+      "report_sha256": "7fec9a6118be29666a7e6ddff2225f126464089c91aee7b33edf51a811a0dfe5"
+    },
+    {
+      "component": "update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+      "plan_sha256": "e5903393e19b8e7bb4aa97daf20b7fa089c10af38c5ef42163bfdbf00aa43cd6",
+      "scope": {
+        "tracked_entries": 289,
+        "excluded_by_pattern": 45,
+        "non_source": 25,
+        "selected_files": 219,
+        "selected_bytes": 851345,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 187,
+        "parsed_partial": 31,
+        "analyzed_files": 187,
+        "scope_loc": 15624,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 31
+        }
+      },
+      "candidates": {
+        "ipc.auth.guard-coverage": 2
+      },
+      "candidates_total": 2,
+      "candidates_with_runner_obligations": 2,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 5.071,
+      "report_sha256": "b97daedb9d1ba2319c26e1306d87105e6bfccf17491b3482d76a3484cf25f547"
+    },
+    {
+      "component": "account_os_account",
+      "repository": "openharmony/account_os_account",
+      "commit": "af2e349854d83ffd0f4e766e0a8b315388d7315a",
+      "git_tree": "0bf196874a7ba13dc2e60ce390ee149f463a2357",
+      "plan_sha256": "9d4d5e31b53d838ebf05a39e2171cc00fb769922bdc2a3f8d41b863d50814703",
+      "scope": {
+        "tracked_entries": 2496,
+        "excluded_by_pattern": 1893,
+        "non_source": 152,
+        "selected_files": 451,
+        "selected_bytes": 4486203,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 400,
+        "parsed_partial": 49,
+        "analyzed_files": 400,
+        "scope_loc": 85793,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 49
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 21.049,
+      "report_sha256": "ef0ec96c13d61a149a6e45c9fdd874ff73c3a77bb46cd2ac6e808c03528c63a6"
+    },
+    {
+      "component": "communication_bluetooth",
+      "repository": "openharmony/communication_bluetooth",
+      "commit": "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+      "git_tree": "ec8695dbeee43b0ec34ef3bb8b03713cf28460e8",
+      "plan_sha256": "b0f112814e92c8e0e52aa8fd0105946421b9c6f843ca21be80d86a796ffc377c",
+      "scope": {
+        "tracked_entries": 835,
+        "excluded_by_pattern": 16,
+        "non_source": 179,
+        "selected_files": 640,
+        "selected_bytes": 4656131,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 466,
+        "parsed_partial": 160,
+        "analyzed_files": 466,
+        "scope_loc": 85931,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 160
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 23.546,
+      "report_sha256": "12d90485601ed0a7d9b4a266abcb2986ca6d71efa5d8dcfd3b9ba4ffae3a5156"
+    },
+    {
+      "component": "device_manager",
+      "repository": "openharmony/device_manager",
+      "commit": "53654dce7302f41d55695fcda8155846aeef7e83",
+      "git_tree": "cfcda6faa393046c544371513fa364b57db75365",
+      "plan_sha256": "d3f9c2e32cdd7caa4b101940c14234face6e2628b805d6b90310c488b54425fb",
+      "scope": {
+        "tracked_entries": 448,
+        "excluded_by_pattern": 183,
+        "non_source": 52,
+        "selected_files": 213,
+        "selected_bytes": 991415,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 204,
+        "parsed_partial": 1,
+        "analyzed_files": 204,
+        "scope_loc": 26342,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 1
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 5.85,
+      "report_sha256": "f5cf757f299d201680a4d7f5640519ec9b2969b9dfeca7b842520e7cd05c1778"
+    },
+    {
+      "component": "distributeddatamgr_datamgr_service",
+      "repository": "openharmony/distributeddatamgr_datamgr_service",
+      "commit": "a6ba8ce1ec700c1a07e80dcc146f40b179d519af",
+      "git_tree": "223c1ab5151250b746edcfa39a2b44929e77a36f",
+      "plan_sha256": "20516ae03d60a0cac3af50dcdd3ce5914dfe4c42e74c9fe58300584f607c0ee8",
+      "scope": {
+        "tracked_entries": 1278,
+        "excluded_by_pattern": 562,
+        "non_source": 85,
+        "selected_files": 631,
+        "selected_bytes": 3281118,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 448,
+        "parsed_partial": 183,
+        "analyzed_files": 448,
+        "scope_loc": 52909,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 183
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 16.48,
+      "report_sha256": "3fc989c2449dc9d18bc6c59603c0fc15198066c4484108af5b35ceaf3edd6264"
+    },
+    {
+      "component": "notification_common_event_service",
+      "repository": "openharmony/notification_common_event_service",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "git_tree": "bca5f636d88a314c82f52a564b7dbf3b5d4aa1cc",
+      "plan_sha256": "9c53dd618007390e598cdf79f09bf58e33a634a195f40aa2dfb704ca0edd5c78",
+      "scope": {
+        "tracked_entries": 432,
+        "excluded_by_pattern": 240,
+        "non_source": 46,
+        "selected_files": 146,
+        "selected_bytes": 1531573,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 121,
+        "parsed_partial": 16,
+        "analyzed_files": 121,
+        "scope_loc": 33075,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 16
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 6.497,
+      "report_sha256": "e82da06ce478c664d3096fe7c2c2dc1d226abcdc1ce49de598cfaa157bfc3e14"
+    },
+    {
+      "component": "security_access_token",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "plan_sha256": "90a5094eae710d1156538e34e7c9e1a6f2bd974abc762422a1bb78109ca9634b",
+      "scope": {
+        "tracked_entries": 1989,
+        "excluded_by_pattern": 1303,
+        "non_source": 136,
+        "selected_files": 550,
+        "selected_bytes": 3484891,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 489,
+        "parsed_partial": 56,
+        "analyzed_files": 489,
+        "scope_loc": 72618,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 56
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 23.839,
+      "report_sha256": "1f40c88a83e7205cb9d77c1f72be71dd366407ce790490251213d370364ee5c7"
+    },
+    {
+      "component": "sensors_sensor",
+      "repository": "openharmony/sensors_sensor",
+      "commit": "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+      "git_tree": "4f8e45441c4e38c3b67f0b3d1369b8e740e47258",
+      "plan_sha256": "fb0f256cdcffa1fc1ea46073c12a0dd646576d1722e2e6ab7ed430f32f1ef014",
+      "scope": {
+        "tracked_entries": 423,
+        "excluded_by_pattern": 226,
+        "non_source": 45,
+        "selected_files": 152,
+        "selected_bytes": 1157109,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 131,
+        "parsed_partial": 21,
+        "analyzed_files": 131,
+        "scope_loc": 21941,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 21
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 4.372,
+      "report_sha256": "e08ae5b8f1d1f257799948ec70cd48ba6912ab4651dd0293b86267431a9bfcf3"
+    },
+    {
+      "component": "useriam_user_auth_framework",
+      "repository": "openharmony/useriam_user_auth_framework",
+      "commit": "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+      "git_tree": "670afd8061df0083d62c91009205188dd9a61e05",
+      "plan_sha256": "2530b35d1f729334bf7774bcc931cd22f092eb008008c8197bc7e523762630be",
+      "scope": {
+        "tracked_entries": 945,
+        "excluded_by_pattern": 443,
+        "non_source": 80,
+        "selected_files": 422,
+        "selected_bytes": 2094442,
+        "shards": 1
+      },
+      "analysis": {
+        "parsed_complete": 398,
+        "parsed_partial": 15,
+        "analyzed_files": 398,
+        "scope_loc": 51258,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 15
+        }
+      },
+      "candidates": {},
+      "candidates_total": 0,
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "elapsed_seconds": 10.734,
+      "report_sha256": "a55e97e879c82d9742a2bba2b641bf905a4113e356800e804649787ab1e6e0c3"
+    }
+  ],
+  "refused_runs": [],
+  "note": "Candidates are unverified static evidence, not vulnerabilities; confirmed_vulnerabilities is 0 by construction. Zero candidates in a component does not mean the component is free of findings. Raw reports stay outside Git; report_sha256 binds each row to the report it came from."
+}

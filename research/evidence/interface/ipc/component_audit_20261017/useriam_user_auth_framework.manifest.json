@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:21:09+00:00",
+  "repository": "openharmony/useriam_user_auth_framework",
+  "commit": "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+  "git_tree": "670afd8061df0083d62c91009205188dd9a61e05",
+  "snapshot_sha256": "69b9dfa62cb5f5347e8e594740381cd5ea1309025b0f534447271e1d48461bf9",
+  "plan_sha256": "2530b35d1f729334bf7774bcc931cd22f092eb008008c8197bc7e523762630be",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-widen/useriam_user_auth_framework",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-widen/useriam_user_auth_framework",
+    "--repository",
+    "openharmony/useriam_user_auth_framework",
+    "--commit",
+    "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/useriam_user_auth_framework",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/useriam_user_auth_framework/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/useriam_user_auth_framework/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 422,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 422,
+    "parse_complete": 398,
+    "parse_partial": 15,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 9,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 422,
+    "bytes_selected": 2094442,
+    "parse_complete": 398,
+    "parse_partial": 15,
+    "files_analyzed": 398
+  },
+  "performance": {
+    "elapsed_seconds": 10.734,
+    "peak_rss_kb": 193644,
+    "files_per_second": 39.31,
+    "bytes_per_second": 195122.23,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/useriam_user_auth_framework/report.json",
+      "sha256": "a55e97e879c82d9742a2bba2b641bf905a4113e356800e804649787ab1e6e0c3"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/useriam_user_auth_framework/report.md",
+      "sha256": "8ca79597a41714eee3752180b2bd832a383cb3a41bc6f7f689d2de52a7cc9350"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

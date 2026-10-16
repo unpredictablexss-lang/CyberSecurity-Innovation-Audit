@@ -32,6 +32,74 @@ Detailed Chinese methods and per-root/tool comparison: https://github.com/unpred
 
 ---
 
+# IPC method card — six-family control depth, and what 18 real components say about the rules (2026-10-17)
+
+Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
+(`0.8.0`, model `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0`). Full records:
+`research/deliveries/ipc/20261017-six-family-depth-unit.md` and
+`research/deliveries/ipc/20261017-six-family-component-measurement.md`; machine-readable evidence in
+`research/evidence/interface/ipc/component_audit_20261017/`.
+
+- **The gap was measured, not asserted.** 18 pinned components, 10,413 files, **1,528,120 lines**
+  analysed (8,364 complete ASTs, 1,874 partial), 719 s: **100 candidates, 0 confirmed**. Five of the
+  eleven catalogued rules fired at all. AUTH-01 (`ipc.relay.descriptor-boundary`) is **54** of the
+  100; AUTH-03 is **2** (only `ipc.auth.object-owner`); **DATA-01 is 0 for both rules**. AUTH-03's
+  `caller-class`/`identity-domain`/`service-identity`/`request-identity` and DATA-01's
+  `copy-range`/`position-underflow` never fired once in 1.53 M lines.
+- **Three of those six silent rules had no positive control at all; they do now.** Added
+  `tests/fixtures/ipc/auth03/{caller_class,identity_domain}*`, `tests/fixtures/ipc/data01/position_underflow_*`
+  and an AUTH-01 `safe` control, with `tests/test_ipc_family_depth.py` asserting the *exact* candidate
+  set per rule and a one-line minimal pair per fixed control. **A rule that has never been made to
+  fire is indistinguishable from one that cannot fire**; that is now a checked invariant, per family
+  and per rule, not a total.
+- **Which means the two facts do not contradict — they compose.** The fixtures show these rules
+  *can* fire (exact candidate sets, `status=completed`); the corpus shows they *do not* fire on these
+  18 components. Distinguishing "cannot fire" from "the corpus holds none of these shapes" needs a
+  **shape census** over the corpus (count the call sites of `caller_class_sensitive_calls`, the
+  `RewindRead(<expr>)` subtractions, the `result_permissions` arguments), not more components. **Not
+  done.**
+- **AUTH-01's descriptor identity is resolved across files, so a single-`.cpp` fixture measures a
+  different branch than a component audit.** `token_sync_manager_stub.cpp` in
+  `security_access_token`@`17d88bfb36be` yields **9 candidates alone and 0 with its own header**;
+  a pairwise bisect over the 35 files under `services/tokensyncmanager` shows **exactly one**
+  companion — `include/service/token_sync_manager_stub.h` — that suppresses, and it is the one that
+  states the base clause (`IRemoteStub<ITokenSyncManager>`), making the comparison
+  `descriptor != ITokenSyncManager::GetDescriptor()` a **matched guard**. 0 is correct; the 9 were
+  the false positive. All 28 existing fixtures feed one file at a time, so a fixture can only
+  express the "identity not stated" branch — a fixture for "compared against a *different*
+  interface" must also supply a base-clause-bearing header.
+- **Checked against all 100: none is that artifact.** The scope includes headers (`.h` is 20–55 % of
+  each component's selection), and every candidate's message falls on an *entry* branch, not an
+  identity branch (`detector.py:27`/`:32`): 24 "no descriptor comparison in the entry", 19 "dispatch
+  path, no matched guard", 2 "unresolved member-pointer dispatch". Spot-verified:
+  `dbinder_service_stub.cpp:164` `DBinderServiceStub::OnRemoteRequest` dispatches on `code` with no
+  `ReadInterfaceToken` at all — a true candidate.
+- **A rejected invocation still writes a report whose counts read zero.** The first driver call passed
+  a bare component name instead of `owner/name`; the driver wrote
+  `counts: {source_files_audited: 1069, candidates: 0}` alongside
+  `shard_errors: [ValueError: invalid declared repository name, files_not_analyzed: 1069]`.
+  Indistinguishable from a component with no candidates if `counts` alone is read. Both aggregators
+  now refuse `shard_errors` non-empty or a `repository` without `/`, and record the refusal with the
+  report hash. `window_window_manager` read 0 from such a leftover and 10 after the rerun.
+- **`variant` was read by no test, so it could lie.** The shared manifest's
+  `account_role_authorized_fixed` was labelled `fixed` while its `expected_rule` named
+  `ipc.auth.missing` — the opposite claim. The matrix test branches on `expected_rule` only, so the
+  relabelling silently converted a negative control into a positive one with every test still green.
+  The label is corrected and `test_ipc_family_depth.ManifestContractTests` now enforces
+  `positive ⟺ expected_rule is not None`. Whether that row should instead be a real negative control
+  (it needs an explicit-policy path — its own `policy_context` says so) is left to the import author.
+- **What this argues for, in cost order:** the shape census for the six silent rules; making
+  descriptor identity an explicit, recorded field on the candidate instead of a message template, so
+  "unresolved" can be counted rather than read; and AUTH-02/03/04, CAP-01, DATA-01 gaining the named
+  mechanism fields AUTH-01 has, so a candidate's claim is assertable and not only its prose.
+- **What it does not claim:** nothing here promotes anything. All 100 stay `candidate`; zero
+  candidates is not safety, and a candidate is not a vulnerability. `all-files` runs `blocked` with
+  zero scope counters by design and is the same interpretation applied twice, not a second source.
+  Per-component counts from earlier rounds were taken under other model versions and are not
+  comparable to this table; they were not reconciled.
+
+---
+
 # IPC method card v0.8 — the first candidate review moved the failure from the candidates to the rules (2026-10-11)
 
 Owner's next step was to stop widening the scan and to review the first representative candidates,
