@@ -1,0 +1,193 @@
+{
+  "artifacts": [
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/RESULTS.md",
+      "bytes": 4241,
+      "group": "r1_r2",
+      "name": "RESULTS.md",
+      "sha256": "a96bf7f1fa12fefd9c15e9728d75b43f4cd09ff1b9871d5d418309ac1f3740d4",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/RESULTS.md"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/execution_record.json",
+      "bytes": 8793,
+      "group": "r1_r2",
+      "name": "execution_record.json",
+      "sha256": "dfe77cc9e715e48dc0c7e38010944feb91f60fd06970cda1508b71513b09df3f",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/execution_record.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/model_binding.json",
+      "bytes": 2525,
+      "group": "r1_r2",
+      "name": "model_binding.json",
+      "sha256": "da60f5622066da4e021234c902a46c34761d14d01d09d276ac7764cd48d96a24",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/model_binding.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/pricing_record.json",
+      "bytes": 1341,
+      "group": "r1_r2",
+      "name": "pricing_record.json",
+      "sha256": "b25d25a49acb1584b1d1a2f69547de58c8594acbb92762b84f0b7d4dcc2df277",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/pricing_record.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/data_processing_record.json",
+      "bytes": 1797,
+      "group": "r1_r2",
+      "name": "data_processing_record.json",
+      "sha256": "c3faa1655c4d3aefb0b8388fd08602bc593c0113aa625e46c706f58d636c350d",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/data_processing_record.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/tool_adapter_authorization.json",
+      "bytes": 2136,
+      "group": "r1_r2",
+      "name": "tool_adapter_authorization.json",
+      "sha256": "e967d888c82b06e02561ea52c198e3879f8b33da9103417f0058952c29775bbc",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/tool_adapter_authorization.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/run_validation.json",
+      "bytes": 1719,
+      "group": "r1_r2",
+      "name": "run_validation.json",
+      "sha256": "fb9718c131a8cc4e221c76c13771b260f6e8266bec12d9896f0da6e96b723958",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/run_validation.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/test_results.json",
+      "bytes": 11404,
+      "group": "r1_r2",
+      "name": "test_results.json",
+      "sha256": "69e9c05644b308ba07a5dc51375c9b86edf7cf22a13f11d22cdc81616c2f5695",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/test_results.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/metrics.json",
+      "bytes": 66234,
+      "group": "r1_r2",
+      "name": "metrics.json",
+      "sha256": "8665758ff61d783ffcd07dcd88d2c52a8d1c812005e6aab8f713444cc9945df6",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/metrics.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/evidence_obligation_contract.json",
+      "bytes": 2936,
+      "group": "r1_r2",
+      "name": "evidence_obligation_contract.json",
+      "sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/evidence_obligation_contract.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/preflight_record.json",
+      "bytes": 5779,
+      "group": "r1_r2",
+      "name": "preflight_record.json",
+      "sha256": "1cd6fb88652ccf12a7e93b46f28d4b2a370c979505356e0486e32b075c6a1230",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/preflight_record.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/artifact_manifest.json",
+      "bytes": 1966,
+      "group": "r1_r2",
+      "name": "artifact_manifest.json",
+      "sha256": "8995c59035d646a2f1be3e58b136dd5aff2cfc92dec2a4f4737d9d2e632b264c",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/artifact_manifest.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/r1_r2/network_log.jsonl",
+      "bytes": 1175,
+      "group": "r1_r2",
+      "name": "network_log.jsonl",
+      "sha256": "43a687f67f57faecf5664cf1c0352a509216fd823848d84afdcb9cccb5708be9",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/network_log.jsonl"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/REPORT.json",
+      "bytes": 3714,
+      "group": "fail_closed_preflight",
+      "name": "REPORT.json",
+      "sha256": "f37b65e1d72a74cb33ae7af509d8eac03761d113911f4ef482db878fcd1baba6",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/REPORT.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/preflight_record.json",
+      "bytes": 8222,
+      "group": "fail_closed_preflight",
+      "name": "preflight_record.json",
+      "sha256": "3800ef0693e675ddf506eea03b880f4d173d36b6ca04397e5d77fc2f7d8448be",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/preflight_record.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/test_results.json",
+      "bytes": 11514,
+      "group": "fail_closed_preflight",
+      "name": "test_results.json",
+      "sha256": "fa14e7aae4690d8b0d44ec5e2eddec5906963c477f80a122dd2dc74fc69d877e",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/test_results.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/metrics.json",
+      "bytes": 5584,
+      "group": "fail_closed_preflight",
+      "name": "metrics.json",
+      "sha256": "b668a19a2715c49defb840263817c7c80f42d34414c570b07e237b943f1535f4",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/metrics.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/source_snapshot.json",
+      "bytes": 30141,
+      "group": "fail_closed_preflight",
+      "name": "source_snapshot.json",
+      "sha256": "4e8ce4226e2d79f97bb0d9900736187478447de9cf3895ffa24cdcfde61986b7",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/source_snapshot.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/fixed_fact_bundle.json",
+      "bytes": 7382,
+      "group": "fail_closed_preflight",
+      "name": "fixed_fact_bundle.json",
+      "sha256": "e64215a21c976b107832af6fe9941f2c7ca4539165913c1543d9c452a53025e6",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/fixed_fact_bundle.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/evidence_obligation_contract.json",
+      "bytes": 2936,
+      "group": "fail_closed_preflight",
+      "name": "evidence_obligation_contract.json",
+      "sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/evidence_obligation_contract.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/r2_extra_budget.json",
+      "bytes": 935,
+      "group": "fail_closed_preflight",
+      "name": "r2_extra_budget.json",
+      "sha256": "12e1d411d9fb676c6efba947afe68e0f032e277574b9cf6751d45d1d37639d22",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/r2_extra_budget.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/artifact_manifest.json",
+      "bytes": 5391,
+      "group": "fail_closed_preflight",
+      "name": "artifact_manifest.json",
+      "sha256": "26975386477678860576bd22bb6ab1b8787a0b00ace3370b97fb8cbcd98b003f",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/artifact_manifest.json"
+    },
+    {
+      "artifact_path": "research/evidence/cpp/a_exp_01_r1_r2_20261016/fail_closed_preflight/network_log.jsonl",
+      "bytes": 579,
+      "group": "fail_closed_preflight",
+      "name": "network_log.jsonl",
+      "sha256": "59b21c565cdb80c5574a02208cacfc53ad212ed25557cf00e1a2f0b91ebbf375",
+      "source_path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/network_log.jsonl"
+    }
+  ],
+  "created_at": "2026-10-16T15:30:00+08:00",
+  "experiment_id": "A-EXP-01",
+  "raw_ledgers_committed": false,
+  "schema": "ohscanner.a-exp-01-compact-evidence.v1",
+  "selection_policy": "Curated manifests, contracts, metrics and compact records only; raw provider/tool ledgers and request/response logs remain local-only because of repository size policy."
+}

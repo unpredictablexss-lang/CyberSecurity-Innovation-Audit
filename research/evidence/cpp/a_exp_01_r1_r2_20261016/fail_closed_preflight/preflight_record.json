@@ -1,0 +1,212 @@
+{
+  "schema_version": "ohscanner.a-exp-01-current-preflight-record-v1",
+  "experiment_id": "A-EXP-01",
+  "task_id": "A-EXP-01-R0-R1-R2-20261016",
+  "generated_at_utc": "2026-10-16T05:35:16.803Z",
+  "status": "fail_closed_execution_blocked",
+  "repository": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "checkout_path": "E:/网安/CyberSecurity-Innovation-Audit",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "full_commit": "c09965c7802d4c2ef282b3cf45475f18980f76fe",
+    "git_tree": "6d8c4da41376ef6a372bada458136f4b63a715bd",
+    "remote_tracking_ref": "origin/codex/full-runtime-performance-audit-20261014",
+    "dirty": true,
+    "dirty_entry_count": 26,
+    "dirty_status_sha256": "fb2f40d96ca94e10e4ba493eeb1992ac96af07e86684569532e7a0bae252648e"
+  },
+  "snapshot_and_source": {
+    "source_snapshot": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/source_snapshot.json",
+    "source_snapshot_sha256": "4e8ce4226e2d79f97bb0d9900736187478447de9cf3895ffa24cdcfde61986b7",
+    "source_hash_sha256": "b650ae9ae579c45f9af988a5ed0d9c99b3d715d0937e4a879964807629775eb0",
+    "source_identity_manifest_sha256": "c1476be3ad369830851f6d35e67bc87ecec56c55f4d24716d389cb5e0b239205",
+    "source_identity_count": 45,
+    "git_object_provenance_verified": true
+  },
+  "detector": {
+    "id": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.4.0",
+    "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+    "profile_id": "light-ast",
+    "scope": "45 frozen review items across 5 pinned target snapshots; per-item scope is in initial_candidate_set.json"
+  },
+  "fixed_initial_fact_bundle": {
+    "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/fixed_fact_bundle.json",
+    "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+    "same_for_all_groups": true,
+    "candidate_set_sha256": "2fb5c899980719100a6b6b0f8f0de40534b533d73e27343a0c6c5c0258e56340",
+    "evidence_catalog_sha256": "131be897022fd25255157388c918b1e0080c3549dcce118f2b35ffa7cebff4d3",
+    "evidence_obligation_contract_sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f"
+  },
+  "model_binding": {
+    "status": "fail_closed_unbound",
+    "observed_runtime": {
+      "provider_id": "custom",
+      "provider_name": "xiaomi_mimo_token_plan",
+      "model_name": "mimo-v2.6-pro",
+      "model_catalog_description": "mimo-v2.6-pro",
+      "model_version": null,
+      "api_version": null,
+      "wire_api": "responses",
+      "api_endpoint": "https://token-plan-cn.xiaomimimo.com/v1",
+      "endpoint_kind": "remote_http_api",
+      "source_files": [
+        {
+          "path": "C:/Users/work_work/.codex/config.toml",
+          "fields_read": [
+            "model_provider",
+            "model",
+            "model_reasoning_effort",
+            "model_providers.custom.name",
+            "model_providers.custom.base_url",
+            "model_providers.custom.wire_api"
+          ],
+          "secrets_included": false
+        },
+        {
+          "path": "C:/Users/work_work/.codex/cc-switch-model-catalog.json",
+          "sha256": "90bebd1bbd818d43c23900aa81005a138b1b1f67278972e1e9cc74ec4573ce5a"
+        }
+      ],
+      "sanitized_binding_sha256": "5f462cd0a8da4246bf4743e8a47dc6f11e40513aa42f52a572b974e32e279b54"
+    },
+    "data_processing": {
+      "status": "unknown_not_reviewed",
+      "terms_reference": null,
+      "terms_version": null,
+      "retention": null,
+      "training_use": null,
+      "region": null,
+      "truth_or_sealed_data_allowed": false,
+      "source_transfer_authorized": false
+    },
+    "pricing": {
+      "status": "unknown_not_bound",
+      "pricing_record_id": null,
+      "currency": null,
+      "input_token_unit_price": null,
+      "output_token_unit_price": null,
+      "effective_from": null,
+      "source_reference": null,
+      "source_sha256": null,
+      "reviewed_by": null
+    },
+    "approval": {
+      "execution_requested_by_user": true,
+      "request_reference": "Current A-EXP-01 goal explicitly requests R0/R1/R2 execution.",
+      "data_processing_review_approved": false,
+      "pricing_review_approved": false,
+      "exact_model_version_approved": false,
+      "execution_authorized": false
+    },
+    "blockers": [
+      "exact model_version is not established by the local model catalog",
+      "API version is not established; wire_api=responses is transport shape, not an API version",
+      "provider data-processing terms, retention, training use, and region are not bound",
+      "provider pricing record and reviewed unit prices are not bound",
+      "named authorization for those records is absent"
+    ]
+  },
+  "tool_adapter": {
+    "status": "fail_closed_not_execution_authorized",
+    "adapter_id": "ohscanner.a-exp-01.read-only-tool-adapter",
+    "adapter_version": "1.0.0",
+    "implementation_sha256": "8a11a07f25bea9618bd8bd8b80927bbdf6239c3a57c8cde30fea59bac726d2bd",
+    "record_sha256": "13f7bba88496e0ff62a91ea33345d7defc1cc5ea979b11b0b2a645c907e1e88c",
+    "recorded_execution_authorized": false,
+    "recorded_status": "recorded_execution_not_authorized",
+    "recorded_expires_at": "2026-10-16T07:21:37.416Z",
+    "expired_at_generation": false,
+    "current_user_scope": "authorizes bounded read-only experiment tools only; it does not fill missing executable adapter implementation or stale authorization record",
+    "whitelisted_tools": [
+      "fixed_source_excerpt",
+      "evidence_obligation_query",
+      "fixed_commit_git_history",
+      "detector_symbol_parse_summary"
+    ],
+    "denied": [
+      "shell execution",
+      "source execution",
+      "network access",
+      "file writes",
+      "Git mutation",
+      "database mutation",
+      "historical report edits",
+      "candidate/review/confirmed state edits"
+    ]
+  },
+  "execution_plan": {
+    "repetitions": {
+      "R0": 3,
+      "R1": 3,
+      "R2": 3
+    },
+    "seeds": [
+      20261015,
+      20261016,
+      20261017
+    ],
+    "sampling": {
+      "R1": {
+        "temperature": 0,
+        "top_p": 1,
+        "model_turns_max": 1,
+        "tool_calls_max": 0
+      },
+      "R2": {
+        "temperature": 0,
+        "top_p": 1,
+        "model_turns_max": 8,
+        "tool_calls_max": 8
+      },
+      "R0": {
+        "human_reviewers_per_repetition": 1,
+        "human_active_seconds_max_per_item": 1200
+      }
+    },
+    "failure_retry_strategy": {
+      "contract": "retry_accounting_contract.json",
+      "scope": "per_run",
+      "max_retries_per_R2_run": 1,
+      "retry_counts_toward_tool_calls": true,
+      "retry_counts_toward_tokens_if_used": true,
+      "retry_counts_toward_cost_if_used": true,
+      "retry_counts_toward_wall_time": true,
+      "retry_counts_toward_tool_output_and_source_bytes": true,
+      "retry_counts_as_new_repetition": false,
+      "retry_resets_budget_or_seed": false,
+      "prior_attempt_preserved": true,
+      "separate_attempt_id_required": true
+    },
+    "same_candidates_all_groups": true,
+    "same_fact_bundle_sha256_all_groups": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+    "same_evidence_obligations_all_groups": true,
+    "same_decision_criteria_all_groups": true
+  },
+  "decisions": {
+    "R0": "blocked_missing_blinded_human_reviewers_and_measured_review_sessions",
+    "R1": "blocked_model_data_processing_pricing_and_exact_binding_unapproved",
+    "R2": "blocked_R1_conditions_plus_tool_adapter_not_execution_authorized",
+    "ablations": "blocked_with_parent_groups",
+    "overall": "fail_closed"
+  },
+  "execution_counts": {
+    "model_calls": 0,
+    "tool_calls": 0,
+    "r0_reviews_started": 0,
+    "r1_runs_started": 0,
+    "r2_runs_started": 0,
+    "ablation_runs_started": 0
+  },
+  "boundaries": {
+    "historical_reports_modified": false,
+    "candidate_or_vulnerability_state_modified": false,
+    "truth_or_sealed_data_sent_to_model": false,
+    "precision_recall_computed": false,
+    "model_self_evaluation_used_as_truth": false,
+    "implicit_git_fetch": false,
+    "arbitrary_shell_granted_to_model": false,
+    "external_model_called": false,
+    "network_data_transfer_of_candidate_source": false
+  }
+}

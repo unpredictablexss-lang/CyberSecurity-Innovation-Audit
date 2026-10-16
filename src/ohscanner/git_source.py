@@ -7,6 +7,7 @@ import re
 import subprocess
 
 from .contracts import safe_relative_path
+from .git_batch import batch_blob_data
 
 SOURCE_LANGUAGES = {
     ".c": "c", ".cc": "cpp", ".cpp": "cpp", ".cxx": "cpp",
@@ -76,7 +77,7 @@ def _within_scope(path: str, include_paths: tuple[str, ...]) -> bool:
 
 
 def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)):
-    """Returns pinned commit/tree IDs, source objects, and a complete coverage inventory.
+    """Return pinned commit/tree IDs, batch-read sources, and coverage inventory.
 
     Tracks supported source file entries in the Git tree. All other tracked
     entries are counted separately. Git symlinks/submodules are skipped.
@@ -94,8 +95,10 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
         "binary_or_non_utf8": 0, "selected_source_files": 0,
         "selected_source_bytes": 0, "skipped": [],
         "git_tree": tree, "declared_scope": list(includes),
+        "git_blob_read_mode": "cat-file --batch",
     }
-    sources = []
+    pending: list[tuple[str, str, str, int]] = []
+    pending_bytes = 0
     seen_paths = set()
     for raw in entries:
         if not raw:
@@ -125,11 +128,7 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
             continue
         if not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", oid):
             raise ValueError("invalid object ID in Git tree")
-        # With lazy fetching disabled, 'ls-tree -l' uses '-' for the size
-        # of a missing local promisor blob. Fail explicitly; never fetch it.
         if size in ("-", "BAD"):
-            # Git versions differ: some return '-' and others emit 'BAD'
-            # for the missing size of an unfetched promisor object.
             raise ValueError("missing_local_git_object: blob unavailable locally "
                              + oid + " (" + path + "); offline-only read (no fetch)")
         if not size.isdecimal():
@@ -139,12 +138,24 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
             inventory["oversize"] += 1
             inventory["skipped"].append({"file": path, "reason": "oversize"})
             continue
-        if len(sources) >= MAX_SOURCE_FILES:
+        if len(pending) >= MAX_SOURCE_FILES:
             raise ValueError("source file count exceeds M1 bounded scope")
-        if inventory["selected_source_bytes"] + size_bytes > MAX_TOTAL_BYTES:
+        if inventory["selected_source_bytes"] + pending_bytes + size_bytes > MAX_TOTAL_BYTES:
             raise ValueError("total source size exceeds M1 bounded scope")
-        data = _git(repo, "cat-file", "blob", oid)
-        if len(data) != size_bytes:
+        pending_bytes += size_bytes
+        pending.append((path, language, oid, size_bytes))
+
+    blobs = batch_blob_data(repo, [item[2] for item in pending]) if pending else {}
+    sources: list[GitSource] = []
+    for path, language, oid, size_bytes in pending:
+        info = blobs.get(oid, {"status": "missing_git_object"})
+        if info.get("status") == "missing_git_object":
+            raise ValueError("missing_local_git_object: blob unavailable locally "
+                             + oid + " (" + path + "); offline-only read (no fetch)")
+        if info.get("git_object_type") != "blob":
+            raise ValueError("Git object is not a blob: " + path)
+        data = info.get("data")
+        if not isinstance(data, bytes) or len(data) != size_bytes:
             raise ValueError("Git blob size mismatch: " + path)
         try:
             data.decode("utf-8")

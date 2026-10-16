@@ -22,7 +22,7 @@ def make_detector():
 def expected_status(coverage: str) -> str:
     if coverage == "failed":
         return "failed"
-    if coverage == "partial":
+    if coverage in ("partial", "not_analyzed"):
         return "blocked"
     return "completed"
 
@@ -88,7 +88,7 @@ class NullDereferenceFixtureRegressionTests(unittest.TestCase):
 
     def test_declares_exact_identity_and_scope(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.null_dereference")
-        self.assertEqual(self.detector.version, "0.1.0")
+        self.assertEqual(self.detector.version, "0.2.0")
         self.assertEqual(self.detector.supported_languages, ("c", "cpp"))
         self.assertEqual(self.detector.required_facts, ())
         self.assertEqual(self.detector.ast_scope, "per_file")

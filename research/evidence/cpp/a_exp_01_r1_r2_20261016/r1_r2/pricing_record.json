@@ -1,0 +1,26 @@
+{
+  "schema_version": "ohscanner.a-exp-01-pricing-record-v1",
+  "experiment_id": "A-EXP-01",
+  "pricing_record_id": "MIMO-MIMO-V2.6-PRO-PAYG-USD-2026-10-08",
+  "currency": "USD",
+  "unit": "USD per 1,000,000 tokens",
+  "model": "mimo-v2.6-pro",
+  "inference_type": "real-time",
+  "input_token_unit_price": 0.435,
+  "output_token_unit_price": 0.87,
+  "cache_hit_input_token_unit_price": 0.0036,
+  "cache_write_price": 0,
+  "effective_from": "2026-10-08",
+  "source_reference": "https://mimo.mi.com/docs/zh-CN/price/pay-as-you-go",
+  "source_sha256": "1878d636b33213e511cbf94d0739268903082bca8db928d285cb0e013796be9d",
+  "reviewed_by": "requesting_user_via_current_A-EXP-01_goal",
+  "reviewed_at_utc": "2026-10-16T06:11:35.230Z",
+  "cost_formula": "USD = input_tokens / 1,000,000 * 0.435 + output_tokens / 1,000,000 * 0.87, conservatively using cache-miss input price.",
+  "domestic_reference_cny_per_million": {
+    "input_cache_hit": 0.025,
+    "input_cache_miss": 3,
+    "output": 6
+  },
+  "applicability_limit": "The configured token-plan endpoint consumes subscription credits rather than normal API balance. This official pay-as-you-go list price is the preregistered reference-cost cap; actual Token Plan credit decrement/billing currency is not exposed and must remain separately reported as unknown.",
+  "web_search_disabled": true
+}

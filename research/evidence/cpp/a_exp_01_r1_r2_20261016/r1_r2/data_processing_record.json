@@ -1,0 +1,31 @@
+{
+  "schema_version": "ohscanner.a-exp-01-data-processing-record-v1",
+  "experiment_id": "A-EXP-01",
+  "record_id": "A-EXP-01-XIAOMI-MIMO-DATA-PROCESSING-20261016",
+  "status": "approved_for_limited_public_source_only",
+  "terms_reference": "https://privacy.mi.com/XiaomiMiMoPlatform/zh_CN/",
+  "terms_version": "effective-2026-10-10",
+  "terms_source_sha256": "d2751c391088815aaf77a609a7cac65e001877f42b249b273991007804ca0c03",
+  "reviewed_at_utc": "2026-10-16T06:11:35.230Z",
+  "reviewer": "requesting_user_via_current_A-EXP-01_goal",
+  "data_classes": [
+    "public OpenHarmony source excerpts and immutable Git identifiers",
+    "frozen OHScanner candidate metadata and supplied fact/evidence IDs",
+    "frozen prompts, schemas and EvidenceObligation definitions",
+    "bounded read-only tool request/response metadata"
+  ],
+  "excluded_data_classes": [
+    "truth labels and truth manifest identifiers",
+    "sealed_item_key contents",
+    "historical review labels",
+    "credentials and API keys",
+    "unrelated repository or worktree files",
+    "personal or sensitive personal information"
+  ],
+  "retention": "Provider policy retains information only for the necessary purpose period or legal requirement, then deletes or anonymizes after purpose completion, confirmed deletion/cancellation, or service termination; exact API log duration is not separately stated.",
+  "training_use": "No model training or other use of provided text without prior consent; A-EXP-01 gives no training consent.",
+  "region": "PRC for service used in the PRC; policy states information is stored in the PRC.",
+  "truth_or_sealed_data_allowed": false,
+  "source_transfer_authorized": true,
+  "minimization": "Each request contains one fixed review item and only its current-item evidence catalog scope."
+}

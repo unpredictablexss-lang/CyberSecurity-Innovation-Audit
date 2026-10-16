@@ -1,0 +1,166 @@
+{
+  "schema_version": "ohscanner.a-exp-01-preflight-unblock-record-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-16T06:11:35.230Z",
+  "status": "R1_R2_ready_R0_human_review_pending",
+  "repository": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "full_commit": "c09965c7802d4c2ef282b3cf45475f18980f76fe",
+    "git_tree": "6d8c4da41376ef6a372bada458136f4b63a715bd"
+  },
+  "bindings": {
+    "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+    "evidence_obligation_contract_sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+    "model_binding": {
+      "path": "model_binding.json",
+      "sha256": "da60f5622066da4e021234c902a46c34761d14d01d09d276ac7764cd48d96a24",
+      "validation": {
+        "errors": [],
+        "valid": true,
+        "contract_complete": true,
+        "bound": true,
+        "execution_authorized": true
+      }
+    },
+    "data_processing": {
+      "path": "data_processing_record.json",
+      "sha256": "c3faa1655c4d3aefb0b8388fd08602bc593c0113aa625e46c706f58d636c350d"
+    },
+    "pricing": {
+      "path": "pricing_record.json",
+      "sha256": "b25d25a49acb1584b1d1a2f69547de58c8594acbb92762b84f0b7d4dcc2df277"
+    },
+    "provider_evidence": {
+      "path": "provider_evidence.json",
+      "sha256": "65da4fae89cc9b7ba11ec44622ad90a94c7b0926a690193a3b1260d91e2a900e"
+    },
+    "tool_adapter_authorization": {
+      "path": "tool_adapter_authorization.json",
+      "sha256": "e967d888c82b06e02561ea52c198e3879f8b33da9103417f0058952c29775bbc",
+      "validation": {
+        "errors": [],
+        "valid": true,
+        "record_present": true,
+        "execution_authorized": true
+      }
+    },
+    "tool_adapter": {
+      "path": "read_only_tool_adapter.js",
+      "sha256": "62a7dcc46e819145fdc91a35f65063469c33a7032a1d5556e29f08790c1233b3"
+    }
+  },
+  "sampling": {
+    "R1": {
+      "temperature": 0,
+      "top_p": 1,
+      "seed_policy": "experiment seed 20261015/16/17 is recorded; provider Responses API seed support is not documented and is not fabricated",
+      "reasoning_effort": "none",
+      "model_turns_max": 1,
+      "retries_max": 0
+    },
+    "R2": {
+      "temperature": 0,
+      "top_p": 1,
+      "seed_policy": "same as R1",
+      "reasoning_effort": "none",
+      "model_turns_max": 8,
+      "tool_calls_max": 8,
+      "retries_max": 1
+    },
+    "failure_policy": "Every failed/timed-out/budget-exhausted/missing-evidence attempt is retained; retries do not create repetitions."
+  },
+  "decisions": {
+    "R1": "ready",
+    "R2": "ready",
+    "R0": "blocked_missing_independent_blinded_human_reviewer_sessions",
+    "overall": "partial_ready_R0_pending"
+  },
+  "boundaries": {
+    "external_model_calls": 0,
+    "r1_runs": 0,
+    "r2_runs": 0,
+    "r0_reviews": 0,
+    "truth_or_sealed_data_sent": false,
+    "arbitrary_shell_granted": false,
+    "network_granted_to_model_or_tools": false
+  },
+  "budget_binding": {
+    "path": "research/experiments/cpp/r0_r1_r2_20261015/budget.json",
+    "sha256": "e71c1d2307aeb14dd81e70410865635f256f5504c58423f9c65f9c25b4d0a948",
+    "repetitions": {
+      "R0": 3,
+      "R1": 3,
+      "R2": 3
+    },
+    "seeds": [
+      20261015,
+      20261016,
+      20261017
+    ],
+    "per_item": {
+      "R0": {
+        "human_active_seconds_max": 1200,
+        "human_reviewers_per_repetition": 1,
+        "model_calls": 0,
+        "tool_calls_max": 8,
+        "wall_seconds_max": 1200,
+        "max_cost_amount_usd": 0
+      },
+      "R1": {
+        "model_calls": 1,
+        "model_turns_max": 1,
+        "tool_calls_max": 0,
+        "model_input_tokens_max": 24000,
+        "model_output_tokens_max": 2400,
+        "wall_seconds_max": 120,
+        "max_cost_amount_usd": 0.25,
+        "retries_max": 0
+      },
+      "R2": {
+        "model_calls": 1,
+        "model_turns_max": 8,
+        "tool_calls_max": 8,
+        "model_input_tokens_max": 32000,
+        "model_output_tokens_max": 4000,
+        "tool_output_bytes_max": 65536,
+        "source_bytes_max": 65536,
+        "wall_seconds_max": 300,
+        "retries_max": 1,
+        "max_cost_amount_usd": 1,
+        "model_provider_attempts_max": 2
+      }
+    },
+    "per_tool_calls_max": {
+      "fixed_source_excerpt": 4,
+      "evidence_obligation_query": 2,
+      "fixed_commit_git_history": 2,
+      "detector_symbol_parse_summary": 2
+    },
+    "retry_accounting": {
+      "contract": "retry_accounting_contract.json",
+      "scope": "per_run",
+      "max_retries_per_R2_run": 1,
+      "retry_counts_toward_tool_calls": true,
+      "retry_counts_toward_tokens_if_used": true,
+      "retry_counts_toward_cost_if_used": true,
+      "retry_counts_toward_wall_time": true,
+      "retry_counts_toward_tool_output_and_source_bytes": true,
+      "retry_counts_as_new_repetition": false,
+      "retry_resets_budget_or_seed": false,
+      "prior_attempt_preserved": true,
+      "separate_attempt_id_required": true
+    },
+    "r2_extra_budget": {
+      "path": "research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/r2_extra_budget.json",
+      "sha256": "12e1d411d9fb676c6efba947afe68e0f032e277574b9cf6751d45d1d37639d22"
+    },
+    "projection_note": "This amendment explicitly projects the frozen budget into the preflight record. It does not alter the recorded pre-execution zero-call boundary or authorize additional budget."
+  },
+  "preflight_amendment": {
+    "amended_at_utc": "2026-10-16T07:10:09.411Z",
+    "reason": "Explicitly bind frozen repetition/seed/token/call/time/cost/retry budgets required by A-EXP-01.",
+    "authorization_changed": false,
+    "execution_counts_at_preflight_unchanged": true
+  }
+}

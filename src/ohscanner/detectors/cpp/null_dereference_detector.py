@@ -7,9 +7,10 @@ in the A-NULL-01 implementation design. Semantic obligations stay unknown/missin
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 from src.ohscanner.contracts import (
     DetectorFinding,
@@ -21,6 +22,10 @@ from src.ohscanner.contracts import (
 
 
 RULE_ID = "ohcpp-null-dereference-candidate-001"
+RULE_VERSION = "1.1.0"
+RULE_LINEAGE_ID = "A-NULL-01:ohcpp-null-dereference-candidate"
+MAX_UNIT_BYTES = 1024 * 1024
+MAX_TOTAL_BYTES = 32 * 1024 * 1024
 _CONTROL_WORDS = frozenset({"if", "for", "while", "switch", "catch", "return", "sizeof", "do", "else"})
 _NULLPTR_WORDS = frozenset({"nullptr", "NULL", "0"})
 _OBLIGATIONS = (
@@ -205,6 +210,19 @@ def _brace_spans(masked: str) -> Tuple[Tuple[_Span, ...], bool]:
     spans.sort(key=lambda item: (item.start, -(item.end - item.start)))
     return tuple(spans), malformed
 
+
+def _delimiter_integrity(masked: str) -> bool:
+    pairs = {")": "(", "]": "["}
+    stack: List[str] = []
+    for char in masked:
+        if char in "([":
+            stack.append(char)
+        elif char in pairs:
+            if not stack or stack.pop() != pairs[char]:
+                return True
+    return bool(stack)
+
+
 def _class_shapes(masked: str, brace_spans: Sequence[_Span]) -> Tuple[_ClassShape, ...]:
     shapes: List[_ClassShape] = []
     for match in re.finditer(r"\b(?:class|struct)\s+([A-Za-z_]\w*)[^;{}]*\{", masked):
@@ -336,7 +354,20 @@ def _parameter_sources(unit: SourceUnit, function: _FunctionShape, unsupported: 
 def _local_and_return_sources(unit: SourceUnit, function: _FunctionShape, masked: str, unsupported: List[UnsupportedShape]) -> Tuple[NullSource, ...]:
     body_text = masked[function.body.start : function.body.end]
     sources: List[NullSource] = []
-    for match in re.finditer(r"\b([A-Za-z_]\w*)\s*=\s*([^;]+);", body_text):
+    pointer_names = set()
+    assignments = list(re.finditer(r"\b([A-Za-z_]\w*)\s*=\s*([^;]+);", body_text))
+    for match in assignments:
+        absolute_name = function.body.start + match.start(1)
+        statement_start = max(
+            masked.rfind(";", function.body.start, absolute_name),
+            masked.rfind("{", function.body.start, absolute_name),
+            masked.rfind("}", function.body.start, absolute_name),
+        )
+        statement_start = max(statement_start, function.body.start) + 1
+        if "*" in masked[statement_start:absolute_name]:
+            pointer_names.add(match.group(1))
+
+    for match in assignments:
         name = match.group(1)
         rhs = match.group(2).strip()
         absolute_name = function.body.start + match.start(1)
@@ -344,10 +375,11 @@ def _local_and_return_sources(unit: SourceUnit, function: _FunctionShape, masked
         statement_start = max(statement_start, function.body.start) + 1
         prefix = masked[statement_start:absolute_name]
         has_pointer_declarator = "*" in prefix
-        if has_pointer_declarator and rhs in _NULLPTR_WORDS:
+        known_pointer = name in pointer_names
+        if (has_pointer_declarator or known_pointer) and rhs in _NULLPTR_WORDS:
             sources.append(NullSource(name, "local", absolute_name, "explicit_null", (statement_start, function.body.start + match.end() + 1), f"local:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, prefix.strip()))
             continue
-        if _is_call_expression(rhs):
+        if (has_pointer_declarator or known_pointer) and _is_call_expression(rhs):
             sources.append(NullSource(name, "return_value", absolute_name, "unknown", (statement_start, function.body.start + match.end() + 1), f"return:{unit.path}:{function.span.start}:{name}", unit.path, unit.sha256, prefix.strip()))
             unsupported.append(UnsupportedShape("alias", (statement_start, function.body.start + match.end() + 1), "cross_function_alias; unresolved_function_return_nullability; function_return_nullability_unknown", unit.path, unit.sha256))
     return tuple(sources)
@@ -356,19 +388,35 @@ def _local_and_return_sources(unit: SourceUnit, function: _FunctionShape, masked
 def _member_sources(unit: SourceUnit, function: _FunctionShape, masked: str, classes: Sequence[_ClassShape]) -> Tuple[NullSource, ...]:
     function_text = masked[function.span.start : function.span.end]
     sources: List[NullSource] = []
+    class_shape = next((item for item in classes if item.name == function.class_name), None) if function.class_name else None
+    class_text = masked[class_shape.span.start : class_shape.span.end] if class_shape is not None else ""
+    member_names = set()
+    if class_text:
+        for field in re.finditer(r"([^;{}]*?\b([A-Za-z_]\w*)\s*(?:=[^;]+)?;)", class_text):
+            member_names.add(field.group(2))
+        for match in re.finditer(r"\b([A-Za-z_]\w*)\s*=\s*(?:nullptr|NULL)\s*;", class_text):
+            name = match.group(1)
+            if name not in member_names:
+                continue
+            absolute = class_shape.span.start + match.start(1)
+            field = re.search(r"([^;{}]*\b" + re.escape(name) + r"\s*=)", class_text)
+            sources.append(NullSource(name, "member", absolute, "explicit_null", (absolute, class_shape.span.start + match.end()), f"member:{unit.path}:{function.class_name}:{name}:default", unit.path, unit.sha256, field.group(1).strip() if field else ""))
     for match in re.finditer(r"\b([A-Za-z_]\w*)\s*\(\s*(?:nullptr|NULL)\s*\)", function_text):
         name = match.group(1)
         absolute = function.span.start + match.start(1)
         owner = function.class_name or function.name
         type_text = ""
-        if function.class_name:
-            class_shape = next((item for item in classes if item.name == function.class_name), None)
-            if class_shape is not None:
-                class_text = masked[class_shape.span.start : class_shape.span.end]
-                field = re.search(r"([^;{}]*\b" + re.escape(name) + r"\s*;)", class_text)
-                if field:
-                    type_text = field.group(1).strip()
+        if class_text:
+            field = re.search(r"([^;{}]*\b" + re.escape(name) + r"\s*;)", class_text)
+            if field:
+                type_text = field.group(1).strip()
         sources.append(NullSource(name, "member", absolute, "explicit_null", (absolute, function.span.start + match.end()), f"member:{unit.path}:{owner}:{name}", unit.path, unit.sha256, type_text))
+    for match in re.finditer(r"\b([A-Za-z_]\w*)\s*=\s*(?:nullptr|NULL)\s*;", function_text):
+        name = match.group(1)
+        if name not in member_names:
+            continue
+        absolute = function.span.start + match.start(1)
+        sources.append(NullSource(name, "member", absolute, "explicit_null", (absolute, function.span.start + match.end()), f"member:{unit.path}:{function.class_name or function.name}:{name}:assignment", unit.path, unit.sha256, ""))
     return tuple(sources)
 
 
@@ -457,17 +505,163 @@ def _alias_map(masked: str, function: _FunctionShape, source_symbols: Iterable[s
     known = set(source_symbols)
     aliases: Dict[str, str] = {}
     body = masked[function.body.start : function.body.end]
-    pattern = re.compile(r"\b([A-Za-z_]\w*)\s*=\s*([A-Za-z_]\w*(?:\s*\.\s*[A-Za-z_]\w*)?)\s*;")
+    pattern = re.compile(
+        r"\b([A-Za-z_]\w*)\s*(?:\*+\s*|&\s*)?(?:=|\{)\s*"
+        r"([A-Za-z_]\w*(?:\s*\.\s*[A-Za-z_]\w*)?)\s*(?:;|\})"
+    )
     for _ in range(8):
         changed = False
         for match in pattern.finditer(body):
             alias, base = match.group(1), re.sub(r"\s+", "", match.group(2))
-            if alias not in known and base not in aliases and base in known:
-                aliases[alias] = base
+            resolved_base = aliases.get(base, base)
+            if alias not in known and base not in aliases and resolved_base in known:
+                aliases[alias] = resolved_base
                 changed = True
         if not changed:
             break
     return aliases
+
+
+def _strip_outer_parentheses(value: str) -> str:
+    value = value.strip()
+    while value.startswith("(") and value.endswith(")"):
+        closing = _matching_delimiter(value, 0, "(", ")")
+        if closing != len(value) - 1:
+            break
+        value = value[1:-1].strip()
+    return value
+
+
+def _guard_predicate(condition: str) -> Optional[Tuple[str, str]]:
+    stripped = _strip_outer_parentheses(re.sub(r"\s+", " ", condition.strip()))
+    match = re.fullmatch(r"!\s*([A-Za-z_]\w*)", stripped)
+    if match:
+        return match.group(1), "null"
+    match = re.fullmatch(r"([A-Za-z_]\w*)\s*==\s*(?:nullptr|NULL|0)", stripped)
+    if match:
+        return match.group(1), "null"
+    match = re.fullmatch(r"(?:nullptr|NULL|0)\s*==\s*([A-Za-z_]\w*)", stripped)
+    if match:
+        return match.group(1), "null"
+    match = re.fullmatch(r"([A-Za-z_]\w*)\s*!=\s*(?:nullptr|NULL|0)", stripped)
+    if match:
+        return match.group(1), "non_null"
+    match = re.fullmatch(r"(?:nullptr|NULL|0)\s*!=\s*([A-Za-z_]\w*)", stripped)
+    if match:
+        return match.group(1), "non_null"
+    match = re.fullmatch(r"([A-Za-z_]\w*)", stripped)
+    if match:
+        return match.group(1), "non_null"
+    return None
+
+
+def _branch_terminates_error_path(branch_text: str) -> bool:
+    inner = branch_text.strip()
+    if inner.startswith("{") and inner.endswith("}"):
+        inner = inner[1:-1].strip()
+    terminal = re.compile(
+        r"(?:^|[;{}])\s*(?:return\b[^;]*;|throw\b[^;]*;|break\s*;|continue\s*;"
+        r"|(?:std::)?abort\s*\([^;]*\)\s*;|(?:std::)?exit\s*\([^;]*\)\s*;"
+        r"|(?:std::)?terminate\s*\([^;]*\)\s*;|assert\s*\(\s*(?:false|0)\s*\)\s*;)\s*$"
+    )
+    return bool(terminal.search(inner))
+
+
+def _assignment_expression_is_non_null(rhs: str) -> bool:
+    value = rhs.strip()
+    return bool(
+        value.startswith("&")
+        or re.fullmatch(r"new\s+[^;]+", value)
+        or value in {"this", "nullptr + 1"}
+    )
+
+
+def _assignments_between(masked: str, symbol: str, start: int, end: int) -> Tuple[Tuple[int, str], ...]:
+    if end <= start:
+        return ()
+    pattern = re.compile(r"\b" + re.escape(symbol) + r"\s*=\s*([^;]+);")
+    return tuple(
+        (match.start(), match.group(1).strip())
+        for match in pattern.finditer(masked, start, end)
+    )
+
+
+def _source_rebound_before(source: NullSource, sink: DereferenceSink, masked: str) -> bool:
+    assignments = _assignments_between(masked, source.symbol, source.position, sink.position)
+    return bool(assignments) and _assignment_expression_is_non_null(assignments[-1][1])
+
+
+def _symbol_base(symbol: str, aliases: Mapping[str, str]) -> str:
+    current = symbol
+    for _ in range(8):
+        next_symbol = aliases.get(current)
+        if next_symbol is None or next_symbol == current:
+            return current
+        current = next_symbol
+    return current
+
+
+def _same_binding(left: str, right: str, aliases: Mapping[str, str]) -> bool:
+    return _symbol_base(left, aliases) == _symbol_base(right, aliases)
+
+
+def _short_circuit_guarded(source: NullSource, sink: DereferenceSink, masked: str, aliases: Mapping[str, str]) -> bool:
+    statement_start = max(
+        masked.rfind(";", 0, sink.position),
+        masked.rfind("{", 0, sink.position),
+        masked.rfind("}", 0, sink.position),
+        masked.rfind("?", 0, sink.position),
+    ) + 1
+    statement_end = min(
+        value for value in (
+            masked.find(";", sink.position),
+            masked.find("}", sink.position),
+            len(masked),
+        ) if value >= 0
+    )
+    prefix = masked[statement_start:sink.position]
+    suffix = masked[sink.position:statement_end]
+    base = _symbol_base(source.symbol, aliases)
+
+    for operator in ("&&", "||"):
+        split = prefix.rfind(operator)
+        if split < 0:
+            continue
+        left = re.sub(
+            r"^\s*(?:return|if|while|for|switch)\s*\(?\s*",
+            "",
+            prefix[:split],
+        )
+        left = _strip_outer_parentheses(left)
+        predicate = _guard_predicate(left)
+        if predicate is None or not _same_binding(predicate[0], base, aliases):
+            continue
+        safe_condition = (
+            operator == "&&" and predicate[1] == "non_null"
+        ) or (
+            operator == "||" and predicate[1] == "null"
+        )
+        if safe_condition and source.symbol in masked[statement_start:statement_end]:
+            return True
+
+    question = masked.rfind("?", statement_start, sink.position)
+    if question >= 0:
+        colon = masked.find(":", question, statement_end)
+        condition_start = max(
+            masked.rfind(";", statement_start, question),
+            masked.rfind("{", statement_start, question),
+            masked.rfind("}", statement_start, question),
+            masked.rfind("?", statement_start, question),
+            masked.rfind(":", statement_start, question),
+        ) + 1
+        predicate = _guard_predicate(masked[condition_start:question])
+        if predicate is not None and _same_binding(predicate[0], base, aliases):
+            in_true_branch = colon < 0 or sink.position < colon
+            if (predicate[1] == "non_null" and in_true_branch) or (
+                predicate[1] == "null" and not in_true_branch
+            ):
+                return True
+    return False
 
 
 def _parse_guards(unit: SourceUnit, masked: str, function: _FunctionShape) -> Tuple[GuardShape, ...]:
@@ -497,19 +691,28 @@ def _parse_guards(unit: SourceUnit, masked: str, function: _FunctionShape) -> Tu
                 continue
             branch = (after, semicolon + 1)
             branch_text = masked[after : semicolon + 1]
-        symbols = tuple(dict.fromkeys(re.findall(r"[A-Za-z_]\w*", condition)))
-        for symbol in symbols:
-            stripped = condition.replace(" ", "")
-            null_guard = bool(re.fullmatch(re.escape(symbol) + r"(?:==(?:nullptr|NULL|0)|==(?:nullptr|NULL|0))?" + re.escape(symbol), stripped) or re.fullmatch(r"!" + re.escape(symbol), stripped))
-            null_guard = null_guard or bool(re.fullmatch(re.escape(symbol) + r"==(?:nullptr|NULL|0)", stripped)) or bool(re.fullmatch(r"(?:nullptr|NULL|0)==" + re.escape(symbol), stripped))
-            positive_guard = bool(re.fullmatch(re.escape(symbol) + r"!=(?:nullptr|NULL|0)", stripped)) or bool(re.fullmatch(r"(?:nullptr|NULL|0)!= " + re.escape(symbol), stripped.replace(" ", ""))) or stripped == symbol
-            if not (null_guard or positive_guard):
-                continue
-            inner = branch_text.strip()
-            if inner.startswith("{") and inner.endswith("}"):
-                inner = inner[1:-1].strip()
-            returns = bool(re.fullmatch(r"return\b[^;]*;", inner))
-            guards.append(GuardShape(symbol, "null" if null_guard else "non_null", (branch,), returns, "unknown", unit.path, unit.sha256, (match.start(), branch[1])))
+        predicate = _guard_predicate(condition)
+        if predicate is None:
+            continue
+        symbol, condition_kind = predicate
+        spans = [branch]
+        else_start = branch[1]
+        while else_start < function.span.end and masked[else_start].isspace():
+            else_start += 1
+        if masked.startswith("else", else_start):
+            else_start += len("else")
+            while else_start < function.span.end and masked[else_start].isspace():
+                else_start += 1
+            if else_start < function.span.end and masked[else_start] == "{":
+                else_close = _matching_delimiter(masked, else_start, "{", "}")
+                if else_close is not None:
+                    spans.append((else_start, else_close + 1))
+            else:
+                else_semicolon = masked.find(";", else_start, function.span.end)
+                if else_semicolon >= 0:
+                    spans.append((else_start, else_semicolon + 1))
+        returns = _branch_terminates_error_path(branch_text)
+        guards.append(GuardShape(symbol, condition_kind, tuple(spans), returns, "unknown", unit.path, unit.sha256, (match.start(), spans[0][1])))
     return tuple(guards)
 
 def _span_candidates(shapes: Sequence[UnsupportedShape], start: int, end: int) -> Tuple[UnsupportedShape, ...]:
@@ -522,29 +725,40 @@ def _rebind_between(masked: str, symbol: str, start: int, end: int) -> bool:
     return bool(re.search(r"\b" + re.escape(symbol) + r"\s*(?:=[^=;]|\+\+|--)", masked[start:end]))
 
 
-def _evaluate_guard(source: NullSource, sink: DereferenceSink, guards: Sequence[GuardShape], unsupported: Sequence[UnsupportedShape], masked: str) -> _GuardEvaluation:
+def _evaluate_guard(source: NullSource, sink: DereferenceSink, guards: Sequence[GuardShape], unsupported: Sequence[UnsupportedShape], masked: str, aliases: Mapping[str, str]) -> _GuardEvaluation:
     function_kinds = {item.kind for item in _span_candidates(unsupported, sink.function_span[0], sink.function_span[1])}
-    all_kinds = {item.kind for item in unsupported}
-    matching = [item for item in guards if item.symbol == source.symbol]
-    if "exception" in function_kinds or "exception" in all_kinds:
-        return _GuardEvaluation("not_dominating", "exception_unmodeled", matching[0] if matching else None)
+    matching = [item for item in guards if _same_binding(item.symbol, source.symbol, aliases)]
     if sink.shape in {"macro_expanded_unary_dereference", "indirect_call_argument", "dependent_unary_dereference"}:
         return _GuardEvaluation("unknown", "not_applicable", matching[0] if matching else None)
     if function_kinds & {"macro", "template", "indirect_call"}:
         return _GuardEvaluation("unknown", "not_applicable", matching[0] if matching else None)
     if not matching:
-        return _GuardEvaluation("none", "not_applicable", None)
+        return _GuardEvaluation(
+            "not_dominating" if "exception" in function_kinds else "none",
+            "exception_unmodeled" if "exception" in function_kinds else "not_applicable",
+            None,
+        )
     for guard in matching:
         branch_start, branch_end = guard.branch_spans[0]
-        if guard.condition == "non_null" and branch_start <= sink.position < branch_end and not _rebind_between(masked, source.symbol, guard.guard_span[0], sink.position):
+        if guard.condition == "non_null" and branch_start <= sink.position < branch_end and not _rebind_between(masked, _symbol_base(source.symbol, aliases), guard.guard_span[0], sink.position):
             return _GuardEvaluation("dominating", "positive_guard_only", guard)
-        if guard.condition == "null" and guard.returns_on_null_path and sink.position >= branch_end and not _rebind_between(masked, source.symbol, branch_end, sink.position):
+        if guard.condition == "null" and len(guard.branch_spans) > 1:
+            else_start, else_end = guard.branch_spans[1]
+            if else_start <= sink.position < else_end:
+                return _GuardEvaluation("dominating", "else_branch_only", guard)
+        if guard.condition == "null" and guard.returns_on_null_path and sink.position >= branch_end and not _rebind_between(masked, _symbol_base(source.symbol, aliases), branch_end, sink.position):
             return _GuardEvaluation("dominating", "early_return", guard)
     for guard in matching:
         branch_start, branch_end = guard.branch_spans[0]
-        if guard.condition == "null" and not guard.returns_on_null_path and sink.position >= branch_end:
+        if guard.condition == "null" and not guard.returns_on_null_path and sink.position >= branch_end and not (
+            len(guard.branch_spans) > 1 and guard.branch_spans[1][0] <= sink.position < guard.branch_spans[1][1]
+        ):
             return _GuardEvaluation("not_dominating", "error_branch_falls_through", guard)
-    return _GuardEvaluation("not_dominating", "not_applicable", matching[0])
+    return _GuardEvaluation(
+        "not_dominating",
+        "exception_unmodeled" if "exception" in function_kinds else "not_applicable",
+        matching[0],
+    )
 
 
 def _source_role(source: NullSource) -> str:
@@ -585,9 +799,53 @@ def _line_column(text: str, position: int) -> Tuple[int, int]:
     column = position + 1 if previous < 0 else position - previous
     return line, column
 
+
+def _select_source(
+    candidates: Iterable[NullSource],
+    sink: DereferenceSink,
+    aliases: Mapping[str, str],
+) -> Optional[NullSource]:
+    matching = [
+        item for item in candidates
+        if _same_binding(item.symbol, sink.symbol, aliases)
+    ]
+    before_sink = [item for item in matching if item.position <= sink.position]
+    if before_sink:
+        return max(before_sink, key=lambda item: item.position)
+    member_candidates = [item for item in matching if item.kind == "member"]
+    return member_candidates[0] if member_candidates else None
+
+
+def _finding_identity(
+    source: NullSource,
+    sink: DereferenceSink,
+    evaluation: _GuardEvaluation,
+    function: _FunctionShape,
+) -> Tuple[str, str, str]:
+    symbol_identity = "::".join((
+        function.class_name or "<free-function>",
+        function.name,
+        source.symbol,
+    ))
+    fingerprint_data = (
+        source.kind,
+        source.nullability,
+        sink.kind,
+        sink.shape,
+        evaluation.relation,
+        evaluation.error_path,
+        source.position - function.span.start,
+        sink.position - function.span.start,
+    )
+    ast_fingerprint = hashlib.sha256(
+        repr(fingerprint_data).encode("utf-8")
+    ).hexdigest()
+    return symbol_identity, ast_fingerprint, "complete"
+
+
 class NullDereferenceDetector:
     detector_id = "ohscanner.cpp.null_dereference"
-    version = "0.1.0"
+    version = "0.2.0"
     supported_languages = ("c", "cpp")
     required_facts = ()
     ast_scope = "per_file"
@@ -602,6 +860,7 @@ class NullDereferenceDetector:
         analyzed: List[str] = []
         findings: List[DetectorFinding] = []
         limitations: List[str] = []
+        total_bytes = 0
 
         for unit in ordered:
             if unit.language not in self.supported_languages:
@@ -614,9 +873,18 @@ class NullDereferenceDetector:
                 limitations.append("parse_failed: " + unit.path)
                 limitations.append("No absence, safety, miss or product conclusion is published for failed/not-analyzed coverage.")
                 continue
+            unit_bytes = len(unit.text.encode("utf-8"))
+            if unit_bytes > MAX_UNIT_BYTES or total_bytes + unit_bytes > MAX_TOTAL_BYTES:
+                reason = "input_limit_unit_exceeded" if unit_bytes > MAX_UNIT_BYTES else "input_limit_total_exceeded"
+                outcomes.append((unit.path, "not_analyzed"))
+                limitations.append(f"{reason}: {unit.path}; bounded lexical analysis was not run.")
+                limitations.append("No absence, safety, miss or product conclusion is published for failed/not-analyzed coverage.")
+                continue
+            total_bytes += unit_bytes
 
             masked = _mask_comments_and_literals(unit.text)
             brace_spans, malformed = _brace_spans(masked)
+            malformed = malformed or _delimiter_integrity(masked)
             classes = _class_shapes(masked, brace_spans)
             functions = _function_shapes(masked, brace_spans, classes)
             unsupported = _global_unsupported_shapes(unit, masked)
@@ -653,10 +921,13 @@ class NullDereferenceDetector:
                 function_unsupported = _span_candidates(unsupported, function.span.start, function.span.end)
 
                 for sink in sinks:
-                    source = next((item for item in sources if item.symbol == sink.symbol), None)
-                    if source is None and sink.symbol in aliases:
-                        base = aliases[sink.symbol]
-                        source = next((item for item in sources if item.symbol == base), None)
+                    source = _select_source(sources, sink, aliases)
+                    if source is None:
+                        source = _select_source(
+                            class_sources.get(function.class_name or "", {}).values(),
+                            sink,
+                            aliases,
+                        )
                     if source is None and function.class_name:
                         source = class_sources.get(function.class_name, {}).get(sink.symbol)
                     if source is None and template_present and "." in sink.symbol:
@@ -664,13 +935,17 @@ class NullDereferenceDetector:
                         source = NullSource(sink.symbol, "member", sink.position, "unknown", (sink.position, sink.position + len(sink.symbol)), f"member:{unit.path}:{owner}:{sink.symbol}", unit.path, unit.sha256, "template-dependent member pointer")
                     if source is None:
                         continue
+                    if _source_rebound_before(source, sink, masked):
+                        continue
+                    if _short_circuit_guarded(source, sink, masked, aliases):
+                        continue
                     if source.nullability in ("explicit_null", "may_be_null") or source.kind == "return_value":
                         emit = True
                     else:
                         emit = bool(_span_candidates(unsupported, sink.position, sink.position + 1) or function_unsupported)
                     if not emit:
                         continue
-                    evaluation = _evaluate_guard(source, sink, guards, function_unsupported, masked)
+                    evaluation = _evaluate_guard(source, sink, guards, function_unsupported, masked, aliases)
                     if evaluation.relation == "dominating":
                         continue
                     line, column = _line_column(unit.text, sink.position)
@@ -680,7 +955,26 @@ class NullDereferenceDetector:
                         f"guard_relation={evaluation.relation}; error_path={evaluation.error_path}; "
                         "syntax evidence is not proof of dereference failure, attacker control, product reachability or CIA impact."
                     )
-                    finding = DetectorFinding(file=unit.path, line=line, column=column, rule_id=RULE_ID, message=message, evidence_type="syntax", candidate_cwe="CWE-476", symbol=source.symbol, evidence_obligations=_OBLIGATIONS, source_sha256=unit.sha256)
+                    symbol_identity, ast_fingerprint, identity_quality = _finding_identity(
+                        source, sink, evaluation, function
+                    )
+                    finding = DetectorFinding(
+                        file=unit.path,
+                        line=line,
+                        column=column,
+                        rule_id=RULE_ID,
+                        message=message,
+                        evidence_type="syntax",
+                        candidate_cwe="CWE-476",
+                        symbol=source.symbol,
+                        evidence_obligations=_OBLIGATIONS,
+                        source_sha256=unit.sha256,
+                        rule_version=RULE_VERSION,
+                        rule_lineage_id=RULE_LINEAGE_ID,
+                        symbol_identity=symbol_identity,
+                        ast_fingerprint=ast_fingerprint,
+                        identity_quality=identity_quality,
+                    )
                     unit_findings.append((sink.position, finding))
                     if source.nullability == "unknown":
                         if source.kind == "return_value":
@@ -698,9 +992,13 @@ class NullDereferenceDetector:
             if unit.parse_status in ("partial", "not_run"):
                 outcome = "partial"
                 unknown_reasons.append("parse_status_" + unit.parse_status)
+                if malformed:
+                    unknown_reasons.append("source_syntax_malformed")
             elif malformed or not functions:
                 outcome = "partial"
-                unknown_reasons.append("function_region_unresolved")
+                unknown_reasons.append(
+                    "source_syntax_malformed" if malformed else "function_region_unresolved"
+                )
             elif has_unknown_reason:
                 outcome = "partial"
             else:
@@ -714,7 +1012,7 @@ class NullDereferenceDetector:
 
         if any(value == "failed" for _, value in outcomes):
             status = "failed"
-        elif any(value == "partial" for _, value in outcomes):
+        elif any(value in ("partial", "not_analyzed") for _, value in outcomes):
             status = "blocked"
         else:
             status = "completed"

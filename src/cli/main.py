@@ -189,6 +189,17 @@ def main() -> None:
                                  help="Explicit approved detector ID; repeatable")
     halfyear_parser.add_argument("--max-commits", type=int, default=5000,
                                  help="Maximum first-parent commits to inspect; default 5000")
+    halfyear_parser.add_argument("--shard-size", type=int, default=32,
+                                 help="Deterministic commit shard size; coverage is aggregated unchanged")
+    halfyear_parser.add_argument("--cache-dir",
+                                 help="Optional incremental scan cache outside the output directory")
+    halfyear_parser.add_argument("--max-wall-seconds", type=float,
+                                 help="Optional wall-time budget; exhausted commits remain unknown")
+    halfyear_parser.add_argument("--max-source-files", type=int, default=2000)
+    halfyear_parser.add_argument("--max-source-bytes", type=int, default=32 * 1024 * 1024)
+    halfyear_parser.add_argument("--max-blob-bytes", type=int, default=1024 * 1024)
+    halfyear_parser.add_argument("--max-git-batch-objects", type=int, default=256)
+    halfyear_parser.add_argument("--max-output-bytes", type=int, default=256 * 1024 * 1024)
     halfyear_parser.add_argument("--out-dir",
                                  default="outputs/reports/halfyear_candidate_mvp",
                                  help="Output directory for aggregate and per-commit evidence")
@@ -202,6 +213,12 @@ def main() -> None:
                                       help="Local Git repository with complete pinned objects")
     cross_version_parser.add_argument("--out-dir", required=True,
                                       help="Output directory for the evidence package")
+    cross_version_parser.add_argument("--component-repo", action="append", default=[],
+                                      help="Multi-repo binding COMPONENT_ID=PATH; repeatable")
+    cross_version_parser.add_argument("--truth-manifest",
+                                      help="Optional independent truth manifest for fail-closed metrics")
+    cross_version_parser.add_argument("--prediction-manifest",
+                                      help="Optional root-cause prediction/truth records")
     historical_parser = subparsers.add_parser(
         "benchmark-historical",
         help="Replay one published vulnerable/fixed commit pair as historical ground truth",
@@ -433,6 +450,14 @@ def main() -> None:
                 out_dir=Path(args.out_dir),
                 max_commits=args.max_commits,
                 argv=tuple(sys.argv),
+                shard_size=args.shard_size,
+                cache_dir=Path(args.cache_dir) if args.cache_dir else None,
+                max_wall_seconds=args.max_wall_seconds,
+                max_source_files=args.max_source_files,
+                max_source_bytes=args.max_source_bytes,
+                max_blob_bytes=args.max_blob_bytes,
+                max_git_batch_objects=args.max_git_batch_objects,
+                max_output_bytes=args.max_output_bytes,
             )
         except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
             halfyear_parser.error(str(error))
@@ -451,16 +476,31 @@ def main() -> None:
         from src.ohscanner.cross_version import build_package
 
         try:
+            component_repo_dirs = {}
+            for row in args.component_repo:
+                if "=" not in row:
+                    cross_version_parser.error("--component-repo must be COMPONENT_ID=PATH")
+                component_id, raw_path = row.split("=", 1)
+                component_repo_dirs[component_id] = Path(raw_path)
             report = build_package(
                 Path(args.manifest),
                 Path(args.repo_dir),
                 Path(args.out_dir),
+                component_repo_dirs=component_repo_dirs,
+                argv=tuple(sys.argv),
+                truth_manifest_path=(
+                    Path(args.truth_manifest) if args.truth_manifest else None
+                ),
+                prediction_manifest_path=(
+                    Path(args.prediction_manifest) if args.prediction_manifest else None
+                ),
             )
         except (ValueError, OSError, UnicodeError, subprocess.TimeoutExpired) as error:
             cross_version_parser.error(str(error))
         print("[OK] cross-version impact evidence package; NOT a confirmed vulnerability")
         print(f"[OK] candidates: {len(report['candidates'])}")
         print(f"[OK] JSON report: {Path(args.out_dir) / 'impact_evidence.json'}")
+        print(f"[OK] accuracy gate: {report['accuracy_evaluation']['status']}")
         return
     if args.command == "ohscan-index":
         from src.ohscanner.indexing import run_git_index

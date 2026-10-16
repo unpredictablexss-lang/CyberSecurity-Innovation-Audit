@@ -1,0 +1,77 @@
+{
+  "schema_version": "ohscanner.a-exp-01-run-report-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-16T05:35:16.803Z",
+  "conclusion": "A-EXP-01 is fail-closed at preflight. R0/R1/R2 and all ablations are planned but unexecuted; no method-effect result is claimed.",
+  "preflight": {
+    "status": "fail_closed_execution_blocked",
+    "path": "preflight_record.json",
+    "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+    "blockers": [
+      "exact model_version is not established by the local model catalog",
+      "API version is not established; wire_api=responses is transport shape, not an API version",
+      "provider data-processing terms, retention, training use, and region are not bound",
+      "provider pricing record and reviewed unit prices are not bound",
+      "named authorization for those records is absent",
+      "R2 tool adapter execution authorization is false and its authorization record is expired",
+      "No independent blinded human reviewer sessions were available for R0",
+      "The frozen package lacks per-item serialized EvidenceObligation records; only the six gate names/criteria are frozen"
+    ]
+  },
+  "run_accounting": {
+    "planned_total": 405,
+    "executed_total": 0,
+    "unexecuted_total": 405,
+    "by_group": {
+      "R0": 135,
+      "R1": 135,
+      "R2": 135
+    },
+    "all_repetitions_reported": true,
+    "best_run_selection": false
+  },
+  "artifacts": {
+    "source_snapshot": "source_snapshot.json",
+    "fixed_fact_bundle": "fixed_fact_bundle.json",
+    "evidence_obligation_contract": "evidence_obligation_contract.json",
+    "planned_runs": "planned_runs.jsonl",
+    "r2_extra_budget": "r2_extra_budget.json",
+    "ablations": "ablation_plan.json",
+    "metrics": "metrics.json",
+    "model_runtime_observation": "model_runtime_observation.json",
+    "network_log": "network_log.jsonl",
+    "test_environment": "test_environment.json",
+    "raw_logs": "raw_logs"
+  },
+  "claim_boundary": {
+    "model_effect_claimed": false,
+    "accuracy_metrics_claimed": false,
+    "vulnerability_status_changed": false,
+    "historical_records_changed": false,
+    "model_self_eval_as_truth": false
+  },
+  "verification": {
+    "path": "test_results.json",
+    "python_full_suite": "648 passed / 2 failed / 8 skipped",
+    "exact_python_failures": [
+      {
+        "test": "detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests.test_all_18_fixture_observations_match_matrix",
+        "exact_assertion": "AssertionError: 'blocked' != 'completed'"
+      },
+      {
+        "test": "detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests.test_declares_exact_identity_and_scope",
+        "exact_assertion": "AssertionError: '0.2.0' != '0.1.0'"
+      }
+    ],
+    "preflight_suite": "passed; --require-ready correctly failed closed",
+    "fail_closed_suite_initial": "failed on one harness assertion; exact log retained",
+    "fail_closed_suite_after_fix": "8/8 passed",
+    "web_direct_build": "TypeScript --noEmit and node build.mjs passed",
+    "npm": "unavailable; exact spawnSync ENOENT retained for npm --version, npm ci, and npm run build",
+    "git_diff_check": "passed with LF/CRLF warnings only"
+  },
+  "limitations": [
+    "The captured full Python suite has two failures in concurrently modified dirty A-line files; this task preserves those changes and reports the exact assertions rather than claiming a clean full pass.",
+    "The captured full Python suite has two failures in concurrently modified dirty A-line files; this task preserves those changes and reports the exact assertions rather than claiming a clean full pass."
+  ]
+}

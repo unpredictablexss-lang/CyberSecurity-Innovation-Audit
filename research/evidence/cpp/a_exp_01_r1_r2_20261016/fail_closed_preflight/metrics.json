@@ -1,0 +1,207 @@
+{
+  "schema_version": "ohscanner.a-exp-01-results-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-16T05:35:16.803Z",
+  "status": "not_executed_preflight_fail_closed",
+  "sample": {
+    "review_items": 45,
+    "scope_occurrences": 45,
+    "unique_candidates": 44,
+    "independent_labeled_metric_dataset": false
+  },
+  "planned_and_executed": {
+    "R0": {
+      "planned_runs": 135,
+      "executed_runs": 0,
+      "unexecuted_runs": 135,
+      "repetitions": [
+        {
+          "repetition": 1,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        },
+        {
+          "repetition": 2,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        },
+        {
+          "repetition": 3,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        }
+      ]
+    },
+    "R1": {
+      "planned_runs": 135,
+      "executed_runs": 0,
+      "unexecuted_runs": 135,
+      "repetitions": [
+        {
+          "repetition": 1,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        },
+        {
+          "repetition": 2,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        },
+        {
+          "repetition": 3,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        }
+      ]
+    },
+    "R2": {
+      "planned_runs": 135,
+      "executed_runs": 0,
+      "unexecuted_runs": 135,
+      "repetitions": [
+        {
+          "repetition": 1,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        },
+        {
+          "repetition": 2,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        },
+        {
+          "repetition": 3,
+          "status": "unexecuted_preflight_fail_closed",
+          "variance": null
+        }
+      ]
+    },
+    "ablations": [
+      {
+        "ablation_id": "ABL-NO-AST",
+        "planned_runs": 135,
+        "executed_runs": 0,
+        "unexecuted_runs": 135
+      },
+      {
+        "ablation_id": "ABL-NO-HISTORY-PATCH",
+        "planned_runs": 135,
+        "executed_runs": 0,
+        "unexecuted_runs": 135
+      },
+      {
+        "ablation_id": "ABL-ONE-TURN",
+        "planned_runs": 135,
+        "executed_runs": 0,
+        "unexecuted_runs": 135
+      }
+    ]
+  },
+  "measurements": {
+    "independent_new_fact_ratio": {
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "status": "not_computed_no_run_outputs"
+    },
+    "illegal_reference_rate": {
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "status": "not_computed_no_model_claims"
+    },
+    "missing_reference_rate": {
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "status": "not_computed_no_model_claims"
+    },
+    "human_review_active_seconds": {
+      "R0": null,
+      "R1_blinded_review": null,
+      "R2_blinded_review": null,
+      "status": "not_measured_no_authorized_human_sessions"
+    },
+    "tool_calls": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 0,
+      "failed": 0,
+      "retried": 0,
+      "status": "observed_zero_because_not_executed"
+    },
+    "model_calls": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 0,
+      "failed": 0,
+      "retried": 0,
+      "status": "observed_zero_because_not_executed"
+    },
+    "provider_tokens": {
+      "R1": null,
+      "R2": null,
+      "status": "unknown_no_provider_calls"
+    },
+    "observed_external_cost_usd": {
+      "R1": 0,
+      "R2": 0,
+      "status": "zero_because_no_external_calls; not an experimental cost estimate"
+    },
+    "elapsed_wall_ms": {
+      "R0": null,
+      "R1": null,
+      "R2": null,
+      "status": "not_measured_no_runs"
+    },
+    "repetition_variance": {
+      "R0": null,
+      "R1": null,
+      "R2": null,
+      "status": "not_computed_no_repetition_results"
+    }
+  },
+  "evidence_gate_counts": {
+    "met": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 0,
+      "note": "No run outputs; zero is count of observed outputs, not gate prevalence."
+    },
+    "partial": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 0,
+      "note": "No run outputs; zero is count of observed outputs, not gate prevalence."
+    },
+    "not_met": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 0,
+      "note": "No run outputs; zero is count of observed outputs, not gate prevalence."
+    },
+    "unknown": {
+      "R0": 0,
+      "R1": 0,
+      "R2": 0,
+      "note": "No run outputs; zero is count of observed outputs, not gate prevalence."
+    }
+  },
+  "precision_recall": {
+    "status": "not_computed",
+    "reason": "The frozen truth set is explicitly not eligible for metrics and no independent labelled accuracy dataset was supplied.",
+    "precision": null,
+    "recall": null,
+    "false_positive_count": null,
+    "false_negative_count": null,
+    "zero_fp_fn_claim": false
+  },
+  "limitations": [
+    "No R0/R1/R2 run was started because preflight failed closed.",
+    "No independent blinded human reviewer session was available; agent review is not substituted for R0 human time or truth.",
+    "No external model was called because data-processing, exact model version/API version, pricing, and approval records were incomplete.",
+    "No R2 tool adapter execution occurred; the recorded adapter authorization was expired and execution_authorized=false.",
+    "All planned repetitions remain visible as unexecuted; none were selected or dropped.",
+    "No Precision/Recall is computed or implied."
+  ]
+}

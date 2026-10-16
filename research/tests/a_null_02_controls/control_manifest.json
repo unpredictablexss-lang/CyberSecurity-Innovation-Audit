@@ -1,0 +1,324 @@
+{
+  "schema_version": "ohscanner.a-null-02-control-manifest-v1",
+  "change_request_id": "A-NULL-02",
+  "detector": {
+    "detector_id": "ohscanner.cpp.null_dereference",
+    "detector_version": "0.2.0",
+    "rule_id": "ohcpp-null-dereference-candidate-001",
+    "rule_version": "1.1.0"
+  },
+  "categories": {
+    "positive": "must retain a bounded candidate",
+    "fixed": "must not retain the repaired control",
+    "safe": "must not be promoted from syntax similarity",
+    "unrelated": "must not acquire a source/sink pair from text similarity"
+  },
+  "units": [
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_parameter_unguarded.cpp",
+      "language": "cpp",
+      "sha256": "272c119cd5f831e0d28423d9d8db0561ccc1bd973a4ac6cc97ecab76ff847502",
+      "git_blob_sha1": "8e4682ee94ebfbd50ad0c50cbb93ed0c7f48b190",
+      "byte_length": 106,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_local_null_read.cpp",
+      "language": "cpp",
+      "sha256": "99fc0c7b90413e0a40d6e6057d54bfde736c8e944d6be2088841c4e21b5a9aa1",
+      "git_blob_sha1": "c2042814f6d239afa2cf967ff257241a22b93b81",
+      "byte_length": 106,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_member_default_initializer.cpp",
+      "language": "cpp",
+      "sha256": "e68bb3a881d5907904b5bae504465f8b5e4b00a71d8abea32a4251cd4760aeb6",
+      "git_blob_sha1": "9c4600d03ad334f637aa8d7bf59ce7164d2093a4",
+      "byte_length": 148,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_reference_alias.cpp",
+      "language": "cpp",
+      "sha256": "b6c471fd21b9219438e24a571bcceddef6fdd0239fc27fd3c98c2512c8e8680d",
+      "git_blob_sha1": "e29cec5b7f0f788ad614f4aaa257f92c01421d43",
+      "byte_length": 122,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_error_path_falls_through.cpp",
+      "language": "cpp",
+      "sha256": "b71af37a8b50b0b1e7440be4f60339a48dd2decb13e5267556fa398a98dad6bc",
+      "git_blob_sha1": "a8da3bb534ec99b6a204f577e85a17fda1078e72",
+      "byte_length": 199,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/positive_return_value_unknown.cpp",
+      "language": "cpp",
+      "sha256": "b3a7051b771a03677f1eee497ef7af174339c3a92e5921469d30122ba810be4b",
+      "git_blob_sha1": "ee7d1f44a146ab3f55081fb219f9d63c43f43149",
+      "byte_length": 151,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_error_path_multistatement.cpp",
+      "language": "cpp",
+      "sha256": "849a777e54aa8a6e0f6c869e2cf598e8c804d6aea46dc67a17c1c78a1a2bd20c",
+      "git_blob_sha1": "3d78da05d4907b4027b56143adc4abfbec8fdd41",
+      "byte_length": 188,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_else_branch.cpp",
+      "language": "cpp",
+      "sha256": "2d6c766ff519cb30a63325fac9202e2f0372cb27d212d14cd68d14848ab6b303",
+      "git_blob_sha1": "1cf3b2c7f70e8d290f7955fc754bc122ac9ca00e",
+      "byte_length": 164,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_alias_early_return.cpp",
+      "language": "cpp",
+      "sha256": "97d9f6d7c6343f221dd5046b6838da77456475267e4c7f667c6a5341fff3530a",
+      "git_blob_sha1": "81dc372a11fc1cd13d8d6c702a8a2b449dc7d6e7",
+      "byte_length": 175,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_local_rebind_nonnull.cpp",
+      "language": "cpp",
+      "sha256": "7b8e30f337e78b64ec982788860cd26e07f000597dfbee88874f57999a478246",
+      "git_blob_sha1": "62feb706361b8a1e5eb77eae255404f96e587c3e",
+      "byte_length": 121,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/fixed_short_circuit.cpp",
+      "language": "cpp",
+      "sha256": "76c5c52f25f2830cf66db94dd705fcf9a460615e360b77f508cc696452d7578f",
+      "git_blob_sha1": "f6ac5f20f55e30997adfb0f9a22b5d1629106d8d",
+      "byte_length": 105,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_address_of_local.cpp",
+      "language": "cpp",
+      "sha256": "87e74b4be4d8172a9364943ca6164acc88d301afe8d214e4413be15760ec7667",
+      "git_blob_sha1": "1c9e5786be9526b63d381e8e48265d3539e57b50",
+      "byte_length": 103,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_guarded_alias.cpp",
+      "language": "cpp",
+      "sha256": "bf37145f23c3959774492734d533847265123aca7eb5b75ea50f4980dc9c9d04",
+      "git_blob_sha1": "91e109e78c5ced3a4e61fd5f871baec3bb48cd5d",
+      "byte_length": 134,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_reference_to_local.cpp",
+      "language": "cpp",
+      "sha256": "9ec218bd094e4bf3ed7e2a5fe731d3bb2e19627bc9c96b402bd6bc7780278f60",
+      "git_blob_sha1": "6d2be2c6decc21b56dc118cf57fe2439b60a1ec2",
+      "byte_length": 103,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/safe_nonpointer_member.cpp",
+      "language": "cpp",
+      "sha256": "eea993f367e5de5cf267d15970b50b1caa19638c6f5240d963cc2b92ce2c46fc",
+      "git_blob_sha1": "5d17a541d8a6ff6cc24bd38a470302dbcdb00f6e",
+      "byte_length": 92,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_null_check_without_sink.cpp",
+      "language": "cpp",
+      "sha256": "9e514877c6b27648a9f779276fdc04246da0c51d2d1070345f6166eafa8c1020",
+      "git_blob_sha1": "7f3aa2253a2aaca2d6569c30d35f2502794ce2ec",
+      "byte_length": 155,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_null_words.cpp",
+      "language": "cpp",
+      "sha256": "8334e1a8968ad453351995209f95f554da305e3fca2dc5c41580b4172e4fd3a3",
+      "git_blob_sha1": "e2d08b1a57ec8f4ae3d5d31ff41306d1c2d004be",
+      "byte_length": 189,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_integer_branch.cpp",
+      "language": "cpp",
+      "sha256": "98897eda1ff386ec105245e5bd48684d9636242618e5bba6e3aed0a3d54ffae0",
+      "git_blob_sha1": "5759147b3e678178edcda7af1a27a0225c28ddc6",
+      "byte_length": 109,
+      "parse_status": "complete"
+    },
+    {
+      "path": "research/tests/a_null_02_controls/fixtures/unrelated_pointer_without_deref.cpp",
+      "language": "cpp",
+      "sha256": "208ccba4569dafc37809c9dcb67b2ec4cd38f05ebbe9ea7de6cb9f55df95e20e",
+      "git_blob_sha1": "d87e3dd5ffda37c6d6452c07a9765fae28b500b0",
+      "byte_length": 124,
+      "parse_status": "complete"
+    }
+  ],
+  "cases": [
+    {
+      "fixture": "positive_parameter_unguarded.cpp",
+      "category": "positive",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "positive_local_null_read.cpp",
+      "category": "positive",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "positive_member_default_initializer.cpp",
+      "category": "positive",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "positive_reference_alias.cpp",
+      "category": "positive",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "positive_error_path_falls_through.cpp",
+      "category": "positive",
+      "expected_coverage": "complete",
+      "expected_finding_count": 1,
+      "guard_relation": "not_dominating",
+      "error_path": "error_branch_falls_through"
+    },
+    {
+      "fixture": "positive_return_value_unknown.cpp",
+      "category": "positive",
+      "expected_coverage": "partial",
+      "expected_finding_count": 1,
+      "guard_relation": "none",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "fixed_error_path_multistatement.cpp",
+      "category": "fixed",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "dominating",
+      "error_path": "early_return"
+    },
+    {
+      "fixture": "fixed_else_branch.cpp",
+      "category": "fixed",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "dominating",
+      "error_path": "else_branch_only"
+    },
+    {
+      "fixture": "fixed_alias_early_return.cpp",
+      "category": "fixed",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "dominating",
+      "error_path": "early_return"
+    },
+    {
+      "fixture": "fixed_local_rebind_nonnull.cpp",
+      "category": "fixed",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "fixed_short_circuit.cpp",
+      "category": "fixed",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "safe_address_of_local.cpp",
+      "category": "safe",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "safe_guarded_alias.cpp",
+      "category": "safe",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "dominating",
+      "error_path": "early_return"
+    },
+    {
+      "fixture": "safe_reference_to_local.cpp",
+      "category": "safe",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "safe_nonpointer_member.cpp",
+      "category": "safe",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "unrelated_null_check_without_sink.cpp",
+      "category": "unrelated",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "unrelated_null_words.cpp",
+      "category": "unrelated",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "unrelated_integer_branch.cpp",
+      "category": "unrelated",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    },
+    {
+      "fixture": "unrelated_pointer_without_deref.cpp",
+      "category": "unrelated",
+      "expected_coverage": "complete",
+      "expected_finding_count": 0,
+      "guard_relation": "not_applicable",
+      "error_path": "not_applicable"
+    }
+  ]
+}

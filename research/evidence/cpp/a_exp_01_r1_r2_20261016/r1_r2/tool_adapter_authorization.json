@@ -1,0 +1,58 @@
+{
+  "schema_version": "ohscanner.a-exp-01-tool-adapter-authorization-v1",
+  "experiment_id": "A-EXP-01",
+  "authorization_id": "A-EXP-01-R2-ADAPTER-AUTH-20261016-UNBLOCK",
+  "status": "execution_authorized",
+  "tool_adapter": {
+    "adapter_id": "ohscanner.a-exp-01.read-only-tool-adapter",
+    "adapter_version": "1.0.0",
+    "implementation_sha256": "62a7dcc46e819145fdc91a35f65063469c33a7032a1d5556e29f08790c1233b3"
+  },
+  "authorizer": {
+    "authorizer_id": "requesting_user_via_current_A-EXP-01_goal",
+    "authorizer_role": "experiment_owner",
+    "authorization_reference": "Current goal authorizes only the four bounded read-only tools and explicitly denies shell, network, writes and Git mutation.",
+    "authorized_at": "2026-10-16T06:11:35.230Z"
+  },
+  "authorization_scope": {
+    "groups": [
+      "R2"
+    ],
+    "experiment_item_scope": "all_45_frozen_review_items",
+    "allowed_operations": [
+      "read frozen local Git-object source excerpts",
+      "query frozen EvidenceObligation definitions and statuses",
+      "read bounded history for the pinned commit and allowed file",
+      "read recorded Detector symbol/parse summaries"
+    ],
+    "max_calls_per_item": 8,
+    "effective_at": "2026-10-16T06:11:35.230Z",
+    "expires_at": "2026-11-05T06:11:35.231Z",
+    "revocation_rule": "Any scope, tool version, implementation hash, whitelist, budget or read-only boundary change invalidates this record and requires a new authorization."
+  },
+  "tool_whitelist": [
+    "fixed_source_excerpt",
+    "evidence_obligation_query",
+    "fixed_commit_git_history",
+    "detector_symbol_parse_summary"
+  ],
+  "read_only_boundary": {
+    "mode": "read_only_allowlist",
+    "allowed_source": "local pinned Git objects and frozen report/evidence records only",
+    "denied": [
+      "shell execution",
+      "source execution",
+      "network access",
+      "file writes",
+      "Git mutation",
+      "database mutation",
+      "historical report edits",
+      "candidate/review/confirmed state edits"
+    ]
+  },
+  "execution": {
+    "r2_runs_executed": 0,
+    "execution_authorized": true,
+    "preflight_only": false
+  }
+}

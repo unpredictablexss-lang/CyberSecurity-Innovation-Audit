@@ -1,0 +1,27 @@
+{
+  "schema_version": "ohscanner.a-exp-01-r2-extra-budget-v1",
+  "experiment_id": "A-EXP-01",
+  "comparison": "R2 minus R1 per item and repetition",
+  "per_run": {
+    "model_turns": 7,
+    "model_input_tokens_max": 8000,
+    "model_output_tokens_max": 1600,
+    "tool_calls_max": 8,
+    "tool_output_bytes_max": 65536,
+    "source_bytes_max": 65536,
+    "wall_seconds_max": 180,
+    "max_cost_amount_usd": 0.75,
+    "retries_max": 1,
+    "model_provider_attempts_max": 1
+  },
+  "planned_total_135_runs": {
+    "tool_calls_max": 1080,
+    "tool_output_bytes_max": 8847360,
+    "source_bytes_max": 8847360,
+    "model_input_tokens_max": 1080000,
+    "model_output_tokens_max": 216000,
+    "max_cost_amount_usd": 101.25,
+    "additional_provider_attempts_max": 135
+  },
+  "interpretation": "These are additional compute/tool resources. Any R2-R1 difference must report this budget separately and cannot be attributed to method alone."
+}

@@ -1,0 +1,347 @@
+{
+  "schema_version": "ohscanner.a-exp-01-final-test-results-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-16T07:10:09.416Z",
+  "frozen_preflight": [
+    {
+      "id": "01_frozen_preflight_check",
+      "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "preflight_validator.js",
+        "--check"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/research/experiments/cpp/r0_r1_r2_20261015",
+      "started_at_utc": "2026-10-16T07:06:56.872Z",
+      "ended_at_utc": "2026-10-16T07:06:56.974Z",
+      "wall_ms": 102,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "expected_exit_codes": [
+        0
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/01_frozen_preflight_check.stdout.txt",
+        "sha256": "0cba0d1dc13e45ebcd684e0fd9d58baac618a2b4c227af69075bc39b9b2c4b46",
+        "bytes": 56475
+      },
+      "stderr": {
+        "path": "raw_logs/01_frozen_preflight_check.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "id": "02_frozen_require_ready_expected_blocked",
+      "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "preflight_validator.js",
+        "--require-ready"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/research/experiments/cpp/r0_r1_r2_20261015",
+      "started_at_utc": "2026-10-16T07:06:56.977Z",
+      "ended_at_utc": "2026-10-16T07:06:57.074Z",
+      "wall_ms": 97,
+      "exit_code": 1,
+      "signal": null,
+      "spawn_error": null,
+      "expected_exit_codes": [
+        1
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/02_frozen_require_ready_expected_blocked.stdout.txt",
+        "sha256": "0cba0d1dc13e45ebcd684e0fd9d58baac618a2b4c227af69075bc39b9b2c4b46",
+        "bytes": 56475
+      },
+      "stderr": {
+        "path": "raw_logs/02_frozen_require_ready_expected_blocked.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "id": "03_frozen_preflight_tests",
+      "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "--test",
+        "preflight_tests.js"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/research/experiments/cpp/r0_r1_r2_20261015",
+      "started_at_utc": "2026-10-16T07:06:57.077Z",
+      "ended_at_utc": "2026-10-16T07:06:57.284Z",
+      "wall_ms": 207,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "expected_exit_codes": [
+        0
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/03_frozen_preflight_tests.stdout.txt",
+        "sha256": "370c5fe9344a819248d8a90a0af8425410b2877bc84eb05c1ab162459e8cf46e",
+        "bytes": 1781
+      },
+      "stderr": {
+        "path": "raw_logs/03_frozen_preflight_tests.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "tool_adapter_tests": {
+    "id": "04_tool_adapter_tests",
+    "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "args": [
+      "--test",
+      "test_unblock.js"
+    ],
+    "cwd": "E:/网安/CyberSecurity-Innovation-Audit/research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt",
+    "started_at_utc": "2026-10-16T07:06:57.286Z",
+    "ended_at_utc": "2026-10-16T07:06:58.017Z",
+    "wall_ms": 731,
+    "exit_code": 0,
+    "signal": null,
+    "spawn_error": null,
+    "expected_exit_codes": [
+      0
+    ],
+    "observed_status": "matched_expected",
+    "stdout": {
+      "path": "raw_logs/04_tool_adapter_tests.stdout.txt",
+      "sha256": "d1f18728b50aa7d4b65988db54930538db0e5bcca274184dab72568ba77e6ea3",
+      "bytes": 386
+    },
+    "stderr": {
+      "path": "raw_logs/04_tool_adapter_tests.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "experiment_contract_tests": {
+    "id": "05_experiment_contract_tests",
+    "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "args": [
+      "--test",
+      "test_unblock_attempt.js"
+    ],
+    "cwd": "E:/网安/CyberSecurity-Innovation-Audit/research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt",
+    "started_at_utc": "2026-10-16T07:06:58.084Z",
+    "ended_at_utc": "2026-10-16T07:06:58.475Z",
+    "wall_ms": 391,
+    "exit_code": 0,
+    "signal": null,
+    "spawn_error": null,
+    "expected_exit_codes": [
+      0
+    ],
+    "observed_status": "matched_expected",
+    "stdout": {
+      "path": "raw_logs/05_experiment_contract_tests.stdout.txt",
+      "sha256": "fe630d988288154779f57560e77d3c156c754f8d80314340ec14f6d25af7a6bc",
+      "bytes": 728
+    },
+    "stderr": {
+      "path": "raw_logs/05_experiment_contract_tests.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "python_full_suite": {
+    "total": 682,
+    "elapsed_seconds": 112.202,
+    "failures": 0,
+    "skipped": 8,
+    "passed": 674,
+    "status": "passed",
+    "exact_failure": null,
+    "raw_stderr": "raw_logs/06_python_full_tests.stderr.txt"
+  },
+  "web_direct_build": [
+    {
+      "id": "07_web_tsc_direct",
+      "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/web",
+      "started_at_utc": "2026-10-16T07:09:00.238Z",
+      "ended_at_utc": "2026-10-16T07:09:01.960Z",
+      "wall_ms": 1722,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "expected_exit_codes": [
+        0
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/07_web_tsc_direct.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "raw_logs/07_web_tsc_direct.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "id": "08_web_build_direct",
+      "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "build.mjs"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/web",
+      "started_at_utc": "2026-10-16T07:09:01.962Z",
+      "ended_at_utc": "2026-10-16T07:09:02.796Z",
+      "wall_ms": 834,
+      "exit_code": 0,
+      "signal": null,
+      "spawn_error": null,
+      "expected_exit_codes": [
+        0
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/08_web_build_direct.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "raw_logs/08_web_build_direct.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "git_diff_check": {
+    "id": "09_git_diff_check",
+    "command": "git",
+    "args": [
+      "diff",
+      "--check"
+    ],
+    "cwd": "E:/网安/CyberSecurity-Innovation-Audit",
+    "started_at_utc": "2026-10-16T07:09:02.799Z",
+    "ended_at_utc": "2026-10-16T07:09:02.856Z",
+    "wall_ms": 57,
+    "exit_code": 0,
+    "signal": null,
+    "spawn_error": null,
+    "expected_exit_codes": [
+      0
+    ],
+    "observed_status": "matched_expected",
+    "stdout": {
+      "path": "raw_logs/09_git_diff_check.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "stderr": {
+      "path": "raw_logs/09_git_diff_check.stderr.txt",
+      "sha256": "a19df063f4628415fc00b202cdc3f150572be20b100aab5d7a3dcb0a76a7235b",
+      "bytes": 1315
+    }
+  },
+  "npm_missing_dependency_probes": [
+    {
+      "id": "10_npm_version_probe",
+      "command": "npm",
+      "args": [
+        "--version"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit",
+      "started_at_utc": "2026-10-16T07:09:02.859Z",
+      "ended_at_utc": "2026-10-16T07:09:02.861Z",
+      "wall_ms": 2,
+      "exit_code": null,
+      "signal": null,
+      "spawn_error": {
+        "code": "ENOENT",
+        "message": "spawnSync npm ENOENT"
+      },
+      "expected_exit_codes": [
+        null
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/10_npm_version_probe.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "raw_logs/10_npm_version_probe.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "id": "11_npm_ci_probe",
+      "command": "npm",
+      "args": [
+        "ci"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/web",
+      "started_at_utc": "2026-10-16T07:09:02.862Z",
+      "ended_at_utc": "2026-10-16T07:09:02.864Z",
+      "wall_ms": 2,
+      "exit_code": null,
+      "signal": null,
+      "spawn_error": {
+        "code": "ENOENT",
+        "message": "spawnSync npm ENOENT"
+      },
+      "expected_exit_codes": [
+        null
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/11_npm_ci_probe.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "raw_logs/11_npm_ci_probe.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "id": "12_npm_build_probe",
+      "command": "npm",
+      "args": [
+        "run",
+        "build"
+      ],
+      "cwd": "E:/网安/CyberSecurity-Innovation-Audit/web",
+      "started_at_utc": "2026-10-16T07:09:02.868Z",
+      "ended_at_utc": "2026-10-16T07:09:02.870Z",
+      "wall_ms": 2,
+      "exit_code": null,
+      "signal": null,
+      "spawn_error": {
+        "code": "ENOENT",
+        "message": "spawnSync npm ENOENT"
+      },
+      "expected_exit_codes": [
+        null
+      ],
+      "observed_status": "matched_expected",
+      "stdout": {
+        "path": "raw_logs/12_npm_build_probe.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr": {
+        "path": "raw_logs/12_npm_build_probe.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "overall": "all expected test outcomes matched; full Python suite passed with recorded skips; npm unavailable with exact ENOENT retained and not reported as passed"
+}

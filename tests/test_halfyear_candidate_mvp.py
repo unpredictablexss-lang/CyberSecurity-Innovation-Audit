@@ -111,7 +111,8 @@ class HalfYearCandidateMvpTests(unittest.TestCase):
             **values,
         )
 
-    def _run(self, out_name="output", *, max_commits=5000, scan=None, argv=None):
+    def _run(self, out_name="output", *, max_commits=5000, scan=None, argv=None,
+             **run_kwargs):
         target = self.root / out_name
         kwargs = {}
         if scan is not None:
@@ -128,6 +129,7 @@ class HalfYearCandidateMvpTests(unittest.TestCase):
                 out_dir=target,
                 max_commits=max_commits,
                 argv=argv,
+                **run_kwargs,
             )
 
     def _identity(self, path, revision):
@@ -455,6 +457,88 @@ class HalfYearCandidateMvpTests(unittest.TestCase):
     def test_max_commits_rejects_oversized_selected_window_without_truncation(self):
         with self.assertRaisesRegex(ValueError, "max_commits=2"):
             self._window(max_commits=2)
+
+    def test_sharding_cache_and_resource_telemetry_preserve_coverage(self):
+        fake = self._fake_scan({})
+        calls = []
+        def scan(*args, **kwargs):
+            calls.append(kwargs["commit"] if "commit" in kwargs else args[2])
+            return fake(*args, **kwargs)
+
+        first = self._run("shard-one", scan=scan, shard_size=1)
+        cache = self.root / "scan-cache"
+        second = self._run(
+            "shard-many", scan=scan, shard_size=3, cache_dir=cache,
+        )
+        calls_before_warm = len(calls)
+        warm = self._run(
+            "shard-warm", scan=scan, shard_size=2, cache_dir=cache,
+        )
+
+        def projection(report):
+            return [
+                (
+                    item["commit"],
+                    item["change_status"],
+                    item["source_manifest"],
+                    item["coverage_status"],
+                    item["candidate_count_status"],
+                    sorted(
+                        row["source_observation_key"]
+                        for row in item.get("candidates", [])
+                    ),
+                )
+                for item in report["commits"]
+            ]
+
+        self.assertEqual(projection(first), projection(second))
+        self.assertEqual(projection(second), projection(warm))
+        self.assertEqual(
+            first["coverage_invariance"]["entry_digest"],
+            second["coverage_invariance"]["entry_digest"],
+        )
+        self.assertEqual(warm["cache"]["hits"], 2)
+        self.assertEqual(warm["cache"]["misses"], 0)
+        self.assertEqual(len(calls), calls_before_warm)
+        self.assertTrue(warm["performance"]["resource_monitor"]["wall_seconds"] >= 0)
+        self.assertIn("peak_rss_bytes", warm["performance"]["resource_monitor"])
+        self.assertGreater(warm["performance"]["files"]["source_lines"], 0)
+        self.assertEqual(
+            warm["performance"]["files"]["source_bytes"],
+            sum(
+                int(item.get("resource_usage", {}).get("source_bytes", 0))
+                for item in warm["commits"]
+            ),
+        )
+
+    def test_resource_budget_exhaustion_is_unknown_not_zero(self):
+        calls = []
+        def scan(*args, **kwargs):
+            calls.append(1)
+            return self._fake_scan({})(*args, **kwargs)
+
+        report = self._run(
+            "budget-output",
+            scan=scan,
+            shard_size=1,
+            max_source_bytes=1,
+        )
+        self.assertEqual(calls, [])
+        self.assertEqual(report["status"], "unexecuted")
+        for entry in report["commits"]:
+            if entry["changed_source_paths"]:
+                self.assertEqual(
+                    entry["candidate_count_status"],
+                    "unexecuted_budget_exceeded",
+                )
+                self.assertIsNone(entry["candidate_count"])
+        self.assertEqual(
+            report["totals"]["commits_with_unknown_candidate_count"],
+            len(report["commits"]),
+        )
+        self.assertEqual(
+            report["performance"]["resource_budget"]["max_source_bytes"], 1,
+        )
 
 
 if __name__ == "__main__":

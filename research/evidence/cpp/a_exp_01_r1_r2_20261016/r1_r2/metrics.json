@@ -1,0 +1,1487 @@
+{
+  "schema_version": "ohscanner.a-exp-01-results-v2",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-16T06:59:21.083Z",
+  "sample": {
+    "review_items": 45,
+    "scope_occurrences": 45,
+    "unique_candidates": 44,
+    "independent_metric_dataset": false
+  },
+  "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+  "evidence_obligation_contract_sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+  "groups": {
+    "R0": {
+      "planned_runs": 135,
+      "executed_runs": 0,
+      "awaiting_independent_human_reviewer": 135,
+      "human_active_seconds": null,
+      "human_paused_seconds": null,
+      "status": "queue_ready_not_executed"
+    },
+    "R1": {
+      "group": "R1",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "missing_run_ids": [],
+      "completed": 128,
+      "failed": 7,
+      "failure_codes": {
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 1,
+        "none": 128,
+        "MODEL_OUTPUT_SCHEMA_INVALID": 6
+      },
+      "model_provider_attempts": 135,
+      "tool_calls": 0,
+      "tool_statuses": {},
+      "persisted_tool_results": 0,
+      "usage": {
+        "input_tokens": 553710,
+        "output_tokens": 230859,
+        "total_tokens": 784569,
+        "missing_usage_runs": 0
+      },
+      "reference_cost_usd_upper_bound": 0.4417111799999999,
+      "actual_provider_billing": "unknown_token_plan_credit_decrement_not_exposed",
+      "timing_wall_ms": {
+        "count": 135,
+        "min": 12084,
+        "max": 38594,
+        "mean": 27011.155555555557,
+        "median": 26981,
+        "p95": 35936,
+        "variance": 23989255.079506166
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "missing": 0,
+          "completed": 43,
+          "failed": 2,
+          "distinct_output_hashes": 44,
+          "cost_reference_usd_upper_bound": 0.14729361
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "missing": 0,
+          "completed": 42,
+          "failed": 3,
+          "distinct_output_hashes": 42,
+          "cost_reference_usd_upper_bound": 0.14692733999999996
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "missing": 0,
+          "completed": 43,
+          "failed": 2,
+          "distinct_output_hashes": 43,
+          "cost_reference_usd_upper_bound": 0.14749023000000003
+        }
+      ],
+      "item_stability": {
+        "items": 45,
+        "all_three_present": 45,
+        "all_three_completed": 38,
+        "stable_mechanism_label_items": 44,
+        "stable_output_hash_items": 0
+      },
+      "references": {
+        "claims": 996,
+        "claims_with_nonempty_refs": 996,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 7,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 1,
+        "total_missing_or_illegal_reference_errors": 7
+      },
+      "independent_new_facts": {
+        "definition": "A claim is independently tool-added when it cites at least one persisted R2 tool-result evidence ID not present in the initial evidence catalog.",
+        "new_fact_claims": 0,
+        "all_claims": 996,
+        "new_fact_claim_ratio": 0,
+        "unique_cited_evidence_ids": 51,
+        "unique_cited_tool_result_evidence_ids": 0,
+        "tool_result_evidence_ratio": 0
+      },
+      "output_labels": {
+        "shared_ptr_owner_race_candidate": 1,
+        "unknown": 128,
+        "missing_or_invalid": 6
+      },
+      "evidence_gate_status": {
+        "unknown": 42,
+        "partial": 87,
+        "missing_or_invalid": 6
+      },
+      "run_validation": {
+        "valid": 134,
+        "invalid": 1,
+        "invalid_runs": [
+          {
+            "run_id": "A-EXP-01-main-R1-R1-S20261015-00c8ae87a8576190",
+            "errors": [
+              "at least one claim is required for reference validation"
+            ]
+          }
+        ]
+      },
+      "failure_recovery": [
+        {
+          "run_id": "A-EXP-01-main-R1-R1-S20261015-00c8ae87a8576190",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+            "message": "at least one claim is required for reference validation",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R1-S20261015-00c8ae87a8576190.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 2747,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 804,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 3551
+              },
+              "output_chars": 2471,
+              "output_head": "```json\n{\n  \"experiment_item_id\": \"00c8ae87a8576190\",\n  \"mechanism_label\": \"shared_ptr_owner_race_candidate\",\n  \"product_assessment\": \"unknown\",\n  \"assessment_basis\": {\n    \"fixed_target_identity\": \"verified\",\n    \"entry_privilege_boundary\": \"unknown\",\n    \"reachable_sensitive_operation\": \"unknown\",\n    \"trigger_conditions\": \"unknown\",\n    \"concrete_cia_impact\": \"unknown\",\n    \"auditable_evidence\": \"partial\"\n  },\n  \"same_object_owner_pairs\": [\n    {\n      \"object\": \"JsPiPWindowListener::jsCallBa"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R1-R3-S20261017-0984ba53e4891550",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "MODEL_OUTPUT_SCHEMA_INVALID",
+            "message": "missing model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R3-S20261017-0984ba53e4891550.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 4108,
+                "input_tokens_details": {
+                  "cached_tokens": 3968
+                },
+                "output_tokens": 2400,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 6508
+              },
+              "output_chars": 7289,
+              "output_head": "```json\n{\n  \"schema_version\": \"ohscanner.a-exp-01-model-output-v1\",\n  \"experiment_item_id\": \"0984ba53e4891550\",\n  \"mechanism_label\": \"unknown\",\n  \"product_assessment\": \"unknown\",\n  \"evidence_gate_status\": \"partial\",\n  \"claims\": [\n    {\n      \"claim_id\": \"C1\",\n      \"kind\": \"observation\",\n      \"text\": \"The fixed target identity is established for the candidate locator: repository openharmony/security_access_token at commit 17d88bfb36bea6c9370ba919ac41a22d16dd66b3, file interfaces/kits/js/napi/ac"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R1-R2-S20261016-0c076a622b333f8d",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "MODEL_OUTPUT_SCHEMA_INVALID",
+            "message": "missing model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R2-S20261016-0c076a622b333f8d.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 4106,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 2400,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 6506
+              },
+              "output_chars": 6379,
+              "output_head": "```json\n{\n  \"schema_version\": \"ohscanner.a-exp-01-model-output-v1\",\n  \"experiment_item_id\": \"0c076a622b333f8d\",\n  \"mechanism_label\": \"unknown\",\n  \"product_assessment\": \"unknown\",\n  \"evidence_gate_status\": \"partial\",\n  \"claims\": [\n    {\n      \"claim_id\": \"C1\",\n      \"kind\": \"observation\",\n      \"text\": \"The fixed target identity is established for previewer/include/wm_animation_common.h at commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7, with the candidate locator at line 281 column 54 on symbol "
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R1-R2-S20261016-2933d6f08739598b",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "MODEL_OUTPUT_SCHEMA_INVALID",
+            "message": "missing model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R2-S20261016-2933d6f08739598b.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 4140,
+                "input_tokens_details": {
+                  "cached_tokens": 4096
+                },
+                "output_tokens": 2400,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 6540
+              },
+              "output_chars": 7380,
+              "output_head": "```json\n{\n  \"schema_version\": \"ohscanner.a-exp-01-model-output-v1\",\n  \"experiment_item_id\": \"2933d6f08739598b\",\n  \"mechanism_label\": \"unknown\",\n  \"product_assessment\": \"unknown\",\n  \"evidence_gate_status\": \"unknown\",\n  \"claims\": [\n    {\n      \"claim_id\": \"C1\",\n      \"kind\": \"observation\",\n      \"text\": \"The fixed source context shows a constructor initializer `jsCallBack_(callback)` at line 33 of js_fb_window_listener.h, storing a std::shared_ptr<NativeReference> parameter into the member `jsCall"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R1-R1-S20261015-29c57a4203eeb950",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "MODEL_OUTPUT_SCHEMA_INVALID",
+            "message": "missing model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R1-S20261015-29c57a4203eeb950.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 4215,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 2400,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 6615
+              },
+              "output_chars": 8147,
+              "output_head": "```json\n{\n  \"schema_version\": \"ohscanner.a-exp-01-model-output-v1\",\n  \"experiment_item_id\": \"29c57a4203eeb950\",\n  \"mechanism_label\": \"unknown\",\n  \"product_assessment\": \"unknown\",\n  \"evidence_gate_status\": \"partial\",\n  \"claims\": [\n    {\n      \"claim_id\": \"C1\",\n      \"kind\": \"observation\",\n      \"text\": \"The fixed source at wm/include/picture_in_picture_controller_base.h line 141 reads the std::shared_ptr<XComponentController> owner member pipXComponentController_ by value in the inline const gett"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R1-R3-S20261017-2c4b4625bf41f268",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "MODEL_OUTPUT_SCHEMA_INVALID",
+            "message": "missing model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R3-S20261017-2c4b4625bf41f268.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 4113,
+                "input_tokens_details": {
+                  "cached_tokens": 3968
+                },
+                "output_tokens": 2400,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 6513
+              },
+              "output_chars": 7950,
+              "output_head": "```json\n{\n  \"schema_version\": \"ohscanner.a-exp-01-model-output-v1\",\n  \"experiment_item_id\": \"2c4b4625bf41f268\",\n  \"mechanism_label\": \"unknown\",\n  \"product_assessment\": \"unknown\",\n  \"evidence_gate_status\": \"unknown\",\n  \"claims\": [\n    {\n      \"claim_id\": \"C1\",\n      \"kind\": \"observation\",\n      \"text\": \"The fixed target identity is established for the write of the same-object shared_ptr owner member ptrChannel_ in RemoteCommandExecutor::SetChannel at services/tokensyncmanager/include/remote/remot"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R1-R2-S20261016-cc38ebb39a402845",
+          "group": "R1",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "MODEL_OUTPUT_SCHEMA_INVALID",
+            "message": "missing model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R1/A-EXP-01-main-R1-R2-S20261016-cc38ebb39a402845.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 4120,
+                "input_tokens_details": {
+                  "cached_tokens": 3968
+                },
+                "output_tokens": 2400,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 6520
+              },
+              "output_chars": 7816,
+              "output_head": "```json\n{\n  \"schema_version\": \"ohscanner.a-exp-01-model-output-v1\",\n  \"experiment_item_id\": \"cc38ebb39a402845\",\n  \"mechanism_label\": \"unknown\",\n  \"product_assessment\": \"unknown\",\n  \"evidence_gate_status\": \"partial\",\n  \"claims\": [\n    {\n      \"claim_id\": \"C1\",\n      \"kind\": \"observation\",\n      \"text\": \"The fixed locator is a read of the shared_ptr owner excludeFromDock at interfaces/innerkits/wm/wm_animation_common.h:289 in commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7, where the code first te"
+            }
+          ]
+        }
+      ]
+    },
+    "R2": {
+      "group": "R2",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "missing_run_ids": [],
+      "completed": 123,
+      "failed": 12,
+      "failure_codes": {
+        "none": 123,
+        "R2_AGENT_FAILED": 7,
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 5
+      },
+      "model_provider_attempts": 270,
+      "tool_calls": 540,
+      "tool_statuses": {
+        "ok": 536,
+        "failed": 4
+      },
+      "persisted_tool_results": 540,
+      "usage": {
+        "input_tokens": 1523527,
+        "output_tokens": 358280,
+        "total_tokens": 1881807,
+        "missing_usage_runs": 0
+      },
+      "reference_cost_usd_upper_bound": 0.974437845,
+      "actual_provider_billing": "unknown_token_plan_credit_decrement_not_exposed",
+      "timing_wall_ms": {
+        "count": 135,
+        "min": 15636,
+        "max": 62308,
+        "mean": 41492.96296296296,
+        "median": 41449,
+        "p95": 56768,
+        "variance": 74781380.49492453
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "missing": 0,
+          "completed": 39,
+          "failed": 6,
+          "distinct_output_hashes": 41,
+          "cost_reference_usd_upper_bound": 0.32609688000000003
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "missing": 0,
+          "completed": 44,
+          "failed": 1,
+          "distinct_output_hashes": 45,
+          "cost_reference_usd_upper_bound": 0.32760285000000006
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "missing": 0,
+          "completed": 40,
+          "failed": 5,
+          "distinct_output_hashes": 42,
+          "cost_reference_usd_upper_bound": 0.32073811499999993
+        }
+      ],
+      "item_stability": {
+        "items": 45,
+        "all_three_present": 45,
+        "all_three_completed": 34,
+        "stable_mechanism_label_items": 45,
+        "stable_output_hash_items": 1
+      },
+      "references": {
+        "claims": 1115,
+        "claims_with_nonempty_refs": 1115,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 7,
+        "illegal_reference_count": 3,
+        "invalid_reference_runs": 5,
+        "total_missing_or_illegal_reference_errors": 10
+      },
+      "independent_new_facts": {
+        "definition": "A claim is independently tool-added when it cites at least one persisted R2 tool-result evidence ID not present in the initial evidence catalog.",
+        "new_fact_claims": 557,
+        "all_claims": 1115,
+        "new_fact_claim_ratio": 0.49955156950672647,
+        "unique_cited_evidence_ids": 548,
+        "unique_cited_tool_result_evidence_ids": 463,
+        "tool_result_evidence_ratio": 0.8448905109489051
+      },
+      "output_labels": {
+        "unknown": 128,
+        "missing_or_invalid": 7
+      },
+      "evidence_gate_status": {
+        "unknown": 68,
+        "partial": 39,
+        "missing_or_invalid": 7,
+        "not_met": 21
+      },
+      "run_validation": {
+        "valid": 130,
+        "invalid": 5,
+        "invalid_runs": [
+          {
+            "run_id": "A-EXP-01-main-R2-R2-S20261016-18c96f591a6dca1e",
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ]
+          },
+          {
+            "run_id": "A-EXP-01-main-R2-R1-S20261015-2fd1e3c72dcb88d7",
+            "errors": [
+              "claims[4] has malformed evidence reference",
+              "claims[6] has malformed evidence reference",
+              "claims[7] has malformed evidence reference"
+            ]
+          },
+          {
+            "run_id": "A-EXP-01-main-R2-R3-S20261017-42a9712edb1f3512",
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ]
+          },
+          {
+            "run_id": "A-EXP-01-main-R2-R3-S20261017-9a7da68327154c5f",
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ]
+          },
+          {
+            "run_id": "A-EXP-01-main-R2-R1-S20261015-a434fff861916fd3",
+            "errors": [
+              "persistedToolResults[0].artifact_sha256 must be SHA-256",
+              "persistedToolResults[0].evidence_ids must be non-empty"
+            ]
+          }
+        ]
+      },
+      "failure_recovery": [
+        {
+          "run_id": "A-EXP-01-main-R2-R1-S20261015-03ac81fdf0dad858",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 4944 (line 1 column 4945); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-03ac81fdf0dad858.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5014,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 444,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5458
+              },
+              "output_chars": 1169,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"03ac81fdf0dad858\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"interfaces/innerkits/wm/wm_animation_common.h\",\"line\":265,\"column\":37,\"symbol\":\"animationSystemParams\",\"context_lines\":40}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"03ac81fdf0dad858\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d8659"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-03ac81fdf0dad858.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6165,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 1442,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 7607
+              },
+              "output_chars": 5057,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"03ac81fdf0dad858\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"unknown\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is anchored to repository openharmony/window_window_manager at commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7, file interfaces/innerkits/wm/wm_animation_common.h line 265 column 37, symbol animationSystemParams, with verified source_s"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R1-S20261015-0984ba53e4891550",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 7871 (line 1 column 7872); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-0984ba53e4891550.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5045,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 351,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5396
+              },
+              "output_chars": 983,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"0984ba53e4891550\",\"repository\":\"openharmony/security_access_token\",\"commit\":\"17d88bfb36bea6c9370ba919ac41a22d16dd66b3\",\"file\":\"interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h\",\"start_line\":1,\"end_line\":140}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"0984ba53e4891550\",\"repository\":\"openharmony/security_access_token\",\"commit\":\"17d88bfb36bea6c9370ba919ac41a22d16dd66"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-0984ba53e4891550.turn2.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 6244,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 4000,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 10244
+              },
+              "output_chars": 7908,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"0984ba53e4891550\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"unknown\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is anchored to repository openharmony/security_access_token at commit 17d88bfb36bea6c9370ba919ac41a22d16dd66b3, file interfaces/kits/js/napi/accesstoken/include/napi_request_permission.h, symbol data_ at line 117 column 71, with git_ob"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R3-S20261017-0a21bb32264c7d75",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 7496 (line 1 column 7497); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-0a21bb32264c7d75.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5045,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 311,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5356
+              },
+              "output_chars": 850,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"0a21bb32264c7d75\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"interfaces/innerkits/wm/wm_animation_common.h\",\"start_line\":200,\"end_line\":300,\"focus_line\":261}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"0a21bb32264c7d75\",\"symbol\":\"animationParams\",\"file\":\"interfaces/innerkits/wm/wm_animation_common.h\",\"line\":261}},{\"tool_"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-0a21bb32264c7d75.turn2.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 6248,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 4000,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 10248
+              },
+              "output_chars": 7785,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"0a21bb32264c7d75\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"unknown\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is anchored to the pinned repository, commit, git tree, file, blob OID, and source SHA-256 for the locator at interfaces/innerkits/wm/wm_animation_common.h line 261 column 37 symbol animationParams.\",\"evidence_refs\":[\"34e200b7b93cfc683"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R2-S20261016-18c96f591a6dca1e",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+            "message": "persistedToolResults[0].artifact_sha256 must be SHA-256; persistedToolResults[0].evidence_ids must be non-empty",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R2-S20261016-18c96f591a6dca1e.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5027,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 461,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5488
+              },
+              "output_chars": 1176,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"18c96f591a6dca1e\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"previewer/include/wm_animation_common.h\",\"start_line\":200,\"end_line\":300,\"locator\":{\"line\":257,\"column\":37,\"symbol\":\"animationSystemParams\"}}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"18c96f591a6dca1e\",\"repository\":\"openharmony/window_window_manager\",\"commit\""
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R2-S20261016-18c96f591a6dca1e.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6103,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 2238,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 8341
+              },
+              "output_chars": 7020,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"18c96f591a6dca1e\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"not_met\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established for the pinned candidate: repository openharmony/window_window_manager at commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7, file previewer/include/wm_animation_common.h, locator line 257 column 37, symbol animationSystemP"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R1-S20261015-1fae182b80e03b31",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 7708 (line 1 column 7709); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-1fae182b80e03b31.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5030,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 331,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5361
+              },
+              "output_chars": 943,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"1fae182b80e03b31\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"utils/include/ui_effect_controller_common.h\",\"start_line\":45,\"end_line\":61,\"symbol\":\"backgroundFilter_\"}},{\"tool_id\":\"evidence_obligation_query\",\"request\":{\"experiment_item_id\":\"1fae182b80e03b31\",\"obligation_scope\":\"A-EXP-01-EVIDENCE-GATE-01..06\"}},{\"tool_id\":\"fixed_commit_git_history\",\"reques"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-1fae182b80e03b31.turn2.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 6235,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 4000,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 10235
+              },
+              "output_chars": 7950,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"1fae182b80e03b31\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"partial\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established: the candidate locator is utils/include/ui_effect_controller_common.h line 53 column 16, symbol backgroundFilter_, in repository openharmony/window_window_manager at pinned commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R3-S20261017-1fae182b80e03b31",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 7209 (line 1 column 7210); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-1fae182b80e03b31.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5030,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 297,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5327
+              },
+              "output_chars": 875,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"1fae182b80e03b31\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"utils/include/ui_effect_controller_common.h\",\"start_line\":45,\"end_line\":61,\"symbol\":\"backgroundFilter_\"}},{\"tool_id\":\"evidence_obligation_query\",\"request\":{\"experiment_item_id\":\"1fae182b80e03b31\",\"obligation_scope\":\"all\"}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-1fae182b80e03b31.turn2.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 6231,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 4000,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 10231
+              },
+              "output_chars": 7597,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"1fae182b80e03b31\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"not_met\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established for the candidate: repository openharmony/window_window_manager at commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7, file utils/include/ui_effect_controller_common.h, line 53, symbol backgroundFilter_, with git_object_pro"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R1-S20261015-2fd1e3c72dcb88d7",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+            "message": "claims[4] has malformed evidence reference; claims[6] has malformed evidence reference; claims[7] has malformed evidence reference",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-2fd1e3c72dcb88d7.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5054,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 340,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5394
+              },
+              "output_chars": 914,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"2fd1e3c72dcb88d7\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"previewer/include/wm_animation_common.h\",\"line\":214,\"context_lines\":60}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"2fd1e3c72dcb88d7\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"previewer/include/"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-2fd1e3c72dcb88d7.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6252,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 2321,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 8573
+              },
+              "output_chars": 6693,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"2fd1e3c72dcb88d7\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"not_met\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established for the pinned repository, commit, git tree, file previewer/include/wm_animation_common.h, blob OID, and source SHA-256, with locator line 214 column 37 symbol animationConfig and operation read.\",\"evidence_refs\":[\"4b8e6"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R3-S20261017-42a9712edb1f3512",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+            "message": "persistedToolResults[0].artifact_sha256 must be SHA-256; persistedToolResults[0].evidence_ids must be non-empty",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-42a9712edb1f3512.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 4987,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 447,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5434
+              },
+              "output_chars": 1166,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"42a9712edb1f3512\",\"repository\":\"openharmony/distributeddatamgr_kv_store\",\"commit\":\"acfb22aac16161d8fb0cefb6cc9b92f04f489a80\",\"file\":\"frameworks/common/js_proxy.h\",\"start_line\":1,\"end_line\":120,\"locator\":{\"line\":42,\"column\":16,\"symbol\":\"instance_\"}}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"42a9712edb1f3512\",\"repository\":\"openharmony/distributeddatamgr_kv_store\",\"commit\":\"acfb22aac161"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-42a9712edb1f3512.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6055,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 1416,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 7471
+              },
+              "output_chars": 5142,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"42a9712edb1f3512\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"not_met\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established for the pinned locator: repository openharmony/distributeddatamgr_kv_store at commit acfb22aac16161d8fb0cefb6cc9b92f04f489a80, file frameworks/common/js_proxy.h, symbol instance_, line 42 column 16, with git_object_prove"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R3-S20261017-475c88d0bbd639f7",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 4540 (line 1 column 4541); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-475c88d0bbd639f7.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5017,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 350,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5367
+              },
+              "output_chars": 989,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"475c88d0bbd639f7\",\"repository\":\"openharmony/distributeddatamgr_kv_store\",\"commit\":\"acfb22aac16161d8fb0cefb6cc9b92f04f489a80\",\"file\":\"kvstoremock/external_inner_kit/napi/include/extension_context.h\",\"line\":81,\"context_lines\":40}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"475c88d0bbd639f7\",\"repository\":\"openharmony/distributeddatamgr_kv_store\",\"commit\":\"acfb22aac16161d8fb0cefb6cc9b92f04"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-475c88d0bbd639f7.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6215,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 2287,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 8502
+              },
+              "output_chars": 7091,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"475c88d0bbd639f7\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"unknown\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is anchored to repository openharmony/distributeddatamgr_kv_store at commit acfb22aac16161d8fb0cefb6cc9b92f04f489a80, file kvstoremock/external_inner_kit/napi/include/extension_context.h, symbol abilityInfo_ at line 81 column 16, with "
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R3-S20261017-9a7da68327154c5f",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+            "message": "persistedToolResults[0].artifact_sha256 must be SHA-256; persistedToolResults[0].evidence_ids must be non-empty",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-9a7da68327154c5f.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5070,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 381,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5451
+              },
+              "output_chars": 1049,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"9a7da68327154c5f\",\"repository\":\"openharmony/window_window_manager\",\"commit\":\"8b0d8fe1b973d865904c942c286b3d2a3b9b08e7\",\"file\":\"wm/include/picture_in_picture_controller.h\",\"start_line\":1,\"end_line\":120,\"locator\":{\"line\":50,\"column\":16,\"symbol\":\"mainWindowXComponentController_\"}}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"9a7da68327154c5f\",\"repository\":\"openharmony/window_window_manager"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R3-S20261017-9a7da68327154c5f.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6150,
+                "input_tokens_details": {
+                  "cached_tokens": 384
+                },
+                "output_tokens": 1351,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 7501
+              },
+              "output_chars": 4607,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"9a7da68327154c5f\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"partial\",\"claims\":[{\"claim_id\":\"claim-01\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established: the candidate locator is wm/include/picture_in_picture_controller.h line 50 column 16, symbol mainWindowXComponentController_, operation read, at commit 8b0d8fe1b973d865904c942c286b3d2a3b9b08e7 with verified Git p"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R1-S20261015-9b3f9c97a527cc4e",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "R2_AGENT_FAILED",
+            "message": "Expected ',' or ']' after array element in JSON at position 7596 (line 1 column 7597); missing final model output",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-9b3f9c97a527cc4e.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 5111,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 309,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5420
+              },
+              "output_chars": 914,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"9b3f9c97a527cc4e\",\"repository\":\"openharmony/communication_dsoftbus\",\"commit\":\"652f88e0261ce4d0610f73cc451c26b84d2597af\",\"file\":\"sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h\",\"line\":67,\"context_lines\":60}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"9b3f9c97a527cc4e\",\"symbol\":\"streamListener_\",\"file\":\"sdk/transmission/trans_channel/udp/stream/libsoftbus_st"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-9b3f9c97a527cc4e.turn2.response.json",
+              "http_status": 200,
+              "response_status": "incomplete",
+              "incomplete_details": {
+                "reason": "max_output_tokens"
+              },
+              "error": null,
+              "usage": {
+                "input_tokens": 6296,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 4000,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 10296
+              },
+              "output_chars": 8020,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"9b3f9c97a527cc4e\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"partial\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established for the pinned candidate: repository openharmony/communication_dsoftbus at commit 652f88e0261ce4d0610f73cc451c26b84d2597af, file sdk/transmission/trans_channel/udp/stream/libsoftbus_stream/stream_manager.h, symbol stream"
+            }
+          ]
+        },
+        {
+          "run_id": "A-EXP-01-main-R2-R1-S20261015-a434fff861916fd3",
+          "group": "R2",
+          "stored_failure": {
+            "status": "failed",
+            "failure_code": "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE",
+            "message": "persistedToolResults[0].artifact_sha256 must be SHA-256; persistedToolResults[0].evidence_ids must be non-empty",
+            "retries": 0,
+            "timed_out": false,
+            "budget_exhausted": false
+          },
+          "raw_response_observations": [
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-a434fff861916fd3.turn1.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 4969,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 361,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 5330
+              },
+              "output_chars": 1029,
+              "output_head": "{\"actions\":[{\"tool_id\":\"fixed_source_excerpt\",\"request\":{\"experiment_item_id\":\"a434fff861916fd3\",\"repository\":\"openharmony/distributeddatamgr_kv_store\",\"commit\":\"acfb22aac16161d8fb0cefb6cc9b92f04f489a80\",\"file\":\"frameworks/common/js_proxy.h\",\"start_line\":1,\"end_line\":120,\"locator\":{\"line\":37,\"column\":9,\"symbol\":\"instance_\"}}},{\"tool_id\":\"detector_symbol_parse_summary\",\"request\":{\"experiment_item_id\":\"a434fff861916fd3\",\"repository\":\"openharmony/distributeddatamgr_kv_store\",\"commit\":\"acfb22aac1616"
+            },
+            {
+              "path": "raw_model_responses/R2/A-EXP-01-main-R2-R1-S20261015-a434fff861916fd3.turn2.response.json",
+              "http_status": 200,
+              "response_status": "completed",
+              "incomplete_details": null,
+              "error": null,
+              "usage": {
+                "input_tokens": 6019,
+                "input_tokens_details": {
+                  "cached_tokens": 0
+                },
+                "output_tokens": 1855,
+                "output_tokens_details": {
+                  "reasoning_tokens": 0
+                },
+                "total_tokens": 7874
+              },
+              "output_chars": 6265,
+              "output_head": "{\"schema_version\":\"ohscanner.a-exp-01-model-output-v1\",\"experiment_item_id\":\"a434fff861916fd3\",\"mechanism_label\":\"unknown\",\"product_assessment\":\"unknown\",\"evidence_gate_status\":\"partial\",\"claims\":[{\"claim_id\":\"C1\",\"kind\":\"observation\",\"text\":\"Fixed target identity is established for the candidate: repository openharmony/distributeddatamgr_kv_store at pinned commit acfb22aac16161d8fb0cefb6cc9b92f04f489a80, file frameworks/common/js_proxy.h, symbol instance_, locator line 37 column 9, with git_obj"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "ablations": [
+    {
+      "ablation_id": "ABL-NO-AST",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "completed": 130,
+      "failed": 5,
+      "failure_codes": {
+        "none": 130,
+        "R2_AGENT_FAILED": 4,
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 1
+      },
+      "model_provider_attempts": 270,
+      "tool_calls": 410,
+      "tool_statuses": {
+        "ok": 409,
+        "failed": 1
+      },
+      "usage": {
+        "input_tokens": 1373265,
+        "output_tokens": 346666,
+        "total_tokens": 1719931
+      },
+      "reference_cost_usd_upper_bound": 0.8989696949999999,
+      "wall_ms": {
+        "count": 135,
+        "min": 17238,
+        "max": 67540,
+        "mean": 38587.2,
+        "median": 37600,
+        "p95": 54984,
+        "variance": 89347849.52296293
+      },
+      "labels": {
+        "unknown": 131,
+        "missing_or_invalid": 4
+      },
+      "evidence_gate_status": {
+        "not_met": 64,
+        "unknown": 45,
+        "partial": 22,
+        "missing_or_invalid": 4
+      },
+      "references": {
+        "claims": 1226,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 4,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 1,
+        "unique_cited_evidence_ids": 473
+      },
+      "independent_new_facts": {
+        "new_fact_claims": 711,
+        "all_claims": 1226,
+        "new_fact_claim_ratio": 0.5799347471451876,
+        "unique_cited_tool_result_evidence_ids": 386,
+        "tool_result_evidence_ratio": 0.8160676532769556
+      },
+      "run_validation": {
+        "valid": 134,
+        "invalid": 1
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "completed": 43,
+          "failed": 2,
+          "distinct_output_hashes": 44
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "completed": 42,
+          "failed": 3,
+          "distinct_output_hashes": 42
+        }
+      ],
+      "status": "complete"
+    },
+    {
+      "ablation_id": "ABL-NO-HISTORY-PATCH",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "completed": 113,
+      "failed": 22,
+      "failure_codes": {
+        "none": 113,
+        "R2_AGENT_FAILED": 5,
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 17
+      },
+      "model_provider_attempts": 270,
+      "tool_calls": 405,
+      "tool_statuses": {
+        "ok": 390,
+        "failed": 15
+      },
+      "usage": {
+        "input_tokens": 1473308,
+        "output_tokens": 358153,
+        "total_tokens": 1831461
+      },
+      "reference_cost_usd_upper_bound": 0.9524820899999998,
+      "wall_ms": {
+        "count": 135,
+        "min": 13036,
+        "max": 63548,
+        "mean": 37346.985185185185,
+        "median": 37313,
+        "p95": 51855,
+        "variance": 94639887.62941013
+      },
+      "labels": {
+        "unknown": 130,
+        "missing_or_invalid": 5
+      },
+      "evidence_gate_status": {
+        "not_met": 57,
+        "missing_or_invalid": 5,
+        "partial": 27,
+        "unknown": 46
+      },
+      "references": {
+        "claims": 1197,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 5,
+        "illegal_reference_count": 2,
+        "invalid_reference_runs": 17,
+        "unique_cited_evidence_ids": 457
+      },
+      "independent_new_facts": {
+        "new_fact_claims": 616,
+        "all_claims": 1197,
+        "new_fact_claim_ratio": 0.5146198830409356,
+        "unique_cited_tool_result_evidence_ids": 367,
+        "tool_result_evidence_ratio": 0.8030634573304157
+      },
+      "run_validation": {
+        "valid": 118,
+        "invalid": 17
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "completed": 37,
+          "failed": 8,
+          "distinct_output_hashes": 43
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "completed": 38,
+          "failed": 7,
+          "distinct_output_hashes": 43
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "completed": 38,
+          "failed": 7,
+          "distinct_output_hashes": 44
+        }
+      ],
+      "status": "complete"
+    },
+    {
+      "ablation_id": "ABL-ONE-TURN",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "completed": 135,
+      "failed": 0,
+      "failure_codes": {
+        "none": 135
+      },
+      "model_provider_attempts": 135,
+      "tool_calls": 0,
+      "tool_statuses": {},
+      "usage": {
+        "input_tokens": 645081,
+        "output_tokens": 294237,
+        "total_tokens": 939318
+      },
+      "reference_cost_usd_upper_bound": 0.5365964249999999,
+      "wall_ms": {
+        "count": 135,
+        "min": 9626,
+        "max": 63973,
+        "mean": 32994.27407407408,
+        "median": 32228,
+        "p95": 45864,
+        "variance": 60214534.64340192
+      },
+      "labels": {
+        "unknown": 135
+      },
+      "evidence_gate_status": {
+        "unknown": 64,
+        "not_met": 71
+      },
+      "references": {
+        "claims": 1302,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 0,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 0,
+        "unique_cited_evidence_ids": 90
+      },
+      "independent_new_facts": {
+        "new_fact_claims": 0,
+        "all_claims": 1302,
+        "new_fact_claim_ratio": 0,
+        "unique_cited_tool_result_evidence_ids": 0,
+        "tool_result_evidence_ratio": 0
+      },
+      "run_validation": {
+        "valid": 135,
+        "invalid": 0
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        }
+      ],
+      "status": "complete"
+    }
+  ],
+  "human_review_time": {
+    "R0": null,
+    "R1_blinded_review": null,
+    "R2_blinded_review": null,
+    "status": "not_measured_no_independent_human_sessions"
+  },
+  "cost_boundary": {
+    "reported_cost": "Official MiMo pay-as-you-go USD list-price upper bound using cache-miss input price.",
+    "actual_token_plan_billing": "unknown; subscription credit decrement and billing currency are not exposed",
+    "currency": "USD"
+  },
+  "precision_recall": {
+    "status": "not_computed",
+    "precision": null,
+    "recall": null,
+    "false_positive_count": null,
+    "false_negative_count": null,
+    "reason": "The frozen truth set is explicitly not eligible for accuracy metrics and no independent labelled accuracy dataset was supplied.",
+    "zero_fp_fn_claim": false
+  },
+  "limitations": [
+    "R0 has no executed independent human review sessions; its human time and outcomes remain unknown.",
+    "R1/R2 are model outputs, not truth. No model self-evaluation is used as ground truth.",
+    "R2 uses two provider turns per run to select tools and then finalize; its tool and compute budget is reported separately.",
+    "Provider cost is a pay-as-you-go reference upper bound, not observed Token Plan billing.",
+    "All failures, invalid JSON, missing outputs, illegal/missing references and missing run records remain in denominators."
+  ]
+}

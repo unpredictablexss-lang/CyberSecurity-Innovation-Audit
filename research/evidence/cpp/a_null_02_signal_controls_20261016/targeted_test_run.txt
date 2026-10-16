@@ -1,0 +1,29 @@
+argv: .venv-web/bin/python -m unittest tests.detectors.test_cpp_null_dereference_detector tests.detectors.test_cpp_null_dereference_signal_controls -v
+recorded_at: 2026-10-16T14:11:35+08:00
+test_manifest_and_matrix_identity_constants_are_stable (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_owner_approval_record_binds_approver_date_and_commit (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_package_is_exactly_the_preexisting_18_fixture_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureIntegrityTests) ... ok
+test_all_18_fixture_observations_match_matrix (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_combined_18_unit_run_retains_candidates_and_fails_closed (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_declares_exact_identity_and_scope (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_failed_and_not_analyzed_publish_no_safety_or_miss_claim (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_output_is_deterministic_across_replays (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_same_line_identical_sinks_keep_one_runner_identity (tests.detectors.test_cpp_null_dereference_detector.NullDereferenceFixtureRegressionTests) ... ok
+test_bounded_analysis_has_a_meaningful_wall_time_regression (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_combined_controls_keep_candidates_and_negative_controls_quiet (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_control_manifest_binds_all_four_categories_and_source_hashes (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_duplicate_identity_is_deduplicated_without_message_forgery (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_each_control_matches_expected_signal_and_coverage (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_maximum_unit_input_is_fail_closed (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_output_identity_is_stable_across_replays (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_partial_failed_and_not_analyzed_fail_closed_without_safety_claims (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+test_total_input_budget_is_enforced_without_dropping_coverage (tests.detectors.test_cpp_null_dereference_signal_controls.NullDereferenceSignalControlTests) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.875s
+
+OK
+real 1.21
+user 0.33
+sys 0.12
+exit_code: 0

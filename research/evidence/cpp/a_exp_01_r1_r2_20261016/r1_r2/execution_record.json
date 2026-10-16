@@ -1,0 +1,333 @@
+{
+  "schema_version": "ohscanner.a-exp-01-execution-record-v1",
+  "experiment_id": "A-EXP-01",
+  "generated_at_utc": "2026-10-16T07:10:09.414Z",
+  "model_binding": {
+    "path": "model_binding.json",
+    "sha256": "da60f5622066da4e021234c902a46c34761d14d01d09d276ac7764cd48d96a24",
+    "binding_id": "A-EXP-01-MODEL-BINDING-MIMO-V2.6-PRO-20261016"
+  },
+  "tool_adapter_authorization": {
+    "path": "tool_adapter_authorization.json",
+    "sha256": "e967d888c82b06e02561ea52c198e3879f8b33da9103417f0058952c29775bbc",
+    "authorization_id": "A-EXP-01-R2-ADAPTER-AUTH-20261016-UNBLOCK"
+  },
+  "fact_bundle_sha256": "c72147a4056a5c07cd4e60858b22970c784760fe53ab4c3c1f45d9751c5feb01",
+  "evidence_obligation_contract_sha256": "72f9a41d5392b8c6753cd8be4e95334fe3ba6a2b6a5e69adfa3df1cfaceadd1f",
+  "R0": {
+    "planned_runs": 135,
+    "executed_runs": 0,
+    "awaiting_independent_human_reviewer": 135,
+    "human_active_seconds": null,
+    "human_paused_seconds": null,
+    "status": "queue_ready_not_executed"
+  },
+  "R1": {
+    "planned_runs": 135,
+    "present_run_records": 135,
+    "completed": 128,
+    "failed": 7,
+    "missing": 0,
+    "model_provider_attempts": 135,
+    "tool_calls": 0,
+    "usage": {
+      "input_tokens": 553710,
+      "output_tokens": 230859,
+      "total_tokens": 784569,
+      "missing_usage_runs": 0
+    },
+    "reference_cost_usd_upper_bound_usd": 0.4417111799999999
+  },
+  "R2": {
+    "planned_runs": 135,
+    "present_run_records": 135,
+    "completed": 123,
+    "failed": 12,
+    "missing": 0,
+    "model_provider_attempts": 270,
+    "tool_calls": 540,
+    "usage": {
+      "input_tokens": 1523527,
+      "output_tokens": 358280,
+      "total_tokens": 1881807,
+      "missing_usage_runs": 0
+    },
+    "reference_cost_usd_upper_bound_usd": 0.974437845,
+    "extra_tool_budget_reported_separately": true
+  },
+  "ablations": [
+    {
+      "ablation_id": "ABL-NO-AST",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "completed": 130,
+      "failed": 5,
+      "failure_codes": {
+        "none": 130,
+        "R2_AGENT_FAILED": 4,
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 1
+      },
+      "model_provider_attempts": 270,
+      "tool_calls": 410,
+      "tool_statuses": {
+        "ok": 409,
+        "failed": 1
+      },
+      "usage": {
+        "input_tokens": 1373265,
+        "output_tokens": 346666,
+        "total_tokens": 1719931
+      },
+      "reference_cost_usd_upper_bound": 0.8989696949999999,
+      "wall_ms": {
+        "count": 135,
+        "min": 17238,
+        "max": 67540,
+        "mean": 38587.2,
+        "median": 37600,
+        "p95": 54984,
+        "variance": 89347849.52296293
+      },
+      "labels": {
+        "unknown": 131,
+        "missing_or_invalid": 4
+      },
+      "evidence_gate_status": {
+        "not_met": 64,
+        "unknown": 45,
+        "partial": 22,
+        "missing_or_invalid": 4
+      },
+      "references": {
+        "claims": 1226,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 4,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 1,
+        "unique_cited_evidence_ids": 473
+      },
+      "independent_new_facts": {
+        "new_fact_claims": 711,
+        "all_claims": 1226,
+        "new_fact_claim_ratio": 0.5799347471451876,
+        "unique_cited_tool_result_evidence_ids": 386,
+        "tool_result_evidence_ratio": 0.8160676532769556
+      },
+      "run_validation": {
+        "valid": 134,
+        "invalid": 1
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "completed": 43,
+          "failed": 2,
+          "distinct_output_hashes": 44
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "completed": 42,
+          "failed": 3,
+          "distinct_output_hashes": 42
+        }
+      ],
+      "status": "complete"
+    },
+    {
+      "ablation_id": "ABL-NO-HISTORY-PATCH",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "completed": 113,
+      "failed": 22,
+      "failure_codes": {
+        "none": 113,
+        "R2_AGENT_FAILED": 5,
+        "ILLEGAL_OR_MISSING_EVIDENCE_REFERENCE": 17
+      },
+      "model_provider_attempts": 270,
+      "tool_calls": 405,
+      "tool_statuses": {
+        "ok": 390,
+        "failed": 15
+      },
+      "usage": {
+        "input_tokens": 1473308,
+        "output_tokens": 358153,
+        "total_tokens": 1831461
+      },
+      "reference_cost_usd_upper_bound": 0.9524820899999998,
+      "wall_ms": {
+        "count": 135,
+        "min": 13036,
+        "max": 63548,
+        "mean": 37346.985185185185,
+        "median": 37313,
+        "p95": 51855,
+        "variance": 94639887.62941013
+      },
+      "labels": {
+        "unknown": 130,
+        "missing_or_invalid": 5
+      },
+      "evidence_gate_status": {
+        "not_met": 57,
+        "missing_or_invalid": 5,
+        "partial": 27,
+        "unknown": 46
+      },
+      "references": {
+        "claims": 1197,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 5,
+        "illegal_reference_count": 2,
+        "invalid_reference_runs": 17,
+        "unique_cited_evidence_ids": 457
+      },
+      "independent_new_facts": {
+        "new_fact_claims": 616,
+        "all_claims": 1197,
+        "new_fact_claim_ratio": 0.5146198830409356,
+        "unique_cited_tool_result_evidence_ids": 367,
+        "tool_result_evidence_ratio": 0.8030634573304157
+      },
+      "run_validation": {
+        "valid": 118,
+        "invalid": 17
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "completed": 37,
+          "failed": 8,
+          "distinct_output_hashes": 43
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "completed": 38,
+          "failed": 7,
+          "distinct_output_hashes": 43
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "completed": 38,
+          "failed": 7,
+          "distinct_output_hashes": 44
+        }
+      ],
+      "status": "complete"
+    },
+    {
+      "ablation_id": "ABL-ONE-TURN",
+      "planned_runs": 135,
+      "present_run_records": 135,
+      "missing_run_records": 0,
+      "completed": 135,
+      "failed": 0,
+      "failure_codes": {
+        "none": 135
+      },
+      "model_provider_attempts": 135,
+      "tool_calls": 0,
+      "tool_statuses": {},
+      "usage": {
+        "input_tokens": 645081,
+        "output_tokens": 294237,
+        "total_tokens": 939318
+      },
+      "reference_cost_usd_upper_bound": 0.5365964249999999,
+      "wall_ms": {
+        "count": 135,
+        "min": 9626,
+        "max": 63973,
+        "mean": 32994.27407407408,
+        "median": 32228,
+        "p95": 45864,
+        "variance": 60214534.64340192
+      },
+      "labels": {
+        "unknown": 135
+      },
+      "evidence_gate_status": {
+        "unknown": 64,
+        "not_met": 71
+      },
+      "references": {
+        "claims": 1302,
+        "missing_or_empty_reference_claims": 0,
+        "runs_without_any_claims": 0,
+        "illegal_reference_count": 0,
+        "invalid_reference_runs": 0,
+        "unique_cited_evidence_ids": 90
+      },
+      "independent_new_facts": {
+        "new_fact_claims": 0,
+        "all_claims": 1302,
+        "new_fact_claim_ratio": 0,
+        "unique_cited_tool_result_evidence_ids": 0,
+        "tool_result_evidence_ratio": 0
+      },
+      "run_validation": {
+        "valid": 135,
+        "invalid": 0
+      },
+      "per_repetition": [
+        {
+          "repetition": 1,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        },
+        {
+          "repetition": 2,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        },
+        {
+          "repetition": 3,
+          "planned": 45,
+          "present": 45,
+          "completed": 45,
+          "failed": 0,
+          "distinct_output_hashes": 45
+        }
+      ],
+      "status": "complete"
+    }
+  ],
+  "repetitions_reported": [
+    1,
+    2,
+    3
+  ],
+  "retries_used": 0,
+  "best_run_selected": false,
+  "truth_or_sealed_data_sent": false,
+  "model_self_eval_used_as_truth": false,
+  "historical_or_vulnerability_state_modified": false,
+  "actual_token_plan_billing": "unknown"
+}

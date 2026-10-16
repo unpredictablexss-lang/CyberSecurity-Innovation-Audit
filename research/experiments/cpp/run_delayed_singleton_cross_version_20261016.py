@@ -16,6 +16,7 @@ import platform
 import re
 import shutil
 import subprocess
+import sys
 import time
 from typing import Any, Mapping, Sequence
 
@@ -23,6 +24,7 @@ from src.ohscanner.cross_version import build_package, enrich_diagnostic_identit
 from src.ohscanner.execution import run_fixed_commit_scan
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.git_source import _git
+from src.ohscanner.resource import finish_resource_monitor, start_resource_monitor
 from src.ohscanner.poc.cpp_shared_ptr_race import (
     TSAN_MARKERS,
     _build,
@@ -199,6 +201,8 @@ def build_version_matrix(repo: Path, output: Path) -> list[dict[str, Any]]:
             "source_path": SOURCE_PATH,
             "source_blob_oid": blob,
             "source_sha256": sha256_bytes(data) if data is not None else None,
+            "source_bytes": len(data) if data is not None else None,
+            "source_lines": len(data.splitlines()) if data is not None else None,
             "snapshot_sha256": report["snapshot_sha256"],
             "report_path": report_path.relative_to(output).as_posix(),
             "comparison_role": "version_matrix",
@@ -249,6 +253,8 @@ def run_boundary_static(
             "subject": meta["subject"],
             "source_blob_oid": blob,
             "source_sha256": sha256_bytes(data) if data is not None else None,
+            "source_bytes": len(data) if data is not None else None,
+            "source_lines": len(data.splitlines()) if data is not None else None,
             "snapshot_sha256": report["snapshot_sha256"] if report else snapshot_digest(()),
             "report_path": report_path,
             "diagnostic_count": report["diagnostic_count"] if report else 0,
@@ -734,7 +740,13 @@ def build_manifest(
                 "historical_id_note": (
                     "These IDs are preserved observations from this run; older report IDs are not recomputed or rewritten."
                 ),
-                "not_present_evidence_ids": ["tree-absence-pre-introduction"],
+                "not_present_evidence_ids": [
+                    "tree-absence-pre-introduction",
+                    "patch-introduction",
+                    "call-path-controlled-component",
+                    "boundary-regression",
+                ],
+                "not_present_boundary_support": "not_present",
                 "impact_by_blob": impact_by_blob,
             }
         ],
@@ -748,6 +760,97 @@ def build_manifest(
     manifest_path = output / "comparison-manifest.json"
     write_json(manifest_path, manifest)
     return manifest_path
+
+
+def canonical_digest(value: Any) -> str:
+    payload = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return sha256_bytes(payload)
+
+
+def build_coverage_invariance(
+    version_rows: Sequence[Mapping[str, Any]],
+    boundary_rows: Sequence[Mapping[str, Any]],
+    *,
+    shard_size: int,
+) -> dict[str, Any]:
+    projection = [
+        {
+            "ref": row.get("ref"),
+            "commit": row.get("commit"),
+            "tree": row.get("tree"),
+            "source_blob_oid": row.get("source_blob_oid"),
+            "source_sha256": row.get("source_sha256"),
+            "coverage_status": row.get("coverage_status"),
+            "diagnostic_count": row.get("diagnostic_count"),
+        }
+        for row in list(version_rows) + list(boundary_rows)
+    ]
+    shards = [
+        projection[index:index + shard_size]
+        for index in range(0, len(projection), shard_size)
+    ]
+    flattened = [row for shard in shards for row in shard]
+    return {
+        "schema_version": 1,
+        "kind": "ohscanner.cross-version-coverage-invariance.v1",
+        "status": "proved_for_ordered_shard_aggregation" if flattened == projection else "failed",
+        "reference": "single ordered version/boundary row stream",
+        "shard_size": shard_size,
+        "shard_count": len(shards),
+        "row_count": len(projection),
+        "reference_digest": canonical_digest(projection),
+        "sharded_digest": canonical_digest(flattened),
+        "scope": (
+            "Sharding changes scheduling and aggregation only. Exact commits, trees, "
+            "blobs, source hashes, detector coverage and unknown states remain unchanged."
+        ),
+    }
+
+
+def build_performance_summary(
+    *,
+    started: Mapping[str, Any],
+    version_rows: Sequence[Mapping[str, Any]],
+    boundary_rows: Sequence[Mapping[str, Any]],
+    output: Path,
+    failures: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    monitor = finish_resource_monitor(dict(started))
+    source_rows = [row for row in list(version_rows) + list(boundary_rows)]
+    artifacts = [
+        path for path in output.rglob("*") if path.is_file()
+    ]
+    return {
+        "schema_version": 1,
+        "kind": "ohscanner.cross-version-performance.v1",
+        "wall_seconds": monitor["wall_seconds"],
+        "rss": {
+            "peak_bytes": monitor["peak_rss_bytes"],
+            "measured": monitor["rss_measured"],
+            "scope": "current research runner process; child compiler/PoC peak RSS is unknown",
+            "start": monitor["start_rss"],
+            "end": monitor["end_rss"],
+        },
+        "files": {
+            "version_rows": len(version_rows),
+            "boundary_rows": len(boundary_rows),
+            "source_files_bound": sum(
+                row.get("source_blob_oid") is not None for row in source_rows
+            ),
+            "source_bytes": sum(int(row.get("source_bytes") or 0) for row in source_rows),
+            "source_lines": sum(int(row.get("source_lines") or 0) for row in source_rows),
+            "output_files": len(artifacts),
+            "output_bytes": sum(path.stat().st_size for path in artifacts),
+        },
+        "failures": list(failures),
+        "resource_budget": {
+            "wall_seconds": None,
+            "source_scope": "one exact source path per fixed version/boundary row",
+            "dynamic_repeats_are_explicit": True,
+        },
+    }
 
 
 def _load_report(path: Path) -> dict[str, Any]:
@@ -764,7 +867,21 @@ def main() -> None:
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--readers", type=int, default=4)
     parser.add_argument("--iterations", type=int, default=20000)
+    parser.add_argument("--shard-size", type=int, default=8)
+    parser.add_argument(
+        "--truth-manifest",
+        type=Path,
+        default=ROOT / "research/evidence/cpp/independent_truth_review_20261015/truth_set_manifest.json",
+    )
+    parser.add_argument(
+        "--prediction-manifest",
+        type=Path,
+        default=ROOT / "research/evidence/cpp/independent_truth_review_20261015/independent_truth_review.json",
+    )
     args = parser.parse_args()
+    if args.shard_size <= 0:
+        parser.error("--shard-size must be positive")
+    started = start_resource_monitor()
     repo = args.repo_dir.resolve()
     output = args.output.resolve()
     if output.exists() and any(output.iterdir()):
@@ -788,7 +905,46 @@ def main() -> None:
         static_rows,
         regression_path,
     )
-    package = build_package(manifest_path, repo, output)
+    package = build_package(
+        manifest_path,
+        repo,
+        output,
+        argv=tuple(sys.argv),
+        truth_manifest_path=args.truth_manifest,
+        prediction_manifest_path=args.prediction_manifest,
+    )
+
+    coverage = build_coverage_invariance(
+        version_rows,
+        static_rows,
+        shard_size=args.shard_size,
+    )
+    coverage_path = output / "coverage-invariance.json"
+    write_json(coverage_path, coverage)
+    failures = []
+    for case in regression["cases"]:
+        dynamic = case.get("dynamic") or {}
+        outcome = dynamic.get("regression_outcome")
+        if case.get("impact_support") == "unknown" or outcome in {
+            "blocked", "harness_invalid", "unstable"
+        }:
+            failures.append({
+                "kind": "boundary_regression",
+                "role": case.get("role"),
+                "commit": case.get("commit"),
+                "impact_support": case.get("impact_support"),
+                "dynamic_outcome": outcome,
+                "build_outcome": dynamic.get("build", {}).get("outcome"),
+            })
+    performance = build_performance_summary(
+        started=started,
+        version_rows=version_rows,
+        boundary_rows=static_rows,
+        output=output,
+        failures=failures,
+    )
+    performance_path = output / "performance.json"
+    write_json(performance_path, performance)
 
     summary = {
         "schema_version": 1,
@@ -810,6 +966,37 @@ def main() -> None:
         ],
         "network_actions": "none",
         "git_mutations": "none",
+        "invocation": {
+            "argv": list(sys.argv),
+            "argv_exact": True,
+            "working_directory": str(Path.cwd()),
+        },
+        "coverage_invariance": {
+            "status": coverage["status"],
+            "sha256": sha256_file(coverage_path),
+            "reference_digest": coverage["reference_digest"],
+            "sharded_digest": coverage["sharded_digest"],
+        },
+        "performance": {
+            "sha256": sha256_file(performance_path),
+            "wall_seconds": performance["wall_seconds"],
+            "peak_rss_bytes": performance["rss"]["peak_bytes"],
+            "rss_measured": performance["rss"]["measured"],
+            "files": performance["files"],
+            "failure_count": len(failures),
+        },
+        "accuracy_evaluation": package["accuracy_evaluation"],
+        "known_risks": [
+            "Candidate observation relations are not vulnerability propagation proof.",
+            "Component affected/fixed/not_present states do not prove product entry, privilege, deployment or CIA impact.",
+            "Zero candidate observations and clean controls do not prove safety.",
+            "Precision/Recall remains blocked unless an independent reliable truth holdout is complete.",
+        ],
+        "next_steps": [
+            "Bind product components to per-component actual SHAs and collect product build/entry/privilege/CIA evidence.",
+            "Freeze and execute an independent vulnerable/fixed/safe/unrelated holdout without model-derived truth.",
+            "Measure child-process peak RSS separately from the runner-process RSS reported here.",
+        ],
     }
     write_json(output / "run-summary.json", summary)
     print(json.dumps(summary, ensure_ascii=False, indent=2))

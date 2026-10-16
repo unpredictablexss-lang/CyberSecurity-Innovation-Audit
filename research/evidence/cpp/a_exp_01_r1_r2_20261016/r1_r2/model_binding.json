@@ -1,0 +1,51 @@
+{
+  "schema_version": "ohscanner.a-exp-01-model-binding-v1",
+  "experiment_id": "A-EXP-01",
+  "binding_id": "A-EXP-01-MODEL-BINDING-MIMO-V2.6-PRO-20261016",
+  "status": "bound_execution_authorized",
+  "execution": {
+    "model_calls_executed": 0,
+    "model_results_generated": false,
+    "contract_only": false
+  },
+  "model": {
+    "provider": "Xiaomi MiMo Token Plan",
+    "model_name": "mimo-v2.6-pro",
+    "model_version": "mimo-v2.6-pro",
+    "api_version": "v1",
+    "api_endpoint": "https://token-plan-cn.xiaomimimo.com/v1/responses",
+    "endpoint_kind": "remote_http_api"
+  },
+  "data_processing": {
+    "terms_reference": "https://privacy.mi.com/XiaomiMiMoPlatform/zh_CN/",
+    "terms_version": "effective-2026-10-10",
+    "review_status": "approved",
+    "data_classes": [
+      "public OpenHarmony source excerpts and immutable Git identifiers",
+      "frozen OHScanner candidate metadata and supplied fact/evidence IDs",
+      "frozen prompts, schemas and EvidenceObligation definitions",
+      "bounded read-only tool request/response metadata"
+    ],
+    "retention": "Provider policy retains information only for the necessary purpose period or legal requirement, then deletes or anonymizes after purpose completion, confirmed deletion/cancellation, or service termination; exact API log duration is not separately stated.",
+    "training_use": "No model training or other use of provided text without prior consent; A-EXP-01 gives no training consent.",
+    "region": "PRC for service used in the PRC; policy states information is stored in the PRC.",
+    "truth_or_sealed_data_allowed": false
+  },
+  "pricing": {
+    "pricing_record_id": "MIMO-MIMO-V2.6-PRO-PAYG-USD-2026-10-08",
+    "currency": "USD",
+    "input_token_unit_price": 0.435,
+    "output_token_unit_price": 0.87,
+    "effective_from": "2026-10-08",
+    "source_reference": "https://mimo.mi.com/docs/zh-CN/price/pay-as-you-go",
+    "source_sha256": "1878d636b33213e511cbf94d0739268903082bca8db928d285cb0e013796be9d",
+    "reviewed_by": "requesting_user_via_current_A-EXP-01_goal"
+  },
+  "approval": {
+    "authorizer_id": "requesting_user_via_current_A-EXP-01_goal",
+    "authorizer_role": "experiment_owner",
+    "authorization_reference": "Current goal explicitly requests A-EXP-01 R0/R1/R2 execution and authorizes only bounded read-only runtime tools; this binding limits transfer to public non-sensitive frozen data and excludes truth/sealed data.",
+    "authorized_at": "2026-10-16T06:11:35.230Z",
+    "execution_authorized": true
+  }
+}

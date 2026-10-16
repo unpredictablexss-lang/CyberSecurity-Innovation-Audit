@@ -1,0 +1,86 @@
+{
+  "schema_version": "ohscanner.a-exp-01-fixed-evidence-obligation-contract-v1",
+  "experiment_id": "A-EXP-01",
+  "source_manifest_field": "experiment_manifest.json#fixed_evidence_gate",
+  "shared_by_groups": [
+    "R0",
+    "R1",
+    "R2"
+  ],
+  "evaluation_criterion": "A reportable conclusion requires every obligation to be met with current-item fact/evidence IDs; unknown, partial, failed, timed-out, or missing evidence blocks promotion.",
+  "obligations": [
+    {
+      "obligation_id": "A-EXP-01-EVIDENCE-GATE-01",
+      "name": "fixed target identity",
+      "initial_status": "unknown_pending_run",
+      "allowed_status": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ],
+      "citation_requirement": "current-item fact_id/evidence_id or persisted current-item tool-result evidence_id"
+    },
+    {
+      "obligation_id": "A-EXP-01-EVIDENCE-GATE-02",
+      "name": "realistic entry/privilege boundary",
+      "initial_status": "unknown",
+      "allowed_status": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ],
+      "citation_requirement": "current-item fact_id/evidence_id or persisted current-item tool-result evidence_id"
+    },
+    {
+      "obligation_id": "A-EXP-01-EVIDENCE-GATE-03",
+      "name": "reachable sensitive operation",
+      "initial_status": "unknown",
+      "allowed_status": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ],
+      "citation_requirement": "current-item fact_id/evidence_id or persisted current-item tool-result evidence_id"
+    },
+    {
+      "obligation_id": "A-EXP-01-EVIDENCE-GATE-04",
+      "name": "trigger conditions",
+      "initial_status": "unknown",
+      "allowed_status": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ],
+      "citation_requirement": "current-item fact_id/evidence_id or persisted current-item tool-result evidence_id"
+    },
+    {
+      "obligation_id": "A-EXP-01-EVIDENCE-GATE-05",
+      "name": "concrete CIA impact",
+      "initial_status": "unknown",
+      "allowed_status": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ],
+      "citation_requirement": "current-item fact_id/evidence_id or persisted current-item tool-result evidence_id"
+    },
+    {
+      "obligation_id": "A-EXP-01-EVIDENCE-GATE-06",
+      "name": "auditable evidence",
+      "initial_status": "unknown",
+      "allowed_status": [
+        "met",
+        "partial",
+        "not_met",
+        "unknown"
+      ],
+      "citation_requirement": "current-item fact_id/evidence_id or persisted current-item tool-result evidence_id"
+    }
+  ],
+  "frozen_package_gap": "The frozen initial_candidate_set.json and evidence_catalog.json do not contain per-item serialized EvidenceObligation records. This contract binds the six gate names and identical criteria but cannot substitute for missing run-time obligation evidence."
+}

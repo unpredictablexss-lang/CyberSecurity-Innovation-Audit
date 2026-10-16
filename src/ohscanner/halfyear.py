@@ -11,20 +11,34 @@ from __future__ import annotations
 from collections import Counter
 from datetime import datetime
 import hashlib
+import inspect
 import json
 from pathlib import Path
 import re
+import shutil
+import time
 from typing import Any, Mapping, Sequence
 from zoneinfo import ZoneInfo
 
 from .contracts import safe_relative_path
 from .detectors.catalog import build_registry
 from .execution import run_fixed_commit_scan
+from .git_batch import batch_blob_identities
 from .git_source import SOURCE_LANGUAGES, _git
+from .resource import finish_resource_monitor, start_resource_monitor
 
 MVP_KIND = "ohscanner.halfyear-candidate-mvp-v1"
+CACHE_SCHEMA = "ohscanner.halfyear-scan-cache.v1"
 MAX_WINDOW_COMMITS = 5000
 BRANCH_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,199}")
+DEFAULT_BUDGET = {
+    "max_wall_seconds": None,
+    "max_source_files": 2000,
+    "max_source_bytes": 32 * 1024 * 1024,
+    "max_blob_bytes": 1024 * 1024,
+    "max_git_batch_objects": 256,
+    "max_output_bytes": 256 * 1024 * 1024,
+}
 
 
 def _text(value: bytes) -> str:
@@ -231,13 +245,27 @@ def _source_manifest(
     commit: str,
     changes: Sequence[Mapping[str, str]],
     tree_paths: set[str],
+    *,
+    max_git_batch_objects: int = 256,
 ) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
     rows: list[dict[str, Any]] = []
     errors: list[dict[str, str]] = []
-    for change in sorted(
+    source_changes = sorted(
         (item for item in changes if _source_path(item["path"])),
         key=lambda item: item["path"],
-    ):
+    )
+    requests: list[tuple[str, str]] = []
+    for change in source_changes:
+        path = change["path"]
+        revision = commit if path in tree_paths else parent
+        if revision is not None:
+            requests.append((revision, path))
+    identities = batch_blob_identities(
+        repo,
+        requests,
+        max_objects_per_batch=max_git_batch_objects,
+    ) if requests else {}
+    for change in source_changes:
         path = change["path"]
         present = path in tree_paths
         revision = commit if present else parent
@@ -250,29 +278,30 @@ def _source_manifest(
             "source_blob_oid": None,
             "source_sha256": None,
             "source_bytes": None,
+            "source_lines": None,
             "binding_status": "unknown",
         }
         if revision is None:
             row["binding_status"] = "missing_baseline_parent"
             errors.append({"path": path, "reason": row["binding_status"]})
         else:
-            try:
-                identity = _blob_identity(repo, revision, path)
-                identity_status = identity.pop("status", "unknown")
-                row.update(identity)
-                row["binding_revision"] = revision
-                if identity_status == "bound":
-                    row["binding_status"] = "bound"
-                    row["scan_eligible"] = present
-                else:
-                    row["binding_status"] = identity_status
-                    errors.append({"path": path, "reason": row["binding_status"]})
-            except Exception as error:
-                kind = _failure_kind(error)
-                row["binding_status"] = kind
-                row["error_type"] = type(error).__name__
-                row["error"] = str(error)[:1000]
-                errors.append({"path": path, "reason": kind})
+            identity = identities.get((revision, path), {
+                "status": "missing_git_object",
+                "revision": revision,
+                "source_blob_oid": None,
+                "source_sha256": None,
+                "source_bytes": None,
+                "source_lines": None,
+            })
+            identity_status = identity.pop("status", "unknown")
+            row.update(identity)
+            row["binding_revision"] = revision
+            if identity_status == "bound":
+                row["binding_status"] = "bound"
+                row["scan_eligible"] = present
+            else:
+                row["binding_status"] = identity_status
+                errors.append({"path": path, "reason": row["binding_status"]})
         rows.append(row)
     return rows, errors
 
@@ -419,6 +448,173 @@ def _artifact(path: Path, root: Path | None = None) -> dict[str, Any]:
     }
 
 
+def _canonical_digest(value: Any) -> str:
+    payload = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _detector_bindings(registry: Any) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for detector in registry.detectors():
+        module_path = inspect.getsourcefile(type(detector))
+        implementation_sha256 = None
+        if module_path:
+            implementation_sha256 = hashlib.sha256(
+                Path(module_path).read_bytes()
+            ).hexdigest()
+        rows.append({
+            "id": detector.detector_id,
+            "version": detector.version,
+            "model_version": getattr(detector, "model_version", None),
+            "implementation_sha256": implementation_sha256,
+        })
+    return rows
+
+
+def _budget(
+    *,
+    max_wall_seconds: float | None,
+    max_source_files: int,
+    max_source_bytes: int,
+    max_blob_bytes: int,
+    max_git_batch_objects: int,
+    max_output_bytes: int,
+) -> dict[str, Any]:
+    values = {
+        "max_wall_seconds": max_wall_seconds,
+        "max_source_files": max_source_files,
+        "max_source_bytes": max_source_bytes,
+        "max_blob_bytes": max_blob_bytes,
+        "max_git_batch_objects": max_git_batch_objects,
+        "max_output_bytes": max_output_bytes,
+    }
+    for key, value in values.items():
+        if key == "max_wall_seconds":
+            if value is not None and value <= 0:
+                raise ValueError("max_wall_seconds must be positive")
+        elif value <= 0:
+            raise ValueError(key + " must be positive")
+    return values
+
+
+def _budget_status(
+    entry: Mapping[str, Any],
+    budget: Mapping[str, Any],
+) -> tuple[bool, str | None]:
+    rows = [
+        item for item in entry.get("source_manifest", [])
+        if item.get("scan_eligible") and item.get("binding_status") == "bound"
+    ]
+    files = len(rows)
+    source_bytes = sum(int(item.get("source_bytes") or 0) for item in rows)
+    source_lines = sum(int(item.get("source_lines") or 0) for item in rows)
+    entry["resource_usage"] = {
+        "source_files": files,
+        "source_bytes": source_bytes,
+        "source_lines": source_lines,
+    }
+    oversized = [
+        item["path"] for item in rows
+        if int(item.get("source_bytes") or 0) > budget["max_blob_bytes"]
+    ]
+    if oversized:
+        return True, "max_blob_bytes exceeded: " + ", ".join(oversized[:8])
+    if files > budget["max_source_files"]:
+        return True, "max_source_files exceeded"
+    if source_bytes > budget["max_source_bytes"]:
+        return True, "max_source_bytes exceeded"
+    return False, None
+
+
+def _cache_key(
+    repository: str,
+    entry: Mapping[str, Any],
+    detector_bindings: Sequence[Mapping[str, Any]],
+    budget: Mapping[str, Any],
+) -> str:
+    payload = {
+        "cache_schema": CACHE_SCHEMA,
+        "repository": repository,
+        "commit": entry.get("commit"),
+        "parent": entry.get("parent"),
+        "git_tree": entry.get("git_tree"),
+        "profile_id": entry.get("profile_id"),
+        "source_manifest": entry.get("source_manifest", []),
+        "detector_bindings": list(detector_bindings),
+        "budget": dict(budget),
+    }
+    return _canonical_digest(payload)
+
+
+def _cache_load(
+    cache_dir: Path,
+    cache_key: str,
+    out_dir: Path,
+) -> dict[str, Any] | None:
+    record_path = cache_dir / cache_key[:2] / cache_key / "record.json"
+    if not record_path.is_file():
+        return None
+    record = json.loads(record_path.read_text(encoding="utf-8"))
+    if record.get("cache_schema") != CACHE_SCHEMA or record.get("cache_key") != cache_key:
+        return None
+    files = record.get("files", {})
+    for relative, expected in files.items():
+        source = record_path.parent / "files" / relative
+        if not source.is_file():
+            return None
+        if hashlib.sha256(source.read_bytes()).hexdigest() != expected.get("sha256"):
+            return None
+    for relative in files:
+        source = record_path.parent / "files" / relative
+        target = out_dir / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    entry = record["entry"]
+    entry["cache_status"] = "hit"
+    return entry
+
+
+def _cache_store(
+    cache_dir: Path,
+    cache_key: str,
+    out_dir: Path,
+    entry: Mapping[str, Any],
+) -> None:
+    record_dir = cache_dir / cache_key[:2] / cache_key
+    files_dir = record_dir / "files"
+    files: dict[str, dict[str, Any]] = {}
+    for artifact in entry.get("artifacts", {}).values():
+        relative = artifact["path"]
+        source = out_dir / relative
+        if source.is_file():
+            target = files_dir / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, target)
+            files[relative] = {
+                "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                "bytes": source.stat().st_size,
+            }
+    record_dir.mkdir(parents=True, exist_ok=True)
+    stored = dict(entry)
+    stored["cache_status"] = "miss"
+    (record_dir / "record.json").write_text(
+        json.dumps(
+            {
+                "cache_schema": CACHE_SCHEMA,
+                "cache_key": cache_key,
+                "entry": stored,
+                "files": files,
+            },
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        ) + "\n",
+        encoding="utf-8",
+    )
+
+
 def _scan_commit(
     repo: Path,
     repository: str,
@@ -426,6 +622,10 @@ def _scan_commit(
     parent: str | None,
     detector_ids: tuple[str, ...],
     commits_dir: Path,
+    *,
+    detector_bindings: Sequence[Mapping[str, Any]] = (),
+    cache_dir: Path | None = None,
+    budget: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     entry: dict[str, Any] = {
         "commit": commit,
@@ -455,8 +655,15 @@ def _scan_commit(
         "candidates": [],
         "rejected_candidates": [],
         "artifacts": {},
+        "cache_status": "not_used",
+        "resource_usage": {
+            "source_files": 0,
+            "source_bytes": 0,
+            "source_lines": 0,
+        },
         "limitations": [],
     }
+    budget = dict(budget or DEFAULT_BUDGET)
     try:
         entry["git_tree"] = _git_text(repo, "rev-parse", commit + "^{tree}").strip()
         if parent is None:
@@ -473,6 +680,7 @@ def _scan_commit(
         tree_paths = _tree_paths(repo, commit)
         manifest, source_identity_errors = _source_manifest(
             repo, parent, commit, changes, tree_paths,
+            max_git_batch_objects=budget["max_git_batch_objects"],
         )
         present = [item["path"] for item in manifest if item["scan_eligible"]]
         deleted = [
@@ -483,6 +691,24 @@ def _scan_commit(
             item["path"] for item in manifest
             if item["present_in_commit"] and item["binding_status"] == "not_blob"
         ]
+        entry["source_manifest"] = manifest
+        entry["source_identity_errors"] = source_identity_errors
+        budget_exceeded, budget_reason = _budget_status(entry, budget)
+        if budget_exceeded:
+            entry.update({
+                "change_status": "resource_budget_exceeded",
+                "scan_status": "unexecuted",
+                "execution_status": "unexecuted",
+                "coverage_status": "unexecuted",
+                "candidate_count_status": "unexecuted_budget_exceeded",
+                "limitations": [
+                    "Resource budget exceeded before detector execution; "
+                    "candidate_count remains unknown/not applicable, not zero."
+                ],
+            })
+            if budget_reason:
+                entry["limitations"].append(budget_reason)
+            return entry
         entry.update({
             "present_changed_source_paths": present,
             "deleted_changed_source_paths": deleted,
@@ -521,6 +747,14 @@ def _scan_commit(
             )
             return entry
         entry["change_status"] = "source_changes_present"
+        cache_key = _cache_key(
+            repository, entry, detector_bindings, budget,
+        ) if cache_dir is not None else None
+        if cache_dir is not None and cache_key is not None:
+            cached = _cache_load(cache_dir, cache_key, commits_dir.parent)
+            if cached is not None:
+                return cached
+        entry["cache_status"] = "miss" if cache_dir is not None else "not_used"
         json_out = commits_dir / (commit + ".json")
         md_out = commits_dir / (commit + ".md")
         report = run_fixed_commit_scan(
@@ -595,6 +829,8 @@ def _scan_commit(
             },
             "limitations": list(report.get("limitations", [])),
         })
+        if cache_dir is not None and cache_key is not None:
+            _cache_store(cache_dir, cache_key, commits_dir.parent, entry)
         if not complete:
             entry["limitations"].append(
                 "Candidate count is unknown for this commit because coverage or "
@@ -616,6 +852,7 @@ def _scan_commit(
         entry["failure_kind"] = failure_kind
         entry["error_type"] = type(error).__name__
         entry["error"] = str(error)[:2000]
+        entry["cache_status"] = "error"
         entry["limitations"].append(
             "This commit is blocked/unknown or failed; no zero candidate count, "
             "safe result, miss, or reportable conclusion is inferred from the failure."
@@ -636,6 +873,7 @@ def _render_markdown(report: Mapping[str, Any]) -> str:
         f"- Branch/ref: `{selection['branch']}`",
         f"- Window: `{selection['start']}` to `{selection['end']}` "
         f"(`{selection['time_basis']}`, `{selection['topology']}`, `{selection['boundary']}`)",
+        "- Commit time is descriptive and first-parent is a review topology only; neither proves vulnerability propagation.",
         f"- Baseline: `{selection['baseline']}`",
         f"- Endpoint: `{selection['endpoint']}`",
         f"- Selected commits: {len(selection['selected_commits'])}",
@@ -727,11 +965,34 @@ def run_halfyear_candidate_mvp(
     *,
     max_commits: int = MAX_WINDOW_COMMITS,
     argv: Sequence[str] | None = None,
+    shard_size: int = 32,
+    cache_dir: Path | None = None,
+    max_wall_seconds: float | None = None,
+    max_source_files: int = DEFAULT_BUDGET["max_source_files"],
+    max_source_bytes: int = DEFAULT_BUDGET["max_source_bytes"],
+    max_blob_bytes: int = DEFAULT_BUDGET["max_blob_bytes"],
+    max_git_batch_objects: int = DEFAULT_BUDGET["max_git_batch_objects"],
+    max_output_bytes: int = DEFAULT_BUDGET["max_output_bytes"],
 ) -> dict[str, Any]:
     """Run the bounded MVP and write JSON, Markdown, and a hash manifest."""
+    started = start_resource_monitor()
     repo = _validate_repo(Path(repo_dir))
+    if shard_size <= 0:
+        raise ValueError("shard_size must be positive")
     detectors = tuple(detector_ids)
     registry = build_registry(detectors)
+    detector_bindings = _detector_bindings(registry)
+    budget = _budget(
+        max_wall_seconds=max_wall_seconds,
+        max_source_files=max_source_files,
+        max_source_bytes=max_source_bytes,
+        max_blob_bytes=max_blob_bytes,
+        max_git_batch_objects=max_git_batch_objects,
+        max_output_bytes=max_output_bytes,
+    )
+    cache_root = Path(cache_dir).resolve() if cache_dir is not None else None
+    if cache_root is not None:
+        cache_root.mkdir(parents=True, exist_ok=True)
     selection = select_window(
         repo, branch, start, end, timezone, max_commits=max_commits,
     )
@@ -751,15 +1012,76 @@ def run_halfyear_candidate_mvp(
     entries: list[dict[str, Any]] = []
     candidates: list[dict[str, Any]] = []
     rejected_candidates: list[dict[str, Any]] = []
-    for item in selection["selected_commit_meta"]:
-        parent = _parent_of(repo, item["commit"])
-        entry = _scan_commit(
-            repo, repository, item["commit"], parent, detectors, commits_dir,
-        )
-        entry["committer_time"] = item["committer_time"]
-        entries.append(entry)
-        candidates.extend(entry.get("candidates", []))
-        rejected_candidates.extend(entry.get("rejected_candidates", []))
+    shard_rows: list[dict[str, Any]] = []
+    cache_hits = 0
+    cache_misses = 0
+    selected_meta = selection["selected_commit_meta"]
+    for shard_index, offset in enumerate(range(0, len(selected_meta), shard_size)):
+        shard_entries: list[dict[str, Any]] = []
+        for item in selected_meta[offset:offset + shard_size]:
+            if budget["max_wall_seconds"] is not None and (
+                time.perf_counter() - started["started_monotonic_seconds"]
+                >= budget["max_wall_seconds"]
+            ):
+                entry = {
+                    "commit": item["commit"],
+                    "parent": _parent_of(repo, item["commit"]),
+                    "committer_time": item["committer_time"],
+                    "change_status": "resource_budget_exceeded",
+                    "scan_status": "unexecuted",
+                    "execution_status": "unexecuted",
+                    "coverage_status": "unexecuted",
+                    "candidate_count_status": "unexecuted_budget_exceeded",
+                    "candidate_count": None,
+                    "reported_candidate_observations": 0,
+                    "rejected_candidate_observations": 0,
+                    "source_manifest": [],
+                    "source_identity_errors": [],
+                    "candidates": [],
+                    "rejected_candidates": [],
+                    "limitations": ["Wall-time budget exhausted before commit scan."],
+                }
+            else:
+                parent = _parent_of(repo, item["commit"])
+                entry = _scan_commit(
+                    repo, repository, item["commit"], parent, detectors,
+                    commits_dir,
+                    detector_bindings=detector_bindings,
+                    cache_dir=cache_root,
+                    budget=budget,
+                )
+                entry["committer_time"] = item["committer_time"]
+            shard_entries.append(entry)
+            entries.append(entry)
+            candidates.extend(entry.get("candidates", []))
+            rejected_candidates.extend(entry.get("rejected_candidates", []))
+            if entry.get("cache_status") == "hit":
+                cache_hits += 1
+            elif entry.get("cache_status") == "miss":
+                cache_misses += 1
+        shard_rows.append({
+            "shard_index": shard_index,
+            "commit_start": shard_entries[0]["commit"] if shard_entries else None,
+            "commit_end": shard_entries[-1]["commit"] if shard_entries else None,
+            "commit_count": len(shard_entries),
+            "source_files": sum(
+                int(item.get("resource_usage", {}).get("source_files", 0))
+                for item in shard_entries
+            ),
+            "source_bytes": sum(
+                int(item.get("resource_usage", {}).get("source_bytes", 0))
+                for item in shard_entries
+            ),
+            "source_lines": sum(
+                int(item.get("resource_usage", {}).get("source_lines", 0))
+                for item in shard_entries
+            ),
+            "reported_candidate_observations": sum(
+                int(item.get("reported_candidate_observations", 0))
+                for item in shard_entries
+            ),
+            "commit_ids": [item["commit"] for item in shard_entries],
+        })
 
     try:
         range_changes = _diff_rows(repo, selection["baseline"], selection["endpoint"])
@@ -796,11 +1118,17 @@ def run_halfyear_candidate_mvp(
         status = "completed"
 
     by_detector = Counter(row["detector_id"] for row in candidates)
+    binding_by_id = {
+        item["id"]: item for item in detector_bindings
+    }
     detector_rows = [
         {
             "id": detector.detector_id,
             "version": detector.version,
             "model_version": getattr(detector, "model_version", None),
+            "implementation_sha256": binding_by_id.get(
+                detector.detector_id, {}
+            ).get("implementation_sha256"),
             "supported_languages": list(detector.supported_languages),
             "report_schema_version": 2,
             "evidence_level": "candidate/unassessed",
@@ -838,6 +1166,13 @@ def run_halfyear_candidate_mvp(
         "window": selection,
         "detectors": detector_rows,
         "offline_git": True,
+        "execution_policy": {
+            "shard_size": shard_size,
+            "shard_count": len(shard_rows),
+            "aggregation": "deterministic ordered shard aggregation",
+            "incremental_cache": cache_root is not None,
+            "cache_schema": CACHE_SCHEMA if cache_root is not None else None,
+        },
         "git_access_policy": {
             "fetch": False,
             "checkout": False,
@@ -849,6 +1184,19 @@ def run_halfyear_candidate_mvp(
             "mode": "cli" if argv is not None else "programmatic",
             "argv": list(argv) if argv is not None else [],
             "argv_exact": argv is not None,
+        },
+        "selection_interpretation": {
+            "branch_ref": (
+                "The explicit local ref is resolved once to a full commit and recorded; "
+                "it is not treated as a moving source of truth."
+            ),
+            "committer_time": (
+                "Descriptive selection basis only; not vulnerability introduction order."
+            ),
+            "first_parent": (
+                "Review-window topology only; not vulnerability propagation evidence."
+            ),
+            "propagation_claim": False,
         },
         "diff_semantics": (
             "Each selected commit is compared with its first parent; only source paths "
@@ -865,6 +1213,54 @@ def run_halfyear_candidate_mvp(
         "commits": entries,
         "candidates": candidates,
         "rejected_candidates": rejected_candidates,
+        "shards": shard_rows,
+        "cache": {
+            "enabled": cache_root is not None,
+            "path": str(cache_root) if cache_root is not None else None,
+            "hits": cache_hits,
+            "misses": cache_misses,
+        },
+        "performance": {
+            "resource_monitor": finish_resource_monitor(started),
+            "resource_budget": budget,
+            "git_batch": {
+                "used": True,
+                "max_objects_per_batch": budget["max_git_batch_objects"],
+            },
+            "files": {
+                "changed_source_paths": sum(
+                    len(item.get("changed_source_paths", [])) for item in entries
+                ),
+                "present_changed_source_paths": sum(
+                    len(item.get("present_changed_source_paths", [])) for item in entries
+                ),
+                "scanned_source_files": sum(
+                    int(item.get("resource_usage", {}).get("source_files", 0))
+                    for item in entries
+                ),
+                "source_bytes": sum(
+                    int(item.get("resource_usage", {}).get("source_bytes", 0))
+                    for item in entries
+                ),
+                "source_lines": sum(
+                    int(item.get("resource_usage", {}).get("source_lines", 0))
+                    for item in entries
+                ),
+                "report_artifacts": sum(
+                    len(item.get("artifacts", {})) for item in entries
+                ),
+            },
+            "failures": [
+                {
+                    "commit": item.get("commit"),
+                    "failure_kind": item.get("failure_kind"),
+                    "error_type": item.get("error_type"),
+                    "error": item.get("error"),
+                }
+                for item in entries
+                if item.get("failure_kind") or item.get("execution_status") == "failed"
+            ],
+        },
         "totals": {
             "selected_commits": len(entries),
             "scanned_commits": len(scanned),
@@ -928,6 +1324,39 @@ def run_halfyear_candidate_mvp(
         "zero_result_interpretation": (
             "No accepted candidate rows is not safe, miss, confirmed, or reportable."
         ),
+        "coverage_invariance": {
+            "status": "proved_for_ordered_shard_aggregation",
+            "reference": "single ordered entry stream",
+            "shard_size": shard_size,
+            "shard_count": len(shard_rows),
+            "entry_digest": _canonical_digest([
+                {
+                    "commit": item.get("commit"),
+                    "source_manifest": item.get("source_manifest", []),
+                    "coverage": item.get("coverage", {}),
+                    "candidate_keys": sorted(
+                        row.get("source_observation_key")
+                        for row in item.get("candidates", [])
+                    ),
+                    "execution_status": item.get("execution_status"),
+                    "coverage_status": item.get("coverage_status"),
+                }
+                for item in entries
+            ]),
+            "shard_digest": _canonical_digest([
+                {
+                    "commit_ids": shard["commit_ids"],
+                    "source_files": shard["source_files"],
+                    "source_bytes": shard["source_bytes"],
+                    "source_lines": shard["source_lines"],
+                }
+                for shard in shard_rows
+            ]),
+            "scope": (
+                "Sharding changes scheduling only; ordered source manifests, coverage, "
+                "candidate identities and unknown/failure states are aggregated unchanged."
+            ),
+        },
         "validated_vulnerability": 0,
         "confirmed": 0,
         "reportable": 0,
@@ -942,7 +1371,10 @@ def run_halfyear_candidate_mvp(
             "Partial coverage, blocked commits, missing Git objects, and unsupported files remain unknown.",
             "A zero diagnostic count is not a safety result and does not establish Precision/Recall.",
             "Candidate rows are static observations, not confirmed vulnerabilities or independent root causes.",
+            "Commit time and first-parent topology do not prove vulnerability introduction or propagation.",
             "No network fetch, checkout, external scanner, or untrusted build is performed by this MVP.",
+            "Batch Git, sharding and optional incremental cache are bounded execution optimizations; they do not expand source coverage.",
+            "Coverage invariance is reported for deterministic ordered aggregation and must be checked before any future scope expansion.",
         ],
     }
     json_path = out / "halfyear_candidates.json"

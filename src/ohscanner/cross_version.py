@@ -13,9 +13,11 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import subprocess
+import sys
 from typing import Any, Mapping, Sequence
 
+from .evaluation import evaluate_root_causes
+from .git_batch import offline_git
 from .identity import build_identity_record, compare_findings, line_byte_range
 
 
@@ -27,9 +29,9 @@ IMPACT_VALUES = ("affected", "fixed", "not_present", "unknown")
 _SHA256 = re.compile(r"[a-f0-9]{64}")
 _GIT_OID = re.compile(r"[a-f0-9]{40}|[a-f0-9]{64}")
 _REQUIRED_EVIDENCE_ROLES = {
-    "affected": {"source", "patch", "call_path"},
+    "affected": {"source", "patch", "call_path", "revalidation"},
     "fixed": {"source", "patch", "call_path", "revalidation"},
-    "not_present": {"tree_absence"},
+    "not_present": {"tree_absence", "patch", "call_path", "revalidation"},
 }
 
 
@@ -147,15 +149,7 @@ def _sha256_file(path: Path) -> str:
 
 
 def _git(repo: Path, *args: str) -> bytes:
-    process = subprocess.run(
-        ["git", "-C", str(repo), *args],
-        capture_output=True,
-        check=False,
-    )
-    if process.returncode != 0:
-        detail = process.stderr.decode("utf-8", errors="replace").strip()
-        raise ValueError("local Git object verification failed: " + detail[:1000])
-    return process.stdout
+    return offline_git(repo, *args)
 
 
 def _git_text(repo: Path, *args: str) -> str:
@@ -224,6 +218,103 @@ def _ls_tree_blob(repo: Path, commit: str, source_path: str) -> str | None:
     fields = metadata.split()
     _require(len(fields) == 3 and fields[1] == b"blob", "source path is not a Git blob")
     return fields[2].decode("ascii")
+
+
+def _component_repo_path(
+    repo_dir: Path,
+    component: Mapping[str, Any],
+    component_repo_dirs: Mapping[str, Path] | None,
+) -> Path:
+    component_id = str(component.get("component_id") or "")
+    if component_repo_dirs and component_id in component_repo_dirs:
+        root = Path(component_repo_dirs[component_id]).resolve()
+    else:
+        root = repo_dir
+        checkout = component.get("checkout_dir")
+        if checkout:
+            root = (root / str(checkout)).resolve()
+            _require(
+                root == repo_dir.resolve() or repo_dir.resolve() in root.parents,
+                "component checkout_dir escapes the product source root",
+            )
+    _require(root.is_dir() and not root.is_symlink(), "component repo path is invalid")
+    return root
+
+
+def verify_product_components(
+    manifest: Mapping[str, Any],
+    repo_dir: Path,
+    component_repo_dirs: Mapping[str, Path] | None = None,
+) -> dict[str, Any]:
+    """Bind every product component to its own actual local commit/tree/source."""
+    raw = manifest.get("product_version")
+    if raw is None:
+        return {
+            "status": "not_declared",
+            "components": [],
+            "shared_product_commit_allowed": False,
+            "note": "No product version was declared; product applicability remains unknown.",
+        }
+    _require(isinstance(raw, Mapping), "product_version must be an object")
+    _require(
+        "commit" not in raw and "tree" not in raw,
+        "product_version must not reuse one shared commit/tree for multiple components",
+    )
+    components = raw.get("components")
+    _require(
+        isinstance(components, list) and components,
+        "product_version.components must be a non-empty list",
+    )
+    checked: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for component in components:
+        _require(isinstance(component, Mapping), "component binding must be an object")
+        component_id = str(component.get("component_id") or "")
+        repository = str(component.get("repository") or "")
+        commit = str(component.get("commit") or "")
+        tree = str(component.get("tree") or "")
+        _require(component_id and component_id not in seen_ids, "component_id must be unique")
+        seen_ids.add(component_id)
+        _require(bool(repository), "component repository is required")
+        _require(bool(_GIT_OID.fullmatch(commit)), "component commit must be a full OID")
+        _require(bool(_GIT_OID.fullmatch(tree)), "component tree must be a full OID")
+        root = _component_repo_path(repo_dir, component, component_repo_dirs)
+        resolved = _git_text(root, "rev-parse", "--verify", commit + "^{commit}").strip()
+        actual_tree = _git_text(root, "rev-parse", "--verify", commit + "^{tree}").strip()
+        _require(resolved == commit, "component commit does not resolve locally: " + component_id)
+        _require(actual_tree == tree, "component tree mismatch: " + component_id)
+        bindings = []
+        for source in component.get("source_bindings", []):
+            _require(isinstance(source, Mapping), "source binding must be an object")
+            source_path = str(source.get("path") or "")
+            expected_blob = source.get("source_blob_oid")
+            expected_sha = source.get("source_sha256")
+            actual_blob = _ls_tree_blob(root, commit, source_path)
+            _require(actual_blob == expected_blob, "component source blob mismatch: " + component_id)
+            actual_sha = None if actual_blob is None else _sha256_bytes(
+                _git(root, "cat-file", "blob", actual_blob)
+            )
+            _require(actual_sha == expected_sha, "component source SHA mismatch: " + component_id)
+            bindings.append({
+                "path": source_path,
+                "source_blob_oid": actual_blob,
+                "source_sha256": actual_sha,
+            })
+        checked.append({
+            "component_id": component_id,
+            "repository": repository,
+            "repo_path": str(root),
+            "commit": resolved,
+            "tree": actual_tree,
+            "source_bindings": bindings,
+            "binding_status": "verified_per_component_actual_sha",
+        })
+    return {
+        "status": "verified",
+        "components": checked,
+        "shared_product_commit_allowed": False,
+        "note": "Each component is bound to its own locally verified commit/tree and source objects.",
+    }
 
 
 def verify_git_versions(
@@ -337,7 +428,7 @@ def assess_impact(
     source_present: bool,
     boundary_support: str | None = None,
 ) -> tuple[str, list[str]]:
-    """Fail closed: only evidence-backed affected/fixed/not_present is published."""
+    """Fail closed: impact needs source, patch, call path and boundary revalidation."""
     if requested_status not in IMPACT_VALUES:
         return "unknown", ["invalid_requested_status"]
     roles = {
@@ -345,23 +436,24 @@ def assess_impact(
         for item in evidence
         if isinstance(item, Mapping) and item.get("verified") is True
     }
-    if requested_status == "affected":
-        missing = sorted(_REQUIRED_EVIDENCE_ROLES["affected"] - roles)
-        return ("affected", []) if not missing else ("unknown", ["missing_evidence:" + item for item in missing])
-    if requested_status == "fixed":
-        missing = sorted(_REQUIRED_EVIDENCE_ROLES["fixed"] - roles)
-        if missing:
-            return "unknown", ["missing_evidence:" + item for item in missing]
-        if boundary_support != "fixed":
-            return "unknown", ["boundary_revalidation_not_fixed"]
-        return "fixed", []
-    if requested_status == "not_present":
-        if source_present:
-            return "unknown", ["source_present_cannot_be_not_present"]
-        if "tree_absence" not in roles:
-            return "unknown", ["missing_evidence:tree_absence"]
-        return "not_present", []
-    return "unknown", ["explicit_unknown"]
+    required = _REQUIRED_EVIDENCE_ROLES.get(requested_status, set())
+    missing = sorted(required - roles)
+    if missing:
+        return "unknown", ["missing_evidence:" + item for item in missing]
+    expected_boundary = {
+        "affected": "affected",
+        "fixed": "fixed",
+        "not_present": "not_present",
+    }.get(requested_status)
+    if boundary_support != expected_boundary:
+        return "unknown", ["boundary_revalidation_not_" + str(expected_boundary)]
+    if requested_status == "affected" and not source_present:
+        return "unknown", ["source_absent_cannot_be_affected"]
+    if requested_status == "fixed" and not source_present:
+        return "unknown", ["source_absent_cannot_be_fixed"]
+    if requested_status == "not_present" and source_present:
+        return "unknown", ["source_present_cannot_be_not_present"]
+    return requested_status, []
 
 
 def _validate_report_binding(
@@ -407,10 +499,87 @@ def _evidence_index(
     return result
 
 
+def _evaluation_inputs(
+    truth_manifest_path: Path | None,
+    prediction_manifest_path: Path | None,
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+    truth_manifest = (
+        _load_json(Path(truth_manifest_path).resolve())
+        if truth_manifest_path is not None else {}
+    )
+    payload = (
+        _load_json(Path(prediction_manifest_path).resolve())
+        if prediction_manifest_path is not None else {}
+    )
+    predictions = payload.get("predictions", [])
+    truth = payload.get("truth", truth_manifest.get("truth", []))
+    if not truth and isinstance(payload.get("groups"), list):
+        derived = []
+        for group in payload["groups"]:
+            if not isinstance(group, Mapping):
+                continue
+            counts = group.get("classification_counts", {})
+            category = next(
+                (
+                    name for name in ("vulnerable", "fixed", "safe", "unrelated")
+                    if counts.get(name)
+                ),
+                "unknown",
+            )
+            group_id = str(group.get("root_cause_group") or group.get("group_key") or "")
+            derived.append({
+                "sample_id": group_id,
+                "root_cause_id": group_id,
+                "category": category,
+                "split": "holdout",
+                "truth_verified": True,
+                "truth_source": "independent_truth_review",
+            })
+        truth = derived
+    _require(isinstance(predictions, list), "predictions must be a list")
+    _require(isinstance(truth, list), "truth must be a list")
+    return truth_manifest, predictions, truth
+
+
+def _render_evaluation_markdown(evaluation: Mapping[str, Any]) -> str:
+    counts = evaluation.get("counts", {})
+    lines = [
+        "# Root-cause accuracy evaluation",
+        "",
+        f"- Status: `{evaluation.get('status')}`",
+        f"- Unit: `{evaluation.get('unit')}`",
+        f"- Independent holdout: `{evaluation.get('independent_holdout')}`",
+        f"- TP/FP/FN/TN: `{counts.get('TP')}` / `{counts.get('FP')}` / "
+        f"`{counts.get('FN')}` / `{counts.get('TN')}`",
+        f"- Precision: `{evaluation.get('precision')}`",
+        f"- Recall: `{evaluation.get('recall')}`",
+        "",
+        evaluation.get("interpretation", ""),
+        "",
+        "## Excluded unknown/unreliable rows",
+        "",
+    ]
+    rows = evaluation.get("excluded_unknown_or_unscored", [])
+    if rows:
+        lines.extend(
+            f"- `{item.get('sample_id')}`: {', '.join(item.get('reasons', []))}"
+            for item in rows
+        )
+    else:
+        lines.append("- None")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def build_package(
     manifest_path: Path,
     repo_dir: Path,
     output_dir: Path,
+    *,
+    component_repo_dirs: Mapping[str, Path] | None = None,
+    argv: Sequence[str] | None = None,
+    truth_manifest_path: Path | None = None,
+    prediction_manifest_path: Path | None = None,
 ) -> dict[str, Any]:
     manifest_path = Path(manifest_path).resolve()
     output = Path(output_dir).resolve()
@@ -419,6 +588,9 @@ def build_package(
     input_artifacts = _manifest_artifacts(manifest, base)
     evidence_index = _evidence_index(manifest, input_artifacts, base)
     versions = verify_git_versions(Path(repo_dir), manifest)
+    product_components = verify_product_components(
+        manifest, Path(repo_dir), component_repo_dirs,
+    )
     _require(len({row["ref"] for row in versions}) == len(versions), "duplicate version ref")
     _require(
         manifest["version_range"]["topology_note"].startswith("first-parent is only"),
@@ -536,6 +708,9 @@ def build_package(
             if blob is None:
                 requested = "not_present"
                 evidence_ids = list(candidate.get("not_present_evidence_ids", []))
+                boundary_support = candidate.get(
+                    "not_present_boundary_support", "not_present"
+                )
             elif blob in impact_by_blob:
                 assessment = impact_by_blob[blob]
                 requested = assessment.get("status", "unknown")
@@ -611,6 +786,28 @@ def build_package(
         "profile_id": manifest["profile_id"],
         "detector": detector,
         "selection_inputs": list(manifest.get("selection_inputs", [])),
+        "product_version_binding": product_components,
+        "git_access_policy": {
+            "fetch": False,
+            "checkout": False,
+            "lazy_fetch": False,
+            "external_scanners": False,
+            "source": "local_pinned_git_objects",
+        },
+        "selection_policy": {
+            "ref_resolution": "explicit local ref names resolved to exact commits",
+            "first_parent": (
+                "review-window topology only; never vulnerability propagation evidence"
+            ),
+            "commit_time": (
+                "descriptive ordering only; never vulnerability introduction evidence"
+            ),
+        },
+        "invocation": {
+            "mode": "cli" if argv is not None else "programmatic",
+            "argv": list(argv) if argv is not None else [],
+            "argv_exact": argv is not None,
+        },
         "candidates": candidate_packages,
         "boundary_regression": boundary,
         "validated_vulnerability": 0,
@@ -620,7 +817,38 @@ def build_package(
             "A disappeared detector observation is not a fix unless exact source/patch/call-path/revalidation evidence supports fixed.",
             "affected/fixed here describe the selected component source mechanism only; product build applicability, entry/privilege boundary and CIA impact remain unknown.",
             "No historical report, diagnostic ID, review, commit, tree or blob was rewritten.",
+            "Multi-repo product applicability is unknown unless every component has its own verified actual commit/tree/source binding.",
+            "Root-cause Precision/Recall is published only for an independent holdout with reliable non-model truth and complete coverage.",
         ],
+    }
+
+    truth_manifest, prediction_rows, truth_rows = _evaluation_inputs(
+        truth_manifest_path, prediction_manifest_path,
+    )
+    independent_holdout = bool(
+        truth_manifest.get("independent_holdout")
+        or truth_manifest.get("truth_set_status") == "independent_truth_set_with_unknowns_and_scope_limits"
+    )
+    evaluation = evaluate_root_causes(
+        prediction_rows,
+        truth_rows,
+        truth_manifest=truth_manifest,
+        independent_holdout=independent_holdout,
+    )
+    evaluation_json_path = output / "accuracy_evaluation.json"
+    evaluation_md_path = output / "accuracy_evaluation.md"
+    evaluation_json_path.write_text(
+        json.dumps(evaluation, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    evaluation_md_path.write_text(
+        _render_evaluation_markdown(evaluation), encoding="utf-8"
+    )
+    package["accuracy_evaluation"] = {
+        "path": evaluation_json_path.name,
+        "sha256": _sha256_file(evaluation_json_path),
+        "status": evaluation["status"],
+        "eligible_for_metrics": evaluation["eligible_for_metrics"],
     }
 
     json_path = output / "impact_evidence.json"
@@ -637,6 +865,14 @@ def build_package(
         "files": {
             json_path.name: {"sha256": _sha256_file(json_path), "bytes": json_path.stat().st_size},
             md_path.name: {"sha256": _sha256_file(md_path), "bytes": md_path.stat().st_size},
+            evaluation_json_path.name: {
+                "sha256": _sha256_file(evaluation_json_path),
+                "bytes": evaluation_json_path.stat().st_size,
+            },
+            evaluation_md_path.name: {
+                "sha256": _sha256_file(evaluation_md_path),
+                "bytes": evaluation_md_path.stat().st_size,
+            },
         },
     }
     (output / "artifact_manifest.json").write_text(
@@ -695,8 +931,25 @@ def main() -> None:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--repo-dir", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--component-repo", action="append", default=[])
+    parser.add_argument("--truth-manifest", type=Path)
+    parser.add_argument("--prediction-manifest", type=Path)
     args = parser.parse_args()
-    package = build_package(args.manifest, args.repo_dir, args.out_dir)
+    component_repo_dirs = {}
+    for row in args.component_repo:
+        if "=" not in row:
+            parser.error("--component-repo must be COMPONENT_ID=PATH")
+        component_id, raw_path = row.split("=", 1)
+        component_repo_dirs[component_id] = Path(raw_path)
+    package = build_package(
+        args.manifest,
+        args.repo_dir,
+        args.out_dir,
+        component_repo_dirs=component_repo_dirs,
+        argv=tuple(sys.argv),
+        truth_manifest_path=args.truth_manifest,
+        prediction_manifest_path=args.prediction_manifest,
+    )
     totals = {
         "candidates": len(package["candidates"]),
         "versions": len(package["candidates"][0]["versions"]) if package["candidates"] else 0,

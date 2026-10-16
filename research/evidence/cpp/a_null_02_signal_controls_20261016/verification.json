@@ -1,0 +1,72 @@
+{
+  "schema_version": "ohscanner.a-null-02-verification-v1",
+  "recorded_at": "2026-10-16T14:16:18+08:00",
+  "checkout": {
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "head": "c09965c7802d4c2ef282b3cf45475f18980f76fe",
+    "head_tree": "6d8c4da41376ef6a372bada458136f4b63a715bd",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "dirty_status_porcelain": "M \"docs/\\351\\241\\271\\347\\233\\256\\347\\216\\260\\347\\212\\266\\344\\270\\216\\344\\270\\213\\344\\270\\200\\346\\255\\245.md\"\n M research/experiments/cpp/run_delayed_singleton_cross_version_20261016.py\n M src/cli/main.py\n M src/ohscanner/cross_version.py\n M src/ohscanner/detectors/cpp/README.md\n M src/ohscanner/detectors/cpp/null_dereference_detector.py\n M src/ohscanner/halfyear.py\n M tests/detectors/test_cpp_null_dereference_detector.py\n M tests/test_cross_version_impact.py\n M tests/test_halfyear_candidate_mvp.py\n?? outputs/cache/\n?? outputs/collect_third_party_summary_20261016.py\n?? outputs/community_scan_summary_20261016.py\n?? outputs/inspect_candidates_20261016.py\n?? outputs/research_third_party_scan_20261016.py\n?? outputs/run_manifest_scope_scan_20261016.py\n?? research/evidence/cpp/a_null_02_signal_controls_20261016/\n?? research/evidence/interface/\n?? research/experiments/cpp/build_a_line_delivery_20261016.py\n?? research/experiments/cpp/r0_r1_r2_20261015/run_20261016_fail_closed/\n?? research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/\n?? research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md\n?? research/tests/a_null_02_controls/\n?? src/ohscanner/evaluation.py\n?? src/ohscanner/git_batch.py\n?? src/ohscanner/resource.py\n?? tests/detectors/test_cpp_null_dereference_signal_controls.py\n?? tests/test_cap01_render_session_export_poc.py",
+    "dirty_status_sha256": "a0f7bbbf00bf75ac3cea5a59b4129c6e5c5ce6cee5282c279572baba27c603fb"
+  },
+  "environment": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "executable": "/mnt/e/网安/CyberSecurity-Innovation-Audit/.venv-web/bin/python"
+  },
+  "artifact_sha256": {
+    "src/ohscanner/detectors/cpp/null_dereference_detector.py": "e1bdadfa279ee0ca1f7be2eb0e805852210acded75aacf29cb4268d11d3b0473",
+    "src/ohscanner/detectors/cpp/README.md": "30e402bc86f88810eab290b51f76b3ac86c25f365f4bf22ac5d866f2e770e7df",
+    "tests/detectors/test_cpp_null_dereference_detector.py": "9f49d2900f5300bfd4b565cf483b3823049da5e53599badab3caf687c5636277",
+    "tests/detectors/test_cpp_null_dereference_signal_controls.py": "6cc2532066071b25a355a087da8569970187a2a4f1556a94aa7edc4a9acf9873",
+    "research/tests/a_null_02_controls/control_manifest.json": "f76e14cae8396fbcf3ebbf2c04ab6f652fb72f809f1bb6f9c4d9766d028e537d",
+    "research/tests/a_null_02_controls/verify_controls.py": "6e14f82e21e5134cecba8963a8c1a59136c618d85af4f7f218304a8112f21fd7",
+    "research/methods/cpp/NULL_DEREFERENCE_METHOD_CARD_V2.md": "b73991bc1592afb92e10f2c8cf339c16e196d1adc8c4bb24d9a68a64906f806e",
+    "research/evidence/cpp/a_null_02_signal_controls_20261016/DELIVERABLES.md": "14993f077c15f690f983c63e5c374311a6a42f785d14b0c9b10664023eeb7332",
+    "research/evidence/cpp/a_null_02_signal_controls_20261016/targeted_test_run.txt": "60d4b58bf382f050224a1ab38b8ecf7955a253377403086ddf1bc409b295af6b",
+    "research/evidence/cpp/a_null_02_signal_controls_20261016/full_test_run.txt": "4886c12e3eee53f42f3d47358c9494b047beafe64e60f01c21b506e06dc5a646"
+  },
+  "tests": {
+    "targeted": {
+      "argv": ".venv-web/bin/python -m unittest tests.detectors.test_cpp_null_dereference_detector tests.detectors.test_cpp_null_dereference_signal_controls -v",
+      "recorded_at": "2026-10-16T14:11:35+08:00",
+      "total": 18,
+      "passed": 18,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "failure_names": [],
+      "error_names": [],
+      "observed_exit_code": 0,
+      "raw_log_sha256": "60d4b58bf382f050224a1ab38b8ecf7955a253377403086ddf1bc409b295af6b"
+    },
+    "full": {
+      "argv": ".venv-web/bin/python -m unittest discover -s tests -q",
+      "recorded_at": "2026-10-16T14:11:56+08:00",
+      "total": 673,
+      "passed": 665,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 8,
+      "failure_names": [],
+      "error_names": [],
+      "observed_exit_code": 0,
+      "raw_log_sha256": "4886c12e3eee53f42f3d47358c9494b047beafe64e60f01c21b506e06dc5a646"
+    }
+  },
+  "fixture_integrity": {
+    "a_null_01": "passed",
+    "a_null_02_controls": "passed"
+  },
+  "claims": {
+    "default_output_state": "candidate/unassessed",
+    "confirmed_or_reportable": false,
+    "precision_recall_computed": false,
+    "zero_fp_fn_claimed": false,
+    "catalog_registration_changed": false,
+    "public_contract_or_runner_changed": false
+  },
+  "limitations": [
+    "Synthetic controls do not establish product reachability, attacker control, CIA impact or vulnerability truth."
+  ]
+}

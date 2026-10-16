@@ -1,0 +1,58 @@
+{
+  "schema_version": "ohscanner.a-exp-01-run-validation-v1",
+  "experiment_id": "A-EXP-01",
+  "R1": {
+    "valid": 134,
+    "invalid": 1,
+    "invalid_runs": [
+      {
+        "run_id": "A-EXP-01-main-R1-R1-S20261015-00c8ae87a8576190",
+        "errors": [
+          "at least one claim is required for reference validation"
+        ]
+      }
+    ]
+  },
+  "R2": {
+    "valid": 130,
+    "invalid": 5,
+    "invalid_runs": [
+      {
+        "run_id": "A-EXP-01-main-R2-R2-S20261016-18c96f591a6dca1e",
+        "errors": [
+          "persistedToolResults[0].artifact_sha256 must be SHA-256",
+          "persistedToolResults[0].evidence_ids must be non-empty"
+        ]
+      },
+      {
+        "run_id": "A-EXP-01-main-R2-R1-S20261015-2fd1e3c72dcb88d7",
+        "errors": [
+          "claims[4] has malformed evidence reference",
+          "claims[6] has malformed evidence reference",
+          "claims[7] has malformed evidence reference"
+        ]
+      },
+      {
+        "run_id": "A-EXP-01-main-R2-R3-S20261017-42a9712edb1f3512",
+        "errors": [
+          "persistedToolResults[0].artifact_sha256 must be SHA-256",
+          "persistedToolResults[0].evidence_ids must be non-empty"
+        ]
+      },
+      {
+        "run_id": "A-EXP-01-main-R2-R3-S20261017-9a7da68327154c5f",
+        "errors": [
+          "persistedToolResults[0].artifact_sha256 must be SHA-256",
+          "persistedToolResults[0].evidence_ids must be non-empty"
+        ]
+      },
+      {
+        "run_id": "A-EXP-01-main-R2-R1-S20261015-a434fff861916fd3",
+        "errors": [
+          "persistedToolResults[0].artifact_sha256 must be SHA-256",
+          "persistedToolResults[0].evidence_ids must be non-empty"
+        ]
+      }
+    ]
+  }
+}
