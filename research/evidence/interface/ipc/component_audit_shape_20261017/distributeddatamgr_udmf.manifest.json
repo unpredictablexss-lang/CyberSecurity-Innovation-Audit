@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:48:43+00:00",
+  "repository": "openharmony/distributeddatamgr_udmf",
+  "commit": "1e2e3c35df0299cd4e14d7a87060aad14e9de0c8",
+  "git_tree": "fb562714a0315f9e660730d36ad108f6a70ddd51",
+  "snapshot_sha256": "d8b5fcd2942b7c355849589cb5005013396dcab0b82cfd52ea91a090abda2932",
+  "plan_sha256": "09bf98aa2cc7bf4c5dec9bfdd0d2fbcb8d95e6d0156512aceb9bba4e1ff8c55d",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-shape/distributeddatamgr_udmf",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-shape/distributeddatamgr_udmf",
+    "--repository",
+    "openharmony/distributeddatamgr_udmf",
+    "--commit",
+    "1e2e3c35df0299cd4e14d7a87060aad14e9de0c8",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/distributeddatamgr_udmf",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/distributeddatamgr_udmf/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/distributeddatamgr_udmf/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 243,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 243,
+    "parse_complete": 168,
+    "parse_partial": 71,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 4,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 243,
+    "bytes_selected": 1622131,
+    "parse_complete": 168,
+    "parse_partial": 71,
+    "files_analyzed": 168
+  },
+  "performance": {
+    "elapsed_seconds": 8.128,
+    "peak_rss_kb": 169992,
+    "files_per_second": 29.9,
+    "bytes_per_second": 199573.2,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/distributeddatamgr_udmf/report.json",
+      "sha256": "bad2a52c8bf92b0c3eb40e02380200f002c4013eccea507ffed3aef5b630f499"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/distributeddatamgr_udmf/report.md",
+      "sha256": "1b4762db610adea2c12f80078f36451eafe5413de3163aeca71f55d775a09635"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

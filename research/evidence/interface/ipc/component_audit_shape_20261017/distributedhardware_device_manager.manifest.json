@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:49:03+00:00",
+  "repository": "openharmony/distributedhardware_device_manager",
+  "commit": "dce05abccbeddd4566479eaaaf11605b46dbe925",
+  "git_tree": "946948337f502f306863052203eccf97d19038b3",
+  "snapshot_sha256": "a237299bb6c60ff62d1c9d65f71574a1c63bd230a9f8b28b430a1766030efd41",
+  "plan_sha256": "11502d4568e4394d357b6da542abdcde862ba73e623a13025804f9b68d412afe",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-shape/distributedhardware_device_manager",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-shape/distributedhardware_device_manager",
+    "--repository",
+    "openharmony/distributedhardware_device_manager",
+    "--commit",
+    "dce05abccbeddd4566479eaaaf11605b46dbe925",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/distributedhardware_device_manager",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/distributedhardware_device_manager/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/distributedhardware_device_manager/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 386,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 386,
+    "parse_complete": 318,
+    "parse_partial": 51,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 17,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 386,
+    "bytes_selected": 4123397,
+    "parse_complete": 318,
+    "parse_partial": 51,
+    "files_analyzed": 318
+  },
+  "performance": {
+    "elapsed_seconds": 20.202,
+    "peak_rss_kb": 408416,
+    "files_per_second": 19.11,
+    "bytes_per_second": 204108.36,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/distributedhardware_device_manager/report.json",
+      "sha256": "1035fd3318e52f20ffa4e303eac49c4c7c3288df8986a59322aff58fcf9ff6a7"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/distributedhardware_device_manager/report.md",
+      "sha256": "bc2c09febce36030630ed006c623fd71e7740cfcf93bcabf4ee9f7d86ead8e31"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

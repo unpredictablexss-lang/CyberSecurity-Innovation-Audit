@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:50:26+00:00",
+  "repository": "openharmony/systemabilitymgr_samgr",
+  "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+  "git_tree": "dd3f1ab5b5d2443686669472adb89c284c230fd7",
+  "snapshot_sha256": "416edc35f3e1bbd5c2731b13de3782ddf0da07089abac30a531417463a86db02",
+  "plan_sha256": "5739dc4fb826365f288084d4b16fd36125fb78c1907867328353efdac69fba0c",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-shape/systemabilitymgr_samgr",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-shape/systemabilitymgr_samgr",
+    "--repository",
+    "openharmony/systemabilitymgr_samgr",
+    "--commit",
+    "0b154e500567fde41f5c8be926925fe25fd9c740",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/systemabilitymgr_samgr",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/systemabilitymgr_samgr/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/systemabilitymgr_samgr/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 96,
+    "candidates": 9,
+    "candidates_with_runner_obligations": 9,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 96,
+    "parse_complete": 80,
+    "parse_partial": 16,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 0,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 96,
+    "bytes_selected": 770626,
+    "parse_complete": 80,
+    "parse_partial": 16,
+    "files_analyzed": 80
+  },
+  "performance": {
+    "elapsed_seconds": 3.481,
+    "peak_rss_kb": 97504,
+    "files_per_second": 27.58,
+    "bytes_per_second": 221380.64,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/systemabilitymgr_samgr/report.json",
+      "sha256": "465133385e21e47d0f58591ce4319734ec77abdab0c2a04b4a4c18b9c213bdee"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/systemabilitymgr_samgr/report.md",
+      "sha256": "c0e4484e51dba8021e0e51a81fdf74fff937cb68fd885432b7f208a1150589e8"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

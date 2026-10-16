@@ -1,0 +1,60 @@
+{
+  "experiment": "position-underflow positive control on real code (guard removed, scratch commit)",
+  "question": "ipc.parcel.position-underflow raises nothing on communication_ipc although ipc/native/src/core/invoker/source/hitrace_invoker.cpp:127 calls data.RewindRead(data.GetDataSize() - PADDED_SIZE_OF_PARCEL). Is the silence explained by the guard in front of that call?",
+  "target": {
+    "repository": "openharmony/communication_ipc",
+    "origin": "git@github.com:openharmony/communication_ipc.git",
+    "pinned_commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "tree_read_from": "Git objects at the pinned commit (no working-tree read, no fetch)",
+    "file": "ipc/native/src/core/invoker/source/hitrace_invoker.cpp",
+    "lines": [127, 132]
+  },
+  "scratch": {
+    "note": "local clone outside the pinned corpus; a commit on top of the pinned commit removes ONLY the guard in front of the call. Nothing outside this clone was modified.",
+    "path": "/home/audit/wtmp/scratch-hitrace/comm-ipc",
+    "scratch_commit": "7471b8420de5ee1e752e8560fdbceec6d541d35a",
+    "scratch_commit_subject": "scratch: drop the GetDataSize guard in front of RewindRead",
+    "removed_block": [
+      "    // padded size(4 bytes) of uint8_t",
+      "    if (data.GetDataSize() < PADDED_SIZE_OF_PARCEL) {",
+      "        ZLOGE(TRACE_LABEL, \"The size of the data packet is less than 4\");",
+      "        return false;",
+      "    }"
+    ],
+    "diffstat": "1 file changed, 5 deletions(-)"
+  },
+  "argv": [
+    "<pinned v0.8.0>/.venv/bin/python -m src.ohscanner.detectors.interface.audit",
+    "--repo-dir <scratch clone>",
+    "--repository openharmony/communication_ipc",
+    "--commit <bbb92dbb2f52... | 7471b8420de5...>",
+    "--out-dir <out>/<tag>",
+    "--json-out <out>/<tag>/report.json",
+    "--md-out <out>/<tag>/report.md"
+  ],
+  "runs": [
+    {
+      "tag": "A_guarded",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "candidates": 12,
+      "by_rule": {"ipc.auth.missing": 2, "ipc.relay.descriptor-boundary": 10},
+      "ipc.parcel.position-underflow": 0,
+      "report_sha256": "b07586ca9ceed608cb290bdee1a0e10ba3a2a1a2e787404a62b2e19cff2982b5"
+    },
+    {
+      "tag": "B_unguarded",
+      "commit": "7471b8420de5ee1e752e8560fdbceec6d541d35a",
+      "candidates": 12,
+      "by_rule": {"ipc.auth.missing": 2, "ipc.relay.descriptor-boundary": 10},
+      "ipc.parcel.position-underflow": 0,
+      "report_sha256": "eca4fb5f1a78086ff3bbe7604fb889fec7fd6084006fe51c0644a8f7d2e08606"
+    }
+  ],
+  "result": "Removing the guard changed nothing: 12 candidates in both runs, no ipc.parcel.position-underflow. The guard is NOT the reason the rule is silent at this site.",
+  "follow_up": "research/deliveries/ipc/20261017-data01-mechanism.md records the probes that locate the real reason (a cross-translation-unit call the walk does not follow).",
+  "scope_limits": [
+    "Static re-run only. No build, no PoC, no dynamic validation.",
+    "One component, one file, one rule. Nothing here generalises to other rules or other components.",
+    "The scratch clone is a local artifact and is not in Git; the two run reports are generated outside Git, so the sha256 values above are the only link to their contents."
+  ]
+}

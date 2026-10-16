@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:46:44+00:00",
+  "repository": "openharmony/applications_permission_manager",
+  "commit": "9fd6f1e3a65b342d12b9dc04b7d9492d5d5bfb63",
+  "git_tree": "d10b6ba28bdcd8572cfed9b0e9b52ae30eedaf98",
+  "snapshot_sha256": "9969b2de0eee5314dc3f6fa512ca245e2ba60c6a8e70059a70a07692df70a595",
+  "plan_sha256": "c154f7b013321fc35e3bb0f6524a1f3c61272428b967b87221a04289283f515e",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-shape/applications_permission_manager",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-shape/applications_permission_manager",
+    "--repository",
+    "openharmony/applications_permission_manager",
+    "--commit",
+    "9fd6f1e3a65b342d12b9dc04b7d9492d5d5bfb63",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/applications_permission_manager",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/applications_permission_manager/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/applications_permission_manager/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 74,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 74,
+    "parse_complete": 0,
+    "parse_partial": 0,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 74,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 74,
+    "bytes_selected": 608042,
+    "parse_complete": 0,
+    "parse_partial": 0,
+    "files_analyzed": 0
+  },
+  "performance": {
+    "elapsed_seconds": 0.738,
+    "peak_rss_kb": 24908,
+    "files_per_second": 100.27,
+    "bytes_per_second": 823905.15,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/applications_permission_manager/report.json",
+      "sha256": "e336eddf10e577d1ec80b2b36e2d2db9e72a30719f53254a0b2158427f0b0ade"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/applications_permission_manager/report.md",
+      "sha256": "021894aeeb572d43362e66e565f2b35042554ad84ab03bd01c35803ff8a25786"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

@@ -61,6 +61,14 @@ Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. D
     respectively, and the two **never combine**. So `identity-domain` and `position-underflow` are
     silent because these 18 components contain no instance of what they key on. Different corpus,
     not a rule fix.
+    **Corrected 2026-10-17: half of this bullet was a measurement defect.** The `RewindRead` count
+    came from `RewindRead\([^)]*-[^)]*\)`, whose `[^)]*` cannot cross the `)` of a nested call, so it
+    scored the rule's real shape as absent. `RewindRead(<args with minus>)` occurs **2** times
+    (`communication_ipc` `hitrace_invoker.cpp:127`,`:132`), both guarded, and both reached only
+    across a translation-unit boundary the walk does not follow — `position-underflow` is a
+    **coverage** fact, not an unexercised one. The `identity-domain` half stands, and was later
+    confirmed by a second, independent method (see the 30-component section below).
+    Detail: `research/deliveries/ipc/20261017-data01-mechanism.md` §4.
   - **Coverage — the dispatcher is not in the source tree.** `caller_class_sensitive_calls` occurs
     **70** times and still nothing fires. The cluster is `security_access_token` (59), of which 9 sit
     in `services/privacymanager/src/service/privacy_manager_service.cpp` — the *implementation*,
@@ -121,6 +129,62 @@ Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. D
   zero scope counters by design and is the same interpretation applied twice, not a second source.
   Per-component counts from earlier rounds were taken under other model versions and are not
   comparable to this table; they were not reconciled.
+
+---
+
+# IPC method card — a shape count is an upper bound: 30 components, and what the identity rules actually require (2026-10-17)
+
+Second deliverable of lane `lanes.ipc` on `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
+(`0.8.0`, `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0`). Records:
+`research/deliveries/ipc/20261017-data01-mechanism.md`,
+`research/deliveries/ipc/20261017-shape-corpus-and-auth03-identity.md`; evidence in
+`research/evidence/interface/ipc/{component_audit_shape_20261017,hitrace_guard_pair_20261017,auth03_identity_probe_20261017}/`.
+
+- **Twelve more repositories, and the split is unchanged.** 30 pinned components, 17,546 files,
+  **2,435,311 lines**: **166 candidates** (from 100 over 18 components). The increase is **entirely**
+  in the three rules that already fired — AUTH-01 54→**92**, CAP-01 24→**43**, AUTH-02 12→**21**;
+  AUTH-04 and AUTH-03's `object-owner` are **flat**, and the six silent rules are **still 0**.
+  Downloading components thickens a signal that exists; it does not create one. That is the answer to
+  "pick a wider corpus" as a route to parity between the families.
+- **Split the shape by argument class before believing it.** Two read-only classifiers now do that
+  with the policy's *own* names and one local-assignment hop (`copy_range_arg_classes.py`,
+  `permission_arg_classes.py`; anything travelling through a container, a member or a function is
+  reported as `identifier`/`unresolved`, never guessed). Result for the AUTH-03 identity rules: 237
+  files contain a permission predicate and **1,608** arguments are classified as
+  `caller_token` **260**, `identifier` 761, `other` 541, `permission-literal` 28, `self` **16**,
+  `request` **1**, `caller_uid` **0**. The safe form dominates the corpus by an order of magnitude.
+- **A shape is not a candidate: these rules also require a modelled sensitive effect.** The identity
+  issues are collected into `state.identity_issues` and emitted only when a `sensitive_calls` name is
+  reached on the same path (`analysis.py:1020`). Nine probes, both passes agreeing: the four real
+  statements from `ability_manager_stub.cpp:3464-3467` (permission name, pid and uid all read out of
+  the parcel, handed to `VerifyPermission`) produce **no finding at all** inside an entry; add one
+  `StartAbility()` on the same path and `ipc.auth.request-identity` fires. Both-side control: the same
+  predicate handed the caller's own `TokenID` stays silent. So the 16 `self` and 1 `request` sites are
+  an **upper bound** on candidates, not a count of them.
+- **An `*Inner` name is not the barrier.** A same-file helper named `VerifyPermissionInner`, called by
+  name from the entry, **is** walked (probe fires). The real component's silence is therefore a
+  cross-translation-unit fact — its caller is the IDL-generated dispatcher — the same gap as
+  `caller-class`, not a naming rule.
+- **A zero can also mean "no detector declares this language".** `applications_permission_manager`
+  is an ArkTS application: 74 selected files, **0 analysed** (65 arkts / 4 js / 5 ts, all
+  `files_in_scope_without_a_claiming_detector`), written out as `counts.candidates = 0` like any
+  other empty result. The second batch's evidence records a `zero_reason` field for it. Pick a corpus
+  by **file language**, not by repository name.
+- **The census at 30 components** (same script, `--detail <label>` prints every site): `copy_calls`
+  665→**1860**, and the `copy-range` claim survives the widening — 0 copy calls take their length from
+  a parcel, while `too few arguments` grew to 184 (`ReadRawData` 139, `ReadBuffer` 45: the rule's
+  `index=2` cannot reach their real length argument). `owner_calls` 2→**57** with candidates **flat at
+  2** — the owner-uid read count is *not* the rule's trigger. `RewindRead(` 19 and
+  `RewindRead(<with minus>)` 2, unchanged. `caller_class_sensitive_calls` 70→71, still 0 candidates,
+  still the IDL gap.
+- **Still not measured:** how many candidates the two coverage gaps (cross-TU hop, IDL entry) would
+  actually yield; both edits fall in `analysis.py`, which a concurrent import owns. The honest bound
+  is 71 `caller_class_sensitive_calls` calls and 17 identity-argument sites — and each still has to
+  pass the sensitive-effect precondition.
+- **What it does not claim:** nothing is promoted; all 166 stay `candidate`. The probes are built from
+  statement text plus fixture declarations, not from the components' real translation units, so they
+  establish which preconditions the rules require, not how those components behave. The single
+  request-derived site is the permission check itself; nothing here says it is a vulnerability.
 
 ---
 

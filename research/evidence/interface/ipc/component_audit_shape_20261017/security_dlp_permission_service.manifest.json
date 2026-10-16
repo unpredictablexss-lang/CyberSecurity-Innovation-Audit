@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:50:23+00:00",
+  "repository": "openharmony/security_dlp_permission_service",
+  "commit": "1adc5b0f36f668e1c038853a582ecb394d08fdec",
+  "git_tree": "41be888852fb68f1ebcb90afa171e022a202be9e",
+  "snapshot_sha256": "76e5a68f4d4bf3f86a5df0d0e7970cc2b6aa16b52820cc3316240cc4d9c3a602",
+  "plan_sha256": "fe9a0cb2d3734c565d7d318a611b9584f4715c02d152faecd8bfaa605b58b65d",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-shape/security_dlp_permission_service",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-shape/security_dlp_permission_service",
+    "--repository",
+    "openharmony/security_dlp_permission_service",
+    "--commit",
+    "1adc5b0f36f668e1c038853a582ecb394d08fdec",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/security_dlp_permission_service",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/security_dlp_permission_service/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/security_dlp_permission_service/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 165,
+    "candidates": 0,
+    "candidates_with_runner_obligations": 0,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 165,
+    "parse_complete": 148,
+    "parse_partial": 17,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 0,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 165,
+    "bytes_selected": 1074448,
+    "parse_complete": 148,
+    "parse_partial": 17,
+    "files_analyzed": 148
+  },
+  "performance": {
+    "elapsed_seconds": 6.061,
+    "peak_rss_kb": 129292,
+    "files_per_second": 27.22,
+    "bytes_per_second": 177272.4,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/security_dlp_permission_service/report.json",
+      "sha256": "45e279db15d4abb9c530ec9aaa4fe22fb248b0ff3935e3837d7ceeae1f80def4"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/security_dlp_permission_service/report.md",
+      "sha256": "3cbed6e7a0fa9beef111934e33af315043cedc4cd45bc02609cee8d0804791bb"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

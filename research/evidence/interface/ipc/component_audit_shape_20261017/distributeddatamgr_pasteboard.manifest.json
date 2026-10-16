@@ -1,0 +1,84 @@
+{
+  "experiment_kind": "component_audit_manifest",
+  "schema_version": 2,
+  "generated_at_utc": "2026-10-16T19:48:32+00:00",
+  "repository": "openharmony/distributeddatamgr_pasteboard",
+  "commit": "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+  "git_tree": "1c8425c8c300b3472bad73cdb76f64a61a530b39",
+  "snapshot_sha256": "3fb4817e171436e0cfebefbf1db6c623453dbd83b0fcf293bd2459b805a34e24",
+  "plan_sha256": "94bbb31ae76a8eab1f5fb8c187999bbd2740d3bcfe86948267b2002b47d816c6",
+  "passes": [
+    "complete-ast",
+    "all-files"
+  ],
+  "source_repo_path": "/home/audit/corpus-ipc-shape/distributeddatamgr_pasteboard",
+  "command": [
+    "audit.py",
+    "--repo-dir",
+    "/home/audit/corpus-ipc-shape/distributeddatamgr_pasteboard",
+    "--repository",
+    "openharmony/distributeddatamgr_pasteboard",
+    "--commit",
+    "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+    "--out-dir",
+    "/home/audit/wtmp/ipc-audit/distributeddatamgr_pasteboard",
+    "--json-out",
+    "/home/audit/wtmp/ipc-audit/distributeddatamgr_pasteboard/report.json",
+    "--md-out",
+    "/home/audit/wtmp/ipc-audit/distributeddatamgr_pasteboard/report.md"
+  ],
+  "working_directory": "/home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b",
+  "environment": {
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "git": "git version 2.34.1"
+  },
+  "counts": {
+    "source_files_audited": 231,
+    "candidates": 1,
+    "candidates_with_runner_obligations": 1,
+    "candidates_with_driver_synthesized_obligations": 0,
+    "confirmed_vulnerabilities": 0,
+    "false_positives_reviewed": 0
+  },
+  "bucket_closure": {
+    "identity": "files_selected = parse_complete + parse_partial + parse_failed + unclaimed_by_detector + dropped_by_loader + not_run_files",
+    "files_selected": 231,
+    "parse_complete": 163,
+    "parse_partial": 55,
+    "parse_failed": 0,
+    "unclaimed_by_detector": 13,
+    "dropped_by_loader": 0,
+    "not_run_files": 0,
+    "files_unaccounted": 0,
+    "closed": true
+  },
+  "coverage": {
+    "files_selected": 231,
+    "bytes_selected": 1550240,
+    "parse_complete": 163,
+    "parse_partial": 55,
+    "files_analyzed": 163
+  },
+  "performance": {
+    "elapsed_seconds": 7.504,
+    "peak_rss_kb": 160432,
+    "files_per_second": 30.78,
+    "bytes_per_second": 206588.49,
+    "scope": "one process, one component; includes interpreter start and report write"
+  },
+  "artifacts": {
+    "json": {
+      "path": "/home/audit/wtmp/ipc-audit/distributeddatamgr_pasteboard/report.json",
+      "sha256": "94e3dd7522bfeb0fb0dc3ca4cb870031cf30be2a0e3cfeb2e6bc4e160ea36822"
+    },
+    "markdown": {
+      "path": "/home/audit/wtmp/ipc-audit/distributeddatamgr_pasteboard/report.md",
+      "sha256": "3dd8ab1eb12efcd7e44d96b7c80e44a47121558c342df9a24325ff93bbdd40c3"
+    }
+  },
+  "limitations": [
+    "The artifact is a single run's output; regenerating it at the same commit with the same command should reproduce the plan and candidate digests.",
+    "The declared repository is a declaration, not a verified identity; the verified identity is the pinned commit and the local Git objects."
+  ]
+}

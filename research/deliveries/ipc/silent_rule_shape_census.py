@@ -63,9 +63,17 @@ def shapes():
         "AUTH-03 identity-domain: any result_permission call": re.compile(
             calls(POLICY.result_permissions)),
         "DATA-01 position-underflow: RewindRead(...)": re.compile(r"\bRewindRead\s*\("),
-        "DATA-01 position-underflow: RewindRead(<expr with minus>)": re.compile(
-            r"\bRewindRead\s*\([^)]*-[^)]*\)"),
+        # `[^)]*` cannot cross the `)` of a nested call, so the first version of
+        # this pattern scored `RewindRead(data.GetDataSize() - X)` -- the shape the
+        # rule actually keys on -- as absent. Scan to the end of the statement
+        # instead: this over-approximates, and the hits are read one by one.
+        "DATA-01 position-underflow: RewindRead(<minus in args>)": re.compile(
+            r"\bRewindRead\s*\([^;]{0,300}-"),
         "DATA-01 copy-range: copy_calls": re.compile(calls(POLICY.copy_calls)),
+        # The rule needs the length argument to come out of the request; a copy
+        # whose length is a local string length is not its shape.
+        "DATA-01 copy-range: copy call with a parcel read in its args": re.compile(
+            r"\b(" + "|".join(sorted(POLICY.copy_calls)) + r")\s*\([^;]{0,300}\bRead[A-Za-z]*\s*\("),
         "AUTH-03 object-owner: owner_calls": re.compile(calls(POLICY.owner_calls)),
     }
 
@@ -80,10 +88,14 @@ def main():
     parser.add_argument("--audit-root", required=True)
     parser.add_argument("--corpus-root", action="append", required=True)
     parser.add_argument("--top", type=int, default=6)
+    parser.add_argument("--detail", default=None,
+                        help="print every hit whose label contains this text, "
+                             "as component relative-path:line")
     args = parser.parse_args()
 
     counts = collections.defaultdict(collections.Counter)
     examples = collections.defaultdict(dict)
+    sites = collections.defaultdict(list)
     fired = collections.Counter()
     components = 0
 
@@ -117,6 +129,10 @@ def main():
                 if hits:
                     counts[label][name] += len(hits)
                     examples[label].setdefault(name, rel)
+                    if args.detail and args.detail in label:
+                        for match in pattern.finditer(text):
+                            sites[label].append("%s %s:%d" % (
+                                name, rel, text.count("\n", 0, match.start()) + 1))
 
     print("components measured: %d" % components)
     for label in shapes():
@@ -124,6 +140,13 @@ def main():
         print("\n%s\n  total=%d  in %d components" % (label, total, len(counts[label])))
         for comp, n in counts[label].most_common(args.top):
             print("     %-42s %4d   e.g. %s" % (comp, n, examples[label][comp]))
+
+    if args.detail:
+        for label in shapes():
+            if args.detail in label:
+                print("\n%s -- every hit (%d)" % (label, len(sites[label])))
+                for site in sorted(sites[label]):
+                    print("   ", site)
 
     print("\n\ncandidates actually raised, for contrast:")
     for rule, n in fired.most_common():

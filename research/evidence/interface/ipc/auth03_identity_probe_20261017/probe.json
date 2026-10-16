@@ -1,0 +1,60 @@
+{
+  "experiment": "AUTH-03 identity rules: does the shape alone raise a candidate, and if not which precondition is missing",
+  "question": "ability_ability_runtime @ 4ae23f04b8f4, services/abilitymgr/src/ability_manager_stub.cpp:3464-3467 reads a permission name, a pid and a uid out of the parcel and hands them to VerifyPermission, yet no ipc.auth.request-identity candidate came out of the component. Is the rule unable to see request-derived identity, or is a precondition unmet?",
+  "target": {
+    "repository": "openharmony/ability_ability_runtime",
+    "origin": "https://gitee.com/openharmony/ability_ability_runtime.git",
+    "pinned_commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+    "commit_date": "2025-09-13T11:58:14+00:00",
+    "working_tree": "clean (git status --porcelain empty)",
+    "site": {
+      "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+      "lines": [3464, 3467],
+      "source_sha256": "7b59dfcac3b9fc4dd98c1fedfdb788fa1689bdfc252e7fde1b4a6c11307e6867",
+      "statements": [
+        "std::string permission = data.ReadString();",
+        "int32_t pid = data.ReadInt32();",
+        "int32_t uid = data.ReadInt32();",
+        "auto result = VerifyPermission(permission, pid, uid);"
+      ],
+      "header_sha256": "62f6902036ef748fbfc544a3026f1dd4971069cc74225561759cde1aa6e51089"
+    }
+  },
+  "method": "The detector runs twice per case, once with the base pass and once with complete-ast, on unit tuples built in memory. Cases 1-7 combine the fixture declarations in tests/fixtures/ipc/common_types.h with statement text; cases 8-9 feed the real component's own files. Nothing is written to the corpus.",
+  "cases": [
+    {"tag": "real_body_no_sensitive_effect", "what": "the four real statements verbatim inside an entry, followed only by reply.WriteInt32", "request-identity": 0, "any finding": 0},
+    {"tag": "real_body_with_sensitive_effect", "what": "the same four statements plus StartAbility() on the same path", "request-identity": 1, "line": 8},
+    {"tag": "fixture_shape_positive", "what": "request-derived value handed to the same predicate, with the effect", "request-identity": 1, "line": 6},
+    {"tag": "caller_token_safe", "what": "the caller's own TokenID handed to the same predicate, with the effect", "request-identity": 0},
+    {"tag": "self_identity_positive", "what": "GetSelfTokenID() handed to VerifyAccessToken, with the effect", "ipc.auth.service-identity": 1, "line": 5},
+    {"tag": "caller_uid_positive", "what": "GetCallingUid() handed to VerifyAccessToken, with the effect", "ipc.auth.identity-domain": 1, "line": 5},
+    {"tag": "real_name_inner_helper", "what": "a same-file helper named VerifyPermissionInner, body = the real statements plus a sensitive effect, called by name from the entry", "request-identity": 1, "line": 7},
+    {"tag": "REAL_stub_cpp_only", "what": "the real ability_manager_stub.cpp alone", "ipc.auth.missing": 7, "ipc.capability.export": 7, "ipc.relay.descriptor-boundary": 25, "ipc.auth.request-identity": 0, "parse_status": "complete"},
+    {"tag": "REAL_stub_cpp_and_header", "what": "the real .cpp together with its .h", "same_as_previous": true, "parse_status": "complete for both files"}
+  ],
+  "results": [
+    "The rule can see request-derived identity: cases 2, 3 and 7 raise ipc.auth.request-identity, at the line of the predicate call, with a non-zero line number.",
+    "The shape alone is not enough. The identical statements with nothing modelled after them (case 1) raise nothing at all -- the predicate is collected into state.identity_issues and only emitted when a call in sensitive_calls is reached on that path (analysis.py action()).",
+    "A helper whose name ends in Inner is not a barrier when it is in the same file and called by name (case 7). So the real component's silence is not explained by the handler's name.",
+    "The real file is parsed complete on both sides and still raises nothing for request-identity, although the shape is at :3465. Its caller is the IDL-generated dispatcher, which is not in the source tree, so the body is not on a path from any entry root: the same coverage gap as ipc.auth.caller-class, plus the missing sensitive effect.",
+    "Both-side control: the caller-token form (case 4) is silent while the request form (case 2) fires, so the rule is not simply flagging every predicate call."
+  ],
+  "counts_over_the_corpus": {
+    "components": 30,
+    "scope_loc": 2435311,
+    "files_with_at_least_one_permission_predicate": 237,
+    "permission_predicate_arguments_classified": 1608,
+    "caller_uid": 0,
+    "request": 1,
+    "self": 16,
+    "self_in_a_file_that_also_resets_identity": 1,
+    "caller_token": 260,
+    "reproduce": "research/deliveries/ipc/permission_arg_classes.py --audit-root <reports> --corpus-root <root> ... --list-sites"
+  },
+  "scope_limits": [
+    "Static re-run only. No build, no PoC, no dynamic validation.",
+    "Cases 1-7 are built from statement text and fixture declarations, not from the component's real translation unit; they establish which precondition the rule requires, not what the component's behaviour is.",
+    "The single request-derived site found by the text census is the permission check itself; nothing here says the component is vulnerable, and VerifyPermission's semantics are not established.",
+    "The argument census resolves one local-assignment hop. A value travelling through a container, a member or a function is counted as unresolved, so 0 caller_uid is a statement about this method, not a proof of absence."
+  ]
+}

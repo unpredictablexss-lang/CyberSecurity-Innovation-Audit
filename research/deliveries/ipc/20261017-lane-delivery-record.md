@@ -6,7 +6,11 @@
 
 - lane `lanes.ipc`；branch `work/ipc-20261017`
 - base `6a41dc9b1aa030158e09be6241e2b14341f9256d`
-- head：本记录所在提交（`work/ipc-20261017` 上本线唯一提交，未 push）
+- head：**本记录所在提交**。本线在本 base 上共 3 个提交，按提交信息依次是
+  "per-rule controls for the six families, and an 18-component measurement"（`bb24978`）→
+  "census the shapes the six silent rules key on"（`09f49d7`）→
+  "why the six silent rules are silent, and 12 more components"（本提交）——
+  第三个提交的确切 SHA 会随 `--amend` 变化，故此处不写死；**未 push**
 - worktree `/home/audit/ohscanner/worktrees/parallel-ipc-20261017`
 
 ## 选择性迁入来源提交、文件与依赖
@@ -29,22 +33,30 @@
   3 个家族（AUTH-01 / AUTH-03 / DATA-01）没有 `safe` 控制。
 - **改动后**：11/11 规则有正例、6/6 家族有 positive+fixed+safe，且该不变量由
   `tests/test_ipc_family_depth.py` 机器校验（逐规则、逐家族，不是总数）。
-- **同时量化了真实代码上的落差**：18 个组件 / 1.53M 行里只有 5 条规则命中过；
-  AUTH-01 占 54/100 条候选，AUTH-03 仅 2 条，DATA-01 为 0。
+- **同时量化了真实代码上的落差**：30 个组件 / 2.44M 行里**仍然只有 5 条规则**命中过；
+  AUTH-01 占 92/166 条候选，AUTH-03 仅 2 条，DATA-01 为 0。
+  （第一批 18 组件时是 100 条、AUTH-01 54 条。两次批量的 argv 与检测器完全相同。）
 
 ## 修改文件、scope check 命令与真实输出
 
-新增（全部只增不改检测逻辑）：
+新增（全部只增不改检测逻辑；后三个交付项随本提交）：
 
 ```text
 research/deliveries/ipc/20261017-v080-dependency-inventory.md
 research/deliveries/ipc/20261017-six-family-depth-unit.md
 research/deliveries/ipc/20261017-six-family-component-measurement.md
 research/deliveries/ipc/20261017-shape-census-silent-rules.md
+research/deliveries/ipc/20261017-data01-mechanism.md
+research/deliveries/ipc/20261017-shape-corpus-and-auth03-identity.md
 research/deliveries/ipc/20261017-lane-delivery-record.md      (本文件)
 research/evidence/interface/ipc/component_audit_20261017/     (components.json, index.json, 18×manifest)
+research/evidence/interface/ipc/component_audit_shape_20261017/ (components.json, index.json, 12×manifest)
+research/evidence/interface/ipc/hitrace_guard_pair_20261017/  (pair.json)
+research/evidence/interface/ipc/auth03_identity_probe_20261017/ (probe.json)
 research/deliveries/ipc/silent_rule_shape_census.py             (只读，形状取自 IpcPolicy)
-research/methods/interface/IPC_METHOD_CARD.md                  (仅新增一节)
+research/deliveries/ipc/copy_range_arg_classes.py               (只读，拷贝长度实参分类)
+research/deliveries/ipc/permission_arg_classes.py               (只读，授权谓词实参分类)
+research/methods/interface/IPC_METHOD_CARD.md                  (仅新增两节，并在旧节内标注一处更正)
 tests/fixtures/ipc/auth01/                                     (manifest + 1 cpp)
 tests/fixtures/ipc/auth03/                                     (manifest + 5 cpp)
 tests/fixtures/ipc/data01/                                     (manifest + 3 cpp)
@@ -54,8 +66,13 @@ tests/test_ipc_family_depth.py                                 (12 项测试)
 ```console
 $ .venv-web/bin/python scripts/check_change_scope.py \
     --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc
+  "checked_paths": 96 项
   "violations": []
+  exit 0
 ```
+
+（`checked_paths` 从 76 涨到 96，是因为第二批新增了 12 份 manifest、两份证据 JSON 与
+两个只读脚本；`--no-renames` 与策略取自 base 提交，本线**没有**为过检查改过策略。）
 
 ## 公共接口申请
 
@@ -90,13 +107,19 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
 
 4 项 skip 为既有跳过，与本单元无关。实测运行的 argv 与 18 份报告哈希见
 [交付项 3](20261017-six-family-component-measurement.md) 与 `components.json` 的
-`report_sha256`。
+`report_sha256`；第二批 12 组件的 argv **逐字相同**（只换 `--repo-dir` 与 `--out-dir`），
+哈希见 `research/evidence/interface/ipc/component_audit_shape_20261017/components.json`。
+本批新增的两个只读脚本（`copy_range_arg_classes.py`、`permission_arg_classes.py`）
+不在测试套件内，它们是测量工具、不参与断言；其输出即交付项 5/6 的表格。
+`silent_rule_shape_census.py` 的两处改动（`RewindRead` 正则修正 + `--detail`）见交付项 5 §4。
 
 ## 固定目标 repo/commit/tree/blob/source SHA、scope/profile、detector/model 版本
 
 - detector `ohscanner.interface.ipc` `0.8.0`；model `oh-ipc-2026.10-v6`；
   驱动 `src/ohscanner/detectors/interface/audit.py`，来源树 HEAD `635b3e0`
 - 18 个组件逐仓库 `rev-parse HEAD` 现场固定，清单见交付项 3 §1；
+  第二批 12 个组件同样现场固定，清单见交付项 6 §1（全部 gitee origin、
+  `git status --porcelain` 干净）；两批共 **30 个组件、17,546 文件、2,435,311 行**；
   scope = 驱动默认（production-only，`//production-segment:test|tests|unittest|fuzz|mock|sample|example|demo|benchmark|third_party|3rdparty` 排除），
   **头文件在范围内**
 - 候选身份：`source_sha256` + `rule_version` + `interpretation_id` + `observed_detector_versions`
@@ -117,6 +140,20 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
 全部来自未改动的 `0.8.0` 检测器。全部 100 条保持 `candidate`（`unassessed`），
 `confirmed_vulnerabilities` 按构造为 0。**零候选不代表组件安全；候选不等于漏洞。**
 
+第二批 12 个组件（+0.91M 行）把候选从 100 扩到 **166**，逐条原因如下（交付项 6 §3）：
+
+| 规则 | 18 → 30 组件 | 逐项原因 |
+|---|---|---|
+| `ipc.relay.descriptor-boundary` | 54 → **92**（+38） | ability_runtime +30、samgr +4、dsoftbus +2、data_share +1、pasteboard +1；均为同样的入口缺 descriptor 比较，**规则与阈值未变，是语料新增站点** |
+| `ipc.capability.export` | 24 → **43**（+19） | ability_runtime +10、samgr +5、dsoftbus +2、data_share +2 |
+| `ipc.auth.missing` | 12 → **21**（+9） | ability_runtime +8、data_share +1 |
+| `ipc.auth.guard-coverage` | 8 → 8 | 新语料没有新站点 |
+| `ipc.auth.object-owner` | 2 → 2 | 新语料 `owner_calls` 从 2 涨到 57，但该计数**不是**规则的触发条件（交付项 6 §7） |
+| 其余 6 条 | 0 → **0** | 见"未验证/下一项"第 1 条的成因表 |
+
+**没有任何一条候选的规则身份或证据字段发生变化** —— 新增的 66 条是新站点上的新候选，
+不是旧候选被重新分类。
+
 一处**数字上的移动**必须区分清楚：`window_window_manager` 曾被读作 0 候选，
 那是**失败运行的残留报告**（`shard_errors: [ValueError: invalid declared repository name]`，
 `files_not_analyzed: 1069`），重跑后为 10 条。这不是候选移动，是**把一个非测量纠回测量**。
@@ -130,16 +167,30 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
 
 ## 未验证、阻塞、下一项
 
-1. **形状普查（已做，见交付项 4）** —— 六条静默规则分成三类：`identity-domain` 与
-   `position-underflow` 是**未被行使**（形状 0 次）；`caller-class` 是**覆盖问题**
-   （形状 70 次，但可达它的 stub 由 IDL 构建期生成、不在源码树）；`copy-range` **待逐条核**
-   （形状 665 次但绝大多数不在入口处理函数内）；`object-owner` 形状 2 次、命中 2 次，精确吻合。
-   **剩下的下一步**：把 IDL 入口纳入建模（已有 6 个 `.idl`），逐条核入口内的拷贝调用，
-   并按**形状**而非按组件名挑下一次的语料。
-2. **机制字段（未做）** —— AUTH-01 有具名机制结果（`descriptor_identity` 等），
+1. **形状普查与六条静默规则的成因（已做，交付项 4/5/6）** —— 每一条现在都有可复核的
+   机制，且**都不是"规则坏了"**：
+
+   | 规则 | 成因 | 依据 |
+   |---|---|---|
+   | `position-underflow` | **覆盖**：形状存在（2 处），但站点在另一翻译单元之后，入口根走不到 | 交付项 5（删守卫 A/B + 7 例探针） |
+   | `copy-range` | **正确静默**：1860 次拷贝调用，长度无一来自请求 | 交付项 6 §7（逐类实参） |
+   | `identity-domain` | **形状不存在**：`caller_uid` 0 次（两种独立方法） | 交付项 6 §5 |
+   | `request-identity` | 形状 **1** 处，但还需同路径敏感效应，且站点在 IDL 生成的分发器之后 | 交付项 6 §6（9 例探针） |
+   | `service-identity` | 形状 16 处（1 处在重置身份的文件里），同样还需敏感效应 | 交付项 6 §5/§6 |
+   | `caller-class` | **覆盖**：可达它的 stub 由 IDL 构建期生成、不在源码树 | 交付项 4 |
+
+   交付项 4 里写"`position-underflow` 形状 0 次 ⇒ 未被行使"的那一行**已作废**
+   （普查正则跨不过嵌套括号），交付项 5 §4 给了旧/新口径对照。**下一步**是把 IDL 入口
+   纳入建模与跨 TU 一跳，两处都在并发 import 的 `analysis.py` 里，见下条。
+2. **两条覆盖缺口的收益上界（未量）** —— `caller_class_sensitive_calls` 71 处、
+   AUTH-03 身份形状 17 处，是"补齐入口建模之后**可能**多出候选"的上界；
+   它们还要再过一次敏感效应（`analysis.py:1020`），所以真实增益更小。
+   补上之后具体多几条，本次**没有测**。语料侧已排除：扩到 30 个组件后，
+   新增的 66 条候选全部落在原本已响过的三条规则上（交付项 6 §3）。
+3. **机制字段（未做）** —— AUTH-01 有具名机制结果（`descriptor_identity` 等），
    AUTH-02/03/04、CAP-01、DATA-01 的候选仍只能靠 `message` 文本区分，没有可断言的字段。
    需要改 `analysis.py` / `models.py`，属并发 import 正在写的文件，本线未抢。
-3. **共享 manifest 一行需集成人裁决** —— `tests/fixtures/ipc/manifest.json` 的
+4. **共享 manifest 一行需集成人裁决** —— `tests/fixtures/ipc/manifest.json` 的
    `account_role_authorized_fixed`：并发 import 把它从"必须零候选"改成断言
    `ipc.auth.missing`，却保留 `variant: "fixed"` 与已失效的 `notes`。
    `matrix()` 只按 `expected_rule` 分支、且**全测试集无人读 `variant`**，所以这次改写不会被任何测试发现。
@@ -147,7 +198,10 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
    并在 `test_ipc_family_depth.ManifestContractTests` 里第一次给该字段加上约束。
    **该文件同时含并发 import 新增的 18 行，故本线未提交它**，留给集成人；
    若要保留为真正的负控制，需让它走显式 policy 路径（该行自带 `policy_context` 已指向此方案）。
-4. **未做的动态验证 / PoC** —— 本交付只到静态候选与测量，无 PoC、无动态验证。
+5. **`ReadRawData`/`ReadBuffer` 取参下标（需集成人裁决）** —— `copy_calls` 的
+   `index=2` 对这两个名字够不着它们真正的长度实参（第 0 个）：`ReadRawData` 139 次、
+   `ReadBuffer` 45 次取不到。这是**规则定义改动**，落在 `analysis.py`。
+6. **未做的动态验证 / PoC** —— 本交付只到静态候选与测量，无 PoC、无动态验证。
 
 ## 本地提交完成；push/merge/Ready 需另有明确授权
 

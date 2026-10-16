@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "kind": "pinned_component_scan_manifest_index",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector_version": "0.8.0",
+  "manifests": [
+    {
+      "component": "ability_ability_runtime",
+      "repository": "openharmony/ability_ability_runtime",
+      "commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+      "git_tree": "e5c9ef987801543bc5ad80438165f36ea653abc4",
+      "selected_files": 2333,
+      "selected_bytes": 18399732,
+      "plan_sha256": "19f586f36caf9faf5ce1d4c60c854f5b2652d9a3c2afab732f02cf8027c909fc",
+      "candidates_total": 48
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "git_tree": "dd3f1ab5b5d2443686669472adb89c284c230fd7",
+      "selected_files": 96,
+      "selected_bytes": 770626,
+      "plan_sha256": "5739dc4fb826365f288084d4b16fd36125fb78c1907867328353efdac69fba0c",
+      "candidates_total": 9
+    },
+    {
+      "component": "communication_dsoftbus",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "ccb1a86fff03a6b2de19d39b90a81351ced5acd6",
+      "git_tree": "20a2200fea61346db1a7df320b3098a705be41a2",
+      "selected_files": 1555,
+      "selected_bytes": 13491228,
+      "plan_sha256": "20cdc298ab3a7b16606f4c7ee916a62e5b5c5033951fcbd0f2a476c9dc13f2f5",
+      "candidates_total": 4
+    },
+    {
+      "component": "distributeddatamgr_data_share",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "commit": "84bbefd47473c97da9ad013ab3b7f184c8862ee1",
+      "git_tree": "4e58aa1fc03822099318c02a70982d930dae5016",
+      "selected_files": 177,
+      "selected_bytes": 1185927,
+      "plan_sha256": "9129d63f6a36a6f2a7d495e360c49337aabb189b50e9095caf5ed37f9fd3ad0c",
+      "candidates_total": 4
+    },
+    {
+      "component": "distributeddatamgr_pasteboard",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+      "git_tree": "1c8425c8c300b3472bad73cdb76f64a61a530b39",
+      "selected_files": 231,
+      "selected_bytes": 1550240,
+      "plan_sha256": "94bbb31ae76a8eab1f5fb8c187999bbd2740d3bcfe86948267b2002b47d816c6",
+      "candidates_total": 1
+    },
+    {
+      "component": "applications_permission_manager",
+      "repository": "openharmony/applications_permission_manager",
+      "commit": "9fd6f1e3a65b342d12b9dc04b7d9492d5d5bfb63",
+      "git_tree": "d10b6ba28bdcd8572cfed9b0e9b52ae30eedaf98",
+      "selected_files": 74,
+      "selected_bytes": 608042,
+      "plan_sha256": "c154f7b013321fc35e3bb0f6524a1f3c61272428b967b87221a04289283f515e",
+      "candidates_total": 0
+    },
+    {
+      "component": "distributeddatamgr_udmf",
+      "repository": "openharmony/distributeddatamgr_udmf",
+      "commit": "1e2e3c35df0299cd4e14d7a87060aad14e9de0c8",
+      "git_tree": "fb562714a0315f9e660730d36ad108f6a70ddd51",
+      "selected_files": 243,
+      "selected_bytes": 1622131,
+      "plan_sha256": "09bf98aa2cc7bf4c5dec9bfdd0d2fbcb8d95e6d0156512aceb9bba4e1ff8c55d",
+      "candidates_total": 0
+    },
+    {
+      "component": "distributedhardware_device_manager",
+      "repository": "openharmony/distributedhardware_device_manager",
+      "commit": "dce05abccbeddd4566479eaaaf11605b46dbe925",
+      "git_tree": "946948337f502f306863052203eccf97d19038b3",
+      "selected_files": 386,
+      "selected_bytes": 4123397,
+      "plan_sha256": "11502d4568e4394d357b6da542abdcde862ba73e623a13025804f9b68d412afe",
+      "candidates_total": 0
+    },
+    {
+      "component": "filemanagement_dfs_service",
+      "repository": "openharmony/filemanagement_dfs_service",
+      "commit": "bec9c8471cf7f5c25728682839e4221e38e65aa3",
+      "git_tree": "0d4a1d46f0f2c17688aecabca58bb3a1e893f3d1",
+      "selected_files": 520,
+      "selected_bytes": 2595790,
+      "plan_sha256": "10c5745df44e35bf2cbb0d00c7bd3806df861e41f5b961d8a86cce9ae6027b97",
+      "candidates_total": 0
+    },
+    {
+      "component": "multimodalinput_input",
+      "repository": "openharmony/multimodalinput_input",
+      "commit": "f7ac33c6097adae62443c11120f3fd089a6a394a",
+      "git_tree": "821f76bdedceb9ee78497e4f3581a1e00c2eb29a",
+      "selected_files": 731,
+      "selected_bytes": 6138767,
+      "plan_sha256": "5fda620328822d482f15a9c0116c543a79264fe50cd3550567fc2ef673f6db6f",
+      "candidates_total": 0
+    },
+    {
+      "component": "notification_distributed_notification_service",
+      "repository": "openharmony/notification_distributed_notification_service",
+      "commit": "4391741ef315c23ceb729fb0ad63b117b3fab695",
+      "git_tree": "ec2a969bd3fdf6cf22b885b82cffbf9b1ba145bb",
+      "selected_files": 622,
+      "selected_bytes": 5892122,
+      "plan_sha256": "dacc26537136cfcec51782ece40a7da6f29b3bd14e19f46de89e1dd357d55bd2",
+      "candidates_total": 0
+    },
+    {
+      "component": "security_dlp_permission_service",
+      "repository": "openharmony/security_dlp_permission_service",
+      "commit": "1adc5b0f36f668e1c038853a582ecb394d08fdec",
+      "git_tree": "41be888852fb68f1ebcb90afa171e022a202be9e",
+      "selected_files": 165,
+      "selected_bytes": 1074448,
+      "plan_sha256": "fe9a0cb2d3734c565d7d318a611b9584f4715c02d152faecd8bfaa605b58b65d",
+      "candidates_total": 0
+    }
+  ],
+  "source_object_note": "Each component is a local clone pinned by rev-parse (gitee.org/openharmony); the driver reads pinned Git objects and does not fetch. Source repositories stay outside Git.",
+  "validated_vulnerability": 0
+}
