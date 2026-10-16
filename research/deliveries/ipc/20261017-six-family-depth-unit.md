@@ -8,6 +8,11 @@
 - **本文件对应的提交**：`research/methods/interface/IPC_METHOD_CARD.md` 的家族小节、
   `tests/test_ipc_family_depth.py`、`tests/fixtures/ipc/{auth01,auth03,data01}/`
 - 第一交付（依赖清单）见 [20261017-v080-dependency-inventory.md](20261017-v080-dependency-inventory.md)
+- **后续（交付项 12）**：本单元只补了**规则**缺口，没补**家族目录**缺口——
+  `auth02/` `auth04/` `cap01/` 当时没有自己的目录（AUTH-02/04/CAP-01 的负证据只能借共享
+  manifest）。交付项 12 补齐这三个目录（16 个夹具）并把测试由 12 项扩到 19 项，含 `B_IPC.md`
+  验收项 2 五个引擎用例的双侧断言，见
+  [20261017-engine-case-coverage-six-families.md](20261017-engine-case-coverage-six-families.md)
 
 ---
 
@@ -38,14 +43,14 @@
 | 规则 | 家族 | 本次前 | 本次后 |
 |---|---|---|---|
 | `ipc.relay.descriptor-boundary` | AUTH-01 | 17 正 / 6 定 / **0 safe** | +1 safe |
-| `ipc.auth.missing` | AUTH-02 | 12 正 / 4 定 / 2 safe | 不变 |
+| `ipc.auth.missing` | AUTH-02 | 12 正 / 4 定 / 2 safe | 共享 manifest 不变；**家族目录内**（交付项 12）4 正 / 1 定 / 1 safe |
 | `ipc.auth.caller-class` | AUTH-03 | **无任何控制** | 1 正 / 1 定 / 1 safe |
 | `ipc.auth.identity-domain` | AUTH-03 | **无任何控制** | 1 正 / 1 定 |
 | `ipc.auth.object-owner` | AUTH-03 | 1 正 | 不变 |
 | `ipc.auth.service-identity` | AUTH-03 | 2 正 | 不变 |
 | `ipc.auth.request-identity` | AUTH-03 | 1 正 | 不变 |
-| `ipc.auth.guard-coverage` | AUTH-04 | 4 正 / 1 定 / 1 safe | 不变 |
-| `ipc.capability.export` | CAP-01 | 6 正 / 2 定 / 1 safe | 不变 |
+| `ipc.auth.guard-coverage` | AUTH-04 | 4 正 / 1 定 / 1 safe | 共享 manifest 不变；**家族目录内**（交付项 12）1 正 / 1 定 / 1 safe |
+| `ipc.capability.export` | CAP-01 | 6 正 / 2 定 / 1 safe | 共享 manifest 不变；**家族目录内**（交付项 12）4 正 / 2 定 / 1 safe |
 | `ipc.parcel.copy-range` | DATA-01 | 2 正 / 1 定 / **0 safe** | 不变 |
 | `ipc.parcel.position-underflow` | DATA-01 | **无任何控制** | 1 正 / 1 定 / 1 safe |
 
@@ -140,4 +145,8 @@ import 的内部实现。
   这是"对齐子类一"里**尚未完成**的一半，需要改 `analysis.py` 与 `models.py`，属于与并发
   import 抢同一批文件的改动。
 - **AUTH-02 的账户负控制**：见 §5。
+- **家族目录缺口**：AUTH-02 / AUTH-04 / CAP-01 三个家族此前没有自己的目录（负证据只能借共享
+  manifest），已由交付项 12 补齐 16 个夹具并逐家族断言。交付项 12 §5 另记了一条**故意不固化**的
+  开放项（一跳 credit 在"对象经返回值回来"的形态下记了但不撤候选），与上面第 1 条落在同一片
+  共享面（`analysis.py` / `models.py`），本线不动，需集成人另开请求。
 - **真实组件实测**：见 [20261017-six-family-component-measurement.md](20261017-six-family-component-measurement.md)。

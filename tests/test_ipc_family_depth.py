@@ -1,17 +1,25 @@
-"""Per-family depth controls: every catalogued rule now has a positive control.
+"""Per-family depth controls: every positive of this unit pinned to the exact
+candidates the engine produces, and one test per engine case the lane acceptance
+item names.
 
 The shared manifest asserts, per fixture, that a named rule is present or that no
 candidate at all is raised. It does not assert *which* candidates a positive
-raises, and it cannot state that a positive and its fixed control differ in one
-line. Those are the assertions here, for the three reviewed rules the shared
-manifest never exercised -- `ipc.auth.caller-class`, `ipc.auth.identity-domain`
-and `ipc.parcel.position-underflow` -- together with the safe control AUTH-01 was
-missing.
+raises, it cannot state that a positive and its control differ in one line, and it
+cannot state what the engine recorded on the way to not raising something. Those
+are the assertions here.
 
 The fixtures live under `tests/fixtures/ipc/<family>/` with their own manifests,
 so `test_ipc_family_matrix.FamilyFixtureMatrixTests` covers them too (directory
 name fixes the family, a null expectation means no candidates, the run must
-complete). What is added here is the per-rule exactness and the pair checks.
+complete). What is added here is the per-rule exactness, the pair checks and the
+engine-case coverage.
+
+`PinnedCandidateTests` holds the exact candidate set of every positive in this
+unit, each line paired with the construct it must be pointing at.
+`EngineCaseCoverageTests` holds one test per engine case the lane acceptance item
+names -- const references, a non-unique host method, the propagation of a refused
+one-hop limitation, a locally shadowed reviewed-role body, and non-zero line
+numbers -- each asserting the side that shows the case and the side that does not.
 
 Whether a rule can be *triggered by a fixture* is not a claim that it fires on
 real code, and a passing fixture is not product evidence. These are synthetic
@@ -32,14 +40,67 @@ from src.ohscanner.detectors.interface.models import IMPACT_BY_RULE
 
 BASE = Path(__file__).parent / 'fixtures/ipc'
 
-# The reviewed rule each fixture of this unit was written against, and the exact
-# candidate set the pinned policy produces for it. Written out rather than read
-# from a run: a rule that starts or stops firing somewhere else has to change
-# this table with a reviewer looking at both.
-REVIEWED_POSITIVES = {
-    'ipc.auth.caller-class': ('auth03', 'caller_class_positive.cpp'),
-    'ipc.auth.identity-domain': ('auth03', 'identity_domain_positive.cpp'),
-    'ipc.parcel.position-underflow': ('data01', 'position_underflow_positive.cpp'),
+# Every positive of this unit, keyed by family directory and fixture, against the
+# exact candidates the pinned policy produces for it. Written out rather than read
+# from a run: a rule that starts or stops firing somewhere else has to change this
+# table with a reviewer looking at both, which is the point of the table.
+#
+# Each candidate is `(rule, line, token)`, and the token has to appear on that line
+# of that fixture. The line number is pinned because a candidate that loses its line
+# is not evidence, and the token is pinned because a line number is only meaningful
+# if it points at the construct the candidate is about -- a detector that numbered
+# from a preprocessed text rather than the file would satisfy the number and fail
+# the token.
+PINNED_POSITIVES = {
+    ('auth03', 'caller_class_positive.cpp'): (
+        ('ipc.auth.caller-class', 7, 'GetPermissionUsedRecordsAsync'),),
+    # A check submitted in the wrong identity domain is not credited as caller
+    # authorization for the operation it guards, so the mis-domain and the
+    # missing-authorization candidate are raised together with guard-coverage for
+    # the non-dominating check. Asserting only the identity rule would hide that
+    # coupling, which is the rule's point.
+    ('auth03', 'identity_domain_positive.cpp'): (
+        ('ipc.auth.guard-coverage', 7, 'StartAbility'),
+        ('ipc.auth.identity-domain', 6, 'VerifyAccessToken'),
+        ('ipc.auth.missing', 7, 'StartAbility')),
+    ('data01', 'position_underflow_positive.cpp'): (
+        ('ipc.parcel.position-underflow', 7, 'RewindRead'),),
+    # The reviewed caller-role name is also defined in the scanned sources, so the
+    # name is not credited and the body is read instead. 4096 is not a reviewed
+    # service-account value, so that body establishes nothing and the sensitive call
+    # below it stays a candidate.
+    ('auth02', 'caller_role_shadowed_positive.cpp'): (
+        ('ipc.auth.missing', 20, 'DeleteUserData'),),
+    # The same shadowed name defined at file scope instead of as a member of the
+    # entry's class. The name is refused outright and its body is never used, which is
+    # the form the member fixture is contrasted against.
+    ('auth02', 'caller_role_shadowed_free_predicate_positive.cpp'): (
+        ('ipc.auth.missing', 19, 'DeleteUserData'),),
+    # The same entry with the parcel bound by const reference and by reference: the
+    # two halves of the invariance pair, pinned separately because they are separate
+    # files and a change to either one has to show up here.
+    ('auth02', 'entry_const_reference_positive.cpp'): (
+        ('ipc.auth.missing', 6, 'DeleteUserData'),),
+    ('auth02', 'entry_reference_positive.cpp'): (
+        ('ipc.auth.missing', 6, 'DeleteUserData'),),
+    # A permission check whose failure branch falls through: the guard-coverage rule
+    # records the non-dominating guard and the call below it is still a candidate for
+    # missing authorization. Two candidates on one line is what that shape produces,
+    # not two independent defects.
+    ('auth04', 'guard_fallthrough_positive.cpp'): (
+        ('ipc.auth.guard-coverage', 7, 'DeleteUserData'),
+        ('ipc.auth.missing', 7, 'DeleteUserData')),
+    ('cap01', 'export_positive.cpp'): (
+        ('ipc.capability.export', 6, 'WriteRemoteObject'),),
+    # The exported object is produced one class hop away, in the implementer of a
+    # virtual call: an ungated implementer, then two gated ones the index refuses to
+    # choose between, then the lane's macro-named stub the index cannot bind at all.
+    ('cap01', 'onehop_ungated_positive.cpp'): (
+        ('ipc.capability.export', 28, 'WriteRemoteObject'),),
+    ('cap01', 'onehop_not_unique_positive.cpp'): (
+        ('ipc.capability.export', 33, 'WriteRemoteObject'),),
+    ('cap01', 'onehop_macro_renamed_stub_positive.cpp'): (
+        ('ipc.capability.export', 28, 'WriteRemoteObject'),),
 }
 # A minimal pair: (positive, control) inside one family directory, and how many
 # source lines the two files may differ by. One line means the suppressed
@@ -48,6 +109,21 @@ REVIEWED_PAIRS = (
     ('auth03', 'caller_class_positive.cpp', 'caller_class_fixed.cpp', 1),
     ('auth03', 'identity_domain_positive.cpp', 'identity_domain_fixed.cpp', 1),
     ('data01', 'position_underflow_positive.cpp', 'position_underflow_fixed.cpp', 1),
+    ('auth02', 'caller_role_shadowed_positive.cpp', 'caller_role_shadowed_fixed.cpp', 1),
+    ('auth02', 'caller_role_shadowed_positive.cpp',
+     'caller_role_shadowed_unmodelled_safe.cpp', 1),
+    ('auth04', 'guard_fallthrough_positive.cpp', 'guard_fallthrough_fixed.cpp', 1),
+    ('auth04', 'guard_fallthrough_positive.cpp', 'guard_fallthrough_unmodelled_safe.cpp', 1),
+    ('cap01', 'export_positive.cpp', 'export_guarded_fixed.cpp', 1),
+    ('cap01', 'export_positive.cpp', 'export_null_safe.cpp', 1),
+    ('cap01', 'onehop_ungated_positive.cpp', 'onehop_credited_fixed.cpp', 1),
+)
+# A pair that must *not* be suppressed: both halves have to produce the same
+# candidates, so it is asserted by equality in both directions. The shared set also
+# has to be non-empty -- two empty runs are equal for reasons that have nothing to
+# do with the invariance being claimed.
+INVARIANCE_PAIRS = (
+    ('auth02', 'entry_const_reference_positive.cpp', 'entry_reference_positive.cpp', 1),
 )
 
 
@@ -60,11 +136,25 @@ def context(text, path='sample.cpp'):
     return ScanContext(request, (unit,), {'ast': {path: index.to_dict()}})
 
 
-def detect(family_dir, filename):
+def run_of(family_dir, filename):
+    """The detector's run for one fixture, limitations included."""
     text = (BASE / family_dir / filename).read_text()
     ctx = context(text, filename)
-    run = IpcInterfaceDetector().detect(ctx, ctx.units)
+    return IpcInterfaceDetector().detect(ctx, ctx.units)
+
+
+def detect(family_dir, filename):
+    run = run_of(family_dir, filename)
     return run.status, sorted({f.rule_id for f in run.findings})
+
+
+def candidates(run):
+    return sorted((f.rule_id, f.line) for f in run.findings)
+
+
+def source_line(family_dir, filename, line):
+    """The fixture's raw line, 1-based, as the detector numbered it."""
+    return (BASE / family_dir / filename).read_text().splitlines()[line - 1]
 
 
 def body(path):
@@ -201,41 +291,194 @@ class ManifestContractTests(unittest.TestCase):
                                       'a ' + item['variant'] + ' control must expect no candidates')
 
 
-class ReviewedRuleControlTests(unittest.TestCase):
-    """The three rules this unit added a control for, pinned to one candidate set."""
+class PinnedCandidateTests(unittest.TestCase):
+    """Every positive of this unit, against the exact candidates it produced.
 
-    def test_each_reviewed_positive_raises_its_rule(self):
-        for rule, (family_dir, filename) in REVIEWED_POSITIVES.items():
-            with self.subTest(rule=rule):
-                status, rules = detect(family_dir, filename)
-                self.assertEqual(status, 'completed')
-                self.assertIn(rule, rules)
+    The matrix test covers the manifest's own claim (this rule is present, or
+    nothing is). The claim here is the stronger one the fixture is worth: this
+    positive raises these rules at these lines, and no others.
+    """
 
-    def test_the_caller_class_positive_raises_that_rule_alone(self):
-        """A permission check is not a caller class. The permission fact is kept
-        (so `ipc.auth.missing` is not raised) and the class question is the only
-        one left open."""
-        self.assertEqual(detect('auth03', 'caller_class_positive.cpp'),
-                         ('completed', ['ipc.auth.caller-class']))
+    def test_each_pinned_positive_raises_exactly_its_pinned_candidates(self):
+        for (family_dir, filename), pinned in sorted(PINNED_POSITIVES.items()):
+            with self.subTest(fixture=filename):
+                run = run_of(family_dir, filename)
+                self.assertEqual(run.status, 'completed')
+                self.assertEqual(candidates(run),
+                                 sorted((rule, line) for rule, line, _ in pinned))
 
-    def test_the_identity_domain_positive_also_loses_its_permission_credit(self):
-        """A check that submits the wrong identity domain is not credited as
-        caller authorization for the operation it guards, so the mis-domain and
-        the missing-authorization candidate are raised together. Asserting only
-        the identity rule would hide that coupling."""
-        status, rules = detect('auth03', 'identity_domain_positive.cpp')
-        self.assertEqual(status, 'completed')
-        self.assertEqual(rules, ['ipc.auth.guard-coverage',
-                                 'ipc.auth.identity-domain',
-                                 'ipc.auth.missing'])
+    def test_each_pinned_line_is_the_construct_the_candidate_is_about(self):
+        """A line number is only evidence if it points at something. This also
+        pins that the detector numbers file lines: a number derived from a
+        preprocessed text would still be an int and would fail here."""
+        for (family_dir, filename), pinned in sorted(PINNED_POSITIVES.items()):
+            for rule, line, token in pinned:
+                with self.subTest(fixture=filename, rule=rule):
+                    self.assertIn(token, source_line(family_dir, filename, line))
 
-    def test_the_position_underflow_positive_raises_that_rule_alone(self):
-        self.assertEqual(detect('data01', 'position_underflow_positive.cpp'),
-                         ('completed', ['ipc.parcel.position-underflow']))
+    def test_every_positive_row_of_a_family_manifest_is_pinned(self):
+        """Both directions: a positive row with no pin would be covered only by the
+        matrix test's weaker claim, and a pin with no row would be a fixture that
+        nothing declares."""
+        rows = {}
+        for path in family_manifests():
+            for item in json.loads(path.read_text()):
+                if item['variant'] == 'positive':
+                    rows[(path.parent.name, item['file'])] = item['expected_rule']
+        self.assertEqual(set(rows), set(PINNED_POSITIVES))
+        for key, rule in sorted(rows.items()):
+            with self.subTest(fixture=key[1]):
+                self.assertIn(rule, {r for r, _, _ in PINNED_POSITIVES[key]})
+
+    def test_a_pinned_rule_is_catalogued_and_the_family_is_among_what_is_raised(self):
+        """A fixture may raise another family's rule as a coupling (the identity
+        domain positive does), so what is required is that the directory's own
+        family is represented among the rules the positive raises -- not that it is
+        the only one."""
+        for (family_dir, filename), pinned in sorted(PINNED_POSITIVES.items()):
+            for rule, _, _ in pinned:
+                with self.subTest(fixture=filename, rule=rule):
+                    self.assertIn(rule, IMPACT_BY_RULE)
+            with self.subTest(fixture=filename):
+                self.assertTrue(
+                    any(families.family_of_rule(rule).fixture_dir == family_dir
+                        for rule, _, _ in pinned),
+                    'no pinned candidate belongs to ' + family_dir)
+
+
+class EngineCaseCoverageTests(unittest.TestCase):
+    """One test per engine case the lane acceptance item names, both sides asserted.
+
+    The item is: const references, a non-unique host method, the propagation of a
+    refused one-hop limitation, a locally shadowed reviewed-role body and non-zero
+    line numbers, with the controls on both sides asserted. A case is covered here
+    only if the fixture that shows it and the fixture that does not both appear in
+    the same test.
+    """
+
+    def one(self, family_dir, filename, token):
+        """The single limitation of this run that mentions `token`."""
+        found = [item for item in run_of(family_dir, filename).limitations
+                 if token in item]
+        self.assertEqual(len(found), 1,
+                         'expected one limitation mentioning ' + repr(token))
+        return found[0]
+
+    def test_a_const_reference_entry_and_a_reference_entry_are_read_the_same(self):
+        """Whether the parcel is bound by const reference or by reference says
+        nothing about caller authorization, so neither kind may be credited for it
+        and neither may be read as a different entry."""
+        for family_dir, left, right, budget in INVARIANCE_PAIRS:
+            with self.subTest(pair=(left, right)):
+                self.assertEqual(changed_lines(family_dir, left, right), budget)
+                left_run = run_of(family_dir, left)
+                right_run = run_of(family_dir, right)
+                left_pairs, right_pairs = candidates(left_run), candidates(right_run)
+                self.assertTrue(left_pairs,
+                                'equality between two empty runs is not evidence')
+                self.assertEqual(left_run.status, right_run.status)
+                self.assertEqual(left_pairs, right_pairs)
+
+    def test_a_non_unique_host_method_is_refused_rather_than_chosen(self):
+        refused = self.one('cap01', 'onehop_not_unique_positive.cpp', 'is not unique')
+        self.assertIn('the callee body was not read', refused)
+        self.assertIn('stays a candidate', refused)
+        # The other side: one implementer, and it is ungated. The hop is followed,
+        # nothing is refused, and the candidate is raised at the reply write for the
+        # reason the fixture is about.
+        unique = run_of('cap01', 'onehop_ungated_positive.cpp')
+        self.assertEqual([item for item in unique.limitations
+                          if 'is not unique' in item], [])
+        self.assertEqual(candidates(unique), [('ipc.capability.export', 28)])
+
+    def test_a_refused_one_hop_limitation_propagates_into_the_run(self):
+        """The refusal is reported, not taken silently: the run keeps the candidate
+        at the call site and states why the hop stopped with it. The credited side
+        shows the other ending of the same mechanism, and says how many implementer
+        guards were read."""
+        refused = run_of('cap01', 'onehop_not_unique_positive.cpp')
+        self.assertEqual(sorted({f.rule_id for f in refused.findings}),
+                         ['ipc.capability.export'])
+        self.assertIn('stays a candidate',
+                      self.one('cap01', 'onehop_not_unique_positive.cpp',
+                               'is not unique'))
+        credited = run_of('cap01', 'onehop_credited_fixed.cpp')
+        self.assertEqual(candidates(credited), [])
+        self.one('cap01', 'onehop_credited_fixed.cpp',
+                 'Cross-TU one-hop dispatch: 1 implementer guard')
+
+    def test_a_locally_shadowed_reviewed_role_body_is_recorded_and_not_credited(self):
+        """The limitation is a fact about the name, so it is recorded on every side
+        of the pair: the reviewed name is not credited whichever way the body reads.
+        What changes between the files is what that body derives."""
+        for filename in ('caller_role_shadowed_positive.cpp',
+                         'caller_role_shadowed_fixed.cpp',
+                         'caller_role_shadowed_unmodelled_safe.cpp'):
+            with self.subTest(fixture=filename):
+                line = self.one('auth02', filename,
+                                'is also defined in the scanned sources at')
+                self.assertIn(filename + ':12', line)
+                self.assertIn('was not credited', line)
+        self.assertEqual(candidates(run_of('auth02', 'caller_role_shadowed_positive.cpp')),
+                         [('ipc.auth.missing', 20)])
+        self.assertEqual(candidates(run_of('auth02', 'caller_role_shadowed_fixed.cpp')), [])
+        self.assertEqual(candidates(run_of('auth02',
+                                           'caller_role_shadowed_unmodelled_safe.cpp')), [])
+
+    def test_every_hop_citation_line_is_non_zero_and_names_its_construct(self):
+        """`DetectorFinding` refuses a line below 1 at construction, so the fixture
+        side is the part worth asserting: the lines the one-hop credit cites are the
+        dispatch, the implementer and its gate, each read back from the file."""
+        cite = self.one('cap01', 'onehop_credited_fixed.cpp',
+                        'Cross-TU one-hop guard credited')
+        for line, token in ((27, 'GetObject(id,object);'),
+                            (32, 'int FixtureOnehopService::GetObject'),
+                            (33, 'IsSACalling')):
+            with self.subTest(line=line):
+                self.assertIn('onehop_credited_fixed.cpp:%d' % line, cite)
+                self.assertIn(token, source_line('cap01', 'onehop_credited_fixed.cpp', line))
+
+    def test_a_member_predicate_body_is_read_and_a_file_scope_one_is_not(self):
+        """Not one of the five named cases either: the other boundary found here.
+
+        A reviewed caller-role name defined in the scanned sources gets different
+        treatment depending on how it is defined. The member form is read -- the run
+        says a call was read from that body, and that is the body whose comparison
+        against a reviewed account the fixed fixture changes. The file-scope form is
+        refused outright and its body is never used. Both are candidates here; what
+        differs is what the run reports having done, so both sides are asserted."""
+        member = self.one('auth02', 'caller_role_shadowed_positive.cpp',
+                          'is also defined in the scanned sources at')
+        self.assertIn('a call to it was read from that body', member)
+        free = self.one('auth02', 'caller_role_shadowed_free_predicate_positive.cpp',
+                        'Local caller-role definition is unresolved')
+        self.assertIn('reviewed-name credit refused', free)
+        self.assertIn('caller authorization remains unknown', free)
+        self.assertEqual(
+            candidates(run_of('auth02',
+                              'caller_role_shadowed_free_predicate_positive.cpp')),
+            [('ipc.auth.missing', 19)])
+
+    def test_a_macro_named_stub_class_is_not_bound_by_the_entry_index(self):
+        """Not one of the five named cases: the boundary found while writing them.
+
+        The rest of this unit names its stub class through `#define Stub <fixture>`,
+        and an object-like macro on that class stops the entry index from binding
+        the handler -- measured. The one-hop fixtures therefore write their class
+        names out, and this fixture keeps the macro-named shape as a control so the
+        boundary cannot move unnoticed. Both sides: the same gated program raises
+        nothing under a literal class name, and the candidate under the macro."""
+        bound = self.one('cap01', 'onehop_macro_renamed_stub_positive.cpp',
+                         'Dispatch handler not uniquely resolved')
+        self.assertIn('not used as an entry', bound)
+        self.assertEqual(candidates(run_of('cap01',
+                                           'onehop_macro_renamed_stub_positive.cpp')),
+                         [('ipc.capability.export', 28)])
+        self.assertEqual(candidates(run_of('cap01', 'onehop_credited_fixed.cpp')), [])
 
 
 class MinimalPairTests(unittest.TestCase):
-    """Each positive's fixed control differs from it in one line, so the
+    """Each positive's control (fixed or safe) differs from it in one line, so the
     suppression is attributable to that line rather than to the file being a
     different program."""
 

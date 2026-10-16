@@ -6,7 +6,7 @@
 
 - lane `lanes.ipc`；branch `work/ipc-20261017`
 - base `6a41dc9b1aa030158e09be6241e2b14341f9256d`（integration base，本线**未** rebase）
-- head：**本记录所在提交**。本线在本 base 上共 8 个提交，按提交信息依次是
+- head：**本记录所在提交**。本线在本 base 上共 9 个提交，按提交信息依次是
   "per-rule controls for the six families, and an 18-component measurement"（`bb24978`）→
   "census the shapes the six silent rules key on"（`09f49d7`）→
   "why the six silent rules are silent, and 12 more components"（`46d4f64`）→
@@ -14,7 +14,8 @@
   "measure why caller-class never emitted"（`400751e`）→
   "measure the coverage ceiling instead of assuming it"（`24c7f6c`）→
   "widen the corpus by mechanism, and measure the loudest rule"（`629f047`）→
-  "screen every emitting rule with the same modes, and read every flagged row"（本提交）——
+  "screen every emitting rule with the same modes, and read every flagged row"（`4214a4f`）→
+  "fill the three family directories and cover the engine cases on both sides"（本提交）——
   本提交的确切 SHA 会随 `--amend` 变化，故此处不写死；**未 push、未开 PR、未标 Ready、未 merge**
 - worktree `/home/audit/ohscanner/worktrees/parallel-ipc-20261017`
 
@@ -87,13 +88,19 @@ research/methods/interface/IPC_METHOD_CARD.md                  (仅新增两节�
 tests/fixtures/ipc/auth01/                                     (manifest + 1 cpp)
 tests/fixtures/ipc/auth03/                                     (manifest + 5 cpp)
 tests/fixtures/ipc/data01/                                     (manifest + 3 cpp)
-tests/test_ipc_family_depth.py                                 (12 项测试)
+tests/fixtures/ipc/auth02/                                     (manifest + 6 cpp)   ← 交付项 12
+tests/fixtures/ipc/auth04/                                     (manifest + 3 cpp)   ← 交付项 12
+tests/fixtures/ipc/cap01/                                      (manifest + 7 cpp)   ← 交付项 12
+research/deliveries/ipc/20261017-engine-case-coverage-six-families.md          (交付项 12)
+research/deliveries/ipc/family_dir_measurement.py              (只读，按深度单元自己的 helper 复现全部 pin)
+research/deliveries/ipc/engine_boundary_probe.py               (只读，§4/§5/§6 三条边界的逐差探针)
+tests/test_ipc_family_depth.py                                 (12 → 19 项测试)
 ```
 
 ```console
 $ .venv-web/bin/python scripts/check_change_scope.py \
     --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc
-  "checked_paths": 141 项
+  "checked_paths": 163 项
   "violations": []
   exit 0
 ```
@@ -108,7 +115,9 @@ $ .venv-web/bin/python scripts/check_change_scope.py \
 `component_audit_bline_20261017/` 的 12 份 manifest 与两份汇总 JSON、
 `auth01_precision_probe_20261017/` 三份、`copy_range_counterfactual_20261017/` 三份；
 本批（交付项 11）新增交付项 11 本身、`rule_precision_screen.py`
-与 `rule_precision_screen_20261017/rule_precision_screen.json` 各一份。）
+与 `rule_precision_screen_20261017/rule_precision_screen.json` 各一份；
+本批（交付项 12）新增 `auth02/` `auth04/` `cap01/` 三个家族目录共 16 个夹具 + 3 份 manifest、
+交付项 12 本身与两份只读仪器 —— **141 → 163**。）
 `--no-renames` 与策略取自 base 提交，本线**没有**为过检查改过策略。
 这份 141 项的清单同时含**三个来源**：本线七个提交新增的文件；并发 import 留在
 `src/ohscanner/detectors/interface/**` 与 `tests/**` 的既有脏文件（本线从未 stage 过它们，
@@ -292,6 +301,9 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
 ## positive/fixed/safe/unrelated 与 holdout 是否独立
 
 - 三件控制齐全（positive + fixed + safe），且按家族各自持有；不存在"借用别家负证据"。
+  （**这句话在交付项 12 之前是超前的**：AUTH-02 / AUTH-04 / CAP-01 三个家族当时没有自己的目录，
+  只能从共享 manifest 借负证据；交付项 12 补齐这三个目录后，该断言才与本线实际持有的证据一致，
+  并由 `RuleControlCoverageTests` 逐家族机器校验。）
 - `unrelated`：`caller_class_unreviewed_name_safe.cpp`、`position_underflow_safe.cpp`、
   `relay_unreviewed_call_safe.cpp` 是**不相关形状**控制（不触发目标规则、也不触发别的规则）。
 - **不是独立 holdout。** 夹具是为规则手工写的同源设计样例，作者知道规则逻辑；
@@ -440,6 +452,13 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
    `path=()` 准确、1 行不准确（即上面第三处）。按旧口径"一律准确"会漏掉那 1 行。
    还有一条限制：`ipc.auth.missing` 的 21 条零命中只说明**它没命中这 4 种模式**，
    不等于这 21 条都对。
+9. **交付项 12 的一条开放项（未固定行为，属共享面）** —— 同一段一跳程序，对象经**引用出参**
+   回来时 credit 抵达并撤销 export 候选，经**返回值**（`virtual RemoteObjectPtr GetObject(...)`）
+   回来时 credit 行照记（三处 `file:line` 引用正确）而候选**不撤**；检测器自己的 limitation
+   只写了 `Pointer out-parameters are not followed`，未覆盖返回值形态。成因从外部不可判定
+   （需读 `analysis.py` / `bind_result`）。**故意不做成夹具**：在预期行为定下来之前把它写进 pin 表
+   等于替引擎定行为。详见交付项 12 §5。另两条边界（对象宏命名的类名使入口索引不绑定 dispatch、
+   成员定义的角色谓词读 body 而文件作用域定义直接拒名）已固化为夹具并双侧断言。
 
 ## 本地提交完成；push/merge/Ready 需另有明确授权
 
