@@ -1,0 +1,14 @@
+command: test -f web/dist/index.html
+web/dist/index.html: present
+command: find web/dist -maxdepth 2 -type f -print | sort
+web/dist/assets/app.css
+web/dist/assets/app.js
+web/dist/assets/chunk-2X22T7HV.css
+web/dist/assets/chunk-6ZZTGZEN.js
+web/dist/assets/chunk-BAKKMBSY.js
+web/dist/assets/chunk-CJ5VB7CT.js
+web/dist/assets/chunk-FSRPMVAS.js
+web/dist/assets/chunk-QAQQ3OGT.js
+web/dist/assets/chunk-ROI26NYG.js
+web/dist/assets/editor.worker.js
+web/dist/index.html

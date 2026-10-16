@@ -1,0 +1,16 @@
+{
+  "scenario": "old detail request is still pending when a new operation is created",
+  "selection_writes": [
+    "new-operation",
+    "new-operation"
+  ],
+  "api_paths_after_submit_started": [
+    "/operations/version-matrices",
+    "/repositories",
+    "/detectors",
+    "/cases",
+    "/operations",
+    "/operations/new-operation"
+  ],
+  "kind": "actual Operations.tsx form/view handlers with mocked React primitives and API transport; not browser E2E"
+}

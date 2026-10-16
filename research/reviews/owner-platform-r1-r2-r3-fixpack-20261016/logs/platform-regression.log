@@ -1,0 +1,83 @@
+COMMAND: python -m unittest discover -s tests -p test_workbench.py -v
+/tmp/ohscanner-r123-venv/lib/python3.10/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_api_cli_parity_partial_and_obligations (test_workbench.WorkbenchTests) ... ok
+test_arbitrary_detector_rejected (test_workbench.WorkbenchTests) ... ok
+test_atomic_claim (test_workbench.WorkbenchTests) ... ok
+test_cancel_at_atomic_publication_discards_report (test_workbench.WorkbenchTests) ... ok
+test_candidate_clusters_keep_each_line_identity (test_workbench.WorkbenchTests) ... ok
+test_case_can_append_existing_candidates_without_overwrite (test_workbench.WorkbenchTests) ... ok
+test_case_links_require_existing_run_candidates (test_workbench.WorkbenchTests) ... ok
+test_catalog_research_only (test_workbench.WorkbenchTests) ... ok
+test_cross_origin_rejected (test_workbench.WorkbenchTests) ... ok
+test_engine_drift_fails_instead_of_reusing_claim (test_workbench.WorkbenchTests) ... ok
+test_evidence_cannot_attach_to_other_candidate (test_workbench.WorkbenchTests) ... ok
+test_export_binds_review_and_report (test_workbench.WorkbenchTests) ... ok
+test_hard_timeout_kills_process (test_workbench.WorkbenchTests) ... ok
+test_health_measures_lock_not_old_lock_file (test_workbench.WorkbenchTests) ... ok
+test_investigation_artifacts_are_draft_only (test_workbench.WorkbenchTests) ... ok
+test_investigation_bundle_separates_facts_and_drafts (test_workbench.WorkbenchTests) ... ok
+test_investigation_draft_is_append_only_and_non_promoting (test_workbench.WorkbenchTests) ... ok
+test_manifest_export_matches_committed_artifacts (test_workbench.WorkbenchTests) ... ok
+test_markdown_tampering_rejected (test_workbench.WorkbenchTests) ... ok
+test_missing_repository_returns_explicit_error (test_workbench.WorkbenchTests) ... ok
+test_mutation_requires_header (test_workbench.WorkbenchTests) ... ok
+test_pin_does_not_follow_branch_later (test_workbench.WorkbenchTests) ... ok
+test_queue_cancel_never_executes (test_workbench.WorkbenchTests) ... ok
+test_reopen_persistent_store (test_workbench.WorkbenchTests) ... ok
+test_report_tampering_rejected (test_workbench.WorkbenchTests) ... ok
+test_repository_outside_roots (test_workbench.WorkbenchTests) ... ok
+test_repository_symlink_rejected (test_workbench.WorkbenchTests) ... ok
+test_restart_marks_interrupted (test_workbench.WorkbenchTests) ... ok
+test_retry_freezes_original_commit (test_workbench.WorkbenchTests) ... ok
+test_review_cannot_self_promote (test_workbench.WorkbenchTests) ... ok
+test_review_is_append_only_with_conflict_detection (test_workbench.WorkbenchTests) ... ok
+test_revision_option_rejected (test_workbench.WorkbenchTests) ... ok
+test_running_cancel_kills_process (test_workbench.WorkbenchTests) ... ok
+test_scope_escape_rejected (test_workbench.WorkbenchTests) ... ok
+test_second_worker_cannot_recover_live_jobs (test_workbench.WorkbenchTests) ... ok
+test_source_evidence_binds_original_blob_and_survives_restart (test_workbench.WorkbenchTests) ... ok
+test_source_evidence_rejects_out_of_scope_and_bad_range (test_workbench.WorkbenchTests) ... ok
+test_untrusted_host_rejected (test_workbench.WorkbenchTests) ... ok
+test_viewer_rejects_unscanned_blob (test_workbench.WorkbenchTests) ... ok
+test_viewer_uses_git_not_worktree (test_workbench.WorkbenchTests) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 54.233s
+
+OK
+COMMAND: python -m unittest discover -s tests -p test_workbench_operations.py -v
+/tmp/ohscanner-r123-venv/lib/python3.10/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_runtime_never_falls_back_to_host_when_docker_is_not_ready (test_workbench_operations.DockerBoundaryTests) ... ok
+test_local_api_rejects_arbitrary_git_sync_url (test_workbench_operations.OperationsApiTests) ... ok
+test_operations_queue_is_exposed_by_local_api (test_workbench_operations.OperationsApiTests) ... ok
+test_cancel_only_requests_cancellation_for_owned_child_scans (test_workbench_operations.OperationsStoreTests) ... ok
+test_claim_lanes_do_not_take_each_others_work (test_workbench_operations.OperationsStoreTests) ... ok
+test_first_start_store_schema_initialization_is_serialized (test_workbench_operations.OperationsStoreTests) ... ok
+test_operation_and_endpoint_scans_are_committed_together (test_workbench_operations.OperationsStoreTests) ... ok
+test_result_integrity_detects_tampering (test_workbench_operations.OperationsStoreTests) ... ok
+test_source_sync_failure_redacts_credentials_and_next_clone_recovers (test_workbench_operations.OperationsStoreTests) ... ok
+test_source_sync_git_process_is_isolated_from_audit_repo_config (test_workbench_operations.OperationsStoreTests) ... ok
+test_v3_migration_makes_a_backup (test_workbench_operations.OperationsStoreTests) ... ok
+test_date_selection_uses_committer_time_and_records_topology_span (test_workbench_operations.PlanningTests) ... ok
+test_missing_coverage_leaves_candidate_delta_unknown (test_workbench_operations.PlanningTests) ... ok
+test_range_comparison_does_not_call_static_candidate_a_fix (test_workbench_operations.PlanningTests) ... ok
+test_source_sync_allowlist_rejects_userinfo_ports_and_other_paths (test_workbench_operations.PlanningTests) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 1.774s
+
+OK
+{"source_sync_process": {"clone_stage": {"failed_staging_removed": true, "published": false, "published_target": null, "staging_path": "/tmp/tmpz38icckl/data/repo-cache/.retry_component.257d94d6b59043dca53f96c0b6355ba9.partial"}, "command": ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never", "-c", "credential.helper=", "clone", "--no-checkout", "--", "https://github.com/openharmony/retry_component.git", "/tmp/tmpz38icckl/data/repo-cache/.retry_component.257d94d6b59043dca53f96c0b6355ba9.partial"], "credential_boundary": "anonymous public HTTPS; approved URL has no userinfo/query/fragment; credential helpers and interactive prompts disabled; persisted text redacted", "cwd": "/tmp", "exit_code": 9, "git_transport": null, "requested_url": "https://github.com/openharmony/retry_component.git", "stderr": "Authorization: <redacted>\nfatal: simulated public network failure", "stdout": "password=<redacted> https://<redacted>@example.invalid/x", "supervisor_deadline": "outer operation Worker", "timeout_seconds": 30}}
+{"source_sync_process": {"clone_stage": {"published": true, "published_target": "/tmp/tmpz38icckl/data/repo-cache/retry_component", "staging_path": "/tmp/tmpz38icckl/data/repo-cache/.retry_component.d095ec4c635a43a1a03a312815a90c71.partial"}, "command": ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never", "-c", "credential.helper=", "clone", "--no-checkout", "--", "https://github.com/openharmony/retry_component.git", "/tmp/tmpz38icckl/data/repo-cache/.retry_component.d095ec4c635a43a1a03a312815a90c71.partial"], "credential_boundary": "anonymous public HTTPS; approved URL has no userinfo/query/fragment; credential helpers and interactive prompts disabled; persisted text redacted", "cwd": "/tmp", "exit_code": 0, "git_transport": null, "requested_url": "https://github.com/openharmony/retry_component.git", "stderr": "", "stdout": "", "supervisor_deadline": "outer operation Worker", "timeout_seconds": 30}}
+{"source_sync_process": {"command": ["git", "-c", "core.hooksPath=/dev/null", "-c", "protocol.file.allow=never", "-c", "protocol.ext.allow=never", "-c", "credential.helper=", "-C", "/tmp/tmpz96rrrvn/data/repo-cache/c_utils", "fetch", "--prune", "--tags", "https://github.com/openharmony/c_utils.git", "+refs/heads/*:refs/remotes/origin/*"], "credential_boundary": "anonymous public HTTPS; approved URL has no userinfo/query/fragment; credential helpers and interactive prompts disabled; persisted text redacted", "cwd": "/tmp", "exit_code": 0, "git_transport": null, "requested_url": "https://github.com/openharmony/c_utils.git", "stderr": "", "stdout": "", "supervisor_deadline": "outer operation Worker", "timeout_seconds": 30}}
+COMMAND: python -m unittest discover -s tests/ui -p test_*.py -v
+/tmp/ohscanner-r123-venv/lib/python3.10/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_built_frontend_and_assets_are_served (test_served_ui.ServedUiTests) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.272s
+
+OK

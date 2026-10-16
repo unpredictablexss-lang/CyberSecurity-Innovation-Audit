@@ -1,0 +1,22 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+    'new-operation',
++   'old-operation'
+  ]
+
+    at file:///E:/%E7%BD%91%E5%AE%89/CyberSecurity-Innovation-Audit-fixpack-20261016/web/tests/operations-handler.test.mjs:140:10 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [ 'new-operation', 'old-operation' ],
+  expected: [ 'new-operation' ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0
