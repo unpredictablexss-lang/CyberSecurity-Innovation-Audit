@@ -1386,3 +1386,55 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - **S1 vs S2 数据不一致**（2026-10-10 起未解）：`ipc-research/pairs/cve-2023-0036/lineage.json`
   标 `verification_level: S1`，而 `research/corpus/interface/ipc/verified_pairs.jsonl` 标
   `S2 / patch_root_cause_review` —— 需队伍核对哪一份为准，B 不擅自改任一份。
+
+## 46. 2026-10-16 CAP-01：版本影响扫描 + guard 链按原文读实
+
+记录写入 `docs/research/ipc_cap01_guard_chain_2026-10-16.md`。
+交付件 #4 的工具 `version_impact.py` **一字未改**，只是参数化后用到第二个候选上。
+**CAP-01 状态仍是 `candidate`** —— 本节没有把它升级成已确认漏洞，理由见下。
+
+- **影响范围**：`openharmony/window_window_manager` @ `8b0d8fe1b973`，
+  **431 ref**（46 tag + 385 origin 分支）→ `affected 2 / fixed 0 / not_present 255 / unknown 174`，
+  4.6 s，产物 `outputs/reports/version_impact_cap01_window_window_manager.json`
+  （未跟踪、不入库），`manifest_sha256 = bfdf0a53d28353d61bf33592a88e1e27f244232ce5dde102506c4c8d43cb182f`。
+- **`affected` 恰为两条**：`origin/master`（`8b0d8fe1b973`，2026-10-08）与
+  `origin/weekly_20261005`（`2743766e03d0`，2026-09-30），两者 blob 均为
+  `26df3196683976a9f175292fcbf54efef262eaa0`（sha256 `404969d1…de2ab`）。
+- **`fixed = 0` 是如实留空**：本次不传 `--fixed-commit`，而工具的既有设计是「无 fixed blob
+  则 `fixed` 永不可达」。不是「查了发现没有修复」，是这一格在该工具语义下取不到。
+- **「克隆范围内不存在修复」是被验证的**：9 个 `unknown` tag 的 `%(committerdate)` 为空，
+  用 `%(*committerdate)` 取 peeled 提交日期补齐后，最新的 `v7.0-Release` 为 2026-08-20；
+  174 条 `unknown` 里最晚的 ref 是 `origin/OpenHarmony-6.1-LTS` 2026-09-29 ——
+  **全部早于 master 2026-10-08**。即在该克隆的全部 ref 上，这个文件的最新状态就是脆弱状态。
+- **guard 链三帧，全部有原文**（blob 与行号见文档 §3）：
+  ① `screen_session_manager_stub.cpp:1775-1780` 事务臂内**无权限判断**，直调 `GetRenderSession`；
+  ② `screen_session_manager.cpp:3200-3208` 定义体**只有 null 检查**，四个权限串一个都没有；
+  ③ `screen_session.cpp:1006-1009` 是 `return renderSession_;` 纯 getter。
+  → `reply.WriteRemoteObject(renderSession)` 把内部对象交回给发起方，**全路径不问「谁在调」**。
+- **同组件对照（本节最有力的证据）**：同一 impl 文件里 `SetScreenSkipProtectedWindow`
+  （16347）与 `GetIsRealScreen`（16395）**都会**用 `SessionPermission::IsSystemCalling()` 拦截；
+  该文件共 **132 处** 权限检查。不是「某个文件忘了写」，是「同一个类里 132 处都写了，
+  唯独这条返回远程对象的路径没写」。
+- **两处早先说法被更正**（写进文档 §5）：
+  ①**CAP-01 不是描述符绕过** —— stub 第 50 行确实校验 `ReadInterfaceToken() != GetDescriptor()`，
+  它在位的；CAP-01 与 AUTH-01 同属 SA relay 家族但机制不同（AUTH-01 是描述符校验完全缺失），
+  两者在报告里必须分开写，否则会把 AUTH-01 的修复建议错套过来。
+  ②「同模块 40+ 处 `IsSystemCalling`」数字不准：impl 里 **132 处**，
+  而 **stub 文件里只有 1 处**（第 2028 行）—— 原说法容易让人以为 stub 里到处都有。
+- **同时更正了本段我自己写错的三处数字**（先写文档、后回查产物发现，已改）：
+  `not_present` 的 weekly 是 **137** 条、区间 2021-12-31 … **2024-09-10**（我原写「到 2024-09-10」
+  但把总数写成 137 weekly 而全量区间是到 2025-09-02）；`unknown` 覆盖 **89** 个不同 blob（原写法正确）；
+  9 个 `unknown` tag 的日期表逐条与产物吻合。另补一条**新交代**：255 条 `not_present` 里有
+  **22 条晚于 2024-09-15**，它们是从模块创建之前的提交点分出去的分支，**不能**读成「上游删了文件」。
+- **为什么仍是 `candidate`**（逐门见文档 §6）：`target_bound` 为真；`dynamic_reproduced` 为假
+  （无 PoC）；**`entry_controlled` 未建立** —— 描述符校验不等于权限校验，
+  「哪类调用者在什么权限下能发这个事务」拿不出证据，而
+  `sa_profile/4607.json`（`bb2aec03568e`）等 3 个 blob **不在本地**，离线核不到权限声明。
+  `reachable_sensitive_operation` / `exploitation_conditions` 只到「半」，
+  `security_impact` 未建立（拿到一个远程对象 ≠ 拿到某个能力）。
+  → 与 AUTH-01 共享同一瓶颈：**不得**把「存在 `OnRemoteRequest` 分支」等同于「任意应用可达」。
+- **CWE 出处坐实**：家族 `CAP-01` → `CWE-926`（`src/ohscanner/detectors/interface/detector.py:7`
+  的 `_CWE`）；后果 `capability_exposure` → `CWE-668`（`src/ohscanner/detectors/interface/models.py:57`）。
+- **本节检查**：全部命令在文档 §8 可复现；分析脚本在 `/home/audit/wtmp/`、产物在 `outputs/`，
+  **均不入库**；`git diff --cached --name-only` 自检共享面（`src/report|src/case|src/evidence|src/benchmark`）
+  零命中。
