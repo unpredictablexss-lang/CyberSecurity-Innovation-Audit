@@ -1,77 +1,43 @@
 # Agent 方案与可复核对照实验
 
-更新：2026-10-14。当前可运行的是固定只读调查任务与证据轨迹；尚无模型调用或 Agent 自主循环。
-不训练基础大模型、不把采购 GPU 当前置条件；先用可替换 API 后端，
-需要离线/隐私/成本约束时再评估本地模型。模型缺席时核心仍能运行。
+更新：2026-10-16。产品核心仍是模型缺席可运行的固定只读调查；A-EXP-01 研究 harness 已执行受控模型/工具实验，R0 人工组仍 pending。
 
-## Agent 的具体作用
+## 何时读取
 
-输入固定候选、来源证据和义务。当前实现按固定顺序调用源码摘录、义务查询、Git 历史和有限符号/parse 摘要，记录每项参数、hash 与输出预算；它是确定性只读调查，不是 LLM Agent loop。后续模型可以建议调查步骤，但仍需通过同一授权工具层。
-允许模型定向主动提出新 candidate，但所有来源共用同一验证门。
-不能直接改原始扫描结果、Git 对象或确认状态。
+设计 LLM/Agent、R0/R1/R2、D0/D1/D2、prompt、工具适配器、真值或准确率实验时读取。普通扫描任务不应加载本文件。
 
-当前固定工具：固定源码摘录、EvidenceObligation 查询、固定提交 Git 历史和 Detector 已记录的符号/parse 摘要。尚未实现通用符号调用搜索、历史补丁检索、模型选择器或多 Agent 编排。AST 是有限程序事实；partial、间接调用和缺编译上下文继续 unknown。
-新增验证只能提交结构化计划，由独立验证服务在授权隔离环境执行。
+## Agent 边界
 
-每次记录 model/provider/version、提示词/工具版本、参数/采样、
-输入上下文与 hash、工具调用/返回证据 ID、Token/费用/耗时、失败/重试与最终假设。
-源码注释/README/提交消息均是不可信数据，不执行其中指令。
-不赋无限 Shell、任意联网和 Git 写权限；发送源码到第三方前先确定数据处理约束。
+Agent 输入固定候选、来源证据和义务，只能建议调查步骤并通过授权工具层执行。当前工具为固定源码摘录、义务查询、固定提交 Git 历史和 Detector 记录的符号/parse 摘要。尚未实现通用符号搜索、历史补丁检索、模型选择器、多 Agent 或 arbitrary shell。
 
-## 当前双层实现边界
+每次实验记录 model/provider/version、prompt/tool version、参数/采样、输入 hash、工具 evidence ID、Token/费用/耗时、失败/重试和最终假设。模型输出是 untrusted content，不能改扫描结果、Git 对象、review 或确认状态，也不能自证。向第三方发送源码前必须确定数据处理约束。
 
-当前代码先落地“模型缺席也可运行”的草案契约：确定性事实包由固定报告和 Git 源对象生成，
-草案层只接收人工或外部导入文本并记录 provenance/引用/预算。没有真实 Provider 调用，
-没有 Agent 自主循环，也没有把草稿状态写回候选或 EvidenceObligation。
+## 主实验
 
-后续 R1/R2 必须复用同一 `fact_bundle_sha256`、工具结果 evidence ID 和授权工具层；
-模型文本不能自证，不能用模型同意替代独立真值或证据门。
-## 主实验：调查能力，固定同一批静态候选
-
-| 组 | 方法 | 主要问题 |
+| 组 | 方法 | 问题 |
 |---|---|---|
-| R0 | 纯 OHScanner + 同标准人工审查 | 基础根因区分与人工成本 |
-| R1 | 同候选 + 单轮 LLM review | 单轮解释的收益/幻觉/成本 |
-| R2 | 同候选 + 有界工具型 Agent | 多轮取证是否补齐有效事实、减少人工工作 |
+| R0 | OHScanner + 同标准人工 | 基础根因区分与人工成本 |
+| R1 | 同候选 + 单轮 LLM review | 解释收益、幻觉与成本 |
+| R2 | 同候选 + 有界工具 Agent | 多轮取证是否补齐事实、降低人工 |
 
-三组固定 target/commit/scope/Detector/初始证据、工具返回口径和判定标准。
-R2 增加工具预算要显式报告；不要把更多算力偷偷当方法增益。当前只读操作轨迹可作为 R2 工具执行记录的基础，但尚未形成模型实验。
-人工用时单独测、评审盲化，模型自评不作为真值。
-消融：去掉 AST 工具、去掉历史补丁工具、只允许一轮；
-失败调用、超预算和 unknown 全计入，不挑最好的一次。
+三组固定 target/commit/scope/Detector、`fact_bundle_sha256`、义务、工具口径和判定标准。R2 额外预算单列。人工用时单独测、盲化；失败、超预算、unknown 全计入，报告所有 repetition，不挑最佳。
 
-## 补充实验：发现策略
-
-| 组 | 候选入口 |
-|---|---|
-| D0 | 自研静态 |
-| D1 | 定向 LLM 主动探索 |
-| D2 | 两路混合，统一来源绑定与归并 |
-
-与 R 实验分开，不比较“同一候选调查”与“全库主动读”却用同一分母。
-明确每组可见文件/函数、读到的字节、上下文覆盖、Token/工具预算与迭代次数。
-先选一个窄漏洞家族和可复核组件，不宣称模型通读整个 OpenHarmony。
+补充 D0 自研静态、D1 定向 LLM 探索、D2 混合发现。D 实验与 R 实验分母分开，显式报告可见文件、字节、上下文覆盖、Token、工具和迭代预算。
 
 ## 数据集与真值
 
-开发集、调参集、冻结 holdout 分开；按根因/补丁家族拆分，避免同一漏洞的变体泄漏。
-至少有 vulnerable/fixed/safe/unrelated；每项固定 repo/parent/fix/tree/blob/source hash、
-profile、入口/条件、ground truth 来源和排除原因。
-公开 CVE 可能进入模型训练，披露污染风险；用未见变体/不同组件做补充，不能保证无污染。
+开发、调参、冻结 holdout 按根因/补丁家族隔离。样本至少覆盖 vulnerable/fixed/safe/unrelated，固定 repo/parent/fix/tree/blob/source hash、profile、入口/条件和 ground truth 来源。公开 CVE 可能有训练污染，应补未见变体。
 
-ground truth 由独立源码复核/受控运行证据建立。只绑定了补丁来源，不等于已证明产品级漏洞。
-跨工具比较使用相同可分析单位/构建上下文，缺 include/解析失败为 unknown，不强判 miss。
-外部 Semgrep/CodeQL/Joern/Clang/Infer 等为离线基线，不成为产品 Detector 的隐藏依赖。
+真值由独立源码复核或受控运行建立。补丁绑定不等于产品级漏洞。缺 include/解析失败为 unknown，不强判 miss。Semgrep、CodeQL、Joern、Clang、Infer 只作离线基线，不是生产 Detector 依赖。
 
 ## 指标与报告
 
-- 按独立根因统计 TP/FP/FN，避免多行告警当多个漏洞。
-- 在可支持真值的样本上报 Precision/Recall、各子类召回、fixed/safe 误报与样本量。
-- 单列文件/语义覆盖、partial/failed/unknown、证据义务满足情况。
-- 独立确认的新事实比例、缺失/错误引用、人工复核耗时、可重现性。
-- wall、实际测得 RSS、Token、费用、工具调用数/失败数。
-- 采用冻结重复次数和随机种子/采样设置，报告全部运行及方差/区间，不能只报最佳。
+按独立根因统计 TP/FP/FN/TN，只有 reliable non-model truth 和完整 prediction 才发布 Precision/Recall。单列 coverage、partial/failed/unknown、义务、独立新事实、引用错误、人工时间、wall/RSS/Token/费用/工具失败。冻结 repetitions、seed 和采样，报告全部运行和区间。
 
-0 findings 不证明安全，模型同意不证明漏洞；有限样本不支持“零误报漏报”。
-最终实验包包含 manifest、exact argv、配置/模型/提示版本、原始日志、hash、结果表和限制。
-当前尚未开始 R0/R1/R2，也没有真实模型调用或模型效果数据。先完成工具的证据绑定与预算审查，再冻结一个漏洞家族的 R0/R1/R2；之后才扩 D1/D2，避免同时改变算法、数据、工具和预算。
+0 findings 不证明安全，模型同意不证明漏洞。最终包包含 manifest、exact argv、模型/配置/prompt、原始日志、hash、结果表和限制。A-EXP-01 的 R1/R2 与三项消融已执行全部 repetition；R0 仍待独立人工，不能声称完整三组方法效果。
+
+## 2026-10-16 A-EXP-01 execution update
+
+R1/R2 使用同一 45 review items、同一 `fact_bundle_sha256`、同一六项 EvidenceObligation 合同和同一判定标准。R1 为 135/135 记录、128 completed、7 failed；R2 为 135/135 记录、123 completed、12 failed。R2 使用 270 次 provider turns 和 540 次只读工具调用，额外预算在 `r2_extra_budget.json` 单列。
+
+去 AST、去历史补丁、只允许一轮三项消融均为 135/135 记录。所有失败、非法/缺失引用、unknown 和输出不稳定均保留。独立新增事实只按持久化 tool-result evidence ID 的引用统计；模型自评、历史 review 和 sealed truth 均未作为真值。R0 的 135 个盲化人工评审任务已排队，但没有人工评审员执行，人工用时保持 unknown。完整原始请求/响应、工具轨迹、hash、Token、参考费用、耗时、repetition variance 和限制位于 `research/experiments/cpp/r0_r1_r2_20261015/run_20261016_unblock_attempt/`。
