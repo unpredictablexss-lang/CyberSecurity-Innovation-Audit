@@ -1636,3 +1636,51 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   **没有任何门字段**因本节置真。交付件 #4 的解释更完整了，但**结论等级不变**。
 - **本节检查**：命令在 triage 文档 §10.5 可复现（`w179.py`）；脚本在 `/home/audit/wtmp/`，
   **不入库**；共享面零改动；回归 485 tests OK（见提交说明）。
+
+## 51. 2026-10-16 AUTH-01：被交出去的那个对象能做什么（队友 B）
+
+记录写入 `docs/research/ipc_auth01_callback_capability_2026-10-16.md`。
+**本文不解 `entry_controlled`** —— 它把 `reachable_sensitive_operation` 与 `security_impact`
+这两格的**素材**读实，但**一个门字段都没有置真**。
+
+- **两端的事务面（原文）**：`IPlatformApi` **9 个**事务
+  （`registerCallback` / `bindInputMethodService` / `unbindInputMethodService` /
+  `createWindowToken` / `destroyWindowToken` / `listInputMethod` / `getInputMethodProperty` /
+  `getInputMethodSetting` / `setInputMethodSetting`，blob `1c7066c50728`）；
+  `IPlatformCallback` **只有 1 个**（`NOTIFY_EVENT` → `notifyEvent(eventId, userId, eventContent)`，
+  blob `e45548666deb`）。**交出去的那一侧是窄的。**
+- **`PlatformCallbackStub::OnRemoteRequest`（blob `e90a4e77e9be`，104 行）三件事同时缺席**：
+  ① 无 `ReadInterfaceToken()` / `GetDescriptor()` 比对（修复版加的正是这 4 行）；
+  ② 无 `IPCSkeleton::GetCallingUid()` 之类的调用者检查（服务端**无法分辨**发消息的是谁）；
+  ③ `size` 被直接当循环上界，**无边界校验**（独立于 ①②，见下）。
+- **`notifyEvent` 能做的事（原文）**：把 `eventId` 映射成 7 种内部消息之一并投进
+  `MessageHandler::Instance()`。消费者已定位到
+  `services/src/input_method_system_ability.cpp:376-408` 的 `WorkThread()`：
+  `MSG_ID_USER_START`→`OnUserStarted`、`USER_STOP`→`OnUserStopped`、`USER_UNLOCK`→`OnUserUnlocked`、
+  `USER_LOCK`→`OnUserLocked`、`PACKAGE_ADDED`→`OnPackageAdded`、`PACKAGE_REMOVED`→`OnPackageRemoved`、
+  `SETTING_CHANGED`→`OnSettingChanged`。
+  即**用户生命周期 / 包安装卸载 / 输入法设置变更**三类事件，连同**调用方自选的 `userId` 与
+  `eventContent`**，被投进 SA 的**串行工作线程**。
+- **一处独立缺陷（静态分析，未动态验证）**：`platform_callback_stub.cpp:42-45`
+  `int size = data.ReadInt32(); for (int i = 0; i < size; i++) eventContent.push_back(data.ReadString16());`
+  —— parcel 读空后 `ReadString16()` 返回空串、**循环不停**，`size = INT_MAX` 时向量要装约 2³¹
+  个空 `std::u16string`（量级几十 GiB）→ `std::bad_alloc` → **SA 进程终止（可用性）**。
+  **钉住的 `fixed` 修订并没有修它**（`vulnerable → fixed` 只有那 4 行描述符校验）；
+  反倒是 §50 读到的那 4 个变体 blob 带了 `size < 0` 与 `size > GetReadableBytes()` 两条校验。
+  **按 `AGENTS.md`，「AI 推测不是验证」，所以这段不进任何门字段，只记为待验证线索。**
+- **门状态：全部未变**。`entry_controlled` **仍未建立**；
+  `reachable_sensitive_operation` **仍是「半」**，但「半在哪」变清楚了
+  （敏感操作已具名，但仍未证 `On*` 内部的实际后果，且**仍需先持有句柄**）；
+  `exploitation_conditions` 仍「半」；`security_impact` **仍未建立**
+  —— **影响面写实与可达性未证是两件事**。
+  `poc_state = stable_reproduced`、`patch_revalidation = passed` 不变，
+  `validated_vulnerability` 仍为 **0**。
+- **对定位实现者有一点帮助但不构成定位**：`IPlatformApi` 的 9 个方法给出了实现者的能力画像
+  （绑定/解绑 IME 服务并返回 `IInputMethodCore`、创建/销毁 window token、列举/读写输入法属性与设置）
+  —— *这**收窄**了候选范围，但盘上仍无实现者、也无 `SetPlatform` 调用方。*
+  **决定项不变**：需要确定**实现 `ohos.miscservices.inputmethod.IPlatformApi` 的组件**。
+- **没有证明的事**：没有读每个 `On*` 的内部（注入成功→状态被改之间还有一段未读）；
+  没有追 `MessageHandler::Instance()` 与 `PerUserSession::msgHandler` 是否同一实例；
+  没有做任何动态验证；没有改 `version_impact.py`、PoC harness、检测规则或任何共享面。
+- **本节检查**：命令在该文档 §8 可复现（`w180`–`w183.py`）；脚本在 `/home/audit/wtmp/`，
+  **不入库**；共享面零改动；回归 485 tests OK（见提交说明）。
