@@ -10,7 +10,8 @@
 ## 0. 一句话结论
 
 62 条 `unknown` 中的 **38 条（3.2-Beta1/2/3 + 35 个 weekly）可以结案：不是缺陷版本** ——
-它们的文件与修复版**逐字节相同，只差两行 namespace 结尾注释**。
+它们的文件与修复版**内容等价**（实为 3639 B / 3595 B 两个不同 blob，差异**只在末尾两行
+`// namespace` 闭合注释**；见 `ipc_auth01_platform_layer_lifecycle_2026-10-16.md` §4.1）。
 ~~剩下 **24 条（5 个 blob）在离线对象库里没有内容，本轮读不到，维持 `unknown`**。~~
 **（当日已结案，见 §10：5 个 blob 全部在 `~/openharmony-targets/inputmethod_imf`，
 且全部携带描述符校验 → 这 24 条也不含 AUTH-01 缺陷。判定状态按 §6 的原则仍写 `unknown`。）**
@@ -85,8 +86,8 @@
 +} // namespace OHOS
 ```
 
-也就是说这 38 个 ref 上的 `platform_callback_stub.cpp` 与修复版**逐字节相同，
-只有两个 namespace 结尾注释被补了名字**（典型的格式化/重排改动）。
+也就是说这 38 个 ref 上的 `platform_callback_stub.cpp` 与修复版**内容等价，不是同一个 blob**
+（3639 B vs 3595 B），差异只有**两个 namespace 结尾注释被补了名字**（典型的格式化/重排改动）。
 第 34–43 行的描述符校验**在位**：
 
 ```cpp
@@ -214,7 +215,7 @@ vulnerable `59c980bf…e043` **MATCH**、fixed `b6d7f66a…c444` **MATCH**（104
 | blob | ref 条数 | 行数 | sha256 前缀 | 相对 vulnerable | 相对 fixed |
 |---|---:|---:|---|---|---|
 | `022e5d44f76f` | 3 | 115 | `4b8d95ac…` | +描述符校验 +边界校验 | +边界校验 |
-| `352b006d2405` | 7 | 108 | `16fe0c99…` | +描述符校验 | **0（逐字节相同）** |
+| `352b006d2405` | 7 | 108 | `16fe0c99…` | +描述符校验 | **0（内容相同；字节差 1，见 §10.4）** |
 | `7d45b1f09d98` | 4 | 116 | `82ae1d53…` | +描述符校验 +边界校验 | +边界校验 |
 | `866c0b6a5825` | 7 | 116 | `a4692b29…` | +描述符校验 +边界校验 +namespace 注释 | +边界校验 +namespace 注释 |
 | `14a849f73d0e` | 3 | 116 | `2d2b789f…` | +描述符校验 +边界校验 +namespace 注释 | +边界校验 +namespace 注释 |
@@ -224,7 +225,12 @@ vulnerable `59c980bf…e043` **MATCH**、fixed `b6d7f66a…c444` **MATCH**（104
 - 其中 4 个在修复版之上**还多了边界校验**（`if (size < 0) return …BAD_VALUE;` 与
   `size_t availSize = data.GetReadableBytes(); if (size > availSize) return …BAD_VALUE;`）——
   这是**比修复版更强的加固**，但它们仍是不同的 blob，**不判 `fixed`**。
-- `352b006d2405`（7 条）与 fixed **逐字节相同**。
+- ~~`352b006d2405`（7 条）与 fixed **逐字节相同**。~~ **本条已更正（2026-10-16）：**
+  二者 **108 行逐行相同，但字节数不同** —— `352b006d2405` 是 **3594 B**、fixed（`0f9ed2f6…ec68`）
+  是 **3595 B**，差异只有**文件末尾那一个换行**。所以只能说**内容等价**，
+  「逐字节相同」**不成立**。读法与复核见
+  `docs/research/ipc_auth01_platform_layer_lifecycle_2026-10-16.md` §4.1。
+  同批的 `f34e8ff7d7a9`（38 条）也属这一类：与 fixed 内容等价，多两行 `// namespace` 注释。
 
 ### 10.3 因此：**62 条 `unknown` 全部结案，无一条携带 AUTH-01 缺陷**
 

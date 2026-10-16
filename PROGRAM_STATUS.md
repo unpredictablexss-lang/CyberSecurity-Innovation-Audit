@@ -1346,7 +1346,7 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   它现于 `src/ohscanner/poc/records.py` 的 `PatchRevalidation` / `patch_state` 与
   `runner.py` 的 `patch_revalidation_state()`，且 `src/ohscanner/poc/` 属 B 自有面。
 
-## 44. 2026-10-16 AUTH-01：62 条 `unknown` ref 追查（38 结案 / 24 仍未知）
+## 44. 2026-10-16 AUTH-01：62 条 `unknown` ref 追查（38 结案 / 24 仍未知）（**剩下的 24 条当日已结案，见 §50；其中「逐字节相同」的表述已更正，见 §52**）
 
 记录写入 `docs/research/ipc_auth01_unknown_refs_triage_2026-10-16.md`。
 这是交付件 #4 遗留问题的收尾：**`version_impact.py` 一字未改**，改的是对那 62 条的解释。
@@ -1361,7 +1361,7 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   即缺陷是**这个前置根本没写**，与 harness manifest 的 `defect`/`fix` 及 B 自撰补丁的 guard 论证一致。
 - **结果二（结案 38 条）**：`fixed` 与 3.2 线 blob `f34e8ff7d7a9` 的差异**只有 4 行改动，
   且全在文件末尾的两个 namespace 注释**（`} // namespace MiscServices` / `// namespace OHOS`）。
-  即这 38 个 ref 上的文件与修复版**逐字节相同（仅注释差异）**，第 34–43 行的校验在位
+  即这 38 个 ref 上的文件与修复版**内容等价、但并非同一 blob**（3639 B vs 3595 B；见 §52），第 34–43 行的校验在位
   → **不携带 AUTH-01 缺陷**。构成：3 tag + 3 Beta 分支 + 26 weekly + 3 monthly
   + 2 `filemanager_develop` + 1 `feature_IDL`（由 #4 产物统计，非估算）。
 - **结果三（仍未知 24 条）**：`022e5d44f76f`(3)、`352b006d2405`(7)、`7d45b1f09d98`(4)、
@@ -1613,7 +1613,9 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   （104 行 / 108 行）；`vulnerable → fixed` 的差异仍**只有描述符校验那 4 行**。
 - **结果：5 个 blob 全部携带描述符校验** ——
   `ReadInterfaceToken` / `GetDescriptor` / `ERROR_STATUS_UNKNOWN_TRANSACTION` 三者全在。
-  - `352b006d2405`（7 条 ref）与 fixed **逐字节相同**；
+  - ~~`352b006d2405`（7 条 ref）与 fixed **逐字节相同**~~ → **本条已更正，见 §52**：
+    二者 108 行逐行相同、**但字节数不同**（`352b006d2405` 3594 B / fixed 3595 B，只差文件末尾
+    那一个换行），所以「逐字节相同」**不成立**，只能说**内容等价**；
   - 其余 4 个在修复版之上**还多了边界校验**（`if (size < 0) … ERROR_STATUS_BAD_VALUE`
     与 `static_cast<size_t>(size) > data.GetReadableBytes() … ERROR_STATUS_BAD_VALUE`），
     是**比修复版更强**的加固。它们仍是不同的 blob，所以**不判 `fixed`**。
@@ -1683,4 +1685,60 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
   没有追 `MessageHandler::Instance()` 与 `PerUserSession::msgHandler` 是否同一实例；
   没有做任何动态验证；没有改 `version_impact.py`、PoC harness、检测规则或任何共享面。
 - **本节检查**：命令在该文档 §8 可复现（`w180`–`w183.py`）；脚本在 `/home/audit/wtmp/`，
+  **不入库**；共享面零改动；回归 485 tests OK（见提交说明）。
+
+## 52. 2026-10-16 AUTH-01：platform 层是怎么活着的、谁在用它、什么时候没的（队友 B）
+
+记录写入 `docs/research/ipc_auth01_platform_layer_lifecycle_2026-10-16.md`。
+起因是 §49/§51 反复撞上的那个决定项（「谁实现了 `IPlatformApi`」）。本轮**不追问实现者是谁**，
+改问这个层**在历史上是怎么活着的** —— 结果同时给出了交付件 #4 的素材、一条**对 AUTH-01 不利**
+的事实，以及一处**对我方旧记录的更正**。
+
+- **它编进去了，不是死文件**：`e663b470:services/BUILD.gn:52-55` 把 `platform.cpp` /
+  `platform_api_proxy.cpp` / `platform_callback_proxy.cpp` / `platform_callback_stub.cpp`
+  四个源文件列进输入法 SA 的构建。
+- **但全历史里没有调用方、也没有实现者**（pickaxe `-S` 扫 `--all`，看**命中路径集合**）：
+  `SetPlatform` 只出现在 `platform.h` / `platform.cpp`；`IPlatformApi` 只出现在接口头 +
+  `platform_api_proxy.cpp`；`PlatformApiStub` / `platform_api_stub` **零命中**。
+  **这不是「没找到」，是「历史里就没有」。**
+- **「没有调用方」≠「死代码」**：`platform.cpp`（blob `046a6a570cc1`，189 行）里**六个转发方法
+  全都有 `platformApi == nullptr` 判空**（`:61`/`:74`/`:88`/`:101`/`:126`/`:150`），
+  无注入方时统一返回 `ERROR_NULL_POINTER` / `nullptr`，**不崩**；`ListInputMethod`(`:114`) 与
+  `GetInputMethodSetting`(`:140`) 更是**无条件 `return 0`**，根本不转发。
+  **唯一不判空的是 `SetPlatform` 自己**（`:22-27`），也是全仓库**唯一** `new PlatformCallbackStub()`
+  的地方。加上 `platform_api_proxy.cpp` 的存在，正确含义是：**注入方是仓库之外的、
+  暴露 `IPlatformApi` stub 的 IPC 对端**。**不主张**产品上一定注入了 —— 那需要产品侧证据。
+- **三个恒真函数不是漏洞（差点写成误报）**：`CheckPhysicalKeyboard`(`:160-163`)、
+  `IsValidWindow`(`:169-175`)、`IsWindowFocused`(`:181-187`) 均**无条件 `return true`**，
+  参数还是教科书式的 `(uid, pid, displayId)`。全树普查（74/74 可读）后：`CheckPhysicalKeyboard`
+  **1 个调用方**（`peruser_session.cpp:490`，结果作为 `supportPhysicalKbd` 传给 `startInput`，
+  **行为提示、不是安全闸**）；`IsValidWindow` / `IsWindowFocused` **零调用方**。
+  → **不构成可达的鉴权绕过**；它们的意义是**设计证据**：钩子留了、没实现、也没接线。
+- **影响范围（交付件 #4 素材，逐 ref 算）**：312 个 ref 逐一取 blob oid 并**逐个读内容**，
+  分成 8 个 blob。**携带未修复 blob `e90a4e77e9be`（104 行）的是 18 个 ref**：
+  `pinned-vulnerable`、`3.1-Beta`、`revert-merge-21-3.0-LTS`、`weekly_20220105`–`20220301`(9)、
+  `v3.0-LTS`/`v3.0.1`/`v3.0.2`/`v3.0.3`/`v3.0.5`、`tags/OpenHarmony-3.1-Beta`。
+  **边界**：`v3.0.4-LTS` 不在该对象库里；**230 个 ref 读不到**（多为 4.x/5.x/6.x），
+  未纳入判定，**不能声称已穷尽全部 ref**。
+- **时间线（必须一起记，因为它对 AUTH-01 不利）**：描述符校验是 **2022-03-05 `a6d13a2d`
+  （master，zhouyongfei，「修复安全测试问题」）**加的 4 行；2022-03-09 `b61148e5` 进了 3.1；
+  而钉住的 `e663b470`（2022-05-06，3.0-LTS，PR `!118`）**仍然没有校验**，
+  直到 2022-08-23 `540daea7` → merge `5eaddcab`（PR `!228`「同步 master 安全问题修复」）才回移。
+  → **主干 2022-03 就修了，3.0-LTS 是分支落后两个月**。**不能写成「OpenHarmony 到 2022-08 才修」**。
+- **整层后来被当废弃代码删掉**：`98e421a2`(12-02「無用代碼刪除」)、`f2c9feb0`(12-03「删除代码」)、
+  `3361ee76`(12-05「清理废弃代码」，含 `platform.cpp` −189 行)，作者均 `cy7717`。
+  `3361ee76` 被 `3.2-Beta5` / `3.2-Release` 及其 tag 包含，`f2c9feb0` 被 `master` 与全部
+  4.x/5.x/6.x release 包含；**`3.0-LTS` / `3.1-*` 不含**。即该层只活在 3.0/3.1/3.2-Beta4 及更早。
+- **一处我方旧记录已更正**：§50 与 triage 文档 §10.2/§10.4 曾写 `352b006d2405` 与 fixed
+  **「逐字节相同」—— 这是错的**。实测 `352b006d2405` 3594 B、fixed(`0f9ed2f6…ec68`) 3595 B，
+  **108 行逐行相同、只差文件末尾一个换行**；同类的 `f34e8ff7d7a9`(38 ref) 是 3639 B，
+  多两行 `// namespace` 注释（由 `5b5ef7d1 2022-03-25 fix warning` 引入）。
+  三处表述已就地更正为「**内容等价，非同一 blob**」。**结论等级不变**（那 62 条仍不含缺陷）。
+- **没有证明的事**：没有定位 `IPlatformApi` 的实现组件（`entry_controlled` 不动）；
+  没有主张产品上一定注入了；**没有读 `CVE-2023-0036` 公告原文**，所以**没有**把
+  `a6d13a2d`/`540daea7` 认定为该 CVE 的修复提交 —— 二者对应关系**尚未核对**，只有提交事实；
+  没有读那 230 个不可读 ref；没有做任何动态验证。
+- **门状态**：**全部未变** —— `entry_controlled` 仍未建立、`validated_vulnerability` 仍为 **0**、
+  `poc_state = stable_reproduced` 与 `patch_revalidation = passed` 不变。
+- **本节检查**：命令在该文档 §9 可复现（`w184`–`w192.py`）；脚本在 `/home/audit/wtmp/`，
   **不入库**；共享面零改动；回归 485 tests OK（见提交说明）。
