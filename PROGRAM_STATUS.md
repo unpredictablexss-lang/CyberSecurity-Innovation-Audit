@@ -1438,3 +1438,45 @@ A 线 `build_version_impact` 调 `classify_refs(repo, refs)` 时**没传 `source
 - **本节检查**：全部命令在文档 §8 可复现；分析脚本在 `/home/audit/wtmp/`、产物在 `outputs/`，
   **均不入库**；`git diff --cached --name-only` 自检共享面（`src/report|src/case|src/evidence|src/benchmark`）
   零命中。
+
+## 47. 2026-10-16 AUTH-01：`entry_controlled` 的证据清单（已定位到 blob，本地 0 个）
+
+记录写入 `docs/research/ipc_auth01_entry_controlled_evidence_2026-10-16.md`。
+起因是先把 `reportable` 的三个条件逐条对账，发现**只剩证据门**在挡：
+
+| `reportable` 条件 | 现状 |
+|---|---|
+| `poc_state == "stable_reproduced"` | **已满足**（replay 3/3） |
+| `patch_revalidation == "passed"` | **已满足**（`auth01-descriptor-guard-v1`，三例全对含正向对照） |
+| 六个门字段全为 True | 不满足（只有 `target_bound` + `dynamic_reproduced`） |
+
+→ 瓶颈是 `entry_controlled`。本节就是把这一格「到底缺什么」查实。
+
+- **可达路径的第一个事实**：`services/src/platform.cpp:22` 的
+  `Platform::SetPlatform(const sptr<IPlatformApi>& platformApi)` 是**外部注入**——
+  `Platform` 不自己找 `IPlatformApi`，`:26` 把 `PlatformCallbackStub` 的句柄
+  经 `registerCallback(cb)` **交给注入方**。所以「谁持有回调句柄」= 「谁调 `SetPlatform`」。
+  `IPlatformApi` 的 proxy 在本仓库（`platform_api_proxy.cpp:42`），stub 实现不在。
+- **可读性切分（必须说清，否则会误报）**：该提交 95 个文件、源码 74 个 →
+  **可读 43 / 不可读 31**。在可读的 43 个里，`SetPlatform`/`registerCallback`
+  合计只有 5 行（声明、定义、调用、纯虚、proxy），**没有调用方**。
+  **但只能说「可读子集里没有调用方」，不能说「本仓库没有调用方」** —— 31 个读不到。
+- **那 31 个不可读文件分布不是随机的**：`frameworks/inputmethod_controller/**` 13 个
+  （**app 侧入口层**）+ `frameworks/inputmethod_ability/**` 14 个（注入 `IPlatformApi` 的一侧）
+  + `unitest/**` 2 + `js_input_method_engine.cpp` 1。**要回答这一层的那层，恰好是偏克隆没有的那层。**
+- **SA 暴露面也读不到**：`profile/3703.xml`（SA id 3703）、
+  `etc/init/inputmethodservice.{cfg,rc}`、`bundle.json` —— **全部 not-local**。
+- **产出：一份按 blob 点名的取数清单**，共 **34 个 blob，本地 0 个**（完整 OID 见文档 §4，分三组：
+  暴露面/拉起方式 4、app 侧入口层 15、IME ability 层 15）。
+  它把「未知」变成「已定位但不可得」——这是**必要不充分**：拿到这 34 个 blob 也还要在其中
+  读出「哪类调用者、在什么权限或注册状态下能走到注入点」并写成带行号原文的关系条目。
+- **明确没有主张的事**：**没有**说这个 SA 不可达，也**没有**说它可达 ——「读不到」两个方向都不支持；
+  **没有**把「可读子集无调用方」升格为「本仓库无调用方」；
+  **没有**改任何 PoC 结论（`stable_reproduced` 与 `patch_revalidation = passed` 不变，
+  `validated_vulnerability` 仍为 **0**，六个门字段**一个都没有**因本节置真）；
+  **没有**推测 SA 3703 的权限语义；**没有**动 `version_impact.py` 或任何共享面。
+- **需要 owner 决定**：是否授权对这 34 个 blob 做一次显式取数
+  （github 不通、gitcode 通；在共享研究克隆上显式 fetch 会改动别的会话依赖的对象库）。
+  与 §45 同一条纪律：B 不单方面做。
+- **本节检查**：全部命令在文档 §7 可复现；脚本在 `/home/audit/wtmp/`，**不入库**；
+  共享面 `git status` 零命中。
