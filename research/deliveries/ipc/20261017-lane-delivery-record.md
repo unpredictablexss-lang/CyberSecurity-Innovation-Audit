@@ -40,9 +40,11 @@
 research/deliveries/ipc/20261017-v080-dependency-inventory.md
 research/deliveries/ipc/20261017-six-family-depth-unit.md
 research/deliveries/ipc/20261017-six-family-component-measurement.md
+research/deliveries/ipc/20261017-shape-census-silent-rules.md
 research/deliveries/ipc/20261017-lane-delivery-record.md      (本文件)
 research/evidence/interface/ipc/component_audit_20261017/     (components.json, index.json, 18×manifest)
-research/methods/interface/IPC_METHOD_CARD.md                  (+68 行，仅新增一节)
+research/deliveries/ipc/silent_rule_shape_census.py             (只读，形状取自 IpcPolicy)
+research/methods/interface/IPC_METHOD_CARD.md                  (仅新增一节)
 tests/fixtures/ipc/auth01/                                     (manifest + 1 cpp)
 tests/fixtures/ipc/auth03/                                     (manifest + 5 cpp)
 tests/fixtures/ipc/data01/                                     (manifest + 3 cpp)
@@ -79,7 +81,7 @@ Ran 25 tests ... OK
 覆盖侧车断言照抄成 `'blocked'`，本基线 `runner.py:119-131/250-255` 在无 `file_outcomes`
 时给出 `'partial'`：
 
-```
+```text
 tests/test_ipc_detector.py:61  AssertionError: 'partial' != 'blocked'
 tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
 ```
@@ -128,9 +130,12 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
 
 ## 未验证、阻塞、下一项
 
-1. **形状普查（未做）** —— 区分"这 6 条规则不能触发"与"语料里没有这些形状"，
-   需要在语料里数 `caller_class_sensitive_calls` 的具名调用、`RewindRead(<expr>)` 的减法、
-   `result_permissions` 的实参个数。这是把 AUTH-03/DATA-01 对齐 AUTH-01 的**下一步**。
+1. **形状普查（已做，见交付项 4）** —— 六条静默规则分成三类：`identity-domain` 与
+   `position-underflow` 是**未被行使**（形状 0 次）；`caller-class` 是**覆盖问题**
+   （形状 70 次，但可达它的 stub 由 IDL 构建期生成、不在源码树）；`copy-range` **待逐条核**
+   （形状 665 次但绝大多数不在入口处理函数内）；`object-owner` 形状 2 次、命中 2 次，精确吻合。
+   **剩下的下一步**：把 IDL 入口纳入建模（已有 6 个 `.idl`），逐条核入口内的拷贝调用，
+   并按**形状**而非按组件名挑下一次的语料。
 2. **机制字段（未做）** —— AUTH-01 有具名机制结果（`descriptor_identity` 等），
    AUTH-02/03/04、CAP-01、DATA-01 的候选仍只能靠 `message` 文本区分，没有可断言的字段。
    需要改 `analysis.py` / `models.py`，属并发 import 正在写的文件，本线未抢。

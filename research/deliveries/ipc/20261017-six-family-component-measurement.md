@@ -116,9 +116,14 @@ AUTH-03 **2**（5 条规则里 1 条）、DATA-01 **0**（2 条规则全 0）。
 | `ipc.parcel.position-underflow` | `data01/position_underflow_positive.cpp` | 命中（精确 1 条） | **0** |
 
 **"夹具能量出来"和"真实代码上会响"是两件事，这里两个方向都有证据。**
-还不能说这 6 条是错的：也可能是 18 个组件里确实没有这几种形状。要区分"规则不能响"与
-"语料里没有"，需要的是**形状普查**（在语料里数 `caller_class_sensitive_calls` 的具名调用、
-`RewindRead` 的减法、`result_permissions` 的实参），不是再扩组件数。这条**未做**，列入 §7。
+
+要区分"规则不能响"与"语料里没有这种形状"，需要的是**形状普查**而不是再扩组件数。
+**已做**，见[交付项 4](20261017-shape-census-silent-rules.md)：在这同一批 10,413 个已扫描文件上，
+`RewindRead(<含减号>)` 与 `Verify*Token(<调用方 UID>)` 各出现 **0** 次（前者裸调用 19 次、
+后者相关调用 190 次与 `GetCallingUid` 1130 次却从不组合）→ 两条**未被行使**；
+`caller_class_sensitive_calls` 出现 **70** 次却 0 候选，因为可达它的分发器由 **IDL 构建期生成、
+不在源码树**（覆盖问题）；`copy_calls` 出现 665 次但绝大多数不在入口处理函数内（待逐条核）；
+而 `owner_calls` 出现 2 次、`ipc.auth.object-owner` 恰好命中 2 次，**形状与候选精确吻合**。
 
 ## 5. 两个方法性发现
 

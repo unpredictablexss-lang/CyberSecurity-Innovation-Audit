@@ -52,12 +52,33 @@ Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. D
   set per rule and a one-line minimal pair per fixed control. **A rule that has never been made to
   fire is indistinguishable from one that cannot fire**; that is now a checked invariant, per family
   and per rule, not a total.
-- **Which means the two facts do not contradict — they compose.** The fixtures show these rules
-  *can* fire (exact candidate sets, `status=completed`); the corpus shows they *do not* fire on these
-  18 components. Distinguishing "cannot fire" from "the corpus holds none of these shapes" needs a
-  **shape census** over the corpus (count the call sites of `caller_class_sensitive_calls`, the
-  `RewindRead(<expr>)` subtractions, the `result_permissions` arguments), not more components. **Not
-  done.**
+- **The census was then run, and it separates the six silences into three kinds** — over the same
+  10,413 scoped files, counting the policy's *own* named constants
+  (`research/deliveries/ipc/silent_rule_shape_census.py`, read-only, 18/18 measured):
+  - **Unexercised — the shape simply is not there.** `RewindRead(<expr with minus>)`: **0**
+    occurrences (plain `RewindRead(` exists 19 times). `Verify*Token(<caller UID>)`: **0** — while
+    `Verify*Token(` occurs 190 times and `GetCallingUid` 1130 times, in 14 and 18 components
+    respectively, and the two **never combine**. So `identity-domain` and `position-underflow` are
+    silent because these 18 components contain no instance of what they key on. Different corpus,
+    not a rule fix.
+  - **Coverage — the dispatcher is not in the source tree.** `caller_class_sensitive_calls` occurs
+    **70** times and still nothing fires. The cluster is `security_access_token` (59), of which 9 sit
+    in `services/privacymanager/src/service/privacy_manager_service.cpp` — the *implementation*,
+    which ought to be reachable. It is not reachable in the analysed sources because
+    `services/privacymanager/idl/IPrivacyManager.idl` is present while **no
+    `privacy_manager_stub.cpp` is**: the stub with `OnRemoteRequest` is **IDL-generated at build
+    time**, so there is no IPC entry to reach those calls from. (Same for
+    `services/accesstokenmanager/idl/IAccessTokenManager.idl`.) The remainder are client-side
+    (`privacy_kit.*`, `privacy_manager_client.cpp`), i.e. the caller surface, not an entry path.
+    **The fix is coverage — model the IDL entry, or record "this component's entries are generated"
+    as a limitation instead of leaving a bare 0.**
+  - **Needs review, and one exact match.** `copy_calls` occurs **665** times in 15 components and
+    fires nowhere, but they are concentrated in the transport/serializer layer
+    (`serializer.c`, `buffer_object.cpp`, `binder_invoker.cpp`, the client FFI), not in
+    `OnRemoteRequest` handlers — `dbinder_service_stub.cpp`'s 5 are the exception and are **not
+    yet checked one by one**. Contrast `owner_calls`: **2** occurrences, in one component, and
+    `ipc.auth.object-owner` fires **2** times in that same component — an exact shape-to-candidate
+    match, and the one rule here whose firing is fully accounted for.
 - **AUTH-01's descriptor identity is resolved across files, so a single-`.cpp` fixture measures a
   different branch than a component audit.** `token_sync_manager_stub.cpp` in
   `security_access_token`@`17d88bfb36be` yields **9 candidates alone and 0 with its own header**;
@@ -88,9 +109,12 @@ Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. D
   The label is corrected and `test_ipc_family_depth.ManifestContractTests` now enforces
   `positive ⟺ expected_rule is not None`. Whether that row should instead be a real negative control
   (it needs an explicit-policy path — its own `policy_context` says so) is left to the import author.
-- **What this argues for, in cost order:** the shape census for the six silent rules; making
-  descriptor identity an explicit, recorded field on the candidate instead of a message template, so
-  "unresolved" can be counted rather than read; and AUTH-02/03/04, CAP-01, DATA-01 gaining the named
+- **What this argues for, in cost order:** model the IDL-generated entry so `caller-class` has an
+  entry to reach (coverage, and it is a fix to scope rather than to the rule); check the
+  entry-internal copy calls one by one to decide whether `copy-range`'s silence is right; pick the
+  next corpus **by shape** for `identity-domain`/`position-underflow` rather than by component name;
+  make descriptor identity an explicit recorded field on the candidate instead of a message template,
+  so "unresolved" can be counted rather than read; and give AUTH-02/03/04, CAP-01, DATA-01 the named
   mechanism fields AUTH-01 has, so a candidate's claim is assertable and not only its prose.
 - **What it does not claim:** nothing here promotes anything. All 100 stay `candidate`; zero
   candidates is not safety, and a candidate is not a vulnerability. `all-files` runs `blocked` with
