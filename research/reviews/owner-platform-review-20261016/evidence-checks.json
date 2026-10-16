@@ -1,0 +1,234 @@
+{
+  "matrix": {
+    "file": "/tmp/ohscanner-matrix-acceptance-20261016/data/operations/1e9aac54c7d04cd89db6428ff7ab5290/result.json",
+    "sha256": "3a1ebfbb67d8bb35184a6014e612131fc10d51a89e99c56dd7477a634f67a4d6",
+    "matches_document": true,
+    "status": "completed_with_limitations",
+    "validation_gate": null,
+    "validated_vulnerability": 0,
+    "limitations": [
+      "Version association is a candidate-level observation; affected/fixed requires bound evidence and review."
+    ],
+    "keys": [
+      "case_id",
+      "comparisons",
+      "limitations",
+      "scan_ids",
+      "status",
+      "validated_vulnerability",
+      "versions"
+    ]
+  },
+  "auth01": {
+    "file": "/home/audit/ohscanner-workbench/verification-data/operations/f4888d67890647568609a496f0d5b3b2/result.json",
+    "sha256": "ec1316eb6078b8bee09649870b3dd04ad4c29f451dfbea7115ca2321b002e9ac",
+    "matches_document": true,
+    "status": "completed_with_limitations",
+    "validation_gate": "passed",
+    "validated_vulnerability": 0,
+    "limitations": [
+      "Harness calls the component stub directly; product entry reachability is not proven.",
+      "Component-level reproduction does not establish a reportable product vulnerability."
+    ],
+    "keys": [
+      "case_id",
+      "docker_exit_code",
+      "docker_log_sha256",
+      "gate_reason",
+      "input_manifest_sha256",
+      "limitations",
+      "patched_revision",
+      "result",
+      "status",
+      "validated_vulnerability",
+      "validation_command_sha256",
+      "validation_gate"
+    ],
+    "revisions": {
+      "fixed": {
+        "build_returncode": 0,
+        "expectations_met": {
+          "correct_token": true,
+          "foreign_token": true,
+          "no_token": true
+        },
+        "replay": {
+          "all_cases_match": true,
+          "attempts": 9,
+          "cases": [
+            {
+              "case_id": "no_token",
+              "expected": "no_trigger",
+              "label": "stable_rejected",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "no_trigger",
+                "no_trigger",
+                "no_trigger"
+              ],
+              "role": "attack"
+            },
+            {
+              "case_id": "correct_token",
+              "expected": "trigger",
+              "label": "stable_reproduced",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "trigger",
+                "trigger",
+                "trigger"
+              ],
+              "role": "control"
+            },
+            {
+              "case_id": "foreign_token",
+              "expected": "no_trigger",
+              "label": "stable_rejected",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "no_trigger",
+                "no_trigger",
+                "no_trigger"
+              ],
+              "role": "attack"
+            }
+          ],
+          "label": "stable_rejected",
+          "triggered": 3
+        }
+      },
+      "patched": {
+        "build_returncode": 0,
+        "expectations_met": {
+          "correct_token": true,
+          "foreign_token": true,
+          "no_token": true
+        },
+        "replay": {
+          "all_cases_match": true,
+          "attempts": 9,
+          "cases": [
+            {
+              "case_id": "no_token",
+              "expected": "no_trigger",
+              "label": "stable_rejected",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "no_trigger",
+                "no_trigger",
+                "no_trigger"
+              ],
+              "role": "attack"
+            },
+            {
+              "case_id": "correct_token",
+              "expected": "trigger",
+              "label": "stable_reproduced",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "trigger",
+                "trigger",
+                "trigger"
+              ],
+              "role": "control"
+            },
+            {
+              "case_id": "foreign_token",
+              "expected": "no_trigger",
+              "label": "stable_rejected",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "no_trigger",
+                "no_trigger",
+                "no_trigger"
+              ],
+              "role": "attack"
+            }
+          ],
+          "label": "stable_rejected",
+          "triggered": 3
+        }
+      },
+      "vulnerable": {
+        "build_returncode": 0,
+        "expectations_met": {
+          "correct_token": true,
+          "foreign_token": true,
+          "no_token": true
+        },
+        "replay": {
+          "all_cases_match": true,
+          "attempts": 3,
+          "cases": [
+            {
+              "case_id": "no_token",
+              "expected": "trigger",
+              "label": "stable_reproduced",
+              "matches_expectation": [
+                true,
+                true,
+                true
+              ],
+              "observed": [
+                "trigger",
+                "trigger",
+                "trigger"
+              ],
+              "role": "attack"
+            }
+          ],
+          "label": "stable_reproduced",
+          "triggered": 3
+        }
+      }
+    }
+  },
+  "auth01_backup": {
+    "exists": true,
+    "keys": [
+      "id",
+      "kind",
+      "spec",
+      "status",
+      "created_at",
+      "started_at",
+      "finished_at",
+      "cancel_requested",
+      "result_sha256",
+      "error",
+      "events",
+      "result"
+    ]
+  },
+  "dirty_files_unchanged": {
+    "docs/面板功能与验收.md": true,
+    "docs/项目现状与下一步.md": true,
+    "tests/test_workbench.py": true,
+    "tests/test_workbench_operations.py": true,
+    "web/src/pages/Operations.tsx": true
+  }
+}

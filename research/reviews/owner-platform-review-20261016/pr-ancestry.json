@@ -1,0 +1,27 @@
+{
+  "8": {
+    "head": "86fbf9951967aaab879d24748a8231744d6977aa",
+    "ancestor_of_local_main": true,
+    "ancestry_check_exit": 0
+  },
+  "9": {
+    "head": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+    "ancestor_of_local_main": true,
+    "ancestry_check_exit": 0
+  },
+  "10": {
+    "head": "aa79d57a3612c0bc5a04dac7af03c2a086dcddd8",
+    "ancestor_of_local_main": false,
+    "ancestry_check_exit": 1
+  },
+  "11": {
+    "head": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+    "ancestor_of_local_main": false,
+    "ancestry_check_exit": 1
+  },
+  "12": {
+    "head": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+    "ancestor_of_local_main": true,
+    "ancestry_check_exit": 0
+  }
+}

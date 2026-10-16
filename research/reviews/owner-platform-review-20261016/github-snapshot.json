@@ -1,0 +1,192 @@
+{
+  "checked_on": "2026-10-16 Asia/Shanghai",
+  "pull_requests": [
+    {
+      "number": 8,
+      "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/8",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": true,
+      "head": "feat/owner-ipc-platform-integration",
+      "head_sha": "86fbf9951967aaab879d24748a8231744d6977aa",
+      "base": "feat/ohscanner-core",
+      "base_sha": "e3654654d0b933a37bea8e0244c0755544950b76",
+      "merge_commit_sha": "a762e6b4d5416722cc91d6bd71a03cb31158cb9c"
+    },
+    {
+      "number": 9,
+      "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/9",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": true,
+      "head": "feat/workbench-integration",
+      "head_sha": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+      "base": "feat/owner-ipc-platform-integration",
+      "base_sha": "86fbf9951967aaab879d24748a8231744d6977aa",
+      "merge_commit_sha": "246f7ba67791cf058324be3f43818b55df8b251e"
+    },
+    {
+      "number": 10,
+      "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/10",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": false,
+      "head": "codex/teammate-a-shared-ptr-competition-loop-20261011",
+      "head_sha": "aa79d57a3612c0bc5a04dac7af03c2a086dcddd8",
+      "base": "feat/ohscanner-core",
+      "base_sha": "e3654654d0b933a37bea8e0244c0755544950b76",
+      "merge_commit_sha": null
+    },
+    {
+      "number": 11,
+      "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/11",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": true,
+      "head": "feat/interface-m2-relay-guard",
+      "head_sha": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+      "base": "feat/interface-m1-descriptor-identity",
+      "base_sha": "84641515f0914d826a3f67ecd4dca7702ecf6c51",
+      "merge_commit_sha": "8ea3688ceff01c26de335159cec0586a4e35496c"
+    },
+    {
+      "number": 12,
+      "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/12",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable": true,
+      "head": "feat/unified-audit-v2",
+      "head_sha": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+      "base": "feat/workbench-integration",
+      "base_sha": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+      "merge_commit_sha": "ed257eb357dbb598fed3a0bbd953d2d37907d20e"
+    },
+    {
+      "number": 13,
+      "url": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/13",
+      "state": "closed",
+      "draft": false,
+      "merged": true,
+      "mergeable": false,
+      "head": "feat/ohscanner-mainline",
+      "head_sha": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+      "base": "main",
+      "base_sha": "1446e49b5b253bd1a65bdbd2d87976085d8d693f",
+      "merge_commit_sha": "f5715c411a2b50ca92f0a9b647d30269d9e8b3b8"
+    }
+  ],
+  "checks": [
+    {
+      "number": 11,
+      "workflow_runs": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "workflow_runs": []
+          },
+          "isError": false
+        }
+      },
+      "combined_status": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "statuses": []
+          },
+          "isError": false
+        }
+      },
+      "reviews": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "reviews": []
+          },
+          "isError": false
+        }
+      }
+    },
+    {
+      "number": 12,
+      "workflow_runs": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "workflow_runs": [
+              {
+                "id": 38504217612,
+                "name": "CI",
+                "status": "completed",
+                "conclusion": "success",
+                "run_number": 170,
+                "jobs_url": "https://api.github.com/repos/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38504217612/jobs",
+                "logs_url": "https://api.github.com/repos/unpredictablexss-lang/CyberSecurity-Innovation-Audit/actions/runs/38504217612/logs",
+                "workflow_id": 374155505
+              }
+            ]
+          },
+          "isError": false
+        }
+      },
+      "combined_status": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "statuses": []
+          },
+          "isError": false
+        }
+      },
+      "reviews": {
+        "status": "fulfilled",
+        "value": {
+          "content": [
+            {
+              "type": "text",
+              "text": "Action completed."
+            }
+          ],
+          "structuredContent": {
+            "reviews": []
+          },
+          "isError": false
+        }
+      }
+    }
+  ]
+}

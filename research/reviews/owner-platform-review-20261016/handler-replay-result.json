@@ -1,0 +1,16 @@
+{
+  "scenario": "An old operation detail is open, then submit a new matrix",
+  "selection_writes": [
+    "new-operation",
+    "old-operation"
+  ],
+  "api_paths": [
+    "/operations/version-matrices",
+    "/repositories",
+    "/detectors",
+    "/cases",
+    "/operations",
+    "/operations/old-operation"
+  ],
+  "kind": "controlled replay of original React handler with mocked hooks and API; not browser E2E"
+}

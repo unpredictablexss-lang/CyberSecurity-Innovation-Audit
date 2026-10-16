@@ -1,0 +1,12 @@
+{
+  "root": "/tmp/ohscanner-review-20261016-56o3p1a2",
+  "source": "/home/audit/ohscanner/app",
+  "head": "2146c229e00e63c4464da85f46fde303019fbeaa",
+  "dirty_hashes": {
+    "docs/面板功能与验收.md": "a572898cedc12729c417dcda47a3a0a672b1ce32f21e70b9051f748272416783",
+    "docs/项目现状与下一步.md": "56e28d4f29b98fbf572be05303544481f68edbc8be0fcc89911a62ae425b788f",
+    "tests/test_workbench.py": "b4bd7b8fe8a68409d675bc4c78545572e041bea2b4d7736ca97b4d13dfc2775e",
+    "tests/test_workbench_operations.py": "eaeef2a5d463ba914059f75982a5a8ff074e993f2a7f2792161961499f444d24",
+    "web/src/pages/Operations.tsx": "93ade0f4c6791325950216da0bbf066541e6eca7fde055fa5681af97891a0695"
+  }
+}
