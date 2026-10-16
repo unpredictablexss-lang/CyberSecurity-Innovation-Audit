@@ -7,10 +7,10 @@
 | 修复 | 提交 | 范围 |
 |---|---|---|
 | R1 | `8620592e6250dad0a2b99139a0488dc45c8b1058` | `.github/workflows/ci.yml`、`tests/ui/test_served_ui.py` |
-| R2 | `77784b21f37c306b5f780201d18d719d7a1cbdb5` | `web/src/pages/Operations.tsx`、handler/browser 回归、`web/package.json`、CI |
+| R2 | `35bffbb5fa621b6286452a1a3fb7efa30aed3323` | `web/src/pages/Operations.tsx`、handler/browser 回归、`web/package.json`、独立 CI job |
 | R3 | `0b8faea14325fb0c687a345127ab7444c939d8ff` | `docs/项目现状与下一步.md`、`docs/面板功能与验收.md` |
 
-独立补丁位于 `patches/`，可按 `0001`、`0002`、`0003` 顺序选择性迁入。
+独立补丁位于 `patches/`，可单独或组合迁入。R2 使用 `0002-fix-workbench-guard-stale-operation-detail-responses-independent.patch`，不依赖 R1 的 CI job 改名；三份补丁对基线 index 的独立 `git apply --check --cached` 均通过，见 `logs/patches-apply-check.log`。
 
 ## Exact commands
 
@@ -89,4 +89,4 @@ node web/tests/operations-selection.browser.mjs
 
 ## 给负责人的最小集成建议
 
-在负责人自己的 worktree 按需 `git cherry-pick 8620592`、`77784b2`、`0b8faea`。只修 CI 取 `8620592`；只修 Operations 取 `77784b2`；只修统计取 `0b8faea`。R3 若与负责人 dirty 文档冲突，保留其原文历史段落，只迁入 R3 统计校正块和证据绑定。迁入后重新执行 `npm ci`、`npm run build`、`npm run test:operations-handler`、`tests/ui`、纯 Python 回归和文档预算检查，再决定是否合并。
+在负责人自己的 worktree 按需 `git cherry-pick 8620592`、`35bffbb`、`0b8faea`。只修 CI 取 `8620592`；只修 Operations 取独立分支 `codex/owner-platform-r2-independent-20261016` 的 `35bffbb`；只修统计取 `0b8faea`。R3 若与负责人 dirty 文档冲突，保留其原文历史段落，只迁入 R3 统计校正块和证据绑定。迁入后重新执行 `npm ci`、`npm run build`、`npm run test:operations-handler`、`tests/ui`、纯 Python 回归和文档预算检查，再决定是否合并。

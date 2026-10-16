@@ -1,32 +1,46 @@
-From 77784b21f37c306b5f780201d18d719d7a1cbdb5 Mon Sep 17 00:00:00 2001
+From 35bffbb5fa621b6286452a1a3fb7efa30aed3323 Mon Sep 17 00:00:00 2001
 From: baldnotstronger <17770177822@163.com>
-Date: Fri, 16 Oct 2026 21:50:00 +0800
+Date: Fri, 16 Oct 2026 22:00:49 +0800
 Subject: [PATCH] fix(workbench): guard stale operation detail responses
 
 ---
- .github/workflows/ci.yml                   |   3 +
+ .github/workflows/ci.yml                   |  17 ++
  web/package.json                           |   4 +-
  web/src/pages/Operations.tsx               |  42 ++++-
  web/tests/operations-handler.test.mjs      | 151 ++++++++++++++++++
  web/tests/operations-selection.browser.mjs | 177 +++++++++++++++++++++
- 5 files changed, 369 insertions(+), 8 deletions(-)
+ 5 files changed, 383 insertions(+), 8 deletions(-)
  create mode 100644 web/tests/operations-handler.test.mjs
  create mode 100644 web/tests/operations-selection.browser.mjs
 
 diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index 9332d41..c12f60e 100644
+index a230816..c841a3f 100644
 --- a/.github/workflows/ci.yml
 +++ b/.github/workflows/ci.yml
-@@ -58,6 +58,9 @@ jobs:
-       - name: Build frontend assets
-         working-directory: web
-         run: npm run build
+@@ -16,6 +16,23 @@ on:
+       - feat/workbench-integration
+ 
+ jobs:
++  operations-handler:
++    name: Operations handler regression
++    runs-on: ubuntu-22.04
++    steps:
++      - uses: actions/checkout@v4
++      - uses: actions/setup-node@v4
++        with:
++          node-version: '22'
++          cache: npm
++          cache-dependency-path: web/package-lock.json
++      - name: Install locked UI dependencies
++        working-directory: web
++        run: npm ci
 +      - name: Run Operations handler regression
 +        working-directory: web
 +        run: npm run test:operations-handler
-       - name: Show frontend artifact paths
-         run: |
-           test -f web/dist/index.html
++
+   unit-tests:
+     name: Python unit tests
+     runs-on: ubuntu-22.04
 diff --git a/web/package.json b/web/package.json
 index c7cc76f..8bfe8ce 100644
 --- a/web/package.json

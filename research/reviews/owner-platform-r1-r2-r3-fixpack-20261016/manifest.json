@@ -1,16 +1,28 @@
 {
   "schema": "ohscanner.owner-platform-r1-r2-r3-fixpack.v1",
-  "generated_at": "2026-10-16T21:56:20.3155054+08:00",
+  "generated_at": "2026-10-16T22:04:14.5647585+08:00",
   "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit-fixpack-20261016",
   "branch": "codex/owner-platform-r1-r2-r3-fixpack-20261016",
   "base_commit": "8e97f152ef747c1e1d21ae179a048910f147e07a",
-  "head": "0b8faea14325fb0c687a345127ab7444c939d8ff",
-  "commits": [
+  "head_before_evidence_update": "62784746f4a45260559412599ef0d7a0f2f5b55e",
+  "independent_patch_commits": [
     "8620592e6250dad0a2b99139a0488dc45c8b1058",
-    "77784b21f37c306b5f780201d18d719d7a1cbdb5",
+    "35bffbb5fa621b6286452a1a3fb7efa30aed3323",
     "0b8faea14325fb0c687a345127ab7444c939d8ff"
   ],
+  "integrated_sequence_commits": [
+    "8620592e6250dad0a2b99139a0488dc45c8b1058",
+    "77784b21f37c306b5f780201d18d719d7a1cbdb5",
+    "0b8faea14325fb0c687a345127ab7444c939d8ff",
+    "b99a89275b9f30f736438b74afb6fd9792e43432",
+    "62784746f4a45260559412599ef0d7a0f2f5b55e"
+  ],
   "files": [
+    {
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/patches-apply-check.log",
+      "bytes": 637,
+      "sha256": "193d9eb8063a5bce2db56adb19996d759765ed4ff1a0b15724b07568ff1f71ea"
+    },
     {
       "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/logs/platform-regression.log",
       "bytes": 8918,
@@ -103,23 +115,23 @@
     },
     {
       "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0001-ci-build-frontend-before-served-ui-tests.patch",
-      "bytes": 3098,
-      "sha256": "01cb3be21a3c64369ffc31858f7723005a79980a628e88bc2dc7efe79dd726cb"
+      "bytes": 3012,
+      "sha256": "8f77ba50a32b08b01b28dc69844479278ffb7582b3e19abe115e357727ccc56e"
     },
     {
-      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0002-fix-workbench-guard-stale-operation-detail-responses.patch",
-      "bytes": 21741,
-      "sha256": "2fd1e1efd6ab3590d0f3bf182bfe353a87570ce7561c1446e1069aa6e5452cd7"
+      "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0002-fix-workbench-guard-stale-operation-detail-responses-independent.patch",
+      "bytes": 21594,
+      "sha256": "fd162c56c492105a2dbea6beba5e625bc0fdd224290c8a27b3600f90fcff64b0"
     },
     {
       "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/patches/0003-docs-correct-owner-unittest-statistics.patch",
-      "bytes": 3806,
-      "sha256": "1c5531d3b5f5dbe26fbe738a98fee258b2115825a655e1f49e79a432f8a20c62"
+      "bytes": 3769,
+      "sha256": "7f7beef3bcc4c793e09b0bb175d16c353fb654d98f4521385123e6da85f99d7c"
     },
     {
       "path": "research/reviews/owner-platform-r1-r2-r3-fixpack-20261016/README.md",
-      "bytes": 5766,
-      "sha256": "d239f14c53ac9c235a354a79adfe1f4c728703c70951d57bd77206929df75c7c"
+      "bytes": 6050,
+      "sha256": "7e4d463b72b841fcb38bf154eb0099ac1bdf83a2117305b0eb2aed7f00eee643"
     }
   ]
 }

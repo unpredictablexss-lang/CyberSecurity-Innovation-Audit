@@ -1,0 +1,4 @@
+CHECK-CACHED E:\网安\CyberSecurity-Innovation-Audit-fixpack-20261016\research\reviews\owner-platform-r1-r2-r3-fixpack-20261016\patches\0001-ci-build-frontend-before-served-ui-tests.patch
+CHECK-CACHED E:\网安\CyberSecurity-Innovation-Audit-fixpack-20261016\research\reviews\owner-platform-r1-r2-r3-fixpack-20261016\patches\0002-fix-workbench-guard-stale-operation-detail-responses-independent.patch
+CHECK-CACHED E:\网安\CyberSecurity-Innovation-Audit-fixpack-20261016\research\reviews\owner-platform-r1-r2-r3-fixpack-20261016\patches\0003-docs-correct-owner-unittest-statistics.patch
+all-independent-patches-apply-to-base-index
