@@ -107,15 +107,36 @@ def main():
     per_component = {}
     errors = []
     component_of_file = {}
+    class_evaluations = collections.Counter()
+    class_sites = collections.defaultdict(set)
+    class_per_component = {}
+    class_reached_without_a_class = []
     for component, rows in records.items():
         for row in rows:
             if "name" not in row:
                 errors.append({"component": component, "record": row})
                 continue
+            component_of_file[row["file"]] = component
+            if row.get("bucket", "identity") == "caller_class":
+                name = row["name"]
+                key = "caller_class_set" if row.get("caller_class_set") else "no_caller_class"
+                class_evaluations[key] += 1
+                class_sites[key].add((row["file"], row["line"], name))
+                class_per_component.setdefault(component, collections.Counter())[key] += 1
+                if not row.get("caller_class_set"):
+                    # The exact conjunction analysis.py:1049 requires: the call
+                    # is reached and state.caller_class is still unset. Zero of
+                    # these is the same statement as zero caller-class candidates.
+                    class_reached_without_a_class.append({
+                        "component": component, "file": row["file"],
+                        "line": row["line"], "predicate": name,
+                        "root": row.get("root", ""), "grade": row.get("grade", ""),
+                        "caller_class_set": False,
+                    })
+                continue
             subject = str(row.get("subject"))
             by_subject[subject] += 1
             sites[subject].add((row["file"], row["line"], row["name"]))
-            component_of_file[row["file"]] = component
             per_component.setdefault(component, collections.Counter())[subject] += 1
 
     def described(subject):
@@ -141,6 +162,19 @@ def main():
         "per_component_evaluations": {k: dict(v) for k, v in sorted(per_component.items())},
         "sites": {subject: described(subject)
                   for subject in ("caller_uid", "self", "request")},
+    }
+
+    document["caller_class_attribution"] = {
+        "what": "How often the walk reached a caller_class_sensitive_call, and whether "
+                "the state already carried a caller class at that point "
+                "(analysis.py:1049 emits only when it does not).",
+        "evaluations_by_caller_class_set": dict(sorted(class_evaluations.items())),
+        "distinct_sites_by_caller_class_set": {k: len(v) for k, v in sorted(class_sites.items())},
+        "per_component_evaluations": {k: dict(v) for k, v in sorted(class_per_component.items())},
+        "reached_without_a_caller_class": class_reached_without_a_class,
+        "how_to_read": "`reached_without_a_caller_class` is the rule's exact conjunction. "
+                       "Its length is what the caller-class candidate count can be, and it "
+                       "is read from the same run as the identity numbers, not a second pass.",
     }
 
     components, counts = rule_counts(args.audit_root)
@@ -172,6 +206,11 @@ def main():
     print("distinct_sites_by_subject",
           json.dumps(document["value_attribution"]["distinct_sites_by_subject"],
                      sort_keys=True))
+    print("caller_class_by_state",
+          json.dumps(document["caller_class_attribution"]["evaluations_by_caller_class_set"],
+                     sort_keys=True))
+    print("caller_class_reached_without_a_class",
+          len(document["caller_class_attribution"]["reached_without_a_caller_class"]))
 
 
 if __name__ == "__main__":

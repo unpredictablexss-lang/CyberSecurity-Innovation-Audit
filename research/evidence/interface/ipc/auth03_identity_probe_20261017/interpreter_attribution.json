@@ -1,4 +1,12 @@
 {
+ "caller_class_attribution": {
+  "distinct_sites_by_caller_class_set": {},
+  "evaluations_by_caller_class_set": {},
+  "how_to_read": "`reached_without_a_caller_class` is the rule's exact conjunction. Its length is what the caller-class candidate count can be, and it is read from the same run as the identity numbers, not a second pass.",
+  "per_component_evaluations": {},
+  "reached_without_a_caller_class": [],
+  "what": "How often the walk reached a caller_class_sensitive_call, and whether the state already carried a caller class at that point (analysis.py:1049 emits only when it does not)."
+ },
  "candidates_by_rule": {
   "ipc.auth.guard-coverage": 8,
   "ipc.auth.missing": 21,
@@ -21,7 +29,7 @@
  "instrument": {
   "mechanism": "A PYTHONPATH sitecustomize wraps Interpreter.value in the pinned read-only tree; the driver's argv is otherwise unchanged.",
   "sitecustomize": "research/deliveries/ipc/probe_site/sitecustomize.py",
-  "sitecustomize_sha256": "1705a5c21a8737b59a840034a8f56e616694696ff51c4b426bd72b894940306b"
+  "sitecustomize_sha256": "67177e28683de37037e6b0b2bb88db86f2cd8453c80f5fbef452db95b23a5c9e"
  },
  "value_attribution": {
   "components_probed": 30,

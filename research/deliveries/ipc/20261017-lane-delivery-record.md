@@ -50,16 +50,20 @@ research/deliveries/ipc/20261017-shape-census-silent-rules.md
 research/deliveries/ipc/20261017-data01-mechanism.md
 research/deliveries/ipc/20261017-shape-corpus-and-auth03-identity.md
 research/deliveries/ipc/20261017-interpreter-attribution-auth03.md
+research/deliveries/ipc/20261017-caller-class-walk-coverage.md
 research/deliveries/ipc/20261017-lane-delivery-record.md      (本文件)
 research/evidence/interface/ipc/component_audit_20261017/     (components.json, index.json, 18×manifest)
 research/evidence/interface/ipc/component_audit_shape_20261017/ (components.json, index.json, 12×manifest)
 research/evidence/interface/ipc/hitrace_guard_pair_20261017/  (pair.json)
 research/evidence/interface/ipc/auth03_identity_probe_20261017/ (probe.json, interpreter_attribution.json)
+research/evidence/interface/ipc/caller_class_walk_20261017/   (caller_class_walk.json)
 research/deliveries/ipc/silent_rule_shape_census.py             (只读，形状取自 IpcPolicy)
 research/deliveries/ipc/copy_range_arg_classes.py               (只读，拷贝长度实参分类)
 research/deliveries/ipc/permission_arg_classes.py               (只读，授权谓词实参分类)
 research/deliveries/ipc/interpreter_arg_attribution.py          (只读，把探针记录汇成证据 JSON)
+research/deliveries/ipc/caller_class_walk.py                    (只读，三种读数汇总)
 research/deliveries/ipc/probe_site/sitecustomize.py             (只读测量仪，PYTHONPATH 注入，不改检测器)
+research/deliveries/ipc/root_probe_site/sitecustomize.py        (只读测量仪，回答"走查跑没跑")
 research/methods/interface/IPC_METHOD_CARD.md                  (仅新增两节，并在旧节内标注一处更正)
 tests/fixtures/ipc/auth01/                                     (manifest + 1 cpp)
 tests/fixtures/ipc/auth03/                                     (manifest + 5 cpp)
@@ -142,11 +146,19 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
 
 ```text
 research/evidence/interface/ipc/auth03_identity_probe_20261017/interpreter_attribution.json
-  sha256 96a32fc8ed12eaedcd660cdfcf1739764bb94c1ac5eee47996ff3beea4e70664
+  sha256 fe5e805529a522a0c185c135220cdfda3e31dcf92427ee59eab4d2efbdaeed63
 research/deliveries/ipc/probe_site/sitecustomize.py   （该次记录所用的仪器本体）
-  sha256 1705a5c21a8737b59a840034a8f56e616694696ff51c4b426bd72b894940306b
+  sha256 67177e28683de37037e6b0b2bb88db86f2cd8453c80f5fbef452db95b23a5c9e
   ↑ 证据 JSON 的 instrument.sitecustomize_sha256 与它逐字相同（同一份文件既产记录、又被记哈希）
+research/evidence/interface/ipc/caller_class_walk_20261017/caller_class_walk.json
+  sha256 见仓库（三种读数汇总，调用点 83 / 走查 0 / 根 27）
+research/deliveries/ipc/root_probe_site/sitecustomize.py  （第二件仪器，只回答"走查跑没跑"）
+  sha256 8e49770f2e1db6dd3d9c3f9bd53e26fb2b0fb4b14f82f4338c05eac78ecaca16
 ```
+
+探针在交付项 8 里扩了 `bucket`/`caller_class_set` 两个字段（哈希随之改变），
+**身份侧的 145 / 102 / 31 / 8 / 4 与站点数一个未动**，两次逐字相同；证据 JSON 是按
+扩后的仪器重跑重取的，不是拿旧记录去配新哈希。
 
 **性能与资源**（比赛文档要求的性能证据；数字取自 30 份 `report.json` 里检测器自报的
 `elapsed_seconds` / `peak_rss_kb`，非另行计时）：
@@ -234,7 +246,7 @@ research/deliveries/ipc/probe_site/sitecustomize.py   （该次记录所用的�
    | `identity-domain` | **解释器侧覆盖**：`caller_uid` 形状 0 处；30 组件上解释器求值 145 次谓词，`caller_uid` 归因 **0 次** | 交付项 6 §5 + 交付项 7 §2（检测器内部实测） |
    | `request-identity` | 形状 **≥2** 处，但还需同路径敏感效应，且站点在 IDL 生成的分发器之后 | 交付项 6 §6（9 例探针）+ 交付项 7 §5.1（敏感效应前置在做事） |
    | `service-identity` | **覆盖**：17 处普查站点**全部在 scope 内**，但解释器一次都没走到（每个外层函数都是客户端/kit/工具代码）；**不是**"还缺敏感效应" | 交付项 7 §4（含 scope 核对与逐站点外层函数表） |
-   | `caller-class` | **覆盖**：可达它的 stub 由 IDL 构建期生成、不在源码树 | 交付项 4 |
+   | `caller-class` | **覆盖**：30 组件上 83 个调用点，解释器求值 **0** 次；`security_access_token` 的 27 个入口根全在 `interfaces/`，58 个调用点全在 `services/`，无一落在根文件内 | 交付项 4 + 交付项 8（检测器内部实测） |
 
    交付项 4 里写"`position-underflow` 形状 0 次 ⇒ 未被行使"的那一行**已作废**
    （普查正则跨不过嵌套括号），交付项 5 §4 给了旧/新口径对照。
@@ -242,6 +254,19 @@ research/deliveries/ipc/probe_site/sitecustomize.py   （该次记录所用的�
    机制是**可达性**（与 `caller-class`/`position-underflow` 同类），不是敏感效应前置；
    行号应为 `3461/3465`。更正后 AUTH-03 四条规则里**只有 `request-identity` 属于
    "形状存在但前置不满足"，其余三条都是覆盖问题**。
+
+   **至此六条静默规则全部有检测器内部或探针支撑的证据，没有一条还停在推断上**
+   （最后一条 `caller-class` 由交付项 8 用第二件仪器结清）。**三类成因**的分布是：
+
+   - **覆盖 3 条**：`position-underflow`、`caller-class`、`service-identity`
+   - **形状不存在 1 条**：`identity-domain`（`caller_uid` 在语料里 0 处，
+     文本普查与解释器归因两个独立方法一致）
+   - **正确静默 1 条**：`copy-range`
+   - **前置不满足 1 条**：`request-identity`
+
+   成因决定下一步改哪：覆盖类要补入口建模/跨 TU 一跳；形状类补建模没用；
+   前置类的"修法"（去掉敏感效应前置）会直接降低精度，交付项 7 §5.1 有语料内的反例。
+
    **下一步**是把 IDL 入口纳入建模与跨 TU 一跳，两处都在并发 import 的 `analysis.py` 里，见下条。
 2. **两条覆盖缺口的收益上界（未量）** —— `caller_class_sensitive_calls` 71 处、
    AUTH-03 身份形状 17 处，是"补齐入口建模之后**可能**多出候选"的上界；

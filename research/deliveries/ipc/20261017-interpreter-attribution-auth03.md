@@ -292,11 +292,15 @@ B_IPC 要求覆盖"本地同名函数体遮蔽"。语料里有真例子，且探
 
 ```bash
 # pass 1：把解释器的归因记下来（30 个组件；墙钟见下）
+# 驱动树是 **pinned 只读树 B**，不是 lane worktree —— 本线不改检测器，
+# 也正因为如此 cwd 必须是 B（探针的 sys.path 补的是 cwd）。
+cd /home/audit/openharmony-audit/CyberSecurity-Innovation-Audit-b   # HEAD 635b3e0
 IPC_PROBE_LOG=<out>/<component>/predicates.jsonl \
-PYTHONPATH=research/deliveries/ipc/probe_site \
-  .venv-web/bin/python -m src.ohscanner.detectors.interface.audit \
-    --repo-dir <component> --repository <name> --commit <sha> \
-    --out-dir <out> --json-out <out>/report.json --md-out <out>/report.md
+PYTHONPATH=/home/audit/ohscanner/worktrees/parallel-ipc-20261017/research/deliveries/ipc/probe_site \
+  .venv/bin/python -m src.ohscanner.detectors.interface.audit \
+    --repo-dir <corpus>/<component> --repository <name> --commit <sha> \
+    --out-dir <out>/<component> --json-out <out>/<component>/report.json \
+    --md-out <out>/<component>/report.md
 
 # 聚合探针记录与该批报告，产出本目录的证据 JSON（数字全部机器生成，不手打）
 .venv-web/bin/python research/deliveries/ipc/interpreter_arg_attribution.py \

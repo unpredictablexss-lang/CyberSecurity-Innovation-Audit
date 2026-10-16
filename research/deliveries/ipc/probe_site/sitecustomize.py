@@ -15,6 +15,15 @@ already computed:
            caller/self/request (`:1364`), or the name-specific default at `:1365`
   added    how many entries the call appended to `state.identity_issues`, which is
            what `analysis.py:1018-1021` later turns into an AUTH-03 candidate
+  class    whether `state.caller_class` was already set at the call, the condition
+           `analysis.py:1049` requires *not* to hold before it emits
+           `ipc.auth.caller-class`
+
+Two disjoint name sets are recorded, tagged with `bucket`: `identity` (the boolean
+and result permission predicates) and `caller_class` (the policy's
+caller_class_sensitive_calls). They are kept apart because the two rules ask
+different questions of the same wrapper, and merging them would move the identity
+counts by adding an empty subject bucket.
 
 One deviation from a bare `PYTHONPATH` run is necessary and is not hidden: at
 sitecustomize time the working directory is not on `sys.path` yet, so the pinned
@@ -53,9 +62,20 @@ if analysis is not None and _LOG:
                 function = node.child_by_field_name("function")
                 callee = fn.text(function) if function is not None else ""
                 name = _terminal(callee)
+                # Two disjoint buckets over the same wrapper call. They are
+                # tagged rather than merged because analysis.py:1049 asks a
+                # different question about the second one (does the state carry
+                # a caller class?) than analysis.py:1018 asks about the first.
                 if name in (self.policy.boolean_permissions
                             | self.policy.result_permissions):
+                    bucket = "identity"
+                elif name in self.policy.caller_class_sensitive_calls:
+                    bucket = "caller_class"
+                else:
+                    bucket = None
+                if bucket is not None:
                     _RECORDS.append({
+                        "bucket": bucket,
                         "name": name,
                         "file": fn.file,
                         "function": fn.qualified,
@@ -67,6 +87,7 @@ if analysis is not None and _LOG:
                         "kind": getattr(result, "kind", None),
                         "permission": getattr(result, "permission", None),
                         "reset": state.reset,
+                        "caller_class_set": bool(state.caller_class),
                         "identity_issues_added": len(state.identity_issues) - before,
                         "identity_issues_total": len(state.identity_issues),
                         "call": " ".join(callee.split())[:80],
