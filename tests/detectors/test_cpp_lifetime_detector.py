@@ -32,7 +32,7 @@ class LifetimeDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.lifetime")
-        self.assertEqual(self.detector.version, "0.3.0")
+        self.assertEqual(self.detector.version, "0.4.0")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
         self.assertEqual(self.context.shared_facts, {})
@@ -383,6 +383,45 @@ void second_same_name_scope() {
             r"lexical_binding_identity=owner-[a-f0-9]{12}:alias-[a-f0-9]{12}",
         )
 
+    def test_duplicate_class_declarations_are_isolated_across_source_units(self) -> None:
+        first = self.generated_unit(
+            "duplicate_class_first",
+            """
+class Holder { public: void Use() const {} };
+void run_case() {
+    std::unique_ptr<Holder> owner = std::make_unique<Holder>();
+    Holder* alias = owner.get();
+    owner.reset();
+    alias->Use();
+}
+// first distinct source bytes
+""",
+        )
+        second = self.generated_unit(
+            "duplicate_class_second",
+            """
+class Holder { public: void Use() const {} };
+void run_case() {
+    std::unique_ptr<Holder> owner = std::make_unique<Holder>();
+    Holder* alias = owner.get();
+    owner.reset();
+    alias->Use();
+}
+// second distinct source bytes
+""",
+        )
+        run = self.detector.detect(self.context, (first, second))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.analyzed_files, (first.path, second.path))
+        self.assertEqual(len(run.findings), 2)
+        self.assertEqual(
+            {(item.file, item.source_sha256) for item in run.findings},
+            {
+                (first.path, first.sha256),
+                (second.path, second.sha256),
+            },
+        )
+
     def test_member_assignment_does_not_rebind_a_local_alias(self) -> None:
         unit = self.generated_unit(
             "member_assignment_not_local_rebind",
@@ -503,6 +542,103 @@ void cross_function_escape() {
         self.assertEqual(run.findings, ())
         self.assertEqual(run.analyzed_files, ())
         self.assertTrue(any("Cooperative timeout" in item for item in run.limitations))
+
+
+    def test_alias_assignment_from_owner_is_modeled(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void alias_assignment() {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = nullptr;
+    alias = owner.get();
+    owner.reset();
+    alias->Use();
+}
+"""
+        unit = self.generated_unit("alias_assignment", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "alias")
+        self.assertIn("reset", run.findings[0].message)
+
+    def test_intra_function_alias_chain_is_modeled(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void alias_chain() {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = owner.get();
+    Widget* use_alias = alias;
+    owner.reset();
+    use_alias->Use();
+}
+"""
+        unit = self.generated_unit("alias_chain", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "use_alias")
+
+    def test_mutually_exclusive_branch_pair_is_not_reported(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void branch_exclusion(bool reset_owner) {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = owner.get();
+    if (reset_owner) {
+        owner.reset();
+    } else {
+        alias->Use();
+    }
+}
+"""
+        unit = self.generated_unit("branch_exclusion", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        self.assertTrue(
+            any("mutually exclusive narrow CFG branches" in item for item in run.limitations)
+        )
+
+    def test_owner_scope_end_invalidates_outer_alias(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void owner_scope_end() {
+    Widget* alias = nullptr;
+    {
+        std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+        alias = owner.get();
+    }
+    alias->Use();
+}
+"""
+        unit = self.generated_unit("owner_scope_end", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("owner scope end", run.findings[0].message)
+
+    def test_owner_scope_boundary_control_is_not_reported(self) -> None:
+        text = """
+#include <memory>
+struct Widget { void Use() const {} };
+void owner_alive_at_use() {
+    std::unique_ptr<Widget> owner = std::make_unique<Widget>();
+    Widget* alias = nullptr;
+    {
+        alias = owner.get();
+    }
+    alias->Use();
+}
+"""
+        unit = self.generated_unit("owner_alive_at_use", text)
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
 
 
 if __name__ == "__main__":

@@ -2,9 +2,16 @@
 from typing import Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
 from .analysis import Interpreter
-from .models import IMPACT_DESCRIPTION, IpcPolicy, MODEL_VERSION, reviewed_consequence
+from .fd_backing import detect_fd_backing_findings
+from .families import cwes, merge_policy
+from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 
-_CWE = {"AUTH-01":"CWE-441", "AUTH-02":"CWE-862", "AUTH-03":"CWE-863", "AUTH-04":"CWE-863", "DATA-01":"CWE-20", "CAP-01":"CWE-926"}
+# Which family reports which mechanism CWE. Read from the family modules rather
+# than repeated here, so a family's id, its rules and its CWE land together and a
+# new family cannot be emitted without declaring the CWE it reports.
+_CWE = cwes()
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05",
+                     "DATA-01", "DATA-02", "DATA-03", "DATA-04", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -59,7 +66,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.5.0"
+    version = "0.9.3"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -71,7 +78,11 @@ class IpcInterfaceDetector:
     ast_scope = "per_file"
 
     def __init__(self, policy=None):
-        self.policy = policy or IpcPolicy()
+        # The reviewed policy is the catalogue's defaults plus the families'
+        # additions; a caller-supplied policy is merged rather than replaced, so a
+        # narrowed harness (`IpcPolicy(max_paths=2)`) still runs under the facts
+        # the families were reviewed for. See families.merge_policy.
+        self.policy = merge_policy(policy)
 
     def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
         ast = context.shared_facts.get("ast", {})
@@ -84,8 +95,9 @@ class IpcInterfaceDetector:
             return DetectorRun(self.detector_id,self.version,"blocked",limitations=(
                 "Shared AST outline is required for every supported unit; missing/failed coverage is unknown. "
                 "Unsupported languages are outside this detector's declared scope.",))
-        analysis = Interpreter(applicable,self.policy)
+        analysis = Interpreter(applicable,self.policy,context.request)
         observations, extra = analysis.run()
+        fd_findings, fd_limitations = detect_fd_backing_findings(applicable)
         findings = tuple(DetectorFinding(
             file=o.file,line=o.line,symbol=o.symbol,rule_id=o.rule,
             message=_finding_message(o),
@@ -101,11 +113,12 @@ class IpcInterfaceDetector:
                 +((_DISPATCH_OBLIGATION,) if o.entry_grade=="dispatch" else ())
                 +((_DESCRIPTOR_OBLIGATIONS[o.descriptor_identity],) if o.descriptor_identity else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
-            ) for o in observations)
+            ) for o in observations) + fd_findings
         status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"
         return DetectorRun(self.detector_id,self.version,status,tuple(u.path for u in applicable),findings,
             ("Model="+MODEL_VERSION+"; first-party bounded structured syntax interpretation, no external scanner execution.",
              "Private branch pass reconstructs Tree-sitter nodes; public shared facts/schema are unchanged.",
+             *fd_limitations,
              "No compiler CFG, arbitrary virtual dispatch, alias analysis or full-program authorization proof. "
              "Macros are expanded only from the scan's own sources and only when unambiguous; the catalogue is "
              "never an #include resolution, and what the expander refused is counted in the macro-expansion "

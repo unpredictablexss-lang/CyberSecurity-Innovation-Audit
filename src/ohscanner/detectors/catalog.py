@@ -4,10 +4,21 @@ To ship teammate detectors: review code, tests, sample provenance and
 licenses; then explicitly register the imported factory in this file.
 """
 from .example import CppCopyCallExampleDetector
+from .cpp.bounds_detector import CppBoundsDetector
+from .cpp.integer_bounds_detector import CppIntegerBoundsDetector
 from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
+from .cpp.null_dereference_detector import NullDereferenceDetector
+from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
+from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
+from .interface.arkts_js import ArkTsJsInterfaceDetector
 
 _APPROVED = {
+    "ohscanner.oh.arkts_js": {
+        "factory": ArkTsJsInterfaceDetector,
+        "kind": "research_candidate",
+        "summary": "B: bounded JS/TS/ArkTS surface candidates; syntax gaps remain unknown",
+    },
     "ohscanner.interface.ipc": {
         "factory": M2IpcInterfaceDetector,
         "kind": "research_candidate",
@@ -23,7 +34,33 @@ _APPROVED = {
         "kind": "research_candidate",
         "summary": "A: narrow unique_ptr owner-reset/raw-alias candidate; not a proven UAF",
     },
-    "ohscanner.cpp.shared_ptr_race": {
+    "ohscanner.cpp.bounds": {
+        "factory": CppBoundsDetector,
+        "kind": "research_candidate",
+        "summary": "A: bounded direct C/C++ element-access candidate; default unassessed, never safe",
+    },
+    "ohscanner.cpp.integer_bounds": {
+        "factory": CppIntegerBoundsDetector,
+        "kind": "research_candidate",
+        "summary": "A: bounded integer narrowing/index candidate; default unassessed, never safe",
+    },
+    "ohscanner.cpp.null_dereference": {
+        "factory": NullDereferenceDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: unknown-return nullability produces broad weak candidates; review a bounded scope first",
+        "summary": "A: narrow same-function C/C++ null-source/deref candidate; default unassessed",
+    },
+    "ohscanner.cpp.resource_lifetime": {
+        "factory": CppResourceLifetimeDetector,
+        "kind": "research_candidate",
+        "summary": "A: bounded resource allocation/release path candidate; default unassessed",
+    },
+    "ohscanner.cpp.unsafe_memory_call": {
+        "factory": CppUnsafeMemoryCallDetector,
+        "kind": "research_candidate",
+        "summary": "A: reviewed unsafe memory-call candidate with explicit proof obligations",
+    },    "ohscanner.cpp.shared_ptr_race": {
         "factory": M2SharedPtrRaceDetector,
         "kind": "research_candidate",
         "summary": "A: narrow non-atomic shared_ptr member candidate (CWE-362); not confirmed",
@@ -31,9 +68,30 @@ _APPROVED = {
 }
 
 
+def default_detector_ids():
+    """Approved security research detectors selected for ordinary scans.
+
+    The example detector is intentionally excluded and must remain an explicit
+    demonstration-only choice.
+    """
+    return tuple(
+        name for name, spec in sorted(_APPROVED.items())
+        if spec["kind"] != "example" and spec.get("default_enabled", True)
+    )
+
+
+def resolve_detector_ids(detector_ids=None):
+    """Resolve an optional user selection to an explicit immutable ID tuple."""
+    if detector_ids is None or len(tuple(detector_ids)) == 0:
+        return default_detector_ids()
+    names = tuple(detector_ids)
+    if len(names) != len(set(names)):
+        raise ValueError("duplicate detector identifier")
+    return names
+
 def catalog_metadata():
     return {
-        name: {"kind": spec["kind"], "summary": spec["summary"]}
+        name: {key: value for key, value in spec.items() if key != "factory"}
         for name, spec in sorted(_APPROVED.items())
     }
 

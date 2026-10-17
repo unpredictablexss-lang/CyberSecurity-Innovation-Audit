@@ -1,7 +1,6 @@
-"""M1 shared frontend: reuse the existing Tree-sitter C/C++ parser.
+"""Shared C/C++ and JS/TS syntax coverage; unsupported ArkTS stays partial.
 
-JS/TS/ArkTS are indexed as source text only; no syntax, type, bridge or
-permission evidence is inferred for them in this milestone.
+Syntax eligibility is not a type, manifest, permission or security proof.
 """
 
 from collections import Counter
@@ -11,6 +10,7 @@ import json
 from src.parser.ast import parse_source
 from .contracts import SourceUnit
 from .git_source import GitSource
+from .detectors.interface.arkts_js import frontend as script_frontend
 
 
 def index_sources(sources: tuple[GitSource, ...]):
@@ -36,8 +36,17 @@ def index_sources(sources: tuple[GitSource, ...]):
                 issues = [type(error).__name__ + ": " + str(error)[:300]]
                 ast_summary[source.path] = {"parse_status": "failed",
                                             "functions": [], "calls": [], "variables": []}
+        elif source.language in ("js", "ts", "arkts"):
+            parsed = script_frontend(SourceUnit(
+                path=source.path, language=source.language, text=text,
+                sha256=sha256(source.data).hexdigest(), parse_status="not_run"))
+            status = parsed.status if parsed.status in ("complete", "partial") else "not_run"
+            if parsed.status == "unsupported":
+                issues = ["Required grammar unavailable; source indexed as text only"]
+            elif parsed.error_nodes:
+                issues = [f"Tree-sitter recovered {parsed.error_nodes} error/missing node(s)"]
         else:
-            issues = ["Language frontend unavailable in M1; source indexed as text only"]
+            issues = ["No language frontend configured; source indexed as text only"]
         units.append(SourceUnit(
             path=source.path, language=source.language, text=text,
             sha256=sha256(source.data).hexdigest(),

@@ -57,7 +57,7 @@ class GitObjectIndexTests(unittest.TestCase):
         self.assertEqual(coverage["languages"], {"arkts": 1, "cpp": 1})
         indexed = {unit.path: unit for unit in context.units}
         self.assertEqual(indexed["src/a.cpp"].parse_status, "complete")
-        self.assertEqual(indexed["src/bridge.ets"].parse_status, "not_run")
+        self.assertEqual(indexed["src/bridge.ets"].parse_status, "complete")
         self.assertGreaterEqual(len(context.shared_facts["ast"]["src/a.cpp"]["functions"]), 1)
         self.assertNotIn("src/bridge.ets", context.shared_facts["ast"])
         self.assertEqual([s.path for s in sources], sorted(s.path for s in sources))

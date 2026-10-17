@@ -121,7 +121,13 @@ class WorkbenchTests(unittest.TestCase):
 
     def test_catalog_research_only(self):
         r = self.client.get("/api/v1/detectors")
-        self.assertEqual({x["id"] for x in r.json()}, set(IDS))
+        self.assertEqual({x["id"] for x in r.json()}, {
+            "ohscanner.cpp.lifetime", "ohscanner.cpp.shared_ptr_race",
+            "ohscanner.cpp.null_dereference", "ohscanner.cpp.bounds",
+            "ohscanner.cpp.integer_bounds", "ohscanner.cpp.resource_lifetime",
+            "ohscanner.cpp.unsafe_memory_call", "ohscanner.interface.ipc",
+            "ohscanner.oh.arkts_js",
+        })
         self.assertTrue(all(x["version"] for x in r.json()))
 
     def test_mutation_requires_header(self):

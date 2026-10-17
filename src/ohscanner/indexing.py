@@ -20,7 +20,8 @@ def environment_fingerprint():
         check=True, timeout=5,
     ).stdout.strip()
     versions = {}
-    for package in ("tree-sitter", "tree-sitter-c", "tree-sitter-cpp"):
+    for package in ("tree-sitter", "tree-sitter-c", "tree-sitter-cpp",
+                    "tree-sitter-javascript", "tree-sitter-typescript"):
         try:
             versions[package] = metadata.version(package)
         except metadata.PackageNotFoundError:
@@ -51,6 +52,7 @@ def prepare_git_context(repo_dir: Path, repository: str, commit: str,
         units=units,
         shared_facts={
             "ast": ast,
+            "source_blob_oid": {item.path: item.oid for item in sources},
             "facts_v1": build_syntax_facts(ast),
             "coverage": coverage,
         },
@@ -101,7 +103,7 @@ def run_git_index(repo_dir: Path, repository: str, commit: str,
         "candidate_count": 0,
         "validated_vulnerability": 0,
         "limitations": [
-            "M1 indexes C/C++ syntax only; JS/TS/ArkTS receive no parsing/semantic analysis.",
+            "C/C++ and JS/TS syntax are bounded; unsupported ArkTS remains partial/unknown, without type/manifest semantics.",
             "Source repository name is user-declared; local Git object identity is checked, not official remote ownership.",
             "Headers default to C++ grammar; no GN/product compile flags, macro instantiation or full device coverage.",
             "No vulnerability detector executed. candidate_count=0 is not a security finding.",
