@@ -1,0 +1,84 @@
+# A-BOF-01 / A-INT-01 memory-safety detector specification
+
+更新：2026-10-17。本文是队友 A 的研究规格和注册建议，不是公共 Catalog 变更。结果默认 `candidate/unassessed`，`validated_vulnerability=0`。
+
+## Identity
+
+| Detector | Version | Languages | Rules | Candidate CWE |
+|---|---|---|---|---|
+| `ohscanner.cpp.bounds` | `0.1.0` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002` | CWE-119/125/787 |
+| `ohscanner.cpp.integer_bounds` | `0.1.0` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002` | CWE-190/191/681/680 |
+
+实现入口：
+
+- `src/ohscanner/detectors/cpp/memory_safety.py`
+- `src/ohscanner/detectors/cpp/bounds_detector.py`
+- `src/ohscanner/detectors/cpp/integer_bounds_detector.py`
+
+源码绑定字段包括 `source_sha256`、`rule_version`、`rule_lineage_id` 和 `identity_quality=partial`。公共契约没有改变；Catalog 注册由公共负责人审查后另行提交。
+
+## A-BOF-01 触发和排除
+
+支持的局部形状：
+
+1. 固定 C 数组或 `std::array<T,N>` 的 `memcpy`、`memmove`、`strncpy`、`snprintf`、`strcpy`、`strcat`。
+2. 固定数组索引，包含常量越界和未证明上界的符号索引。
+3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。
+
+候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
+
+## A-INT-01 触发和排除
+
+支持的局部形状：
+
+1. `size * count`、`offset + len`、`len - header` 等算术进入 `malloc/calloc/new[]`、copy length 或后续敏感 size 变量。
+2. `uint8_t x = 255 + 1` 等常量结果超出目标类型范围的截断候选。
+3. `__builtin_*overflow`、`SIZE_MAX /`、明确 checked arithmetic guard 作为安全对照。
+4. `strnlen` + `if (len >= MAX) return` 的窄安全形状和 `uint8_t/uint16_t + 1` 整数提升安全形状不告警。
+5. `MAX_KEY_PATH + 1` 这类宏值未知保持 unknown，不按宏值臆测溢出。
+
+算术后果和溢出本身分开：CWE-190/191 是候选类别，分配不足或越界写是候选 consequence；不能把每个 `+`/`*` 都当漏洞。
+
+## EvidenceObligations
+
+每个候选保留：
+
+- `capacity_and_alias_identity` / `integer_range_and_signedness`
+- `guard_dominance` / `overflow_guard_dominance`
+- `cross_function_and_macro_context`
+- `entry_or_privilege_boundary`
+- `attacker_control`
+- `trigger_conditions` / `allocation_or_memory_consequence`
+- `cia_impact`
+
+这些义务当前为 `unknown` 或 `missing`。只有真实入口/权限边界、可达敏感操作、触发条件、具体 CIA 影响和可审计证据闭合后才允许 `confirmed/reportable`。
+
+## Controls and regression
+
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 9 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+
+- 正例产生候选；
+- 修复/精确容量/checked arithmetic 为 quiet；
+- 动态目的地和宏-only 分配为 unknown/quiet；
+- partial、failed、1MiB/unit、32MiB/run fail-closed；
+- 输出和 source binding 稳定；
+- 已审阅误报形状（placement new、`strnlen` guard、窄整数提升）不再告警。
+
+## Catalog registration suggestion
+
+建议公共负责人在独立兼容性提交中注册：
+
+```python
+"ohscanner.cpp.bounds": {
+    "factory": M2BoundsDetector,
+    "kind": "research_candidate",
+    "summary": "A: bounded local array/copy length candidates; no exploitability proof",
+},
+"ohscanner.cpp.integer_bounds": {
+    "factory": M2IntegerBoundsDetector,
+    "kind": "research_candidate",
+    "summary": "A: bounded size arithmetic and truncation candidates; no product impact proof",
+},
+```
+
+未注册前不改变当前生产 Catalog；研究脚本直接调用 Detector。示例 Detector 永不作为漏洞能力启用。

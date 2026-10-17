@@ -1,0 +1,294 @@
+"""Run A memory-safety detectors over existing pinned OpenHarmony manifests.
+
+The script never fetches or checks out source repositories. It verifies each
+manifest's full commit/tree identity, reads exact pinned blobs, rechecks the
+inventory, and writes source-bound candidate reports.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import platform
+import resource
+import re
+import sys
+import time
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Mapping, Sequence, Tuple
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.ohscanner.contracts import DetectorRun
+from src.ohscanner.detectors.cpp.bounds_detector import CppBoundsDetector
+from src.ohscanner.detectors.cpp.integer_bounds_detector import CppIntegerBoundsDetector
+from src.ohscanner.git_source import load_git_sources
+from src.ohscanner.indexing import environment_fingerprint, prepare_git_context
+
+
+DEFAULT_COMPONENTS = (
+    "communication_dsoftbus",
+    "distributeddatamgr_kv_store",
+    "security_access_token",
+    "update_updateservice",
+    "window_window_manager",
+)
+
+
+def _json_finding(finding: Any) -> Dict[str, Any]:
+    return {
+        "file": finding.file,
+        "line": finding.line,
+        "column": finding.column,
+        "rule_id": finding.rule_id,
+        "message": finding.message,
+        "evidence_type": finding.evidence_type,
+        "candidate_cwe": finding.candidate_cwe,
+        "symbol": finding.symbol,
+        "consequence_impact": finding.consequence_impact,
+        "consequence_cwe": finding.consequence_cwe,
+        "source_sha256": finding.source_sha256,
+        "rule_version": finding.rule_version,
+        "rule_lineage_id": finding.rule_lineage_id,
+        "identity_quality": finding.identity_quality,
+        "evidence_obligations": [
+            {"kind": item.kind, "description": item.description, "status": item.status}
+            for item in finding.evidence_obligations
+        ],
+    }
+
+
+def _json_run(run: DetectorRun) -> Dict[str, Any]:
+    return {
+        "detector_id": run.detector_id,
+        "version": run.version,
+        "status": run.status,
+        "analyzed_files": list(run.analyzed_files),
+        "findings": [_json_finding(item) for item in run.findings],
+        "limitations": list(run.limitations),
+        "file_outcomes": [list(item) for item in run.file_outcomes],
+    }
+
+
+def _resolve_source_root(value: str) -> Path:
+    path = Path(value)
+    if path.exists():
+        return path
+    match = re.fullmatch(r"([A-Za-z]):\\(.*)", value)
+    if match and os.name != "nt":
+        converted = Path("/mnt") / match.group(1).lower() / match.group(2).replace("\\", "/")
+        if converted.exists():
+            return converted
+    return path
+
+
+def _load_manifest(path: Path) -> Dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _manifest_paths(manifest: Mapping[str, Any]) -> Tuple[str, ...]:
+    paths: List[str] = []
+    for shard in manifest.get("shards", []):
+        paths.extend(shard.get("paths", []))
+    return tuple(sorted(set(paths)))
+
+
+def _verify_manifest_identity(manifest: Mapping[str, Any]) -> None:
+    if manifest.get("kind") != "pinned_component_scan_manifest":
+        raise ValueError("unsupported manifest kind")
+    if manifest.get("schema_version") != 1:
+        raise ValueError("unsupported manifest schema")
+    source_root = _resolve_source_root(manifest["source_repo_path"])
+    if source_root.is_symlink() or not source_root.is_dir():
+        raise ValueError("source_repo_path must be an existing non-symlink directory")
+    expected_commit = manifest["commit"]
+    expected_tree = manifest["git_tree"]
+    _commit, _tree, sources, _inventory = load_git_sources(
+        source_root, expected_commit, _manifest_paths(manifest)
+    )
+    if _commit != expected_commit or _tree != expected_tree:
+        raise ValueError("manifest commit/tree mismatch")
+
+
+def _run_component(manifest_path: Path, out_dir: Path) -> Dict[str, Any]:
+    manifest = _load_manifest(manifest_path)
+    _verify_manifest_identity(manifest)
+    repository = manifest["repository"]
+    commit = manifest["commit"]
+    source_root = _resolve_source_root(manifest["source_repo_path"])
+    includes = _manifest_paths(manifest)
+    started = time.perf_counter()
+    context, tree, inventory, coverage, sources = prepare_git_context(
+        source_root, repository, commit, includes
+    )
+    commit2, tree2, sources2, inventory2 = load_git_sources(source_root, commit, includes)
+    if (
+        commit2 != context.request.commit
+        or tree != tree2
+        or tuple((item.path, item.oid, item.data) for item in sources)
+        != tuple((item.path, item.oid, item.data) for item in sources2)
+        or inventory2 != inventory
+    ):
+        raise ValueError("pinned Git object inventory changed during analysis")
+    detector_runs = [
+        _json_run(CppBoundsDetector().detect(context, context.units)),
+        _json_run(CppIntegerBoundsDetector().detect(context, context.units)),
+    ]
+    wall = time.perf_counter() - started
+    findings = [item for run in detector_runs for item in run["findings"]]
+    component = manifest["component"]
+    json_path = out_dir / f"{component}.json"
+    md_path = out_dir / f"{component}.md"
+    report = {
+        "schema_version": 1,
+        "experiment_kind": "a_memory_safety_pinned_component_scan",
+        "status": "completed_with_limitations",
+        "component": component,
+        "repository": repository,
+        "source_repo_path": str(source_root),
+        "commit": commit,
+        "git_tree": tree,
+        "snapshot_sha256": context.request.snapshot_sha256,
+        "profile_id": context.request.profile_id,
+        "provenance": "local_pinned_git_objects",
+        "scope_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "scope": inventory,
+        "coverage": coverage,
+        "detector_runs": detector_runs,
+        "candidate_count": len(findings),
+        "candidate_groups": len({
+            (run["detector_id"], item["rule_id"], item["symbol"])
+            for run in detector_runs for item in run["findings"]
+        }),
+        "validated_vulnerability": 0,
+        "eligible_for_metrics": False,
+        "precision_recall": None,
+        "performance": {
+            "wall_seconds": wall,
+            "selected_source_files": inventory["selected_source_files"],
+            "selected_source_bytes": inventory["selected_source_bytes"],
+            "process_peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+        },
+        "environment": environment_fingerprint(),
+        "exact_argv": list(sys.argv),
+        "limitations": [
+            "Candidate-only lexical analysis; no confirmed/reportable vulnerability is claimed.",
+            "No product build, permission boundary, attacker control, trigger trace or CIA impact is established.",
+            "Pointer aliases, wrappers, macro expansion, templates, interprocedural range facts and complete CFG dominance remain unknown.",
+            "This run uses local pinned Git objects only; no fetch, checkout or external scanner is invoked.",
+        ],
+    }
+    json_path.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    md = [
+        f"# A memory-safety pinned scan: {component}", "",
+        "> Candidate-only report; `validated_vulnerability=0`.", "",
+        f"- Repository: `{repository}`",
+        f"- Commit: `{commit}`",
+        f"- Git tree: `{tree}`",
+        f"- Snapshot SHA-256: `{report['snapshot_sha256']}`",
+        f"- Scope manifest SHA-256: `{report['scope_manifest_sha256']}`",
+        f"- Selected files/bytes: {inventory['selected_source_files']}/{inventory['selected_source_bytes']}",
+        f"- Wall seconds: {wall:.6f}",
+        f"- Candidate findings/groups: {len(findings)}/{report['candidate_groups']}",
+        "",
+        "## Detector runs", "",
+    ]
+    for run in detector_runs:
+        md.append(f"### `{run['detector_id']}` {run['version']} ({run['status']})")
+        md.append("")
+        if not run["findings"]:
+            md.append("- No candidate emitted in the analyzed lexical scope.")
+        for finding in run["findings"]:
+            md.append(
+                f"- `{finding['file']}:{finding['line']}:{finding['column']}` "
+                f"`{finding['rule_id']}` `{finding['candidate_cwe']}` "
+                f"{finding['message']}"
+            )
+        md.append("")
+    md.extend(["## Limitations", ""])
+    md.extend("- " + item for item in report["limitations"])
+    md_path.write_text("\n".join(md) + "\n", encoding="utf-8")
+    return {
+        "component": component,
+        "repository": repository,
+        "commit": commit,
+        "git_tree": tree,
+        "snapshot_sha256": report["snapshot_sha256"],
+        "candidate_count": len(findings),
+        "candidate_groups": report["candidate_groups"],
+        "validated_vulnerability": 0,
+        "wall_seconds": wall,
+        "selected_source_files": inventory["selected_source_files"],
+        "selected_source_bytes": inventory["selected_source_bytes"],
+        "json": str(json_path),
+        "markdown": str(md_path),
+    }
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--manifest-dir", type=Path, required=True)
+    parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--components", nargs="*", default=list(DEFAULT_COMPONENTS))
+    args = parser.parse_args(argv)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for component in args.components:
+        manifest_path = args.manifest_dir / f"{component}.manifest.json"
+        if not manifest_path.is_file():
+            raise FileNotFoundError(manifest_path)
+        rows.append(_run_component(manifest_path, args.out_dir))
+    summary = {
+        "schema_version": 1,
+        "experiment_kind": "a_memory_safety_pinned_component_summary",
+        "status": "completed_with_limitations",
+        "components": rows,
+        "totals": {
+            "components": len(rows),
+            "candidate_count": sum(item["candidate_count"] for item in rows),
+            "candidate_groups": sum(item["candidate_groups"] for item in rows),
+            "validated_vulnerability": 0,
+            "eligible_for_metrics": False,
+            "wall_seconds": sum(item["wall_seconds"] for item in rows),
+            "selected_source_files": sum(item["selected_source_files"] for item in rows),
+            "selected_source_bytes": sum(item["selected_source_bytes"] for item in rows),
+            "process_peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+        },
+        "exact_argv": list(sys.argv),
+        "environment": environment_fingerprint(),
+        "limitations": [
+            "Candidate counts are not vulnerability counts and groups are not confirmed root causes.",
+            "Precision/Recall are not computed without an independent reliable labelled holdout.",
+            "The source repositories are pre-fixed local OpenHarmony Git objects; no remote acquisition was performed.",
+        ],
+    }
+    (args.out_dir / "summary.json").write_text(
+        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    lines = [
+        "# A memory-safety pinned component summary", "",
+        "> Candidate-only; `validated_vulnerability=0`; no Precision/Recall claim.", "",
+        "| Component | Files | Bytes | Candidates | Groups | Wall s | Commit |",
+        "|---|---:|---:|---:|---:|---:|---|",
+    ]
+    for item in rows:
+        lines.append(
+            f"| `{item['component']}` | {item['selected_source_files']} | "
+            f"{item['selected_source_bytes']} | {item['candidate_count']} | "
+            f"{item['candidate_groups']} | {item['wall_seconds']:.3f} | `{item['commit']}` |"
+        )
+    lines.extend(["", "## Limitations", ""])
+    lines.extend("- " + item for item in summary["limitations"])
+    (args.out_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
+
+

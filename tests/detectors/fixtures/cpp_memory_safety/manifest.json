@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "change_request_ids": [
+    "A-BOF-01",
+    "A-INT-01"
+  ],
+  "source": "self-authored synthetic controls",
+  "cases": [
+    {
+      "category": "positive",
+      "expected_min": 2,
+      "fixture": "bounds_positive.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "db559dc134ab55c47a3052350d8cae1c0059c938a0730369569f5951cb2a95f4",
+      "byte_length": 112
+    },
+    {
+      "category": "fixed",
+      "expected_max": 0,
+      "fixture": "bounds_fixed.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "29be30100c7ab08ddd1991142413be7d8fc4ff0bf6e537b1569b3e15f94eb527",
+      "byte_length": 155
+    },
+    {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "bounds_safe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "14b702f241ebee456e0cd1ec5c8387430888f06540d2f7f19ea274806ea9c816",
+      "byte_length": 101
+    },
+    {
+      "category": "unrelated",
+      "expected_max": 0,
+      "fixture": "bounds_unrelated.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "5fc7033050d78344a78141318fd4455e745746ac3c5fffcc0347fb9a3e960a6a",
+      "byte_length": 90
+    },
+    {
+      "category": "positive",
+      "expected_min": 2,
+      "fixture": "integer_positive.cpp",
+      "detector": "ohscanner.cpp.integer_bounds",
+      "sha256": "4572f46bfee013e624ed88e75ec8f59baac5810b5c974a7ebdc6ce6fff41bc0b",
+      "byte_length": 225
+    },
+    {
+      "category": "fixed",
+      "expected_max": 0,
+      "fixture": "integer_fixed.cpp",
+      "detector": "ohscanner.cpp.integer_bounds",
+      "sha256": "cf37a822b1809940d08157656655353b2ef830543e5a30a779f3bbfc3f523cc8",
+      "byte_length": 175
+    },
+    {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "integer_safe.cpp",
+      "detector": "ohscanner.cpp.integer_bounds",
+      "sha256": "444069b5b62381d6fa03fdec1ac56ebb5a49717238b5569544048ea247c0b70d",
+      "byte_length": 183
+    },
+    {
+      "category": "unrelated",
+      "expected_max": 0,
+      "fixture": "integer_unrelated.cpp",
+      "detector": "ohscanner.cpp.integer_bounds",
+      "sha256": "c47d1c57a30c56d7c986789e37d9341548eb5e72054da97d563da086c4d7189b",
+      "byte_length": 78
+    },
+    {
+      "category": "unknown",
+      "fixture": "unknown_partial.cpp",
+      "expected_status": "blocked",
+      "detector": "both",
+      "sha256": "0bcae9048b0809a348080f1c259ae23e0e204a079869676ab0377ff6a08c3ee5",
+      "byte_length": 54
+    }
+  ]
+}
