@@ -7,7 +7,7 @@
 - Base merge: `9f3fcb249b6eb59d7497341ae740b230f8a7b859`.
 - Detector implementation commits: `d8175fd8dbc54ccc5a30aa327d0cecda33f3a32f`, `0e4e8e7e345030d29d1f2cf0ec2e2d70f3beca29`.
 - Pinned scan/review commit: `465168693b8ecd05a8eebd6a2ca33862f284f17a`.
-- Isolated PoC commit: `8f556e73c5d1269f6e67edd9da5464c77df40fff`.
+- Isolated PoC commit: `8f556e73c5d1269f6e67edd9da5464c77df40fff`.\n- Historical OOB replay and bounds 0.2.0 commit: `5a0225cdd1d218e1e204f02f01d9732006b52626`.
 - Source worktree SHA-256 values are recorded in `A_MEMORY_SAFETY_SOURCE_HASHES_20261017.json`; PoC source/log hashes are in `research/evidence/cpp/a_memory_safety_poc_20261017/hashes.json`; Git blob identities are fixed by the commits above.
 
 ## Implemented capabilities
@@ -57,7 +57,7 @@ This validates the detector mechanism and synthetic fix controls. It does not fi
 - Full Python regression: 700 tests executed, 692 passed, 8 skipped, 111.220s.
 - New memory-safety regression: 16 tests passed.
 - `compileall`: passed.
-- Docs context budget: `default=11400/13500`, `docs=20605/32500`.
+- Docs context budget: `default=11512/13500`, `docs=20717/32500`.
 - `git diff --check`: passed.
 - Pinned source scan and isolated PoC commands are recorded in their evidence packages.
 
