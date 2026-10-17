@@ -4,7 +4,12 @@ To ship teammate detectors: review code, tests, sample provenance and
 licenses; then explicitly register the imported factory in this file.
 """
 from .example import CppCopyCallExampleDetector
+from .cpp.bounds_detector import CppBoundsDetector
+from .cpp.integer_bounds_detector import CppIntegerBoundsDetector
 from .cpp.m2_adapter import M2LifetimeDetector, M2SharedPtrRaceDetector
+from .cpp.null_dereference_detector import NullDereferenceDetector
+from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
+from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
 
 _APPROVED = {
@@ -23,7 +28,31 @@ _APPROVED = {
         "kind": "research_candidate",
         "summary": "A: narrow unique_ptr owner-reset/raw-alias candidate; not a proven UAF",
     },
-    "ohscanner.cpp.shared_ptr_race": {
+    "ohscanner.cpp.bounds": {
+        "factory": CppBoundsDetector,
+        "kind": "research_candidate",
+        "summary": "A: bounded direct C/C++ element-access candidate; default unassessed, never safe",
+    },
+    "ohscanner.cpp.integer_bounds": {
+        "factory": CppIntegerBoundsDetector,
+        "kind": "research_candidate",
+        "summary": "A: bounded integer narrowing/index candidate; default unassessed, never safe",
+    },
+    "ohscanner.cpp.null_dereference": {
+        "factory": NullDereferenceDetector,
+        "kind": "research_candidate",
+        "summary": "A: narrow same-function C/C++ null-source/deref candidate; default unassessed",
+    },
+    "ohscanner.cpp.resource_lifetime": {
+        "factory": CppResourceLifetimeDetector,
+        "kind": "research_candidate",
+        "summary": "A: bounded resource allocation/release path candidate; default unassessed",
+    },
+    "ohscanner.cpp.unsafe_memory_call": {
+        "factory": CppUnsafeMemoryCallDetector,
+        "kind": "research_candidate",
+        "summary": "A: reviewed unsafe memory-call candidate with explicit proof obligations",
+    },    "ohscanner.cpp.shared_ptr_race": {
         "factory": M2SharedPtrRaceDetector,
         "kind": "research_candidate",
         "summary": "A: narrow non-atomic shared_ptr member candidate (CWE-362); not confirmed",
