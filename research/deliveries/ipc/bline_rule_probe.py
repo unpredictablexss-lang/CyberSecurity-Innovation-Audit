@@ -12,6 +12,8 @@ counts, per component:
   reply_writes / disclosure_writes  reply writes, and writes of a disclosure result
   actions / reset_actions / ...     modelled sensitive actions, and the identity-flow
                                     preconditions on those paths
+  proxy_boundaries / _forwarded     calls reached through an iface_cast<> handle, and how
+                                    many carried the original caller's identity
 
 It does not change any finding: every wrapper delegates to the original method.
 """
@@ -45,6 +47,23 @@ def wrap(name, before):
     setattr(A.Interpreter, name, patched)
 
 
+def wrap_result(name, after):
+    original = getattr(A.Interpreter, name)
+
+    def patched(self, *args, **kwargs):
+        result = original(self, *args, **kwargs)
+        after(COUNTS, self, result, *args, **kwargs)
+        return result
+
+    setattr(A.Interpreter, name, patched)
+
+
+def after_resolve(c, self, result, fn, name):
+    c['resolve_calls'] += 1
+    if result is not None and result.file != fn.file:
+        c['resolve_cross_file'] += 1
+
+
 def before_index(c, self, fn, node, state, base, index):
     c['index_sites'] += 1
     if index.kind == 'request':
@@ -67,6 +86,12 @@ def before_invalidate(c, self, state, receiver, call):
                                    if state.env.get(v) is not None
                                    and state.env[v].kind == 'parcel_view'
                                    and state.env[v].subject == receiver])
+
+
+def before_boundary(c, self, fn, node, method, state):
+    c['proxy_boundaries'] += 1
+    if state.forwarded:
+        c['proxy_boundaries_forwarded'] += 1
 
 
 def before_reply(c, self, fn, node, state, name, args):
@@ -117,6 +142,8 @@ def main():
     wrap('invalidate_views', before_invalidate)
     wrap('reply_flow', before_reply)
     wrap('action', before_action)
+    wrap('boundary', before_boundary)
+    wrap_result('resolve', after_resolve)
     items = targets()
     if a.only:
         items = [i for i in items if i[0] in a.only.split(',')]

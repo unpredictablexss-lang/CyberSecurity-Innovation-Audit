@@ -143,6 +143,12 @@ class State:
     # either. Kept on the path so the candidate can say which it is.
     auth_issues: tuple = ()
     reset: bool = False
+    # The thread's binder identity was set to the *original caller's* token
+    # (`SetCallingIdentity(GetCallingFullTokenID())` and the like), so a call
+    # leaving this process through a proxy carries that caller rather than this
+    # service. Cleared by `ResetCallingIdentity`; restoring the service's own
+    # saved identity (`SetCallingIdentity(saved)`) does not set it.
+    forwarded: bool = False
     trace: tuple = ()
     flow: str = "normal"
     returned: Value = UNKNOWN
@@ -428,6 +434,12 @@ class Interpreter:
         # each. Kept separately from `limitations` while the walk is in progress so
         # a hop note is never mistaken for a refusal, and merged in `run()`.
         self.hop_notes = set()
+        # Cross-service boundaries this walk actually reached, as
+        # (file, line, called method, identity carried across). A boundary is
+        # recorded only when the handle was built by `iface_cast<...>` in the
+        # scanned sources; a handle that arrives as a parameter or through an
+        # unmodelled factory is not claimed as one.
+        self.proxy_notes = set()
         # `(owner, name) -> implementation or None`. Source-derived and
         # root-independent, so it is built once per detector run rather than
         # re-walked for every unqualified call met in the corpus.
@@ -623,7 +635,11 @@ class Interpreter:
                                     issue for s in group for issue in s.descriptor_issues)),
                                 auth_issues=tuple(dict.fromkeys(
                                     issue for s in group for issue in s.auth_issues)),
-                                reset=any(s.reset for s in group), flow=flow,
+                                reset=any(s.reset for s in group),
+                                # Either path may leave through the proxy with
+                                # the caller's identity, so the joined state
+                                # records that a change point was carried.
+                                forwarded=any(s.forwarded for s in group), flow=flow,
                                 trace=((0, "conservative path join"),)))
         return result
 
@@ -641,12 +657,16 @@ class Interpreter:
         does not show that an analysed path performed one.
         """
         sink = _Suspended()
-        saved = self.emit, self.limitations, self.seen_permissions
+        saved = self.emit, self.limitations, self.seen_permissions, self.proxy_notes
         self.emit, self.limitations, self.seen_permissions = sink, sink, sink
+        # A boundary met while reading a handler only to find its guard is not a
+        # call the analysed paths made, so it is not counted either.
+        self.proxy_notes = set()
         try:
             yield
         finally:
-            self.emit, self.limitations, self.seen_permissions = saved
+            (self.emit, self.limitations, self.seen_permissions,
+             self.proxy_notes) = saved
 
     def emit(self, family, rule, fn, node, state, message, call=None):
         impact, impact_cwe, basis = consequence_for(rule, (call,) if call else ())
@@ -670,14 +690,38 @@ class Interpreter:
             impact, impact_cwe, basis, descriptor_identity))
 
     def resolve(self, fn, name):
-        # No arbitrary receiver or global name-only cross-class resolution.
+        """The one definition a written call names, preferring this file.
+
+        `f.file == fn.file` alone silently dropped a body that lives in another
+        translation unit -- a stub calling `Class::Method()` where the class is
+        implemented elsewhere. The widening is bounded to what the call site
+        already states:
+
+        * only an explicitly qualified callee can resolve out of its file. An
+          unqualified name is still this file (or a hop the entry index models);
+          nothing is resolved by last-name-only search;
+        * the qualifier must equal the definition's owner, or its last component
+          for a body written inside the class (`NS::Foo::Bar` call, `Foo` owner);
+        * the match must be unique. An overload set, or a definition visible both
+          inside and outside the class, stays unresolved rather than picking one.
+
+        A receiver other than `this` is never resolved: `other->Guard()` names an
+        object, and nothing in the call says what that object is.
+        """
         receiver = name.rsplit("->", 1)[0] if "->" in name else None
         if "." in name or (receiver is not None and receiver != "this"):
             return None
         prefix = name.rsplit("::", 1)[0] if "::" in name else fn.owner
         matches = [f for f in self.functions_by_file_name.get((fn.file, terminal(name)), ())
                    if f.owner == prefix]
-        return matches[0] if len(matches) == 1 else None
+        if matches:
+            return matches[0] if len(matches) == 1 else None
+        if "::" not in name:
+            return None
+        short = prefix.rsplit("::", 1)[-1]
+        qualified = [f for f in self.functions_by_owner_name.get((short, terminal(name)), ())
+                     if f.owner in (prefix, short)]
+        return qualified[0] if len(qualified) == 1 else None
 
     def delegated(self, callee):
         """One hop from a handler into the service singleton it delegates to.
@@ -775,6 +819,22 @@ class Interpreter:
         line_map = self.line_maps.get(file) or {}
         line = node.start_point[0] + 1
         return file + ":" + str(line_map.get(line, line))
+
+    def boundary(self, fn, node, method, state):
+        """Record that this path leaves the process through a proxy handle.
+
+        The identity a downstream service sees is not the identity this handler
+        was entered with. Unless the path explicitly set the calling identity to
+        the original caller's token, the downstream call runs as this service.
+        Keeping the change point means a later reader cannot assume the entry's
+        authorization carried across the boundary: it either did (the path says
+        so) or it did not.
+
+        Nothing is credited from this record and no rule keys on it yet; what it
+        refuses to do is assume identity was preserved.
+        """
+        self.proxy_notes.add((self._where(fn.file, fn, node), method,
+                              "caller" if state.forwarded else "service"))
 
     def bind_result(self, state, implementation, args, produced):
         """Bind what a dispatched call hands back, so a later export can be traced.
@@ -1223,20 +1283,45 @@ class Interpreter:
         return ("mismatch" if mismatch else "unresolved"), "Guard seen, not accepted: " + "; ".join(parts) + "."
 
     def auth_note(self, state):
-        """The unresolved caller-identity comparison on this path, if any.
+        """The caller-identity comparison seen on this path that was not credited.
 
         A missing-authorization message must not be read as "no guard was
         written". When the walk saw the caller's identity compared against a
-        symbol the scanned sources never bind, the guard is real but unreadable
-        here; the candidate stays, and the message says which fact is missing.
+        symbol, the guard is real; the candidate stays, and the message says
+        which of the two facts is missing:
+
+        * the symbol has no value in the scanned sources (`auth_unknown`), or
+        * it has one and no reviewed account assignment credits that value
+          (`auth_uncredited`).
+
+        Reporting the second as the first would be a checkable false statement
+        about the source, and the reviewer would go looking for a definition that
+        is already there.
         """
         if not state.auth_issues:
             return ""
-        return (" Guard seen, not accepted: the caller identity is compared against "
-                + ", ".join(sorted(state.auth_issues))
-                + " on this path, but this analysis does not resolve that symbol to "
-                  "a value (a same-file constant initializer is not modelled here), "
-                  "so the comparison cannot be credited as authorization.")
+        unresolved, uncredited = [], []
+        for issue in state.auth_issues:
+            if isinstance(issue, tuple):
+                symbol, value, file, line = issue
+                where = (file + ":" + str(line)) if file else "an unstated location"
+                uncredited.append(symbol + " (which these sources bind to " + value
+                                 + " at " + where + ")")
+            else:
+                unresolved.append(issue)
+        parts = []
+        if unresolved:
+            parts.append("the caller identity is compared against "
+                         + ", ".join(sorted(unresolved))
+                         + " on this path, but this analysis does not resolve that symbol "
+                           "to a value")
+        if uncredited:
+            parts.append("the caller identity is compared against "
+                         + ", ".join(sorted(uncredited))
+                         + ", but no reviewed account assignment in this policy credits "
+                           "that value")
+        return (" Guard seen, not accepted: " + "; ".join(parts)
+                + ", so the comparison cannot be credited as authorization.")
 
     def relay_guard(self, fn, node, args, helper, state, depth):
         """What a one-hop same-file relay out of an entry lands on.
@@ -1330,17 +1415,32 @@ class Interpreter:
             an = node.child_by_field_name("arguments")
             args = [self.value(fn, a, state, depth) for a in an.named_children] if an else []
             receiver = re.split(r"->|\.", callee)[0] if re.search(r"->|\.", callee) else ""
+            if callee.strip().startswith("iface_cast") and "<" in callee:
+                # `iface_cast<IFoo>(remote)` is the canonical way a client in
+                # these sources obtains a typed proxy. The handle names another
+                # process, so a later call through it leaves this one even when
+                # the callee's body is not in the scanned tree.
+                return Value("proxy", text)
+            if receiver:
+                held = state.env.get(receiver)
+                if held is not None and held.kind == "proxy":
+                    self.boundary(fn, node, name, state)
             if name in self.policy.caller_token_calls | self.policy.caller_uid_calls:
                 return Value("self" if state.reset else "caller", text, "uid" if name in self.policy.caller_uid_calls else "token")
             if name in self.policy.self_calls:
                 return Value("self", text, "uid" if name in ("getuid","geteuid") else "token")
             if name == "ResetCallingIdentity":
                 state.reset = True
+                state.forwarded = False
                 return Value("saved_identity", text)
             if name == "SetCallingIdentity":
                 # Restoration cannot establish the original caller unless the
                 # corresponding identity token's provenance is available.
                 state.reset = not (args and args[0].kind == "saved_identity")
+                # Only a token read as the calling token is the original caller.
+                # The service's own saved identity is a different principal.
+                state.forwarded = bool(args and args[0].kind == "caller"
+                                       and args[0].subject == "token")
                 return UNKNOWN
             if name == "ReadInterfaceToken":
                 rv = state.env.get(receiver, UNKNOWN)
@@ -1437,8 +1537,13 @@ class Interpreter:
                 with self.lookahead():
                     relay = self.relay_guard(fn, node, args, helper, state, depth)
                 if relay is None:
+                    # Say where the handler was resolved. A qualified callee can
+                    # resolve into another translation unit, and calling that
+                    # "locally resolved" would be a claim the reviewer can check.
+                    where = helper.qualified if helper.file == fn.file else (
+                        helper.qualified + " in " + helper.file)
                     self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
-                        "IPC entry reaches a locally resolved handler without interface-descriptor validation: "+helper.qualified)
+                        "IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: "+where)
                 elif relay[0] == "seen":
                     if relay[1] not in state.descriptor_issues:
                         state.descriptor_issues = state.descriptor_issues + (relay[1],)
@@ -1549,6 +1654,19 @@ class Interpreter:
                         left.key if right.kind == "caller"
                         and left.kind == "constant" and left.key.isidentifier() else None)
                     if symbol:
+                        # Whether the symbol has a value and whether that value is
+                        # credited are two different facts, and the message has to
+                        # say which one is missing. A resolved constant that no
+                        # reviewed account assignment covers is not "unresolved";
+                        # calling it that would be a statement about the source
+                        # that the scan can check and would find false.
+                        definition = (self.index.define_constant(symbol, fn.file)
+                                      if self.index is not None else None)
+                        if definition is not None:
+                            return Value("predicate",predicate=(
+                                "auth_uncredited",
+                                (symbol, definition.value, definition.file,
+                                 definition.line), op=="=="))
                         return Value("predicate",predicate=("auth_unknown",symbol,op=="=="))
                 if left.kind == "request" and right.kind != "request":
                     if op=="<" and right.key=="0":
@@ -1783,9 +1901,13 @@ class Interpreter:
                 issue=(pred[3].subject,pred[3].key)+tuple(pred[3].terms)
                 if issue not in out.descriptor_issues:
                     out.descriptor_issues=out.descriptor_issues+(issue,)
-            if kind=="auth_unknown":
-                # The comparison was seen; the symbol's value was not. It is a
-                # record of an unresolved guard, not a fact on this path.
+            if kind in ("auth_unknown","auth_uncredited"):
+                # The comparison was seen and is not a fact on this path. The two
+                # kinds are kept apart in the record: `auth_unknown` means the
+                # scanned sources do not bind the symbol to a value, and
+                # `auth_uncredited` means they do bind it and the policy still has
+                # no reviewed account assignment for that value. The candidate
+                # message is built from these, so it cannot claim the wrong one.
                 accepted=False
                 if key not in out.auth_issues:
                     out.auth_issues=out.auth_issues+(key,)
@@ -2003,6 +2125,18 @@ class Interpreter:
                 "relay or cross-TU dispatch question, and a guard written against a "
                 "same-named constant bound to another value (or against a TokenID, or "
                 "against a request-derived value) derives nothing.")
+        # Always emitted, so "no cross-service call was reached" and "the walk
+        # never looked for one" are distinguishable in the report.
+        carried = sum(1 for note in self.proxy_notes if note[2] == "caller")
+        self.limitations.add(
+            "Cross-service boundary coverage: " + str(len(self.proxy_notes))
+            + " call(s) on a handle built by iface_cast<> in the scanned sources, "
+            + str(carried) + " carrying the original caller's identity "
+              "(SetCallingIdentity with a calling-token value active), "
+            + str(len(self.proxy_notes) - carried)
+            + " executing as the service. Each boundary is recorded with the identity "
+              "that crossed it; no candidate is emitted from the boundary itself, and "
+              "a downstream service's own guards are not read from this corpus.")
         if self.hop_notes:
             # One provenance line per credited hop, then one line saying what the
             # credit does and does not cover, so the difference between "the callee

@@ -1,0 +1,47 @@
+{
+ "old_totals": {
+  "resolve_calls": 25384,
+  "reply_writes": 3305,
+  "disclosure_writes": 6,
+  "actions": 53,
+  "index_sites": 88,
+  "resolve_cross_file": 158
+ },
+ "new_totals": {
+  "resolve_calls": 25221,
+  "reply_writes": 3305,
+  "disclosure_writes": 6,
+  "actions": 53,
+  "index_sites": 88,
+  "resolve_cross_file": 158,
+  "proxy_boundaries": 10
+ },
+ "components_with_moved_counts": [
+  {
+   "component": "ability_ability_runtime",
+   "delta": {
+    "resolve_calls": -110
+   }
+  },
+  {
+   "component": "bundlemanager_bundle_framework",
+   "delta": {
+    "resolve_calls": -10,
+    "proxy_boundaries": 10
+   }
+  },
+  {
+   "component": "graphic_graphic_2d",
+   "delta": {
+    "resolve_calls": -34
+   }
+  },
+  {
+   "component": "window_window_manager",
+   "delta": {
+    "resolve_calls": -9
+   }
+  }
+ ],
+ "note": "0.9.1 pre-boundary build vs final 0.9.1; candidate identity unchanged"
+}

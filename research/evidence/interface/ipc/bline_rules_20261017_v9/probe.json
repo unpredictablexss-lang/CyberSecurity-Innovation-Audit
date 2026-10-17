@@ -1,0 +1,371 @@
+{
+  "components": 54,
+  "totals": {
+    "resolve_calls": 25384,
+    "reply_writes": 3305,
+    "disclosure_writes": 6,
+    "actions": 53,
+    "index_sites": 88,
+    "resolve_cross_file": 158
+  },
+  "rows": [
+    {
+      "component": "ability_ability_runtime",
+      "commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+      "seconds": 13.7,
+      "resolve_calls": 7628,
+      "reply_writes": 1440,
+      "disclosure_writes": 0,
+      "actions": 18,
+      "index_sites": 10,
+      "resolve_cross_file": 6
+    },
+    {
+      "component": "ability_dmsfwk",
+      "commit": "aa1b0347b10700d761def383c08749420dd3f71a",
+      "seconds": 3.3,
+      "resolve_calls": 316,
+      "resolve_cross_file": 8
+    },
+    {
+      "component": "ability_form_fwk",
+      "commit": "0914d437af5988ffbea2ec29fa4259a943bceadf",
+      "seconds": 2.0,
+      "resolve_calls": 2274,
+      "reply_writes": 536,
+      "disclosure_writes": 0,
+      "actions": 1
+    },
+    {
+      "component": "account_os_account",
+      "commit": "af2e349854d83ffd0f4e766e0a8b315388d7315a",
+      "seconds": 4.2,
+      "resolve_calls": 79
+    },
+    {
+      "component": "applications_permission_manager",
+      "commit": "9fd6f1e3a65b342d12b9dc04b7d9492d5d5bfb63",
+      "seconds": 0.0
+    },
+    {
+      "component": "bundlemanager_bundle_framework",
+      "commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+      "seconds": 30.5,
+      "resolve_calls": 4718,
+      "reply_writes": 636,
+      "disclosure_writes": 0,
+      "resolve_cross_file": 69,
+      "index_sites": 12,
+      "actions": 4
+    },
+    {
+      "component": "commonlibrary_c_utils",
+      "commit": "7a9af76276aca8f53347fb89c07850e014905521",
+      "seconds": 0.3
+    },
+    {
+      "component": "communication_bluetooth",
+      "commit": "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+      "seconds": 5.1,
+      "resolve_calls": 649,
+      "reply_writes": 2,
+      "disclosure_writes": 0
+    },
+    {
+      "component": "communication_dsoftbus",
+      "commit": "ccb1a86fff03a6b2de19d39b90a81351ced5acd6",
+      "seconds": 7.5,
+      "resolve_calls": 48
+    },
+    {
+      "component": "communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "seconds": 1.6,
+      "resolve_calls": 61,
+      "resolve_cross_file": 8
+    },
+    {
+      "component": "communication_netmanager_base",
+      "commit": "d1a2c26d3dc07e4582b6d32417fe9a0f7d2359d7",
+      "seconds": 4.7
+    },
+    {
+      "component": "communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "seconds": 2.9,
+      "resolve_calls": 16
+    },
+    {
+      "component": "communication_nfc",
+      "commit": "331bfd2661490c996d495ab2b656f79d81ae931c",
+      "seconds": 1.7,
+      "resolve_calls": 239,
+      "reply_writes": 20,
+      "disclosure_writes": 0,
+      "resolve_cross_file": 6
+    },
+    {
+      "component": "communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "seconds": 7.9,
+      "resolve_calls": 108,
+      "reply_writes": 2,
+      "disclosure_writes": 0
+    },
+    {
+      "component": "device_manager",
+      "commit": "53654dce7302f41d55695fcda8155846aeef7e83",
+      "seconds": 1.0,
+      "resolve_calls": 14
+    },
+    {
+      "component": "distributeddatamgr_data_share",
+      "commit": "84bbefd47473c97da9ad013ab3b7f184c8862ee1",
+      "seconds": 0.7,
+      "resolve_calls": 39
+    },
+    {
+      "component": "distributeddatamgr_datamgr_service",
+      "commit": "a6ba8ce1ec700c1a07e80dcc146f40b179d519af",
+      "seconds": 2.2,
+      "resolve_calls": 2
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "commit": "64e48eb1d97b45f44125761f16811f78be609a4a",
+      "seconds": 8.1,
+      "resolve_calls": 1,
+      "resolve_cross_file": 1
+    },
+    {
+      "component": "distributeddatamgr_objectstore",
+      "commit": "1a63f5a9827dc68ebd9b02b58935cd18996b2c1b",
+      "seconds": 0.2
+    },
+    {
+      "component": "distributeddatamgr_pasteboard",
+      "commit": "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+      "seconds": 2.3
+    },
+    {
+      "component": "distributeddatamgr_preferences",
+      "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+      "seconds": 2.2
+    },
+    {
+      "component": "distributeddatamgr_relational_store",
+      "commit": "9fa3a57e6657275d03e25f2e319dab55f894d1e8",
+      "seconds": 7.4,
+      "resolve_calls": 1,
+      "resolve_cross_file": 1
+    },
+    {
+      "component": "distributeddatamgr_udmf",
+      "commit": "1e2e3c35df0299cd4e14d7a87060aad14e9de0c8",
+      "seconds": 2.0,
+      "resolve_calls": 76,
+      "resolve_cross_file": 1,
+      "index_sites": 1
+    },
+    {
+      "component": "distributedhardware_device_manager",
+      "commit": "dce05abccbeddd4566479eaaaf11605b46dbe925",
+      "seconds": 7.1,
+      "resolve_calls": 7
+    },
+    {
+      "component": "filemanagement_app_file_service",
+      "commit": "a7815f653bd669026cad48421ed1ecc0dfbbe9f2",
+      "seconds": 2.4
+    },
+    {
+      "component": "filemanagement_dfs_service",
+      "commit": "bec9c8471cf7f5c25728682839e4221e38e65aa3",
+      "seconds": 2.3,
+      "resolve_calls": 124,
+      "reply_writes": 7,
+      "disclosure_writes": 0
+    },
+    {
+      "component": "filemanagement_file_api",
+      "commit": "103df5c4911e7fcddcccc7ae34894c5a2871d3a7",
+      "seconds": 2.2
+    },
+    {
+      "component": "graphic_graphic_2d",
+      "commit": "286721f97d69fe04f9327ce38227c73e6f86160b",
+      "seconds": 15.9,
+      "resolve_calls": 4066,
+      "reply_writes": 289,
+      "disclosure_writes": 0,
+      "resolve_cross_file": 41,
+      "index_sites": 4
+    },
+    {
+      "component": "inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "seconds": 3.4
+    },
+    {
+      "component": "multimedia_audio_framework",
+      "commit": "3a2688e805df970739e3b0cebf9cc05d8cb24e9b",
+      "seconds": 11.6,
+      "resolve_calls": 34
+    },
+    {
+      "component": "multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "seconds": 8.1,
+      "resolve_calls": 122,
+      "resolve_cross_file": 2
+    },
+    {
+      "component": "multimedia_image_framework",
+      "commit": "5fbe952024f16cb518a5a7cec24063cffcc038bd",
+      "seconds": 4.8
+    },
+    {
+      "component": "multimedia_media_foundation",
+      "commit": "486aae6c8ed9c22499e6bc171748fb44fe7d88b0",
+      "seconds": 1.3
+    },
+    {
+      "component": "multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "seconds": 3.4,
+      "resolve_calls": 28
+    },
+    {
+      "component": "multimodalinput_input",
+      "commit": "f7ac33c6097adae62443c11120f3fd089a6a394a",
+      "seconds": 3.6,
+      "resolve_calls": 81
+    },
+    {
+      "component": "notification_common_event_service",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "seconds": 1.6
+    },
+    {
+      "component": "notification_distributed_notification_service",
+      "commit": "4391741ef315c23ceb729fb0ad63b117b3fab695",
+      "seconds": 6.0,
+      "resolve_calls": 29,
+      "reply_writes": 8,
+      "disclosure_writes": 0
+    },
+    {
+      "component": "powermgr_battery_statistics",
+      "commit": "271a545acc0ececc746cfe0bb7c1501943df7c64",
+      "seconds": 0.3
+    },
+    {
+      "component": "powermgr_display_manager",
+      "commit": "6b2ee24ce30ca93a3fba451b912e0af59538b794",
+      "seconds": 0.4,
+      "resolve_calls": 72
+    },
+    {
+      "component": "powermgr_power_manager",
+      "commit": "06d1f3d19a59fcdb744b179d1158f65b75ad572d",
+      "seconds": 1.3,
+      "resolve_calls": 225
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "seconds": 0.9
+    },
+    {
+      "component": "security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "seconds": 5.3,
+      "resolve_calls": 364,
+      "reply_writes": 48,
+      "disclosure_writes": 6,
+      "actions": 18
+    },
+    {
+      "component": "security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "seconds": 3.6,
+      "resolve_calls": 119
+    },
+    {
+      "component": "security_device_auth",
+      "commit": "21a357fe07ac0a61ce0929040251a712f94adef3",
+      "seconds": 2.7
+    },
+    {
+      "component": "security_dlp_permission_service",
+      "commit": "1adc5b0f36f668e1c038853a582ecb394d08fdec",
+      "seconds": 1.1,
+      "resolve_calls": 94
+    },
+    {
+      "component": "security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "seconds": 1.7
+    },
+    {
+      "component": "sensors_sensor",
+      "commit": "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+      "seconds": 0.9,
+      "resolve_calls": 17
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "seconds": 0.6,
+      "resolve_calls": 22
+    },
+    {
+      "component": "telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "seconds": 3.3,
+      "resolve_calls": 234,
+      "reply_writes": 6,
+      "disclosure_writes": 0,
+      "actions": 12
+    },
+    {
+      "component": "telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "seconds": 6.1,
+      "resolve_calls": 129,
+      "resolve_cross_file": 2,
+      "reply_writes": 2,
+      "disclosure_writes": 0
+    },
+    {
+      "component": "telephony_sms_mms",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "seconds": 2.6,
+      "resolve_calls": 71,
+      "reply_writes": 4,
+      "disclosure_writes": 0
+    },
+    {
+      "component": "update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "seconds": 0.8,
+      "resolve_calls": 17,
+      "resolve_cross_file": 3
+    },
+    {
+      "component": "useriam_user_auth_framework",
+      "commit": "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+      "seconds": 2.9
+    },
+    {
+      "component": "window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "seconds": 7.7,
+      "resolve_calls": 3260,
+      "resolve_cross_file": 10,
+      "reply_writes": 305,
+      "disclosure_writes": 0,
+      "index_sites": 61
+    }
+  ]
+}

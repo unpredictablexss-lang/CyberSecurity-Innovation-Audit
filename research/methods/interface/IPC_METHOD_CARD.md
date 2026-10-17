@@ -127,12 +127,16 @@ positive/fixed/safe 控制。"能发射一次"是下限，不是产量对齐：A
 
 ---
 
-# IPC 方法卡 — 0.9.0：新增四个家族在 54 个真实组件上的执行面（2026-10-17）
+# IPC 方法卡 — 0.9.1：新增四个家族在 54 个真实组件上的执行面（2026-10-17）
 
-本 lane、分支 `work/ipc-20261017`、基线 `6a41dc9`。检测器 **0.9.0** / 模型
-**`oh-ipc-2026.10-v8`**。完整记录：
+本 lane、分支 `work/ipc-20261017`、基线 `6a41dc9`。检测器 **0.9.1** / 模型
+**`oh-ipc-2026.10-v10`**。0.9.1 在 0.9.0 之上加三件事：**显式限定名**的跨文件
+helper 解析（唯一匹配才接受；未限定名仍不做全名搜索）、把守卫陈述拆成
+"符号没有值"与"值有、但策略没有审阅账户归属"两种、以及为**跨服务代理链**保留身份
+变更点（`iface_cast<>` 句柄上的调用记边界，记跨过去的是调用者还是服务自身）。完整记录：
 `research/deliveries/ipc/20261017-bline-parcel-auth-flow.md`；机器可读：
-`research/evidence/interface/ipc/bline_rules_20261017/`。
+`research/evidence/interface/ipc/bline_rules_20261017_v10/`（与提交代码同一份；
+`_v9/` 是加边界记录之前的构建，保留备查）。
 
 **新增 5 条规则、4 个族。** DATA-02 `ipc.parcel.bounds` / `write-bounds`（CWE-20，
 越界读/写分开）；DATA-03 `ipc.parcel.lifecycle`（CWE-416，parcel view 被所属 parcel 的
@@ -144,48 +148,70 @@ positive/fixed/safe 控制。"能发射一次"是下限，不是产量对齐：A
 
 **实测口径。** 54 个固定组件、31,225 个入选文件、24,151 完整 + 7,074 部分 AST。生产 CLI 的
 M1 文件上限会拒绝大组件，所以测量走直接固定树（`git ls-tree` + `cat-file`），两个 pass：
-`complete-ast`（`completed`）**141 条**；`all-files`（含部分 AST、`blocked` 保留候选）
-**265 条**。265 与上一轮 CLI 表的 264 条一致，差的 1 条正是新增的 DATA-04；124 条候选只在
-部分 AST 中出现，其中包含 `object-owner`/`guard-coverage`/`copy-range` 的全部发射。
+`complete-ast`（`completed`）**183 条**；`all-files`（含部分 AST、`blocked` 保留候选）
+**337 条**；154 条候选只在部分 AST 中出现。0.9.0 定稿前的中间构建曾给出 141/265，与更早
+CLI 表的 264 相互校验；提交代码在同一批固定 commit 上给出 183/337，差异来自两次测量之间
+对 relay/描述符路径的修改。**本卡与证据以提交代码的实测为准**，旧表已被取代。
 
-| 规则 | complete-ast | all-files | 命中组件 |
+| 规则 | complete-ast | all-files | 命中组件（all-files） |
 |---|---:|---:|---:|
-| `ipc.relay.descriptor-boundary` | 101 | 174 | 12 |
-| `ipc.auth.missing` | 16 | 25 | 5 |
-| `ipc.auth.object-owner` | 0 | 2 | 0 |
-| `ipc.auth.guard-coverage` | 0 | 8 | 0 |
-| `ipc.capability.export` | 23 | 55 | 4 |
-| `ipc.parcel.copy-range` | 0 | 1 | 0 |
+| `ipc.relay.descriptor-boundary` | 143 | 238 | 18 |
+| `ipc.auth.missing` | 16 | 27 | 9 |
+| `ipc.auth.object-owner` | 0 | 2 | 1 |
+| `ipc.auth.guard-coverage` | 0 | 9 | 3 |
+| `ipc.capability.export` | 23 | 59 | 8 |
+| `ipc.parcel.copy-range` | 0 | 1 | 1 |
 | **`ipc.data.sensitive-flow`** | **1** | **1** | **1** |
 | **`ipc.parcel.bounds` / `write-bounds` / `lifecycle` / `auth.flow`** | **0** | **0** | **0** |
 | 其余 AUTH-03 四条 + `position-underflow` | 0 | 0 | 0 |
 
+**0.9.1 的跨文件解析是零候选变化。** 同一 54 组件、同一 commit 上，1d47160（0.9.0）
+与当前代码逐组件逐规则比较：`337/183 → 337/183`，`changed: []`；探针记录到它确实
+解析了跨文件目标：54 个组件共 25,221 次 `resolve` 调用，其中 **158 次命中另一文件**
+（`bundlemanager_bundle_framework` 69、`graphic_graphic_2d` 41、`window_window_manager` 10
+等 37 个组件有计数变化）。所以这次放宽改变的是"读到多少函数体"，不是候选判定。
+
+**跨服务边界：只记身份变更点，不出候选。** `iface_cast<IFoo>(remote)` 得到的句柄上的
+调用被记为一次跨服务边界；记录的是 `(file:line, 被调方法, service|caller)`——默认
+`service`（下游看到的是本服务，不是入口调用者），只有显式
+`SetCallingIdentity(<调用者 token>)` 且未 `ResetCallingIdentity()` 才是 `caller`。
+重置、恢复自身保存身份、非 `iface_cast` 句柄都有反例测试。它满足 B-2 的"保留身份变更点"，
+**不**声称能读下游守卫或追击任意深度代理链；边界计数进入报告的
+`Cross-service boundary coverage` 行。54 组件实测：**10 次边界，全部为 `service`**
+（`bundlemanager_bundle_framework`），**0 次**显式转发调用者身份。
+
 **四个零不是同一个结论，且都是插桩计数。** 包装分析器决策点的只读探针在 54 个组件上记录：
-入口可达函数里 87 个下标站点，**0 个下标来自 request parcel、0 个索引容量已知**；
+入口可达函数里 88 个下标站点，**0 个下标来自 request parcel、0 个索引容量已知**；
 入口路径上 **0 个** `ReadRawData(dst,size)` 站点；parcel 失效调用 **0 次**、被失效命中的
 活动 view **0 个**；`ResetCallingIdentity` 之后到达的建模敏感操作 **0 次**。文本上界普查
 给出形状：`ReadRawData(` 163、`ReadBuffer(` 89、`RewindRead(` 32、`SetReadPosition(` 2、
 `Seek(` 152；`Reuse(` 与裸 `ResetCallingIdentity();` 均为 **0**——这 54 个组件的身份操作
-全是"保存—恢复"协议（`SetCallingIdentity(` 380 处）。另：3,265 次 reply 写入中 6 次的实参
+全是"保存—恢复"协议（`SetCallingIdentity(` 380 处）。另：3,305 次 reply 写入中 6 次的实参
 是披露类结果，只有 1 次没有匹配守卫。
 
 **唯一的 DATA-04 候选已按固定源码复核并保留。** `security_access_token`@`17d88bfb`
 `interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp:104`：
 `GetRemoteHapTokenInfoInner` 的守卫是 `if (!IsAccessTokenCalling())`，函数体比较
 `IPCSkeleton::GetCallingUid()` 与 `ACCESSTOKEN_UID`，而后者在同文件 `:34` 初始化为
-`static const int32_t ACCESSTOKEN_UID = 3020;`。扫描器没有建模同文件常量初始化，因此无法
-计入守卫。消息明确写出 `Guard seen, not accepted: ... does not resolve that symbol ...`；
-候选保持 `candidate`，**它不是漏洞**，也不能用白名单压掉；下一步是常量初始化传播。
+`static const int32_t ACCESSTOKEN_UID = 3020;`。**常量值是可解析的**，缺的是审阅过的
+账户归属：默认 `service_account_roles` 为空，没有 reviewed assignment 说 3020 属于哪个
+服务账户、授权哪些操作。消息因此区分两种事实——`does not resolve that symbol to a value`
+（真的读不到）与 `these sources bind to 3020 at ...:34, but no reviewed account assignment
+in this policy credits that value`（读到了、没归属）——本候选是后者。候选保持
+`candidate`，**它不是漏洞**，也不能用白名单压掉；是否内置该账户归属属于 owner 决定。
 
-**性能。** `graphic_graphic_2d`（3,411 文件）此前单组件 42 分钟未完成，`faulthandler`
+**性能。** `graphic_graphic_2d`（3,401 入选文件）此前单组件 42 分钟未完成，`faulthandler`
 定位在 `resolve()` 的全量函数扫描；改为 `functions_by_file_name` 索引后 **83.9 秒**完成，
-结果不变（all-files 83 条，与 CLI 表一致），54 组件整轮约 16 分钟。
+逐规则结果与索引前一致。提交版本上该组件是 all-files **120** / complete-ast **80**，
+差异来自 relay/描述符路径的修改；54 组件整轮约 16 分钟。
 
-**限制。** A 线的 Bounds/Integer 事实当前不可用，未联动；同文件 `static const` 与跨文件
-宏常量未建模；跨服务代理链不保留身份变更点；敏感 source 仍是命名表而非通用 taint；
-ArkTS/ETS 与 JS/TS 前端（B-3）未实现，`applications_permission_manager` 在本语料中
-是 0 个 C/C++ 单元而非"扫描通过"；没有 PoC 或动态复现。601 条测试通过（skipped 4），
-lane 范围检查 `violations: []`。所有候选仍是未验证静态候选，`confirmed` 为 0。
+**限制。** A 线的 Bounds/Integer 事实当前不可用，未联动；同文件 `static const` 与无参
+`#define` 的**值**可以解析，但默认策略没有审阅账户归属（见上）；跨服务代理链不保留身份
+变更点（只有同文件/同 owner 一跳与 `GetInstance` 委托，以及新增的显式限定名一跳）；
+敏感 source 仍是命名表而非通用 taint；ArkTS/ETS 与 JS/TS 前端（B-3）未实现，
+`applications_permission_manager` 在本语料中是 0 个 C/C++ 单元而非"扫描通过"；
+没有 PoC 或动态复现。615 条测试通过（skipped 4），lane 范围检查 `violations: []`。
+所有候选仍是未验证静态候选，`confirmed` 为 0。
 
 ---
 

@@ -161,6 +161,20 @@ class UnresolvedGuardTests(unittest.TestCase):
         rules = {f.rule_id for f in findings_for(text)}
         self.assertIn('ipc.auth.missing', rules)
 
+    def test_a_resolved_constant_without_a_reviewed_account_says_so(self):
+        # The symbol has a value; the policy has no reviewed account assignment
+        # for that value. Saying "does not resolve" here would be a claim about
+        # the source that a reviewer can check, and it would be false.
+        text = (HEADER + 'static const int32_t ACCESS_TOKEN_UID = 3020;\n' + self.HELPER
+                + SIGNATURE + DESCRIPTOR
+                + 'if (!IsTrustedCalling()) return -1;\nStartAbility();\nreturn 0;\n}\n')
+        findings = [f for f in findings_for(text) if f.rule_id == 'ipc.auth.missing']
+        self.assertEqual(len(findings), 1, findings)
+        message = findings[0].message
+        self.assertIn('these sources bind to 3020', message)
+        self.assertIn('no reviewed account assignment', message)
+        self.assertNotIn('does not resolve', message)
+
     def test_the_note_does_not_credit_the_guard(self):
         # Reporting the comparison must not turn it into authorization: the
         # symbol is still unresolved, so the candidate stays.

@@ -8,25 +8,28 @@
 
 ## 0. 一句话结论
 
-检测器从 **0.8.1 / `oh-ipc-2026.10-v7`** 升到 **0.9.0 / `oh-ipc-2026.10-v8`**，新增
+检测器从 **0.8.1 / `oh-ipc-2026.10-v7`** 升到 **0.9.1 / `oh-ipc-2026.10-v10`**，新增
 **5 条规则、4 个族**：`ipc.parcel.bounds`、`ipc.parcel.write-bounds`（DATA-02，CWE-20）、
 `ipc.parcel.lifecycle`（DATA-03，CWE-416）、`ipc.auth.flow`（AUTH-05，CWE-863）、
-`ipc.data.sensitive-flow`（DATA-04，CWE-200）。在 54 个固定组件、31,225 个入选文件、
-24,151 个完整 AST 上实测：**新增规则只有 `sensitive-flow` 发射 1 条候选，其余四条为 0**；
-四个零各有**插桩计数**解释，不是"规则应该没问题"的推断。唯一的候选经固定源码复核后
-**保留为 candidate**：它命中的是一个真实存在、但常量初始化未被建模的调用者 UID 守卫。
+`ipc.data.sensitive-flow`（DATA-04，CWE-200）。0.9.1 另外补三件事：**限定名跨文件**解析
+（B-0 要求"避免仅 `f.file==fn.file` 导致静默"）、把"符号没有值"与"值有、但无审阅
+账户归属"拆成两种候选陈述，以及为 B-2 的**跨服务代理链**保留身份变更点（`iface_cast<>`
+句柄上的调用被记录为边界，并记录跨过去的是调用者身份还是服务自身身份）。在 54 个固定组件、31,225 个入选文件、24,151 个完整 AST 上实测：
+**新增规则只有 `sensitive-flow` 发射 1 条候选，其余四条为 0**；四个零各有**插桩计数**
+解释，不是"规则应该没问题"的推断。唯一的候选经固定源码复核后**保留为 candidate**：它命中
+的是一个真实存在、值可解析、但策略里没有审阅账户归属的调用者 UID 守卫。
 
 ## 1. 改动面与版本
 
 | 项 | 内容 |
 |---|---|
-| detector | `ohscanner.interface.ipc` **0.9.0** |
-| model | `oh-ipc-2026.10-v8` |
+| detector | `ohscanner.interface.ipc` **0.9.1** |
+| model | `oh-ipc-2026.10-v10`（v9 之上新增 `forwarded` 身份事实与 `proxy` 句柄值） |
 | 新增规则 | `ipc.parcel.bounds`、`ipc.parcel.write-bounds`、`ipc.parcel.lifecycle`、`ipc.auth.flow`、`ipc.data.sensitive-flow` |
 | 新增族模块 | `families/data02.py`、`data03.py`、`auth05.py`、`data04.py` |
-| 语义改动 | Parcel API 参数位置（`ReadRawData(dst,size)` 用第 2 参）、目的容量匹配、parcel view 失效、身份丢弃、敏感结果写入 reply |
-| 索引改动 | `functions_by_file_name`：同文件调用解析从全量扫描改为索引查找 |
-| 测试 | 601 通过 / 4 skipped；新增 23 条数据流语义测试 + 3 条入口覆盖记录测试 |
+| 语义改动 | Parcel API 参数位置（`ReadRawData(dst,size)` 用第 2 参）、目的容量匹配、parcel view 失效、身份丢弃、敏感结果写入 reply；守卫陈述区分"无值"与"有值未审阅" |
+| 解析改动 | `functions_by_file_name` 索引查找；`resolve` 增加**显式限定名**的跨文件解析（唯一匹配才接受） |
+| 测试 | 615 通过 / 4 skipped；新增 24 条数据流语义测试、4 条跨文件解析测试、2 条 system-app 谓词测试、7 条跨服务边界测试、3 条入口覆盖记录测试 |
 
 规则 ID 与差距文档的对应：`ohscanner.oh.parcel.bounds` → `ipc.parcel.bounds`（以及
 `write-bounds` 为写入侧的独立 ID）、`ohscanner.oh.parcel.lifecycle` → `ipc.parcel.lifecycle`、
@@ -52,13 +55,19 @@
 
 | pass | 单元 | 状态 | 候选 |
 |---|---|---:|---:|
-| `all-files` | 完整 + 部分 AST | `blocked`（保留候选） | **265** |
-| `complete-ast` | 仅完整 AST | `completed` | **141** |
+| `all-files` | 完整 + 部分 AST | `blocked`（保留候选） | **337** |
+| `complete-ast` | 仅完整 AST | `completed` | **183** |
 
-`all-files` 是 `complete-ast` 的超集；两者不是相加关系。**124 条候选只出现在部分 AST 里**，
-其中包含既有规则 `object-owner`（2）、`guard-coverage`（8）、`copy-range`（1）的全部发射。
-因此"某个规则为 0"必须说明是哪个 pass。上一轮 CLI 表里的 264 条对应本表的 `all-files` 265
-条——差的 1 条正是本次新增的 `data.sensitive-flow`，这也是两套测量互相校验的一个点。
+`all-files` 是 `complete-ast` 的超集；两者不是相加关系。**154 条候选只出现在部分 AST 里**，
+其中包含既有规则 `object-owner`（2）、`guard-coverage`（9）、`copy-range`（1）的全部发射。
+因此"某个规则为 0"必须说明是哪个 pass。
+
+**口径更正（必读）。** 0.9.0 定稿前的中间构建曾在同一语料上给出 `all-files` 265 /
+`complete-ast` 141，并与更早的 CLI 表 264 相互校验；**提交后的 0.9.0 代码在同一批固定
+commit、同样 31,225 个入选文件上给出 337 / 183**。差异来自两次测量之间对 relay/描述符
+路径的修改，不是测量脚本或语料的差异（入选文件数、完整/部分 AST 数逐组件一致）。本表、
+`candidates.json` 与下文所有数字都以**提交代码的实测**为准；265/141 那张表已被本表取代，
+不再作为当前结论引用。
 
 ## 3. 逐规则实测
 
@@ -77,18 +86,19 @@
 
 ### 3.2 既有规则（同一语料、同一模型）
 
-| 规则 | complete-ast | all-files | 命中组件 |
+| 规则 | complete-ast | all-files | 命中组件（all-files） |
 |---|---:|---:|---:|
-| `ipc.relay.descriptor-boundary` | 101 | 174 | 12 |
-| `ipc.auth.missing` | 16 | 25 | 5 |
-| `ipc.auth.object-owner` | 0 | 2 | 0 |
-| `ipc.auth.guard-coverage` | 0 | 8 | 0 |
-| `ipc.capability.export` | 23 | 55 | 4 |
-| `ipc.parcel.copy-range` | 0 | 1 | 0 |
+| `ipc.relay.descriptor-boundary` | 143 | 238 | 18 |
+| `ipc.auth.missing` | 16 | 27 | 9 |
+| `ipc.auth.object-owner` | 0 | 2 | 1 |
+| `ipc.auth.guard-coverage` | 0 | 9 | 3 |
+| `ipc.capability.export` | 23 | 59 | 8 |
+| `ipc.parcel.copy-range` | 0 | 1 | 1 |
+| **`ipc.data.sensitive-flow`** | **1** | **1** | **1** |
 | `caller-class` / `identity-domain` / `service-identity` / `request-identity` / `position-underflow` | 0 | 0 | 0 |
 
-`complete-ast` 下仍在发射的既有规则是 4 条（AUTH-01、AUTH-02、CAP-01、DATA-04）；其余
-旧规则的全部候选依赖部分 AST，这是本表与上一轮 54 组件表的唯一口径差异。
+`complete-ast` 下仍在发射的规则是 4 条（AUTH-01、AUTH-02、CAP-01、DATA-04）；其余规则的
+全部候选依赖部分 AST。
 
 ## 4. 四个零分别意味着什么（插桩，不是推断）
 
@@ -98,16 +108,30 @@
 
 | 计数 | 值 | 含义 |
 |---|---:|---|
-| `index_sites` | 87 | 入口可达函数里被求值的下标站点 |
+| `index_sites` | 88 | 入口可达函数里被求值的下标站点 |
 | `index_request` | **0** | 其中下标来自 request parcel 的站点 |
 | `index_capacity_known` | **0** | 其中被索引缓冲区容量在源码中声明的站点 |
 | `dest_sites` | **0** | 入口路径上到达的 `ReadRawData(dst,size)` 站点 |
 | `invalidations` | **0** | parcel 上的失效调用（`Reuse`/`RewindRead`/`SetReadPosition`/`Seek`） |
 | `views_invalidated` | **0** | 被失效操作命中的活动 view |
 | `reset_actions` | **0** | `ResetCallingIdentity` 之后到达的建模敏感操作 |
-| `reply_writes` | 3,265 | reply parcel 上的写入 |
+| `reply_writes` | 3,305 | reply parcel 上的写入 |
 | `disclosure_writes` | 6 | 写入的实参是披露类调用结果 |
 | `actions` | 53 | 建模敏感调用 |
+| `resolve_calls` | 25,221 | `resolve()` 调用次数（含新读到的跨文件函数体内部） |
+| `resolve_cross_file` | 158 | 其中命中另一文件定义的次数 |
+| `proxy_boundaries` | 10 | `iface_cast<>` 句柄上的调用（跨服务边界；全部在 `bundlemanager_bundle_framework`） |
+| `proxy_boundaries_forwarded` | **0** | 其中显式转发调用者身份的边界 |
+
+0.9.1 的探针数字相对 0.9.0 只在这几处变化：`resolve_calls`（新增计数）、
+`index_sites` 87→88、`reply_writes` 3,265→3,305（`graphic_graphic_2d` +40），
+以及新增的边界计数。`resolve_calls` 相对引入边界记录前的 25,384 少 163，正好是
+`iface_cast` 调用数（110+10+34+9，分布在四个组件）：这些调用现在在 `value()` 里直接
+返回 `proxy` 句柄，不再走普通 callee 解析。原因是被跨文件解析读到的函数体里还有站点，
+属于**覆盖增加**；
+所有 `**0**` 计数保持为 0，候选身份也逐条未变（见 `delta_v8_to_v9.json` 与
+`probe_delta_v8_to_v9.json`）。边界计数为 10 且全部为 `service`：这批组件里
+`iface_cast` 之后的跨服务调用没有一处显式转发调用者身份。
 
 文本普查（54 个组件合计，**上界，不是可达性**）：
 
@@ -143,34 +167,46 @@
   `int callingUid = IPCSkeleton::GetCallingUid(); return callingUid == ACCESSTOKEN_UID;`
   而 `static const int32_t ACCESSTOKEN_UID = 3020;` 在同文件 `:34`。
 
-**判定：候选陈述成立，但它是扫描器的知识边界，不是已证明的未授权读取。** 守卫确实比较了
-调用者 UID；本分析没有建模"同文件 `static const` 初始化"，于是无法把它计入授权事实。
-候选消息现在明确写出这一点：
+**判定：候选陈述成立，但它是扫描器的策略边界，不是已证明的未授权读取。** 守卫确实比较了
+调用者 UID，且常量值是可读的：分析器用 `EntryIndex.define_constant` 把 `ACCESSTOKEN_UID`
+解析到 `static const int32_t ACCESSTOKEN_UID = 3020;`（同文件 `:34`）。缺的不是常量初始化，
+而是**审阅过的账户归属**：默认策略的 `service_account_roles` 为空，没有任何一条 reviewed
+assignment 声明 3020 属于哪个服务账户、能授权哪些操作。**把"值读不到"和"值读到了但没有
+审阅归属" 分开说出来**，是本轮修正的语义：两者都会保留候选，但对源码的陈述不同，前者是
+可被复核为假的。候选消息现在写出后者：
 
-> Guard seen, not accepted: the caller identity is compared against ACCESSTOKEN_UID on this
-> path, but this analysis does not resolve that symbol to a value (a same-file constant
-> initializer is not modelled here), so the comparison cannot be credited as authorization.
+> Guard seen, not accepted: the caller identity is compared against ACCESSTOKEN_UID (which
+> these sources bind to 3020 at interfaces/innerkits/accesstoken/src/accesstoken_callback_stubs.cpp:34),
+> but no reviewed account assignment in this policy credits that value, so the comparison
+> cannot be credited as authorization.
 
-保留候选、不删除、不加白名单。**它不是漏洞**；若下一步把常量初始化纳入模型，它应当
-自行消失，而不是被规则名单抑制。同一组件的 6 次披露结果写入中只有这 1 次没有匹配守卫，
-另外 5 次路径上存在可识别的权限判定。
+保留候选、不删除、不加白名单。**它不是漏洞**。注意 `tests/test_ipc_detector.py` 与
+`tests/fixtures/ipc/manifest.json` 里已有一个**显式传入 reviewed policy** 的路径：在该路径
+下这三处调用被 credit、候选不发射，并明说这是"只有 harness 显式提供策略时才成立"的控制，
+默认策略下仍是正控制。同一个账户归属因此有两种可复现口径，本项没有把默认策略改成那种更宽松
+的口径。同一组件的 6 次披露结果写入中只有这 1 次没有匹配守卫，另外 5 次路径上存在可识别的
+权限判定。
 
 ## 6. 性能：同文件调用解析改为索引
 
-在 `graphic_graphic_2d`（3,411 个入选文件）上，旧实现的 `resolve()` 与本地函数查找
+在 `graphic_graphic_2d`（3,401 个入选文件）上，旧实现的 `resolve()` 与本地函数查找
 每次调用都线性扫描全组件的 `self.functions`（该组件数万个函数），单个组件运行 **42 分钟
 仍未完成**（同一进程 CPU 满载，faulthandler 栈顶在 `analysis.py:665` 的列表推导）。
-加入 `functions_by_file_name` 索引后，同一组件 **83.9 秒**完成，结果与索引前逐规则一致
-（83 条候选，与 CLI 表相同）。54 个组件的最终整轮约 16 分钟。这个优化不改变语义：
-`resolve` 仍只接受"同文件 + 同 owner + 唯一匹配"。
+加入 `functions_by_file_name` 索引后，同一组件 **83.9 秒**完成，逐规则结果与索引前一致
+（当时该构建 83 条候选）。提交版本的同一组件是 all-files **120** / complete-ast **80**，
+差异来自两次测量之间对 relay/描述符路径的修改，不是索引改动。54 个组件的最终整轮约
+16 分钟。这个优化不改变语义：`resolve` 的同文件分支仍只接受"同文件 + 同 owner + 唯一
+匹配"。
 
 ## 7. 测试、范围与证据
 
-- `python -m unittest discover -s tests -t tests`：**601 tests，OK（skipped=4）**。
-  新增 `tests/test_ipc_data_flow_rules.py`（23 条，钉住参数位置、目的容量匹配、
+- `python -m unittest discover -s tests -t tests`：**615 tests，OK（skipped=4）**。
+  新增 `tests/test_ipc_data_flow_rules.py`（24 条，钉住参数位置、目的容量匹配、
   view 失效归属、披露写回、身份丢弃/保存、未解析守卫不计数也不谎称无守卫、
-  同名本地谓词按函数体解释）与 `tests/test_ipc_dispatch_coverage.py`（3 条，钉住
-  覆盖记录每次都输出、含 `unresolved_dispatch`、无基类子句的分发器不算 stub）。
+  值可解析但无审阅归属时如实陈述、同名本地谓词按函数体解释）、
+  `tests/test_ipc_cross_file_resolution.py`（4 条，钉住限定名跨文件解析的四个边界）与
+  `tests/test_ipc_dispatch_coverage.py`（3 条，钉住覆盖记录每次都输出、含
+  `unresolved_dispatch`、无基类子句的分发器不算 stub）。
 - 14 个新 fixture 的正/修复/安全控制（`parcel_*`、`auth_flow_*`、`sensitive_flow_*`）。
 - `scripts/check_change_scope.py --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc`：
   **`"violations": []`**。
@@ -182,10 +218,17 @@
 
 1. **A 线的 `Bounds/Integer` 事实没有可联动对象**——当前主线没有可用的事实接口，
    `bounds` 只做本地的容量/下界匹配，不做符号执行或位向量溢出证明。
-2. **常量初始化未建模**：`static const`、跨文件 `#define` 的值不在值域里；这正是
-   §5 那条候选保留的原因。下一步是把"同文件字面量初始化"纳入值传播，再重测候选差异。
-3. **跨服务代理链没有保留身份变更点**：B-2 要求的 proxy chain 目前只有同文件一跳、
-   同 owner 一跳与 `GetInstance()` 委托；任意跨进程/跨服务链仍是 unknown。
+2. **账户归属没有默认审阅记录**：同文件 `static const` 与无参 `#define` 的值**可以**
+   解析（`define_constant`），但默认 `service_account_roles` 为空——没有 reviewed
+   assignment 时，解析出的值仍不能作为授权事实，候选按"值已解析、归属未审阅"保留。
+   默认策略是否应内置某个服务账户的归属属于 owner 决定，本 lane 没有单方面放宽。
+   带常量值但无审阅归属的跨文件 `#define` 同理。
+3. **跨服务代理链只记录到"我们看见的边界"为止**：0.9.1 起，用 `iface_cast<IFoo>(...)`
+   得到的句柄上的调用会被记为跨服务边界，并记录跨过去的是**调用者身份**还是**服务自身
+   身份**（见 §10.4）；但接收者来自参数、字段或未建模工厂（`GetProxy`、`CreateProxy`
+   之类）的调用**不**被声明为边界，任意深度的链、下游服务的守卫与它自己的授权判定都不读。
+   `other->Guard()` 仍刻意不解析。身份变更点是**覆盖记录**，不产生候选，也不把入口守卫
+   追认为下游授权。
 4. **敏感 source 是一张命名表**（`DISCLOSURE_CALLS`），不是通用 taint；只覆盖
    "披露类结果 → reply"，不覆盖文件、日志、共享内存等 sink。
 5. **ArkTS/ETS 与 JS/TS 前端没有实现**（B-3）。`applications_permission_manager`
@@ -199,6 +242,103 @@
 
 ## 9. 结论口径
 
-265（`all-files`）/ 141（`complete-ast`）条全部是**未验证的静态候选**；
+337（`all-files`）/ 183（`complete-ast`）条全部是**未验证的静态候选**；
 `validated_vulnerability` 与 `confirmed` 均为 0。某个组件为 0 不等于它安全；
 一条候选不等于一个漏洞；54 个组件是 2026-10-17 的快照，不代表整个 OpenHarmony。
+0.9.1 的跨文件解析在同一语料上使候选数**零变化**（337/183 → 337/183，逐组件逐规则
+`changed: []`）；它增加的是被读到的函数体，不是新的判定。
+
+## 10. 0.9.1：限定名跨文件解析，与守卫陈述的二值化
+
+### 10.1 有界跨文件解析（B-0 的"避免仅 `f.file==fn.file` 导致静默"）
+
+`resolve()` 原先只查 `(fn.file, 名字)`。一个写在别的翻译单元里的 `Class::Method()` 因此
+读不到函数体：守卫没被读到，条目保持候选。0.9.1 只在调用点**自己已经写出限定名**时放宽：
+
+- 只有带 `::` 的 callee 才可能解析到别的文件；未限定名仍是本文件（或入口索引已建模的一跳），
+  **不做按末名搜索**；
+- 限定符必须等于定义的 owner，或等于其末段（类内定义：调用写 `NS::Foo::Bar`，定义 owner 是
+  `Foo`）；
+- 必须**唯一命中**；重载集合、类内外两份定义都保持未解析，不挑一个；
+- `other->Guard()` 这类接收者一律不解析——调用点没有说明那个对象是什么。
+
+控制：`tests/test_ipc_cross_file_resolution.py` 四条，正例是"另一文件的限定名守卫被读到，
+候选消失"，三条反例分别是"未限定名不借体"、"同名两份定义保持未解析"、"不同 owner 不取"。
+
+**实测效果：零候选变化。** 54 组件、同一 commit 上，0.9.0（`1d47160`）与 0.9.1 的
+逐组件逐规则比较为 `337/183 → 337/183`、`changed: []`；探针同时记录到放宽确实在工作
+（`communication_ipc` 上 `resolve_calls=61`、`resolve_cross_file=8`）。也就是说，这次改动
+增加的是覆盖（读到的函数体），不是判定：没有任何候选因此被 credit 或删除。
+
+### 10.2 守卫陈述：区分"没有值"与"有值但没有审阅归属"
+
+§5 那条候选的守卫比较 `GetCallingUid()` 与 `ACCESSTOKEN_UID`。旧消息写的是"本分析没有把
+该符号解析成值"，但 `EntryIndex.define_constant` 实际上能把它解析到同文件 `:34` 的
+`3020`——**旧消息对源码的陈述是可被复核为假的**。现在：
+
+- 真的解析不到 → `auth_unknown`，消息写 `does not resolve that symbol to a value`；
+- 解析到值、但策略里没有 reviewed account assignment → `auth_uncredited`，消息写
+  `these sources bind to 3020 at <file>:<line>, but no reviewed account assignment in this
+  policy credits that value`。
+
+两种都**不**把比较计为授权，候选都保留；区别只在陈述是否与源码一致。控制：
+`test_a_resolved_constant_without_a_reviewed_account_says_so` 断言消息出现 `bind to 3020`
+与 `no reviewed account assignment`，且**不**出现 `does not resolve`；原有的
+`test_the_candidate_keeps_the_comparison_it_could_not_read` 继续钉住真正无定义的情形。
+
+### 10.3 证据与口径
+
+本轮证据在 `research/evidence/interface/ipc/bline_rules_20261017_v10/`（与提交代码
+同一份）：`candidates.json`（54 组件、0.9.1/v10 实测）、`probe.json`、
+`probe_delta_v9_to_v10.json`（四点差异：`iface_cast` 早返回使 `resolve_calls` 少 163，
+`bundlemanager_bundle_framework` 记到 10 次边界）、`delta_v9_to_v10.json`
+（`337/183 → 337/183`、`changed: []`）、`shape_census.json`（纯文本普查，与检测器语义
+无关，语料未变，沿用同一 54 个固定 commit 的结果）。
+
+同目录族里保留两个较早的目录，便于复核而不是覆盖历史：`bline_rules_20261017_v9/`
+是加入跨服务边界记录**之前**的 0.9.1 构建（候选相同，探针无边界计数、
+`delta_v8_to_v9.json` 记录 0.9.0→0.9.1 的零变化）；`bline_rules_20261017/` 是 0.9.0
+定稿前中间构建，其中的 141/265 已被 §2 的口径更正取代。三者都不回溯改写。
+
+### 10.4 跨服务边界的身份变更点（B-2）
+
+B-2 要求"跨服务代理链保留身份变更点"。0.9.1 的实现是有界的事实记录，不是链式追击：
+
+- **句柄怎么认**：只认源码里写出来的 `iface_cast<IFoo>(remote)` 结果。这是这批源码里
+  获得类型化代理的标准写法；接收者来自参数、成员字段或 `GetProxy` 一类未建模工厂时
+  **不**声称边界。
+- **边界上记什么**：`(file:line, 被调方法, 跨过去的身份)`。身份二选一：
+  - `service` —— 默认。下游绑定器看到的是**本服务**的身份，不是本处理器入口时的调用者；
+  - `caller` —— 只有路径显式执行了 `SetCallingIdentity(<调用者 token>)`，且其后没有
+    `ResetCallingIdentity()`。把服务**自己**保存的身份 `SetCallingIdentity(saved)` 设回去
+    不算：那是恢复自身，不是转发调用者。
+- **它不做什么**：不产生候选、不把入口守卫追认为下游授权、不读下游服务的守卫，也不
+  沿链继续（`proxy->A()` 的返回值再取 `B` 的情形没有建模）。记录进入
+  `DetectorRun.limitations` 的 **Cross-service boundary coverage** 一行（边界数、其中
+  携带调用者身份的数、作为服务执行的数），零边界也照常输出，所以"没走到"与"没找过"
+  可区分。
+- **控制**：`tests/test_ipc_proxy_chain.py` 七条——`iface_cast` 句柄上的调用是边界且记为
+  service；转发调用者 token 记为 caller；转发后 `ResetCallingIdentity()` 回到 service；
+  恢复自身保存身份不算转发；`Manager::GetInstance()` 这类**客户端 Kit** 调用不是边界；
+  非 `iface_cast` 句柄不声称边界；入口守卫之后的跨服务调用仍只是覆盖、不产生候选。
+
+## 11. B 线目标对照（差距审查 §6）
+
+| 条目 | 状态 | 证据/位置 |
+|---|---|---|
+| B-0 六家族收口、版本与依赖 | 完成 | 交付项 16/17；`research/deliveries/ipc/20261017-v080-dependency-inventory.md` |
+| B-0 入口建模（stub/handler、IDL dispatcher、callback、`unresolved_dispatch`） | 完成 | `entry_index.py`；报告 `Entry/dispatch coverage:` 行（分发器/绑定 grade/事务解析/未解析分发/条件绑定） |
+| B-0 有界跨文件 helper/限定名 | 完成 | §10.1；`tests/test_ipc_cross_file_resolution.py`（4 条） |
+| B-0 授权事实绑定实际调用者 | 完成 | `caller`/`self` 值事实、`caller_class`、审阅账户模型；`auth_unknown` 与 `auth_uncredited` 分开陈述（§10.2） |
+| B-0 `IsSystemAppCalling`/`CheckSystemApp` 读函数体、不按名白名单 | 完成 | 同名本地定义优先按体解释、拒绝按名 credit；`tests/test_ipc_system_app_predicate.py` 成对控制 |
+| B-0 客户端 Kit/`Manager::` 不当作 IPC 边界 | 完成 | §10.4 控制之一：`CameraManager::GetInstance().OpenCamera()` 不计边界 |
+| B-0 Parcel API 语义 + 真实语料执行计数 | 完成 | §3、§4；插桩探针 `bline_rule_probe.py` |
+| B-1 `parcel.bounds` / `parcel.lifecycle` 与 taint/guard/unknown | 完成 | DATA-01..03；正/修复/安全控制；`all-files` 与 `complete-ast` 双视图 |
+| B-1 真实修复前/后漏洞对、隔离复现 | **受阻** | 语料为浅克隆，显式 fetch 属 owner 决定；无本地构建环境。已选候选见 §5，未升格 |
+| B-2 事实模型 + guard 支配 | 完成 | AUTH-02/03/04/05 与 DATA-04；成对样本（有 guard / guard 在错误分支 / guard 不支配 / 客户端调用受服务端保护）见 `tests/fixtures/ipc/` |
+| B-2 跨服务代理链身份变更点 | 完成（有界） | §10.4；54 组件实测 10 次边界，0 次转发调用者 |
+| B-2 敏感 source → 不可信可见输出 | 完成（有界） | DATA-04：披露类结果 → reply 写入；文件/日志/共享内存 sink 未建模（§8.4） |
+| B-3 ArkTS/ETS + JS/TS 前端 | **受阻（共享工作）** | 本 lane 无 JS/TS 语法依赖，`src/parser/` 与依赖属共享面；见 §8.5 |
+
+"完成"指该条的实现与控制存在于本提交，并且有可复核的运行结果；它不指这些规则在真实组件里
+找到了漏洞。

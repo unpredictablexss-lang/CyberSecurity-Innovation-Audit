@@ -1,0 +1,1095 @@
+{
+  "summary": {
+    "components": 54,
+    "files": 31225,
+    "complete_ast": 24151,
+    "partial_ast": 7074,
+    "candidates_complete_ast": 183,
+    "rules": {
+      "ipc.relay.descriptor-boundary": {
+        "complete-ast": 143,
+        "all-files": 238,
+        "components": 14
+      },
+      "ipc.auth.missing": {
+        "complete-ast": 16,
+        "all-files": 27,
+        "components": 5
+      },
+      "ipc.auth.caller-class": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.auth.object-owner": {
+        "complete-ast": 0,
+        "all-files": 2,
+        "components": 0
+      },
+      "ipc.auth.identity-domain": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.auth.service-identity": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.auth.request-identity": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.auth.guard-coverage": {
+        "complete-ast": 0,
+        "all-files": 9,
+        "components": 0
+      },
+      "ipc.capability.export": {
+        "complete-ast": 23,
+        "all-files": 59,
+        "components": 4
+      },
+      "ipc.parcel.copy-range": {
+        "complete-ast": 0,
+        "all-files": 1,
+        "components": 0
+      },
+      "ipc.parcel.position-underflow": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.parcel.bounds": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.parcel.write-bounds": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.parcel.lifecycle": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.auth.flow": {
+        "complete-ast": 0,
+        "all-files": 0,
+        "components": 0
+      },
+      "ipc.data.sensitive-flow": {
+        "complete-ast": 1,
+        "all-files": 1,
+        "components": 1
+      }
+    },
+    "zero_candidate_components": [
+      "account_os_account",
+      "applications_permission_manager",
+      "commonlibrary_c_utils",
+      "communication_bluetooth",
+      "communication_netmanager_base",
+      "communication_netmanager_ext",
+      "communication_nfc",
+      "communication_wifi",
+      "device_manager",
+      "distributeddatamgr_datamgr_service",
+      "distributeddatamgr_objectstore",
+      "distributeddatamgr_pasteboard",
+      "distributeddatamgr_preferences",
+      "distributeddatamgr_udmf",
+      "distributedhardware_device_manager",
+      "filemanagement_app_file_service",
+      "filemanagement_dfs_service",
+      "filemanagement_file_api",
+      "inputmethod_imf",
+      "multimedia_image_framework",
+      "multimedia_media_foundation",
+      "multimodalinput_input",
+      "notification_common_event_service",
+      "notification_distributed_notification_service",
+      "powermgr_battery_statistics",
+      "powermgr_display_manager",
+      "powermgr_power_manager",
+      "resourceschedule_background_task_mgr",
+      "security_certificate_manager",
+      "security_device_auth",
+      "security_dlp_permission_service",
+      "security_huks",
+      "sensors_sensor",
+      "telephony_sms_mms",
+      "update_updateservice",
+      "useriam_user_auth_framework"
+    ],
+    "no_applicable_units": [
+      "applications_permission_manager"
+    ],
+    "validated_vulnerability": 0
+  },
+  "components": [
+    {
+      "component": "ability_ability_runtime",
+      "repository": "openharmony/ability_ability_runtime",
+      "commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+      "dirty": false,
+      "selected_files": 2198,
+      "parse": {
+        "complete": 1926,
+        "partial": 272,
+        "failed": 0
+      },
+      "all_candidates": 47,
+      "complete_candidates": 47,
+      "complete_rules": {
+        "ipc.auth.missing": 8,
+        "ipc.capability.export": 10,
+        "ipc.relay.descriptor-boundary": 29
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 119 dispatcher(s) (86 in stub classes, 0 with a recognizable guard before dispatch), 350 binding(s) by grade {'source_dispatch': 343, 'source_dispatch_case_call': 6, 'virtual_override': 1}, transactions {'dynamic': 229, 'enum': 121}, unresolved dispatch {}, 13 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "ability_dmsfwk",
+      "repository": "openharmony/ability_dmsfwk",
+      "commit": "aa1b0347b10700d761def383c08749420dd3f71a",
+      "dirty": false,
+      "selected_files": 428,
+      "parse": {
+        "complete": 339,
+        "partial": 89,
+        "failed": 0
+      },
+      "all_candidates": 7,
+      "complete_candidates": 2,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 2
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 7 dispatcher(s) (5 in stub classes, 0 with a recognizable guard before dispatch), 11 binding(s) by grade {'source_dispatch': 2, 'source_dispatch_case_call': 9}, transactions {'dynamic': 4, 'enum': 7}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "ability_form_fwk",
+      "repository": "openharmony/ability_form_fwk",
+      "commit": "0914d437af5988ffbea2ec29fa4259a943bceadf",
+      "dirty": false,
+      "selected_files": 585,
+      "parse": {
+        "complete": 397,
+        "partial": 188,
+        "failed": 0
+      },
+      "all_candidates": 1,
+      "complete_candidates": 1,
+      "complete_rules": {
+        "ipc.auth.missing": 1
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 15 dispatcher(s) (15 in stub classes, 1 with a recognizable guard before dispatch), 164 binding(s) by grade {'source_dispatch': 164}, transactions {'dynamic': 164}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "account_os_account",
+      "repository": "openharmony/account_os_account",
+      "commit": "af2e349854d83ffd0f4e766e0a8b315388d7315a",
+      "dirty": false,
+      "selected_files": 449,
+      "parse": {
+        "complete": 400,
+        "partial": 49,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 1 binding(s) by grade {'source_dispatch': 1}, transactions {'literal': 1}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "applications_permission_manager",
+      "repository": "openharmony/applications_permission_manager",
+      "commit": "9fd6f1e3a65b342d12b9dc04b7d9492d5d5bfb63",
+      "dirty": false,
+      "selected_files": 0,
+      "parse": {
+        "complete": 0,
+        "partial": 0,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "blocked",
+      "dispatch_coverage": null
+    },
+    {
+      "component": "bundlemanager_bundle_framework",
+      "repository": "openharmony/bundlemanager_bundle_framework",
+      "commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+      "dirty": false,
+      "selected_files": 1014,
+      "parse": {
+        "complete": 912,
+        "partial": 102,
+        "failed": 0
+      },
+      "all_candidates": 29,
+      "complete_candidates": 8,
+      "complete_rules": {
+        "ipc.auth.missing": 2,
+        "ipc.capability.export": 3,
+        "ipc.relay.descriptor-boundary": 3
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 24 dispatcher(s) (21 in stub classes, 0 with a recognizable guard before dispatch), 98 binding(s) by grade {'source_dispatch': 53, 'source_dispatch_case_call': 44, 'virtual_override': 1}, transactions {'enum': 98}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "commonlibrary_c_utils",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "commit": "7a9af76276aca8f53347fb89c07850e014905521",
+      "dirty": false,
+      "selected_files": 62,
+      "parse": {
+        "complete": 56,
+        "partial": 6,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_bluetooth",
+      "repository": "openharmony/communication_bluetooth",
+      "commit": "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+      "dirty": false,
+      "selected_files": 626,
+      "parse": {
+        "complete": 466,
+        "partial": 160,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 22 dispatcher(s) (22 in stub classes, 0 with a recognizable guard before dispatch), 512 binding(s) by grade {'source_dispatch': 511, 'source_dispatch_case_call': 1}, transactions {'enum': 508, 'unresolved': 4}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_dsoftbus",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "ccb1a86fff03a6b2de19d39b90a81351ced5acd6",
+      "dirty": false,
+      "selected_files": 1555,
+      "parse": {
+        "complete": 648,
+        "partial": 907,
+        "failed": 0
+      },
+      "all_candidates": 4,
+      "complete_candidates": 2,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 2
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 2 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_ipc",
+      "repository": "openharmony/communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "dirty": false,
+      "selected_files": 251,
+      "parse": {
+        "complete": 154,
+        "partial": 97,
+        "failed": 0
+      },
+      "all_candidates": 29,
+      "complete_candidates": 10,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 10
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 5 dispatcher(s) (4 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_netmanager_base",
+      "repository": "openharmony/communication_netmanager_base",
+      "commit": "d1a2c26d3dc07e4582b6d32417fe9a0f7d2359d7",
+      "dirty": false,
+      "selected_files": 730,
+      "parse": {
+        "complete": 615,
+        "partial": 115,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 3 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_netmanager_ext",
+      "repository": "openharmony/communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "dirty": false,
+      "selected_files": 460,
+      "parse": {
+        "complete": 409,
+        "partial": 51,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 2 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_nfc",
+      "repository": "openharmony/communication_nfc",
+      "commit": "331bfd2661490c996d495ab2b656f79d81ae931c",
+      "dirty": false,
+      "selected_files": 273,
+      "parse": {
+        "complete": 251,
+        "partial": 22,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 11 dispatcher(s) (7 in stub classes, 0 with a recognizable guard before dispatch), 7 binding(s) by grade {'source_dispatch_case_call': 7}, transactions {'dynamic': 7}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "communication_wifi",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "dirty": false,
+      "selected_files": 761,
+      "parse": {
+        "complete": 596,
+        "partial": 165,
+        "failed": 0
+      },
+      "all_candidates": 2,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 141 dispatcher(s) (139 in stub classes, 0 with a recognizable guard before dispatch), 7 binding(s) by grade {'source_dispatch_case_call': 4, 'unresolved_handler': 3}, transactions {'enum': 4, 'unresolved': 3}, unresolved dispatch {'map_found_but_never_dispatched': 3}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "device_manager",
+      "repository": "openharmony/device_manager",
+      "commit": "53654dce7302f41d55695fcda8155846aeef7e83",
+      "dirty": false,
+      "selected_files": 205,
+      "parse": {
+        "complete": 204,
+        "partial": 1,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 3 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_data_share",
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "commit": "84bbefd47473c97da9ad013ab3b7f184c8862ee1",
+      "dirty": false,
+      "selected_files": 172,
+      "parse": {
+        "complete": 134,
+        "partial": 38,
+        "failed": 0
+      },
+      "all_candidates": 4,
+      "complete_candidates": 1,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 3 dispatcher(s) (3 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_datamgr_service",
+      "repository": "openharmony/distributeddatamgr_datamgr_service",
+      "commit": "a6ba8ce1ec700c1a07e80dcc146f40b179d519af",
+      "dirty": false,
+      "selected_files": 631,
+      "parse": {
+        "complete": 448,
+        "partial": 183,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "64e48eb1d97b45f44125761f16811f78be609a4a",
+      "dirty": false,
+      "selected_files": 1444,
+      "parse": {
+        "complete": 1134,
+        "partial": 310,
+        "failed": 0
+      },
+      "all_candidates": 2,
+      "complete_candidates": 1,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 11 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_objectstore",
+      "repository": "openharmony/distributeddatamgr_objectstore",
+      "commit": "1a63f5a9827dc68ebd9b02b58935cd18996b2c1b",
+      "dirty": false,
+      "selected_files": 62,
+      "parse": {
+        "complete": 56,
+        "partial": 6,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_pasteboard",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+      "dirty": false,
+      "selected_files": 218,
+      "parse": {
+        "complete": 163,
+        "partial": 55,
+        "failed": 0
+      },
+      "all_candidates": 1,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_preferences",
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+      "dirty": false,
+      "selected_files": 341,
+      "parse": {
+        "complete": 277,
+        "partial": 64,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 6 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_relational_store",
+      "repository": "openharmony/distributeddatamgr_relational_store",
+      "commit": "9fa3a57e6657275d03e25f2e319dab55f894d1e8",
+      "dirty": false,
+      "selected_files": 919,
+      "parse": {
+        "complete": 676,
+        "partial": 243,
+        "failed": 0
+      },
+      "all_candidates": 1,
+      "complete_candidates": 1,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 11 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributeddatamgr_udmf",
+      "repository": "openharmony/distributeddatamgr_udmf",
+      "commit": "1e2e3c35df0299cd4e14d7a87060aad14e9de0c8",
+      "dirty": false,
+      "selected_files": 239,
+      "parse": {
+        "complete": 168,
+        "partial": 71,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 3 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "distributedhardware_device_manager",
+      "repository": "openharmony/distributedhardware_device_manager",
+      "commit": "dce05abccbeddd4566479eaaaf11605b46dbe925",
+      "dirty": false,
+      "selected_files": 369,
+      "parse": {
+        "complete": 318,
+        "partial": 51,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 2 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "filemanagement_app_file_service",
+      "repository": "openharmony/filemanagement_app_file_service",
+      "commit": "a7815f653bd669026cad48421ed1ecc0dfbbe9f2",
+      "dirty": false,
+      "selected_files": 286,
+      "parse": {
+        "complete": 244,
+        "partial": 42,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "filemanagement_dfs_service",
+      "repository": "openharmony/filemanagement_dfs_service",
+      "commit": "bec9c8471cf7f5c25728682839e4221e38e65aa3",
+      "dirty": false,
+      "selected_files": 518,
+      "parse": {
+        "complete": 466,
+        "partial": 52,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 9 dispatcher(s) (6 in stub classes, 0 with a recognizable guard before dispatch), 81 binding(s) by grade {'source_dispatch': 81}, transactions {'dynamic': 42, 'enum': 39}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "filemanagement_file_api",
+      "repository": "openharmony/filemanagement_file_api",
+      "commit": "103df5c4911e7fcddcccc7ae34894c5a2871d3a7",
+      "dirty": false,
+      "selected_files": 682,
+      "parse": {
+        "complete": 592,
+        "partial": 90,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "graphic_graphic_2d",
+      "repository": "openharmony/graphic_graphic_2d",
+      "commit": "286721f97d69fe04f9327ce38227c73e6f86160b",
+      "dirty": false,
+      "selected_files": 3401,
+      "parse": {
+        "complete": 2350,
+        "partial": 1051,
+        "failed": 0
+      },
+      "all_candidates": 120,
+      "complete_candidates": 80,
+      "complete_rules": {
+        "ipc.capability.export": 6,
+        "ipc.relay.descriptor-boundary": 74
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 43 dispatcher(s) (9 in stub classes, 1 with a recognizable guard before dispatch), 41 binding(s) by grade {'source_dispatch': 9, 'source_dispatch_case_call': 28, 'virtual_override': 4}, transactions {'dynamic': 24, 'enum': 17}, unresolved dispatch {}, 2 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "inputmethod_imf",
+      "repository": "openharmony/inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "dirty": false,
+      "selected_files": 402,
+      "parse": {
+        "complete": 330,
+        "partial": 72,
+        "failed": 0
+      },
+      "all_candidates": 6,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "multimedia_audio_framework",
+      "repository": "openharmony/multimedia_audio_framework",
+      "commit": "3a2688e805df970739e3b0cebf9cc05d8cb24e9b",
+      "dirty": false,
+      "selected_files": 1510,
+      "parse": {
+        "complete": 1317,
+        "partial": 193,
+        "failed": 0
+      },
+      "all_candidates": 6,
+      "complete_candidates": 6,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 6
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 2 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 4 binding(s) by grade {'source_dispatch_case_call': 4}, transactions {'dynamic': 4}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "multimedia_camera_framework",
+      "repository": "openharmony/multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "dirty": false,
+      "selected_files": 1105,
+      "parse": {
+        "complete": 932,
+        "partial": 173,
+        "failed": 0
+      },
+      "all_candidates": 11,
+      "complete_candidates": 7,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 7
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 4 dispatcher(s) (3 in stub classes, 0 with a recognizable guard before dispatch), 9 binding(s) by grade {'source_dispatch_case_call': 9}, transactions {'dynamic': 9}, unresolved dispatch {}, 1 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "multimedia_image_framework",
+      "repository": "openharmony/multimedia_image_framework",
+      "commit": "5fbe952024f16cb518a5a7cec24063cffcc038bd",
+      "dirty": false,
+      "selected_files": 570,
+      "parse": {
+        "complete": 442,
+        "partial": 128,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "multimedia_media_foundation",
+      "repository": "openharmony/multimedia_media_foundation",
+      "commit": "486aae6c8ed9c22499e6bc171748fb44fe7d88b0",
+      "dirty": false,
+      "selected_files": 534,
+      "parse": {
+        "complete": 352,
+        "partial": 182,
+        "failed": 0
+      },
+      "all_candidates": 1,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "multimedia_player_framework",
+      "repository": "openharmony/multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "dirty": false,
+      "selected_files": 920,
+      "parse": {
+        "complete": 578,
+        "partial": 342,
+        "failed": 0
+      },
+      "all_candidates": 28,
+      "complete_candidates": 2,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 2
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 2 binding(s) by grade {'source_dispatch_case_call': 2}, transactions {'dynamic': 2}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "multimodalinput_input",
+      "repository": "openharmony/multimodalinput_input",
+      "commit": "f7ac33c6097adae62443c11120f3fd089a6a394a",
+      "dirty": false,
+      "selected_files": 727,
+      "parse": {
+        "complete": 668,
+        "partial": 59,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 9 binding(s) by grade {'virtual_override': 9}, transactions {'enum': 9}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "notification_common_event_service",
+      "repository": "openharmony/notification_common_event_service",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "dirty": false,
+      "selected_files": 137,
+      "parse": {
+        "complete": 121,
+        "partial": 16,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "notification_distributed_notification_service",
+      "repository": "openharmony/notification_distributed_notification_service",
+      "commit": "4391741ef315c23ceb729fb0ad63b117b3fab695",
+      "dirty": false,
+      "selected_files": 597,
+      "parse": {
+        "complete": 552,
+        "partial": 45,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 1 binding(s) by grade {'source_dispatch_case_call': 1}, transactions {'enum': 1}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "powermgr_battery_statistics",
+      "repository": "openharmony/powermgr_battery_statistics",
+      "commit": "271a545acc0ececc746cfe0bb7c1501943df7c64",
+      "dirty": false,
+      "selected_files": 77,
+      "parse": {
+        "complete": 62,
+        "partial": 15,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "powermgr_display_manager",
+      "repository": "openharmony/powermgr_display_manager",
+      "commit": "6b2ee24ce30ca93a3fba451b912e0af59538b794",
+      "dirty": false,
+      "selected_files": 102,
+      "parse": {
+        "complete": 94,
+        "partial": 8,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 4 dispatcher(s) (4 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "powermgr_power_manager",
+      "repository": "openharmony/powermgr_power_manager",
+      "commit": "06d1f3d19a59fcdb744b179d1158f65b75ad572d",
+      "dirty": false,
+      "selected_files": 279,
+      "parse": {
+        "complete": 241,
+        "partial": 38,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 13 dispatcher(s) (13 in stub classes, 0 with a recognizable guard before dispatch), 3 binding(s) by grade {'source_dispatch_case_call': 3}, transactions {'dynamic': 1, 'enum': 2}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "dirty": false,
+      "selected_files": 188,
+      "parse": {
+        "complete": 162,
+        "partial": 26,
+        "failed": 0
+      },
+      "all_candidates": 2,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "security_access_token",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "dirty": false,
+      "selected_files": 545,
+      "parse": {
+        "complete": 489,
+        "partial": 56,
+        "failed": 0
+      },
+      "all_candidates": 4,
+      "complete_candidates": 4,
+      "complete_rules": {
+        "ipc.auth.missing": 3,
+        "ipc.data.sensitive-flow": 1
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 12 dispatcher(s) (11 in stub classes, 0 with a recognizable guard before dispatch), 12 binding(s) by grade {'source_dispatch': 1, 'source_dispatch_case_call': 11}, transactions {'dynamic': 9, 'enum': 3}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "security_certificate_manager",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "dirty": false,
+      "selected_files": 304,
+      "parse": {
+        "complete": 240,
+        "partial": 64,
+        "failed": 0
+      },
+      "all_candidates": 1,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 2 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "security_device_auth",
+      "repository": "openharmony/security_device_auth",
+      "commit": "21a357fe07ac0a61ce0929040251a712f94adef3",
+      "dirty": false,
+      "selected_files": 491,
+      "parse": {
+        "complete": 197,
+        "partial": 294,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "security_dlp_permission_service",
+      "repository": "openharmony/security_dlp_permission_service",
+      "commit": "1adc5b0f36f668e1c038853a582ecb394d08fdec",
+      "dirty": false,
+      "selected_files": 165,
+      "parse": {
+        "complete": 148,
+        "partial": 17,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 3 dispatcher(s) (3 in stub classes, 0 with a recognizable guard before dispatch), 2 binding(s) by grade {'source_dispatch': 2}, transactions {'enum': 2}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "security_huks",
+      "repository": "openharmony/security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "dirty": false,
+      "selected_files": 537,
+      "parse": {
+        "complete": 150,
+        "partial": 387,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "sensors_sensor",
+      "repository": "openharmony/sensors_sensor",
+      "commit": "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+      "dirty": false,
+      "selected_files": 152,
+      "parse": {
+        "complete": 131,
+        "partial": 21,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "dirty": false,
+      "selected_files": 96,
+      "parse": {
+        "complete": 80,
+        "partial": 16,
+        "failed": 0
+      },
+      "all_candidates": 9,
+      "complete_candidates": 1,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 3 dispatcher(s) (3 in stub classes, 0 with a recognizable guard before dispatch), 1 binding(s) by grade {'unresolved_handler': 1}, transactions {'unresolved': 1}, unresolved dispatch {'map_found_but_never_dispatched': 1}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "telephony_call_manager",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "dirty": false,
+      "selected_files": 393,
+      "parse": {
+        "complete": 324,
+        "partial": 69,
+        "failed": 0
+      },
+      "all_candidates": 2,
+      "complete_candidates": 2,
+      "complete_rules": {
+        "ipc.auth.missing": 2
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 13 dispatcher(s) (8 in stub classes, 0 with a recognizable guard before dispatch), 512 binding(s) by grade {'source_dispatch': 512}, transactions {'enum': 502, 'unresolved': 10}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "telephony_core_service",
+      "repository": "openharmony/telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "dirty": false,
+      "selected_files": 546,
+      "parse": {
+        "complete": 508,
+        "partial": 38,
+        "failed": 0
+      },
+      "all_candidates": 4,
+      "complete_candidates": 4,
+      "complete_rules": {
+        "ipc.relay.descriptor-boundary": 4
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 9 dispatcher(s) (8 in stub classes, 0 with a recognizable guard before dispatch), 225 binding(s) by grade {'source_dispatch': 225}, transactions {'dynamic': 186, 'enum': 39}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "telephony_sms_mms",
+      "repository": "openharmony/telephony_sms_mms",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "dirty": false,
+      "selected_files": 259,
+      "parse": {
+        "complete": 238,
+        "partial": 21,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 6 dispatcher(s) (6 in stub classes, 0 with a recognizable guard before dispatch), 14 binding(s) by grade {'source_dispatch': 12, 'source_dispatch_case_call': 2}, transactions {'enum': 14}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "dirty": false,
+      "selected_files": 218,
+      "parse": {
+        "complete": 187,
+        "partial": 31,
+        "failed": 0
+      },
+      "all_candidates": 2,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 1 dispatcher(s) (1 in stub classes, 0 with a recognizable guard before dispatch), 2 binding(s) by grade {'virtual_override': 2}, transactions {'dynamic': 1, 'enum': 1}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "useriam_user_auth_framework",
+      "repository": "openharmony/useriam_user_auth_framework",
+      "commit": "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+      "dirty": false,
+      "selected_files": 413,
+      "parse": {
+        "complete": 398,
+        "partial": 15,
+        "failed": 0
+      },
+      "all_candidates": 0,
+      "complete_candidates": 0,
+      "complete_rules": {},
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    },
+    {
+      "component": "window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "dirty": false,
+      "selected_files": 1079,
+      "parse": {
+        "complete": 811,
+        "partial": 268,
+        "failed": 0
+      },
+      "all_candidates": 14,
+      "complete_candidates": 4,
+      "complete_rules": {
+        "ipc.capability.export": 4
+      },
+      "status": "completed",
+      "dispatch_coverage": "Entry/dispatch coverage: 26 dispatcher(s) (20 in stub classes, 0 with a recognizable guard before dispatch), 133 binding(s) by grade {'source_dispatch': 123, 'virtual_override': 10}, transactions {'dynamic': 19, 'enum': 114}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+    }
+  ]
+}

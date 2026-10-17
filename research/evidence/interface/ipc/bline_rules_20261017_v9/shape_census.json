@@ -1,0 +1,1020 @@
+{
+  "components": 54,
+  "totals": {
+    "GetCallingUid": 1987,
+    "ReadInt32": 8622,
+    "ReadString": 2928,
+    "GetCallingTokenID": 966,
+    "ResetCallingIdentity": 313,
+    "SetCallingIdentity": 380,
+    "ReadRawData": 163,
+    "ReadBuffer": 89,
+    "RewindRead": 32,
+    "Seek": 152,
+    "SetReadPosition": 2
+  },
+  "rows": [
+    {
+      "component": "ability_ability_runtime",
+      "commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+      "counts": {
+        "GetCallingUid": 220,
+        "ReadInt32": 949,
+        "ReadString": 224,
+        "GetCallingTokenID": 114,
+        "ResetCallingIdentity": 10,
+        "SetCallingIdentity": 19,
+        "ReadRawData": 1,
+        "ReadBuffer": 1
+      },
+      "files": {
+        "GetCallingUid": 45,
+        "ReadInt32": 105,
+        "ReadString": 47,
+        "GetCallingTokenID": 28,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "ReadRawData": 1,
+        "ReadBuffer": 1
+      }
+    },
+    {
+      "component": "ability_dmsfwk",
+      "commit": "aa1b0347b10700d761def383c08749420dd3f71a",
+      "counts": {
+        "ReadInt32": 102,
+        "ReadString": 67,
+        "GetCallingTokenID": 19,
+        "ResetCallingIdentity": 4,
+        "SetCallingIdentity": 4,
+        "GetCallingUid": 17,
+        "ReadBuffer": 2
+      },
+      "files": {
+        "ReadInt32": 25,
+        "ReadString": 7,
+        "GetCallingTokenID": 7,
+        "ResetCallingIdentity": 4,
+        "SetCallingIdentity": 4,
+        "GetCallingUid": 5,
+        "ReadBuffer": 2
+      }
+    },
+    {
+      "component": "ability_form_fwk",
+      "commit": "0914d437af5988ffbea2ec29fa4259a943bceadf",
+      "counts": {
+        "GetCallingUid": 109,
+        "ReadInt32": 170,
+        "ReadString": 55,
+        "ResetCallingIdentity": 8,
+        "SetCallingIdentity": 8,
+        "GetCallingTokenID": 4
+      },
+      "files": {
+        "GetCallingUid": 18,
+        "ReadInt32": 27,
+        "ReadString": 10,
+        "ResetCallingIdentity": 6,
+        "SetCallingIdentity": 6,
+        "GetCallingTokenID": 3
+      }
+    },
+    {
+      "component": "account_os_account",
+      "commit": "af2e349854d83ffd0f4e766e0a8b315388d7315a",
+      "counts": {
+        "GetCallingUid": 112,
+        "ReadRawData": 5,
+        "ReadInt32": 90,
+        "ReadString": 55,
+        "GetCallingTokenID": 13,
+        "ReadBuffer": 1,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1
+      },
+      "files": {
+        "GetCallingUid": 22,
+        "ReadRawData": 3,
+        "ReadInt32": 18,
+        "ReadString": 10,
+        "GetCallingTokenID": 8,
+        "ReadBuffer": 1,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1
+      }
+    },
+    {
+      "component": "applications_permission_manager",
+      "commit": "9fd6f1e3a65b342d12b9dc04b7d9492d5d5bfb63",
+      "counts": {},
+      "files": {}
+    },
+    {
+      "component": "bundlemanager_bundle_framework",
+      "commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+      "counts": {
+        "ReadInt32": 790,
+        "ReadString": 372,
+        "ReadRawData": 23,
+        "GetCallingUid": 423,
+        "ResetCallingIdentity": 35,
+        "SetCallingIdentity": 37,
+        "GetCallingTokenID": 11,
+        "ReadBuffer": 1
+      },
+      "files": {
+        "ReadInt32": 75,
+        "ReadString": 34,
+        "ReadRawData": 12,
+        "GetCallingUid": 46,
+        "ResetCallingIdentity": 8,
+        "SetCallingIdentity": 8,
+        "GetCallingTokenID": 4,
+        "ReadBuffer": 1
+      }
+    },
+    {
+      "component": "commonlibrary_c_utils",
+      "commit": "7a9af76276aca8f53347fb89c07850e014905521",
+      "counts": {
+        "ReadBuffer": 10,
+        "ReadInt32": 10,
+        "ReadString": 5,
+        "RewindRead": 2
+      },
+      "files": {
+        "ReadBuffer": 2,
+        "ReadInt32": 2,
+        "ReadString": 2,
+        "RewindRead": 2
+      }
+    },
+    {
+      "component": "communication_bluetooth",
+      "commit": "1eb489c9c4031bdeae3b2668b98c4a80014d423e",
+      "counts": {
+        "ReadString": 122,
+        "ReadBuffer": 2,
+        "ReadInt32": 614,
+        "GetCallingUid": 4
+      },
+      "files": {
+        "ReadString": 33,
+        "ReadBuffer": 2,
+        "ReadInt32": 61,
+        "GetCallingUid": 1
+      }
+    },
+    {
+      "component": "communication_dsoftbus",
+      "commit": "ccb1a86fff03a6b2de19d39b90a81351ced5acd6",
+      "counts": {
+        "GetCallingTokenID": 12,
+        "GetCallingUid": 34,
+        "ReadInt32": 227,
+        "ReadRawData": 43,
+        "ReadBuffer": 21,
+        "ReadString": 53
+      },
+      "files": {
+        "GetCallingTokenID": 6,
+        "GetCallingUid": 7,
+        "ReadInt32": 15,
+        "ReadRawData": 7,
+        "ReadBuffer": 8,
+        "ReadString": 6
+      }
+    },
+    {
+      "component": "communication_ipc",
+      "commit": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+      "counts": {
+        "ReadString": 34,
+        "GetCallingUid": 33,
+        "GetCallingTokenID": 13,
+        "ReadInt32": 54,
+        "ReadRawData": 9,
+        "ReadBuffer": 15,
+        "RewindRead": 18,
+        "ResetCallingIdentity": 15,
+        "SetCallingIdentity": 13
+      },
+      "files": {
+        "ReadString": 14,
+        "GetCallingUid": 21,
+        "GetCallingTokenID": 9,
+        "ReadInt32": 13,
+        "ReadRawData": 8,
+        "ReadBuffer": 8,
+        "RewindRead": 8,
+        "ResetCallingIdentity": 12,
+        "SetCallingIdentity": 11
+      }
+    },
+    {
+      "component": "communication_netmanager_base",
+      "commit": "d1a2c26d3dc07e4582b6d32417fe9a0f7d2359d7",
+      "counts": {
+        "GetCallingUid": 67,
+        "ReadInt32": 375,
+        "ReadString": 320,
+        "ReadRawData": 3,
+        "GetCallingTokenID": 5
+      },
+      "files": {
+        "GetCallingUid": 17,
+        "ReadInt32": 27,
+        "ReadString": 32,
+        "ReadRawData": 3,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "counts": {
+        "GetCallingUid": 48,
+        "ReadInt32": 69,
+        "ReadString": 102,
+        "RewindRead": 1,
+        "ReadRawData": 5
+      },
+      "files": {
+        "GetCallingUid": 12,
+        "ReadInt32": 19,
+        "ReadString": 20,
+        "RewindRead": 1,
+        "ReadRawData": 1
+      }
+    },
+    {
+      "component": "communication_nfc",
+      "commit": "331bfd2661490c996d495ab2b656f79d81ae931c",
+      "counts": {
+        "ReadInt32": 20,
+        "ReadString": 8,
+        "GetCallingTokenID": 12,
+        "GetCallingUid": 7
+      },
+      "files": {
+        "ReadInt32": 14,
+        "ReadString": 6,
+        "GetCallingTokenID": 3,
+        "GetCallingUid": 3
+      }
+    },
+    {
+      "component": "communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "counts": {
+        "ReadString": 220,
+        "ReadInt32": 744,
+        "ResetCallingIdentity": 3,
+        "SetCallingIdentity": 3,
+        "GetCallingUid": 94,
+        "ReadBuffer": 3,
+        "RewindRead": 1,
+        "GetCallingTokenID": 5
+      },
+      "files": {
+        "ReadString": 17,
+        "ReadInt32": 22,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "GetCallingUid": 16,
+        "ReadBuffer": 3,
+        "RewindRead": 1,
+        "GetCallingTokenID": 4
+      }
+    },
+    {
+      "component": "device_manager",
+      "commit": "53654dce7302f41d55695fcda8155846aeef7e83",
+      "counts": {
+        "ReadRawData": 10,
+        "ReadInt32": 64,
+        "ReadString": 73,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      },
+      "files": {
+        "ReadRawData": 4,
+        "ReadInt32": 4,
+        "ReadString": 5,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "distributeddatamgr_data_share",
+      "commit": "84bbefd47473c97da9ad013ab3b7f184c8862ee1",
+      "counts": {
+        "ReadRawData": 2,
+        "ReadInt32": 24,
+        "ReadString": 1,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "GetCallingUid": 2,
+        "GetCallingTokenID": 8
+      },
+      "files": {
+        "ReadRawData": 1,
+        "ReadInt32": 6,
+        "ReadString": 1,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 2
+      }
+    },
+    {
+      "component": "distributeddatamgr_datamgr_service",
+      "commit": "a6ba8ce1ec700c1a07e80dcc146f40b179d519af",
+      "counts": {
+        "GetCallingUid": 24,
+        "GetCallingTokenID": 122,
+        "ReadString": 4,
+        "ReadInt32": 3
+      },
+      "files": {
+        "GetCallingUid": 14,
+        "GetCallingTokenID": 21,
+        "ReadString": 2,
+        "ReadInt32": 1
+      }
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "commit": "64e48eb1d97b45f44125761f16811f78be609a4a",
+      "counts": {
+        "ReadRawData": 6,
+        "ReadInt32": 13,
+        "ReadString": 42,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "GetCallingUid": 4,
+        "GetCallingTokenID": 4
+      },
+      "files": {
+        "ReadRawData": 4,
+        "ReadInt32": 4,
+        "ReadString": 17,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "GetCallingUid": 4,
+        "GetCallingTokenID": 4
+      }
+    },
+    {
+      "component": "distributeddatamgr_objectstore",
+      "commit": "1a63f5a9827dc68ebd9b02b58935cd18996b2c1b",
+      "counts": {},
+      "files": {}
+    },
+    {
+      "component": "distributeddatamgr_pasteboard",
+      "commit": "e0a1320a94b3ec41f6994f299432c88a8e389ab9",
+      "counts": {
+        "ReadRawData": 7,
+        "GetCallingUid": 10,
+        "GetCallingTokenID": 21,
+        "ReadString": 4,
+        "ReadInt32": 3
+      },
+      "files": {
+        "ReadRawData": 7,
+        "GetCallingUid": 3,
+        "GetCallingTokenID": 1,
+        "ReadString": 4,
+        "ReadInt32": 3
+      }
+    },
+    {
+      "component": "distributeddatamgr_preferences",
+      "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+      "counts": {
+        "GetCallingTokenID": 5,
+        "GetCallingUid": 4,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "ReadRawData": 2,
+        "ReadString": 1
+      },
+      "files": {
+        "GetCallingTokenID": 5,
+        "GetCallingUid": 4,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "ReadRawData": 2,
+        "ReadString": 1
+      }
+    },
+    {
+      "component": "distributeddatamgr_relational_store",
+      "commit": "9fa3a57e6657275d03e25f2e319dab55f894d1e8",
+      "counts": {
+        "ReadInt32": 19,
+        "ReadString": 6,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "GetCallingUid": 4,
+        "GetCallingTokenID": 4,
+        "ReadRawData": 2
+      },
+      "files": {
+        "ReadInt32": 4,
+        "ReadString": 3,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "GetCallingUid": 4,
+        "GetCallingTokenID": 4,
+        "ReadRawData": 2
+      }
+    },
+    {
+      "component": "distributeddatamgr_udmf",
+      "commit": "1e2e3c35df0299cd4e14d7a87060aad14e9de0c8",
+      "counts": {
+        "ReadRawData": 5,
+        "ReadInt32": 9,
+        "ReadString": 2,
+        "GetCallingTokenID": 1
+      },
+      "files": {
+        "ReadRawData": 2,
+        "ReadInt32": 2,
+        "ReadString": 2,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "distributedhardware_device_manager",
+      "commit": "dce05abccbeddd4566479eaaaf11605b46dbe925",
+      "counts": {
+        "ReadRawData": 2,
+        "ReadInt32": 164,
+        "ReadString": 251,
+        "GetCallingTokenID": 22,
+        "GetCallingUid": 2
+      },
+      "files": {
+        "ReadRawData": 2,
+        "ReadInt32": 6,
+        "ReadString": 7,
+        "GetCallingTokenID": 7,
+        "GetCallingUid": 2
+      }
+    },
+    {
+      "component": "filemanagement_app_file_service",
+      "commit": "a7815f653bd669026cad48421ed1ecc0dfbbe9f2",
+      "counts": {
+        "GetCallingUid": 6,
+        "GetCallingTokenID": 14,
+        "ReadInt32": 5,
+        "ReadString": 8
+      },
+      "files": {
+        "GetCallingUid": 2,
+        "GetCallingTokenID": 9,
+        "ReadInt32": 3,
+        "ReadString": 4
+      }
+    },
+    {
+      "component": "filemanagement_dfs_service",
+      "commit": "bec9c8471cf7f5c25728682839e4221e38e65aa3",
+      "counts": {
+        "ReadInt32": 68,
+        "ReadString": 61,
+        "ReadRawData": 1,
+        "GetCallingUid": 11,
+        "GetCallingTokenID": 11
+      },
+      "files": {
+        "ReadInt32": 19,
+        "ReadString": 11,
+        "ReadRawData": 1,
+        "GetCallingUid": 5,
+        "GetCallingTokenID": 3
+      }
+    },
+    {
+      "component": "filemanagement_file_api",
+      "commit": "103df5c4911e7fcddcccc7ae34894c5a2871d3a7",
+      "counts": {
+        "GetCallingUid": 3,
+        "GetCallingTokenID": 5,
+        "Seek": 1
+      },
+      "files": {
+        "GetCallingUid": 3,
+        "GetCallingTokenID": 5,
+        "Seek": 1
+      }
+    },
+    {
+      "component": "graphic_graphic_2d",
+      "commit": "286721f97d69fe04f9327ce38227c73e6f86160b",
+      "counts": {
+        "GetCallingTokenID": 8,
+        "ReadBuffer": 11,
+        "ReadInt32": 392,
+        "ReadString": 112,
+        "GetCallingUid": 9,
+        "ReadRawData": 2,
+        "RewindRead": 9
+      },
+      "files": {
+        "GetCallingTokenID": 7,
+        "ReadBuffer": 9,
+        "ReadInt32": 54,
+        "ReadString": 20,
+        "GetCallingUid": 3,
+        "ReadRawData": 2,
+        "RewindRead": 5
+      }
+    },
+    {
+      "component": "inputmethod_imf",
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "counts": {
+        "ReadInt32": 40,
+        "ReadString": 22,
+        "RewindRead": 1,
+        "GetCallingUid": 18,
+        "GetCallingTokenID": 40
+      },
+      "files": {
+        "ReadInt32": 12,
+        "ReadString": 7,
+        "RewindRead": 1,
+        "GetCallingUid": 7,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "multimedia_audio_framework",
+      "commit": "3a2688e805df970739e3b0cebf9cc05d8cb24e9b",
+      "counts": {
+        "GetCallingTokenID": 33,
+        "ReadInt32": 314,
+        "ReadString": 93,
+        "GetCallingUid": 298,
+        "ResetCallingIdentity": 101,
+        "SetCallingIdentity": 112
+      },
+      "files": {
+        "GetCallingTokenID": 11,
+        "ReadInt32": 29,
+        "ReadString": 18,
+        "GetCallingUid": 27,
+        "ResetCallingIdentity": 8,
+        "SetCallingIdentity": 8
+      }
+    },
+    {
+      "component": "multimedia_camera_framework",
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "counts": {
+        "ReadInt32": 58,
+        "ReadString": 10,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "GetCallingTokenID": 57,
+        "GetCallingUid": 50
+      },
+      "files": {
+        "ReadInt32": 10,
+        "ReadString": 6,
+        "ResetCallingIdentity": 4,
+        "SetCallingIdentity": 4,
+        "GetCallingTokenID": 22,
+        "GetCallingUid": 18
+      }
+    },
+    {
+      "component": "multimedia_image_framework",
+      "commit": "5fbe952024f16cb518a5a7cec24063cffcc038bd",
+      "counts": {
+        "Seek": 120,
+        "SetReadPosition": 2,
+        "ReadInt32": 33,
+        "ReadString": 16,
+        "GetCallingTokenID": 1
+      },
+      "files": {
+        "Seek": 29,
+        "SetReadPosition": 1,
+        "ReadInt32": 5,
+        "ReadString": 9,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "multimedia_media_foundation",
+      "commit": "486aae6c8ed9c22499e6bc171748fb44fe7d88b0",
+      "counts": {
+        "ReadBuffer": 6,
+        "Seek": 8,
+        "ReadInt32": 40,
+        "ReadString": 12,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      },
+      "files": {
+        "ReadBuffer": 6,
+        "Seek": 6,
+        "ReadInt32": 9,
+        "ReadString": 4,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "multimedia_player_framework",
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "counts": {
+        "Seek": 23,
+        "GetCallingTokenID": 17,
+        "ReadInt32": 597,
+        "GetCallingUid": 32,
+        "ReadString": 87,
+        "ReadBuffer": 4
+      },
+      "files": {
+        "Seek": 12,
+        "GetCallingTokenID": 14,
+        "ReadInt32": 43,
+        "GetCallingUid": 18,
+        "ReadString": 29,
+        "ReadBuffer": 3
+      }
+    },
+    {
+      "component": "multimodalinput_input",
+      "commit": "f7ac33c6097adae62443c11120f3fd089a6a394a",
+      "counts": {
+        "ReadInt32": 112,
+        "ReadBuffer": 1,
+        "ReadString": 15,
+        "GetCallingTokenID": 18,
+        "GetCallingUid": 21,
+        "ResetCallingIdentity": 4,
+        "SetCallingIdentity": 11
+      },
+      "files": {
+        "ReadInt32": 22,
+        "ReadBuffer": 1,
+        "ReadString": 8,
+        "GetCallingTokenID": 4,
+        "GetCallingUid": 2,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1
+      }
+    },
+    {
+      "component": "notification_common_event_service",
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "counts": {
+        "GetCallingTokenID": 13,
+        "ReadInt32": 11,
+        "ReadString": 1,
+        "ResetCallingIdentity": 3,
+        "SetCallingIdentity": 3,
+        "GetCallingUid": 7
+      },
+      "files": {
+        "GetCallingTokenID": 3,
+        "ReadInt32": 4,
+        "ReadString": 1,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1,
+        "GetCallingUid": 2
+      }
+    },
+    {
+      "component": "notification_distributed_notification_service",
+      "commit": "4391741ef315c23ceb729fb0ad63b117b3fab695",
+      "counts": {
+        "ReadInt32": 67,
+        "ReadString": 79,
+        "ResetCallingIdentity": 29,
+        "SetCallingIdentity": 30,
+        "GetCallingUid": 53,
+        "GetCallingTokenID": 113
+      },
+      "files": {
+        "ReadInt32": 28,
+        "ReadString": 28,
+        "ResetCallingIdentity": 8,
+        "SetCallingIdentity": 8,
+        "GetCallingUid": 21,
+        "GetCallingTokenID": 23
+      }
+    },
+    {
+      "component": "powermgr_battery_statistics",
+      "commit": "271a545acc0ececc746cfe0bb7c1501943df7c64",
+      "counts": {
+        "ReadInt32": 1,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2
+      },
+      "files": {
+        "ReadInt32": 1,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2
+      }
+    },
+    {
+      "component": "powermgr_display_manager",
+      "commit": "6b2ee24ce30ca93a3fba451b912e0af59538b794",
+      "counts": {
+        "ResetCallingIdentity": 17,
+        "SetCallingIdentity": 17,
+        "GetCallingUid": 2,
+        "ReadString": 1
+      },
+      "files": {
+        "ResetCallingIdentity": 3,
+        "SetCallingIdentity": 3,
+        "GetCallingUid": 2,
+        "ReadString": 1
+      }
+    },
+    {
+      "component": "powermgr_power_manager",
+      "commit": "06d1f3d19a59fcdb744b179d1158f65b75ad572d",
+      "counts": {
+        "ResetCallingIdentity": 10,
+        "SetCallingIdentity": 22,
+        "GetCallingUid": 71,
+        "ReadInt32": 1,
+        "GetCallingTokenID": 5
+      },
+      "files": {
+        "ResetCallingIdentity": 3,
+        "SetCallingIdentity": 3,
+        "GetCallingUid": 13,
+        "ReadInt32": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "resourceschedule_background_task_mgr",
+      "commit": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+      "counts": {
+        "ReadInt32": 11,
+        "GetCallingTokenID": 15,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1,
+        "GetCallingUid": 35
+      },
+      "files": {
+        "ReadInt32": 4,
+        "GetCallingTokenID": 4,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1,
+        "GetCallingUid": 4
+      }
+    },
+    {
+      "component": "security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "counts": {
+        "ReadString": 68,
+        "ReadInt32": 105,
+        "ReadBuffer": 1,
+        "GetCallingUid": 17,
+        "GetCallingTokenID": 104
+      },
+      "files": {
+        "ReadString": 27,
+        "ReadInt32": 35,
+        "ReadBuffer": 1,
+        "GetCallingUid": 7,
+        "GetCallingTokenID": 8
+      }
+    },
+    {
+      "component": "security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "counts": {
+        "ReadInt32": 5,
+        "ReadBuffer": 2,
+        "GetCallingTokenID": 11,
+        "GetCallingUid": 8,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "ReadRawData": 1
+      },
+      "files": {
+        "ReadInt32": 3,
+        "ReadBuffer": 2,
+        "GetCallingTokenID": 7,
+        "GetCallingUid": 4,
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "ReadRawData": 1
+      }
+    },
+    {
+      "component": "security_device_auth",
+      "commit": "21a357fe07ac0a61ce0929040251a712f94adef3",
+      "counts": {
+        "ReadBuffer": 1,
+        "ReadInt32": 21,
+        "ReadString": 1,
+        "GetCallingUid": 12,
+        "GetCallingTokenID": 4
+      },
+      "files": {
+        "ReadBuffer": 1,
+        "ReadInt32": 8,
+        "ReadString": 1,
+        "GetCallingUid": 6,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "security_dlp_permission_service",
+      "commit": "1adc5b0f36f668e1c038853a582ecb394d08fdec",
+      "counts": {
+        "ReadInt32": 6,
+        "ReadString": 15,
+        "GetCallingUid": 12,
+        "GetCallingTokenID": 19
+      },
+      "files": {
+        "ReadInt32": 5,
+        "ReadString": 7,
+        "GetCallingUid": 4,
+        "GetCallingTokenID": 3
+      }
+    },
+    {
+      "component": "security_huks",
+      "commit": "4ae4e0db461f137672719d43ffc6c5b1b6c05be8",
+      "counts": {
+        "ReadBuffer": 7,
+        "ReadInt32": 5,
+        "GetCallingUid": 7,
+        "GetCallingTokenID": 11
+      },
+      "files": {
+        "ReadBuffer": 5,
+        "ReadInt32": 4,
+        "GetCallingUid": 5,
+        "GetCallingTokenID": 4
+      }
+    },
+    {
+      "component": "sensors_sensor",
+      "commit": "571dd5b5b5f58b7a6cb2834c55a57bba86ad3c43",
+      "counts": {
+        "ReadInt32": 20,
+        "ReadString": 6,
+        "ResetCallingIdentity": 3,
+        "SetCallingIdentity": 9,
+        "GetCallingUid": 3,
+        "GetCallingTokenID": 20
+      },
+      "files": {
+        "ReadInt32": 4,
+        "ReadString": 3,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "systemabilitymgr_samgr",
+      "commit": "0b154e500567fde41f5c8be926925fe25fd9c740",
+      "counts": {
+        "ReadInt32": 68,
+        "ReadString": 19,
+        "GetCallingUid": 21,
+        "GetCallingTokenID": 5
+      },
+      "files": {
+        "ReadInt32": 7,
+        "ReadString": 7,
+        "GetCallingUid": 4,
+        "GetCallingTokenID": 4
+      }
+    },
+    {
+      "component": "telephony_call_manager",
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "counts": {
+        "ReadInt32": 449,
+        "ReadRawData": 26,
+        "ReadString": 55,
+        "ResetCallingIdentity": 11,
+        "SetCallingIdentity": 13,
+        "GetCallingUid": 6,
+        "GetCallingTokenID": 1
+      },
+      "files": {
+        "ReadInt32": 18,
+        "ReadRawData": 3,
+        "ReadString": 8,
+        "ResetCallingIdentity": 5,
+        "SetCallingIdentity": 5,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "telephony_core_service",
+      "commit": "accd8c7931a5001041ddf638959da0ae6f31b1a6",
+      "counts": {
+        "GetCallingTokenID": 4,
+        "ReadInt32": 499,
+        "ReadString": 43,
+        "ReadRawData": 2,
+        "GetCallingUid": 1,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1
+      },
+      "files": {
+        "GetCallingTokenID": 3,
+        "ReadInt32": 30,
+        "ReadString": 9,
+        "ReadRawData": 1,
+        "GetCallingUid": 1,
+        "ResetCallingIdentity": 1,
+        "SetCallingIdentity": 1
+      }
+    },
+    {
+      "component": "telephony_sms_mms",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "counts": {
+        "ReadInt32": 94,
+        "ReadString": 9,
+        "ReadRawData": 1
+      },
+      "files": {
+        "ReadInt32": 10,
+        "ReadString": 4,
+        "ReadRawData": 1
+      }
+    },
+    {
+      "component": "update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "counts": {
+        "ReadInt32": 13,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 2
+      },
+      "files": {
+        "ReadInt32": 2,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "useriam_user_auth_framework",
+      "commit": "54966af5d1b6f5ca0cddb10407e038584d01d53e",
+      "counts": {
+        "ResetCallingIdentity": 3,
+        "SetCallingIdentity": 3,
+        "GetCallingUid": 2,
+        "GetCallingTokenID": 2
+      },
+      "files": {
+        "ResetCallingIdentity": 2,
+        "SetCallingIdentity": 2,
+        "GetCallingUid": 1,
+        "GetCallingTokenID": 1
+      }
+    },
+    {
+      "component": "window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "counts": {
+        "ReadInt32": 1074,
+        "ReadString": 174,
+        "GetCallingTokenID": 36,
+        "ResetCallingIdentity": 31,
+        "SetCallingIdentity": 50,
+        "GetCallingUid": 61,
+        "ReadRawData": 5
+      },
+      "files": {
+        "ReadInt32": 60,
+        "ReadString": 34,
+        "GetCallingTokenID": 13,
+        "ResetCallingIdentity": 14,
+        "SetCallingIdentity": 14,
+        "GetCallingUid": 21,
+        "ReadRawData": 3
+      }
+    }
+  ]
+}

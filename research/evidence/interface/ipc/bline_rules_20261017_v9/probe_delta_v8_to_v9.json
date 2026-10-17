@@ -1,0 +1,256 @@
+{
+ "old_totals": {
+  "reply_writes": 3265,
+  "disclosure_writes": 6,
+  "actions": 53,
+  "index_sites": 87
+ },
+ "new_totals": {
+  "resolve_calls": 25384,
+  "reply_writes": 3305,
+  "disclosure_writes": 6,
+  "actions": 53,
+  "index_sites": 88,
+  "resolve_cross_file": 158
+ },
+ "components_with_moved_counts": [
+  {
+   "component": "ability_ability_runtime",
+   "delta": {
+    "resolve_cross_file": 6,
+    "resolve_calls": 7628
+   }
+  },
+  {
+   "component": "ability_dmsfwk",
+   "delta": {
+    "resolve_cross_file": 8,
+    "resolve_calls": 316
+   }
+  },
+  {
+   "component": "ability_form_fwk",
+   "delta": {
+    "resolve_calls": 2274
+   }
+  },
+  {
+   "component": "account_os_account",
+   "delta": {
+    "resolve_calls": 79
+   }
+  },
+  {
+   "component": "bundlemanager_bundle_framework",
+   "delta": {
+    "resolve_cross_file": 69,
+    "resolve_calls": 4718
+   }
+  },
+  {
+   "component": "communication_bluetooth",
+   "delta": {
+    "resolve_calls": 649
+   }
+  },
+  {
+   "component": "communication_dsoftbus",
+   "delta": {
+    "resolve_calls": 48
+   }
+  },
+  {
+   "component": "communication_ipc",
+   "delta": {
+    "resolve_cross_file": 8,
+    "resolve_calls": 61
+   }
+  },
+  {
+   "component": "communication_netmanager_ext",
+   "delta": {
+    "resolve_calls": 16
+   }
+  },
+  {
+   "component": "communication_nfc",
+   "delta": {
+    "resolve_cross_file": 6,
+    "resolve_calls": 239
+   }
+  },
+  {
+   "component": "communication_wifi",
+   "delta": {
+    "resolve_calls": 108
+   }
+  },
+  {
+   "component": "device_manager",
+   "delta": {
+    "resolve_calls": 14
+   }
+  },
+  {
+   "component": "distributeddatamgr_data_share",
+   "delta": {
+    "resolve_calls": 39
+   }
+  },
+  {
+   "component": "distributeddatamgr_datamgr_service",
+   "delta": {
+    "resolve_calls": 2
+   }
+  },
+  {
+   "component": "distributeddatamgr_kv_store",
+   "delta": {
+    "resolve_cross_file": 1,
+    "resolve_calls": 1
+   }
+  },
+  {
+   "component": "distributeddatamgr_relational_store",
+   "delta": {
+    "resolve_cross_file": 1,
+    "resolve_calls": 1
+   }
+  },
+  {
+   "component": "distributeddatamgr_udmf",
+   "delta": {
+    "index_sites": 1,
+    "resolve_calls": 76,
+    "resolve_cross_file": 1
+   }
+  },
+  {
+   "component": "distributedhardware_device_manager",
+   "delta": {
+    "resolve_calls": 7
+   }
+  },
+  {
+   "component": "filemanagement_dfs_service",
+   "delta": {
+    "resolve_calls": 124
+   }
+  },
+  {
+   "component": "graphic_graphic_2d",
+   "delta": {
+    "resolve_cross_file": 41,
+    "reply_writes": 40,
+    "resolve_calls": 4066
+   }
+  },
+  {
+   "component": "multimedia_audio_framework",
+   "delta": {
+    "resolve_calls": 34
+   }
+  },
+  {
+   "component": "multimedia_camera_framework",
+   "delta": {
+    "resolve_cross_file": 2,
+    "resolve_calls": 122
+   }
+  },
+  {
+   "component": "multimedia_player_framework",
+   "delta": {
+    "resolve_calls": 28
+   }
+  },
+  {
+   "component": "multimodalinput_input",
+   "delta": {
+    "resolve_calls": 81
+   }
+  },
+  {
+   "component": "notification_distributed_notification_service",
+   "delta": {
+    "resolve_calls": 29
+   }
+  },
+  {
+   "component": "powermgr_display_manager",
+   "delta": {
+    "resolve_calls": 72
+   }
+  },
+  {
+   "component": "powermgr_power_manager",
+   "delta": {
+    "resolve_calls": 225
+   }
+  },
+  {
+   "component": "security_access_token",
+   "delta": {
+    "resolve_calls": 364
+   }
+  },
+  {
+   "component": "security_certificate_manager",
+   "delta": {
+    "resolve_calls": 119
+   }
+  },
+  {
+   "component": "security_dlp_permission_service",
+   "delta": {
+    "resolve_calls": 94
+   }
+  },
+  {
+   "component": "sensors_sensor",
+   "delta": {
+    "resolve_calls": 17
+   }
+  },
+  {
+   "component": "systemabilitymgr_samgr",
+   "delta": {
+    "resolve_calls": 22
+   }
+  },
+  {
+   "component": "telephony_call_manager",
+   "delta": {
+    "resolve_calls": 234
+   }
+  },
+  {
+   "component": "telephony_core_service",
+   "delta": {
+    "resolve_cross_file": 2,
+    "resolve_calls": 129
+   }
+  },
+  {
+   "component": "telephony_sms_mms",
+   "delta": {
+    "resolve_calls": 71
+   }
+  },
+  {
+   "component": "update_updateservice",
+   "delta": {
+    "resolve_cross_file": 3,
+    "resolve_calls": 17
+   }
+  },
+  {
+   "component": "window_window_manager",
+   "delta": {
+    "resolve_cross_file": 10,
+    "resolve_calls": 3260
+   }
+  }
+ ],
+ "note": "coverage-only probe deltas; candidate identity unchanged (see delta_v8_to_v9.json)"
+}
