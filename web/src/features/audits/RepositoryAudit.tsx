@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Alert, Button, Card, Col, Form, Row, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go, Header } from "../../components";
-import { approvedDetectorIds, snapshotPayload } from "./model";
+import { approvedDetectorIds, snapshotPayload, planPayload, requestGate } from "./model";
 import { AuditProps, auditDefaults, RefField, RepositoryField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
+import AuditPlanView from "./AuditPlanView";
 export default function RepositoryAudit({ repos, detectors, refresh }: AuditProps) {
   const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form);
   const { refs, error: refsError, loading } = useRepositoryRefs(repository);
   const [busy, setBusy] = useState(false); const [error, setError] = useState("");
+  const [plan, setPlan] = useState<any>(null); const [planning, setPlanning] = useState(false);
+  const gate = useRef(requestGate());
+  const invalidate = () => { gate.current.invalidate(); setPlan(null); setPlanning(false); };
+  async function preview() {
+    const ticket = gate.current.next(); setPlanning(true); setError(""); setPlan(null);
+    try { const values = await form.validateFields();
+      const result = await api("/audit-plans", planPayload(values, detectors));
+      if (gate.current.current(ticket)) setPlan(result);
+    } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
+    finally { if (gate.current.current(ticket)) setPlanning(false); }
+  }
   let ready = false; try { ready = approvedDetectorIds(detectors).length > 0; } catch { /* blocked */ }
   return <>
     <Header title="仓库安全扫描" description="选择仓库与版本，冻结源码快照，查看真实覆盖和候选证据。" />
@@ -15,14 +27,16 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
       <ScopeAvailability />
       {error && <Alert className="section-gap" type="error" showIcon message={error} />}
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
-      <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults }} onFinish={async (values) => {
+      <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults }} onValuesChange={invalidate} onFinish={async (values) => {
         setBusy(true); setError("");
-        try { const job = await api("/scans", snapshotPayload(values, detectors)); await refresh(); go("/tasks/" + job.id); }
+        try { const job = await api("/scans", { ...snapshotPayload(values, detectors), ...(plan ? { expected_plan_sha256: plan.plan_sha256 } : {}) }); await refresh(); go("/tasks/" + job.id); }
         catch (e) { setError(String(e)); } finally { setBusy(false); }
       }}>
-        <RepositoryField repos={repos} refresh={refresh} onChange={() => { form.setFieldValue("revision", undefined); setError(""); }} />
+        <RepositoryField repos={repos} refresh={refresh} onChange={() => { form.setFieldValue("revision", undefined); setError(""); invalidate(); }} />
         <RefField name="revision" label={loading ? "正在加载当前仓库版本…" : "审计版本"} refs={refs} />
         <ScopeBudget /><RuleNotice detectors={detectors} />
+        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览适用规则</Button>
+        <AuditPlanView plan={plan} />
         <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length}>冻结版本并开始扫描</Button>
       </Form>
     </Card></Col><Col xs={24} xl={8}><Card title="本次审计将保存">

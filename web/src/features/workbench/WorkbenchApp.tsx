@@ -64,7 +64,7 @@ function Workspace() {
       <Col xs={24} xl={8}><Card title="能力与覆盖" extra={<Button type="link" onClick={() => go("/settings/capabilities")}>能力详情</Button>}><div className="capability-summary">
         <div><span>C/C++ 自研检测</span><Text strong>{detectors.filter((d) => d.kind === "research_candidate" && d.supported_languages?.some((l: string) => ["c", "cpp", "c++"].includes(l.toLowerCase()))).length ? "已接入研究规则" : "以规则清单为准"}</Text></div>
         <div><span>IPC / 接口分析</span><Text strong>{detectors.some((d) => d.id === "ohscanner.interface.ipc") ? "有界候选分析" : "以规则清单为准"}</Text></div>
-        <div><span>ArkTS / ETS / JS / TS</span><Text type="secondary">规划扩展</Text></div>
+        <div><span>ArkTS / ETS / JS / TS</span><Text type="secondary">有界语法候选；ETS 限制见覆盖</Text></div>
         <div><span>模型辅助调查</span><Text type="secondary">未连接</Text></div>
       </div><div className="coverage-note">实际解析覆盖见各任务报告；未分析、部分解析和证据不足保留 unknown。</div></Card></Col></Row>
     <div className="audit-shortcuts section-gap"><Text type="secondary">新建审计</Text>{auditLinks.map((entry) => <Button key={entry.path} onClick={() => go(entry.path)}>{entry.title} →</Button>)}</div>
@@ -103,7 +103,7 @@ function Workspace() {
         {error && <Alert className="section-gap" type="error" showIcon message={error} description="数据刷新失败，当前视图可能保留上次成功结果。" />}
         {health && !health.worker_running && <Alert className="section-gap" type="warning" message="扫描 Worker 未运行，排队任务将等待启动。" />}
         {content}
-      </Layout.Content><Layout.Footer className="footer">OHScanner · 候选 / 覆盖 / 证据分别记录 · 采用本机 MiSans 字体与系统回退</Layout.Footer>
+      </Layout.Content><Layout.Footer className="footer">OHScanner · 候选 / 覆盖 / 证据分别记录 · 采用 MiSans VF Web 字体，网络不可用时系统回退</Layout.Footer>
     </Layout>
   </Layout>;
 }

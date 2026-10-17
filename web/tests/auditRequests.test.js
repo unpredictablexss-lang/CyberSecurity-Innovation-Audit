@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, datePreviewPayload, includePaths, operationPayload, recentRange, requestGate, snapshotPayload } from "../src/features/audits/model.js";
+import { approvedDetectorIds, datePreviewPayload, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
@@ -12,8 +12,8 @@ test("automatic rule IDs come from approved service metadata and exclude example
   assert.throws(() => approvedDetectorIds(detectors.slice(1)), /没有可用/);
   assert.throws(() => approvedDetectorIds([detectors[0], detectors[0]]), /重复/);
 });
-test("snapshot sends only the existing strict API fields, never UI-only controls", () => {
-  assert.deepEqual(snapshotPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: ["test.cpp"], timeout_seconds: 60, memory_mb: 512 });
+test("snapshot delegates automatic rule selection to the server and drops UI-only controls", () => {
+  assert.deepEqual(snapshotPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], timeout_seconds: 60, memory_mb: 512 });
 });
 test("invalid include scopes and budgets fail before submission", () => {
   for (const value of ["../escape", "/absolute", "a/../b", "a\\b", "src,src", ""]) assert.throws(() => includePaths(value));
@@ -48,4 +48,12 @@ test("late ref or preview responses cannot restore invalidated form input", asyn
   gate.invalidate(); resolve({ branch: "old repo" }); await pending;
   assert.equal(displayed, null);
   const fresh = gate.next(); assert.equal(gate.current(fresh), true);
+});
+
+test("plan preview sends source selection only, with no browser-chosen rule list", () => {
+  assert.deepEqual(planPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"] });
+});
+
+test("explicit-only research rules are not silently requested by normal UI flows", () => {
+  assert.deepEqual(approvedDetectorIds([...detectors, { ...detectors[0], id: "test.research-only", default_enabled: false }]), ["test.cpp"]);
 });

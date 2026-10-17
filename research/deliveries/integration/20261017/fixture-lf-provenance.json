@@ -1,0 +1,236 @@
+[
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/bounds_positive.cpp",
+    "previous_sha256": "db559dc134ab55c47a3052350d8cae1c0059c938a0730369569f5951cb2a95f4",
+    "git_sha256": "f5f74d0be5fb61f8194dd4529d725a34441d18fe672467824f456e16371bc571",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/bounds_fixed.cpp",
+    "previous_sha256": "29be30100c7ab08ddd1991142413be7d8fc4ff0bf6e537b1569b3e15f94eb527",
+    "git_sha256": "f253adaaee561c9cbeedd877d33d251d0c8106cb4c1e2a2141faa5dcddcf165d",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/bounds_safe.cpp",
+    "previous_sha256": "14b702f241ebee456e0cd1ec5c8387430888f06540d2f7f19ea274806ea9c816",
+    "git_sha256": "1ba17501f075c4b6a3c87e9b39f91bef33897bb2f1b37b166564964b4e2f7694",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/bounds_unrelated.cpp",
+    "previous_sha256": "5fc7033050d78344a78141318fd4455e745746ac3c5fffcc0347fb9a3e960a6a",
+    "git_sha256": "90182adb2e52c7d6b13068553a54bb176524b2a94036c79cc0239d559c685e67",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/integer_positive.cpp",
+    "previous_sha256": "4572f46bfee013e624ed88e75ec8f59baac5810b5c974a7ebdc6ce6fff41bc0b",
+    "git_sha256": "8cbb48b5ba9eddb8b9ab2fe6787a5f97db2f3753493acf7b1ae9a28588221e9d",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/integer_fixed.cpp",
+    "previous_sha256": "cf37a822b1809940d08157656655353b2ef830543e5a30a779f3bbfc3f523cc8",
+    "git_sha256": "bf1d8980899d15380c588dd89540d099084b646b5b819c80d233759b2e259234",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/integer_safe.cpp",
+    "previous_sha256": "444069b5b62381d6fa03fdec1ac56ebb5a49717238b5569544048ea247c0b70d",
+    "git_sha256": "a428fd7768c4e37fea2c3238c610502f5ac6ea15b1d719af1081e111272f17a3",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/integer_unrelated.cpp",
+    "previous_sha256": "c47d1c57a30c56d7c986789e37d9341548eb5e72054da97d563da086c4d7189b",
+    "git_sha256": "1f6598c32cae8d9d2a766a7c5db6079ba5b72a03072b4651f5a9efde64babb81",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_memory_safety/unknown_partial.cpp",
+    "previous_sha256": "0bcae9048b0809a348080f1c259ae23e0e204a079869676ab0377ff6a08c3ee5",
+    "git_sha256": "1f3a22b825e147ce2a37d51d830e76f36bb60777e26e49bdf79e15dc479076b9",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_resource_lifetime/positive_double_free.cpp",
+    "previous_sha256": "6d4a743f94c36812470f0329f96d7456085088fce2f625fcbdec781ee97ff610",
+    "git_sha256": "0cf6a9abd87f88a283f64db8a6caa5d1ac18e1e99a441e0ff6a62412d64c7f24",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_resource_lifetime/positive_alias_uaf.cpp",
+    "previous_sha256": "e57ca0ae39949f392b81829c8ce9516fdf65641357afb40022d23612ad0f6210",
+    "git_sha256": "035c222dda688a83d57f7e065696e5290c0920612f05288b2e0ea9a2ca346b04",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_resource_lifetime/fixed_null_after_free.cpp",
+    "previous_sha256": "6d9eaf569dc79a6d1faf878ac6072f88c476a533a1e362f0ba4f66273fdda835",
+    "git_sha256": "4263c5f4a96f48fca3defc22d1226c49b39b2acf5e197765a48213ca0f6f1cf8",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_resource_lifetime/fixed_reallocate.cpp",
+    "previous_sha256": "ef25ad319e9bf014c2295c41b9d2875b477a06ef158db2e32467dc2a4aab1835",
+    "git_sha256": "006e3097e6380b5fb5675e7f80103bb3daad9d09f7fa39b46598385f906c2fd8",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_resource_lifetime/unrelated_release.cpp",
+    "previous_sha256": "4f510214b4ea848905a8f982981f3cd3618f51388e80d7b81e41e6797a75c33c",
+    "git_sha256": "1dd6411ae53fd0f69999d9da68b4ef8f77943b871be0df91995c323d8ce15328",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_resource_lifetime/unknown_partial.cpp",
+    "previous_sha256": "3668d5b90d67e23932f1577bfd480d24d91fb10ccf5e0578d171ccf667e95fb0",
+    "git_sha256": "21b68f96e2df4bc69abca2bb146c248674ad0bd3de67cad19c6035fc6048e8c8",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_unsafe_calls/positive_unsafe.cpp",
+    "previous_sha256": "f0b96d52643ed5f1eb3bd3f404df8c9384f45a5038fe2bdfe4524494b5d5096a",
+    "git_sha256": "b7950aadb5ad8f8c876ce7eb38b69fe6b44426d6f06f64c4e562876d7044cce2",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_unsafe_calls/fixed_bounded.cpp",
+    "previous_sha256": "c0ce9362859a7e82aa7f782b95e9404fe0b2f75433e1d991b45ed8515de9204f",
+    "git_sha256": "49162e97c1f0907d3ee6994f77474b70662e3aaae1de0fe162d07a8b79c74d11",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_unsafe_calls/safe_literal.cpp",
+    "previous_sha256": "4c39655f7912267a3ed83feca091ecfa3934aa12cef181af152d654d5b6f3b73",
+    "git_sha256": "55aa2be7122a5b7921ce5038c24a3a8b7814c8e5ca87b9c3f0903009a40f73eb",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_unsafe_calls/unrelated.cpp",
+    "previous_sha256": "f7fad5cbd7c484b709a00d773ade231fe1a57cb1f135c16e5eca676dacf86181",
+    "git_sha256": "39e59fa96bdb33e88caf713ef9d4e455d55624d65c83d694ec2f3bba63f5dec2",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "tests/detectors/fixtures/cpp_unsafe_calls/unknown_partial.cpp",
+    "previous_sha256": "011aa21dea038895a13bd020d18fe8774402eb2d018941d97b78815f9201ea50",
+    "git_sha256": "1ed8a63f715b2a7d6178555a164ea3b9202df9a7668728dea2dd7e3809b75b8c",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/fixed_local_guarded_deref.cpp",
+    "previous_sha256": "c789cb7a7caf2c1d282f050642d54e3bdad6b6565de070375ffd4ba5570c0317",
+    "git_sha256": "1b54f0a7e16ea614e51b43eb2f2984ffdabba58048fb77a697f7f0b103c595b4",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/fixed_parameter_early_return.cpp",
+    "previous_sha256": "9bb54e84a4738e89302b104ddd259647c30a13d56ea0b6df14ebf5a2044f42c6",
+    "git_sha256": "5755c4f0180a30832d78967148ef50aa21ed2d8c6ea3338426af45b868a8718d",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/not_analyzed_no_cpp_shape.js",
+    "previous_sha256": "ceebe23694800fe72e4af8db69f9dd15e577d95033ee950221c37a80c8af6f26",
+    "git_sha256": "48fae1315525f80a5cb3fbb6000c8c5eca1747f68e0bf7207ebe119aa1e94fad",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/safe_address_of_local.cpp",
+    "previous_sha256": "28da2da593f1be753e939a4ca299048c010f7dd0d56d3f3ac7ec848b4cbf2db3",
+    "git_sha256": "54b0a822fe8b78eb107aefc7370dcb79536c9fe152289f8aa643bfa139b2d522",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/safe_positive_guard_nested.cpp",
+    "previous_sha256": "b827ffa13047dc3beedc4d4f6420b37d2ce55bd8c2874c07a472c3b1fb8def4f",
+    "git_sha256": "99a70fe2b469ed8ac1e023a6fdf12afaff4328856c38b1bb56f7bc4b990ce164",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unknown_cross_function_alias.cpp",
+    "previous_sha256": "0072b8dabe7ec6c693db89798a63612fd87ed81a0b87c43bf0d0f423e7e30cc0",
+    "git_sha256": "bdafe38976e1b50c962dbfc70ae25a79d8dadd5359d532505ca653ef78c35d99",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unknown_exception_destructor.cpp",
+    "previous_sha256": "19cfb8245dbb06f3e8d3f6ae2534acd5282c04465054be7b92a9f0e14207b220",
+    "git_sha256": "eb5059c99f838ed0c066f14b7fd1c286ebd0dfa44397d7d54cf6e0c366dd24cf",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unknown_failed_parse.cpp",
+    "previous_sha256": "d2e8446d76cc67eb61395035320143c74aa480a35846992a8452fde6a0beecd4",
+    "git_sha256": "c72f43b252ef524c80d830f93ad2508b85f14907644db548e31853d9ea51e18d",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unknown_indirect_call.cpp",
+    "previous_sha256": "b9488cf8a5e6ae5c8f25d722a7cb1d1bbb1bf44677ce63262d4160545e2281c9",
+    "git_sha256": "617876e7fbbacb79b113772853d859daf5369e98a1109daeece5ed911801de58",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unknown_macro.cpp",
+    "previous_sha256": "7e83694de02bbe642f55b8d4ec642399278729d7216b0759890f7f89306b96a2",
+    "git_sha256": "4092b457ef8a39a70b9791482847d258495ea6c091973ea9c00b211d67293a2a",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unknown_template.cpp",
+    "previous_sha256": "724f7488eea4c256a317960fd476faf3c421b664b41444af27aba099eeb1e287",
+    "git_sha256": "dc378f1de2a4c10fcb5958c30e4eca0facfe3a41bea865ac392f32cf7bac73e6",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/unrelated_no_pointer_shape.cpp",
+    "previous_sha256": "15da20ddd16ff8d326bfa42826169348180fd2e39009d0b076f42ef9f1279767",
+    "git_sha256": "e4bbaf8c218719b5f94467eafc581ec5c197ad1fe7d9e3e1d7393abb039788d6",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/vulnerable_error_path_falls_through.cpp",
+    "previous_sha256": "3b485c6676271c1b3ace7294f56b6154b3ec8dfccb12263626bf468f9f812c95",
+    "git_sha256": "c68d3177acac6d2e171c95d0fad9fb59f3a2e9eba765066da2800eee1d3d85f5",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/vulnerable_guard_not_dominating.cpp",
+    "previous_sha256": "1a4ef7599a7583b4e2338a359cf107597875b99b3be9b63b9652f3d43ebe96fd",
+    "git_sha256": "ef30bb5c5f80f3b2757312f4dfd2b2c54ab0fa856352a3ab7814f42dfc42e7ff",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/vulnerable_local_null.cpp",
+    "previous_sha256": "ed228483ede7f0d47e17a237bc919661dd058df277026a10b2a2174260df62d8",
+    "git_sha256": "92d8e7d5059492cdbdaa811b8ce378138d796c46370eb2070af940f90bc1a00f",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/vulnerable_member_pointer.cpp",
+    "previous_sha256": "008ab238b1e7ce43f9498af45ebd4dec71e65b725c33f184021f4e87d8f13917",
+    "git_sha256": "252ebce87095bdd9cf41ec2bcaa106629b52557d6a4499c8e37b79631b3c4654",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/vulnerable_parameter.cpp",
+    "previous_sha256": "182c6cd346fb752a4eab12b3c006c6c58eec8ad89c249f035c3538ffc85ae69a",
+    "git_sha256": "097baaa9b8f5c049214ebfd84b4afe6ece080aced28b8a092e0a677b36d5cd34",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/fixtures/vulnerable_return_value.cpp",
+    "previous_sha256": "6f1b4ade4aa8d3ac454762360b51e4e6c05da3480fef6cd2809e8dbf5f32b8c7",
+    "git_sha256": "c7a777afcf4893572c660f3e6c53fad5d25d1c6738b737477d6748777efbefd3",
+    "reason": "final newline CRLF to Git LF"
+  },
+  {
+    "file": "research/tests/a_null_01/regression_matrix.json",
+    "previous_sha256": "b91fbb81d36e09750fc7321370477addb5c74ab5e32561a5248b1795856eb784",
+    "git_sha256": "9bd5f8db1a712dbd048d3713dd8fee6cd9e13c0b91f5024c34ff15db4596d55a",
+    "reason": "final newline CRLF to Git LF"
+  }
+]

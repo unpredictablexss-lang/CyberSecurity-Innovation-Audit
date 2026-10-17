@@ -42,6 +42,7 @@ import {
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
+import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
@@ -246,6 +247,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
           ]}
         />
       </Card>
+      <AuditPlanView plan={job.spec.audit_plan} />
       {report && (
         <Row gutter={18} className="section-gap">
           {[

@@ -7,10 +7,23 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 
-from .detectors.catalog import build_registry
+from .detectors.catalog import build_registry, default_detector_ids
 from .git_source import load_git_sources
 from .indexing import environment_fingerprint, prepare_git_context
 from .runner import run_all_with_coverage
+
+
+
+MAX_REPORT_BYTES = 64 * 1024 * 1024
+
+
+def write_report_json(report, path):
+    data = (json.dumps(report, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+    if len(data) > MAX_REPORT_BYTES:
+        raise ValueError("Report exceeds 64 MiB publication budget; narrow the scope or select fewer rules. No complete result was published; analysis remains unknown.")
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_bytes(data)
+    temporary.replace(path)
 
 
 def run_reviewed_detectors(
@@ -19,6 +32,7 @@ def run_reviewed_detectors(
     commit: str,
     includes: tuple[str, ...],
     registry,
+    *, planning_selection=False, expected_plan=None,
 ):
     """Programmatic extension point: callers supply an explicitly reviewed registry.
 
@@ -30,6 +44,16 @@ def run_reviewed_detectors(
     context, tree, inventory, parsing, sources = prepare_git_context(
         repo_dir, repository, commit, includes
     )
+    plan = None
+    if planning_selection is not False:
+        from .planning import plan_context
+        plan = plan_context(context, tree, inventory, sources, planning_selection)
+        if expected_plan is not None and plan != expected_plan:
+            raise ValueError("Frozen audit plan drifted; no scan result published")
+        if planning_selection is None:
+            if not plan["suggested_detector_ids"]:
+                raise ValueError("No applicable approved detector; analysis remains unknown")
+            registry = build_registry(tuple(plan["suggested_detector_ids"]))
     reports, sidecar = run_all_with_coverage(context, registry)
 
     # Independently re-read the same immutable objects. Do not claim the scan
@@ -85,6 +109,13 @@ def run_reviewed_detectors(
             "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation.",
         ],
     }
+    if plan is not None:
+        report["audit_plan"] = plan
+        report["plan_execution"] = {
+            "plan_sha256": plan["plan_sha256"],
+            "detectors": [{"id": result.tool, "version": result.tool_version,
+                           "status": result.status} for result in reports],
+        }
     if report["files_in_scope_without_a_claiming_detector"]:
         report["status"] = "completed_with_limitations"
         report["limitations"].append(
@@ -103,11 +134,17 @@ def run_fixed_commit_scan(
     md_out: Path,
     *,
     allow_examples=False,
+    expected_plan=None,
 ):
     if json_out.resolve() == md_out.resolve():
         raise ValueError("JSON and Markdown output paths must differ")
-    registry = build_registry(detector_ids, allow_examples=allow_examples)
-    report = run_reviewed_detectors(repo_dir, repository, commit, includes, registry)
+    registry = build_registry(default_detector_ids() if detector_ids is None else detector_ids,
+                              allow_examples=allow_examples)
+    selection = expected_plan["requested_detector_ids"] if expected_plan is not None else (
+        None if detector_ids is None else tuple(detector_ids))
+    report = run_reviewed_detectors(
+        repo_dir, repository, commit, includes, registry,
+        planning_selection=False if allow_examples else selection, expected_plan=expected_plan)
 
     lines = [
         "# OHScanner M2 reviewed-detector execution",
@@ -177,10 +214,16 @@ def run_fixed_commit_scan(
             lines.append(f"- `{result['tool']}`: {limitation}")
     lines.append("")
 
+    if "audit_plan" in report:
+        plan = report["audit_plan"]
+        lines.extend(["## Frozen execution plan", "",
+                      f"- Planner: {plan['planner_version']}; mode: {plan['selection_mode']}",
+                      f"- Plan SHA-256: `{plan['plan_sha256']}`",
+                      "- Language matching plans attempts; actual coverage remains in the results above.", ""])
     # Source data and scanner output are only written after successful
     # re-verification of the fixed commit's Git blob inventory.
     json_out.parent.mkdir(parents=True, exist_ok=True)
     md_out.parent.mkdir(parents=True, exist_ok=True)
-    json_out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    write_report_json(report, json_out)
     md_out.write_text("\n".join(lines), encoding="utf-8")
     return report

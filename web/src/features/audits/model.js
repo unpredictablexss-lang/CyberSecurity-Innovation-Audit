@@ -1,6 +1,6 @@
 // Request builders match the existing strict /api/v1 request schemas.
 export function approvedDetectorIds(detectors) {
-  const approved = detectors.filter((d) => d.kind === "research_candidate" &&
+  const approved = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled !== false &&
     typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
     Array.isArray(d.supported_languages) && d.supported_languages.length);
   const ids = approved.map((d) => d.id).sort();
@@ -29,7 +29,12 @@ function common(values, detectors) {
 }
 export function snapshotPayload(values, detectors) {
   if (!values.revision?.trim()) throw new Error("请选择或填写分支、Tag 或完整 Commit。");
-  return { ...common(values, detectors), revision: values.revision.trim() };
+  const { detector_ids, ...payload } = common(values, detectors);
+  return { ...payload, revision: values.revision.trim() };
+}
+export function planPayload(values, detectors) {
+  const { timeout_seconds, memory_mb, ...payload } = snapshotPayload(values, detectors);
+  return payload;
 }
 export function datePreviewPayload(values) {
   const { repository_id, branch, start, end, timezone } = values;

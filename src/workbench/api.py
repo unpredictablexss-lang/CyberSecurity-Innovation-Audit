@@ -26,13 +26,18 @@ class RepositoryInput(StrictModel):
     path: str = Field(min_length=1, max_length=1000)
 
 
-class ScanInput(StrictModel):
+class AuditPlanInput(StrictModel):
     repository_id: str
     revision: str = Field(min_length=1, max_length=200)
     include_paths: list[str] = Field(
         default_factory=lambda: ["."], min_length=1, max_length=100
     )
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] | None = Field(default=None, max_length=16)
+
+
+class ScanInput(AuditPlanInput):
+    detector_ids: list[str] | None = Field(default=None, min_length=1, max_length=16)
+    expected_plan_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
     timeout_seconds: int = Field(default=300, ge=1, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -148,6 +153,7 @@ def create_app(settings=None):
             "target_roots": [str(p) for p in settings.target_roots],
             "capabilities": {
                 "snapshot_scan": True,
+                "audit_planning": True,
                 "operations_framework": True,
                 "source_sync": True,
                 "revision_range": True,
@@ -190,6 +196,13 @@ def create_app(settings=None):
     def scans():
         return store.jobs()
 
+    @app.post("/api/v1/audit-plans")
+    def audit_plan(body: AuditPlanInput):
+        repo = store.repository(body.repository_id)
+        service.check_repository(settings, repo["path"])
+        _, plan = service.audit_plan(repo, body.revision, body.include_paths, body.detector_ids)
+        return plan
+
     @app.post("/api/v1/scans", status_code=201)
     def scan(body: ScanInput):
         repo = store.repository(body.repository_id)
@@ -202,6 +215,8 @@ def create_app(settings=None):
             body.timeout_seconds,
             body.memory_mb,
         )
+        if body.expected_plan_sha256 and body.expected_plan_sha256 != spec["plan_sha256"]:
+            raise ValueError("Source or rule plan changed since preview; refresh the plan before scanning")
         return store.create_job(repo["id"], spec)
 
     @app.get("/api/v1/scans/{key}")

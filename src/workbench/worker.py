@@ -110,6 +110,9 @@ class Worker:
                             "completed_with_limitations",
                         }:
                             raise ValueError("invalid scanner task status")
+                        if job["spec"].get("audit_plan") is not None:
+                            if report.get("audit_plan") != job["spec"]["audit_plan"]:
+                                raise ValueError("published audit plan differs from queued plan")
                         status, digest = report["status"], sha(data)
                         manifest = {
                             "schema_version": 1,

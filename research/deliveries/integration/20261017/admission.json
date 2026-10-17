@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "default_evidence": "candidate/unassessed",
+  "source_model_gate": "repo/commit and per-file facts remain mandatory",
+  "null": {
+    "registered": true,
+    "automatic": false,
+    "reason": "First real 870-file scan yielded 15731 unknown-nullability candidates and exceeded the old indented report budget; a bounded scope requires explicit review/selection. This is not an FP/precision estimate."
+  },
+  "c": {
+    "source_sha": "33242fbd2b58e2f510fa74f1521e247fea08db27",
+    "registered": false,
+    "reason": "Production adapter requires complete AST; real historical files remain partial. Function-local dependency/contamination RFC not approved; no rewriting parse status or dropping required facts."
+  },
+  "d": {
+    "source_sha": "d64d1787250fdff0f912c2733b2739cf6c78ff51",
+    "registered": false,
+    "reason": "Default source model binds only communication_dsoftbus@0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132; 9-file result 0 complete/3 partial/6 not_analyzed is not general coverage."
+  },
+  "confirmed_product_vulnerabilities": 0
+}
