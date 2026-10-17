@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "local_recent_15_day_increment",
+  "status": "completed_with_limitations",
+  "window": {
+    "since": "2026-10-02T00:00:00+08:00",
+    "until": "2026-10-18T00:00:00+08:00"
+  },
+  "scope": {
+    "mode": "locally_available_repositories",
+    "repository_count": 12,
+    "all_community_status": "not_executed",
+    "reason": "Only locally cloned OpenHarmony repositories were authorized; no additional repositories were fetched."
+  },
+  "repositories": [
+    {
+      "repository": "communication_dsoftbus",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/communication_dsoftbus",
+      "commit_count": 1,
+      "selected_unique_files": 36,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {
+        "complete": 24,
+        "partial": 12
+      },
+      "commits": [
+        {
+          "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+          "date": "2026-10-11T10:10:28+08:00",
+          "subject": "!12589 merge master into master",
+          "source_files": 36,
+          "candidate_count": 0
+        }
+      ],
+      "wall_seconds": 2.6763256360000014
+    },
+    {
+      "repository": "communication_ipc",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/communication_ipc",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.04680644500001563
+    },
+    {
+      "repository": "distributeddatamgr_kv_store",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/distributeddatamgr_kv_store",
+      "commit_count": 1,
+      "selected_unique_files": 35,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {
+        "complete": 18,
+        "partial": 17
+      },
+      "commits": [
+        {
+          "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+          "date": "2026-10-08T15:11:42+08:00",
+          "subject": "!2705 merge kv into master",
+          "source_files": 35,
+          "candidate_count": 0
+        }
+      ],
+      "wall_seconds": 2.8394673309999234
+    },
+    {
+      "repository": "inputmethod_imf",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/inputmethod_imf",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.2844987429999719
+    },
+    {
+      "repository": "multimedia_camera_framework",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/multimedia_camera_framework",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.06969626099999005
+    },
+    {
+      "repository": "multimedia_player_framework",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/multimedia_player_framework",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.0671750559999964
+    },
+    {
+      "repository": "notification_common_event_service",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/notification_common_event_service",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.05970653100007439
+    },
+    {
+      "repository": "resourceschedule_background_task_mgr",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/resourceschedule_background_task_mgr",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.058648331999961556
+    },
+    {
+      "repository": "security_access_token",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/security_access_token",
+      "commit_count": 1,
+      "selected_unique_files": 19,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {
+        "complete": 19
+      },
+      "commits": [
+        {
+          "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+          "date": "2026-10-07T11:16:35+08:00",
+          "subject": "!5066 merge 0921 into master",
+          "source_files": 19,
+          "candidate_count": 0
+        }
+      ],
+      "wall_seconds": 1.1829114660000641
+    },
+    {
+      "repository": "telephony_call_manager",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/telephony_call_manager",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.0770602240000926
+    },
+    {
+      "repository": "update_updateservice",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/update_updateservice",
+      "commit_count": 0,
+      "selected_unique_files": 0,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {},
+      "commits": [],
+      "wall_seconds": 0.051653129999976954
+    },
+    {
+      "repository": "window_window_manager",
+      "path": "/mnt/e/网安/audit-sources-20261014/home/audit/openharmony-audit/perf-corpus/window_window_manager",
+      "commit_count": 1,
+      "selected_unique_files": 28,
+      "candidate_counts_by_detector": {
+        "ohscanner.cpp.bounds": 0,
+        "ohscanner.cpp.integer_bounds": 0,
+        "ohscanner.cpp.resource_lifetime": 0,
+        "ohscanner.cpp.unsafe_memory_call": 0
+      },
+      "parse_counts": {
+        "complete": 11,
+        "partial": 17
+      },
+      "commits": [
+        {
+          "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+          "date": "2026-10-08T11:45:03+08:00",
+          "subject": "!20325 merge interceptMaximize into master",
+          "source_files": 28,
+          "candidate_count": 0
+        }
+      ],
+      "wall_seconds": 1.9987890629998901
+    }
+  ],
+  "totals": {
+    "commits": 4,
+    "selected_unique_files_sum": 118,
+    "wall_seconds": 9.412738217999959
+  },
+  "limitations": [
+    "Increment candidates are not vulnerabilities and no Precision/Recall is computed.",
+    "A commit with zero changed supported source files is not evidence of safety.",
+    "This is not an 807-repository or whole-community capacity run."
+  ]
+}

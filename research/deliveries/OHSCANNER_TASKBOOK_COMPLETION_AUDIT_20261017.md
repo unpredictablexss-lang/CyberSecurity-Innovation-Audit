@@ -24,7 +24,7 @@ The taskbook is **not fully complete**. Automatic selection, v2 fact slots, Code
 | B-3 ArkTS/JS frontends and four rule families | `language.py` lexical frontend and `script_security_detector.py` rules exist with controls and pinned scan; product/manifest semantics remain open | Partial |
 | Public contracts and v2 compatibility | v1 preserved; `build_fact_view_v2` exports symbol/CFG/range/call/taint/unknown slots and shared facts now carry v2 | Partial |
 | Automatic detector selection | Catalog/API/Web/CLI omit selection to auto-select approved security detectors; example remains opt-in | Complete for ordinary scan entry |
-| Repository/all-community/15-day/807-scale plan | Existing batch/halfyear/perf components only; no current all-community/recent-15-day execution | Incomplete |
+| Repository/all-community/15-day/807-scale plan | Local 12-repository 15-day increment executed (4 commits / 118 changed source files); all-community/807 scale remains not executed | Partial |
 | Agent/tool evidence foundation | Historical R0/R1/R2 artifacts exist; no new taskbook-wide Agent completion | Partial |
 | E1 rule controls | New A detectors have positive/fixed/safe/unrelated/unknown controls | Complete for A detectors |
 | E2 real fixed-source comparison | 5 pinned components and old/new comparison exist | Partial for A only |
