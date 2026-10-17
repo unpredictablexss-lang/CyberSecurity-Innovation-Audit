@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-17",
+  "development_head": "f11d5fdf4ab01a345a1ffb702b18edb6b5109a38",
+  "detector_version": "0.2.0",
+  "source_model_version": "0.1.0",
+  "code_sha256": {
+    "src/ohscanner/detectors/data/sensitive_exposure.py": "63f6ab9a87ce100233ae73629cae3f894a6a3e768154d4dd9c1d54d40ff303b7",
+    "src/ohscanner/detectors/data/models.py": "ddfa2e262accb12f70f878265125bc80c79461935cffd599e8048222bac1fdca",
+    "tests/detectors/data/test_d2_semantics.py": "bd781cfcfe2edd96a1c905ba601364e12ca0b65352d097730e8e0bce619eeccc",
+    "tests/fixtures/data_sensitive/d2_cases.json": "18f733a2ea4cbd3f49e97c432610794571642ef6e8b9207e6fe956c2bd83cd19"
+  },
+  "development_controls": {
+    "d1": 32,
+    "d2": 39
+  },
+  "independent_holdout_executed": false,
+  "note": "Freeze file identifies tested working code; final commit will bind same hashes. Any further algorithm/model change invalidates this freeze."
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "id": "return_branch_fixed",
+    "file": "d2_return_branch_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "live_branch_positive",
+    "file": "d2_live_branch_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "loop_unknown",
+    "file": "d2_loop_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "if_else_return_fixed",
+    "file": "d2_if_else_return_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "else_live_positive",
+    "file": "d2_else_live_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "both_return_fixed",
+    "file": "d2_both_return_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "nested_block_return_fixed",
+    "file": "d2_nested_block_return_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "single_return_fixed",
+    "file": "d2_single_return_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "single_else_positive",
+    "file": "d2_single_else_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "nested_if_positive",
+    "file": "d2_nested_if_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "scope_shadow_fixed",
+    "file": "d2_scope_shadow_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "scope_shadow_positive",
+    "file": "d2_scope_shadow_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "overwrite_fixed",
+    "file": "d2_overwrite_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "after_log_fixed",
+    "file": "d2_after_log_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "log_before_return_positive",
+    "file": "d2_log_before_return_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "shortcircuit_positive",
+    "file": "d2_shortcircuit_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "shortcircuit_false_fixed",
+    "file": "d2_shortcircuit_false_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "shortcircuit_declaration_positive",
+    "file": "d2_shortcircuit_declaration_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "conditional_value_positive",
+    "file": "d2_conditional_value_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "conditional_assignment_positive",
+    "file": "d2_conditional_assignment_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "unknown_wrapper",
+    "file": "d2_unknown_wrapper.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "unknown_mutation",
+    "file": "d2_unknown_mutation.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "mixed_slots_fixed",
+    "file": "d2_mixed_slots_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "mixed_slots_positive",
+    "file": "d2_mixed_slots_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "snprintf_s_positive",
+    "file": "d2_snprintf_s_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "strcpy_s_positive",
+    "file": "d2_strcpy_s_positive.cpp",
+    "expected_candidates": 1,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "format_status_fixed",
+    "file": "d2_format_status_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "local_sink_pointer_unknown",
+    "file": "d2_local_sink_pointer_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "positional_unknown",
+    "file": "d2_positional_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "pri_unknown",
+    "file": "d2_pri_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "dynamic_unknown",
+    "file": "d2_dynamic_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "break_exit_unknown",
+    "file": "d2_break_exit_unknown.cpp",
+    "expected_candidates": 1,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "return_expression_unknown",
+    "file": "d2_return_expression_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "copy_wrong_arity_unknown",
+    "file": "d2_copy_wrong_arity_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "source_wrong_arity_unknown",
+    "file": "d2_source_wrong_arity_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "copy_status_fixed",
+    "file": "d2_copy_status_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": false,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "local_copy_pointer_unknown",
+    "file": "d2_local_copy_pointer_unknown.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "else_overwrite_fixed",
+    "file": "d2_else_overwrite_fixed.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  },
+  {
+    "id": "both_exit_if_end",
+    "file": "d2_both_exit_if_end.cpp",
+    "expected_candidates": 0,
+    "requires_partial": true,
+    "split": "d2_design_regression"
+  }
+]

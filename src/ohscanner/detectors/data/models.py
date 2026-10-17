@@ -1,6 +1,8 @@
 """Explicit source/sink models; no sensitive-name heuristics or catalog registration."""
 from dataclasses import dataclass
 
+SOURCE_MODEL_VERSION = '0.1.0'  # D2 keeps D1 source/sink semantics and pinned scope.
+
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
 
 @dataclass(frozen=True)
