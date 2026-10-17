@@ -30,7 +30,7 @@ class RangeRequest(Strict):
     include_paths: list[str] = Field(
         default_factory=lambda: ["."], min_length=1, max_length=MAX_INCLUDE_PATHS
     )
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] | None = Field(default=None, max_length=10)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -44,7 +44,7 @@ class DateRangeRequest(Strict):
     include_paths: list[str] = Field(
         default_factory=lambda: ["."], min_length=1, max_length=MAX_INCLUDE_PATHS
     )
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] | None = Field(default=None, max_length=10)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 
@@ -56,7 +56,7 @@ class MatrixRequest(Strict):
     include_paths: list[str] = Field(
         default_factory=lambda: ["."], min_length=1, max_length=MAX_INCLUDE_PATHS
     )
-    detector_ids: list[str] = Field(min_length=1, max_length=10)
+    detector_ids: list[str] | None = Field(default=None, max_length=10)
     timeout_seconds: int = Field(default=600, ge=30, le=3600)
     memory_mb: int = Field(default=2048, ge=256, le=8192)
 

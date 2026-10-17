@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "ohscanner_taskbook_source_hashes",
+  "files": [
+    {
+      "path": "src/ohscanner/language.py",
+      "bytes": 3720,
+      "sha256": "e32f3965e46951cc8be585d4fc72eedfe8ee7d469108bc3eb8e423de67c9f9f9"
+    },
+    {
+      "path": "src/ohscanner/detectors/script_security_detector.py",
+      "bytes": 6956,
+      "sha256": "313a6e8a4e8a6f72b6958f200028f92ffe0a8f5eae635adc6a4bf3339621b211"
+    },
+    {
+      "path": "src/ohscanner/facts.py",
+      "bytes": 6712,
+      "sha256": "e79e587b481f28dc8ffed7ed648afb2359eb359802cb5f0c66ebc91e4b12e47a"
+    },
+    {
+      "path": "src/ohscanner/frontend.py",
+      "bytes": 2469,
+      "sha256": "5d6ad30b7983fac7604d60e8c745ac40671f05a8c67e2a62c8e3b2eaf91ca14e"
+    },
+    {
+      "path": "src/ohscanner/indexing.py",
+      "bytes": 6959,
+      "sha256": "a55e04a0d3bdad304823438866d6c6591fde6cd6f5f1746d6b26f6549eadee4a"
+    },
+    {
+      "path": "src/ohscanner/detectors/catalog.py",
+      "bytes": 3075,
+      "sha256": "9cdfcbc9bedbe4f39a0f9836527998d07f43ed03cb5b5bb649ab7668cf8f9e7a"
+    },
+    {
+      "path": "src/ohscanner/execution.py",
+      "bytes": 8707,
+      "sha256": "0be5c77e06f2006b315d634b8370032dcd7066aa923f2d5660ecee4308036f85"
+    },
+    {
+      "path": "src/workbench/service.py",
+      "bytes": 13275,
+      "sha256": "76f965cb82e197f90a6db008521367924c6d95207864e674d36e9f2e48fa6000"
+    },
+    {
+      "path": "src/workbench/api.py",
+      "bytes": 17673,
+      "sha256": "f0753c3feff337b84d64d860e440877b0833fc3f4b98d3f9a722252362d51710"
+    },
+    {
+      "path": "src/workbench/operations_api.py",
+      "bytes": 14756,
+      "sha256": "08d20305f1d85277aaf73b9c03b7d2d80ff1377225e72b0edd5089f5f3c577f6"
+    },
+    {
+      "path": "src/cli/main.py",
+      "bytes": 36843,
+      "sha256": "7e867c9f32f23ade744717632c498f0361f6568be1bb565a54e79db9adff92eb"
+    },
+    {
+      "path": "src/ohscanner/detectors/cpp/memory_safety.py",
+      "bytes": 17744,
+      "sha256": "1d060929a5252afadd39ae7be50c08fb88757df02bbecf2f5afd124c6125d101"
+    },
+    {
+      "path": "src/ohscanner/detectors/cpp/bounds_detector.py",
+      "bytes": 14551,
+      "sha256": "de726036449cfcaaa31d86504a5b0266749b0063014885b4ba42579159694f71"
+    },
+    {
+      "path": "scripts/run_cross_ab_parcel_case.py",
+      "bytes": 4580,
+      "sha256": "904440d142f8b7632d8ccc8d3c7638a7aedcec8d52f9f0ac84015a9da3302fe4"
+    },
+    {
+      "path": "scripts/run_script_security_scan.py",
+      "bytes": 4640,
+      "sha256": "f17612a1ee7519a4b3f983b94b2693ad63e383544a2b947d7529550017a2442e"
+    },
+    {
+      "path": "tests/test_fact_view_v2.py",
+      "bytes": 2343,
+      "sha256": "70d572f46f43d4e82608ad716675b4ca97205f8a6ec6f90bf2037d431780295d"
+    },
+    {
+      "path": "tests/test_cross_ab_parcel_case.py",
+      "bytes": 1655,
+      "sha256": "3a89e20149cf27bf5c319da4703fbdfad66284a39fe9f946ba21e010e9facff4"
+    },
+    {
+      "path": "tests/detectors/test_script_security_detector.py",
+      "bytes": 4105,
+      "sha256": "ebd59ce6c633463cfa281b01d90da91772a803ad51f36210a44842f5ce5bd3d7"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "script_security_pinned_component_scan",
+  "status": "completed",
+  "component": "window_window_manager",
+  "repository": "openharmony/window_window_manager",
+  "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+  "git_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+  "snapshot_sha256": "b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9",
+  "coverage": {
+    "parsing_status": {
+      "complete": 844,
+      "partial": 268
+    },
+    "languages": {
+      "arkts": 20,
+      "cpp": 1079,
+      "js": 7,
+      "ts": 6
+    }
+  },
+  "candidate_count": 0,
+  "findings": [],
+  "limitations": [
+    "Candidate presence is not a product vulnerability or permission bypass.",
+    "Lexical JS/TS/ArkTS analysis only; module graph, types, manifests and runtime dispatch remain unknown.",
+    "Partial syntax is unknown, never safe."
+  ],
+  "wall_seconds": 14.717488787999969
+}

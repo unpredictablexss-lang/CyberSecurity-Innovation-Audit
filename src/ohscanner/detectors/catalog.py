@@ -31,6 +31,27 @@ _APPROVED = {
 }
 
 
+def default_detector_ids():
+    """Approved security research detectors selected for ordinary scans.
+
+    The example detector is intentionally excluded and must remain an explicit
+    demonstration-only choice.
+    """
+    return tuple(
+        name for name, spec in sorted(_APPROVED.items())
+        if spec["kind"] != "example"
+    )
+
+
+def resolve_detector_ids(detector_ids=None):
+    """Resolve an optional user selection to an explicit immutable ID tuple."""
+    if detector_ids is None or len(tuple(detector_ids)) == 0:
+        return default_detector_ids()
+    names = tuple(detector_ids)
+    if len(names) != len(set(names)):
+        raise ValueError("duplicate detector identifier")
+    return names
+
 def catalog_metadata():
     return {
         name: {"kind": spec["kind"], "summary": spec["summary"]}

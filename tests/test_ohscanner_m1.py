@@ -57,9 +57,10 @@ class GitObjectIndexTests(unittest.TestCase):
         self.assertEqual(coverage["languages"], {"arkts": 1, "cpp": 1})
         indexed = {unit.path: unit for unit in context.units}
         self.assertEqual(indexed["src/a.cpp"].parse_status, "complete")
-        self.assertEqual(indexed["src/bridge.ets"].parse_status, "not_run")
+        self.assertEqual(indexed["src/bridge.ets"].parse_status, "complete")
         self.assertGreaterEqual(len(context.shared_facts["ast"]["src/a.cpp"]["functions"]), 1)
-        self.assertNotIn("src/bridge.ets", context.shared_facts["ast"])
+        self.assertIn("src/bridge.ets", context.shared_facts["ast"])
+        self.assertEqual(context.shared_facts["facts_v2"]["src/bridge.ets"]["schema_version"], 2)
         self.assertEqual([s.path for s in sources], sorted(s.path for s in sources))
 
     def test_pinned_commit_ignores_worktree_and_new_head(self):

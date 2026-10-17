@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "script_security_pinned_component_scan",
+  "status": "completed",
+  "component": "distributeddatamgr_kv_store",
+  "repository": "openharmony/distributeddatamgr_kv_store",
+  "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+  "git_tree": "3b92c53fde616d5a3f9487b0c295670a42c63023",
+  "snapshot_sha256": "a7917342d0733f226781468dab51d85f793f27213ba4ff7a1c5db708af4a1ff3",
+  "coverage": {
+    "parsing_status": {
+      "complete": 1136,
+      "partial": 310
+    },
+    "languages": {
+      "c": 5,
+      "cpp": 1439,
+      "js": 2
+    }
+  },
+  "candidate_count": 0,
+  "findings": [],
+  "limitations": [
+    "Candidate presence is not a product vulnerability or permission bypass.",
+    "Lexical JS/TS/ArkTS analysis only; module graph, types, manifests and runtime dispatch remain unknown.",
+    "Partial syntax is unknown, never safe."
+  ],
+  "wall_seconds": 7.6660014019998926
+}

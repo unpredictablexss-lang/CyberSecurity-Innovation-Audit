@@ -11,6 +11,7 @@ import json
 from src.parser.ast import parse_source
 from .contracts import SourceUnit
 from .git_source import GitSource
+from .language import parse_script_text
 
 
 def index_sources(sources: tuple[GitSource, ...]):
@@ -37,7 +38,15 @@ def index_sources(sources: tuple[GitSource, ...]):
                 ast_summary[source.path] = {"parse_status": "failed",
                                             "functions": [], "calls": [], "variables": []}
         else:
-            issues = ["Language frontend unavailable in M1; source indexed as text only"]
+            index = parse_script_text(text, source.language)
+            status = index["parse_status"]
+            issues = [json.dumps(item, sort_keys=True) for item in index["parse_issues"]]
+            ast_summary[source.path] = {
+                "parse_status": status,
+                "functions": index["functions"],
+                "calls": index["calls"],
+                "variables": index["variables"],
+            }
         units.append(SourceUnit(
             path=source.path, language=source.language, text=text,
             sha256=sha256(source.data).hexdigest(),

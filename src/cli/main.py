@@ -162,8 +162,8 @@ def main() -> None:
     m2_parser.add_argument("--commit", required=True, help="Complete immutable Git commit SHA")
     m2_parser.add_argument("--include", action="append", default=None,
                            help="Repository-relative path or prefix; repeatable")
-    m2_parser.add_argument("--detector", action="append", required=True,
-                           help="Explicit first-party detector ID (e.g. ohscanner.interface.ipc); repeatable. Not an import path.")
+    m2_parser.add_argument("--detector", action="append", required=False, default=None,
+                           help="Explicit first-party detector ID; repeatable. Omit to auto-select approved security detectors. Not an import path.")
     m2_parser.add_argument("--allow-example-detectors", action="store_true",
                            help="Acknowledge that 'ohscanner.example.*' is a non-security demonstration")
     m2_parser.add_argument("--json-out", default="outputs/reports/ohscanner_m2.json")
@@ -419,7 +419,7 @@ def main() -> None:
                 repository=args.repository,
                 commit=args.commit,
                 includes=tuple(args.include or ["."]),
-                detector_ids=tuple(args.detector),
+                detector_ids=tuple(args.detector or ()),
                 json_out=Path(args.json_out),
                 md_out=Path(args.md_out),
                 allow_examples=args.allow_example_detectors,
@@ -446,7 +446,7 @@ def main() -> None:
                 start=args.start,
                 end=args.end,
                 timezone=args.timezone,
-                detector_ids=tuple(args.detector),
+                detector_ids=tuple(args.detector or ()),
                 out_dir=Path(args.out_dir),
                 max_commits=args.max_commits,
                 argv=tuple(sys.argv),

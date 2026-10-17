@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "script_security_pinned_component_scan",
+  "status": "completed",
+  "component": "security_access_token",
+  "repository": "openharmony/security_access_token",
+  "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+  "git_tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+  "snapshot_sha256": "ed782acd6668c44b92c66e1dfa27e2641c8abfb5bc2bd4d5af4a274377332a8d",
+  "coverage": {
+    "parsing_status": {
+      "complete": 494,
+      "partial": 56
+    },
+    "languages": {
+      "arkts": 5,
+      "c": 6,
+      "cpp": 539
+    }
+  },
+  "candidate_count": 0,
+  "findings": [],
+  "limitations": [
+    "Candidate presence is not a product vulnerability or permission bypass.",
+    "Lexical JS/TS/ArkTS analysis only; module graph, types, manifests and runtime dispatch remain unknown.",
+    "Partial syntax is unknown, never safe."
+  ],
+  "wall_seconds": 2.310806298999978
+}

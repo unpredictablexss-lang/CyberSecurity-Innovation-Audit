@@ -192,6 +192,11 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
     arrays, _integers, constants = declarations(masked)
     guards = guard_shapes(masked, functions)
     nonnegative = _nonnegative_symbols(masked)
+    sizeof_values = {
+        name: shape.capacity * shape.element_size
+        for name, shape in arrays.items()
+        if shape.capacity is not None and shape.element_size is not None
+    }
 
     for match in re.finditer(r"\b(?P<name>memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\(", masked):
         span = call_argument_span(masked, match.start())
@@ -223,7 +228,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if _safe_copy_length(length_expression, destination, arrays):
             continue
         explicit_size = _size_of_value(length_expression, arrays)
-        constraints = guard_constraints(guards, match.start(), constants)
+        constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
         interval = expression_interval(length_expression, constants, constraints)
         if explicit_size is not None and explicit_size <= capacity_bytes:
             continue
@@ -252,7 +257,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if shape is None or shape.capacity is None:
             continue
         index_expression = match.group("index").strip()
-        constraints = guard_constraints(guards, match.start(), constants)
+        constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
         interval = expression_interval(index_expression, constants, constraints)
         safe_upper = interval.maximum is not None and interval.maximum < shape.capacity
         safe_lower = interval.is_nonnegative() or index_expression in nonnegative

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "script_security_pinned_component_scan",
+  "status": "completed",
+  "component": "update_updateservice",
+  "repository": "openharmony/update_updateservice",
+  "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+  "git_tree": "b367991eed0272f54fe5ae712d18e24377d57949",
+  "snapshot_sha256": "3eac699e183d0c08368ce18374ba039fbf4a165cb6f9ac56e43f65a9a774c6c3",
+  "coverage": {
+    "parsing_status": {
+      "complete": 188,
+      "partial": 31
+    },
+    "languages": {
+      "c": 1,
+      "cpp": 217,
+      "ts": 1
+    }
+  },
+  "candidate_count": 0,
+  "findings": [],
+  "limitations": [
+    "Candidate presence is not a product vulnerability or permission bypass.",
+    "Lexical JS/TS/ArkTS analysis only; module graph, types, manifests and runtime dispatch remain unknown.",
+    "Partial syntax is unknown, never safe."
+  ],
+  "wall_seconds": 0.674077159000035
+}

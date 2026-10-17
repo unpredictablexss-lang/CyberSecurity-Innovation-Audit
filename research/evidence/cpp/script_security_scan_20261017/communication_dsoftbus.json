@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "script_security_pinned_component_scan",
+  "status": "blocked",
+  "component": "communication_dsoftbus",
+  "repository": "openharmony/communication_dsoftbus",
+  "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+  "git_tree": "f8a14c30ef815217fa4d267939cff84db1fd5057",
+  "snapshot_sha256": "5c8702d6cafab30fdfc12c2b146f23a9afc33fcf296b45d75a8a6a1b77b1dbe7",
+  "coverage": {
+    "parsing_status": {
+      "complete": 729,
+      "partial": 927
+    },
+    "languages": {
+      "c": 631,
+      "cpp": 1025
+    }
+  },
+  "candidate_count": 0,
+  "findings": [],
+  "limitations": [
+    "not_applicable: no JS/TS/ArkTS source."
+  ],
+  "wall_seconds": 9.60190318299999
+}

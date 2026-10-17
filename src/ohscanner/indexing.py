@@ -8,7 +8,7 @@ import subprocess
 
 from .contracts import ScanContext, ScanRequest
 from .fixture import snapshot_digest
-from .facts import build_syntax_facts
+from .facts import build_fact_view_v2, build_syntax_facts
 from .frontend import index_sources
 from .git_source import load_git_sources
 
@@ -52,6 +52,7 @@ def prepare_git_context(repo_dir: Path, repository: str, commit: str,
         shared_facts={
             "ast": ast,
             "facts_v1": build_syntax_facts(ast),
+            "facts_v2": build_fact_view_v2(ast),
             "coverage": coverage,
             # Exact Git blob binding for A-CCR-03 occurrence records. The
             # identity layer records it; it never verifies repository ownership.

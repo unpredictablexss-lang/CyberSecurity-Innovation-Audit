@@ -32,7 +32,7 @@ export default function OperationsPage() {
   };
   const common = <>
     <Form.Item name="repository_id" label="已登记仓库" rules={[{ required: true }]}><Select data-testid="repository-select" options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))} /></Form.Item>
-    <Form.Item name="detector_ids" label="检测器" rules={[{ required: true }]}><Select data-testid="detector-select" mode="multiple" options={detectors.map((d) => ({ value: d.id, label: d.id }))} /></Form.Item>
+    <Form.Item name="detector_ids" label="检测器（可选；留空自动）"><Select data-testid="detector-select" mode="multiple" options={detectors.map((d) => ({ value: d.id, label: d.id }))} /></Form.Item>
     <Form.Item name="include_paths_text" label="纳入路径（逗号分隔）" initialValue="."><Input data-testid="include-paths" /></Form.Item>
     <Form.Item name="timeout_seconds" label="单端点超时（秒）" initialValue={600}><InputNumber min={30} max={3600} /></Form.Item>
     <Form.Item name="memory_mb" label="内存上限（MiB）" initialValue={2048}><InputNumber min={256} max={8192} /></Form.Item>

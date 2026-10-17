@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "cross_a_b_parcel_length_case",
+  "status": "completed_with_limitations",
+  "cases": [
+    {
+      "category": "positive",
+      "source": {
+        "path": "tests/fixtures/ipc/parcel_positive.cpp",
+        "sha256": "8e9efb7708d6a8f5955b6dd3f58707449841f00e363c6fe87552543a90d247cc",
+        "parse_status": "complete"
+      },
+      "a_bounds_findings": [
+        {
+          "file": "tests/fixtures/ipc/parcel_positive.cpp",
+          "line": 6,
+          "rule_id": "ohcpp-memory-bounds-copy-candidate-001",
+          "message": "Candidate only: `memcpy` length `n` has an unproven upper bound against fixed array `dst` (64 bytes). Byte/element units, aliases and complete guard dominance remain unknown.",
+          "evidence_type": "syntax",
+          "column": 39,
+          "candidate_cwe": "CWE-119",
+          "symbol": "dst",
+          "evidence_obligations": [
+            {
+              "kind": "capacity_and_alias_identity",
+              "description": "Bind the destination/index object to its exact storage, byte width and aliases.",
+              "status": "unknown"
+            },
+            {
+              "kind": "guard_dominance",
+              "description": "Prove every violating path is dominated by complete lower/upper length guards.",
+              "status": "unknown"
+            },
+            {
+              "kind": "cross_function_and_macro_context",
+              "description": "Resolve parameters, wrappers, macros, templates and compile-time constants.",
+              "status": "missing"
+            },
+            {
+              "kind": "entry_or_privilege_boundary",
+              "description": "Establish a realistic reachable entry and privilege boundary.",
+              "status": "missing"
+            },
+            {
+              "kind": "attacker_control",
+              "description": "Show attacker influence over the index or copy length.",
+              "status": "missing"
+            },
+            {
+              "kind": "trigger_conditions",
+              "description": "Reproduce a concrete violating path in an isolated harness.",
+              "status": "missing"
+            },
+            {
+              "kind": "cia_impact",
+              "description": "Establish concrete confidentiality, integrity or availability impact.",
+              "status": "missing"
+            }
+          ],
+          "consequence_impact": "memory_safety",
+          "consequence_cwe": "CWE-787",
+          "source_sha256": "8e9efb7708d6a8f5955b6dd3f58707449841f00e363c6fe87552543a90d247cc",
+          "rule_version": "0.2.0",
+          "rule_lineage_id": "A-BOF-01:ohcpp-memory-bounds-candidate",
+          "symbol_identity": null,
+          "ast_fingerprint": null,
+          "identity_quality": "partial"
+        }
+      ],
+      "a_integer_findings": [],
+      "b_ipc_findings": [
+        {
+          "file": "tests/fixtures/ipc/parcel_positive.cpp",
+          "line": 6,
+          "rule_id": "ipc.parcel.copy-range",
+          "message": "DATA-01 candidate: Parcel-derived copy length n lacks matched nonnegative/destination-capacity bounds. Entry=Fixture_parcel_positive::OnRemoteRequest; possible consequence (not established): an out-of-bounds read may return adjacent memory to the caller [out_of_bounds_read CWE-125]; path=((5, 'data.ReadInterfaceToken() != GetDescriptor() => False'),)",
+          "evidence_type": "syntax",
+          "column": null,
+          "candidate_cwe": "CWE-20",
+          "symbol": "Fixture_parcel_positive::OnRemoteRequest",
+          "evidence_obligations": [
+            {
+              "kind": "entry_reachability",
+              "description": "Verify actual caller reachability and product build/macro conditions.",
+              "status": "unknown"
+            },
+            {
+              "kind": "callee_and_policy",
+              "description": "Verify overload/receiver binding, required permission and any upstream guard.",
+              "status": "unknown"
+            },
+            {
+              "kind": "security_impact",
+              "description": "Independently review attacker control, trust boundary and concrete effect.",
+              "status": "unknown"
+            },
+            {
+              "kind": "consequence",
+              "description": "Establish what the modeled path can actually expose: which data, capability or state the caller reaches, and to whom. A modeled read of a sensitive API does not by itself show that anything was returned to an unauthorized caller. The candidate CWE is the mechanism; the consequence CWE stated in the message is a possibility, not a demonstrated effect.",
+              "status": "unknown"
+            }
+          ],
+          "consequence_impact": "out_of_bounds_read",
+          "consequence_cwe": "CWE-125",
+          "source_sha256": "",
+          "rule_version": null,
+          "rule_lineage_id": null,
+          "symbol_identity": null,
+          "ast_fingerprint": null,
+          "identity_quality": "unknown"
+        }
+      ],
+      "facts_v2": {
+        "tests/fixtures/ipc/parcel_positive.cpp": {
+          "schema_version": 2,
+          "parse_status": "complete",
+          "symbols": [
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "name": "OnRemoteRequest",
+              "kind": "function",
+              "qualified_name": "OnRemoteRequest",
+              "type_text": "",
+              "resolution_status": "syntax_only"
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "name": "dst",
+              "kind": "variable",
+              "qualified_name": "dst",
+              "type_text": "",
+              "resolution_status": "syntax_only"
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "name": "n",
+              "kind": "variable",
+              "qualified_name": "n",
+              "type_text": "",
+              "resolution_status": "syntax_only"
+            }
+          ],
+          "cfg_edges": [],
+          "ranges": [
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "symbol": "n",
+              "minimum": 0,
+              "maximum": null,
+              "unit": "bytes",
+              "confidence": "unknown",
+              "proof_ref": null
+            }
+          ],
+          "call_edges": [
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "caller": "",
+              "callee": "data.ReadInterfaceToken",
+              "line": 5,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "caller": "",
+              "callee": "GetDescriptor",
+              "line": 5,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "caller": "",
+              "callee": "data.ReadInt32",
+              "line": 6,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "caller": "",
+              "callee": "memcpy",
+              "line": 6,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "caller": "",
+              "callee": "data.ReadBuffer",
+              "line": 6,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            }
+          ],
+          "taint": [],
+          "unknowns": [
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "subject": "call_target",
+              "reason": "AST syntax-only; target resolution was not computed.",
+              "missing_fact": "resolved_call_edge",
+              "coverage_status": "unknown"
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_positive.cpp",
+              "subject": "guard_dominance",
+              "reason": "No complete CFG/dominance proof is available.",
+              "missing_fact": "cfg_edge_and_dominance",
+              "coverage_status": "unknown"
+            }
+          ],
+          "limitations": [
+            "Syntax facts do not prove ownership, aliasing, attacker control or security impact.",
+            "Missing CFG/range/taint facts remain unknown and are never inferred as safe."
+          ]
+        }
+      },
+      "combined_evidence_obligations": [
+        "attacker_control",
+        "callee_and_policy",
+        "capacity_and_alias_identity",
+        "cia_impact",
+        "consequence",
+        "cross_function_and_macro_context",
+        "entry_or_privilege_boundary",
+        "entry_reachability",
+        "guard_dominance",
+        "security_impact",
+        "trigger_conditions"
+      ],
+      "limitations": [
+        "Synthetic fixed fixture, not a product build or real-world exploit.",
+        "A range fact is a bounded analysis aid, not a proof of runtime attacker control.",
+        "B Parcel semantics and A length facts remain separate evidence layers; no causal security claim is made."
+      ]
+    },
+    {
+      "category": "fixed",
+      "source": {
+        "path": "tests/fixtures/ipc/parcel_fixed.cpp",
+        "sha256": "7a71bcda0642472623dc835e1b2c641c5ce65f70b4336aa6b3268a3ad81b2b62",
+        "parse_status": "complete"
+      },
+      "a_bounds_findings": [],
+      "a_integer_findings": [],
+      "b_ipc_findings": [],
+      "facts_v2": {
+        "tests/fixtures/ipc/parcel_fixed.cpp": {
+          "schema_version": 2,
+          "parse_status": "complete",
+          "symbols": [
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "name": "OnRemoteRequest",
+              "kind": "function",
+              "qualified_name": "OnRemoteRequest",
+              "type_text": "",
+              "resolution_status": "syntax_only"
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "name": "dst",
+              "kind": "variable",
+              "qualified_name": "dst",
+              "type_text": "",
+              "resolution_status": "syntax_only"
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "name": "n",
+              "kind": "variable",
+              "qualified_name": "n",
+              "type_text": "",
+              "resolution_status": "syntax_only"
+            }
+          ],
+          "cfg_edges": [],
+          "ranges": [
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "symbol": "n",
+              "minimum": 0,
+              "maximum": 64,
+              "unit": "bytes",
+              "confidence": "derived_from_explicit_guard",
+              "proof_ref": "explicit destination guard"
+            }
+          ],
+          "call_edges": [
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "caller": "",
+              "callee": "data.ReadInterfaceToken",
+              "line": 5,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "caller": "",
+              "callee": "GetDescriptor",
+              "line": 5,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "caller": "",
+              "callee": "data.ReadInt32",
+              "line": 6,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "caller": "",
+              "callee": "memcpy",
+              "line": 6,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "caller": "",
+              "callee": "data.ReadBuffer",
+              "line": 6,
+              "resolution_status": "unresolved",
+              "depth": 0,
+              "proof_ref": null
+            }
+          ],
+          "taint": [],
+          "unknowns": [
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "subject": "call_target",
+              "reason": "AST syntax-only; target resolution was not computed.",
+              "missing_fact": "resolved_call_edge",
+              "coverage_status": "unknown"
+            },
+            {
+              "file": "tests/fixtures/ipc/parcel_fixed.cpp",
+              "subject": "guard_dominance",
+              "reason": "No complete CFG/dominance proof is available.",
+              "missing_fact": "cfg_edge_and_dominance",
+              "coverage_status": "unknown"
+            }
+          ],
+          "limitations": [
+            "Syntax facts do not prove ownership, aliasing, attacker control or security impact.",
+            "Missing CFG/range/taint facts remain unknown and are never inferred as safe."
+          ]
+        }
+      },
+      "combined_evidence_obligations": [],
+      "limitations": [
+        "Synthetic fixed fixture, not a product build or real-world exploit.",
+        "A range fact is a bounded analysis aid, not a proof of runtime attacker control.",
+        "B Parcel semantics and A length facts remain separate evidence layers; no causal security claim is made."
+      ]
+    }
+  ],
+  "expected_shape": {
+    "positive": "A bounds candidate + B ipc.parcel.copy-range + unbounded range fact",
+    "fixed": "A bounds quiet + B parcel quiet + bounded range fact"
+  }
+}

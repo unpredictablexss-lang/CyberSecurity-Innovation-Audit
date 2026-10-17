@@ -134,8 +134,8 @@ export default function NewScan({
               </Form.Item>
               <Form.Item
                 name="detector_ids"
-                label="自研检测器"
-                rules={[{ required: true, message: "至少选择一个检测器" }]}
+                label="自研检测器（可选；留空自动选择已批准安全检测器）"
+
               >
                 <Checkbox.Group className="detector-options">
                   {detectors.map((d) => (

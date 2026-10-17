@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "script_security_pinned_summary",
+  "status": "completed_with_limitations",
+  "components": [
+    {
+      "component": "communication_dsoftbus",
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+      "candidate_count": 0,
+      "wall_seconds": 9.60190318299999,
+      "status": "blocked"
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "candidate_count": 0,
+      "wall_seconds": 7.6660014019998926,
+      "status": "completed"
+    },
+    {
+      "component": "security_access_token",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "candidate_count": 0,
+      "wall_seconds": 2.310806298999978,
+      "status": "completed"
+    },
+    {
+      "component": "update_updateservice",
+      "repository": "openharmony/update_updateservice",
+      "commit": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+      "candidate_count": 0,
+      "wall_seconds": 0.674077159000035,
+      "status": "completed"
+    },
+    {
+      "component": "window_window_manager",
+      "repository": "openharmony/window_window_manager",
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "candidate_count": 0,
+      "wall_seconds": 14.717488787999969,
+      "status": "completed"
+    }
+  ],
+  "totals": {
+    "candidate_count": 0,
+    "wall_seconds": 34.970276830999865,
+    "process_peak_rss_kib": 362056
+  },
+  "environment": {
+    "python": "3.10.12",
+    "git": "git version 2.34.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "limitations": [
+    "Lexical JS/TS/ArkTS rules only; no mature ArkTS semantics or product permission proof.",
+    "Candidates are not vulnerabilities and zero findings is not a safe verdict."
+  ]
+}

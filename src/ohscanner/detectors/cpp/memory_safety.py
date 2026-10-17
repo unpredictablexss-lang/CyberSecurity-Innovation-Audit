@@ -328,27 +328,33 @@ def declarations(masked: str) -> Tuple[Dict[str, ArrayShape], Dict[str, IntegerS
 
 def guard_shapes(masked: str, functions: Sequence[FunctionShape]) -> Tuple[GuardShape, ...]:
     guards: List[GuardShape] = []
-    pattern = re.compile(r"\bif\s*\((?P<condition>[^{}]+?)\)\s*(?P<then>\{[^{}]*\}|[^;{}]+;)", re.S)
-    for match in pattern.finditer(masked):
+    for match in re.finditer(r"\bif\s*\(", masked):
         function = function_at(functions, match.start())
         if function is None:
             continue
-        then = match.group("then").strip()
+        open_paren = match.end() - 1
+        close_paren = balanced_end(masked, open_paren, "(", ")")
+        if close_paren is None:
+            continue
+        condition = masked[open_paren + 1:close_paren - 1].strip()
+        cursor = close_paren
+        then_match = re.match(r"\s*(?P<then>\{.*?\}|[^;{}]+;)", masked[cursor:], re.S)
+        if not then_match:
+            continue
+        then = then_match.group("then").strip()
         true_returns = bool(re.search(r"\breturn\b", then))
         true_breaks = bool(re.search(r"\b(?:break|continue)\b", then))
-        body_end = match.end()
-        rest = masked[body_end:]
-        else_match = re.match(r"\s*else\s*(?P<else>\{[^{}]*\}|[^;{}]+;)", rest, re.S)
+        cursor += then_match.end()
+        else_match = re.match(r"\s*else\s*(?P<else>\{.*?\}|[^;{}]+;)", masked[cursor:], re.S)
         false_returns = False
         if else_match:
             false_returns = bool(re.search(r"\breturn\b", else_match.group("else")))
-            body_end += else_match.end()
+            cursor += else_match.end()
         guards.append(GuardShape(
-            match.start(), body_end, match.group("condition").strip(),
-            true_returns, true_breaks, false_returns, body_end,
+            match.start(), cursor, condition,
+            true_returns, true_breaks, false_returns, cursor,
         ))
     return tuple(guards)
-
 
 def expression_interval(
     expression: str,
@@ -398,8 +404,17 @@ def expression_interval(
     return Interval.unknown()
 
 
+def _comparison_value(text, constants, sizeof_values):
+    value_text = text.strip()
+    match = re.fullmatch(r"sizeof\s*\(\s*([A-Za-z_]\w*)\s*\)", value_text)
+    if match and sizeof_values is not None and match.group(1) in sizeof_values:
+        return sizeof_values[match.group(1)]
+    return _constant_value(value_text, constants)
+
+
 def guard_constraints(
-    guards: Sequence[GuardShape], position: int, constants: Mapping[str, int]
+    guards: Sequence[GuardShape], position: int, constants: Mapping[str, int],
+    sizeof_values: Optional[Mapping[str, int]] = None,
 ) -> Dict[str, Tuple[Optional[int], Optional[int]]]:
     constraints: Dict[str, Tuple[Optional[int], Optional[int]]] = {}
     for guard in guards:
@@ -410,8 +425,8 @@ def guard_constraints(
             continue
         negated = guard.true_returns or guard.true_breaks
         patterns = (
-            (r"(?P<name>[A-Za-z_]\w*)\s*>=\s*(?P<value>[A-Za-z_]\w*|\d+)", "ge"),
-            (r"(?P<name>[A-Za-z_]\w*)\s*>\s*(?P<value>[A-Za-z_]\w*|\d+)", "gt"),
+            (r"(?P<name>[A-Za-z_]\w*)\s*>=\s*(?P<value>sizeof\s*\([^)]+\)|[A-Za-z_]\w*|\d+)", "ge"),
+            (r"(?P<name>[A-Za-z_]\w*)\s*>\s*(?P<value>sizeof\s*\([^)]+\)|[A-Za-z_]\w*|\d+)", "gt"),
             (r"(?P<name>[A-Za-z_]\w*)\s*<\s*0", "lt_zero"),
             (r"(?P<name>[A-Za-z_]\w*)\s*==\s*nullptr", "null"),
         )
@@ -421,7 +436,7 @@ def guard_constraints(
                 continue
             name = match.group("name")
             value_text = match.groupdict().get("value")
-            value = _constant_value(value_text, constants) if value_text else None
+            value = _comparison_value(value_text, constants, sizeof_values) if value_text else None
             low, high = constraints.get(name, (None, None))
             if kind in {"ge", "gt"} and value is not None:
                 if negated:

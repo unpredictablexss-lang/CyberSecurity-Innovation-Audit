@@ -102,6 +102,12 @@ class M2ExecutionTests(unittest.TestCase):
         self.assertEqual(before["detector_runs"][0]["diagnostics"],
                          after["detector_runs"][0]["diagnostics"])
 
+    def test_default_registry_auto_selection_excludes_example(self):
+        from src.ohscanner.detectors.catalog import default_detector_ids, resolve_detector_ids
+        defaults = default_detector_ids()
+        self.assertEqual(defaults, resolve_detector_ids(()))
+        self.assertNotIn(ID, defaults)
+        self.assertGreaterEqual(len(defaults), 3)
     def test_unapproved_and_duplicate_plugins_rejected(self):
         for ids, flag in (
             ((ID,), False),

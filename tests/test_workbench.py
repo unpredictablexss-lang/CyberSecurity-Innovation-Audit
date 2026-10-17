@@ -100,6 +100,15 @@ class WorkbenchTests(unittest.TestCase):
         self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
         return job
 
+    def test_ordinary_scan_auto_selects_approved_detectors(self):
+        data = {"repository_id": self.repo_id, "revision": "HEAD"}
+        r = self.client.post("/api/v1/scans", json=data, headers=HEADERS)
+        self.assertEqual(r.status_code, 201, r.text)
+        spec = self.store.job(r.json()["id"])["spec"]
+        self.assertEqual(spec["detector_selection"]["mode"], "auto")
+        self.assertEqual(spec["detector_selection"]["requested"], [])
+        self.assertEqual(set(spec["detector_selection"]["selected"]), set(IDS))
+        self.assertNotIn("ohscanner.example.cpp.copy-calls", spec["detector_ids"])
     def test_catalog_research_only(self):
         r = self.client.get("/api/v1/detectors")
         self.assertEqual({x["id"] for x in r.json()}, set(IDS))

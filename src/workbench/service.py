@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 from src.ohscanner.contracts import safe_relative_path
-from src.ohscanner.detectors.catalog import build_registry, catalog_metadata
+from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, resolve_detector_ids
 from src.ohscanner.git_source import _git, resolve_commit, MAX_BLOB_BYTES
 
 MAX_INCLUDE_PATHS = 2000
@@ -101,6 +101,7 @@ def detector_metadata():
 
 
 def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
+    requested_ids = tuple(detector_ids or ())
     if (
         not includes
         or len(includes) > MAX_INCLUDE_PATHS
@@ -112,16 +113,22 @@ def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_m
     for path in includes:
         if path != ".":
             safe_relative_path(path)
-    build_registry(tuple(detector_ids))
+    selected_ids = resolve_detector_ids(requested_ids)
+    build_registry(selected_ids)
     return {
         **revision(repo, requested),
         "repository": repo["name"],
         "include_paths": includes,
-        "detector_ids": detector_ids,
+        "detector_ids": list(selected_ids),
+        "detector_selection": {
+            "mode": "auto" if not requested_ids else "explicit",
+            "requested": list(requested_ids),
+            "selected": list(selected_ids),
+        },
         "detector_versions": {
             d["id"]: d["version"]
             for d in detector_metadata()
-            if d["id"] in detector_ids
+            if d["id"] in selected_ids
         },
         "timeout_seconds": timeout_seconds,
         "memory_mb": memory_mb,

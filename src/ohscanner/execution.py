@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 
-from .detectors.catalog import build_registry
+from .detectors.catalog import build_registry, resolve_detector_ids
 from .git_source import load_git_sources
 from .indexing import environment_fingerprint, prepare_git_context
 from .runner import run_all_with_coverage
@@ -106,8 +106,14 @@ def run_fixed_commit_scan(
 ):
     if json_out.resolve() == md_out.resolve():
         raise ValueError("JSON and Markdown output paths must differ")
-    registry = build_registry(detector_ids, allow_examples=allow_examples)
+    selected_ids = resolve_detector_ids(detector_ids)
+    registry = build_registry(selected_ids, allow_examples=allow_examples)
     report = run_reviewed_detectors(repo_dir, repository, commit, includes, registry)
+    report["detector_selection"] = {
+        "mode": "auto" if not tuple(detector_ids or ()) else "explicit",
+        "requested": list(detector_ids or ()),
+        "selected": list(selected_ids),
+    }
 
     lines = [
         "# OHScanner M2 reviewed-detector execution",
