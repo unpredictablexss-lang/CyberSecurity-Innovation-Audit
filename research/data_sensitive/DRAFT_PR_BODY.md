@@ -1,35 +1,34 @@
-## D2：修复提前退出传播，补齐固定范围审计（保持 Draft）
+## 队友 D：D3 真实历史版本实验与受限检测原型
 
-D1工程原型保留。本轮只升级D模块到Detector0.2.0，Source/Sink语义模型仍0.1.0；唯一规则
-`data.log.sensitive-value`，拟议ID `ohscanner.data.sensitive_exposure`，未注册Catalog/UI。
+本 PR 累计包含 D1/D2 局部敏感材料到日志原型，以及 D3 的显式历史模型和真实 Git 源码实验。D3 在成功解密后的请求 JSON 缓冲区到旧版公开日志之间识别出一条条件研究候选，并在真实日志删除后的版本观察到候选消失。
 
-### 问题与变化
+**真实候选来自独立研究探针；公共 Runner 因目标文件 partial 解析未准入该文件，两端正式候选均为 0。没有确认漏洞、产品影响结论或动态 PoC。**
 
-D1把已return分支的敏感赋值合并到后继日志，同时漏掉部分活跃else/短路效果。
-先加入33控制，在D1实测12个失败子用例；修复后仅合并存活后继，显式返回退出状态，恢复块作用域绑定。
-补充格式/实参/状态与同名函数指针对照，最终新增39控制；旧32控制及预期哈希不变。
+### D3 代码及验证
 
-### 实际验证
+- 模型提交 `dc9ed46`：TCP 前后两个精确 commit，模型 `0.2.0-historical.1`；每端 10 个依赖文件、定义行号、blob/SHA 与日志语义。
+- 算法提交 `7a75d9c`：历史检测器 `0.3.0`；分配/非空/成功分支、受审一跳 DecryptMessage 输出摘要、旧 SoftBusLog 格式语义；未修改公共准入。
+- 测试提交 `88528b7`：24 个新增设计控制；旧 71 控制哈希不变。专项 25 个 unittest 方法通过。
+- 全量实际执行：537 项，526 passed、11 skipped、0 failures/errors；compileall 和 diff 检查通过。跳过理由与日志 SHA 见 `D3_VALIDATION.json`。
 
-- 实现与测试HEAD：`3b646c881716eb6b0c86195cdeeb1012ac9c921b`；D1 HEAD `f11d5fd`，merge-base `e510c99`。
-- D专项16方法通过（含32旧+39新控制）；全项目528项，517通过、11历史来源/Docker等条件跳过，0失败/错误；compileall和diff检查通过。
-- 固定dsoftbus `0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132`、相同9文件、相同源模型：D1/D2均0候选，覆盖均complete0/partial3/not_analyzed6/failed0；D2双跑观察和覆盖一致。
-- 逐文件错误/函数/模型审计及私有探针已区分；15个不与错误直接交叠函数不等于已批准准入。
+### 真实实验
 
-### 审核入口
+| 范围 | 公共候选 | 研究探针候选 | 公共覆盖 complete/partial/not_analyzed/failed |
+| --- | ---: | ---: | --- |
+| 原固定 9 文件 | 0 | 0 | 0/3/6/0 |
+| TCP 修改前 10 文件 | 0 | 1 | 0/4/6/0 |
+| TCP 修改后 10 文件 | 0 | 0 | 0/4/6/0 |
 
-- [D2交付总览](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_HANDOFF.md)
-- [基线](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_BASELINE.md) / [实现与回归](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_IMPLEMENTATION.md)
-- [9文件覆盖](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_COVERAGE.md) / [机器证据](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_COVERAGE.json)
-- [历史调查](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_HISTORICAL.md) / [来源manifest](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_HISTORY_MANIFEST.json)
-- [独立评估计划](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_EVALUATION.md) / [隔离验证计划](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_POC_PLAN.md)
-- [最小前端RFC](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/frontend_request.md) / [实际测试记录](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_VALIDATION.json)
-- D1的独立验收、接口需求、研究方案仍保留；D1 validation push=false是当时快照，不是当前PR状态。
+每个输入公共及私有分析双跑稳定。TCP 消息构造将 Base64 会话密钥加入 JSON，旧日志经过 secure-C 格式化后由 public HiLog / printf 输出；请求种类、格式化长度成功、生产配置和非授权读取仍是义务。
 
-### 限制
+服务发现日志删除对不作为正例：开源 DiscCoapAssembleCapData 是返回“不支持”的 stub，调用方退出，不能证明被删日志可达。GitCode 具体 API 404，使用明确标识的官方 GitHub 镜像，未宣称跨镜像已核验。
 
-没有确认真实漏洞、CVE或产品影响；两组可核实日志删除硬化对尚不具备当前规则的真实正例标签/模型。
-GitCode具体API请求404，使用明确标注的GitHub镜像/API证据，未声称双源核验成功。
-独立holdout和Docker PoC仅完成方案，未执行。零候选不是安全结论，不提供Precision/Recall。
-公共Runner/Catalog/contracts/frontend/indexing/DB/UI与A/B/C均未改动；D2增量只限D目录。
-负责人请审查局部partial资格/共享事实RFC。保持Draft，不自动Ready/Merge。
+### 审核入口与剩余限制
+
+从 `research/data_sensitive/D3_HANDOFF.md` 开始；模型证据、历史判断、真实实验、覆盖、机器可读验证及限制分别位于 `D3_MODEL_EVIDENCE.md`、`D3_HISTORICAL_CASES.md`、`D3_REAL_SCAN.md/.json`、`D3_VALIDATION.json`、`D3_LIMITATIONS.md`。
+
+三份独立中文文档：`D3_acceptance_zh.md`、`D3_interface_requirements_zh.md`、`D3_research_plan_zh.md`。
+
+冻结后收集 3 个其他组件的未标注源码供盲审；未执行独立 holdout，不报告 Precision/Recall。真实同名无关函数对照尚缺，脱敏形状不等于已通过安全评估。
+
+D3 增量只在 D 获准的四个目录；不改 Runner/Catalog/contracts/frontend/DB/UI/A/B/C，不注册面板、不自动 Ready 或合并。原 D1 的公共状态文档改动是历史累计差异，D3 没有新增该路径修改。

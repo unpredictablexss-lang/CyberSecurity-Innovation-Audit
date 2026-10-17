@@ -40,3 +40,8 @@ restore on scope exit; short-circuit/conditional effects use conservative may-fl
 D1 source/sink model semantics remain0.1.0. Old32 controls unchanged, new39 D2 controls.
 Read research/data_sensitive/D2_HANDOFF.md for current publication/tests; D1 records
 with push=false describe the historical pre-publication snapshot, not current PR #17.
+
+D3 adds an explicitly selected historical profile (0.3.0 detector / 0.2.0-historical.1 model).
+The default entry remains compatible. Read research/data_sensitive/D3_HANDOFF.md
+for real pre/post experiments, public Runner admission limits and separate user docs.
+The real pre-change candidate is research-only; no confirmed vulnerability is claimed.
