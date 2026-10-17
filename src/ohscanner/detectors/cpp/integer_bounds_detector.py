@@ -387,7 +387,3 @@ class CppIntegerBoundsDetector:
             limitations=tuple(sorted(set(limitations))),
         )
 
-
-
-
-
