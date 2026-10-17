@@ -118,8 +118,8 @@ def main(scan_root, out_path,
     payload = {
         "repository": repository,
         "commit": commit,
-        "detector": "ohscanner.oh.arkts_js",
-        "detector_version": "0.1.0",
+        "detector": ArkTsJsInterfaceDetector.detector_id,
+        "detector_version": ArkTsJsInterfaceDetector.version,
         "files_seen": len(files),
         "by_language_status": {"%s/%s" % key: value
                                for key, value in sorted(counts.items())},

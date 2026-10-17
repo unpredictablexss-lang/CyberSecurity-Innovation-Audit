@@ -537,7 +537,7 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
 
 class ArkTsJsInterfaceDetector:
     detector_id = "ohscanner.oh.arkts_js"
-    version = "0.1.0"
+    version = "0.2.0"
     supported_languages = ("js", "ts", "arkts")
     required_facts = ()
     ast_scope = "per_file"

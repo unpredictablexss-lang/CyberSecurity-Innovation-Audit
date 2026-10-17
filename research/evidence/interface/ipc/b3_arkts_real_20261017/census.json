@@ -2,7 +2,7 @@
   "repository": "openharmony/applications_settings",
   "commit": "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
   "detector": "ohscanner.oh.arkts_js",
-  "detector_version": "0.1.0",
+  "detector_version": "0.2.0",
   "files_seen": 2045,
   "by_language_status": {
     "ets/complete": 1343,

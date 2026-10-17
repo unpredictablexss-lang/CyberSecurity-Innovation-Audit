@@ -9,7 +9,7 @@
 | --- | --- |
 | 目标仓库 | `openharmony/applications_settings` |
 | commit | `5e8af0a2a104bc634f8d5e18ed03db202cd1ea02` |
-| 前端 | `ohscanner.oh.arkts_js` 0.1.0（提交 `dfb187a`） |
+| 前端 | `ohscanner.oh.arkts_js` 0.2.0（行为见提交 `d52c82f`；`detector_version` 直接读类属性） |
 | 语法 | tree-sitter 0.26.0 + tree-sitter-typescript 0.23.2 + tree-sitter-javascript 0.25.0 |
 | 排除目录 | `.git` `node_modules` `oh_modules` `build` `dist` `output` `third_party` `preview` |
 | 大小上限 | 2 MiB/文件 |
@@ -83,6 +83,6 @@ python research/evidence/interface/ipc/b3_arkts_real_20261017/census.py \
 ## 哈希
 
 ```text
-ef724883598110e94d83b335cf3622e5c18407e65d33340f5080f38c5a868db9  census.json
-feae06292784017a0bb414239bf5498e72e7d8f82a178da6728402d1d41fa949  census.py
+cf24bd9cec876d1f6866a74ab932cbb55b3075562add2a4f0d706e4f39645148  census.json
+e79b880079178a3973c1736d6c8c0be91dedf35ff118b0748b523eb05a117c09  census.py
 ```

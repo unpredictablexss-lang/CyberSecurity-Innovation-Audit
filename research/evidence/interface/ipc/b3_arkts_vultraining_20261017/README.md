@@ -10,7 +10,7 @@
 | 扫描根 | `/home/audit/openharmony-audit/_research_sync/openharmony-security/vulntest/vultraining` |
 | 仓库 | `openharmony-security`（本机检出） |
 | commit | `ceaf1b4fbe38e46cd18bfcffd7353516bdc34227` |
-| 前端 | `ohscanner.oh.arkts_js` 0.1.0（提交 `dfb187a`） |
+| 前端 | `ohscanner.oh.arkts_js` 0.2.0（行为见提交 `d52c82f`） |
 | 排除目录/大小上限 | `.git` `node_modules` `oh_modules` `build` `dist` `output` `third_party` `preview`；2 MiB |
 
 ## 结果
@@ -41,5 +41,5 @@
 ## 哈希
 
 ```text
-493000dd2ed72a9d93c9b7c016bb2407c68c59259ed71e99f91e8bc577a3923c  census.json
+86a6480c55d07992af6af2f721025dc33a3eed7630ffb11f213b92a3c25e259c  census.json
 ```

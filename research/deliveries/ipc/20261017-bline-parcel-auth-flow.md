@@ -383,8 +383,8 @@ AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的�
 
 ## 13. B-3 首批：ArkTS/ETS + JS/TS 前端与四条规则
 
-`src/ohscanner/detectors/interface/arkts_js.py` 先交付可审计的语言前端，再在其上放窄规则。
-前端三态是硬契约：
+`src/ohscanner/detectors/interface/arkts_js.py`（`ohscanner.oh.arkts_js` 0.2.0）先交付
+可审计的语言前端，再在其上放窄规则。前端三态是硬契约：
 
 - `.js` → tree-sitter-javascript；`.ts`/`.ets` → tree-sitter-typescript。
 - `complete`：AST 无 ERROR/MISSING；`partial`：有语法错误但仍恢复了调用/类结构；

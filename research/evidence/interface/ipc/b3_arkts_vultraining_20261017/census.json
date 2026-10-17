@@ -2,7 +2,7 @@
   "repository": "openharmony-security/vulntraining",
   "commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
   "detector": "ohscanner.oh.arkts_js",
-  "detector_version": "0.1.0",
+  "detector_version": "0.2.0",
   "files_seen": 16,
   "by_language_status": {
     "ets/complete": 7,
