@@ -1,0 +1,99 @@
+{
+  "schema_version": "ohscanner.cap01-render-capability-analysis.v1",
+  "candidate_id": "ohscanner.interface.ipc:eaf73b5d3dd8cbed",
+  "status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "dependency_source": {
+    "repository": "openharmony/graphic_graphic_2d",
+    "commit": "8f1745527aa13624539e8b16ad31373e6b7d7087",
+    "tree": "ea54227cfb9a672090fb8215489bbb1e44dc9a0a",
+    "release": "OpenHarmony-7.0-Release"
+  },
+  "verified_source_blobs": {
+    "rs_iclient_to_render_connection.h": "a91486c196f2629d6cb51f8b08db8f67eab5652b",
+    "rs_iclient_to_render_connection_ipc_interface_code_access_verifier.h": "907e8f3d089e2dae2a684da87c940c9144126a31",
+    "rs_iclient_to_render_connection_ipc_interface_code_access_verifier.cpp": "6ce9e093364dc4d8371100a45b83a4dcd0a70e06",
+    "rs_client_to_render_connection_stub.cpp": "c8d5e97d2ebf81054f49f47d43da7ffd516f6e9a",
+    "rs_render_service_connect_hub.cpp": "b611bf06d3b69996ce7df4942ba84465d3a76324",
+    "rs_render_pipeline_client.cpp": "4cc3546858ac70e4fe385ceb234d2d42173750b3",
+    "rs_render_interface.cpp": "822fa9c9331443497363af42da3ccd0cf103805f",
+    "rs_ui_director.cpp": "10dacc96f66fbbbc59920918ad525d8fea355b73"
+  },
+  "capability_chain": [
+    "ScreenSession stores the exported IRemoteObject in renderSession_.",
+    "RSUIDirector::Create passes it to RSUIContextManager::CreateRSUIContext.",
+    "RSRenderPipelineClient treats it as RSIConnectToRenderProcess, descriptor ohos.rosen.ConnectToRenderProcess.",
+    "RSRenderServiceConnectHub::GetRenderProcessTokenMaskId creates a local empty RSIConnectionToken and calls CreateRenderConnection(tokenMaskId, token, needRefresh).",
+    "CreateRenderConnection returns RSIClientToRenderConnection, descriptor ohos.rosen.ClientToRenderConnection.",
+    "Subsequent RSRenderInterface/RSUIContext operations route through that client-to-render connection."
+  ],
+  "interface_surface": {
+    "entry_interface": {
+      "descriptor": "ohos.rosen.ConnectToRenderProcess",
+      "methods": ["CreateRenderConnection", "RemoveConnection"]
+    },
+    "returned_connection": {
+      "descriptor": "ohos.rosen.ClientToRenderConnection",
+      "sensitive_methods": [
+        "CommitTransaction",
+        "ExecuteSynchronousTask",
+        "CreateNode",
+        "CreateNodeAndSurface",
+        "GetBitmap",
+        "GetPixelmap",
+        "TakeSurfaceCapture",
+        "TakeSurfaceCaptureWithAllWindows",
+        "TakeSelfSurfaceCapture",
+        "SetHardwareEnabled",
+        "SetHidePrivacyContent",
+        "SetFocusAppInfo",
+        "FreezeScreen",
+        "DropFrameByPid",
+        "SetSurfaceWatermark",
+        "RemoveToken"
+      ]
+    }
+  },
+  "access_verifier": {
+    "explicit_permission_mappings": {
+      "TAKE_SURFACE_CAPTURE": "CAPTURE_SCREEN",
+      "TAKE_SURFACE_CAPTURE_WITH_ALL_WINDOWS": "CAPTURE_SCREEN_ALL"
+    },
+    "exclusive_system_checks": [
+      "GET_BRIGHTNESS_INFO", "DROP_FRAME_BY_PID", "SET_FOCUS_APP_INFO",
+      "SET_SURFACE_WATERMARK", "CLEAR_SURFACE_WATERMARK_FOR_NODES",
+      "CLEAR_SURFACE_WATERMARK", "SET_SYSTEM_ANIMATED_SCENES",
+      "SET_GLOBAL_DARK_COLOR_MODE", "TAKE_UI_CAPTURE_IN_RANGE",
+      "SET_BUFFER_AVAILABLE_LISTENER", "SET_BUFFER_CLEAR_LISTENER",
+      "CREATE_DISPLAY_NODE", "SET_WINDOW_FREEZE_IMMEDIATELY",
+      "SET_WINDOW_CONTAINER", "GET_SCREEN_HDR_STATUS", "FREEZE_SCREEN",
+      "REGISTER_OCCLUSION_CHANGE_CALLBACK", "REGISTER_FRAME_STABILITY_DETECTION",
+      "UNREGISTER_FRAME_STABILITY_DETECTION", "START_FRAME_STABILITY_COLLECTION",
+      "GET_FRAME_STABILITY_RESULT", "UPDATE_FRAME_STABILITY_DETECTION",
+      "SET_FREE_MULTI_WINDOW_STATUS"
+    ],
+    "default_allow_observed": [
+      "COMMIT_TRANSACTION", "EXECUTE_SYNCHRONOUS_TASK", "CREATE_NODE",
+      "CREATE_NODE_AND_SURFACE", "GET_BITMAP", "GET_PIXELMAP"
+    ],
+    "capture_exception": "OnRemoteRequest lets TAKE_SURFACE_CAPTURE and TAKE_SURFACE_CAPTURE_WITH_ALL_WINDOWS proceed when generic accessibility is false, but records screenCapturePermission=false and computes system/self-capture flags in the handler."
+  },
+  "cia_assessment": {
+    "confidentiality": {
+      "status": "candidate_supported_not_validated",
+      "basis": "GetBitmap, GetPixelmap and capture methods expose pixel-producing capabilities; self/PID and CAPTURE_SCREEN checks bound some paths.",
+      "missing": "runtime proof that a non-privileged caller can enumerate target node IDs and retrieve target pixels"
+    },
+    "integrity": {
+      "status": "candidate_supported_not_validated",
+      "basis": "CommitTransaction and node creation have no explicit system-case in the inspected verifier and can submit render commands to the acquired connection.",
+      "missing": "runtime proof that the acquired connection is scoped to another screen/render process and that commands change target state"
+    },
+    "availability": {
+      "status": "candidate_unknown",
+      "basis": "transaction submission, synchronous tasks, node creation and RemoveConnection/RemoveToken are potential resource/lifecycle controls.",
+      "missing": "measured crash, hang, resource exhaustion or service denial"
+    }
+  },
+  "conclusion": "The exported object is not merely opaque in its downstream use: its concrete entry interface is RSIConnectToRenderProcess and it creates RSIClientToRenderConnection, a broad render command/pixel/lifecycle surface. Static evidence supports C/I candidate consequences and possible A impact, but exact candidate product execution and cross-screen scoping remain unproven; CAP-01 remains candidate/unknown."
+}

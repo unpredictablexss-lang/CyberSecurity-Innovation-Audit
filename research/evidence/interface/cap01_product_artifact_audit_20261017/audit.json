@@ -68,10 +68,10 @@
     "returned_type": "sptr<OHOS::IRemoteObject>",
     "origin": "ScreenSession::renderSession_ / RSUIContextContainer render-session token",
     "consumer": "RSAdapterUtil::InitRSUIDirector -> RSUIDirector::Create(connectToRenderToken, rsUiContext)",
-    "concrete_remote_interface": "unknown; window_window_manager treats it as an opaque connect-to-render token",
-    "confidentiality": "unknown",
-    "integrity": "unknown",
-    "availability": "unknown"
+    "concrete_remote_interface": "RSIConnectToRenderProcess (ohos.rosen.ConnectToRenderProcess) -> CreateRenderConnection -> RSIClientToRenderConnection (ohos.rosen.ClientToRenderConnection)",
+    "confidentiality": "candidate-supported by GetBitmap/GetPixelmap/capture surface; cross-window runtime effect unknown",
+    "integrity": "candidate-supported by CommitTransaction/node creation if connection is cross-process scoped; runtime effect unknown",
+    "availability": "candidate-unknown; transaction, synchronous task, node allocation and connection removal are plausible but unmeasured"
   },
   "runtime_attempts": [
     {
@@ -96,5 +96,5 @@
     "reason": "the candidate commit postdates all public 5.x/6.x/7.0 release artifacts; exact source dependency/toolchain closure is still being assembled",
     "do_not_substitute": "component harness is not product evidence"
   },
-  "conclusion": "Official product artifacts and policy are verified, but neither contains the exact candidate blob or direct GetRenderSession product implementation. Non-privileged HAP domains are allowed to look up SA 4607 at the SELinux/SAMGR object layer. Product-call reachability, the opaque render-session interface and CIA remain unknown, so CAP-01 remains candidate/unknown."
+  "conclusion": "Official product artifacts do not contain the candidate blob. Product policy allows normal HAP lookup of SA 4607. The render-session object resolves to a broad ConnectToRenderProcess/ClientToRenderConnection capability; static source supports C/I candidates and possible A impact, but exact product execution and cross-screen scope remain unknown. CAP-01 remains candidate/unknown."
 }

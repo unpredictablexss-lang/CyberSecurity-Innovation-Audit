@@ -36,11 +36,11 @@ The candidate `TRANS_ID_GET_RENDER_SESSION` handler performs interface-token equ
 - malicious native caller holding or constructing the internal proxy: plausible but not product-executed;
 - exact deployed candidate implementation: absent from public product releases.
 
-## Opaque render-session capability
+## Render-session capability surface
 
-The object is typed only as `sptr<IRemoteObject>`. Window manager stores it in `ScreenSession::renderSession_`, passes it to `RSAdapterUtil::InitRSUIDirector`, and `RSUIDirector::Create(connectToRenderToken, rsUiContext)` consumes it. This supports an inference that it is a render-connection/context token, but the concrete remote interface and transaction surface are not defined in `window_window_manager`.
+The object is typed as `sptr<IRemoteObject>` in window manager, but graphic_2d source resolves it to `RSIConnectToRenderProcess` and then `RSIClientToRenderConnection`. The latter exposes transaction, node, bitmap/pixelmap, capture and lifecycle operations. See `RENDER_CAPABILITY_ANALYSIS.md`; concrete cross-screen effects still require product runtime.
 
-Confidentiality, integrity and availability remain `unknown`. The candidate proves capability handoff, not screen disclosure, render-state modification, crash or denial of service.
+Confidentiality and integrity are candidate-supported by the concrete pixel/command surface, while availability remains candidate-unknown. The candidate proves capability handoff, not successful cross-screen disclosure, target-state modification, crash or denial of service.
 
 ## Runtime attempts
 
