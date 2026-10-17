@@ -338,7 +338,7 @@ B-2 要求"跨服务代理链保留身份变更点"。0.9.1 的实现是有界�
 | B-2 事实模型 + guard 支配 | 完成 | AUTH-02/03/04/05 与 DATA-04；成对样本（有 guard / guard 在错误分支 / guard 不支配 / 客户端调用受服务端保护）见 `tests/fixtures/ipc/` |
 | B-2 跨服务代理链身份变更点 | 完成（有界） | §10.4；54 组件实测 10 次边界，0 次转发调用者 |
 | B-2 敏感 source → 不可信可见输出 | 完成（有界） | DATA-04：披露类结果 → reply 写入；文件/日志/共享内存 sink 未建模（§8.4） |
-| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py`（complete/partial/unsupported 三态）+ 4 条规则 + `tests/test_ipc_arkts_js.py`（13 条）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
+| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py`（complete/partial/unsupported 三态）+ 4 条规则 + `tests/test_ipc_arkts_js.py`（15 条）；真实语料 2045 文件全量解析、0 候选（`research/evidence/interface/ipc/b3_arkts_real_20261017/`）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
 
 "完成"指该条的实现与控制存在于本提交，并且有可复核的运行结果；它不指这些规则在真实组件里
 找到了漏洞。
@@ -410,5 +410,22 @@ AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的�
 `catalog.py` 属 owner 共享面，本提交没有改动它们：语法包只在本地 venv 安装，检测器也尚未
 注册进 Catalog；接入前 CI 不会自动获得这两个依赖。
 
-控制：`tests/test_ipc_arkts_js.py` 13 条，包含每个规则的正例与抑制例、`partial` 三态报告、
-以及"非 Ability 类不产生 component_exposure 但路径规则仍触发"的分离控制。
+控制：`tests/test_ipc_arkts_js.py` 15 条，包含每个规则的正例与抑制例（含
+`want.parameters?.x` 直接作实参的内联形态）、`partial` 三态报告，以及"非 Ability 类不产生
+component_exposure 但路径规则仍触发"的分离控制。
+
+真实文件上还有两个实现修正（提交 `dfb187a`）：
+
+- `Node.start_point` 在真实 88 调用点的 `.ets` 文件上会让 tree-sitter 绑定段错误；行号改为
+  从保存的字节偏移 `_line_starts()` + `bisect_right(start_byte)` 计算。
+- 每次 parse 新建 `Parser`（Language 仍缓存）。复用一个 Parser 在上一棵树被回收后同样会崩。
+
+**真实语料清点**：`research/evidence/interface/ipc/b3_arkts_real_20261017/` 对
+`openharmony/applications_settings @ 5e8af0a2a104bc634f8d5e18ed03db202cd1ea02` 跑完整
+前端：2045 个文件（ets 1343 complete / 552 partial，ts 122 / 2，js 26），112221 个调用点，
+40 个导出的 Ability/Extension 类，30 个路径 sink，1 个 eval 站点，0 个 bridge 注册；
+**0 条候选**。逐点核对解释了这个 0：唯一 eval 是字面量
+`new Function('return this')()`；16 个 `want.parameters` 文件里被抽样的是
+`bundleManager.getBundleInfoSync(want.parameters?.bundleName, ...)` 这类非文件 sink，
+且在 `isParamsValid` 守卫之后；40 个 Ability 类没有一个把 `want.parameters` 送进文件 API。
+这是覆盖结论，不是"该应用安全"。

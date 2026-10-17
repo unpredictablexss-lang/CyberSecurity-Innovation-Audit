@@ -233,10 +233,19 @@ tree-sitter-javascript / tree-sitter-typescript 解析 `.js`/`.ts`/`.ets`，硬�
 `complete` / `partial` / `unsupported` 三态。ArkTS `struct` 与装饰器不在 TS 语法内，
 `.ets` 通常报 `partial`，结果里明确写"不声称 component/decorator 语义"。四条规则
 （component_exposure、webview_bridge、path_taint、dangerous_eval）都有正例与同函数守卫
-抑制例；`tests/test_ipc_arkts_js.py` 13 条。Catalog 注册与 `requirements*.txt` 依赖
-属 owner 共享面，未改；语法包只在本地 venv 安装。
+抑制例，含 `want.parameters?.x` 直接作实参的内联形态；`tests/test_ipc_arkts_js.py` 15 条。
+真实文件上还修了两个绑定级问题（`dfb187a`）：行号改用字节偏移，Parser 每次新建。
+Catalog 注册与 `requirements*.txt` 依赖属 owner 共享面，未改；语法包只在本地 venv 安装。
 
-**口径。** 628 条测试通过（skipped 4），lane 范围检查 `violations: []`。
+**真实语料。** 对 `applications_settings @ 5e8af0a2` 的 2045 个 `.ets/.ts/.js` 文件
+（ets 1343 complete / 552 partial，ts 122 / 2，js 26）完整跑通：112221 调用点、
+40 个导出的 Ability/Extension 类、30 个路径 sink、1 个 eval 站点、0 个 bridge 注册，
+**0 条候选**。0 的原因已逐点核对（字面量 `new Function('return this')()`；
+`want.parameters?.bundleName` 送进 `bundleManager` 而非文件 sink；Ability 类无文件
+sink），记录在 `research/evidence/interface/ipc/b3_arkts_real_20261017/`。这是覆盖
+结论，不是安全结论。
+
+**口径。** 630 条测试通过（skipped 4），lane 范围检查 `violations: []`。
 
 ---
 

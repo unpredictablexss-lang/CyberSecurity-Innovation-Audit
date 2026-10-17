@@ -1,0 +1,72 @@
+{
+  "repository": "openharmony/applications_settings",
+  "commit": "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
+  "detector": "ohscanner.oh.arkts_js",
+  "detector_version": "0.1.0",
+  "files_seen": 2045,
+  "by_language_status": {
+    "ets/complete": 1343,
+    "ets/partial": 552,
+    "js/complete": 26,
+    "ts/complete": 122,
+    "ts/partial": 2
+  },
+  "counters": {
+    "call_sites": 112221,
+    "ability_classes": 40,
+    "bridge_sites": 0,
+    "bridge_guarded": 0,
+    "path_sinks": 30,
+    "path_guarded": 0,
+    "eval_sites": 1
+  },
+  "findings_total": 0,
+  "findings_by_rule": {},
+  "findings": [],
+  "text_shape_files": {
+    "bridge_text": 0,
+    "want_parameters_text": 16,
+    "file_sink_text": 14,
+    "eval_text": 1
+  },
+  "batch_coverage_lines": [
+    "ArkTS/JS frontend: 400 file(s) parsed; 333 complete, 67 partial, 0 unsupported; 17091 call site(s) recovered.",
+    "Ability surface: 0 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 2 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "ArkTS/JS frontend: 400 file(s) parsed; 307 complete, 93 partial, 0 unsupported; 24870 call site(s) recovered.",
+    "Ability surface: 0 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 10 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "ArkTS/JS frontend: 400 file(s) parsed; 233 complete, 167 partial, 0 unsupported; 21993 call site(s) recovered.",
+    "Ability surface: 34 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 3 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "ArkTS/JS frontend: 400 file(s) parsed; 216 complete, 184 partial, 0 unsupported; 19920 call site(s) recovered.",
+    "Ability surface: 5 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 4 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "ArkTS/JS frontend: 400 file(s) parsed; 358 complete, 42 partial, 0 unsupported; 26107 call site(s) recovered.",
+    "Ability surface: 0 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 11 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "ArkTS/JS frontend: 45 file(s) parsed; 44 complete, 1 partial, 0 unsupported; 2240 call site(s) recovered.",
+    "Ability surface: 1 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 0 path sink(s), 0 behind a same-function path predicate; 1 eval site(s)."
+  ],
+  "limits": {
+    "max_bytes": 2097152,
+    "excluded_dirs": [
+      ".git",
+      "build",
+      "dist",
+      "node_modules",
+      "oh_modules",
+      "output",
+      "preview",
+      "third_party"
+    ],
+    "note": "Third-party source is not stored; only this aggregate is kept. Shape counts are text matches, not findings."
+  }
+}

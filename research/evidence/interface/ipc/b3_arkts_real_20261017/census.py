@@ -1,0 +1,150 @@
+"""B-3 census over a real ArkTS application repository.
+
+Run from the repository root, with the scan checkout outside the repository:
+
+    python research/evidence/interface/ipc/b3_arkts_real_20261017/census.py \
+        <scan-root> <out.json>
+
+Only aggregate counts and finding metadata are written. Third-party source is
+read but never stored, which is why the artifact keeps shape counts instead of
+the files themselves.
+"""
+import hashlib
+import json
+import os
+import re
+import sys
+from collections import Counter
+
+# The script lives three levels below the repository root; imports resolve
+# against the working directory, which the usage line tells you to set.
+sys.path.insert(0, os.getcwd())
+
+from src.ohscanner.contracts import SourceUnit, ScanContext, ScanRequest
+from src.ohscanner.fixture import snapshot_digest
+from src.ohscanner.detectors.interface.arkts_js import ArkTsJsInterfaceDetector
+
+SKIP_DIRS = {".git", "node_modules", "oh_modules", "build", "dist", "output",
+             "third_party", "preview"}
+MAX_BYTES = 2 * 1024 * 1024
+LANG = {".ets": "arkts", ".ts": "ts", ".js": "js"}
+BATCH = 400
+SHAPE_PATTERNS = {
+    "bridge_text": re.compile(r"registerJavaScriptProxy|javaScriptProxy"),
+    "want_parameters_text": re.compile(r"want\s*\.\s*parameters"),
+    "file_sink_text": re.compile(
+        r"fileIo\.(openSync|open|readSync|writeSync|readTextSync)|"
+        r"fs\.(openSync|open|readFileSync|writeFileSync)"),
+    "eval_text": re.compile(r"\beval\s*\(|new\s+Function\s*\("),
+}
+COUNTER_PATTERNS = {
+    "call_sites": re.compile(r"(\d+) call site"),
+    "ability_classes": re.compile(r"^Ability surface: (\d+)"),
+    "bridge_sites": re.compile(r"^WebView bridge coverage: (\d+)"),
+    "bridge_guarded": re.compile(r"(\d+) with an origin predicate"),
+    "path_sinks": re.compile(r"^Taint coverage: (\d+) path sink"),
+    "path_guarded": re.compile(r"(\d+) behind a same-function path predicate"),
+    "eval_sites": re.compile(r"(\d+) eval site"),
+}
+
+
+def read_units(root):
+    files = []
+    for base, dirs, names in os.walk(root):
+        dirs[:] = sorted(directory for directory in dirs
+                         if directory not in SKIP_DIRS)
+        for name in sorted(names):
+            extension = os.path.splitext(name)[1].lower()
+            if extension not in LANG:
+                continue
+            path = os.path.join(base, name)
+            relative = os.path.relpath(path, root).replace(os.sep, "/")
+            try:
+                if os.path.getsize(path) > MAX_BYTES:
+                    continue
+                text = open(path, encoding="utf-8").read()
+            except (OSError, UnicodeDecodeError):
+                continue
+            files.append((relative, LANG[extension], text))
+    files.sort(key=lambda item: item[0])
+    return files
+
+
+def main(scan_root, out_path):
+    files = read_units(scan_root)
+    counts = Counter()
+    findings = []
+    coverage_lines = []
+    for start in range(0, len(files), BATCH):
+        chunk = files[start:start + BATCH]
+        units = tuple(
+            SourceUnit(relative, language, text,
+                       hashlib.sha256(text.encode("utf-8")).hexdigest())
+            for relative, language, text in chunk)
+        request = ScanRequest("b3-census", "openharmony/applications_settings",
+                              "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
+                              snapshot_digest(units),
+                              "current-component:openharmony/applications_settings")
+        result = ArkTsJsInterfaceDetector().detect(
+            ScanContext(request, units, {}), units)
+        assert result.status == "completed", result.status
+        for path, status in result.file_outcomes:
+            counts[(path.rsplit(".", 1)[1], status)] += 1
+        for finding in result.findings:
+            findings.append({"file": finding.file, "line": finding.line,
+                             "rule": finding.rule_id,
+                             "cwe": finding.candidate_cwe,
+                             "symbol": finding.symbol,
+                             "message": finding.message})
+        coverage_lines.extend(
+            line for line in result.limitations
+            if line.startswith(("ArkTS/JS frontend:", "Ability surface:",
+                                "WebView bridge coverage:", "Taint coverage:")))
+
+    totals = {key: 0 for key in COUNTER_PATTERNS}
+    for line in coverage_lines:
+        for key, pattern in COUNTER_PATTERNS.items():
+            match = pattern.search(line)
+            if match:
+                totals[key] += int(match.group(1))
+
+    shape = {key: 0 for key in SHAPE_PATTERNS}
+    for _path, _language, text in files:
+        for key, pattern in SHAPE_PATTERNS.items():
+            if pattern.search(text):
+                shape[key] += 1
+
+    payload = {
+        "repository": "openharmony/applications_settings",
+        "commit": "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
+        "detector": "ohscanner.oh.arkts_js",
+        "detector_version": "0.1.0",
+        "files_seen": len(files),
+        "by_language_status": {"%s/%s" % key: value
+                               for key, value in sorted(counts.items())},
+        "counters": totals,
+        "findings_total": len(findings),
+        "findings_by_rule": dict(sorted(
+            Counter(item["rule"] for item in findings).items())),
+        "findings": findings,
+        "text_shape_files": shape,
+        "batch_coverage_lines": coverage_lines,
+        "limits": {
+            "max_bytes": MAX_BYTES,
+            "excluded_dirs": sorted(SKIP_DIRS),
+            "note": "Third-party source is not stored; only this aggregate "
+                    "is kept. Shape counts are text matches, not findings.",
+        },
+    }
+    with open(out_path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
+    print(json.dumps({key: payload[key] for key in
+                      ("files_seen", "by_language_status", "counters",
+                       "findings_total", "findings_by_rule", "text_shape_files")},
+                     indent=2))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        raise SystemExit("usage: census.py <scan-root> <out.json>")
+    main(sys.argv[1], sys.argv[2])
