@@ -15,7 +15,7 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
       <ScopeAvailability />
       {error && <Alert className="section-gap" type="error" showIcon message={error} />}
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
-      <Form form={form} layout="vertical" initialValues={{ ...auditDefaults }} onFinish={async (values) => {
+      <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults }} onFinish={async (values) => {
         setBusy(true); setError("");
         try { const job = await api("/scans", snapshotPayload(values, detectors)); await refresh(); go("/tasks/" + job.id); }
         catch (e) { setError(String(e)); } finally { setBusy(false); }
@@ -23,7 +23,7 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
         <RepositoryField repos={repos} refresh={refresh} onChange={() => { form.setFieldValue("revision", undefined); setError(""); }} />
         <RefField name="revision" label={loading ? "正在加载当前仓库版本…" : "审计版本"} refs={refs} />
         <ScopeBudget /><RuleNotice detectors={detectors} />
-        <Button className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length}>冻结版本并开始扫描</Button>
+        <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length}>冻结版本并开始扫描</Button>
       </Form>
     </Card></Col><Col xs={24} xl={8}><Card title="本次审计将保存">
       <ol className="audit-checklist"><li>完整 Commit 与 Git Tree</li><li>实际规则与版本</li><li>纳入范围、解析及执行覆盖</li><li>候选、证据义务与报告哈希</li></ol>

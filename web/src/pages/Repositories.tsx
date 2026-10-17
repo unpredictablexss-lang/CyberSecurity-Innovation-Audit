@@ -98,6 +98,7 @@ export default function Repositories({
           <Card title="登记本地仓库">
             {error && <Alert type="error" message={error} />}
             <Form
+              name="repository-registration"
               form={form}
               layout="vertical"
               onFinish={async (values) => {

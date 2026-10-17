@@ -12,12 +12,13 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit }: 
   const [preview, setPreview] = useState<any>(null); const [previewBusy, setPreviewBusy] = useState(false);
   const [error, setError] = useState(""); const gate = useRef(requestGate());
   let ready = false; try { ready = approvedDetectorIds(detectors).length > 0; } catch { /* blocked */ }
+  const submitLabel = kind === "date" ? "固定区间并创建任务" : kind === "matrix" ? "创建版本矩阵" : "扫描并比较两个端点";
   const invalidate = () => { gate.current.invalidate(); setPreview(null); setPreviewBusy(false); setError(""); };
   return <Card title={kind === "date" ? "时间范围与固定端点" : kind === "matrix" ? "关联案例的版本矩阵" : "选择两个版本"}>
     {kind !== "matrix" && <ScopeAvailability />}
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
     {refError && <Alert type="warning" message={refError} />}
-    <Form form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai" }} onValuesChange={invalidate}
+    <Form name={"audit-" + kind} form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai" }} onValuesChange={invalidate}
       onFinish={async (values) => {
         try { await submit(kind === "date" ? "/operations/date-ranges" : kind === "matrix" ? "/operations/version-matrices" : kind === "range" ? "/operations/revision-ranges" : "/operations/branch-comparisons", operationPayload(kind, values, detectors)); }
         catch (e) { setError(String(e)); }
@@ -32,7 +33,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit }: 
         <Form.Item name="end" label="结束时间（不包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} onInput={(event) => { form.setFieldValue("end", event.currentTarget.value); invalidate(); }} /></Form.Item>
         <Form.Item name="timezone" label="所选时间的时区" rules={[{ required: true }]}><Select options={["Asia/Shanghai", "UTC", "America/Los_Angeles", "Europe/London"].map((value) => ({ value, label: value }))} /></Form.Item>
         <Alert type="info" message="按提交者时间与 first-parent 选择 [开始, 结束) 区间；当前扫描固定两端。" description="不等于逐提交扫描、合入时间审计或完整增量引擎。预览可能包含拓扑跨度内的区间外提交。" />
-        <Button className="section-gap" loading={previewBusy} onClick={async () => {
+        <Button aria-label="预览时间区间" className="section-gap" loading={previewBusy} onClick={async () => {
           const ticket = gate.current.next(); setPreviewBusy(true); setPreview(null); setError("");
           try {
             const values = await form.validateFields(["repository_id", "branch", "start", "end", "timezone"]);
@@ -52,12 +53,12 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit }: 
         {!cases.length && <Alert type="info" message="请先从风险候选建立调查案例，再创建版本矩阵。" action={<Button size="small" onClick={() => go("/risks")}>查看风险</Button>} />}
       </>}
       <ScopeBudget /><RuleNotice detectors={detectors} />
-      <Button className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length)}>{kind === "date" ? "固定区间并创建任务" : kind === "matrix" ? "创建版本矩阵" : "扫描并比较两个端点"}</Button>
+      <Button aria-label={submitLabel} className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || (kind === "matrix" && !cases.length)}>{submitLabel}</Button>
     </Form>
   </Card>;
 }
 export function SyncForm({ busy, submit }: Pick<OperationFormProps, "busy" | "submit">) {
-  return <Card title="显式同步源码"><Form layout="vertical" initialValues={{ timeout_seconds: 900 }} onFinish={(v) => void submit("/operations/source-sync", v)}>
+  return <Card title="显式同步源码"><Form name="source-sync" layout="vertical" initialValues={{ timeout_seconds: 900 }} onFinish={(v) => void submit("/operations/source-sync", v)}>
     <Form.Item name="repository" label="OpenHarmony 仓库名" rules={[{ required: true }]}><Input placeholder="openharmony/commonlibrary_c_utils" /></Form.Item>
     <Form.Item name="url" label="HTTPS 地址（GitHub / Gitee / GitCode 的 OpenHarmony 仓库）" rules={[{ required: true }]}><Input placeholder="https://gitee.com/openharmony/commonlibrary_c_utils.git" /></Form.Item>
     <Form.Item name="timeout_seconds" label="同步超时（秒）"><InputNumber min={10} max={3600} /></Form.Item>
@@ -66,7 +67,7 @@ export function SyncForm({ busy, submit }: Pick<OperationFormProps, "busy" | "su
   </Form></Card>;
 }
 export function InvestigationForm({ busy, submit }: Pick<OperationFormProps, "busy" | "submit">) {
-  return <Card title="启动只读候选调查"><Form layout="vertical" initialValues={{ max_output_bytes: 65536 }} onFinish={(v) => void submit("/operations/investigations", v)}>
+  return <Card title="启动只读候选调查"><Form name="candidate-investigation" layout="vertical" initialValues={{ max_output_bytes: 65536 }} onFinish={(v) => void submit("/operations/investigations", v)}>
     <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input /></Form.Item>
     <Form.Item name="candidate_id" label="候选 ID" rules={[{ required: true }]}><Input /></Form.Item>
     <Form.Item name="max_output_bytes" label="最大输出字节数"><InputNumber min={1024} max={262144} /></Form.Item>
@@ -78,7 +79,7 @@ export function ValidationForm({ repos, cases, busy, submit }: Omit<OperationFor
   const target = repos.filter((r) => r.name === "openharmony/inputmethod_imf");
   const support = repos.filter((r) => r.name === "openharmony/commonlibrary_c_utils");
   return <Card title="受控 AUTH-01 验证计划"><Alert type="warning" showIcon message="仅限注册的 Docker Harness；组件复现不等于产品漏洞确认。" description="缺少 Docker daemon 或固定镜像时 Worker 会返回 blocked。当前未提供通用 PoC 上传、任意命令执行或产品确认能力。" />
-    <Form className="section-gap" layout="vertical" initialValues={{ harness_id: "auth01_descriptor_bypass", repeats: 3 }} onFinish={({ approval, ...payload }) => void submit("/operations/validations", payload)}>
+    <Form name="validation-plan" className="section-gap" layout="vertical" initialValues={{ harness_id: "auth01_descriptor_bypass", repeats: 3 }} onFinish={({ approval, ...payload }) => void submit("/operations/validations", payload)}>
       <Form.Item name="case_id" label="调查案例" rules={[{ required: true }]}><Select options={cases.map((c) => ({ value: c.id, label: c.title }))} /></Form.Item>
       <Form.Item name="harness_id" label="已注册 Harness"><Select options={[{ value: "auth01_descriptor_bypass", label: "AUTH-01 描述符边界" }]} /></Form.Item>
       <Form.Item name="target_repository_id" label="inputmethod_imf 仓库" rules={[{ required: true }]}><Select options={target.map((r) => ({ value: r.id, label: r.path }))} /></Form.Item>
