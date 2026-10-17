@@ -44,6 +44,7 @@ import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
+import { requestGate } from "../features/audits/model";
 const { Text, Title, Paragraph } = Typography;
 export default function JobDetail({ id, initialTab = "findings" }: { id: string; initialTab?: string }) {
   const [job, setJob] = useState<any>(null);
@@ -59,6 +60,8 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const selectedDetailId = useRef<string | null>(null);
+  const detailGate = useRef(requestGate());
   const [source, setSource] = useState<any>(null);
   const [selected, setSelected] = useState<React.Key[]>([]);
   const [caseOpen, setCaseOpen] = useState(false);
@@ -135,12 +138,16 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
   useEffect(() => {
     if (report) void loadClusters();
   }, [report?.snapshot_sha256, clusterPage]);
-  async function open(f: any) {
+  async function open(f: any, options: { select?: boolean; resetReview?: boolean } = {}) {
+    if (options.select === false && selectedDetailId.current !== f.id) return;
+    if (options.select !== false) selectedDetailId.current = f.id;
+    const ticket = detailGate.current.next();
     try {
       const d = await api("/scans/" + id + "/findings/" + f.id);
+      if (!detailGate.current.current(ticket) || selectedDetailId.current !== f.id) return;
       setDetail(d);
       const last = d.reviews.at(-1);
-      reviewForm.setFieldsValue({
+      if (options.resetReview !== false) reviewForm.setFieldsValue({
         status: last?.status || "under_review",
         reviewer: last?.reviewer || "",
         notes: "",
@@ -626,7 +633,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
       </Card>
       <Drawer
         open={!!detail}
-        onClose={() => setDetail(null)}
+        onClose={() => { selectedDetailId.current = null; detailGate.current.invalidate(); setDetail(null); }}
         width="90vw"
         title={
           <Space>
@@ -648,7 +655,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
               key={detail.id}
               jobId={id}
               detail={detail}
-              reload={() => open(detail)}
+              reload={() => open(detail, { select: false, resetReview: false })}
             />
             <Row gutter={20} className="section-gap">
               <Col span={12}>
@@ -687,7 +694,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
                             expected_id: detail.reviews.at(-1)?.id || 0,
                           },
                         );
-                        await open(detail);
+                        await open(detail, { select: false, resetReview: true });
                         await loadFindings();
                         message.success("复核记录已追加");
                       } catch (e) {
