@@ -44,13 +44,15 @@ class ArkRuntimeTypeSafetyDetector:
                 trace = json.dumps({'target': item.target_identity, 'token_origin': item.token_origin,
                                     'token_line': item.token_line, 'creation_line': item.creation_line,
                                     'generated_path': item.path, 'constraints': item.constraints,
-                                    'model_sha256': result.model_digest}, sort_keys=True)
+                                    'model_sha256': result.model_digest,
+                                    'function_region': [item.region_start_byte, item.region_end_byte],
+                                    'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
                 findings.append(DetectorFinding(
                     file=unit.path, line=item.line, column=item.column, rule_id=RULE_ID,
                     message='Candidate only: TypedArray destination and type-token origin differ under '
                             'the bounded species model; generated graph path is symbolic. trace=' + trace,
                     evidence_type='syntax', candidate_cwe='CWE-843',
-                    symbol=self.model.caller, source_sha256=unit.sha256,
+                    symbol=item.symbol, source_sha256=unit.sha256,
                     evidence_obligations=tuple(EvidenceObligation(kind, description) for kind, description in (
                         ('model_applicability', 'Verify exact symbols, signatures, macros and model semantics in the product build.'),
                         ('runtime_path_feasibility', 'Prove generated path conditions and species return type in the real runtime.'),

@@ -5,6 +5,7 @@ import unittest
 
 from research.experiments.ark_runtime.c2_20261017.replay import MANIFEST, pinned_context
 from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+from src.ohscanner.detectors.ark_runtime.model import RuntimeTypeModel, CALLER
 import json
 
 
@@ -15,16 +16,18 @@ class HistoricalPairTests(unittest.TestCase):
         entry = manifest['sources'][index]
         ctx, _, _, _, _ = pinned_context(Path(os.environ['OHSCANNER_ARK_REPO']), entry['commit'], entry['source_sha256'])
         self.assertEqual(ctx.units[0].parse_status, 'partial')
-        return analyze_unit(ctx.units[0], research_partial=True)
+        result = analyze_unit(ctx.units[0], model=RuntimeTypeModel(caller_profiles=()), research_partial=True)
+        self.assertTrue(all(o.symbol == CALLER for o in result.observations))
+        return result
 
     def test_C01_pinned_before_has_origin_candidate(self):
         result = self.run_version(0)
-        self.assertTrue(any(o.kind == 'candidate' for o in result.observations))
+        self.assertEqual([o.kind for o in result.observations], ['candidate'])
         self.assertEqual(result.file_outcome, 'partial')
 
     def test_C02_pinned_fix_has_no_rule_candidate(self):
         result = self.run_version(1)
-        self.assertTrue(any(o.kind == 'matched' for o in result.observations))
+        self.assertEqual([o.kind for o in result.observations], ['matched'])
         self.assertFalse(any(o.kind == 'candidate' for o in result.observations))
         self.assertEqual(result.file_outcome, 'partial')
 

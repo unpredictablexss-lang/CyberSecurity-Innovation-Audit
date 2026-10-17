@@ -113,6 +113,9 @@ class FunctionSyntax:
 
 def parse_functions(data):
     tree = Parser(Language(tree_sitter_cpp.language())).parse(data)
+    # Tree-sitter also calls defaulted/deleted special members function_definition;
+    # they have no emitted body to analyse and must not crash an unrelated caller.
     functions = [FunctionSyntax(data, n) for n in walk(tree.root_node)
-                 if n.type == 'function_definition']
+                 if n.type == 'function_definition' and n.child_by_field_name('body') is not None
+                 and n.child_by_field_name('declarator') is not None]
     return tree, functions

@@ -42,7 +42,8 @@ class TypeOriginTests(unittest.TestCase):
         self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['unknown'])
 
     def test_local_shadow_is_not_the_outer_object(self):
-        code = wrap(PREFIX + '{ GateRef output = input;\n'
+        # C3: isolate lexical shadowing from an old token's species-call lifetime.
+        code = wrap(PREFIX + 'inputTag = GetObjectType(LoadHClass(input));\n{ GateRef output = input;\n'
                     'StoreTypedArrayElement(glue, output, count, input, inputTag); }')
         self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['matched'])
 

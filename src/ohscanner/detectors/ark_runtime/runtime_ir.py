@@ -20,6 +20,42 @@ class GeneratedGraph:
     entry: int
     external_labels: frozenset
     limitations: tuple
+    cyclic_nodes: frozenset = frozenset()
+
+
+def cyclic_nodes(instructions):
+    """Iterative SCC pass: allocation-site identity is unsafe inside a cycle."""
+    edges = {i: [t for t, _ in inst.successors if t is not None and t >= 0]
+             for i, inst in enumerate(instructions)}
+    reverse = {i: [] for i in edges}
+    for src, targets in edges.items():
+        for target in targets:
+            reverse[target].append(src)
+    visited, order = set(), []
+    for entry in edges:
+        stack = [(entry, False)]
+        while stack:
+            current, finish = stack.pop()
+            if finish:
+                order.append(current)
+            elif current not in visited:
+                visited.add(current)
+                stack.append((current, True))
+                stack.extend((child, False) for child in edges[current] if child not in visited)
+    visited, cyclic = set(), set()
+    for entry in reversed(order):
+        if entry in visited:
+            continue
+        group, stack = set(), [entry]
+        while stack:
+            current = stack.pop()
+            if current not in visited:
+                visited.add(current)
+                group.add(current)
+                stack.extend(reverse[current])
+        if len(group) > 1 or entry in edges[entry]:
+            cyclic.update(group)
+    return frozenset(cyclic)
 
 
 def label_identity(fn, node):
@@ -45,12 +81,19 @@ def build_graph(fn, budget):
             raise ValueError('instruction_budget_exhausted')
         if node.type == 'compound_statement':
             for child in node.named_children:
-                visit(child, depth + 1)
+                if visit(child, depth + 1):
+                    return True
         elif node.type in ('if_statement', 'switch_statement', 'for_statement', 'while_statement',
                            'do_statement', 'try_statement', 'preproc_if', 'preproc_ifdef'):
             append(node, 'unknown', problem='unsupported_host_control_or_macro')
         elif node.type == 'return_statement':
-            append(node, 'return')
+            if any(child.type != 'comment' for child in node.named_children):
+                append(node, 'unknown', problem='unmodeled_host_return_expression')
+            else:
+                append(node, 'return')
+            # An unconditional host return prevents later graph emission,
+            # including labels to which previously emitted branches refer.
+            return True
         elif node.type == 'declaration':
             if any(n.type == 'lambda_expression' for n in walk(node)):
                 append(node, 'unknown', problem='unmodeled_lambda_or_escape')
@@ -64,7 +107,9 @@ def build_graph(fn, budget):
                 name = fn.call_name(expression)
                 args = fn.arguments(expression)
                 shadowed = fn.resolve(name, expression)
-                if name in CONTROL and shadowed is None:
+                if name in ('Return', 'ReturnVoid', 'Throw'):
+                    append(expression, 'unknown', problem='unmodeled_generated_termination:' + name)
+                elif name in CONTROL and shadowed is None:
                     count = 3 if name == 'BRANCH' else 1
                     if len(args) != count:
                         append(expression, 'unknown', problem='invalid_control_signature:' + name)
@@ -125,4 +170,4 @@ def build_graph(fn, budget):
             # Bind does not reconnect a previously terminated block. Only a
             # predecessor edge from a branch/jump reaches a detached label.
             inst.successors.append((index + 1, None))
-    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))))
+    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))), cyclic_nodes(instructions))
