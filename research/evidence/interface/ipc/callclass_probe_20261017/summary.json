@@ -1,0 +1,35 @@
+{
+ "what": "Caller-class probe over the three components whose text contains a real caller_class_sensitive_call site. The probe records every evaluated policy predicate and every reached caller-class-sensitive call; an empty bucket is the measurement, not a missing file.",
+ "instrument": "research/deliveries/ipc/probe_site/sitecustomize.py",
+ "components": [
+  {
+   "component": "ability_ability_runtime",
+   "repository": "openharmony/ability_ability_runtime",
+   "commit": "4ae23f04b8f46f16426a3a1b268c3c0e01894ed7",
+   "records": 2,
+   "by_bucket": {
+    "identity": 2
+   },
+   "caller_class_records": []
+  },
+  {
+   "component": "bundlemanager_bundle_framework",
+   "repository": "openharmony/bundlemanager_bundle_framework",
+   "commit": "9e67186cfade9714c7c212f374c7ff870524a63e",
+   "records": 2,
+   "by_bucket": {
+    "identity": 2
+   },
+   "caller_class_records": []
+  },
+  {
+   "component": "multimedia_audio_framework",
+   "repository": "openharmony/multimedia_audio_framework",
+   "commit": "3a2688e805df970739e3b0cebf9cc05d8cb24e9b",
+   "records": 0,
+   "by_bucket": {},
+   "caller_class_records": []
+  }
+ ],
+ "how_to_read": "A caller_class_record with caller_class_set=false is the exact conjunction `analysis.py:1049` needs to emit ipc.auth.caller-class. Zero such records means the sites in the source census were never reached from a modeled entry in that component."
+}

@@ -556,3 +556,49 @@ research/evidence/interface/ipc/extra_corpus_20261017/attribution.json
 `caller_class_sensitive_calls_reached_without_a_caller_class = 0`。
 
 `validated_vulnerability` 在 7 份报告中均为 0；未删除任何负结果。
+
+## 追加：交付项 16（第五批 5 组件 + 六族发射面）
+
+本批新增路径（只增不改核心面；未动检测器、策略、模型、共享面）：
+
+```text
+research/deliveries/ipc/20261017-family-parity-and-batch3.md
+research/deliveries/ipc/family_capability_parity.py
+research/evidence/interface/ipc/family_parity_20261017/parity.json
+research/evidence/interface/ipc/family_parity_20261017/rules.json
+research/evidence/interface/ipc/family_parity_20261017/shape_census.txt
+research/evidence/interface/ipc/family_parity_20261017/shape_census_detail.txt
+research/evidence/interface/ipc/extra_corpus_batch3_20261017/components.json
+research/evidence/interface/ipc/extra_corpus_batch3_20261017/attribution.json
+research/evidence/interface/ipc/callclass_probe_20261017/summary.json
+```
+
+本批浅克隆 5 个组件（5619 个入选文件 / 47,603,959 字节 / 4048 完整 + 1524 部分），
+`account_app_account` 无 `master` 未克隆。合计 84 条候选：83 条在
+`graphic_graphic_2d`（AUTH-01 71、CAP-01 12），1 条在 `ability_form_fwk`
+（AUTH-02，`form_mgr_stub.cpp:1698`）。
+
+逐族源码复核（均判为疑似误报，候选全部保留）：
+
+- `ability_form_fwk` AUTH-02：`StartAbility` 是 `IFormMgr` 纯虚调用，
+  `FormMgrService` 继承 `FormMgrStub` 并在实现体第 1396 行
+  `CheckFormPermission(...)`；检测器未绑定虚分派，属"一跳"误报类；
+- `multimedia_camera_framework` AUTH-02 + AUTH-04（`hcamera_service.cpp:1098`）：
+  第 1076 行有 `CheckPermission`，但守护它的 `CHECK_RETURN_RET_ELOG`
+  宏体含 `...` / `##__VA_ARGS__`，展开器拒绝；与 `FALSE_RETURN_V`、
+  `ENFORCE` 构成同类第三个、第四个独立实例，且**同时命中两个子类**；
+- `communication_wifi` DATA-01 copy-range（`wifi_p2p_callback_stub.cpp:385`）：
+  目的容量与拷贝长度是同一个受检 `cfgLen`（0 < cfgLen ≤ 1024），
+  `analysis.py:1067-1069` 要求上界等于容量键，未把 `cap == length` 当匹配。
+
+六族发射面（54 个真实组件，四个干净 audit 根）：AUTH-01 175、AUTH-02 22、
+AUTH-03 2（object-owner）、AUTH-04 8、CAP-01 56、DATA-01 1（copy-range）。
+**每一族都至少有一条实码候选，且每族都有 positive/fixed/safe 三类控制。**
+其余四条规则为 0，逐条带 `corpus_zero`：caller-class 的 12 处形状里 6 处在
+`*mock*` 路径，另 6 处经三个组件的探针确认零次 caller-class 求值（未从入口走到）；
+identity-domain 的 `Verify*Token(UID)` 形状在 54 组件中为 0，而任意
+`result_permission` 调用有 260 次；position-underflow 唯一的带减号
+`RewindRead` 是受检减法（`rs_marshalling_helper.cpp:2327`），规则未发射。
+
+`validated_vulnerability` 在 5 份报告中均为 0；未删除任何负结果或候选；
+未做 `git fetch`。

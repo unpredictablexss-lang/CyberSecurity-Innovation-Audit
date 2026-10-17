@@ -1,0 +1,832 @@
+{
+  "schema_version": 1,
+  "kind": "ipc_family_capability_parity",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "components_read": 54,
+  "audit_roots": [
+    "/home/audit/wtmp/ipc-audit",
+    "/home/audit/wtmp/ipc-audit-bline",
+    "/home/audit/wtmp/ipc-audit-extra",
+    "/home/audit/wtmp/ipc-audit-batch3"
+  ],
+  "families": {
+    "AUTH-01": {
+      "rules": 1,
+      "emitting_rules": 1,
+      "corpus_candidates": 175,
+      "controls": {
+        "fixed": 6,
+        "positive": 17,
+        "safe": 1
+      }
+    },
+    "AUTH-02": {
+      "rules": 1,
+      "emitting_rules": 1,
+      "corpus_candidates": 22,
+      "controls": {
+        "fixed": 4,
+        "positive": 17,
+        "safe": 3
+      }
+    },
+    "AUTH-03": {
+      "rules": 5,
+      "emitting_rules": 1,
+      "corpus_candidates": 2,
+      "controls": {
+        "fixed": 5,
+        "positive": 6,
+        "safe": 1
+      }
+    },
+    "AUTH-04": {
+      "rules": 1,
+      "emitting_rules": 1,
+      "corpus_candidates": 8,
+      "controls": {
+        "fixed": 2,
+        "positive": 5,
+        "safe": 2
+      }
+    },
+    "CAP-01": {
+      "rules": 1,
+      "emitting_rules": 1,
+      "corpus_candidates": 56,
+      "controls": {
+        "fixed": 4,
+        "positive": 10,
+        "safe": 2
+      }
+    },
+    "DATA-01": {
+      "rules": 2,
+      "emitting_rules": 1,
+      "corpus_candidates": 1,
+      "controls": {
+        "fixed": 2,
+        "positive": 3,
+        "safe": 1
+      }
+    }
+  },
+  "rules": [
+    {
+      "family": "AUTH-01",
+      "rule": "ipc.relay.descriptor-boundary",
+      "cwe": "CWE-441",
+      "corpus_candidates": 175,
+      "corpus_components": 16,
+      "corpus_sites": [
+        {
+          "component": "ability_ability_runtime",
+          "file": "frameworks/native/ability/native/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
+          "line": 51,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: ReverseContinuationSchedulerPrimaryStub::NotifyReplicaT"
+        },
+        {
+          "component": "ability_ability_runtime",
+          "file": "frameworks/native/ability/native/continuation/distributed/reverse_continuation_scheduler_primary_stub.cpp",
+          "line": 53,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: ReverseContinuationSchedulerPrimaryStub::ContinuationBa"
+        },
+        {
+          "component": "ability_ability_runtime",
+          "file": "frameworks/native/ability/native/continuation/remote_register_service/connect_callback_stub.cpp",
+          "line": 56,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "AUTH-01 candidate: IPC entry reaches a locally resolved handler without interface-descriptor validation: ConnectCallbackStub::ConnectInner Entry=ConnectCallback"
+        }
+      ],
+      "corpus_zero": null,
+      "controls": {
+        "positive": 17
+      },
+      "control_samples": [
+        {
+          "sample_id": "relay_positive",
+          "file": "relay_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_read_only_positive",
+          "file": "relay_read_only_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "wrong_parcel_positive",
+          "file": "wrong_parcel_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_wrong_interface_positive",
+          "file": "descriptor_wrong_interface_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_unrelated_positive",
+          "file": "descriptor_unrelated_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_alias_positive",
+          "file": "descriptor_alias_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_unresolved_positive",
+          "file": "descriptor_unresolved_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_call_only_positive",
+          "file": "descriptor_call_only_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_no_reject_positive",
+          "file": "descriptor_no_reject_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_after_positive",
+          "file": "descriptor_after_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "descriptor_one_branch_positive",
+          "file": "descriptor_one_branch_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_inner_no_guard_positive",
+          "file": "relay_inner_no_guard_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_inner_after_dispatch_positive",
+          "file": "relay_inner_after_dispatch_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_inner_no_reject_positive",
+          "file": "relay_inner_no_reject_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_inner_nested_positive",
+          "file": "relay_inner_nested_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_inner_substituted_positive",
+          "file": "relay_inner_substituted_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        },
+        {
+          "sample_id": "relay_inner_wrong_interface_positive",
+          "file": "relay_inner_wrong_interface_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-01"
+        }
+      ],
+      "family_controls": {
+        "fixed": 6,
+        "positive": 17,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-02",
+      "rule": "ipc.auth.missing",
+      "cwe": "CWE-862",
+      "corpus_candidates": 22,
+      "corpus_components": 7,
+      "corpus_sites": [
+        {
+          "component": "ability_ability_runtime",
+          "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+          "line": 1406,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "AUTH-02 candidate: Sensitive modeled call StartAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityIn"
+        },
+        {
+          "component": "ability_ability_runtime",
+          "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+          "line": 1695,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "AUTH-02 candidate: Sensitive modeled call StartAbility has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartAbilityAd"
+        },
+        {
+          "component": "ability_ability_runtime",
+          "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+          "line": 1718,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "AUTH-02 candidate: Sensitive modeled call StartAbilityAsCaller has a structured path without a recognized caller authorization. Entry=AbilityManagerStub::StartA"
+        }
+      ],
+      "corpus_zero": null,
+      "controls": {
+        "positive": 17
+      },
+      "control_samples": [
+        {
+          "sample_id": "caller_role_shadowed_positive",
+          "file": "caller_role_shadowed_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "entry_const_reference_positive",
+          "file": "entry_const_reference_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "entry_reference_positive",
+          "file": "entry_reference_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "caller_role_shadowed_free_predicate_positive",
+          "file": "caller_role_shadowed_free_predicate_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "auth_positive",
+          "file": "auth_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "helper_positive",
+          "file": "helper_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "helper_preproc_unguarded_positive",
+          "file": "helper_preproc_unguarded_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "helper_preproc_wrong_uid_positive",
+          "file": "helper_preproc_wrong_uid_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "helper_preproc_log_only_positive",
+          "file": "helper_preproc_log_only_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "helper_preproc_param_positive",
+          "file": "helper_preproc_param_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "helper_preproc_no_else_positive",
+          "file": "helper_preproc_no_else_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "role_predicate_shadowed_positive",
+          "file": "role_predicate_shadowed_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "account_role_authorized_fixed",
+          "file": "account_role_authorized_fixed.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "account_role_wrong_value_positive",
+          "file": "account_role_wrong_value_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "account_role_unrelated_call_positive",
+          "file": "account_role_unrelated_call_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "account_role_tokenid_positive",
+          "file": "account_role_tokenid_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        },
+        {
+          "sample_id": "account_role_request_value_positive",
+          "file": "account_role_request_value_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-02"
+        }
+      ],
+      "family_controls": {
+        "fixed": 4,
+        "positive": 17,
+        "safe": 3
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-03",
+      "rule": "ipc.auth.caller-class",
+      "cwe": "CWE-863",
+      "corpus_candidates": 0,
+      "corpus_components": 0,
+      "corpus_sites": [],
+      "corpus_zero": "12 caller_class_sensitive_calls sites in 6 components; 6 sit under `*mock*` include paths. The caller-class probe recorded zero evaluations in the three components holding the other 6 sites (multimedia_audio_framework, ability_ability_runtime, bundlemanager_bundle_framework), so none of those was reached from a modeled entry.",
+      "controls": {
+        "positive": 1
+      },
+      "control_samples": [
+        {
+          "sample_id": "caller_class_positive",
+          "file": "caller_class_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-03"
+        }
+      ],
+      "family_controls": {
+        "fixed": 5,
+        "positive": 6,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-03",
+      "rule": "ipc.auth.object-owner",
+      "cwe": "CWE-863",
+      "corpus_candidates": 2,
+      "corpus_components": 1,
+      "corpus_sites": [
+        {
+          "component": "resourceschedule_background_task_mgr",
+          "file": "services/continuous_task/src/bg_continuous_task_mgr.cpp",
+          "line": 907,
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "message": "AUTH-03 candidate: Background-task target UID is not bound to calling UID. Entry=BgContinuousTaskMgr::RequestBackgroundRunningForInner; possible consequence (no"
+        },
+        {
+          "component": "resourceschedule_background_task_mgr",
+          "file": "services/continuous_task/src/bg_continuous_task_mgr.cpp",
+          "line": 909,
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "message": "AUTH-03 candidate: Background-task target UID is not bound to calling UID. Entry=BgContinuousTaskMgr::RequestBackgroundRunningForInner; possible consequence (no"
+        }
+      ],
+      "corpus_zero": null,
+      "controls": {
+        "positive": 1
+      },
+      "control_samples": [
+        {
+          "sample_id": "owner_positive",
+          "file": "owner_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-03"
+        }
+      ],
+      "family_controls": {
+        "fixed": 5,
+        "positive": 6,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-03",
+      "rule": "ipc.auth.identity-domain",
+      "cwe": "CWE-863",
+      "corpus_candidates": 0,
+      "corpus_components": 0,
+      "corpus_sites": [],
+      "corpus_zero": "0 of 54 components contains a Verify*Token call whose argument is a caller UID; the call shape occurs 260 times across 33 components with token-ID arguments (shape census over the same reports).",
+      "controls": {
+        "positive": 1
+      },
+      "control_samples": [
+        {
+          "sample_id": "identity_domain_positive",
+          "file": "identity_domain_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-03"
+        }
+      ],
+      "family_controls": {
+        "fixed": 5,
+        "positive": 6,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-03",
+      "rule": "ipc.auth.service-identity",
+      "cwe": "CWE-863",
+      "corpus_candidates": 0,
+      "corpus_components": 0,
+      "corpus_sites": [],
+      "corpus_zero": "Verify*Token over a self identity occurs outside IPC entries (ability_runtime napi/session code); across the 54 components the probe recorded no entry-reachable Verify*Token site consuming a self identity.",
+      "controls": {
+        "positive": 2
+      },
+      "control_samples": [
+        {
+          "sample_id": "identity_positive",
+          "file": "identity_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-03"
+        },
+        {
+          "sample_id": "reset_identity_positive",
+          "file": "reset_identity_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-03"
+        }
+      ],
+      "family_controls": {
+        "fixed": 5,
+        "positive": 6,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-03",
+      "rule": "ipc.auth.request-identity",
+      "cwe": "CWE-863",
+      "corpus_candidates": 0,
+      "corpus_components": 0,
+      "corpus_sites": [],
+      "corpus_zero": "the predicate probe recorded no caller/self/request subject at any Verify*Token site across the measured components; the shape census finds no request-derived argument at those calls.",
+      "controls": {
+        "positive": 1
+      },
+      "control_samples": [
+        {
+          "sample_id": "request_identity_positive",
+          "file": "request_identity_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-03"
+        }
+      ],
+      "family_controls": {
+        "fixed": 5,
+        "positive": 6,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "AUTH-04",
+      "rule": "ipc.auth.guard-coverage",
+      "cwe": "CWE-863",
+      "corpus_candidates": 8,
+      "corpus_components": 3,
+      "corpus_sites": [
+        {
+          "component": "bundlemanager_bundle_framework",
+          "file": "services/bundlemgr/src/bundle_installer_host.cpp",
+          "line": 188,
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "message": "AUTH-04 candidate: Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. Sensitive modeled call Ins"
+        },
+        {
+          "component": "bundlemanager_bundle_framework",
+          "file": "services/bundlemgr/src/bundle_installer_host.cpp",
+          "line": 255,
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "message": "AUTH-04 candidate: Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. Sensitive modeled call Ins"
+        },
+        {
+          "component": "bundlemanager_bundle_framework",
+          "file": "services/bundlemgr/src/bundle_installer_host.cpp",
+          "line": 279,
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "message": "AUTH-04 candidate: Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. Sensitive modeled call Uni"
+        }
+      ],
+      "corpus_zero": null,
+      "controls": {
+        "positive": 5
+      },
+      "control_samples": [
+        {
+          "sample_id": "guard_fallthrough_positive",
+          "file": "guard_fallthrough_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-04"
+        },
+        {
+          "sample_id": "auth_ignored_positive",
+          "file": "auth_ignored_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-04"
+        },
+        {
+          "sample_id": "coverage_positive",
+          "file": "coverage_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-04"
+        },
+        {
+          "sample_id": "coverage_late_positive",
+          "file": "coverage_late_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-04"
+        },
+        {
+          "sample_id": "switch_positive",
+          "file": "switch_positive.cpp",
+          "variant": "positive",
+          "family": "AUTH-04"
+        }
+      ],
+      "family_controls": {
+        "fixed": 2,
+        "positive": 5,
+        "safe": 2
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "CAP-01",
+      "rule": "ipc.capability.export",
+      "cwe": "CWE-926",
+      "corpus_candidates": 56,
+      "corpus_components": 8,
+      "corpus_sites": [
+        {
+          "component": "ability_ability_runtime",
+          "file": "interfaces/inner_api/app_manager/src/appmgr/app_mgr_stub.cpp",
+          "line": 494,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AppMgrStub::OnRemoteRequestInner; possible con"
+        },
+        {
+          "component": "ability_ability_runtime",
+          "file": "interfaces/inner_api/app_manager/src/appmgr/app_mgr_stub.cpp",
+          "line": 959,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AppMgrStub::OnRemoteRequestInner; possible con"
+        },
+        {
+          "component": "ability_ability_runtime",
+          "file": "services/abilitymgr/src/ability_manager_stub.cpp",
+          "line": 1336,
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "message": "CAP-01 candidate: Capability export WriteRemoteObject lacks a recognized caller authorization on this path. Entry=AbilityManagerStub::AcquireDataAbilityInner; p"
+        }
+      ],
+      "corpus_zero": null,
+      "controls": {
+        "positive": 10
+      },
+      "control_samples": [
+        {
+          "sample_id": "export_positive",
+          "file": "export_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_ungated_positive",
+          "file": "onehop_ungated_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_not_unique_positive",
+          "file": "onehop_not_unique_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_macro_renamed_stub_positive",
+          "file": "onehop_macro_renamed_stub_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "capability_positive",
+          "file": "capability_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_unguarded_positive",
+          "file": "onehop_unguarded_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_open_conjunct_positive",
+          "file": "onehop_open_conjunct_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_late_gate_positive",
+          "file": "onehop_late_gate_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_property_gate_positive",
+          "file": "onehop_property_gate_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        },
+        {
+          "sample_id": "onehop_not_unique_positive",
+          "file": "onehop_not_unique_positive.cpp",
+          "variant": "positive",
+          "family": "CAP-01"
+        }
+      ],
+      "family_controls": {
+        "fixed": 4,
+        "positive": 10,
+        "safe": 2
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "DATA-01",
+      "rule": "ipc.parcel.copy-range",
+      "cwe": "CWE-20",
+      "corpus_candidates": 1,
+      "corpus_components": 1,
+      "corpus_sites": [
+        {
+          "component": "communication_wifi",
+          "file": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+          "line": 385,
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "message": "DATA-01 candidate: Parcel-derived copy length cfgLen lacks matched nonnegative/destination-capacity bounds. Entry=WifiP2pCallbackStub::RemoteOnConfigChanged [di"
+        }
+      ],
+      "corpus_zero": null,
+      "controls": {
+        "positive": 2
+      },
+      "control_samples": [
+        {
+          "sample_id": "parcel_positive",
+          "file": "parcel_positive.cpp",
+          "variant": "positive",
+          "family": "DATA-01"
+        },
+        {
+          "sample_id": "parcel_unrelated_bound_positive",
+          "file": "parcel_unrelated_bound_positive.cpp",
+          "variant": "positive",
+          "family": "DATA-01"
+        }
+      ],
+      "family_controls": {
+        "fixed": 2,
+        "positive": 3,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    },
+    {
+      "family": "DATA-01",
+      "rule": "ipc.parcel.position-underflow",
+      "cwe": "CWE-20",
+      "corpus_candidates": 0,
+      "corpus_components": 0,
+      "corpus_sites": [],
+      "corpus_zero": "14 RewindRead sites in 5 components; exactly one size-minus shape, a checked subtraction behind `readPosition > PIXELMAP_UNMARSHALLING_DEBUG_OFFSET` (graphic_graphic_2d rs_marshalling_helper.cpp:2327); the rule emitted nothing at it (shape census; no per-site evaluation trace exists).",
+      "controls": {
+        "positive": 1
+      },
+      "control_samples": [
+        {
+          "sample_id": "position_underflow_positive",
+          "file": "position_underflow_positive.cpp",
+          "variant": "positive",
+          "family": "DATA-01"
+        }
+      ],
+      "family_controls": {
+        "fixed": 2,
+        "positive": 3,
+        "safe": 1
+      },
+      "has_positive": true,
+      "has_fixed": true,
+      "has_safe": true
+    }
+  ],
+  "how_to_read": "`corpus_candidates` counts real-component candidates, not fixtures. `controls` counts the declared positive/fixed/safe/unrelated fixtures for the same rule. A zero with no `corpus_zero` would be a gap in this document; every zero above carries one. Candidates are unverified static evidence; validated_vulnerability remains 0."
+}

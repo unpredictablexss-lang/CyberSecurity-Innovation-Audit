@@ -1,0 +1,53 @@
+components measured: 54
+
+AUTH-03 caller-class: caller_class_sensitive_calls
+  total=12  in 6 components
+     multimedia_audio_framework                    3   e.g. frameworks/native/audioutils/src/audio_utils.cpp
+     bundlemanager_bundle_framework                2   e.g. services/bundlemgr/src/bundle_permission_mgr.cpp
+     distributeddatamgr_kv_store                   2   e.g. kvstoremock/external_inner_kit/access_token/include/accesstoken_kit.h
+     distributeddatamgr_relational_store           2   e.g. rdbmock/external_inner_kit/access_token/include/accesstoken_kit.h
+
+AUTH-03 identity-domain: Verify*Token(caller UID)
+  total=0  in 0 components
+
+AUTH-03 identity-domain: any result_permission call
+  total=260  in 33 components
+     notification_distributed_notification_service  110   e.g. services/ans/include/access_token_helper.h
+     ability_ability_runtime                      25   e.g. frameworks/js/napi/application/js_application.cpp
+     distributeddatamgr_kv_store                  10   e.g. kvstoremock/external_inner_kit/access_token/include/accesstoken_kit.h
+     distributeddatamgr_relational_store          10   e.g. rdbmock/external_inner_kit/access_token/include/accesstoken_kit.h
+
+DATA-01 position-underflow: RewindRead(...)
+  total=13  in 4 components
+     graphic_graphic_2d                            9   e.g. rosen/modules/platform/utils/parcel.cpp
+     commonlibrary_c_utils                         2   e.g. base/include/parcel.h
+     communication_wifi                            1   e.g. wifi/frameworks/native/src/wifi_scan_impl.cpp
+     communication_netmanager_ext                  1   e.g. interfaces/innerkits/netvpnclient/include/vpn_config_raw_data.h
+
+DATA-01 position-underflow: RewindRead(<minus in args>)
+  total=1  in 1 components
+     graphic_graphic_2d                            1   e.g. rosen/modules/render_service_base/src/platform/ohos/rs_marshalling_helper.cpp
+
+DATA-01 copy-range: copy_calls
+  total=3349  in 40 components
+     communication_dsoftbus                      990   e.g. adapter/common/bus_center/driver/lnn_hdf_driver_request.c
+     security_huks                               389   e.g. frameworks/crypto_lite/cipher/src/cipher_aes.c
+     security_device_auth                        367   e.g. common_lib/impl/src/hc_parcel.c
+     multimedia_image_framework                  208   e.g. frameworks/innerkitsimpl/accessor/src/blob_metadata.cpp
+
+DATA-01 copy-range: copy call with a parcel read in its args
+  total=2  in 1 components
+     multimedia_media_foundation                   2   e.g. engine/plugin/common/share_memory.cpp
+
+AUTH-03 object-owner: owner_calls
+  total=55  in 1 components
+     notification_distributed_notification_service   55   e.g. frameworks/ans/src/notification_request.cpp
+
+
+candidates actually raised, for contrast:
+  ipc.relay.descriptor-boundary      175
+  ipc.capability.export              56
+  ipc.auth.missing                   22
+  ipc.auth.guard-coverage            8
+  ipc.auth.object-owner              2
+  ipc.parcel.copy-range              1

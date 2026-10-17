@@ -1,4 +1,4 @@
-"""Turn the seven new components' saved runs into one evidence document.
+"""Turn one batch of components' saved runs into one evidence document.
 
 Read-only. Three sources per component, all produced in the same session against
 the same pinned clone:
@@ -128,6 +128,10 @@ def main():
     parser.add_argument("--audit-root", required=True)
     parser.add_argument("--root-root", required=True)
     parser.add_argument("--probe-root", required=True)
+    parser.add_argument("--batch", default="B-line corpus extension",
+                        help="label carried into the document; no batch is implied")
+    parser.add_argument("--attribution", default="",
+                        help="path to the attribution.json for this batch, if any")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 
@@ -217,7 +221,7 @@ def main():
     document = {
         "schema_version": 1,
         "kind": "ipc_component_audit_measurement",
-        "batch": "B-line corpus extension (7 repositories added 2026-10-17)",
+        "batch": args.batch,
         "generated": "2026-10-17 Asia/Shanghai",
         "detector": DETECTOR,
         "instruments": {
@@ -226,8 +230,7 @@ def main():
             "mechanism": "PYTHONPATH sitecustomize wrappers over the pinned Interpreter; "
                          "the driver argv is otherwise unchanged and neither wrapper "
                          "changes a computed value.",
-            "attribution": "research/evidence/interface/ipc/extra_corpus_20261017/"
-                           "attribution.json",
+            "attribution": args.attribution,
         },
         "totals": dict(sorted(totals.items())),
         "per_rule": {rule: per_rule[rule] for rule in RULES if per_rule.get(rule)},

@@ -85,7 +85,7 @@ def is_measurement(report):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--audit-root", required=True)
+    parser.add_argument("--audit-root", action="append", required=True)
     parser.add_argument("--corpus-root", action="append", required=True)
     parser.add_argument("--top", type=int, default=6)
     parser.add_argument("--detail", default=None,
@@ -99,10 +99,19 @@ def main():
     fired = collections.Counter()
     components = 0
 
-    for name in sorted(os.listdir(args.audit_root)):
-        path = os.path.join(args.audit_root, name, "report.json")
-        if not os.path.exists(path):
-            continue
+    seen = set()
+    reports = []
+    for root in args.audit_root:
+        for name in sorted(os.listdir(root)):
+            path = os.path.join(root, name, "report.json")
+            if not os.path.exists(path):
+                continue
+            if name in seen:
+                print("  duplicate report for %s ignored" % name, file=sys.stderr)
+                continue
+            seen.add(name)
+            reports.append((name, path))
+    for name, path in reports:
         report = json.load(open(path))
         if not is_measurement(report):
             continue

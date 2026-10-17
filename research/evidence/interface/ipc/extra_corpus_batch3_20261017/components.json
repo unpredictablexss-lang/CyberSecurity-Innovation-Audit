@@ -1,0 +1,1373 @@
+{
+  "schema_version": 1,
+  "kind": "ipc_component_audit_measurement",
+  "batch": "B-line corpus batch 3 (5 repositories added 2026-10-17)",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector": {
+    "path": "src/ohscanner/detectors/interface",
+    "version": "0.8.0",
+    "model_version": "oh-ipc-2026.10-v6",
+    "source": "read-only pinned tree of the interface branch",
+    "source_commit": "635b3e0449c552f0ccc25118850d245962845568",
+    "driver": "src/ohscanner/detectors/interface/audit.py",
+    "passes": [
+      "complete-ast",
+      "all-files"
+    ]
+  },
+  "instruments": {
+    "root_probe": "research/deliveries/ipc/root_probe_site/sitecustomize.py",
+    "predicate_probe": "research/deliveries/ipc/probe_site/sitecustomize.py",
+    "mechanism": "PYTHONPATH sitecustomize wrappers over the pinned Interpreter; the driver argv is otherwise unchanged and neither wrapper changes a computed value.",
+    "attribution": "research/evidence/interface/ipc/extra_corpus_batch3_20261017/attribution.json"
+  },
+  "totals": {
+    "candidates": 84,
+    "parsed_complete": 4048,
+    "parsed_partial": 1524,
+    "selected_bytes": 47603959,
+    "selected_files": 5619,
+    "value_calls": 993605
+  },
+  "per_rule": {
+    "ipc.relay.descriptor-boundary": {
+      "graphic_graphic_2d": 71
+    },
+    "ipc.auth.missing": {
+      "ability_form_fwk": 1
+    },
+    "ipc.capability.export": {
+      "graphic_graphic_2d": 12
+    }
+  },
+  "components": [
+    {
+      "component": "ability_form_fwk",
+      "repository": "openharmony/ability_form_fwk",
+      "commit": "0914d437af5988ffbea2ec29fa4259a943bceadf",
+      "git_tree": "381dcf29a2e8190f140799a4c17ecb7b9d84156f",
+      "snapshot_sha256": "6e5d26a39a3c1435a27eb5359c9634b5987dd89ddad9412ce547af244245ed64",
+      "plan_sha256": "e9d63ba6a1f181afbe5d1beb57d42392d778f342726c36c5895d93eb5e6aadb9",
+      "scope": {
+        "selected_files": 605,
+        "selected_bytes": 5059884
+      },
+      "analysis": {
+        "parsed_complete": 397,
+        "parsed_partial": 188,
+        "analyzed_files": 397,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 188
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "arkts": 11,
+          "js": 8,
+          "ts": 1
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": null,
+      "candidates": {
+        "ipc.auth.missing": 1
+      },
+      "candidates_total": 1,
+      "candidate_sites": [
+        {
+          "file": "interfaces/inner_api/src/form_mgr_stub.cpp",
+          "line": 1698,
+          "rule_id": "ipc.auth.missing",
+          "symbol": "FormMgrStub::HandleStartAbility",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "73d9f5fa97373cd51e3bbf8e9b7c2c37acc26311793675ebfea4576a4f55c674"
+        }
+      ],
+      "candidates_with_runner_obligations": 1,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 19.469,
+      "report_sha256": "98d9997d4208820ef16994610b099ded047b2d2ba70db9ed57155eed3de50ea1",
+      "root_probe": {
+        "distinct_roots": 174,
+        "distinct_root_files": 10,
+        "value_calls": 22132,
+        "distinct_functions": 301,
+        "root_files": [
+          "interfaces/inner_api/src/form_cross_device_publish_callback_stub.cpp",
+          "interfaces/inner_api/src/form_host_stub.cpp",
+          "interfaces/inner_api/src/form_mgr_stub.cpp",
+          "interfaces/inner_api/src/form_provider_stub.cpp",
+          "interfaces/inner_api/src/form_publish_interceptor_stub.cpp",
+          "interfaces/inner_api/src/form_render_stub.cpp",
+          "interfaces/inner_api/src/form_supply_stub.cpp",
+          "interfaces/inner_api/src/js_form_state_observer_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 2,
+        "evaluations_by_subject": {
+          "unknown": 2
+        },
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "communication_netmanager_base",
+      "repository": "openharmony/communication_netmanager_base",
+      "commit": "d1a2c26d3dc07e4582b6d32417fe9a0f7d2359d7",
+      "git_tree": "121611278ecf9a1ad924698d4607bee2753b48c6",
+      "snapshot_sha256": "55ba5bdda7cd25fe4e5e18be3505b8405b60bcef587c2c9e21acf0ae538d2a9b",
+      "plan_sha256": "bd1f5669197ad152539e27dfa927a849d8fe89ae548a1d60cad123f16d85ddb8",
+      "scope": {
+        "selected_files": 739,
+        "selected_bytes": 5767040
+      },
+      "analysis": {
+        "parsed_complete": 615,
+        "parsed_partial": 115,
+        "analyzed_files": 615,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 115
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "arkts": 4,
+          "ts": 5
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "entry_roots_walked_no_rule_conjunction",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 24.074,
+      "report_sha256": "80d48b205b1244408a6b26fefa171815759cf8487f14ed28e9442f2de7389bd5",
+      "root_probe": {
+        "distinct_roots": 91,
+        "distinct_root_files": 16,
+        "value_calls": 6845,
+        "distinct_functions": 161,
+        "root_files": [
+          "frameworks/native/netconnclient/src/proxy/net_conn_callback_stub.cpp",
+          "frameworks/native/netconnclient/src/proxy/net_detection_callback_stub.cpp",
+          "frameworks/native/netconnclient/src/proxy/net_factoryreset_callback_stub.cpp",
+          "frameworks/native/netconnclient/src/proxy/net_interface_callback_stub.cpp",
+          "frameworks/native/netconnclient/src/proxy/net_supplier_callback_stub.cpp",
+          "frameworks/native/netconnclient/src/proxy/refresh_http_proxy_callback_stub.cpp",
+          "frameworks/native/netmanagernative/dnsresolv/net_dns_result_callback_stub.cpp",
+          "frameworks/native/netmanagernative/net_diag_callback_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 68,
+        "evaluations_by_subject": {
+          "": 14,
+          "unknown": 54
+        },
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "filemanagement_app_file_service",
+      "repository": "openharmony/filemanagement_app_file_service",
+      "commit": "a7815f653bd669026cad48421ed1ecc0dfbbe9f2",
+      "git_tree": "ca3587483f9ce2904629f64ac10439997459c774",
+      "snapshot_sha256": "3fab1593970edbee3548f24d490edcbc6ce23020aa3ff046b92976477545103b",
+      "plan_sha256": "b826d23378f7856d594a375b7465df56ac56359eb2cf1213b303b16dc81cf62b",
+      "scope": {
+        "selected_files": 291,
+        "selected_bytes": 2394630
+      },
+      "analysis": {
+        "parsed_complete": 244,
+        "parsed_partial": 42,
+        "analyzed_files": 244,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 42
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "arkts": 3,
+          "js": 2
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "no_entry_roots",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 9.905,
+      "report_sha256": "ad569d9a7bb6219b3221ec09a9d17749a845409fa53c6f4e2523f230bc5b45f6",
+      "root_probe": {
+        "distinct_roots": 0,
+        "distinct_root_files": 0,
+        "value_calls": 0,
+        "distinct_functions": 0,
+        "root_files": []
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "graphic_graphic_2d",
+      "repository": "openharmony/graphic_graphic_2d",
+      "commit": "286721f97d69fe04f9327ce38227c73e6f86160b",
+      "git_tree": "bd83f71e3d95d02bbfdfe146ddb12648b6f2caa4",
+      "snapshot_sha256": "f2ce834b7046c7d24742ce5e3825659160783f2859516b554dfb22e1b2d34112",
+      "plan_sha256": "02c67f4348aa8839ed36fdccae5316eba0e3b1c8aae51a1897eb23222be567d2",
+      "scope": {
+        "selected_files": 3411,
+        "selected_bytes": 26981078
+      },
+      "analysis": {
+        "parsed_complete": 2350,
+        "parsed_partial": 1051,
+        "analyzed_files": 2350,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 1051
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "arkts": 10
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": null,
+      "candidates": {
+        "ipc.relay.descriptor-boundary": 71,
+        "ipc.capability.export": 12
+      },
+      "candidates_total": 83,
+      "candidate_sites": [
+        {
+          "file": "rosen/modules/composer/vsync/src/vsync_connection_stub.cpp",
+          "line": 54,
+          "rule_id": "ipc.capability.export",
+          "symbol": "VSyncConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ee37c02f1b332949be90d300f17dbc3df272ea30fc5016cf92b6f9d56213e6c9"
+        },
+        {
+          "file": "rosen/modules/render_service/composer/composer_service/connection/zidl/rs_render_to_composer_connection_stub.cpp",
+          "line": 172,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSRenderToComposerConnectionStub::CommitTunnelLayerBySurfaceIdStub",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "3291be9e171edb87f6275ebce31f459b3ad879b355a22445b2197f8a25127b77"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 294,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 598,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 598,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 904,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 909,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 914,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 937,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 979,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 1007,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 1048,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 1053,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_client_to_render_connection_stub.cpp",
+          "line": 1091,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "95f3996d71945f8d2554afd38080f9c2bca5eb7a71a5db1a3f0a2ea24ed06a90"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_connect_to_render_process_stub.cpp",
+          "line": 71,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSConnectToRenderProcessStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b19c7c5bcf519c414dcd01769b3bdb1aa3fa8d97bd23c0a527fe1678d5bbc6e"
+        },
+        {
+          "file": "rosen/modules/render_service/core/transaction/zidl/rs_connect_to_render_process_stub.cpp",
+          "line": 71,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSConnectToRenderProcessStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b19c7c5bcf519c414dcd01769b3bdb1aa3fa8d97bd23c0a527fe1678d5bbc6e"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 216,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 225,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 234,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 243,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 252,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 1015,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_process/transaction/zidl/rs_service_to_render_connection_stub.cpp",
+          "line": 1026,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSServiceToRenderConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1b6f8631b21d46efc2268502f52890ea719c8da3813aaf89af423ed2ca859b8b"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 348,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 410,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 410,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 1808,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 1808,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2274,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2274,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2428,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2428,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2456,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2465,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2474,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2483,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2492,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 2501,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 3559,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_client_to_service_connection_stub.cpp",
+          "line": 3559,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSClientToServiceConnectionStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "12bd81d718d7583e9bea0c191f72422a659313eb80b8d55fdda114ccb531474f"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_render_service_stub.cpp",
+          "line": 77,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSRenderServiceStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ed58f9a5d78743c8b6bcea02c54f4078056ba52eaec322f1a7338d4f3f52c714"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_render_service_stub.cpp",
+          "line": 77,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSRenderServiceStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ed58f9a5d78743c8b6bcea02c54f4078056ba52eaec322f1a7338d4f3f52c714"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_render_service_stub.cpp",
+          "line": 82,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSRenderServiceStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ed58f9a5d78743c8b6bcea02c54f4078056ba52eaec322f1a7338d4f3f52c714"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_render_service_stub.cpp",
+          "line": 82,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSRenderServiceStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ed58f9a5d78743c8b6bcea02c54f4078056ba52eaec322f1a7338d4f3f52c714"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_render_service_stub.cpp",
+          "line": 113,
+          "rule_id": "ipc.capability.export",
+          "symbol": "RSRenderServiceStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ed58f9a5d78743c8b6bcea02c54f4078056ba52eaec322f1a7338d4f3f52c714"
+        },
+        {
+          "file": "rosen/modules/render_service/main/render_server/transaction/zidl/rs_render_service_stub.cpp",
+          "line": 113,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSRenderServiceStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ed58f9a5d78743c8b6bcea02c54f4078056ba52eaec322f1a7338d4f3f52c714"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/display_engine/ipc_callbacks/rs_de_status_change_callback_stub.cpp",
+          "line": 44,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSDEStatusChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "2607b22f032efdd436be83a3e241466554c9ac428748e8571584ee9440bc1135"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/display_engine/transaction/zidl/rs_display_engine_control_stub.cpp",
+          "line": 52,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSDisplayEngineControlStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "60614a9cc1b378af8573c0d11d303db36c9cf1c6ae405b8cabe3007ad81044da"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/display_engine/transaction/zidl/rs_display_engine_control_stub.cpp",
+          "line": 67,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSDisplayEngineControlStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "60614a9cc1b378af8573c0d11d303db36c9cf1c6ae405b8cabe3007ad81044da"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/display_engine/transaction/zidl/rs_display_engine_control_stub.cpp",
+          "line": 72,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSDisplayEngineControlStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "60614a9cc1b378af8573c0d11d303db36c9cf1c6ae405b8cabe3007ad81044da"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/active_screen_id_changed_callback_stub.cpp",
+          "line": 38,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSActiveScreenIdChangedCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "77ce219c749f1ddf49cb4068217b1d39827bcf0084e87d0aa940f8061eabba04"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/buffer_available_callback_stub.cpp",
+          "line": 34,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSBufferAvailableCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ade029e027d72f7133db5f7892b9766fe32e69d3bf3fadcfc4b8b5e15276c218"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/buffer_clear_callback_stub.cpp",
+          "line": 34,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSBufferClearCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "16346dd99c16989e19aa4af8a278e71ca23d1b215fc01269f4d4230cf55f2822"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/dfx/rs_dump_callback_stub.cpp",
+          "line": 40,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSDumpCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "b70b02a7d72fdc0a5d04beb6b5573bebb64147346bfd2c9d8eb4fecc3cd2204d"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/hgm_config_change_callback_stub.cpp",
+          "line": 40,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSHgmConfigChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1d3d6455498f30b9cf426a61477c937b31af18d22b6620a46b9309db661ccf99"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/hgm_config_change_callback_stub.cpp",
+          "line": 51,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSHgmConfigChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1d3d6455498f30b9cf426a61477c937b31af18d22b6620a46b9309db661ccf99"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/hgm_config_change_callback_stub.cpp",
+          "line": 61,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSHgmConfigChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "1d3d6455498f30b9cf426a61477c937b31af18d22b6620a46b9309db661ccf99"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/pointer_render/pointer_luminance_callback_stub.cpp",
+          "line": 38,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSPointerLuminanceChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "a4d502b0e79bd55c709809ce1146865b9a2611d577ac20a8ca63198f01f36ebb"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_application_agent_stub.cpp",
+          "line": 37,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSApplicationAgentStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "ff3094d85e9c5a19d78544f9c90e4f835496c17082b7fa8f3b68cc0c6744f5ff"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_canvas_surface_buffer_callback_stub.cpp",
+          "line": 68,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSCanvasSurfaceBufferCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "fbb63d7db19f745b3cbb072579c05c6650858dd69ae55f731477b2c334c37bee"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_exposed_event_callback_stub.cpp",
+          "line": 39,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSExposedEventCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "a5e6c18a51475bddf300199799b55fe8704d270452f03e5cec62ea8160357146"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_first_frame_commit_callback_stub.cpp",
+          "line": 45,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSFirstFrameCommitCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "7f47306cdcde5e760318def3aa9e06cdf61241358f03036eb8ab10411450d6f0"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_frame_rate_linker_expected_fps_update_callback_stub.cpp",
+          "line": 46,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSFrameRateLinkerExpectedFpsUpdateCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "b658ee2c48f34f63d1f537cf7d7f23aa1134d2e8a74625119a95aa5769f33d89"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_frame_stability_callback_stub.cpp",
+          "line": 40,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSFrameStabilityCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "17ba71a130100cb2738f2833c3d3ccf5badc6ade998bbd20e5a033be538477e0"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_occlusion_change_callback_stub.cpp",
+          "line": 40,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSOcclusionChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "a3e92eb80164e8e3322975da5b3ce3db0b46f6780b2506acf8a00d06e3cc8fd5"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_self_drawing_node_rect_change_callback_stub.cpp",
+          "line": 36,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSelfDrawingNodeRectChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "60bc44b07dc91e46ea4a61c6306e72c99fd5c4c45662bdef8f8e252ff8b8d8ba"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_surface_buffer_callback_stub.cpp",
+          "line": 55,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceBufferCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "4a28cd64858d51aeafbf3ef6b3b00910a71d44a5cb69de442f5e90c9d79795be"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_surface_buffer_callback_stub.cpp",
+          "line": 65,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceBufferCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "4a28cd64858d51aeafbf3ef6b3b00910a71d44a5cb69de442f5e90c9d79795be"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_surface_occlusion_change_callback_stub.cpp",
+          "line": 42,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceOcclusionChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "cb51803173497b6b849cfa24f7946ebe2b5be42aa7426ffede82347f55953f67"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_transaction_data_callback_stub.cpp",
+          "line": 42,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSTransactionDataCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "8562a6bddec394bea254047287e736af09bd8cd46dcd6eb7fecfe53ea0de22ba"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/rs_uiextension_callback_stub.cpp",
+          "line": 41,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSUIExtensionCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "6799316cf04193aea24e994164840a3e79774455f61d51cc21dfac8e2587b408"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/screen_change_callback_stub.cpp",
+          "line": 55,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSScreenChangeCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "401838a79ce69cf69cc980626028e5736feb35b8e42b1e65985e6e9f8a093b6f"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/screen_supported_hdr_formats_callback_stub.cpp",
+          "line": 53,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSScreenSupportedHDRFormatsCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "0b2b9157ce2b126950a04c1fd40451ab42ee7b23ac015e7cc93f53e253c8c8b7"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/screen_switching_notify_callback_stub.cpp",
+          "line": 38,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSScreenSwitchingNotifyCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "193ee04ffe51eb0fc2ea4a2f15ba62d841d5a8cd31794a84f991d065406a9906"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/surface_capture_callback_stub.cpp",
+          "line": 42,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceCaptureCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "862ba1b4e30e45a582d1a2ebe55882e10b5c530d1e6fb4cdcbc65c4e642cae9b"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/surface_capture_callback_stub.cpp",
+          "line": 61,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceCaptureCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "862ba1b4e30e45a582d1a2ebe55882e10b5c530d1e6fb4cdcbc65c4e642cae9b"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/surface_capture_callback_stub.cpp",
+          "line": 72,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceCaptureCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "862ba1b4e30e45a582d1a2ebe55882e10b5c530d1e6fb4cdcbc65c4e642cae9b"
+        },
+        {
+          "file": "rosen/modules/render_service_base/src/ipc_callbacks/surface_capture_callback_stub.cpp",
+          "line": 92,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSSurfaceCaptureCallbackStub::OnRemoteRequest",
+          "passes": [
+            "all-files",
+            "complete-ast"
+          ],
+          "file_parse_status": "complete",
+          "file_analysis_status": "analyzed",
+          "source_sha256": "862ba1b4e30e45a582d1a2ebe55882e10b5c530d1e6fb4cdcbc65c4e642cae9b"
+        },
+        {
+          "file": "rosen/modules/render_service_profiler/rs_profiler.cpp",
+          "line": 504,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSProfiler::WriteRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "003fb13f5c86fdf698ba69870a7cb585056e9cf65e4dcd32cc3c1d6ddb3f0789"
+        },
+        {
+          "file": "rosen/modules/render_service_profiler/rs_profiler.cpp",
+          "line": 555,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSProfiler::ProcessRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "003fb13f5c86fdf698ba69870a7cb585056e9cf65e4dcd32cc3c1d6ddb3f0789"
+        },
+        {
+          "file": "rosen/modules/render_service_profiler/rs_profiler.cpp",
+          "line": 556,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSProfiler::ProcessRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "003fb13f5c86fdf698ba69870a7cb585056e9cf65e4dcd32cc3c1d6ddb3f0789"
+        },
+        {
+          "file": "rosen/modules/render_service_profiler/rs_profiler.cpp",
+          "line": 566,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSProfiler::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "003fb13f5c86fdf698ba69870a7cb585056e9cf65e4dcd32cc3c1d6ddb3f0789"
+        },
+        {
+          "file": "rosen/modules/render_service_profiler/rs_profiler.cpp",
+          "line": 578,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "RSProfiler::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "003fb13f5c86fdf698ba69870a7cb585056e9cf65e4dcd32cc3c1d6ddb3f0789"
+        }
+      ],
+      "candidates_with_runner_obligations": 83,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 418.205,
+      "report_sha256": "ee26187575b89be9b50296e188d68994da1504a8b622fc4cdbc2fdd5f6522497",
+      "root_probe": {
+        "distinct_roots": 374,
+        "distinct_root_files": 46,
+        "value_calls": 964628,
+        "distinct_functions": 391,
+        "root_files": [
+          "rosen/modules/animation/window_animation/src/rs_window_animation_finish_callback_stub.cpp",
+          "rosen/modules/animation/window_animation/src/rs_window_animation_stub.cpp",
+          "rosen/modules/composer/vsync/src/vsync_connection_stub.cpp",
+          "rosen/modules/composer/vsync/src/vsync_distributor.cpp",
+          "rosen/modules/platform/ipc_core/ipc_object_stub.cpp",
+          "rosen/modules/render_service/composer/composer_client/connection/zidl/rs_composer_to_render_connection_stub.cpp",
+          "rosen/modules/render_service/composer/composer_service/connection/rs_render_to_composer_connection.cpp",
+          "rosen/modules/render_service/composer/composer_service/connection/zidl/rs_render_to_composer_connection_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "multimedia_image_framework",
+      "repository": "openharmony/multimedia_image_framework",
+      "commit": "5fbe952024f16cb518a5a7cec24063cffcc038bd",
+      "git_tree": "33cb49524a6f2fdce502b74c1e6bc3e9f61193a9",
+      "snapshot_sha256": "fa0e5e67f342f38f69bc3e79b137a1050f0f3146956fbea3147dcfb43bc972c0",
+      "plan_sha256": "19cf2b9f5fc8fc760000ff11dcebf847441f808c32a9fc332649313a720614c5",
+      "scope": {
+        "selected_files": 573,
+        "selected_bytes": 7401327
+      },
+      "analysis": {
+        "parsed_complete": 442,
+        "parsed_partial": 128,
+        "analyzed_files": 442,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 128
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "arkts": 2,
+          "ts": 1
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "no_entry_roots",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 25.875,
+      "report_sha256": "bfe738ea24fabe414503b3168b5ce55ecec1a791670aacffda3f16b94db39338",
+      "root_probe": {
+        "distinct_roots": 0,
+        "distinct_root_files": 0,
+        "value_calls": 0,
+        "distinct_functions": 0,
+        "root_files": []
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    }
+  ],
+  "refused_runs": [],
+  "note": "Candidates are unverified static evidence, not vulnerabilities; validated_vulnerability is 0 in every report and confirmed_vulnerabilities is 0 by construction. A zero in a component is not a statement that the component is free of findings: read `zero_reason` first. 'no_entry_roots' means the walk had nowhere to start in this component; 'mock_only_entry_roots' means every entry it found sits under a path segment named mock; only 'entry_roots_walked_no_rule_conjunction' attributes the zero to the rules. Raw reports stay outside Git; report_sha256 binds each row to the report it came from."
+}

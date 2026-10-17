@@ -1,0 +1,60 @@
+{
+ "caller_class_attribution": {
+  "distinct_sites_by_caller_class_set": {},
+  "evaluations_by_caller_class_set": {},
+  "how_to_read": "`reached_without_a_caller_class` is the rule's exact conjunction. Its length is what the caller-class candidate count can be, and it is read from the same run as the identity numbers, not a second pass.",
+  "per_component_evaluations": {},
+  "reached_without_a_caller_class": [],
+  "what": "How often the walk reached a caller_class_sensitive_call, and whether the state already carried a caller class at that point (analysis.py:1049 emits only when it does not)."
+ },
+ "candidates_by_rule": {
+  "ipc.auth.missing": 1,
+  "ipc.capability.export": 12,
+  "ipc.relay.descriptor-boundary": 71
+ },
+ "components_with_reports": 5,
+ "conjunction_counts_by_entailment": {
+  "caller_class_sensitive_calls_reached_without_a_caller_class": 0,
+  "how": "Zero candidates for a rule implies zero emissions for that rule (emit() appends unconditionally; observation->finding is one-to-one), so these are read from the reports, not from a second instrumented run.",
+  "identity_rules_whose_conjunction_was_satisfied": 0,
+  "rules_read": [
+   "ipc.auth.identity-domain",
+   "ipc.auth.service-identity",
+   "ipc.auth.request-identity",
+   "ipc.auth.caller-class"
+  ]
+ },
+ "instrument": {
+  "mechanism": "A PYTHONPATH sitecustomize wraps Interpreter.value in the pinned read-only tree; the driver's argv is otherwise unchanged.",
+  "sitecustomize": "research/deliveries/ipc/probe_site/sitecustomize.py",
+  "sitecustomize_sha256": "67177e28683de37037e6b0b2bb88db86f2cd8453c80f5fbef452db95b23a5c9e"
+ },
+ "value_attribution": {
+  "components_probed": 5,
+  "components_that_evaluated_any_predicate": 2,
+  "distinct_sites_by_subject": {
+   "": 2,
+   "unknown": 4
+  },
+  "evaluations_by_subject": {
+   "": 14,
+   "unknown": 56
+  },
+  "per_component_evaluations": {
+   "ability_form_fwk": {
+    "unknown": 2
+   },
+   "communication_netmanager_base": {
+    "": 14,
+    "unknown": 54
+   }
+  },
+  "records_reported_as_errors": [],
+  "sites": {
+   "caller_uid": [],
+   "request": [],
+   "self": []
+  }
+ },
+ "what": "What the interpreter attributed to every permission-predicate call it evaluated. Detector-internal: the wrapper reads the value the analysis computed and re-evaluates nothing."
+}

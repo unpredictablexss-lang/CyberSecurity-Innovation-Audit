@@ -1,0 +1,57 @@
+[
+ {
+  "family": "AUTH-01",
+  "rule": "ipc.relay.descriptor-boundary",
+  "cwe": "CWE-441"
+ },
+ {
+  "family": "AUTH-02",
+  "rule": "ipc.auth.missing",
+  "cwe": "CWE-862"
+ },
+ {
+  "family": "AUTH-03",
+  "rule": "ipc.auth.caller-class",
+  "cwe": "CWE-863"
+ },
+ {
+  "family": "AUTH-03",
+  "rule": "ipc.auth.object-owner",
+  "cwe": "CWE-863"
+ },
+ {
+  "family": "AUTH-03",
+  "rule": "ipc.auth.identity-domain",
+  "cwe": "CWE-863"
+ },
+ {
+  "family": "AUTH-03",
+  "rule": "ipc.auth.service-identity",
+  "cwe": "CWE-863"
+ },
+ {
+  "family": "AUTH-03",
+  "rule": "ipc.auth.request-identity",
+  "cwe": "CWE-863"
+ },
+ {
+  "family": "AUTH-04",
+  "rule": "ipc.auth.guard-coverage",
+  "cwe": "CWE-863"
+ },
+ {
+  "family": "CAP-01",
+  "rule": "ipc.capability.export",
+  "cwe": "CWE-926"
+ },
+ {
+  "family": "DATA-01",
+  "rule": "ipc.parcel.copy-range",
+  "cwe": "CWE-20"
+ },
+ {
+  "family": "DATA-01",
+  "rule": "ipc.parcel.position-underflow",
+  "cwe": "CWE-20"
+ }
+]
