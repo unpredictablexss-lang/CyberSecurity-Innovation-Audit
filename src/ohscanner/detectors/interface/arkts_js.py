@@ -36,6 +36,7 @@ page-origin determination, and no claim that a candidate is reachable or
 exploitable.
 """
 from dataclasses import dataclass
+import bisect
 import re
 from typing import Dict, List, Optional, Tuple
 
@@ -135,6 +136,22 @@ def _text(node, source: bytes) -> str:
     return source[node.start_byte:node.end_byte].decode("utf-8", "replace")
 
 
+def _line_starts(source: bytes) -> List[int]:
+    """Byte offsets of line starts, for line numbers computed from offsets.
+
+    Line numbers do not come from ``Node.start_point``: on a real 88-call ArkTS
+    file the binding segfaulted reading that property after earlier nodes had
+    been touched, while ``start_byte`` stayed valid. Computing from the saved
+    bytes keeps extraction independent of that binding path.
+    """
+    starts = [0]
+    position = source.find(b"\n")
+    while position != -1:
+        starts.append(position + 1)
+        position = source.find(b"\n", position + 1)
+    return starts
+
+
 def _walk(node):
     stack = [node]
     while stack:
@@ -147,27 +164,34 @@ def _count(node, node_type: str) -> int:
     return sum(1 for item in _walk(node) if item.type == node_type)
 
 
-def _parser_for(language: str):
+def _language_for(language: str):
     if Language is None:
         return None
-    if language == "js":
-        if _javascript_grammar is None:
-            return None
-        language_bundle = getattr(_parser_for, "_js", None)
-        if language_bundle is None:
-            language_bundle = Parser(Language(_javascript_grammar.language()))
-            _parser_for._js = language_bundle
-        return language_bundle
-    if language in ("ts", "arkts"):
-        if _typescript_grammar is None:
-            return None
-        language_bundle = getattr(_parser_for, "_ts", None)
-        if language_bundle is None:
-            language_bundle = Parser(
-                Language(_typescript_grammar.language_typescript()))
-            _parser_for._ts = language_bundle
-        return language_bundle
+    if language == "js" and _javascript_grammar is not None:
+        cached = getattr(_language_for, "_js", None)
+        if cached is None:
+            cached = Language(_javascript_grammar.language())
+            _language_for._js = cached
+        return cached
+    if language in ("ts", "arkts") and _typescript_grammar is not None:
+        cached = getattr(_language_for, "_ts", None)
+        if cached is None:
+            cached = Language(_typescript_grammar.language_typescript())
+            _language_for._ts = cached
+        return cached
     return None
+
+
+def _parser_for(language: str):
+    """A fresh Parser per parse.
+
+    Reusing one Parser across parses segfaulted on a real 88-call ArkTS file
+    (tree-sitter 0.26 / tree-sitter-typescript 0.23) when the previous Tree had
+    already been collected. A new Parser over the cached Language is cheap and
+    avoids that binding-level crash; the input is untrusted code either way.
+    """
+    language_object = _language_for(language)
+    return Parser(language_object) if language_object is not None else None
 
 
 def frontend(unit: SourceUnit) -> FrontendFile:
@@ -217,10 +241,17 @@ def _mentions(text: str, names: List[str]) -> bool:
     return any(re.search(r"\b" + re.escape(name) + r"\b", text) for name in names)
 
 
-def _path_guarded(scope_text: str, names: List[str]) -> bool:
+def _inline_source(text: str) -> bool:
+    """``want.parameters`` used directly in an expression, not via a local."""
+    return _SOURCE.search(text) is not None
+
+
+def _path_guarded(scope_text: str, names: List[str], inline: bool = False) -> bool:
     for match in re.finditer(r"if\s*\(([^)]{0,400})\)", scope_text):
         condition = match.group(1)
-        if _PATH_PREDICATE.search(condition) and _mentions(condition, names):
+        if not _PATH_PREDICATE.search(condition):
+            continue
+        if (names and _mentions(condition, names)) or (inline and _inline_source(condition)):
             return True
     return False
 
@@ -271,6 +302,10 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
         return []
     observation_list: List[Observation] = []
     source = frontend_file.source
+    line_starts = _line_starts(source)
+
+    def line_at(offset):
+        return bisect.bisect_right(line_starts, offset)
 
     # Re-parse to walk nodes; the frontend result keeps only counts.
     parser = _parser_for(unit.language)
@@ -290,7 +325,7 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
         if arguments.strip("()") and not re.fullmatch(
                 r"\(\s*(['\"]).*\1\s*\)", arguments, re.S):
             observation_list.append(Observation(
-                "ohscanner.js.dangerous_eval", constructor.start_point.row + 1,
+                "ohscanner.js.dangerous_eval", line_at(constructor.start_byte),
                 "new Function",
                 "new Function() receives a non-literal body. Dynamic code "
                 "generation is a candidate sink; attacker control is an "
@@ -301,7 +336,7 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
         arguments = _arguments_text(call, source)
         scope_text = _scope_text(call, source)
         names = _tainted_names(scope_text)
-        line = call.start_point.row + 1
+        line = line_at(call.start_byte)
 
         # dangerous_eval: a non-literal argument to eval/new Function.
         if callee.split(".")[-1] == "eval":
@@ -333,9 +368,10 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
         # Path sinks fed by want.parameters.
         if any(callee.endswith(sink) for sink in _PATH_SINKS):
             counters["path_sinks"] += 1
-            source_present = _SOURCE.search(scope_text) is not None
-            if source_present and (names and _mentions(arguments, names)):
-                if _path_guarded(scope_text, names):
+            inline = _inline_source(arguments)
+            tainted = (names and _mentions(arguments, names)) or inline
+            if tainted:
+                if _path_guarded(scope_text, names, inline):
                     counters["path_guarded"] += 1
                 else:
                     observation_list.append(Observation(
@@ -367,16 +403,20 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
                 r"(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*(?::[^=]+)?=\s*want\s*\.\s*parameters",
                 class_text):
             names.append(match.group(1))
-        if not names:
+        inline = any(
+            re.search(re.escape(sink) + r"\s*\([^;]{0,400}?" + _SOURCE.pattern,
+                      class_text)
+            for sink in _PATH_SINKS)
+        if not names and not inline:
             continue
         sinks = [sink for sink in _PATH_SINKS if sink + "(" in class_text]
         if not sinks:
             continue
-        if _path_guarded(class_text, names):
+        if _path_guarded(class_text, names, inline):
             counters["ability_guarded"] += 1
             continue
         observation_list.append(Observation(
-            "ohscanner.oh.arkts.component_exposure", node.start_point.row + 1,
+            "ohscanner.oh.arkts.component_exposure", line_at(node.start_byte),
             ", ".join(lifecycle),
             "An exported " + "/".join(sorted(set(bases))) + " reads "
             "want.parameters and reaches a path API (" + ", ".join(sorted(sinks))

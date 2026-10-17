@@ -103,6 +103,12 @@ class PathTaintTests(unittest.TestCase):
         self.assertIn("ohscanner.js.path_taint", rules(result))
         self.assertIn("Taint coverage:", note(result, "Taint coverage:"))
 
+    def test_an_inline_want_parameter_argument_is_still_a_candidate(self):
+        text = ("function openFromWant(want) {\n"
+                "  return fileIo.openSync(want.parameters?.path);\n}\n")
+        result = run(("a.js", text))
+        self.assertIn("ohscanner.js.path_taint", rules(result))
+
     def test_a_same_function_path_predicate_suppresses_the_candidate(self):
         text = ("function openFromWant(want) {\n"
                 "  const path = want.parameters.path;\n"
@@ -146,6 +152,13 @@ class ComponentExposureTests(unittest.TestCase):
         self.assertIn("module.json5", " ".join(
             finding.message for finding in result.findings))
         self.assertIn("export/permission state", note(result, "Ability surface:"))
+
+    def test_an_inline_want_parameter_argument_in_a_lifecycle_is_a_candidate(self):
+        text = ("export default class EntryAbility extends UIAbility {\n"
+                "  onNewWant(want: Want) {\n"
+                "    fileIo.openSync(want.parameters?.path);\n  }\n}\n")
+        result = run(("ability.ts", text))
+        self.assertIn("ohscanner.oh.arkts.component_exposure", rules(result))
 
     def test_a_path_predicate_inside_the_ability_suppresses_both_candidates(self):
         text = ("export default class EntryAbility extends UIAbility {\n"
