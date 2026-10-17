@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-18",
+  "scope": "OpenHarmony check wrap-up; bounded evidence only",
+  "source_checkout": "D:/openHarmonyScanner/openharmony",
+  "repository": "D:/openHarmonyScanner/CyberSecurity-Innovation-Audit",
+  "branch": "codex/a-line-openharmony-full-test-20261016",
+  "status": {
+    "testing": "stopped before full coverage",
+    "manifest_projects": 525,
+    "prepared_projects": 479,
+    "runner_records": 478,
+    "projects_with_result_and_report": 378,
+    "strict_runner_478": {
+      "completed": 0,
+      "failed": 100,
+      "unknown": 378
+    },
+    "strict_prepared_479": {
+      "completed": 0,
+      "failed": 100,
+      "unknown": 379
+    },
+    "scanner_level_completed": 10,
+    "validated_vulnerability_total": 0,
+    "finding_status": "candidate/unassessed/unknown",
+    "ability_idl_tool": "completed_with_limitations; strict=unknown",
+    "ability_lifetime": "blocked",
+    "ability_shared_ptr_race": "completed",
+    "ability_interface_ipc": "completed",
+    "ohscanner_regression": {
+      "python": "3.14",
+      "tests": 640,
+      "skipped": 48,
+      "result": "OK",
+      "target_test": "1/1 OK",
+      "compileall": "OK",
+      "git_diff_check": "OK",
+      "meaning": "OHScanner self-regression only; not an OpenHarmony full scan"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "validation/openharmony-manifest-fixed.xml",
+      "bytes": 117625,
+      "sha256": "45090468297C469DD821B3E6F311F47A358A7D292D7AF5D480130352FA746C96",
+      "purpose": "fixed manifest snapshot for 525 project parsing input"
+    },
+    {
+      "path": "validation/openharmony-project-heads.tsv",
+      "bytes": 72600,
+      "sha256": "083808FC299DBDE55804E78A733834E1CA83A6316A1D265FDB3DD5D605470519",
+      "purpose": "project path to full commit SHA mapping"
+    },
+    {
+      "path": "docs/openharmony-full-scan-20261017-summary.md",
+      "bytes": 253147,
+      "sha256": "E6B65E8611243C04579C4DAFC0F7B6E0D712027A04E125741C6EA455AF78EFE9",
+      "purpose": "bounded full-scan aggregate and project-level summary"
+    },
+    {
+      "path": "docs/openharmony-ability-validation-20261017-summary.md",
+      "bytes": 1778,
+      "sha256": "EA1588EBEC2BAA9470F32262D3A3134DB27E9614566B11FAF61005414426EF4B",
+      "purpose": "Ability validation summary"
+    },
+    {
+      "path": "docs/openharmony-smoke-20261017-ability-idl-tool.md",
+      "bytes": 111668,
+      "sha256": "C505586FD250DC1EB8DC877107E662A38EF78A69B85A4AB231D8A9047D0CB484",
+      "purpose": "Ability IDL tool smoke record"
+    },
+    {
+      "path": "validation/repo-lfs-pull-20261017.log",
+      "bytes": 559,
+      "sha256": "872BE4734AFBA6FEB868BF9D79966168E6D0FD10B7A3DD685C2B3FA12DC699CF",
+      "purpose": "bounded exit-code evidence for git lfs pull only"
+    },
+    {
+      "path": "validation/linux-tests-after-ls-tree-fix-python314-20261017.log",
+      "bytes": 1499,
+      "sha256": "B79E0E21EC8495C61FCADF7800DC48E0B5DB830F7C06457B6357215BDEB9A6A0",
+      "purpose": "bounded OHScanner Python 3.14 regression evidence"
+    }
+  ],
+  "included_existing_artifacts": [
+    "docs/openharmony-full-test-20261017.md",
+    "validation/openharmony-full-test-20261017-summary.json"
+  ],
+  "log_policy": {
+    "included": "two bounded logs listed in artifacts",
+    "excluded": "full stdout/stderr, full run logs, raw experiment logs",
+    "note": "repo-lfs log proves command exit code 0 only; regression log proves OHScanner self-regression only"
+  },
+  "excluded_paths_and_artifacts": [
+    "D:/openHarmonyScanner/openharmony",
+    ".repo/",
+    "OpenHarmony source repositories",
+    "third-party dependency repositories",
+    "Git LFS objects and large source files",
+    "projects/",
+    "raw result.json",
+    "raw request.json",
+    "raw run_meta.json",
+    "approximately 277 MB raw summary.json",
+    "full stdout/stderr",
+    "full run logs",
+    "caches",
+    "virtual environments",
+    "build outputs"
+  ],
+  "policy": {
+    "full_scan_complete": false,
+    "validated_vulnerability_zero_means_no_vulnerabilities": false,
+    "create_pr": false,
+    "mark_ready": false,
+    "merge": false
+  }
+}

@@ -1,0 +1,9 @@
+START_UTC=2026-10-16T18:50:04Z
+START_LOCAL=2026-10-17T02:50:04+0800
+WORKDIR=/mnt/d/openHarmonyScanner/openharmony
+GIT_LFS_VERSION=git-lfs/3.8.0 (GitHub; linux amd64; go 1.26.7)
+/mnt/d/openHarmonyScanner/openharmony/.repo/repo/repo:636: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now = datetime.datetime.utcnow()
+END_UTC=2026-10-16T19:43:53Z
+END_LOCAL=2026-10-17T03:43:53+0800
+LFS_PULL_EXIT_CODE=0

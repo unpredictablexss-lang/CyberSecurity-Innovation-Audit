@@ -1,0 +1,33 @@
+=== Python environment ===
+3.14.7 (main, Sep  5 2026, 05:55:41) [GCC 16.2.0]
+/mnt/d/openHarmonyScanner/ohscanner-test-venv-python314/bin/python
+0.26.0
+tree_sitter_c loaded
+tree_sitter_cpp loaded
+=== Full unittest discovery ===
+----------------------------------------------------------------------
+Ran 640 tests in 26.177s
+
+OK (skipped=48)
+[OK] wrote /tmp/tmpicdka4pf/fixture_evidence.json
+[OK] shared_ptr_race fixture evidence matches
+[OK] wrote /tmp/tmpf_wd37aa/evidence.json and /tmp/tmpf_wd37aa/evidence.md
+[OK] wrote /tmp/tmpf_wd37aa/evidence.json and /tmp/tmpf_wd37aa/evidence.md
+[OK] wrote /tmp/tmppoo14dmv/evidence.json and /tmp/tmppoo14dmv/evidence.md
+[OK] shared_ptr_race native evidence outputs match
+[OK] wrote draft binding manifest /tmp/tmpgmcpgdz_/prepared-binding.json with SHA-256 be783723c57c693bb9e2ffe4367eb9f351a2da30111125fa1c081f2919789585
+UNITTEST_EXIT_CODE=0
+=== Target regression ===
+test_promisor_clone_never_fetches_missing_blob (tests.test_ohscanner_m15.OfflineGitTests.test_promisor_clone_never_fetches_missing_blob) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.054s
+
+OK
+TARGET_TEST_EXIT_CODE=0
+=== compileall ===
+COMPILEALL_EXIT_CODE=0
+=== git diff --check ===
+warning: in the working copy of 'PROGRAM_STATUS.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/ohscanner/git_source.py', LF will be replaced by CRLF the next time Git touches it
+GIT_DIFF_CHECK_EXIT_CODE=0

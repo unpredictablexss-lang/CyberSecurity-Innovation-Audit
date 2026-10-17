@@ -536,3 +536,26 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   缺失对象修复及状态更新，并 push 到 A 线测试分支。不包含 OpenHarmony 源码、
   `.repo`、Git LFS 数据、原始扫描输出或生成实验产物；不创建 PR、不标记 ready、
   不合并。
+
+## 30. 2026-10-18 OpenHarmony 检查收尾
+
+- 已按要求停止下载、扫描和测试，仅整理已生成的检查材料、聚合报告与两个有界日志。
+- 新增 `docs/openharmony-check-wrapup-20261018.md` 与
+  `validation/openharmony-check-artifact-manifest.json`，归档 manifest/project heads、
+  全量扫描摘要、Ability 摘要/smoke、Git LFS 退出码日志和 Python 3.14 回归日志，
+  并记录各文件字节数、SHA-256、纳入与排除范围。
+- 测试覆盖结论保持保守：manifest 525 个 project；prepared 479；runner 478；
+  生成 `result.json`/`report.md` 378。478 项严格分类为
+  `completed=0`、`failed=100`、`unknown=378`；计入未执行的
+  `third_party/selinux` 后为 `unknown=379`。scanner 级 `completed=10` 不等于
+  project 级全量完成。不得宣称 525 个 project 已完成扫描。
+- `validated_vulnerability_total=0` 不表示 OpenHarmony 无漏洞；所有 finding 仍为
+  `candidate/unassessed/unknown`。640 项 OHScanner 自回归不是 OpenHarmony 全量扫描。
+- Ability 中 `idl_tool` 为 `completed_with_limitations` 且严格分类为 unknown，
+  `lifetime` 为 blocked，`shared_ptr_race` 与 `interface.ipc` 为 completed。
+- 本次只例外纳入两个小型、有界日志：Git LFS 日志仅证明退出码 0，Python 3.14 日志
+  仅证明 OHScanner 回归 640 tests/48 skipped/OK、目标测试 1/1、`compileall` 和
+  `git diff --check` 通过；完整 stdout/stderr、运行日志和原始实验日志仍排除。
+- 提交内容不包含 OpenHarmony 源码仓库、`.repo/`、Git LFS 对象、第三方依赖库、
+  `projects/`、原始扫描 JSON、约 277 MB 原始 `summary.json`、缓存或构建产物。
+  本次仅向 A 线测试分支推送收尾材料，不创建 PR、不标记 ready、不合并。
