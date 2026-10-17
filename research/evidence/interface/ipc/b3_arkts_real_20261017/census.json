@@ -2,7 +2,7 @@
   "repository": "openharmony/applications_settings",
   "commit": "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
   "detector": "ohscanner.oh.arkts_js",
-  "detector_version": "0.2.0",
+  "detector_version": "0.3.0",
   "files_seen": 2045,
   "by_language_status": {
     "ets/complete": 1343,
@@ -18,7 +18,12 @@
     "bridge_guarded": 0,
     "path_sinks": 30,
     "path_guarded": 0,
-    "eval_sites": 1
+    "eval_sites": 1,
+    "native_modules": 1,
+    "native_signatures": 2,
+    "native_calls": 15,
+    "native_unmapped": 13,
+    "native_guarded": 0
   },
   "findings_total": 0,
   "findings_by_rule": {},
@@ -27,36 +32,45 @@
     "bridge_text": 0,
     "want_parameters_text": 16,
     "file_sink_text": 14,
-    "eval_text": 1
+    "eval_text": 1,
+    "native_import_text": 8
   },
+  "dts_files": 1,
   "batch_coverage_lines": [
     "ArkTS/JS frontend: 400 file(s) parsed; 333 complete, 67 partial, 0 unsupported; 17091 call site(s) recovered.",
     "Ability surface: 0 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
     "Taint coverage: 2 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "N-API binding map: 0 .so module(s) and 0 function signature(s) declared in the scan's .d.ts files; 0 call site(s) into lib*.so imports, 0 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check.",
     "ArkTS/JS frontend: 400 file(s) parsed; 307 complete, 93 partial, 0 unsupported; 24870 call site(s) recovered.",
     "Ability surface: 0 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
     "Taint coverage: 10 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "N-API binding map: 0 .so module(s) and 0 function signature(s) declared in the scan's .d.ts files; 12 call site(s) into lib*.so imports, 12 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check.",
     "ArkTS/JS frontend: 400 file(s) parsed; 233 complete, 167 partial, 0 unsupported; 21993 call site(s) recovered.",
     "Ability surface: 34 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
     "Taint coverage: 3 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "N-API binding map: 1 .so module(s) and 2 function signature(s) declared in the scan's .d.ts files; 2 call site(s) into lib*.so imports, 0 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check.",
     "ArkTS/JS frontend: 400 file(s) parsed; 216 complete, 184 partial, 0 unsupported; 19920 call site(s) recovered.",
     "Ability surface: 5 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
     "Taint coverage: 4 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "N-API binding map: 0 .so module(s) and 0 function signature(s) declared in the scan's .d.ts files; 1 call site(s) into lib*.so imports, 1 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check.",
     "ArkTS/JS frontend: 400 file(s) parsed; 358 complete, 42 partial, 0 unsupported; 26107 call site(s) recovered.",
     "Ability surface: 0 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
     "Taint coverage: 11 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "N-API binding map: 0 .so module(s) and 0 function signature(s) declared in the scan's .d.ts files; 0 call site(s) into lib*.so imports, 0 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check.",
     "ArkTS/JS frontend: 45 file(s) parsed; 44 complete, 1 partial, 0 unsupported; 2240 call site(s) recovered.",
     "Ability surface: 1 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
-    "Taint coverage: 0 path sink(s), 0 behind a same-function path predicate; 1 eval site(s)."
+    "Taint coverage: 0 path sink(s), 0 behind a same-function path predicate; 1 eval site(s).",
+    "N-API binding map: 0 .so module(s) and 0 function signature(s) declared in the scan's .d.ts files; 0 call site(s) into lib*.so imports, 0 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check."
   ],
   "limits": {
     "max_bytes": 2097152,
+    "batch_size": 400,
     "excluded_dirs": [
       ".git",
       "build",
@@ -67,6 +81,6 @@
       "preview",
       "third_party"
     ],
-    "note": "Third-party source is not stored; only this aggregate is kept. Shape counts are text matches, not findings."
+    "note": "Third-party source is not stored; only this aggregate is kept. Shape counts are text matches, not findings. The N-API binding map is rebuilt per batch of 400 files, so a .d.ts declaration in another batch is not visible to the calling file."
   }
 }

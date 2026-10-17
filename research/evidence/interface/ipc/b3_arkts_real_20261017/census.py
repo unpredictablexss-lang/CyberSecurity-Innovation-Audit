@@ -36,15 +36,23 @@ SHAPE_PATTERNS = {
         r"fileIo\.(openSync|open|readSync|writeSync|readTextSync)|"
         r"fs\.(openSync|open|readFileSync|writeFileSync)"),
     "eval_text": re.compile(r"\beval\s*\(|new\s+Function\s*\("),
+    "native_import_text": re.compile(
+        r"\bfrom\s+['\"][^'\"]*lib[^'\"]*\.so['\"]|requireNapi\s*\("),
 }
 COUNTER_PATTERNS = {
-    "call_sites": re.compile(r"(\d+) call site"),
+    "call_sites": re.compile(r"^ArkTS/JS frontend: .*? (\d+) call site"),
     "ability_classes": re.compile(r"^Ability surface: (\d+)"),
     "bridge_sites": re.compile(r"^WebView bridge coverage: (\d+)"),
     "bridge_guarded": re.compile(r"(\d+) with an origin predicate"),
     "path_sinks": re.compile(r"^Taint coverage: (\d+) path sink"),
     "path_guarded": re.compile(r"(\d+) behind a same-function path predicate"),
     "eval_sites": re.compile(r"(\d+) eval site"),
+    "native_modules": re.compile(r"^N-API binding map: (\d+) \.so module"),
+    "native_signatures": re.compile(r"(\d+) function signature"),
+    "native_calls": re.compile(r"(\d+) call site\(s\) into lib\*\.so imports"),
+    "native_unmapped": re.compile(r"(\d+) unmapped"),
+    "native_guarded": re.compile(
+        r"(\d+) behind a same-function numeric predicate"),
 }
 
 
@@ -100,7 +108,8 @@ def main(scan_root, out_path,
         coverage_lines.extend(
             line for line in result.limitations
             if line.startswith(("ArkTS/JS frontend:", "Ability surface:",
-                                "WebView bridge coverage:", "Taint coverage:")))
+                                "WebView bridge coverage:", "Taint coverage:",
+                                "N-API binding map:")))
 
     totals = {key: 0 for key in COUNTER_PATTERNS}
     for line in coverage_lines:
@@ -129,12 +138,18 @@ def main(scan_root, out_path,
             Counter(item["rule"] for item in findings).items())),
         "findings": findings,
         "text_shape_files": shape,
+        "dts_files": sum(1 for path, _language, _text in files
+                         if path.endswith(".d.ts")),
         "batch_coverage_lines": coverage_lines,
         "limits": {
             "max_bytes": MAX_BYTES,
+            "batch_size": BATCH,
             "excluded_dirs": sorted(SKIP_DIRS),
             "note": "Third-party source is not stored; only this aggregate "
-                    "is kept. Shape counts are text matches, not findings.",
+                    "is kept. Shape counts are text matches, not findings. "
+                    "The N-API binding map is rebuilt per batch of "
+                    + str(BATCH) + " files, so a .d.ts declaration in another "
+                    "batch is not visible to the calling file.",
         },
     }
     with open(out_path, "w", encoding="utf-8") as handle:

@@ -29,11 +29,21 @@ The rules are deliberately narrow and stay candidates:
     path predicate in between.
 ``ohscanner.js.dangerous_eval``
     ``eval``/``new Function`` with a non-literal argument.
+``ohscanner.oh.native_bridge``
+    A value derived from ``want.parameters`` is passed as a numeric argument to
+    an N-API export imported from a ``lib*.so`` module, and the same function has
+    no numeric range or domain predicate. The binding map comes from
+    ``declare module 'lib*.so'`` signatures in the scan's ``.d.ts`` files; an
+    import whose module or export is not declared there is counted as unmapped,
+    not guessed.
 
 What this module does not do, and says so in every result: no CFG, no
 cross-function taint beyond one same-file hop between function declarations,
 no decorator/struct modelling, no manifest parsing, no page-origin
 determination, and no claim that a candidate is reachable or exploitable.
+The N-API binding map is limited to ``.d.ts`` files in the same scan batch:
+a declaration that lives outside the scanned tree is invisible, and such a
+call is reported as unmapped rather than matched by symbol name.
 """
 from dataclasses import dataclass
 import bisect
@@ -84,6 +94,16 @@ _SOURCE = re.compile(r"\bwant\s*\.\s*parameters\b|\bparameters\s*\[")
 _ORIGIN_PREDICATE = re.compile(
     r"\b(?:url|origin|src|allowlist|isTrusted|isAllowed)\b")
 _COMPARE = re.compile(r"===|!==|startsWith|endsWith|indexOf|includes|match\(")
+# A numeric-domain or range test on a value before it crosses into native code.
+# The predicate list is deliberately small: these are the ways the sources in
+# this corpus say "this number is a count/length/offset I have constrained",
+# and a wider pattern would start crediting comparisons that bound something
+# else. `parseInt` is not here: it converts and truncates, it does not bound.
+_NUMBER_PREDICATE = re.compile(
+    r"\bNumber\.(?:isInteger|isSafeInteger|isFinite)\s*\(|"
+    r"\bisNaN\s*\(|"
+    r"(?:<=?|>=?)\s*-?\d|"
+    r"-?\d\s*(?:<=?|>=?)")
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation(
@@ -109,6 +129,11 @@ _ORIGIN_OBLIGATION = EvidenceObligation(
     "page_origin",
     "Establish which page is loaded and whether it is untrusted. The bridge "
     "registration alone does not show that untrusted content can call it.")
+_NATIVE_OBLIGATION = EvidenceObligation(
+    "native_parameter_check",
+    "Read the N-API implementation behind this lib*.so export and show whether "
+    "the native side validates the value's range, length or index. The .d.ts "
+    "type is a declaration, not a runtime check.")
 
 
 @dataclass(frozen=True)
@@ -130,6 +155,19 @@ class Observation:
     message: str
     cwe: str
     obligations: Tuple[EvidenceObligation, ...] = _BASE_OBLIGATIONS
+
+
+@dataclass(frozen=True)
+class BindingParameter:
+    name: str
+    type_text: str
+
+
+@dataclass(frozen=True)
+class BindingFunction:
+    module: str
+    name: str
+    parameters: Tuple[BindingParameter, ...]
 
 
 def _text(node, source: bytes) -> str:
@@ -359,8 +397,261 @@ def _class_method_names(node, source: bytes) -> List[str]:
     return names
 
 
+def _module_key(module: str) -> str:
+    """Canonical N-API module key.
+
+    ``requireNapi('foo')`` and ``import ... from 'libfoo.so'`` name the same
+    library through different spellings; the loader's own convention is
+    ``libfoo.z.so``. Keying on the stem keeps the binding map usable without
+    guessing which file on disk corresponds to which import.
+    """
+    key = module.strip().strip("'\"").lower()
+    for suffix in (".z.so", ".so"):
+        if key.endswith(suffix):
+            key = key[:-len(suffix)]
+            break
+    if key.startswith("lib"):
+        key = key[3:]
+    return key
+
+
+def _signature_name(node, source: bytes) -> str:
+    name = node.child_by_field_name("name")
+    if name is not None:
+        return _text(name, source).strip()
+    for child in node.children:
+        if child.type == "identifier":
+            return _text(child, source).strip()
+    return ""
+
+
+def _formal_parameters(parameters, source: bytes) -> Tuple[BindingParameter, ...]:
+    result: List[BindingParameter] = []
+    for item in parameters.named_children:
+        if item.type not in ("required_parameter", "optional_parameter"):
+            continue
+        pattern = item.child_by_field_name("pattern")
+        name = _text(pattern, source).strip() if pattern is not None else ""
+        annotation = item.child_by_field_name("type")
+        type_text = _text(annotation, source).strip().lstrip(":").strip() \
+            if annotation is not None else ""
+        result.append(BindingParameter(name, type_text))
+    return tuple(result)
+
+
+def _signature_parameters(node, source: bytes) -> Tuple[BindingParameter, ...]:
+    parameters = node.child_by_field_name("parameters")
+    if parameters is None:
+        for child in node.children:
+            if child.type == "formal_parameters":
+                parameters = child
+                break
+    if parameters is None:
+        return ()
+    return _formal_parameters(parameters, source)
+
+
+def _function_type_parameters(node, source: bytes) -> Tuple[BindingParameter, ...]:
+    """Parameters of a ``const f: (a: number) => T`` declaration.
+
+    The DevEco N-API template writes its type file this way instead of
+    ``declare module``, so the ``formal_parameters`` sit under
+    ``type_annotation`` -> ``function_type`` rather than on the declarator.
+    """
+    for child in _walk(node):
+        if child.type == "function_type":
+            for item in child.children:
+                if item.type == "formal_parameters":
+                    return _formal_parameters(item, source)
+    return ()
+
+
+_TYPES_DIRECTORY = re.compile(
+    r"(?:^|/)cpp/types/(lib[^/]+)/index\.d\.ts$")
+
+
+def _types_directory_module(path: str) -> str:
+    """Module name implied by the DevEco ``cpp/types/lib<name>/index.d.ts`` path.
+
+    This is the layout the N-API template generates; the type file itself does
+    not spell the module name. Anything outside that exact layout is left
+    unmapped rather than inferred from the directory name.
+    """
+    match = _TYPES_DIRECTORY.search(path)
+    return match.group(1) + ".so" if match else ""
+
+
+def _path_bound_functions(root, source: bytes) -> List[Tuple[str, Tuple[
+        BindingParameter, ...]]]:
+    """Top-level exported functions in a module-shaped ``.d.ts``."""
+    result: List[Tuple[str, Tuple[BindingParameter, ...]]] = []
+    for node in _walk(root):
+        if node.type == "function_signature":
+            name = _signature_name(node, source)
+            if name:
+                result.append((name, _signature_parameters(node, source)))
+            continue
+        if node.type != "variable_declarator":
+            continue
+        name_node = node.child_by_field_name("name")
+        if name_node is None or name_node.type != "identifier":
+            continue
+        parameters = _function_type_parameters(node, source)
+        if not parameters and not any(
+                child.type == "function_type" for child in _walk(node)):
+            continue
+        result.append((_text(name_node, source).strip(), parameters))
+    return result
+
+
+def _native_bindings(units: Tuple[SourceUnit, ...]) -> Tuple[
+        Dict[str, Dict[str, BindingFunction]], int, int]:
+    """The N-API binding map, from two declaration shapes in the scan's ``.d.ts``.
+
+    ``declare module 'lib*.so' { export function ... }`` is read as written.
+    The DevEco template's ``cpp/types/lib<name>/index.d.ts`` (which names the
+    module only via its path) is accepted for that exact layout. A module with
+    no declaration is not guessed from its name, and a declaration is a type
+    statement, not a statement that the native side checks anything.
+    """
+    bindings: Dict[str, Dict[str, BindingFunction]] = {}
+    signatures = 0
+    for unit in units:
+        if not unit.path.endswith(".d.ts"):
+            continue
+        parser = _parser_for(unit.language)
+        if parser is None:
+            continue
+        source = unit.text.encode("utf-8")
+        root = parser.parse(source).root_node
+        declared = 0
+        for node in _walk(root):
+            if node.type != "module":
+                continue
+            module_strings = [child for child in node.children
+                              if child.type == "string"]
+            if not module_strings:
+                continue
+            module_name = _text(module_strings[0], source).strip().strip("'\"")
+            if not module_name.endswith(".so"):
+                continue
+            declared += 1
+            table = bindings.setdefault(_module_key(module_name), {})
+            for child in _walk(node):
+                if child.type != "function_signature":
+                    continue
+                name = _signature_name(child, source)
+                if not name:
+                    continue
+                signatures += 1
+                if name in table:
+                    # Overloads: the first signature is kept; the call's
+                    # argument positions against the others are not evaluated.
+                    continue
+                table[name] = BindingFunction(
+                    module_name, name, _signature_parameters(child, source))
+        if declared:
+            continue
+        # The DevEco N-API template's `cpp/types/lib<name>/index.d.ts` names
+        # the module only through its path. Only that exact layout is used;
+        # no other directory name is inferred to be a library.
+        module_name = _types_directory_module(unit.path)
+        if not module_name:
+            continue
+        table = bindings.setdefault(_module_key(module_name), {})
+        for name, parameters in _path_bound_functions(root, source):
+            if name in table:
+                continue
+            signatures += 1
+            table[name] = BindingFunction(module_name, name, parameters)
+    return bindings, len(bindings), signatures
+
+
+def _native_imports(root, source: bytes) -> Dict[str, Tuple[str, Optional[str]]]:
+    """Local names bound to a native module.
+
+    Value is ``(module, member)``: ``member`` is the named import when the
+    binding is ``import { fn } from 'libx.so'`` and ``None`` for a default or
+    namespace import, where the member is written at the call site.
+    ``import`` modules must end in ``.so``; ``requireNapi(...)`` is itself a
+    native loader call, so its argument is accepted as written.
+    """
+    imports: Dict[str, Tuple[str, Optional[str]]] = {}
+    for node in _walk(root):
+        if node.type == "import_statement":
+            module_strings = [child for child in node.children
+                              if child.type == "string"]
+            if not module_strings:
+                continue
+            module = _text(module_strings[-1], source).strip().strip("'\"")
+            if not module.endswith(".so"):
+                continue
+            for child in node.children:
+                if child.type != "import_clause":
+                    continue
+                for item in child.children:
+                    if item.type == "identifier":
+                        imports[_text(item, source).strip()] = (module, None)
+                    elif item.type == "namespace_import":
+                        names = [sub for sub in item.children
+                                 if sub.type == "identifier"]
+                        if names:
+                            imports[_text(names[-1], source).strip()] = (module, None)
+                    elif item.type == "named_imports":
+                        for specifier in item.named_children:
+                            if specifier.type != "import_specifier":
+                                continue
+                            names = [sub for sub in specifier.children
+                                     if sub.type == "identifier"]
+                            if names:
+                                imports[_text(names[-1], source).strip()] = (
+                                    module, _text(names[0], source).strip())
+        elif node.type == "variable_declarator":
+            name_node = node.child_by_field_name("name")
+            value_node = node.child_by_field_name("value")
+            if name_node is None or value_node is None:
+                continue
+            if value_node.type != "call_expression":
+                continue
+            callee = _callee_text(value_node, source)
+            if callee != "requireNapi":
+                continue
+            arguments = value_node.child_by_field_name("arguments")
+            if arguments is None or not arguments.named_children:
+                continue
+            module = _text(arguments.named_children[0], source).strip().strip("'\"")
+            # `requireNapi` is an explicit native-module loader, so its argument
+            # is taken as a module name even without the `.so` suffix that the
+            # import form carries; the binding map still has to declare it.
+            if not module:
+                continue
+            imports[_text(name_node, source).strip()] = (module, None)
+    return imports
+
+
+def _numeric_guarded(scope_text: str, names: List[str],
+                     inline: bool = False) -> bool:
+    """A same-function numeric predicate on the tainted value.
+
+    Same bounded shape as ``_path_guarded``: an ``if (...)`` that mentions the
+    tainted local (or, for an inline expression, ``want.parameters`` itself) and
+    contains a numeric comparison or a numeric-domain test. Presence in the
+    function is not dominance over the call; that distinction stays an
+    obligation on the candidate, not an assertion here.
+    """
+    for match in re.finditer(r"if\s*\(([^)]{0,400})\)", scope_text):
+        condition = match.group(1)
+        if not _NUMBER_PREDICATE.search(condition):
+            continue
+        if (names and _mentions(condition, names)) or (inline and _inline_source(condition)):
+            return True
+    return False
+
+
 def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
-                  counters: Dict[str, int]) -> List[Observation]:
+                  counters: Dict[str, int],
+                  bindings: Optional[Dict[str, Dict[str, BindingFunction]]] = None
+                  ) -> List[Observation]:
     if frontend_file.status == "unsupported":
         return []
     observation_list: List[Observation] = []
@@ -443,6 +734,61 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
                         + " with no path predicate in the same function. "
                         "Caller reachability and API-level sanitisation are "
                         "obligations.", "CWE-22"))
+
+    # N-API boundary: a want.parameters-derived numeric argument to an export
+    # of a lib*.so module. The binding map is built from the scan's .d.ts
+    # declarations; an import whose module/export is not declared is counted as
+    # unmapped rather than matched by name.
+    imports = _native_imports(root, source)
+    mappings = bindings or {}
+    for call in calls:
+        callee = _callee_text(call, source)
+        head, _separator, member = callee.partition(".")
+        bound = imports.get(head)
+        if bound is None:
+            continue
+        module, imported_member = bound
+        export_name = member or imported_member or ""
+        if not export_name:
+            continue
+        counters["native_calls"] += 1
+        function = mappings.get(_module_key(module), {}).get(export_name)
+        if function is None:
+            counters["native_unmapped"] += 1
+            continue
+        arguments_node = call.child_by_field_name("arguments")
+        argument_nodes = (list(arguments_node.named_children)
+                          if arguments_node is not None else [])
+        scope_text = _scope_text(call, source)
+        tainted_names = _tainted_names(scope_text)
+        positions = []
+        for position, parameter in enumerate(function.parameters):
+            if "number" not in parameter.type_text:
+                continue
+            if position >= len(argument_nodes):
+                break
+            argument_text = _text(argument_nodes[position], source)
+            inline = _inline_source(argument_text)
+            if inline or _mentions(argument_text, tainted_names):
+                positions.append((position, parameter.name, inline))
+        if not positions:
+            continue
+        inline_any = any(item[2] for item in positions)
+        if _numeric_guarded(scope_text, tainted_names, inline_any):
+            counters["native_guarded"] += 1
+            continue
+        parameters_text = ", ".join(
+            item[1] or ("argument " + str(item[0] + 1)) for item in positions)
+        observation_list.append(Observation(
+            "ohscanner.oh.native_bridge", line_at(call.start_byte),
+            module + ":" + export_name,
+            "A want.parameters-derived value reaches numeric parameter(s) "
+            + parameters_text + " of " + module + ":" + export_name
+            + " with no numeric range or domain predicate in the same "
+            "function. "
+            "The .d.ts type is a declaration, not a check; whether the N-API "
+            "side validates the value is an obligation.", "CWE-20",
+            _BASE_OBLIGATIONS + (_NATIVE_OBLIGATION,)))
 
     # One-hop same-file propagation: a helper parameter receives a
     # want.parameters-derived value at a call site, and the helper passes that
@@ -537,7 +883,7 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
 
 class ArkTsJsInterfaceDetector:
     detector_id = "ohscanner.oh.arkts_js"
-    version = "0.2.0"
+    version = "0.3.0"
     supported_languages = ("js", "ts", "arkts")
     required_facts = ()
     ast_scope = "per_file"
@@ -562,7 +908,9 @@ class ArkTsJsInterfaceDetector:
             "call_sites": 0, "eval_sites": 0, "bridge_sites": 0,
             "bridge_guarded": 0, "path_sinks": 0, "path_guarded": 0,
             "ability_classes": 0, "ability_guarded": 0,
+            "native_calls": 0, "native_unmapped": 0, "native_guarded": 0,
         }
+        bindings, native_modules, native_signatures = _native_bindings(applicable)
         findings: List[DetectorFinding] = []
         outcomes: List[Tuple[str, str]] = []
         statuses: List[str] = []
@@ -570,7 +918,8 @@ class ArkTsJsInterfaceDetector:
             frontend_file = frontend(unit)
             statuses.append(frontend_file.status)
             outcomes.append((unit.path, frontend_file.status))
-            for observation in _analyze_file(unit, frontend_file, counters):
+            for observation in _analyze_file(unit, frontend_file, counters,
+                                             bindings):
                 findings.append(DetectorFinding(
                     file=unit.path, line=observation.line,
                     symbol=observation.symbol, rule_id=observation.rule_id,
@@ -605,6 +954,14 @@ class ArkTsJsInterfaceDetector:
             "Taint coverage: " + str(counters["path_sinks"]) + " path sink(s), "
             + str(counters["path_guarded"]) + " behind a same-function path "
               "predicate; " + str(counters["eval_sites"]) + " eval site(s).",
+            "N-API binding map: " + str(native_modules) + " .so module(s) and "
+            + str(native_signatures) + " function signature(s) declared in the "
+              "scan's .d.ts files; " + str(counters["native_calls"])
+            + " call site(s) into lib*.so imports, "
+            + str(counters["native_unmapped"]) + " unmapped (module or export "
+              "not declared in this scan), " + str(counters["native_guarded"])
+            + " behind a same-function numeric predicate. A declaration is a "
+              "type statement, not a runtime check.",
             "All output is candidate/unassessed; no candidate is a vulnerability "
             "finding and no reachability is established by this frontend.",
         )

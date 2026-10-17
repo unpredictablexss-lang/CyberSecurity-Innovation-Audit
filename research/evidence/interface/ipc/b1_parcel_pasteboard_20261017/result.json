@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "family": "DATA-02",
+  "harness": "pasteboard_read_raw_data_fd",
+  "repository": "openharmony/distributeddatamgr_pasteboard",
+  "vulnerable_commit": "3287e85450f16d3f41801040abe35701131ad6f4",
+  "fixed_commit": "ddee7c00d97d54423c6168fac994d3ef6204f385",
+  "fix": "ReadRawData checks AshmemGetSize(fd) >= 0 and size <= actualSize before mmap; before the fix any descriptor the parcel carried was mapped for the declared size.",
+  "culprit_symbol": "OHOS::MiscServices::MessageParcelWarp::ReadRawData",
+  "cutils_commit": "3bdc11e00e7bf6e577cee300ad51045ca9958efd",
+  "revisions": {
+    "vulnerable": {
+      "commit": "3287e85450f16d3f41801040abe35701131ad6f4",
+      "sources": {
+        "framework/tlv/message_parcel_warp.cpp": "a486ff1a47245712cfc5e025d0cb91db9ca92508c5b2661906b9fa69b227ef89",
+        "framework/tlv/message_parcel_warp.h": "4e667a82af9796048d4b8ffb336931077a9d5fc87a1dd8b51626c24f65b36186",
+        "utils/native/include/pasteboard_hilog.h": "e9b9eb9b16004ce3d1c819758b1b5aeddda91b20dbe1714cb52d87f9b3893796",
+        "framework/framework/include/api/visibility.h": "a201cb1604d2613684922b6de006eabd588c161492e5e4d11df41a72d78a55d4"
+      },
+      "binary_sha256": "cd4f181dae1ba243ed8c65480c8140fda729400b35dacd59e6756563bb34bfc4"
+    },
+    "fixed": {
+      "commit": "ddee7c00d97d54423c6168fac994d3ef6204f385",
+      "sources": {
+        "framework/tlv/message_parcel_warp.cpp": "f07acbadf9481ee61ea35024555182b4a06e1d21b24e5899586f3a183c7b958b",
+        "framework/tlv/message_parcel_warp.h": "4e667a82af9796048d4b8ffb336931077a9d5fc87a1dd8b51626c24f65b36186",
+        "utils/native/include/pasteboard_hilog.h": "e9b9eb9b16004ce3d1c819758b1b5aeddda91b20dbe1714cb52d87f9b3893796",
+        "framework/framework/include/api/visibility.h": "a201cb1604d2613684922b6de006eabd588c161492e5e4d11df41a72d78a55d4"
+      },
+      "binary_sha256": "d33f49322c93d2ff3284a9fa912dc63674eeccbf9f119cf8de22f11f2ca4621e"
+    }
+  },
+  "compiler": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+  "kernel": "6.18.54.1-microsoft-standard-WSL2",
+  "scenarios": {
+    "vulnerable": [
+      {
+        "scenario": "A_non_ashmem_fits",
+        "revision": "vulnerable",
+        "result": "non_null",
+        "declared_size": 65536,
+        "file_size": 65536,
+        "first_byte": 65,
+        "last_byte": 65,
+        "kind": "non_ashmem_file"
+      },
+      {
+        "scenario": "B_non_ashmem_short",
+        "revision": "vulnerable",
+        "result": "non_null",
+        "declared_size": 65536,
+        "file_size": 4096,
+        "read_past_eof": "signalled",
+        "signal": 7
+      },
+      {
+        "scenario": "C_small_payload",
+        "revision": "vulnerable",
+        "result": "non_null",
+        "declared_size": 1024,
+        "bytes_match": "yes",
+        "kind": "unpad_buffer"
+      },
+      {
+        "scenario": "D_size_mismatch",
+        "revision": "vulnerable",
+        "result": "null",
+        "declared_size": 65536,
+        "parcel_int64": 65537
+      }
+    ],
+    "fixed": [
+      {
+        "scenario": "A_non_ashmem_fits",
+        "revision": "fixed",
+        "result": "null",
+        "declared_size": 65536,
+        "file_size": 65536,
+        "first_byte": "n/a",
+        "last_byte": "n/a",
+        "kind": "non_ashmem_file"
+      },
+      {
+        "scenario": "B_non_ashmem_short",
+        "revision": "fixed",
+        "result": "null",
+        "declared_size": 65536,
+        "file_size": 4096,
+        "read_past_eof": "not_attempted",
+        "signal": 0
+      },
+      {
+        "scenario": "C_small_payload",
+        "revision": "fixed",
+        "result": "non_null",
+        "declared_size": 1024,
+        "bytes_match": "yes",
+        "kind": "unpad_buffer"
+      },
+      {
+        "scenario": "D_size_mismatch",
+        "revision": "fixed",
+        "result": "null",
+        "declared_size": 65536,
+        "parcel_int64": 65537
+      }
+    ]
+  },
+  "detector": {
+    "vulnerable": {
+      "commit": "3287e85450f16d3f41801040abe35701131ad6f4",
+      "all_files": {
+        "status": "blocked",
+        "seconds": 2.1,
+        "analyzed_files": 260,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "candidates": 1,
+        "limitations": [
+          "Entry/dispatch coverage: 5 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 20 binding(s) by grade {'source_dispatch': 20}, transactions {'enum': 20}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+        ]
+      },
+      "complete_ast": {
+        "status": "completed",
+        "seconds": 1.2,
+        "analyzed_files": 197,
+        "rules": {},
+        "candidates": 0,
+        "limitations": [
+          "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+        ]
+      }
+    },
+    "fixed": {
+      "commit": "ddee7c00d97d54423c6168fac994d3ef6204f385",
+      "all_files": {
+        "status": "blocked",
+        "seconds": 4.8,
+        "analyzed_files": 260,
+        "rules": {
+          "ipc.relay.descriptor-boundary": 1
+        },
+        "candidates": 1,
+        "limitations": [
+          "Entry/dispatch coverage: 5 dispatcher(s) (2 in stub classes, 0 with a recognizable guard before dispatch), 20 binding(s) by grade {'source_dispatch': 20}, transactions {'enum': 20}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+        ]
+      },
+      "complete_ast": {
+        "status": "completed",
+        "seconds": 1.5,
+        "analyzed_files": 197,
+        "rules": {},
+        "candidates": 0,
+        "limitations": [
+          "Entry/dispatch coverage: 0 dispatcher(s) (0 in stub classes, 0 with a recognizable guard before dispatch), 0 binding(s) by grade {}, transactions {}, unresolved dispatch {}, 0 binding(s) under a preprocessor condition. A binding is not reachability; a refused binding is unknown, not safe."
+        ]
+      }
+    },
+    "note": "Both revisions are silent for DATA-01..04. Two causes, both observed: (1) the rules key on parcel-derived copies and ReadRawData destinations, not on a parcel-carried descriptor used as an mmap backing; (2) the call site is messageData.ReadRawData(...), and Interpreter.resolve refuses a receiver that is not `this` (analysis.py:711-713), so the function body is never interpreted. A probe counted dest_sites=1/dest_request=1 at the call site and zero ReadFileDescriptor/mmap evaluations inside the body. This is a false negative of the present rule set, recorded rather than removed."
+  },
+  "validated_vulnerability": 0,
+  "reachability": {
+    "status": "partial",
+    "summary": "ReadRawData is the function the pasteboard TLV layer calls on the receiving side. The harness calls it directly; which process can put a descriptor into that parcel, and what privilege it holds, is not established here."
+  }
+}

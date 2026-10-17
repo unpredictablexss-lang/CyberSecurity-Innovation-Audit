@@ -29,7 +29,7 @@
 | 新增族模块 | `families/data02.py`、`data03.py`、`auth05.py`、`data04.py` |
 | 语义改动 | Parcel API 参数位置（`ReadRawData(dst,size)` 用第 2 参）、目的容量匹配、parcel view 失效、身份丢弃、敏感结果写入 reply；守卫陈述区分"无值"与"有值未审阅" |
 | 解析改动 | `functions_by_file_name` 索引查找；`resolve` 增加**显式限定名**的跨文件解析（唯一匹配才接受） |
-| 测试 | 615 通过 / 4 skipped；新增 24 条数据流语义测试、4 条跨文件解析测试、2 条 system-app 谓词测试、7 条跨服务边界测试、3 条入口覆盖记录测试 |
+| 测试 | 647 通过 / 4 skipped（当前 lane 套件，含 §13 的 32 条 ArkTS/JS 测试）；新增 24 条数据流语义测试、4 条跨文件解析测试、2 条 system-app 谓词测试、7 条跨服务边界测试、3 条入口覆盖记录测试 |
 
 规则 ID 与差距文档的对应：`ohscanner.oh.parcel.bounds` → `ipc.parcel.bounds`（以及
 `write-bounds` 为写入侧的独立 ID）、`ohscanner.oh.parcel.lifecycle` → `ipc.parcel.lifecycle`、
@@ -334,11 +334,11 @@ B-2 要求"跨服务代理链保留身份变更点"。0.9.1 的实现是有界�
 | B-0 客户端 Kit/`Manager::` 不当作 IPC 边界 | 完成 | §10.4 控制之一：`CameraManager::GetInstance().OpenCamera()` 不计边界 |
 | B-0 Parcel API 语义 + 真实语料执行计数 | 完成 | §3、§4；插桩探针 `bline_rule_probe.py` |
 | B-1 `parcel.bounds` / `parcel.lifecycle` 与 taint/guard/unknown | 完成 | DATA-01..03；正/修复/安全控制；`all-files` 与 `complete-ast` 双视图 |
-| B-1 真实修复前/后漏洞对、隔离复现 | 完成一项（AUTH-01 族） | §12：CVE-2023-0036 vulnerable `e663b470` 稳定触发 3/3，fixed `5eaddcab` 拒绝；本地 Docker 镜像内 clang++/ASan/UBSan。Parcel 族（DATA-01..03）仍无对应的公开修复对，未作同类声明 |
+| B-1 真实修复前/后漏洞对、隔离复现 | 完成两项（AUTH-01、DATA-02） | §12：CVE-2023-0036 vulnerable `e663b470` 稳定触发 3/3，fixed `5eaddcab` 拒绝；本地 Docker 镜像内 clang++/ASan/UBSan。§12.1：pasteboard `ReadRawData` vulnerable `3287e854` / fixed `ddee7c00`，WSL 本地隔离编译，非 ashmem fd 差分（vulnerable 返回文件内容、越界读 SIGBUS；fixed 返回 null）。DATA-01/03 仍无公开修复对 |
 | B-2 事实模型 + guard 支配 | 完成 | AUTH-02/03/04/05 与 DATA-04；成对样本（有 guard / guard 在错误分支 / guard 不支配 / 客户端调用受服务端保护）见 `tests/fixtures/ipc/` |
 | B-2 跨服务代理链身份变更点 | 完成（有界） | §10.4；54 组件实测 10 次边界，0 次转发调用者 |
 | B-2 敏感 source → 不可信可见输出 | 完成（有界） | DATA-04：披露类结果 → reply 写入；文件/日志/共享内存 sink 未建模（§8.4） |
-| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py`（complete/partial/unsupported 三态）+ 4 条规则 + `tests/test_ipc_arkts_js.py`（18 条）；真实语料 2045 文件全量解析、0 候选（`research/evidence/interface/ipc/b3_arkts_real_20261017/`）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
+| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py` 0.3.0（complete/partial/unsupported 三态）+ 5 条规则（含 `ohscanner.oh.native_bridge`）+ `tests/test_ipc_arkts_js.py`（32 条）；真实语料 2045 文件全量解析、0 候选（`research/evidence/interface/ipc/b3_arkts_real_20261017/`）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
 
 "完成"指该条的实现与控制存在于本提交，并且有可复核的运行结果；它不指这些规则在真实组件里
 找到了漏洞。
@@ -381,9 +381,47 @@ docker run --rm --entrypoint sh -v 'C:\Users\16669\AppData\Local\Temp\ohpoc:/wor
 AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的真实修复对；后者仍无
 可用的公开修复前后组合，不能借这一条类推。
 
-## 13. B-3 首批：ArkTS/ETS + JS/TS 前端与四条规则
+## 12.1 真实修复对：DATA-02 pasteboard `ReadRawData`（Parcel 族第一组）
 
-`src/ohscanner/detectors/interface/arkts_js.py`（`ohscanner.oh.arkts_js` 0.2.0）先交付
+§12 属于 AUTH-01；Parcel 族此前没有公开修复对。本轮补上第一组：
+
+**目标**：`openharmony/distributeddatamgr_pasteboard`，
+`OHOS::MiscServices::MessageParcelWarp::ReadRawData`。vulnerable
+`3287e85450f16d3f41801040abe35701131ad6f4`，fixed
+`ddee7c00d97d54423c6168fac994d3ef6204f385`（提交说明
+"ReadRawData补充AshmemGetSize校验防止非ashmem fd注入"），依赖 c_utils
+`3bdc11e00e7bf6e577cee300ad51045ca9958efd`。
+
+**环境**：WSL2 本地隔离目录，Ubuntu clang 14.0.0，ASan+UBSan，`-DCROSS_PLATFORM`
+（与仓库自身的跨平台分支一致，只去掉 `fdsan_*`），无网络，不接触任何线上服务。
+
+**原样编译**：两个修订的 `message_parcel_warp.cpp` 与其头文件，加上真实 cutils
+`Parcel`/`RefBase`/`AshmemGetSize`（`ioctl(fd, ASHMEM_GET_SIZE)`）。harness 只补
+描述符传输与日志/`memcpy_s` 形状；宿主内核无 `/dev/ashmem`，头文件取自上游 UAPI，
+仅为让真实 `ashmem.cpp` 编译。
+
+**结果**（`result.json` sha256 `dbb44109…`）：
+
+| 场景 | vulnerable `3287e854` | fixed `ddee7c00` |
+|---|---|---|
+| A 非 ashmem 普通文件 fd，声明大小 = 文件大小 | 返回 `non_null`，内容即文件字节 | `null` |
+| B 非 ashmem fd，声明大小（64 KiB）> 文件（4 KiB） | 返回 `non_null`；调用方读 EOF 之外 → **SIGBUS(7)** | `null` |
+| C 小载荷（≤32 KiB，不走 fd） | `non_null`，字节一致 | `non_null`，字节一致 |
+| D 声明大小与包内 `ReadInt64` 不一致 | `null` | `null` |
+
+静态检测器对这对提交是**假阴性**（两修订都 0 条 DATA），原因有两层且都有探针计数：
+DATA-02 没有把"包里带来的 fd 作为 mmap backing、长度未与该 fd 容量比较"建模为 sink；
+且调用点是 `messageData.ReadRawData(...)`，`Interpreter.resolve` 拒绝非 `this` 接收者
+（`analysis.py:711-713`），函数体从未被解释（`dest_sites=1/dest_request=1`，
+函数体内 `ReadFileDescriptor`/`mmap` 求值 0 次）。这条负结果保留在
+`research/evidence/interface/ipc/b1_parcel_pasteboard_20261017/`，不用候选数掩盖。
+
+**没有证明的事**：harness 直接调用 `ReadRawData`，真实 TLV 分发层与"哪个进程能向该包
+写入描述符"未建立，`reachability` 为 `partial`；`validated_vulnerability` 仍为 0。
+
+## 13. B-3 首批：ArkTS/ETS + JS/TS 前端与五条规则
+
+`src/ohscanner/detectors/interface/arkts_js.py`（`ohscanner.oh.arkts_js` 0.3.0）先交付
 可审计的语言前端，再在其上放窄规则。前端三态是硬契约：
 
 - `.js` → tree-sitter-javascript；`.ts`/`.ets` → tree-sitter-typescript。
@@ -401,6 +439,7 @@ AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的�
 | `ohscanner.oh.arkts.webview_bridge` | `registerJavaScriptProxy` / `javaScriptProxy` 注册 | 同函数内 URL/origin 比较则不报；带 `page_origin` 义务 |
 | `ohscanner.js.path_taint` | `want.parameters` 派生值到达 `fileIo.*`/`fs.*` 路径 sink；含一层同文件函数声明调用（实参污染 → helper 形参 → sink） | 同函数（或 helper 内针对该形参）路径谓词则不报 |
 | `ohscanner.js.dangerous_eval` | `eval(x)`、`new Function(x)` 且实参非字符串字面量 | 字面量实参不报 |
+| `ohscanner.oh.native_bridge` | `want.parameters` 派生值作为数值实参传给从 `lib*.so` 导入的 N-API 导出 | 同函数数值范围/长度谓词则不报；模块或导出在扫描内没有 `.d.ts` 声明时计为 unmapped，不按名字猜 |
 
 覆盖数字写进每次运行的 limitation（前端文件数/三态、调用点、bridge 注册与守卫数、路径 sink
 与守卫数、ability 类数），与 IPC 检测器的计数口径一致。
@@ -411,15 +450,62 @@ AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的�
 `catalog.py` 属 owner 共享面，本提交没有改动它们：语法包只在本地 venv 安装，检测器也尚未
 注册进 Catalog；接入前 CI 不会自动获得这两个依赖。
 
-控制：`tests/test_ipc_arkts_js.py` 18 条，包含每个规则的正例与抑制例（含
-`want.parameters?.x` 直接作实参的内联形态）、`partial` 三态报告，以及"非 Ability 类不产生
-component_exposure 但路径规则仍触发"的分离控制。
+控制：`tests/test_ipc_arkts_js.py` 32 条，包含每个规则的正例与抑制例（含
+`want.parameters?.x` 直接作实参的内联形态）、`partial` 三态报告，"非 Ability 类不产生
+component_exposure 但路径规则仍触发"的分离控制，以及 native_bridge 的 12 条：声明导入/
+命名导入/namespace 导入/`requireNapi`/`.z.so` 后缀、数值谓词抑制、字面量、非数值形参、
+未声明模块/未声明导出计 unmapped、无 `.d.ts` 时映射为空、DevEco
+`cpp/types/lib<name>/index.d.ts` 路径声明，以及"不在该布局下的目录名不被推断为库"。
 
-**未纳入首批**：差距审查 B-3 还建议 `ohscanner.oh.native_bridge`（ArkTS/ETS → N-API
-C++ binding map、参数类型/长度约束，复用 A 线内存安全规则）。它需要 C++ 侧符号/事实与
-A 线引擎联动，而本 lane 只拥有 `detectors/interface/**` 且 Catalog 注册属 owner；在没有
-binding map 的情况下按 `.so` 导入名或函数名报候选会变成猜测，所以本批不做，也不以
-"前端存在"代替它。
+### 13.1 N-API 边界（`ohscanner.oh.native_bridge`）
+
+binding map 只来自**同一扫描内**的 `.d.ts`，两种声明形状：
+
+- `declare module 'lib*.so' { export function f(a: number): ... }`，按书写内容读取；
+- DevEco N-API 模板的 `src/main/cpp/types/lib<name>/index.d.ts`（文件本身不写模块名，
+  只在该精确路径下由目录名给出 `lib<name>.so`），读取
+  `export const f: (a: number) => ...` 的函数类型形参。
+
+导入侧识别 `import x from 'lib*.so'`、`import * as x`、`import { f }` 与
+`requireNapi('...')`；模块键去掉 `.z.so`/`.so` 后缀与 `lib` 前缀。**没有声明的模块/
+导出不会被猜**：该调用只计入 `native_unmapped`，不产生候选。规则只在实参是
+`want.parameters` 派生值、且对应形参类型文本含 `number` 时触发；同函数出现
+`Number.isInteger/isSafeInteger/isFinite`、`isNaN` 或数值比较则抑制。finding 带
+`native_parameter_check` 义务，明说 `.d.ts` 是类型声明而不是运行时校验。
+
+真实语料（settings `5e8af0a2`）：1 个 `.so` 声明（2 个函数签名）、15 个 native 调用点；
+2 个 `libnative.so` 调用映射成功但实参是方法自身参数（非 `want.parameters`），
+13 个 `@ohos.libhgmnapi.z.so` 调用无扫描内声明 → unmapped；0 守卫、**0 候选**。
+vultraining `ceaf1b4f` 无 N-API 导入。
+
+**仍未落地**：Catalog 注册与 `requirements*.txt` 属 owner 共享面，本 lane 不改；
+`catalog.py` 的接入片段与来源/版本说明见下，完整提案（依赖、来源链、口径）
+落在 `research/methods/interface/ARKTS_JS_CATALOG_REGISTRATION.md`。`.d.ts` 声明跨批不可见（census 每 400 文件
+一批），且 C++ 侧实现未与 A 线引擎联动 —— native 侧是否真的检查范围/长度仍是义务，
+不能由声明推出"安全"或"漏洞"。
+
+**给 owner 的 Catalog 注册片段**（`src/ohscanner/detectors/catalog.py` 属
+`shared_owner_only`，本 lane 不落盘）：
+
+```python
+# 1) import block
+from .interface.arkts_js import ArkTsJsInterfaceDetector
+
+# 2) _APPROVED
+"ohscanner.oh.arkts_js": {
+    "factory": ArkTsJsInterfaceDetector,
+    "kind": "research_candidate",
+    "summary": "B: bounded ArkTS/JS interface candidates; "
+               "partial parse is unknown, not safe",
+},
+```
+
+依赖（`requirements*.txt` 同属 owner）：`tree-sitter>=0.26.0`、
+`tree-sitter-typescript>=0.23.2`、`tree-sitter-javascript>=0.25.0`。语法包缺失时该
+detector 返回 `blocked`，不会伪装成 0 发现。来源与规则说明在
+`arkts_js.py` 模块 docstring；真实语料证据在
+`research/evidence/interface/ipc/b3_arkts_real_20261017/` 与
+`.../b3_arkts_vultraining_20261017/`。
 
 真实文件上还有两个实现修正（提交 `dfb187a`）：
 
@@ -430,11 +516,13 @@ binding map 的情况下按 `.so` 导入名或函数名报候选会变成猜测�
 **真实语料清点**：`research/evidence/interface/ipc/b3_arkts_real_20261017/` 对
 `openharmony/applications_settings @ 5e8af0a2a104bc634f8d5e18ed03db202cd1ea02` 跑完整
 前端：2045 个文件（ets 1343 complete / 552 partial，ts 122 / 2，js 26），112221 个调用点，
-40 个导出的 Ability/Extension 类，30 个路径 sink，1 个 eval 站点，0 个 bridge 注册；
-**0 条候选**。逐点核对解释了这个 0：唯一 eval 是字面量
+40 个导出的 Ability/Extension 类，30 个路径 sink，1 个 eval 站点，0 个 bridge 注册，
+15 个 N-API 调用点（2 个映射到 1 个 `.so` 声明，13 个 unmapped）；**0 条候选**。
+逐点核对解释了这个 0：唯一 eval 是字面量
 `new Function('return this')()`；16 个 `want.parameters` 文件里被抽样的是
 `bundleManager.getBundleInfoSync(want.parameters?.bundleName, ...)` 这类非文件 sink，
-且在 `isParamsValid` 守卫之后；40 个 Ability 类没有一个把 `want.parameters` 送进文件 API。
+且在 `isParamsValid` 守卫之后；40 个 Ability 类没有一个把 `want.parameters` 送进文件 API；
+两个映射成功的 `libnative.so` 调用实参是方法自身参数而不是 `want.parameters`。
 这是覆盖结论，不是"该应用安全"。第二个独立检出
 （`openharmony-security` 的 `vultraining`，`ceaf1b4f`，16 个文件 / 239 调用点 / 1 个
 Ability 类 / 2 个路径 sink）同样是 0 候选，记录在 `b3_arkts_vultraining_20261017/`。

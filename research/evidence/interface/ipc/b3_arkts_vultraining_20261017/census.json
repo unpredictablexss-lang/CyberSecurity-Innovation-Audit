@@ -2,7 +2,7 @@
   "repository": "openharmony-security/vulntraining",
   "commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
   "detector": "ohscanner.oh.arkts_js",
-  "detector_version": "0.2.0",
+  "detector_version": "0.3.0",
   "files_seen": 16,
   "by_language_status": {
     "ets/complete": 7,
@@ -16,7 +16,12 @@
     "bridge_guarded": 0,
     "path_sinks": 2,
     "path_guarded": 0,
-    "eval_sites": 0
+    "eval_sites": 0,
+    "native_modules": 0,
+    "native_signatures": 0,
+    "native_calls": 0,
+    "native_unmapped": 0,
+    "native_guarded": 0
   },
   "findings_total": 0,
   "findings_by_rule": {},
@@ -25,16 +30,20 @@
     "bridge_text": 0,
     "want_parameters_text": 0,
     "file_sink_text": 2,
-    "eval_text": 0
+    "eval_text": 0,
+    "native_import_text": 0
   },
+  "dts_files": 0,
   "batch_coverage_lines": [
     "ArkTS/JS frontend: 16 file(s) parsed; 9 complete, 7 partial, 0 unsupported; 239 call site(s) recovered.",
     "Ability surface: 1 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
     "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
-    "Taint coverage: 2 path sink(s), 0 behind a same-function path predicate; 0 eval site(s)."
+    "Taint coverage: 2 path sink(s), 0 behind a same-function path predicate; 0 eval site(s).",
+    "N-API binding map: 0 .so module(s) and 0 function signature(s) declared in the scan's .d.ts files; 0 call site(s) into lib*.so imports, 0 unmapped (module or export not declared in this scan), 0 behind a same-function numeric predicate. A declaration is a type statement, not a runtime check."
   ],
   "limits": {
     "max_bytes": 2097152,
+    "batch_size": 400,
     "excluded_dirs": [
       ".git",
       "build",
@@ -45,6 +54,6 @@
       "preview",
       "third_party"
     ],
-    "note": "Third-party source is not stored; only this aggregate is kept. Shape counts are text matches, not findings."
+    "note": "Third-party source is not stored; only this aggregate is kept. Shape counts are text matches, not findings. The N-API binding map is rebuilt per batch of 400 files, so a .d.ts declaration in another batch is not visible to the calling file."
   }
 }

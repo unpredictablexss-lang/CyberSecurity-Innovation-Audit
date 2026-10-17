@@ -10,7 +10,8 @@
 | 扫描根 | `/home/audit/openharmony-audit/_research_sync/openharmony-security/vulntest/vultraining` |
 | 仓库 | `openharmony-security`（本机检出） |
 | commit | `ceaf1b4fbe38e46cd18bfcffd7353516bdc34227` |
-| 前端 | `ohscanner.oh.arkts_js` 0.2.0（行为见提交 `d52c82f`） |
+| 前端 | `ohscanner.oh.arkts_js` 0.3.0（本版新增 `ohscanner.oh.native_bridge`） |
+| 前端源码 | `src/ohscanner/detectors/interface/arkts_js.py`，sha256 `8b6c16298d3ef966553c1a290c90af499c0e966bdc8b419caaef03dbf850657e` |
 | 排除目录/大小上限 | `.git` `node_modules` `oh_modules` `build` `dist` `output` `third_party` `preview`；2 MiB |
 
 ## 结果
@@ -26,10 +27,13 @@
 | WebView bridge 注册 | 0 |
 | 路径 sink | 2（同函数路径谓词前 0） |
 | eval / `new Function` 站点 | 0 |
+| N-API `.so` 模块声明 / 函数签名 | 0 / 0 |
+| 进入 `lib*.so` 导入的调用点 | 0 |
 | 候选 | **0** |
 
 文本形态计数：文件类 API 2 个文件，`want.parameters` 0 个文件，
-`registerJavaScriptProxy`/`javaScriptProxy` 0 个文件，`eval`/`new Function` 0 个文件。
+`registerJavaScriptProxy`/`javaScriptProxy` 0 个文件，`eval`/`new Function` 0 个文件，
+`lib*.so` 导入 / `requireNapi` 0 个文件（该语料没有 N-API 边界可判）。
 
 ## 说明
 
@@ -41,5 +45,6 @@
 ## 哈希
 
 ```text
-86a6480c55d07992af6af2f721025dc33a3eed7630ffb11f213b92a3c25e259c  census.json
+c87acdf4982db91555014a43050c03cfd441ad362d9133c5e44455cb7c3ca534  census.json
+8b6c16298d3ef966553c1a290c90af499c0e966bdc8b419caaef03dbf850657e  src/ohscanner/detectors/interface/arkts_js.py
 ```

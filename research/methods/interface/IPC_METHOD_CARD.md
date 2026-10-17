@@ -215,7 +215,7 @@ Parcel 族没有。所有候选仍是未验证静态候选，`confirmed` 为 0�
 
 ---
 
-# IPC 方法卡 — 0.9.1 增补：AUTH-01 真实修复对已隔离执行，B-3 首批前端落地（2026-10-17）
+# IPC 方法卡 — 0.9.1 增补：AUTH-01 / DATA-02 真实修复对已隔离执行，B-3 前端 0.3.0（2026-10-17）
 
 **动态执行不再是零。** 在本地 Docker 验证镜像（`ohscanner-validation-local:20261016`，
 clang 14 + ASan/UBSan，无网络）里重跑了 `auth01_descriptor_bypass` harness：
@@ -225,28 +225,47 @@ clang 14 + ASan/UBSan，无网络）里重跑了 `auth01_descriptor_bypass` harn
 完整记录在 `research/evidence/interface/ipc/auth01_dynamic_20261017/`。
 
 它**不**把任何候选升级：`validated_vulnerability=0`，reachability 仍是 `partial`——
-harness 直接调用 stub，真实 IPC 入口与调用者身份没有被证明。它也**不是** Parcel 族
-（DATA-01..03）的修复对；后者的真实前后组合仍缺。
+harness 直接调用 stub，真实 IPC 入口与调用者身份没有被证明。
 
-**B-3 首批前端。** `src/ohscanner/detectors/interface/arkts_js.py` 用
+**Parcel 族第一组真实修复对（DATA-02）。** `pasteboard` `MessageParcelWarp::ReadRawData`
+vulnerable `3287e854` / fixed `ddee7c00`（修复加入 `AshmemGetSize` 与实际容量校验），
+在 WSL 本地隔离目录用 clang 14 + ASan/UBSan 编译两个修订与真实 cutils `Parcel`：
+vulnerable 会用包里带来的任意 fd 做 mmap 并返回文件内容（声明大小超过文件时调用方
+越界读 **SIGBUS**），fixed 对同一请求返回 `null`；小载荷与既有大小校验两个修订一致。
+静态检测器对这对提交是**已记录的假阴性**（规则未把 fd backing 建模为 sink；
+`Interpreter.resolve` 拒绝非 `this` 接收者，探针 `dest_sites=1/dest_request=1`、
+函数体内 0 次 `mmap`/`ReadFileDescriptor` 求值）。记录在
+`research/evidence/interface/ipc/b1_parcel_pasteboard_20261017/`；`validated_vulnerability=0`。
+DATA-01/03 仍无公开修复对。
+
+**B-3 前端 0.3.0。** `src/ohscanner/detectors/interface/arkts_js.py` 用
 tree-sitter-javascript / tree-sitter-typescript 解析 `.js`/`.ts`/`.ets`，硬性输出
 `complete` / `partial` / `unsupported` 三态。ArkTS `struct` 与装饰器不在 TS 语法内，
-`.ets` 通常报 `partial`，结果里明确写"不声称 component/decorator 语义"。四条规则
-（component_exposure、webview_bridge、path_taint、dangerous_eval）都有正例与同函数守卫
-抑制例，含 `want.parameters?.x` 直接作实参的内联形态与一层同文件 helper 传播
-（`sink <- helper`）；`tests/test_ipc_arkts_js.py` 18 条。
+`.ets` 通常报 `partial`，结果里明确写"不声称 component/decorator 语义"。五条规则
+（component_exposure、webview_bridge、path_taint、dangerous_eval、native_bridge）都有
+正例与同函数守卫抑制例，含 `want.parameters?.x` 直接作实参的内联形态、一层同文件
+helper 传播（`sink <- helper`），以及 N-API 边界的声明导入/命名导入/namespace/
+`requireNapi`/`.z.so`、unmapped、DevEco `cpp/types/lib<name>/index.d.ts` 路径声明；
+`tests/test_ipc_arkts_js.py` 32 条。
 真实文件上还修了两个绑定级问题（`dfb187a`）：行号改用字节偏移，Parser 每次新建。
 Catalog 注册与 `requirements*.txt` 依赖属 owner 共享面，未改；语法包只在本地 venv 安装。
+可直接套用的注册片段、依赖与来源链见 `research/methods/interface/ARKTS_JS_CATALOG_REGISTRATION.md`。
+
+**N-API binding map。** 只读同一扫描内的 `.d.ts`：`declare module 'lib*.so'`，或
+DevEco 模板的 `cpp/types/lib<name>/index.d.ts`（该精确路径下由目录名给出模块名，
+读取 `export const f: (a: number) => T`）。没有声明的模块/导出只计 `native_unmapped`，
+不按名字猜；finding 带 `native_parameter_check` 义务，明说声明不是运行时校验。
 
 **真实语料。** 对 `applications_settings @ 5e8af0a2` 的 2045 个 `.ets/.ts/.js` 文件
 （ets 1343 complete / 552 partial，ts 122 / 2，js 26）完整跑通：112221 调用点、
-40 个导出的 Ability/Extension 类、30 个路径 sink、1 个 eval 站点、0 个 bridge 注册，
+40 个导出的 Ability/Extension 类、30 个路径 sink、1 个 eval 站点、0 个 bridge 注册、
+15 个 N-API 调用点（1 个 `.so` 声明 / 2 个签名；2 个映射，13 个 unmapped），
 **0 条候选**。0 的原因已逐点核对（字面量 `new Function('return this')()`；
 `want.parameters?.bundleName` 送进 `bundleManager` 而非文件 sink；Ability 类无文件
-sink），记录在 `research/evidence/interface/ipc/b3_arkts_real_20261017/`。这是覆盖
-结论，不是安全结论。
+sink；映射成功的 native 调用实参不是 `want.parameters` 派生值），记录在
+`research/evidence/interface/ipc/b3_arkts_real_20261017/`。这是覆盖结论，不是安全结论。
 
-**口径。** 633 条测试通过（skipped 4），lane 范围检查 `violations: []`。
+**口径。** 647 条测试通过（skipped 4），lane 范围检查 `violations: []`。
 
 ---
 
