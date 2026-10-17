@@ -34,6 +34,12 @@ def analyze(body, header=HEADER):
     c,m=context(header+'void ProcessReceivedData(void) { '+body+' }')
     return HistoricalSensitiveExposureDetector(m).detect(c,c.units)
 
+def analyze_profile(body, header, overrides, function='HandleInbound'):
+    c,m=context(header+f'void {function}(void) {{ '+body+' }')
+    profile=dict(m.profile);profile.update(overrides)
+    m=replace(m,profile=profile)
+    return HistoricalSensitiveExposureDetector(m).detect(c,c.units)
+
 class D3HistoricalTests(unittest.TestCase):
     def test_design_control_matrix(self):
         for case in json.loads((ROOT/'tests/fixtures/data_sensitive/d3_cases.json').read_text()):
@@ -55,6 +61,9 @@ class D3HistoricalTests(unittest.TestCase):
     def test_missing_dependency_blocks_real_model(self):
         c,_=context('void ProcessReceivedData(void) {}')
         model=historical_model('d33177135ec6c6aaf4a4c42de1f6878652b330e3')
+        profile=dict(model.profile)
+        profile.update(target_file='service.c',required_files=[{'file':'service.c','sha256':'0'*64}])
+        model=replace(model,profile=profile)
         c=replace(c,request=replace(c.request,repository=model.repository,commit=model.commit,target_id='current-component:'+model.repository))
         result=HistoricalSensitiveExposureDetector(model).detect(c,c.units)
         self.assertEqual(result.findings,());self.assertIn('missing or mismatched',result.limitations[0])
@@ -67,6 +76,38 @@ class D3HistoricalTests(unittest.TestCase):
         bad=replace(c.units[0],text=text,sha256=hashlib.sha256(text.encode()).hexdigest())
         c=replace(c,units=(bad,))
         self.assertEqual(HistoricalSensitiveExposureDetector(m).detect(c,c.units).findings,())
+
+    def test_detector_rejects_input_bytes_that_drift_from_context_snapshot(self):
+        c,m=context(HEADER+'void ProcessReceivedData(void) { '+PREFIX+SUCCESS+SINK+' }')
+        original=c.units[0]
+        changed=original.text.replace('SoftBusLog', 'OtherLog')
+        bad=replace(original,text=changed,sha256=hashlib.sha256(changed.encode()).hexdigest())
+        run=HistoricalSensitiveExposureDetector(m).detect(c,(bad,))
+        self.assertEqual(run.status,'blocked')
+        self.assertEqual(run.findings,())
+        self.assertIn('not an exact source unit',run.limitations[0])
+
+    def test_detector_rejects_context_snapshot_digest_drift(self):
+        c,m=context(HEADER+'void ProcessReceivedData(void) { '+PREFIX+SUCCESS+SINK+' }')
+        c=replace(c,request=replace(c.request,snapshot_sha256='0'*64))
+        run=HistoricalSensitiveExposureDetector(m).detect(c,c.units)
+        self.assertEqual(run.status,'blocked')
+        self.assertEqual(run.findings,())
+        self.assertIn('snapshot digest',run.limitations[0])
+
+    def test_detector_rejects_duplicate_paths_in_input(self):
+        c,m=context(HEADER+'void ProcessReceivedData(void) { '+PREFIX+SUCCESS+SINK+' }')
+        run=HistoricalSensitiveExposureDetector(m).detect(c,c.units+c.units)
+        self.assertEqual(run.status,'blocked')
+        self.assertEqual(run.findings,())
+        self.assertIn('duplicate source paths',run.limitations[0])
+
+    def test_omitting_historical_target_is_blocked_not_a_clean_scan(self):
+        c,m=context(HEADER+'void ProcessReceivedData(void) { '+PREFIX+SUCCESS+SINK+' }')
+        run=HistoricalSensitiveExposureDetector(m).detect(c,())
+        self.assertEqual(run.status,'blocked')
+        self.assertEqual(run.findings,())
+        self.assertIn('outside the analyzed scope',run.limitations[0])
 
     def test_public_runner_retains_partial_candidate_and_obligations(self):
         c,m=context(HEADER+'void ProcessReceivedData(void) { '+PREFIX+SUCCESS+SINK+' }')
@@ -93,6 +134,55 @@ class D3HistoricalTests(unittest.TestCase):
         from src.ohscanner.detectors.data.sensitive_exposure import formats
         self.assertEqual(formats('%s')[0][0][0],'private')
         self.assertEqual(formats('%s','public')[0][0][0],'public')
+
+    def test_reviewed_summary_extension_supports_renamed_source_field_and_sink(self):
+        header='static int DecodePayload(int flags, DecodedEnvelope *p) { return SOFTBUS_OK; }\n'
+        body=('DecodedEnvelope envelope={0}; envelope.payload=(char *)PayloadAlloc(128); '
+              'if (envelope.payload==NULL) { return; } '
+              'if (DecodePayload(0,&envelope)!=SOFTBUS_OK) { return; } '
+              'AuditLog("%s",envelope.payload);')
+        run=analyze_profile(body,header,{
+            'source_function':'HandleInbound','summary_function':'DecodePayload',
+            'summary_parameter':1,'output_member':'payload','output_type':'DecodedEnvelope',
+            'allocator':'PayloadAlloc','sink':'AuditLog','format_index':0,
+            'default_private':False,'format_syntax':'printf'})
+        self.assertEqual(len(run.findings),1)
+        self.assertIn('DecodePayload',run.findings[0].message)
+        self.assertIn('AuditLog',run.findings[0].message)
+
+    def test_reviewed_alternate_sink_defaults_private_when_profile_says_so(self):
+        header='static int DecodePayload(int flags, DecodedEnvelope *p) { return SOFTBUS_OK; }\n'
+        body=('DecodedEnvelope envelope={0}; envelope.payload=(char *)PayloadAlloc(128); '
+              'if (envelope.payload==NULL) { return; } '
+              'if (DecodePayload(0,&envelope)!=SOFTBUS_OK) { return; } '
+              'AuditLog("%s",envelope.payload);')
+        run=analyze_profile(body,header,{
+            'source_function':'HandleInbound','summary_function':'DecodePayload',
+            'summary_parameter':1,'output_member':'payload','output_type':'DecodedEnvelope',
+            'allocator':'PayloadAlloc','sink':'AuditLog','format_index':0,
+            'default_private':True,'format_syntax':'printf'})
+        self.assertEqual(run.findings,())
+        self.assertTrue(any('private operand' in text for text in run.limitations))
+
+    def test_renamed_same_name_sink_in_unrelated_function_is_not_a_candidate(self):
+        header='static int DecodePayload(int flags, DecodedEnvelope *p) { return SOFTBUS_OK; }\n'
+        body=('DecodedEnvelope envelope={0}; envelope.payload=(char *)PayloadAlloc(128); '
+              'if (envelope.payload==NULL) { return; } '
+              'if (DecodePayload(0,&envelope)!=SOFTBUS_OK) { return; } '
+              'AuditLog("%s",envelope.payload);')
+        unrelated='void OtherHandler(void) { '+body+' }'
+        run=analyze_profile(unrelated,header,{
+            'source_function':'HandleInbound','summary_function':'DecodePayload',
+            'summary_parameter':1,'output_member':'payload','output_type':'DecodedEnvelope',
+            'allocator':'PayloadAlloc','sink':'AuditLog','format_index':0,
+            'default_private':False,'format_syntax':'printf'})
+        self.assertEqual(run.findings,())
+
+    def test_candidate_explains_request_and_reply_boundary(self):
+        run=analyze(PREFIX+SUCCESS+SINK)
+        kinds={item.kind for item in run.findings[0].evidence_obligations}
+        self.assertIn('request_payload',kinds)
+        self.assertIn('message_kind',kinds)
 
     def test_repeat_identity_stable(self):
         body=PREFIX+SUCCESS+SINK

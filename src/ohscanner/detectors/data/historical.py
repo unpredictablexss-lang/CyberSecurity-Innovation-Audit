@@ -8,17 +8,47 @@ import hashlib
 import re
 
 from src.ohscanner.contracts import DetectorRun, EvidenceObligation
+from src.ohscanner.fixture import snapshot_digest
 from .models import ExposureSinkModel
 from .historical_models import HistoricalSourceModel, historical_model
 from .sensitive_exposure import LocalFlow, SensitiveExposureDetector, Flow, BlockResult, walk
 
 
 class HistoricalSensitiveExposureDetector(SensitiveExposureDetector):
-    version = '0.3.0'
+    version = '0.4.0'
 
     def detect(self, context, units):
         p = self.model.profile
-        by_path = {u.path: u for u in context.units}
+        if snapshot_digest(context.units) != context.request.snapshot_sha256:
+            return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
+                'Historical model context does not match the request snapshot digest.',))
+        by_path = {}
+        for unit in context.units:
+            if unit.path in by_path:
+                return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
+                    'Historical model context contains duplicate source paths.',))
+            if hashlib.sha256(unit.text.encode()).hexdigest() != unit.sha256:
+                return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
+                    'Historical model context contains source bytes that do not match the declared hash.',))
+            by_path[unit.path] = unit
+
+        seen = set()
+        for unit in units:
+            if unit.path in seen:
+                return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
+                    'Historical model input contains duplicate source paths.',))
+            seen.add(unit.path)
+            pinned = by_path.get(unit.path)
+            if (pinned is None or unit.language != pinned.language or unit.sha256 != pinned.sha256
+                    or unit.text != pinned.text
+                    or hashlib.sha256(unit.text.encode()).hexdigest() != unit.sha256):
+                return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
+                    'Historical model input is not an exact source unit from the request snapshot.',))
+
+        if p['target_file'] not in seen:
+            return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
+                'Historical model target source is outside the analyzed scope; absence is not a clean result.',))
+
         mismatches = []
         for row in p['required_files']:
             u = by_path.get(row['file'])
@@ -42,7 +72,8 @@ class HistoricalLocalFlow(LocalFlow):
     def __init__(self, unit, model):
         super().__init__(unit, model)
         self.p = model.profile
-        self.sinks = {self.p['sink']: ExposureSinkModel(self.p['sink'], self.p['format_index'], False)}
+        self.sinks = {self.p['sink']: ExposureSinkModel(
+            self.p['sink'], self.p['format_index'], self.p.get('default_private', False))}
         self.target = unit.path == self.p['target_file']
         definitions = []
         for node in walk(self.tree.root_node):
@@ -79,7 +110,7 @@ class HistoricalLocalFlow(LocalFlow):
             return ()
         if node is not None and node.type == 'call_expression':
             fn = self.text(node.child_by_field_name('function'))
-            if fn in ('strlen', 'cJSON_Parse', self.p['summary_function'], 'SoftBusCalloc'):
+            if fn in ('strlen', 'cJSON_Parse', self.p['summary_function'], self.p.get('allocator', 'SoftBusCalloc')):
                 return ()  # status/length/JSON pointer is not the original string
         return super().expr(node, env, types)
 
@@ -102,7 +133,7 @@ class HistoricalLocalFlow(LocalFlow):
             for key in list(state.values):
                 if key.startswith((name+'.', name+'->', '@allocated:'+name+'.', '@nonnull:'+name+'.')):
                     state.values.pop(key, None)
-            if typ == 'MsgCryptInfo':
+            if typ == self.p.get('output_type', 'MsgCryptInfo'):
                 state.types[name] = typ
         return names
 
@@ -128,7 +159,7 @@ class HistoricalLocalFlow(LocalFlow):
                 state.values.pop('@allocated:'+key, None)
                 state.values.pop('@nonnull:'+key, None)
                 calls = [x for x in walk(right) if x.type == 'call_expression'] if right else []
-                if len(calls) == 1 and self.text(calls[0].child_by_field_name('function')) == 'SoftBusCalloc' and 'SoftBusCalloc' not in state.shadows:
+                if len(calls) == 1 and self.text(calls[0].child_by_field_name('function')) == self.p.get('allocator', 'SoftBusCalloc') and self.p.get('allocator', 'SoftBusCalloc') not in state.shadows:
                     state.values['@allocated:'+key] = (True,)
                 return
         super().effects(node, state, fnname)
@@ -145,12 +176,17 @@ class HistoricalLocalFlow(LocalFlow):
                 self.gaps.add('historical log name locally shadowed')
                 return
             args = node.child_by_field_name('arguments').named_children
+            syntax = self.p.get('format_syntax', 'secure_c')
+            if syntax not in ('secure_c', 'printf'):
+                self.gaps.add('unreviewed log format syntax; candidate withheld')
+                return
             if len(args) > self.p['format_index']:
                 try:
                     fmt = self.literal(args[self.p['format_index']])
                 except (ValueError, SyntaxError):
                     fmt = None
-                if fmt is not None and re.search(r'%\{(?:public|private)\}', fmt):
+                if (fmt is not None and syntax == 'secure_c'
+                        and re.search(r'%\{(?:public|private)\}', fmt)):
                     self.gaps.add('HiLog privacy syntax is not a reviewed secure-C SoftBusLog format')
                     return
             # Includes and hash-bound implementation provide model identity;
@@ -161,7 +197,8 @@ class HistoricalLocalFlow(LocalFlow):
             finding = self.findings[i]
             self.findings[i] = replace(finding, evidence_obligations=finding.evidence_obligations+(
                 EvidenceObligation('historical_model', self.p['profile_id']+' / '+self.p['model_version']),
-                EvidenceObligation('request_payload', 'Prove request path carries PackRequest SESSION_KEY; reply/error/plain JSON need not contain secrets.'),
+                EvidenceObligation('request_payload', 'Pinned source shows StartVerifySession sends FLAG_REQUEST and PackRequest adds SESSION_KEY; verify this exact path executes in the target product.'),
+                EvidenceObligation('message_kind', 'The log runs before FLAG_REPLY dispatch and also sees replies; only the request JSON is evidenced to carry SESSION_KEY.'),
                 EvidenceObligation('log_adapter', self.p['sink_semantics']),))
 
     def guard(self, condition, state):
@@ -184,7 +221,7 @@ class HistoricalLocalFlow(LocalFlow):
             self.gaps.add('unique error-free reviewed one-hop summary unavailable')
             return None
         args = left.child_by_field_name('arguments').named_children
-        if len(args) != 3:
+        if self.p['summary_parameter'] >= len(args):
             return None
         output = self.text(args[self.p['summary_parameter']])
         match = re.fullmatch(r'&\s*([A-Za-z_]\w*)', output)
@@ -193,7 +230,7 @@ class HistoricalLocalFlow(LocalFlow):
             return None
         root = match.group(1)
         key = root+'.'+self.p['output_member']
-        if state.types.get(root) != 'MsgCryptInfo' or state.values.get('@nonnull:'+key) != (True,):
+        if state.types.get(root) != self.p.get('output_type', 'MsgCryptInfo') or state.values.get('@nonnull:'+key) != (True,):
             self.gaps.add('one-hop output initialization/allocation guard unresolved')
             return None
         return ('source', key, op == '==')
@@ -204,7 +241,7 @@ class HistoricalLocalFlow(LocalFlow):
             if guarded:
                 kind, key, on_true = guarded
                 results = []
-                self.gaps.add('reviewed success-edge summary; branch feasibility and request kind not proved')
+                self.gaps.add('reviewed success-edge summary; branch feasibility is unproved and request/reply is not filtered at the log site')
                 for truth, field in ((True, 'consequence'), (False, 'alternative')):
                     branch = state.clone()
                     if truth == on_true:
