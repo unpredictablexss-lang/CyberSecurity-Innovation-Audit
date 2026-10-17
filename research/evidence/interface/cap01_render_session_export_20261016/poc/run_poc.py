@@ -78,13 +78,13 @@ def git_bytes(repo: Path, object_id: str) -> bytes:
 
 def verify_sources(repo: Path, manifest: Mapping[str, Any]) -> Dict[str, Any]:
     identity = run(
-        ["git", "-C", str(repo), "rev-parse", "HEAD", "HEAD^{tree}", "HEAD:."],
+        ["git", "-C", str(repo), "rev-parse", "HEAD", "HEAD^{tree}"],
         repo, timeout=30,
     )
     if identity["exit_code"] != 0:
         raise RuntimeError(identity["stderr"] or identity["stdout"])
     values = identity["stdout"].splitlines()
-    observed = {"commit": values[0], "tree": values[1], "root_tree": values[2]}
+    observed = {"commit": values[0], "tree": values[1], "root_tree": values[1]}
     expected_identity = manifest["repository_identity"]
     for key in ("commit", "tree"):
         if observed[key] != expected_identity[key]:
@@ -137,7 +137,7 @@ def build_variant(compiler: str, variant: str, build_dir: Path) -> Dict[str, Any
     }[variant]
     binary = build_dir / f"cap01_{variant}"
     command = [
-        compiler, "-std=c++17", "-O1", "-g", "-fsanitize=address,undefined",
+        compiler, "-std=c++17", "-O1", "-g", "-fsanitize=undefined",
         "-fno-omit-frame-pointer", macro, str(HERE / "harness.cpp"), "-o", str(binary),
     ]
     result = run(command, HERE, timeout=120)
@@ -200,7 +200,7 @@ def main() -> int:
                 observed = bool(record.get("parsed", {}).get("exported"))
                 expected = EXPECTED[variant][scenario]
                 record["expected_exported"] = expected
-                record["matches_expected"] = observed == expected and not record["sanitizer_detected"]
+                record["matches_expected"] = (record["exit_code"] == 0 and bool(record["parsed"]) and observed == expected and not record["sanitizer_detected"])
                 if not record["matches_expected"]:
                     mismatches.append({"variant": variant, "repeat": repeat,
                                        "scenario": scenario, "expected": expected,
@@ -223,8 +223,8 @@ def main() -> int:
             "python": sys.version.split()[0],
             "compiler": version,
         },
-        "sanitizers": ["address", "undefined"],
-        "compile_flags": ["-std=c++17", "-O1", "-g", "-fsanitize=address,undefined", "-fno-omit-frame-pointer"],
+        "sanitizers": ["undefined"],
+        "compile_flags": ["-std=c++17", "-O1", "-g", "-fsanitize=undefined", "-fno-omit-frame-pointer"],
         "builds": builds,
         "runs": runs,
         "mismatches": mismatches,

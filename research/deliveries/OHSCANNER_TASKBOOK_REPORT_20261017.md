@@ -100,8 +100,20 @@ This is not product Precision/Recall or global Recall.
 - CVE-2025-0587 narrowing index: deterministic bounds-check bypass; fixed wide-index control rejects.
 - Integer wrap control: `UINT32_MAX + 1 -> 0`; fixed checked arithmetic rejects.
 
-These are runnable isolated mechanism PoCs. Direct OpenHarmony/ArkCompiler product builds were not executed.
+These are runnable isolated mechanism PoCs. The CAP-01 source-bound component model executed in Docker, but direct OpenHarmony/ArkCompiler product builds were not executed.
 
+## CAP-01 real-source component replay
+
+A source-bound `window_window_manager` CAP-01 capability-export case was replayed in the isolated project Docker image:
+
+- 10/10 pinned source blobs and 18/18 quoted source relations verified.
+- Vulnerable / fixed_control / patched variants built with clang 14 and UBSan.
+- 4 scenarios x 3 variants x 3 repeats: 36/36 expected behaviors, 0 mismatches.
+- Vulnerable exports to unauthorized and authorized callers; fixed/patched deny unauthorized callers and preserve authorized export.
+- Proposed patch adds the existing system-caller guard before `GetRenderSession`.
+- `component_model_dynamic_validation=true`, `stable_replay=true`, `product_dynamic_validation=false`, `validated_vulnerability=0`.
+
+This is the strongest current real-source replay, but product permission/runtime/CIA/release evidence remains open.
 ## Recent increment and scale
 
 The local 2026-10-02..2026-10-18 increment covered 12 locally available repositories:

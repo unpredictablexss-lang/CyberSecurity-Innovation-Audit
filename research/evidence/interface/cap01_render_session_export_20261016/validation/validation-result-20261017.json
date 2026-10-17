@@ -1,0 +1,1160 @@
+{
+  "builds": [
+    {
+      "binary": "/work/bin/cap01_vulnerable",
+      "binary_sha256": "f86a8a29701238a20cea7a35b26fb9dcc2e87fec99339af26c1e25f646cc4b95",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-omit-frame-pointer",
+        "-DCAP01_VARIANT_VULNERABLE=1",
+        "/opt/cap01/poc/harness.cpp",
+        "-o",
+        "/work/bin/cap01_vulnerable"
+      ],
+      "elapsed_seconds": 1.749217,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "variant": "vulnerable"
+    },
+    {
+      "binary": "/work/bin/cap01_fixed_control",
+      "binary_sha256": "d6c946da63af95a4d7f28a12edb51ce2cddac18f0180e76e72a0ddb0c8bbee35",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-omit-frame-pointer",
+        "-DCAP01_VARIANT_FIXED_CONTROL=1",
+        "/opt/cap01/poc/harness.cpp",
+        "-o",
+        "/work/bin/cap01_fixed_control"
+      ],
+      "elapsed_seconds": 1.610851,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "variant": "fixed_control"
+    },
+    {
+      "binary": "/work/bin/cap01_patched",
+      "binary_sha256": "70057fbfcf93bda9a7ef365f86a7d6e32be79369ba5a5a9bb356b578e18ca269",
+      "command": [
+        "clang++",
+        "-std=c++17",
+        "-O1",
+        "-g",
+        "-fsanitize=undefined",
+        "-fno-omit-frame-pointer",
+        "-DCAP01_VARIANT_PATCHED=1",
+        "/opt/cap01/poc/harness.cpp",
+        "-o",
+        "/work/bin/cap01_patched"
+      ],
+      "elapsed_seconds": 1.595553,
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "variant": "patched"
+    }
+  ],
+  "candidate_status": "candidate/unknown",
+  "compile_flags": [
+    "-std=c++17",
+    "-O1",
+    "-g",
+    "-fsanitize=undefined",
+    "-fno-omit-frame-pointer"
+  ],
+  "component_model_dynamic_validation": true,
+  "environment": {
+    "compiler": {
+      "command": [
+        "clang++",
+        "--version"
+      ],
+      "exit_code": 0,
+      "first_line": "Ubuntu clang version 14.0.0-1ubuntu1.1"
+    },
+    "container_required": true,
+    "dockerenv": true,
+    "ohscanner_validation_container": "1",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.10.12"
+  },
+  "limitations": [
+    "This is a component model of the pinned dispatch and capability handoff path, not an OpenHarmony product build.",
+    "It proves only the modeled authorization difference; product service acquisition, SELinux/samgr policy and real render-session capabilities remain unknown.",
+    "No live service, device, network endpoint or production process is contacted."
+  ],
+  "mismatches": [],
+  "product_dynamic_validation": false,
+  "repeats": 3,
+  "runs": [
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.008032,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.008298,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.008886,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.008092,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.008879,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.009135,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.007992,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.008628,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.007661,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.008075,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.008774,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_vulnerable",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.007404,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "vulnerable"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.008378,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.00858,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.00922,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.008003,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.008557,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.00781,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.008518,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.007642,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.007826,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.008617,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.008494,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_fixed_control",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.008505,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "fixed_control"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.00778,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.008698,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.008469,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.008537,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 1,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.007742,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.007613,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.007915,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.008899,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 2,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "unauthorized_export"
+      ],
+      "elapsed_seconds": 0.007551,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unauthorized_export",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "unauthorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unauthorized_export\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "authorized_export"
+      ],
+      "elapsed_seconds": 0.007188,
+      "exit_code": 0,
+      "expected_exported": true,
+      "matches_expected": true,
+      "parsed": {
+        "exported": true,
+        "model_only": true,
+        "object_id": "render-session:7",
+        "scenario": "authorized_export",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "authorized_export",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"authorized_export\",\"status\":0,\"exported\":true,\"object_id\":\"render-session:7\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "wrong_descriptor"
+      ],
+      "elapsed_seconds": 0.008679,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "wrong_descriptor",
+        "status": -1
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "wrong_descriptor",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"wrong_descriptor\",\"status\":-1,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    },
+    {
+      "command": [
+        "/work/bin/cap01_patched",
+        "unknown_screen"
+      ],
+      "elapsed_seconds": 0.007794,
+      "exit_code": 0,
+      "expected_exported": false,
+      "matches_expected": true,
+      "parsed": {
+        "exported": false,
+        "model_only": true,
+        "object_id": "",
+        "scenario": "unknown_screen",
+        "status": 0
+      },
+      "repeat": 3,
+      "sanitizer_detected": false,
+      "scenario": "unknown_screen",
+      "stderr": "",
+      "stdout": "{\"scenario\":\"unknown_screen\",\"status\":0,\"exported\":false,\"object_id\":\"\",\"model_only\":true}\n",
+      "variant": "patched"
+    }
+  ],
+  "sanitizers": [
+    "undefined"
+  ],
+  "schema_version": "ohscanner.cap01-render-session-poc.v1",
+  "source_verification": {
+    "identity": {
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "root_tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+      "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617"
+    },
+    "relations": [
+      {
+        "contains": "TRANS_ID_GET_RENDER_SESSION,",
+        "line": 211,
+        "observed_line": "    TRANS_ID_GET_RENDER_SESSION,",
+        "path": "dmserver/include/display_manager_interface_code.h",
+        "relation": "attacker-controlled transaction code selector",
+        "verified": true
+      },
+      {
+        "contains": "GetSystemAbility(DISPLAY_MANAGER_SERVICE_SA_ID)",
+        "line": 64,
+        "observed_line": "    auto remoteObject = systemAbilityMgr->GetSystemAbility(DISPLAY_MANAGER_SERVICE_SA_ID);",
+        "path": "window_scene/screen_session_manager_client/src/screen_session_manager_client.cpp",
+        "relation": "source-visible remote service acquisition",
+        "verified": true
+      },
+      {
+        "contains": "iface_cast<IScreenSessionManager>(remoteObject)",
+        "line": 70,
+        "observed_line": "    screenSessionManager_ = iface_cast<IScreenSessionManager>(remoteObject);",
+        "path": "window_scene/screen_session_manager_client/src/screen_session_manager_client.cpp",
+        "relation": "remote object becomes ScreenSessionManager proxy",
+        "verified": true
+      },
+      {
+        "contains": "SystemAbility::MakeAndRegisterAbility",
+        "line": 374,
+        "observed_line": "    return SystemAbility::MakeAndRegisterAbility(&ScreenSessionManager::GetInstance());",
+        "path": "window_scene/screen_session_manager/src/screen_session_manager.cpp",
+        "relation": "component registers a SystemAbility",
+        "verified": true
+      },
+      {
+        "contains": "WriteInterfaceToken(GetDescriptor())",
+        "line": 5568,
+        "observed_line": "    if (!data.WriteInterfaceToken(GetDescriptor())) {",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+        "relation": "proxy writes the interface descriptor",
+        "verified": true
+      },
+      {
+        "contains": "WriteUint64(static_cast<uint64_t>(screenId))",
+        "line": 5572,
+        "observed_line": "    if (!data.WriteUint64(static_cast<uint64_t>(screenId))) {",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+        "relation": "caller controls screenId input",
+        "verified": true
+      },
+      {
+        "contains": "TRANS_ID_GET_RENDER_SESSION",
+        "line": 5576,
+        "observed_line": "    if (remote->SendRequest(static_cast<uint32_t>(DisplayManagerMessage::TRANS_ID_GET_RENDER_SESSION),",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+        "relation": "proxy sends the selected transaction",
+        "verified": true
+      },
+      {
+        "contains": "return reply.ReadRemoteObject();",
+        "line": 5581,
+        "observed_line": "    return reply.ReadRemoteObject();",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+        "relation": "caller receives returned remote object",
+        "verified": true
+      },
+      {
+        "contains": "OnRemoteRequestInner(code, data, reply, option)",
+        "line": 42,
+        "observed_line": "    int32_t result = OnRemoteRequestInner(code, data, reply, option);",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "relation": "remote entry delegates to dispatcher",
+        "verified": true
+      },
+      {
+        "contains": "data.ReadInterfaceToken() != GetDescriptor()",
+        "line": 50,
+        "observed_line": "    if (data.ReadInterfaceToken() != GetDescriptor()) {",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "relation": "only source-visible request validation is descriptor equality",
+        "verified": true
+      },
+      {
+        "contains": "case DisplayManagerMessage::TRANS_ID_GET_RENDER_SESSION",
+        "line": 1775,
+        "observed_line": "        case DisplayManagerMessage::TRANS_ID_GET_RENDER_SESSION: {",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "relation": "dispatch reaches render-session branch",
+        "verified": true
+      },
+      {
+        "contains": "GetRenderSession(screenId)",
+        "line": 1777,
+        "observed_line": "            sptr<IRemoteObject> renderSession = GetRenderSession(screenId);",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "relation": "attacker-selected screenId reaches lookup",
+        "verified": true
+      },
+      {
+        "contains": "reply.WriteRemoteObject(renderSession)",
+        "line": 1778,
+        "observed_line": "            reply.WriteRemoteObject(renderSession);",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "relation": "sensitive capability handoff",
+        "verified": true
+      },
+      {
+        "contains": "return screenSession->GetRenderSession();",
+        "line": 3207,
+        "observed_line": "    return screenSession->GetRenderSession();",
+        "path": "window_scene/screen_session_manager/src/screen_session_manager.cpp",
+        "relation": "lookup returns stored render-session object",
+        "verified": true
+      },
+      {
+        "contains": "return renderSession_;",
+        "line": 1009,
+        "observed_line": "    return renderSession_;",
+        "path": "window_scene/session/screen/src/screen_session.cpp",
+        "relation": "render-session remote object source",
+        "verified": true
+      },
+      {
+        "contains": "SessionPermission::IsSystemCalling()",
+        "line": 2028,
+        "observed_line": "    if (!SessionPermission::IsSystemCalling()) {",
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "relation": "same translation unit has a caller authorization pattern",
+        "verified": true
+      },
+      {
+        "contains": "IPCSkeleton::GetCallingTokenID()",
+        "line": 79,
+        "observed_line": "    const auto tokenId = IPCSkeleton::GetCallingTokenID();",
+        "path": "window_scene/common/src/session_permission.cpp",
+        "relation": "existing authorization consumes caller token identity",
+        "verified": true
+      },
+      {
+        "contains": "IsSystemAppByFullTokenID",
+        "line": 84,
+        "observed_line": "    bool isSystemApp = Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(accessTokenIDEx);",
+        "path": "window_scene/common/src/session_permission.cpp",
+        "relation": "existing authorization distinguishes system-app identity",
+        "verified": true
+      }
+    ],
+    "sources": [
+      {
+        "blob": "26df3196683976a9f175292fcbf54efef262eaa0",
+        "bytes": 95874,
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+        "role": "IPC entry, dispatch and capability handoff",
+        "sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab"
+      },
+      {
+        "blob": "f36a03ddbca81a55e25e56d8cd6d8b324ccc7760",
+        "bytes": 202800,
+        "path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_proxy.cpp",
+        "role": "transaction construction and returned remote object",
+        "sha256": "8bab03aaba0db4b0ce1fb7d47b98215a5c32cf07e45be6e031f4484218c8e754"
+      },
+      {
+        "blob": "b1b6226de88882fd654389fb45a1579f6954bea5",
+        "bytes": 796200,
+        "path": "window_scene/screen_session_manager/src/screen_session_manager.cpp",
+        "role": "SystemAbility registration and render-session lookup",
+        "sha256": "f0d8bd17948136540a0b4fabe4dc94c551cf6cfdd2d85a2437c5f7b63beeb805"
+      },
+      {
+        "blob": "2442c62f00c293ae9f0437c4f46f7c7609c5eeaa",
+        "bytes": 142062,
+        "path": "window_scene/session/screen/src/screen_session.cpp",
+        "role": "stored render-session remote object",
+        "sha256": "c3f5d1942808c50f880cb302a8f0f62a5ecd0ab76709904963636804d73d3274"
+      },
+      {
+        "blob": "707976aeb1cd12c36a5235cba40d8f97c1cd22e7",
+        "bytes": 3659,
+        "path": "window_scene/common/include/session_permission.h",
+        "role": "existing authorization interface",
+        "sha256": "abd47fd6c02a86c176c2e522557465cff0c238d3cc6a4fcde3e44b1d41a40a4c"
+      },
+      {
+        "blob": "4be110940cf954f6ff5f511566b0160723b0593e",
+        "bytes": 15132,
+        "path": "window_scene/common/src/session_permission.cpp",
+        "role": "existing caller-token authorization implementation",
+        "sha256": "42d5f9ec4370d578788228ddc8c506b230ea90d186d006c15d49df970a934b6e"
+      },
+      {
+        "blob": "931c25e655c0407784dd3c2e8e484f7ecc2dc2ed",
+        "bytes": 9024,
+        "path": "dmserver/include/display_manager_interface_code.h",
+        "role": "transaction code enum",
+        "sha256": "ab9bf36e633a0b487656f837da2ba161b855d40eb8c90fd6a58033642013fc83"
+      },
+      {
+        "blob": "35bb84bf836c016c2e37d1debb1388a8b02a23ee",
+        "bytes": 72979,
+        "path": "window_scene/screen_session_manager_client/src/screen_session_manager_client.cpp",
+        "role": "SystemAbility client acquisition",
+        "sha256": "6eecb28e8f725791322b1dc19b9b802bf5607025f20980153d3768463d05fb6e"
+      },
+      {
+        "blob": "76110d9dc26567fee4aa0cb76d9b2cb7b213bd20",
+        "bytes": 89312,
+        "path": "window_scene/screen_session_manager/include/screen_session_manager.h",
+        "role": "SystemAbility and stub inheritance",
+        "sha256": "e8c21106e0a4fd7fa8fe891a9809e5140742d4ddd25a95a403ff1b6198431e48"
+      },
+      {
+        "blob": "913c185826855195782c94ed99682a3550c9d737",
+        "bytes": 11502,
+        "path": "window_scene/screen_session_manager/BUILD.gn",
+        "role": "build dependencies",
+        "sha256": "4e2cf3ec0a3fab91bc4f5dbb1114c95e6c9e1d6a85d0b3ec6d598c216421bb77"
+      }
+    ]
+  },
+  "stable_replay": true,
+  "validated_vulnerability": 0
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "kind": "cap01_component_validation_hashes",
+  "validation_result": "16042bcfc869f768ce63f0ad68ae463865b4856278cbbf8cee0a29272f9b39ec",
+  "runner": "d1507068d09813d6e49b7a2ae22388da49b400f9ab49d65b1143ca88bb47b240",
+  "harness": "a9a54a3f746c5ebea9bb74d3dec16cc7011f11d9e6b440425571c50499c383c5",
+  "source_count": 10,
+  "relation_count": 18,
+  "run_count": 36,
+  "mismatch_count": 0
+}

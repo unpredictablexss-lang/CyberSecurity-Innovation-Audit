@@ -9,6 +9,7 @@
     "current_state_competition_report",
     "E1_A_detector_controls",
     "E1_B_IPC_six_family_controls",
+    "E4_CAP01_component_replay",
     "remote_sync_current_branch"
   ],
   "partial": [
@@ -22,7 +23,7 @@
     "Codex0_branch_reconciliation",
     "E2_fixed_source_comparison",
     "E3_independent_holdout",
-    "E4_isolated_verification",
+    "E4_product_verification",
     "performance_metrics",
     "public_facts_v2"
   ],
@@ -38,6 +39,7 @@
     "research/deliveries/OHSCANNER_TASKBOOK_REPORT_20261017.md",
     "research/evidence/cpp/cross_ab_parcel_case_20261017.md",
     "research/evidence/cpp/script_security_scan_20261017/summary.md",
+    "research/evidence/interface/cap01_render_session_export_20261016/validation/VALIDATION_UPDATE.md",
     "research/evidence/interface/ipc_family_census_20261017/summary.md"
   ]
 }
