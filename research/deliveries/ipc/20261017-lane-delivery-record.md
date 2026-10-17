@@ -602,3 +602,10 @@ identity-domain 的 `Verify*Token(UID)` 形状在 54 组件中为 0，而任意
 
 `validated_vulnerability` 在 5 份报告中均为 0；未删除任何负结果或候选；
 未做 `git fetch`。
+
+AUTH-03 `object-owner` 的两条候选也已逐条复核（`20261017-family-parity-and-batch3.md`
+§10）：它们在 `bg_continuous_task_mgr.cpp:907/909`，`path` 已记录
+`CheckPermissionForInner(...) => True`；被调方 `:916-920` 的分支只授权固定的
+系统 SA 表并要求模式相等，不绑定目标 uid。候选陈述在源码上成立，保持 `candidate`；
+是否构成问题取决于"受信 SA 可否为任意应用 uid 申请该模式"的产品策略，静态证据不能判定。
+这与前面三类可判误报的形态不同，未删除候选。

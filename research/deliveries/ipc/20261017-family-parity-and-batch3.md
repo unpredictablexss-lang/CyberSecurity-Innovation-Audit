@@ -311,3 +311,59 @@ cd <pinned tree>
 - `caller-class` 的"未走到"以三个组件上的探针为准，不外推到其余 48 个组件；
 - 54 个组件之外仍有未测组件；本批数字不能代表整个 OpenHarmony；
 - 所有候选均为未验证静态证据，`validated_vulnerability` 仍为 0。
+
+## 10. AUTH-03 `object-owner` 两条候选的源码复核
+
+这是 11 条规则里最后一条"只在真实语料发射过一次"的规则，两条候选同在
+`resourceschedule_background_task_mgr` 的
+`services/continuous_task/src/bg_continuous_task_mgr.cpp:907` / `:909`
+（`RequestBackgroundRunningForInner` 的 start / stop 两个分支）：
+
+```cpp
+899      int32_t callingUid = IPCSkeleton::GetCallingUid();
+901      if (!CheckPermissionForInner(taskParam, callingUid)) {
+902          BGTASK_LOGE("continuous task param uid %{public}d is invalid, real %{public}d",
+903                      taskParam->uid_, callingUid);
+904          return ERR_BGTASK_CHECK_TASK_PARAM;
+905      }
+906      if (taskParam->isStart_) {
+907          return StartBackgroundRunningForInner(taskParam, callingUid);
+908      }
+909      return StopBackgroundRunningForInner(taskParam, callingUid);
+```
+
+候选的 `path` 里已经记下 `CheckPermissionForInner(taskParam, callingUid) => True`，
+也就是说这次**不是**§3 / §4 那两类"守卫对检测器不可见"的误报：守卫被求值、被记录，
+只是它的某个分支不绑定对象属主。被调方在同一个文件的 `:912-925`：
+
+```cpp
+912  bool BgContinuousTaskMgr::CheckPermissionForInner(
+913      const sptr<ContinuousTaskParamForInner> &taskParam, int32_t callingUid)
+915      auto it = g_innerApiReqBgRunningConfig.find(callingUid);
+916      if (it != g_innerApiReqBgRunningConfig.end()) {
+917          if (it->second.bgModeId_ == taskParam->bgModeId_) {
+918              return true;
+919          }
+920      }
+922      if (callingUid == taskParam->uid_ && taskParam->bgModeId_ == BackgroundMode::AUDIO_PLAYBACK) {
+923          return true;
+924      }
+925      return false;
+```
+
+分支 (b) `:922` 正是规则要的绑定（`callingUid == taskParam->uid_`）；分支 (a)
+`:916-920` 只把调用方限定在 `g_innerApiReqBgRunningConfig` 这张固定的系统 SA 表里
+（`:137-147`：VOIP_SA 7022、CFWK_SA 5520、AUDIO_CONNECT_SA 7878、GAME_SERVICE_SA 7011、
+HEALTHSPORT_SA 7259/7500），并要求请求的 `bgModeId_` 与该 SA 配置的模式相等。
+**目标 `taskParam->uid_` 在分支 (a) 里确实没有被绑定**——这正是候选消息陈述的事实。
+
+因此这两条的分类是"形态已定位、未证伪"，保持 `candidate`：
+
+- 它不是 §3 / §4 那类可以就地判 false positive 的形态：路径记录到了守卫，
+  候选陈述的"target UID 未绑定 calling UID"在源码上成立；
+- 它也不能升格为发现：表中每个 SA 只被授权请求一种固定模式，注释写明了
+  VOIP / CFWK / AUDIO_CONNECT / GAME_SERVICE / HEALTHSPORT 的用途，
+  这是按 SA 授权的委派设计；"受信 SA 能否为任意应用 uid 申请该模式的长时任务"
+  属于产品策略问题，静态证据无法判定意图；
+- 结论只影响这 2 条候选的解读，不改变 `family_parity_20261017/parity.json`
+  的计数，也不删除任何候选。
