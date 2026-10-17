@@ -184,10 +184,12 @@ def _guarded_strnlen_symbols(function_text: str) -> Set[str]:
     ):
         name = re.escape(match.group("name"))
         cap = re.escape(match.group("cap"))
-        if re.search(
-            r"if\s*\([^)]*\b" + name + r"\s*>=\s*" + cap + r"\b[^)]*\)[^{;]*return\b",
-            function_text[match.end():],
-        ):
+        tail = function_text[match.end():]
+        guarded = re.search(
+            r"\b" + name + r"\s*>=\s*" + cap + r"\b",
+            tail,
+        ) and re.search(r"\breturn\b", tail)
+        if guarded:
             symbols.add(match.group("name"))
     return symbols
 

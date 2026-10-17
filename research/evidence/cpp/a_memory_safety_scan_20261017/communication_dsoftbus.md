@@ -1,0 +1,32 @@
+# A memory-safety pinned scan: communication_dsoftbus
+
+> Candidate-only report; `validated_vulnerability=0`.
+
+- Repository: `openharmony/communication_dsoftbus`
+- Commit: `652f88e0261ce4d0610f73cc451c26b84d2597af`
+- Git tree: `f8a14c30ef815217fa4d267939cff84db1fd5057`
+- Snapshot SHA-256: `5c8702d6cafab30fdfc12c2b146f23a9afc33fcf296b45d75a8a6a1b77b1dbe7`
+- Scope manifest SHA-256: `bfe5509394b8cc176849bde1a49448d8f756736442ba929a35cb84d35869281f`
+- Selected files/bytes: 1656/15243597
+- Wall seconds: 15.177581
+- Candidate findings/groups: 4/3
+
+## Detector runs
+
+### `ohscanner.cpp.bounds` 0.1.0 (blocked)
+
+- No candidate emitted in the analyzed lexical scope.
+
+### `ohscanner.cpp.integer_bounds` 0.1.0 (blocked)
+
+- `components/nstackx/nstackx_core/dfile/core/nstackx_file_list.c:269:30` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `userDataLength + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
+- `components/nstackx/nstackx_ctrl/core/nstackx_common.c:165:29` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `size + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
+- `components/nstackx/nstackx_ctrl/core/nstackx_common.c:198:29` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `size + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
+- `components/nstackx/nstackx_util/core/nstackx_util.c:153:19` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `len + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
+
+## Limitations
+
+- Candidate-only lexical analysis; no confirmed/reportable vulnerability is claimed.
+- No product build, permission boundary, attacker control, trigger trace or CIA impact is established.
+- Pointer aliases, wrappers, macro expansion, templates, interprocedural range facts and complete CFG dominance remain unknown.
+- This run uses local pinned Git objects only; no fetch, checkout or external scanner is invoked.
