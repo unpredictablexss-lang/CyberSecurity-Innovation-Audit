@@ -37,7 +37,7 @@ from tree_sitter import Language, Parser
 import tree_sitter_c
 import tree_sitter_cpp
 
-from .models import IpcPolicy
+from .families import merge_policy
 
 # Evidence grades, strongest first.
 SOURCE_DISPATCH = "source_dispatch"                        # map / switch-return / if-return
@@ -61,6 +61,13 @@ _OPTION_TYPE = re.compile(r"\bMessageOption\b")
 
 # `(this->*(iter->second))(args)` does not survive parsing; confirm it textually.
 _NUMBER = re.compile(r"-?(?:0x[0-9A-Fa-f]+|\d+)")
+
+# A definition that binds a name to a literal, so a guard written against that
+# name can be resolved to a value the source states instead of to the spelling of
+# the name. Only `const`/`constexpr` declarations and object-like `#define`s are
+# read: an enumerator already has its own table.
+_CONST_QUALIFIER = re.compile(r"\b(?:constexpr|const)\b")
+_LITERAL = re.compile(r"-?(?:0[xX][0-9A-Fa-f]+|\d+)[uUlL]*")
 
 # Names whose presence before the dispatch site indicates a pre-dispatch guard.
 # Deliberately broader than IpcPolicy: the point is to downgrade rather than to
@@ -207,6 +214,24 @@ class _Binding:
     grade: str = ""
 
 
+@dataclass(frozen=True)
+class ConstantDefinition:
+    """One source definition binding a name to an integer literal.
+
+    `symbol` is the qualified name the definition sits under as the index read it
+    (namespace and class scopes, outermost first), so a citation names something a
+    reviewer can find in the file rather than a bare identifier that a component
+    may define in several places.
+    """
+
+    name: str
+    value: str
+    file: str
+    line: int
+    symbol: str
+    text: str
+
+
 @dataclass
 class _Func:
     qualified: str
@@ -219,6 +244,12 @@ class _Func:
     source: bytes
     params: tuple          # (type_text, name_text)
     code_param: str
+    # Names declared as non-const lvalue references. An argument bound to one of
+    # these can carry the callee's result back to the caller, which is how a stub
+    # receives a remote object it then writes into the reply. Kept as a set of
+    # names rather than a positional tuple so a caller can ask about the argument
+    # it actually has.
+    ref_params: tuple = ()
 
 
 class EntryIndex:
@@ -226,7 +257,10 @@ class EntryIndex:
 
     def __init__(self, units, policy=None, *, max_files=2000, max_map_entries=4096,
                  max_class_depth=16, max_roots=512):
-        self.policy = policy or IpcPolicy()
+        # Entry discovery reads policy fields too (`entry_names`, `service_entries`,
+        # `caller_role_guards`), and a family may add to them, so the index is built
+        # under the merged policy as well -- see families.merge_policy.
+        self.policy = merge_policy(policy)
         self.limitations = set()
         self._max_map_entries = max_map_entries
         self._max_class_depth = max_class_depth
@@ -239,6 +273,7 @@ class EntryIndex:
         self._classes_by_terminal = {}
         self._enum_members = {}
         self._macros = {}
+        self._constants = {}        # name -> [ConstantDefinition, ...]
         self._map_literals = {}     # map var -> [(code_text, handler, file, line)]
         self._map_assigns = {}      # map var -> same shape
 
@@ -274,9 +309,11 @@ class EntryIndex:
             elif kind == "enum_specifier":
                 self._record_enum(node, source)
             elif kind == "preproc_def":
-                self._record_macro(node, source, functional=False)
+                self._record_macro(node, source, functional=False, path=path)
             elif kind == "preproc_function_def":
-                self._record_macro(node, source, functional=True)
+                self._record_macro(node, source, functional=True, path=path)
+            elif kind in ("declaration", "field_declaration"):
+                self._record_constant(node, source, path)
             elif kind == "function_definition":
                 self._record_function(node, source, path)
             elif kind == "initializer_list":
@@ -340,13 +377,40 @@ class EntryIndex:
         if members:
             self._enum_members.setdefault(name, {}).update(members)
 
-    def _record_macro(self, node, source, *, functional):
+    def _record_macro(self, node, source, *, functional, path=""):
         name = _text(source, node.child_by_field_name("name"))
         if not name:
             return
         value = _text(source, node.child_by_field_name("value")).strip()
         params = _text(source, node.child_by_field_name("parameters")).strip() if functional else ""
-        self._macros[name] = {"value": value, "functional": functional, "params": params}
+        self._macros[name] = {"value": value, "functional": functional, "params": params,
+                              "file": path, "line": node.start_point[0] + 1}
+
+    def _record_constant(self, node, source, path):
+        """A `const`/`constexpr` name bound to a literal, and where it was read.
+
+        Only the literal case is recorded. A definition whose initializer is an
+        expression (`= OTHER_UID`) is left out rather than followed: this is a
+        citation table, and a chain of definitions is not a value a reviewer can
+        check in one line. A name the file defines more than once is kept as both
+        records; deciding between them is the query's job, not the recorder's.
+        """
+        if not _CONST_QUALIFIER.search(_text(source, node)):
+            return
+        for item in node.named_children:
+            if item.type != "init_declarator":
+                continue
+            name = _last_identifier(source, item.child_by_field_name("declarator"))
+            raw = item.child_by_field_name("value")
+            if not name or raw is None:
+                continue
+            value = _literal_value(source, raw)
+            if value is None:
+                continue
+            self._constants.setdefault(name, []).append(
+                ConstantDefinition(name, value, path, item.start_point[0] + 1,
+                                   _scope_prefix(source, node, name),
+                                   _text(source, node).strip()))
 
     def _record_function(self, node, source, path):
         declared = node.child_by_field_name("declarator")
@@ -366,16 +430,32 @@ class EntryIndex:
                     owner = _text(source, item) if item is not None else ""
                     break
         params = []
+        refs = []
         plist = declared.child_by_field_name("parameters")
         for param in plist.named_children if plist else ():
             if param.type != "parameter_declaration":
                 continue
             ptype = _text(source, param.child_by_field_name("type")).strip()
             pdecl = param.child_by_field_name("declarator")
-            params.append((ptype, _last_identifier(source, pdecl) if pdecl is not None else ""))
+            pname = _last_identifier(source, pdecl) if pdecl is not None else ""
+            params.append((ptype, pname))
+            # `T& x` binds through a reference_declarator; `T&& x` is an rvalue
+            # reference and a reference to a const type cannot carry a result back
+            # out. Any `const` anywhere in the parameter's declaration is enough to
+            # leave the parameter out: the qualifier is a sibling of the type
+            # (`const sptr<T> &x` reads as `&x` on the declarator, and the grammar
+            # hands back the type without it), so testing the declarator alone
+            # bound const references and marked the caller's own argument with a
+            # result the callee never wrote. Not following a pointer-to-const
+            # result is the cheap side of that trade, and an unknown declarator
+            # shape is left out rather than assumed to be an out-parameter.
+            if pdecl is not None and pdecl.type == "reference_declarator" and pname \
+                    and not re.search(r"\bconst\b", _text(source, param)):
+                refs.append(pname)
         record = _Func(qualified, owner, _last_component(qualified), path,
                        node.start_point[0] + 1, node, node.child_by_field_name("body"),
-                       source, tuple(params), params[0][1] if params else "")
+                       source, tuple(params), params[0][1] if params else "",
+                       tuple(refs))
         self._funcs.append(record)
         self._func_by_key[(qualified, path)] = record
         self._func_by_owner_name.setdefault((_last_component(owner), record.name), []).append(record)
@@ -795,6 +875,43 @@ class EntryIndex:
             self.limitations.add("Virtual override depth budget reached at " + base_owner)
         return found
 
+    def one_hop_definition(self, owner, name):
+        """The single definition `name` resolves to one class hop from `owner`.
+
+        An OpenHarmony stub calls a method its own class does not define: the
+        concrete service derives from the stub and supplies the body, usually in
+        another translation unit. This is the boundary a caller needs when asking
+        what the callee does, and it answers `None` rather than guessing whenever
+        the hop is not unique -- no subclass in the analysed sources, several
+        subclasses defining the name, or several definitions within one. `None`
+        means "not established", never "no definition exists".
+        """
+        owner_name = _last_component(owner)
+        if not owner_name or not name:
+            return None
+        found = self._virtual_overrides(owner_name, name)
+        if len(found) == 1:
+            # A class that defines the name itself is a second possible body: a
+            # virtual call written in `Base::Handle` runs on whatever `this` is,
+            # and a subclass that does not override runs `Base`'s body. One
+            # derived definition plus the owner's own is the same "not unique"
+            # this lookup already refuses, so neither body is handed back.
+            own = self._func_by_owner_name.get((owner_name, name))
+            if own:
+                self.limitations.add(
+                    "One-hop callee is not unique: " + owner_name + " defines " + name
+                    + " itself at " + own[0].file + ":" + str(own[0].line)
+                    + " in addition to the subclass definition at " + found[0].file
+                    + ":" + str(found[0].line) + "; neither body was read.")
+                return None
+            return found[0]
+        if len(found) > 1:
+            self.limitations.add(
+                "One-hop callee is not unique (" + str(len(found)) + " definitions) for "
+                + owner_name + "::" + name + "; the callee body was not read.")
+        return None
+
+
     # -- transaction codes ------------------------------------------------------
 
     def _unwrap_cast(self, raw):
@@ -839,6 +956,43 @@ class EntryIndex:
 
     # ------------------------------------------------------------------ queries
 
+    def define_constant(self, name, near_file=""):
+        """The value the scanned sources bind `name` to, and the definition saying so.
+
+        A definition in `near_file` is preferred, because that is the binding a
+        guard in that translation unit most plausibly reads. The lookup is
+        file-scoped, not lexical: a definition in an inner scope is not told apart
+        from one at file scope, and that is a limitation of this answer rather than
+        a claim about the name.
+
+        Several definitions are usable only when they agree on the value. A name
+        bound to two different values has no value here, and `None` -- with the
+        conflict recorded, locations included -- is the answer rather than the first
+        definition found. `None` means "not established", never "defined as nothing".
+        """
+        if not name:
+            return None
+        candidates = list(self._constants.get(name, ()))
+        macro = self._macros.get(name)
+        if macro is not None and not macro["functional"]:
+            value = _literal_value_text(macro["value"])
+            if value is not None:
+                candidates.append(ConstantDefinition(
+                    name, value, macro.get("file", ""), macro.get("line", 0), "",
+                    "#define " + name + " " + macro["value"]))
+        if not candidates:
+            return None
+        chosen = [c for c in candidates if near_file and c.file == near_file] or candidates
+        values = {c.value for c in chosen}
+        if len(values) > 1:
+            self.limitations.add(
+                "Constant " + name + " is defined with conflicting values ("
+                + ", ".join(sorted(values)) + ") at "
+                + ", ".join(sorted(c.file + ":" + str(c.line) for c in chosen))
+                + "; no value was taken from it.")
+            return None
+        return sorted(chosen, key=lambda c: (c.file, c.line))[0]
+
     def _compute_guard_roots(self):
         roots = set()
         for entry in self.entries:
@@ -851,6 +1005,44 @@ class EntryIndex:
 
     def dispatcher_guard_roots(self):
         return self._guard_roots
+
+    def dispatch_coverage(self):
+        """Counts describing what entry discovery saw, including what it refused.
+
+        A candidate list alone cannot say whether a quiet component had no
+        dispatcher, had dispatchers whose handlers were never bound, or had
+        bindings whose transaction codes never resolved. These counts are the
+        explicit coverage record for that question: they are emitted beside the
+        findings rather than inferred from them. Every number is a count of
+        records already in `entries`/`dispatchers`; nothing is re-classified here.
+        """
+        entries = self.entries
+        grade = {}
+        for entry in entries:
+            grade[entry.evidence] = grade.get(entry.evidence, 0) + 1
+        unresolved = {}
+        for entry in entries:
+            if entry.evidence != UNRESOLVED_HANDLER:
+                continue
+            reason = entry.transaction_reason or "unstated"
+            if entry.ambiguity:
+                reason = ",".join(sorted(entry.ambiguity))
+            unresolved[reason] = unresolved.get(reason, 0) + 1
+        resolution = {}
+        for entry in entries:
+            resolution[entry.transaction_resolution] = resolution.get(
+                entry.transaction_resolution, 0) + 1
+        return {
+            "dispatchers": len(self.dispatchers),
+            "dispatchers_in_stub": sum(1 for d in self.dispatchers if d.owner_is_stub),
+            "dispatchers_guarded_before_dispatch": sum(
+                1 for d in self.dispatchers if d.guard_before_dispatch),
+            "bindings": len(entries),
+            "by_grade": dict(sorted(grade.items())),
+            "unresolved_dispatch": dict(sorted(unresolved.items())),
+            "transaction_resolution": dict(sorted(resolution.items())),
+            "conditional_bindings": sum(1 for e in entries if e.conditional),
+        }
 
     def root_bindings(self):
         """Handlers admitted as roots from a source-verified dispatch binding.
@@ -932,6 +1124,52 @@ class EntryIndex:
                                            if e.transaction_resolution == "unresolved"),
             "limitations": sorted(self.limitations),
         }
+
+
+def _literal_value_text(text):
+    """The decimal value of an integer literal as written, or None.
+
+    Normalizing here is what makes a hex- or suffixed spelling the same value as
+    the reviewed decimal one; a reviewer cites a number, not a spelling.
+    """
+    text = text.strip()
+    if not _LITERAL.fullmatch(text):
+        return None
+    try:
+        return str(int(text.rstrip("uUlL"), 0))
+    except ValueError:
+        return None
+
+
+def _literal_value(source, node):
+    """The literal a declaration's value node writes, or None."""
+    text = _text(source, node).strip()
+    value = _literal_value_text(text)
+    if value is not None:
+        return value
+    if node.type == "unary_expression" \
+            and _text(source, node.child_by_field_name("operator")).strip() == "-":
+        inner = _literal_value_text(_text(source, node.child_by_field_name("argument")))
+        if inner is not None:
+            return "-" + inner
+    return None
+
+
+def _scope_prefix(source, node, name):
+    """`Ns::Class::NAME` for a definition written inside those scopes, else `NAME`.
+
+    An anonymous namespace has no name node and contributes nothing, which is how
+    a file-scope constant under `namespace {` reads as the bare name it is.
+    """
+    parts = []
+    for ancestor in _parents(node):
+        if ancestor.type in ("namespace_definition", "class_specifier", "struct_specifier"):
+            item = ancestor.child_by_field_name("name")
+            if item is not None:
+                label = _text(source, item).strip()
+                if label:
+                    parts.append(label)
+    return "::".join(list(reversed(parts)) + [name])
 
 
 def _base_terminal(source, node):

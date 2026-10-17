@@ -7,7 +7,7 @@ from pathlib import Path
 import resource
 import signal
 import sys
-from src.ohscanner.execution import run_fixed_commit_scan
+from src.ohscanner.execution import run_fixed_commit_scan, write_report_json
 from src.ohscanner.git_source import load_git_sources
 from src.workbench.service import engine_fingerprint
 from src.workbench.store import Store
@@ -58,6 +58,7 @@ def main():
         tuple(spec["detector_ids"]),
         out / "report.json",
         out / "report.md",
+        expected_plan=spec.get("audit_plan"),
     )
     if engine_fingerprint() != spec["engine_sha256"]:
         raise ValueError("scanner implementation changed during task execution")
@@ -83,9 +84,7 @@ def main():
             for s in sources
         ],
     }
-    (out / "report.json").write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    write_report_json(report, out / "report.json")
     store.event(
         key,
         "report_written",

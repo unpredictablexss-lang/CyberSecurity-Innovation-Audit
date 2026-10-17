@@ -42,9 +42,12 @@ import {
 import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
+import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
+import CandidateActions from "../features/workbench/CandidateActions";
+import { requestGate } from "../features/audits/model";
 const { Text, Title, Paragraph } = Typography;
-export default function JobDetail({ id }: { id: string }) {
+export default function JobDetail({ id, initialTab = "findings", candidateId }: { id: string; initialTab?: string; candidateId?: string }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -58,6 +61,9 @@ export default function JobDetail({ id }: { id: string }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
   const [detail, setDetail] = useState<any>(null);
+  const selectedDetailId = useRef<string | null>(null);
+  const detailGate = useRef(requestGate());
+  const candidateAutoOpened = useRef<string | null>(null);
   const [source, setSource] = useState<any>(null);
   const [selected, setSelected] = useState<React.Key[]>([]);
   const [caseOpen, setCaseOpen] = useState(false);
@@ -134,12 +140,16 @@ export default function JobDetail({ id }: { id: string }) {
   useEffect(() => {
     if (report) void loadClusters();
   }, [report?.snapshot_sha256, clusterPage]);
-  async function open(f: any) {
+  async function open(f: any, options: { select?: boolean; resetReview?: boolean } = {}) {
+    if (options.select === false && selectedDetailId.current !== f.id) return;
+    if (options.select !== false) selectedDetailId.current = f.id;
+    const ticket = detailGate.current.next();
     try {
       const d = await api("/scans/" + id + "/findings/" + f.id);
+      if (!detailGate.current.current(ticket) || selectedDetailId.current !== f.id) return;
       setDetail(d);
       const last = d.reviews.at(-1);
-      reviewForm.setFieldsValue({
+      if (options.resetReview !== false) reviewForm.setFieldsValue({
         status: last?.status || "under_review",
         reviewer: last?.reviewer || "",
         notes: "",
@@ -148,6 +158,12 @@ export default function JobDetail({ id }: { id: string }) {
       setError(String(e));
     }
   }
+  useEffect(() => {
+    if (job && candidateId && candidateAutoOpened.current !== candidateId) {
+      candidateAutoOpened.current = candidateId;
+      void open({ id: candidateId });
+    }
+  }, [job?.id, candidateId]);
   async function action(name: string) {
     try {
       const j = await api("/scans/" + id + "/" + name, {});
@@ -157,7 +173,7 @@ export default function JobDetail({ id }: { id: string }) {
       setError(String(e));
     }
   }
-  if (!job) return <Spin />;
+  if (!job) return error ? <Alert type="error" showIcon message={error} /> : <Spin />;
   const parse = report?.source_parsing.parsing_status || {};
   const coverage = report
     ? Object.entries(report.detector_coverage.detectors).map(
@@ -238,6 +254,7 @@ export default function JobDetail({ id }: { id: string }) {
           ]}
         />
       </Card>
+      <AuditPlanView plan={job.spec.audit_plan} />
       {report && (
         <Row gutter={18} className="section-gap">
           {[
@@ -253,7 +270,7 @@ export default function JobDetail({ id }: { id: string }) {
                 (parse.failed || 0) +
                 (parse.not_run || 0),
             },
-            { title: "已确认漏洞", value: report.validated_vulnerability },
+            { title: "已确认漏洞", value: report.validated_vulnerability ?? "unknown" },
           ].map((x) => (
             <Col span={6} key={x.title}>
               <Card>
@@ -265,6 +282,7 @@ export default function JobDetail({ id }: { id: string }) {
       )}
       <Card className="section-gap">
         <Tabs
+          defaultActiveKey={initialTab}
           items={[
             {
               key: "findings",
@@ -393,6 +411,7 @@ export default function JobDetail({ id }: { id: string }) {
                       showSizeChanger: false,
                     }}
                     expandable={{
+                      expandIcon: ({ expanded, onExpand, record }) => <Button size="small" type="text" aria-label={expanded ? "收起候选组" : "展开候选组"} onClick={(event) => onExpand(record, event)}>{expanded ? "−" : "+"}</Button>,
                       expandedRowRender: (group: any) => (
                         <Space wrap>
                           {group.candidates.map((candidate: any) => (
@@ -624,7 +643,7 @@ export default function JobDetail({ id }: { id: string }) {
       </Card>
       <Drawer
         open={!!detail}
-        onClose={() => setDetail(null)}
+        onClose={() => { selectedDetailId.current = null; detailGate.current.invalidate(); setDetail(null); }}
         width="90vw"
         title={
           <Space>
@@ -640,12 +659,13 @@ export default function JobDetail({ id }: { id: string }) {
               message={detail.rule_id + " · " + detail.candidate_cwe}
               description={detail.message}
             />
+            <CandidateActions job={job} candidate={detail} />
             <CodeView source={detail.source} line={detail.line} />
             <SourceEvidence
               key={detail.id}
               jobId={id}
               detail={detail}
-              reload={() => open(detail)}
+              reload={() => open(detail, { select: false, resetReview: false })}
             />
             <Row gutter={20} className="section-gap">
               <Col span={12}>
@@ -684,7 +704,7 @@ export default function JobDetail({ id }: { id: string }) {
                             expected_id: detail.reviews.at(-1)?.id || 0,
                           },
                         );
-                        await open(detail);
+                        await open(detail, { select: false, resetReview: true });
                         await loadFindings();
                         message.success("复核记录已追加");
                       } catch (e) {

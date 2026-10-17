@@ -11,6 +11,7 @@ from time import perf_counter
 
 from src.benchmark.tool_result import ToolDiagnostic, ToolRunResult
 from .contracts import ScanContext, DetectorRun
+from .identity import build_identity_record, line_byte_range
 
 
 class DetectorRegistry:
@@ -86,6 +87,31 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
         if finding.source_sha256 and finding.source_sha256 != unit.sha256:
             raise ValueError("finding source hash does not match the analyzed source")
         diagnostic_id = _diagnostic_id(detector.detector_id, finding, unit.sha256)
+        byte_start, byte_end = line_byte_range(unit.text, finding.line)
+        blob_oids = context.shared_facts.get("source_blob_oid", {})
+        observation = {
+            "repository": context.request.repository,
+            "commit": context.request.commit,
+            "snapshot_sha256": context.request.snapshot_sha256,
+            "profile_id": context.request.profile_id,
+            "legacy_diagnostic_id": diagnostic_id,
+            "detector_id": detector.detector_id,
+            "detector_version": detector.version,
+            "rule_id": finding.rule_id,
+            "rule_version": finding.rule_version,
+            "rule_lineage_id": finding.rule_lineage_id,
+            "file": finding.file,
+            "line": finding.line,
+            "message": finding.message,
+            "source_blob_oid": blob_oids.get(finding.file),
+            "source_sha256": unit.sha256,
+            "byte_start": byte_start,
+            "byte_end": byte_end,
+            "symbol_identity": finding.symbol_identity,
+            "ast_fingerprint": finding.ast_fingerprint,
+            "identity_quality": finding.identity_quality,
+        }
+        identity_record = build_identity_record(observation)
         if diagnostic_id in seen_ids:
             raise ValueError("duplicate finding identity")
         seen_ids.add(diagnostic_id)
@@ -96,7 +122,10 @@ def _normalized(context, detector, selected, run, elapsed, error=None,
             message=finding.message, candidate_cwe=finding.candidate_cwe,
             confidence="unassessed", symbol=finding.symbol,
             source_sha256=unit.sha256, consequence_impact=finding.consequence_impact,
-            consequence_cwe=finding.consequence_cwe))
+            consequence_cwe=finding.consequence_cwe,
+            finding_identity_id=identity_record["stable"]["id"],
+            occurrence_id=identity_record["occurrence"]["id"],
+            finding_identity=identity_record))
     findings.sort(key=lambda item: (item.file, item.line or 0, item.rule_id or "", item.diagnostic_id))
     limitations = list(run.limitations)
     provenance_limitation = (

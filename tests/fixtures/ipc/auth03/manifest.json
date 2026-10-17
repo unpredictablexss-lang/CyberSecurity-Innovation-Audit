@@ -1,0 +1,52 @@
+[
+  {
+    "sample_id": "caller_class_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.caller-class",
+    "file": "caller_class_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "A caller-class-sensitive operation (GetPermissionUsedRecordsAsync) runs behind a caller permission check and no named caller-role predicate. The permission fact is honest and insufficient: a permission is not a caller class, so the boundary the rule asks about is exactly the one that is absent."
+  },
+  {
+    "sample_id": "caller_class_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "caller_class_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "caller_class_positive plus one line: a named caller-role predicate (IPCSkeleton::IsSystemAppCalling) rejects callers outside the class before the operation. The pair differs in exactly that line, so the suppressed candidate is attributable to the caller-class fact and not to a widened guard set."
+  },
+  {
+    "sample_id": "caller_class_unreviewed_name_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "caller_class_unreviewed_name_safe.cpp",
+    "split": "design",
+    "variant": "safe",
+    "notes": "A look-alike permission-usage query (GetPermissionUsageSummary) at the same site. The rule is scoped to a reviewed set of names rather than to a call shape, so a sibling API that is not on that set raises nothing."
+  },
+  {
+    "sample_id": "identity_domain_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": "ipc.auth.identity-domain",
+    "file": "identity_domain_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "AccessTokenKit::VerifyAccessToken is a reviewed result-domain predicate; it is called with the calling UID where its result domain is a caller TokenID. The same call also loses its permission credit -- the submitted identity is a different domain, so the guarded operation is recorded as unguarded as well as mis-domained. That coupling is the rule's point and is why this positive carries three candidates."
+  },
+  {
+    "sample_id": "identity_domain_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "identity_domain_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "identity_domain_positive with the submitted identity changed from IPCSkeleton::GetCallingUid() to IPCSkeleton::GetCallingTokenID() -- the remediation the rule names, and no other line changes."
+  }
+]

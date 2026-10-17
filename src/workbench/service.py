@@ -4,6 +4,9 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import os
+import subprocess
+import sys
 from src.ohscanner.contracts import safe_relative_path
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata
 from src.ohscanner.git_source import _git, resolve_commit, MAX_BLOB_BYTES
@@ -13,13 +16,24 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+ENGINE_MODEL_FILES = ()  # Reviewed shipped model data only; C/D models remain withheld.
+
+
 def engine_fingerprint():
     root = Path(__file__).resolve().parents[2]
     digest = hashlib.sha256()
     for file in sorted((root / "src").rglob("*.py")):
-        if "workbench" in file.relative_to(root / "src").parts:
+        relative = file.relative_to(root / "src")
+        if "workbench" in relative.parts and not (
+            relative.parts[:2] in (("workbench", "planning"), ("workbench", "sources"))
+            or relative.as_posix() == "workbench/plan_child.py"
+        ):
             continue
         digest.update(str(file.relative_to(root)).encode())
+        digest.update(file.read_bytes())
+    for relative in ENGINE_MODEL_FILES:
+        file = root / relative
+        digest.update(relative.encode())
         digest.update(file.read_bytes())
     return digest.hexdigest()
 
@@ -98,27 +112,48 @@ def detector_metadata():
     return result
 
 
-def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
+def audit_plan(repo, requested, includes, detector_ids=None):
     if not includes or len(includes) > 100 or len(set(includes)) != len(includes):
         raise ValueError("select 1..100 distinct include paths")
     for path in includes:
         if path != ".":
             safe_relative_path(path)
-    build_registry(tuple(detector_ids))
+    if detector_ids:
+        build_registry(tuple(detector_ids))
+    fixed = revision(repo, requested)
+    request = {"repo_dir": repo["path"], "repository": repo["name"],
+               "commit": fixed["commit"], "includes": includes,
+               "selected_detector_ids": detector_ids}
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "src.workbench.plan_child", str(os.getpid())],
+            input=json.dumps(request), capture_output=True, text=True,
+            cwd=Path(__file__).resolve().parents[2], timeout=35)
+    except subprocess.TimeoutExpired as exc:
+        raise ValueError("Planning deadline exceeded; no scan was queued") from exc
+    if result.returncode or len(result.stdout.encode()) > 8 * 1024 * 1024:
+        raise ValueError("Planning failed within source/resource limits; no scan was queued: "
+                         + result.stderr[-800:])
+    plan = json.loads(result.stdout)
+    if plan["source"]["commit"] != fixed["commit"] or plan["source"]["git_tree"] != fixed["git_tree"]:
+        raise ValueError("planning source binding mismatch")
+    return fixed, plan
+
+
+def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
+    fixed, plan = audit_plan(repo, requested, includes, detector_ids)
+    ids = list(plan["suggested_detector_ids"]) if detector_ids is None else list(detector_ids)
+    if not ids:
+        raise ValueError("No applicable approved detector; analysis remains unknown, no scan queued")
+    build_registry(tuple(ids))
     return {
-        **revision(repo, requested),
-        "repository": repo["name"],
-        "include_paths": includes,
-        "detector_ids": detector_ids,
-        "detector_versions": {
-            d["id"]: d["version"]
-            for d in detector_metadata()
-            if d["id"] in detector_ids
-        },
-        "timeout_seconds": timeout_seconds,
-        "memory_mb": memory_mb,
-        "mode": "repository_snapshot",
-        "engine_sha256": engine_fingerprint(),
+        **fixed,
+        "repository": repo["name"], "include_paths": includes,
+        "detector_ids": ids,
+        "detector_versions": {d["id"]: d["version"] for d in detector_metadata() if d["id"] in ids},
+        "audit_plan": plan, "plan_sha256": plan["plan_sha256"],
+        "timeout_seconds": timeout_seconds, "memory_mb": memory_mb,
+        "mode": "repository_snapshot", "engine_sha256": engine_fingerprint(),
     }
 
 

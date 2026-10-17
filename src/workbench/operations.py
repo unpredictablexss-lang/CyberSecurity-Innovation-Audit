@@ -60,6 +60,25 @@ def enqueue_range(settings, store, ops, body):
         repo["id"], (a, b))
 
 
+def enqueue_branch_comparison(settings, store, ops, body):
+    repo = store.repository(body["repository_id"])
+    service.check_repository(settings, repo["path"])
+    before = service.revision(repo, body["baseline_ref"])
+    after = service.revision(repo, body["endpoint_ref"])
+    if before["commit"] == after["commit"]:
+        raise ValueError("branch comparison refs must resolve to different commits")
+    specs = [service.make_spec(repo, item["commit"], body["include_paths"], body["detector_ids"],
+                               body["timeout_seconds"], body["memory_mb"])
+             for item in (before, after)]
+    return ops.create_with_scans("branch_comparison", {
+        "repository_id": repo["id"],
+        "baseline_ref": body["baseline_ref"], "baseline": before["commit"],
+        "endpoint_ref": body["endpoint_ref"], "endpoint": after["commit"],
+        "timeout_seconds": body["timeout_seconds"] * 2 + 60,
+        "memory_mb": body["memory_mb"],
+    }, repo["id"], specs)
+
+
 def date_selection(settings, store, repository_id, branch, start, end, timezone):
     zone = ZoneInfo(timezone)
     def epoch(value):
@@ -84,7 +103,7 @@ def date_selection(settings, store, repository_id, branch, start, end, timezone)
     if len(parents) < 2:
         raise ValueError("earliest selected commit has no baseline parent; choose explicit SHAs")
     selected = [rows[i][0] for i in indices]
-    return {"tip": tip, "baseline": parents[1], "endpoint": rows[low][0],
+    return {"branch": branch, "tip": tip, "baseline": parents[1], "endpoint": rows[low][0],
             "selected_commits": selected,
             "intervening_outside_date": [sha for sha, _ in rows[low:high + 1] if sha not in selected],
             "time_basis": "committer", "timezone": timezone, "start": start, "end": end,
@@ -223,11 +242,21 @@ def execute(settings, store, ops, task):
                 "limitations": ["No checkout or scan was performed; choose a returned immutable commit explicitly."]}
     if kind == "investigation":
         return investigation(settings, store, spec)
+    if kind == "agent_investigation":
+        from .agent import execute_agent
+        return execute_agent(settings, store, ops, task)
     if kind == "validation":
         from .validation import execute_validation
         return execute_validation(settings, store, ops, task)
     reports = wait_reports(settings, store, spec["scan_ids"])
     if any(r is None for r in reports):
+        if kind == "branch_comparison":
+            return {"status": "blocked", "baseline_ref": spec["baseline_ref"],
+                    "baseline": spec["baseline"], "endpoint_ref": spec["endpoint_ref"],
+                    "endpoint": spec["endpoint"], "scan_ids": spec["scan_ids"],
+                    "candidate_comparison": [{"status": "unknown", "vulnerability_introduced_or_fixed": "unknown"}],
+                    "impact": "unknown", "validated_vulnerability": 0,
+                    "reason": "An endpoint scan failed or was cancelled; branch comparison remains unknown."}
         return {"status": "blocked", "scan_ids": spec["scan_ids"], "reason": "Endpoint scan failed/cancelled; comparison unknown"}
     if kind == "revision_range":
         repo = store.repository(spec["repository_id"])
@@ -258,4 +287,24 @@ def execute(settings, store, ops, task):
                               "source_snapshot_sha256": r["snapshot_sha256"]} for r in reports],
                 "comparisons": comparisons, "validated_vulnerability": 0,
                 "limitations": ["Version association is a candidate-level observation; affected/fixed requires bound evidence and review."]}
+    if kind == "branch_comparison":
+        repo = store.repository(spec["repository_id"])
+        try:
+            delta = changes(repo["path"], spec["baseline"], spec["endpoint"])
+            compared = compare_reports(reports[0], reports[1], delta)
+        except (ValueError, subprocess.SubprocessError):
+            delta, compared = [], [{"status": "unknown", "reason": "comparison unavailable",
+                                    "vulnerability_introduced_or_fixed": "unknown"}]
+        return {"status": "completed_with_limitations", "repository_id": repo["id"],
+                "baseline_ref": spec["baseline_ref"], "baseline": spec["baseline"],
+                "endpoint_ref": spec["endpoint_ref"], "endpoint": spec["endpoint"],
+                "scan_ids": spec["scan_ids"], "changes": delta,
+                "candidate_comparison": compared, "impact": "unknown",
+                "versions": [{"ref": ref, "commit": report["commit"],
+                              "candidate_count": report["diagnostic_count"],
+                              "impact": "unknown", "source_snapshot_sha256": report["snapshot_sha256"]}
+                             for ref, report in ((spec["baseline_ref"], reports[0]),
+                                                 (spec["endpoint_ref"], reports[1]))],
+                "validated_vulnerability": 0,
+                "limitations": ["Branch endpoint comparison is candidate-level observation; it does not prove vulnerability introduction, remediation, affected versions, or product impact."]}
     raise ValueError("unimplemented operation")

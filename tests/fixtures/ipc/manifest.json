@@ -431,5 +431,333 @@
     "file": "relay_inner_wrong_interface_positive.cpp",
     "split": "design",
     "variant": "positive"
+  },
+  {
+    "sample_id": "helper_preproc_guard_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": null,
+    "file": "helper_preproc_guard_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "helper_preproc_unguarded_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "helper_preproc_unguarded_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "helper_preproc_wrong_uid_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "helper_preproc_wrong_uid_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "helper_preproc_log_only_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "helper_preproc_log_only_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "helper_preproc_param_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "helper_preproc_param_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "helper_preproc_no_else_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "helper_preproc_no_else_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "onehop_guard_fixed",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": null,
+    "file": "onehop_guard_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "notes": "The handler's unqualified call is defined by the concrete service one class hop away, whose opening gate rejects every caller that is not a system-ability caller. The export is not an unguarded one."
+  },
+  {
+    "sample_id": "onehop_unguarded_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_unguarded_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "Same hop, and the implementer asks nothing about the caller."
+  },
+  {
+    "sample_id": "onehop_open_conjunct_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_open_conjunct_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The implementer's gate is a conjunction whose second conjunct is not a reviewed caller-role predicate, so a caller the gate established nothing about continues."
+  },
+  {
+    "sample_id": "onehop_late_gate_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_late_gate_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The implementer checks the caller only after a modelled sensitive operation, so the gate does not cover what precedes it."
+  },
+  {
+    "sample_id": "onehop_property_gate_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_property_gate_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The implementer's opening check asks about the request, not about the caller."
+  },
+  {
+    "sample_id": "onehop_not_unique_positive",
+    "data_origin": "synthetic",
+    "family": "CAP-01",
+    "expected_rule": "ipc.capability.export",
+    "file": "onehop_not_unique_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "Two classes derive from the stub and both define the method, so the hop is not unique and neither body is used as the answer."
+  },
+  {
+    "sample_id": "role_predicate_shadowed_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "role_predicate_shadowed_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The handler's caller check is written with a reviewed caller-role name and this file defines that name itself, answering with a UID the reviewed set carries no role for. A local function of the same name is not the reviewed function, so the operation stays a candidate and the run records the body that took the name's place."
+  },
+  {
+    "sample_id": "account_role_authorized_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "account_role_authorized_fixed.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The three handlers are gated by a caller-UID comparison with ACCESSTOKEN_UID, which this file's own sources bind to the reviewed value 3020, and each call is one of the three operations the reviewed record says that account authorizes. The role is credited for those operations only, so the three candidates are not raised. Under the default policy the account assignment is unreviewed, so `ipc.auth.missing` is raised at the three call sites: this row asserts that, and is therefore a positive control, not a fixed one. The three candidates are held back only for a harness that supplies the reviewed policy explicitly -- see policy_context. A `fixed` label here would have stated the opposite of what the row asserts, and no test reads `variant`, so the mismatch would have been invisible.",
+    "policy_context": "default policy: account assignment unreviewed; explicit fixture policy tested separately"
+  },
+  {
+    "sample_id": "account_role_wrong_value_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "account_role_wrong_value_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The guard compares the calling UID with a constant of the reviewed name, and the scanned definition binds that name to 4096 rather than to the reviewed 3020. A same-named constant is not the reviewed account, so nothing is credited and the operation stays a candidate."
+  },
+  {
+    "sample_id": "account_role_unrelated_call_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "account_role_unrelated_call_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The account resolves and the comparison is a caller-UID one, but the operation behind the gate is SetPermission, which the reviewed account record does not list as authorized. An account is not a permission, so the candidate stays and the credit is withheld."
+  },
+  {
+    "sample_id": "account_role_tokenid_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "account_role_tokenid_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The constant and its value are the reviewed ones, and the identity compared against it is a TokenID rather than a UID. A token number is not the account number, so the guard answers about the wrong identity domain and the operation stays a candidate."
+  },
+  {
+    "sample_id": "account_role_request_value_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-02",
+    "expected_rule": "ipc.auth.missing",
+    "file": "account_role_request_value_positive.cpp",
+    "split": "design",
+    "variant": "positive",
+    "notes": "The compared value is read out of the parcel, so a caller that writes the reviewed account number into its own request satisfies the check. The condition is about the request, not about the caller, and nothing is credited."
+  },
+  {
+    "sample_id": "parcel_bounds_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": "ipc.parcel.bounds",
+    "file": "parcel_bounds_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_bounds_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "parcel_bounds_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_bounds_unknown_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "parcel_bounds_unknown_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "parcel_write_bounds_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": "ipc.parcel.write-bounds",
+    "file": "parcel_write_bounds_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_write_bounds_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "parcel_write_bounds_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_lifecycle_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-03",
+    "expected_rule": "ipc.parcel.lifecycle",
+    "file": "parcel_lifecycle_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_lifecycle_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-03",
+    "expected_rule": null,
+    "file": "parcel_lifecycle_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_lifecycle_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-03",
+    "expected_rule": null,
+    "file": "parcel_lifecycle_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "auth_flow_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-05",
+    "expected_rule": "ipc.auth.flow",
+    "file": "auth_flow_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth_flow_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-05",
+    "expected_rule": null,
+    "file": "auth_flow_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "sensitive_flow_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": "ipc.data.sensitive-flow",
+    "file": "sensitive_flow_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "sensitive_flow_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "sensitive_flow_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "sensitive_flow_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "sensitive_flow_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "auth_flow_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-05",
+    "expected_rule": null,
+    "file": "auth_flow_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "parcel_fd_backing_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": "ipc.parcel.fd-backing-size",
+    "file": "fd_backing_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_fd_backing_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "fd_backing_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_fd_backing_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "fd_backing_safe.cpp",
+    "split": "design",
+    "variant": "safe"
   }
 ]
