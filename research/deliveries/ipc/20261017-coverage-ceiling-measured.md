@@ -188,6 +188,17 @@ bool CheckSystemApp()
 并让"体内只剩它"的同名包装（无论成员函数还是自由函数）把返回值透出来。
 这落在 `models.py` + `analysis.py` 的谓词推导里——并发 import 正在写的文件，本线只测不改。
 
+> **2026-10-17 更正（交付项 14 实测）**：上面"两者都终止于同一个谓词、故可修点是一个"
+> 只对 `security_access_token` 的 4 条成立。按该谓词规则打补丁、在同一个 ceiling 仪器上
+> 复跑六个读数，结果是 **79 → 75，删除的正好是那 4 条 `ipc.auth.caller-class`，新增 0**；
+> `security_access_token` 服务侧 8 → 4，其余五个读数逐条相同。
+> camera 的那 1 条**不在规则层**：它的守卫宏 `CHECK_RETURN_RET_ELOG`（`camera_log.h:163-169`）
+> 定义体含 `##__VA_ARGS__` 且形参含 `...`，被展开器按
+> `cpp_macros.py:235-237` 的 `variadic_stringify_or_token_paste` **拒绝展开**（该文件 842 处
+> 被拒），所以走查看到的仍是未展开的调用、`path=()` 是必然的。谓词建模、`do/while` 逃逸修复
+> 以及两者合并，三档都改变不了这一条（记录逐字段相同）。详见
+> [20261017-caller-class-predicate-counterfactual.md](20261017-caller-class-predicate-counterfactual.md)。
+
 **但"往 `caller_role_guards` 里加两个名字"这条廉价修法是空的**，这是控制流事实、不是猜测
 （pinned 树 B `analysis.py:1300-1319`）：
 

@@ -6,7 +6,7 @@
 
 - lane `lanes.ipc`；branch `work/ipc-20261017`
 - base `6a41dc9b1aa030158e09be6241e2b14341f9256d`（integration base，本线**未** rebase）
-- head：**本记录所在提交**。本线在本 base 上共 10 个提交，按提交信息依次是
+- head：**本记录所在提交**。本线在本 base 上共 11 个提交，按提交信息依次是
   "per-rule controls for the six families, and an 18-component measurement"（`bb24978`）→
   "census the shapes the six silent rules key on"（`09f49d7`）→
   "why the six silent rules are silent, and 12 more components"（`46d4f64`）→
@@ -16,7 +16,8 @@
   "widen the corpus by mechanism, and measure the loudest rule"（`629f047`）→
   "screen every emitting rule with the same modes, and read every flagged row"（`4214a4f`）→
   "fill the three family directories and cover the engine cases on both sides"（`50e776a`）→
-  "measure whether the five engine cases occur in real code, and what the reports keep"（本提交）——
+  "measure whether the five engine cases occur in real code, and what the reports keep"（`df2d4de`）→
+  "measure which caller-class false positives a predicate rule removes, and why camera is not one of them"（本提交）——
   本提交的确切 SHA 会随 `--amend` 变化，故此处不写死；**未 push、未开 PR、未标 Ready、未 merge**
 - worktree `/home/audit/ohscanner/worktrees/parallel-ipc-20261017`
 
@@ -60,6 +61,7 @@ research/deliveries/ipc/20261017-caller-class-walk-coverage.md
 research/deliveries/ipc/20261017-coverage-ceiling-measured.md
 research/deliveries/ipc/20261017-widen-corpus-and-precision.md  (交付项 10)
 research/deliveries/ipc/20261017-rule-precision-screen.md      (交付项 11)
+research/deliveries/ipc/20261017-caller-class-predicate-counterfactual.md (交付项 14)
 research/deliveries/ipc/20261017-lane-delivery-record.md      (本文件)
 research/evidence/interface/ipc/component_audit_20261017/     (components.json, index.json, 18×manifest)
 research/evidence/interface/ipc/component_audit_shape_20261017/ (components.json, index.json, 12×manifest)
@@ -72,6 +74,8 @@ research/evidence/interface/ipc/copy_range_counterfactual_20261017/ (counterfact
 research/evidence/interface/ipc/caller_class_walk_20261017/   (caller_class_walk.json)
 research/evidence/interface/ipc/rule_precision_screen_20261017/ (rule_precision_screen.json)
 research/evidence/interface/ipc/ceiling_20261017/             (ceiling_yield.json, roots/6×json)
+research/evidence/interface/ipc/caller_class_predicate_counterfactual_20261017/
+                                                              (counterfactual.json)
 research/deliveries/ipc/silent_rule_shape_census.py             (只读，形状取自 IpcPolicy)
 research/deliveries/ipc/widen_shape_census.py                   (只读，全语料形状普查，多语料同法可比)
 research/deliveries/ipc/auth01_precision_probe.py               (只读，筛查 + pinned-blob 摘录 + relay_guard 六出口实测)
@@ -98,12 +102,18 @@ research/deliveries/ipc/engine_boundary_probe.py               (只读，§4/§5
 tests/test_ipc_family_depth.py                                 (12 → 19 项测试)
 research/deliveries/ipc/20261017-engine-case-corpus-census.md  (交付项 13)
 research/deliveries/ipc/engine_case_corpus_census.py           (只读，形状×语料×已保存报告×作用域计划四节)
+research/deliveries/ipc/cf_patch_pred.py                       (补丁副本：身份派生谓词 tier 1/2)   ← 交付项 14
+research/deliveries/ipc/cf_patch_dw.py                         (补丁副本：do/while 逃逸 + 谓词合并) ← 交付项 14
+research/deliveries/ipc/cf_compare_pred.py                     (只读：强制哈希/roots 同一 + 逐行写证据) ← 交付项 14
+research/deliveries/ipc/macro_budget.py                        (只读：复现宏目录选择与预算)        ← 交付项 14
+research/deliveries/ipc/macro_expand_probe.py                  (只读：对真实 blob 调真实展开器)    ← 交付项 14
+research/deliveries/ipc/caller_class_record_identity.py         (只读：camera 记录六副本逐字段比对) ← 交付项 14
 ```
 
 ```console
 $ .venv-web/bin/python scripts/check_change_scope.py \
     --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc
-  "checked_paths": 165 项
+  "checked_paths": 173 项
   "violations": []
   exit 0
 ```
@@ -121,7 +131,11 @@ $ .venv-web/bin/python scripts/check_change_scope.py \
 与 `rule_precision_screen_20261017/rule_precision_screen.json` 各一份；
 本批（交付项 12）新增 `auth02/` `auth04/` `cap01/` 三个家族目录共 16 个夹具 + 3 份 manifest、
 交付项 12 本身与两份只读仪器；本批（交付项 13）新增交付项 13 本身与
-`engine_case_corpus_census.py` 一份 —— **141 → 163 → 165**。）
+`engine_case_corpus_census.py` 一份；本批（交付项 14）新增交付项 14 本身、
+`cf_patch_pred.py`、`cf_patch_dw.py`、`cf_compare_pred.py`、`macro_budget.py`、
+`macro_expand_probe.py`、`caller_class_record_identity.py` 六份只读/补丁脚本
+与 `caller_class_predicate_counterfactual_20261017/counterfactual.json`
+—— **141 → 163 → 165 → 173**。）
 `--no-renames` 与策略取自 base 提交，本线**没有**为过检查改过策略。
 这份 141 项的清单同时含**三个来源**：本线七个提交新增的文件；并发 import 留在
 `src/ohscanner/detectors/interface/**` 与 `tests/**` 的既有脏文件（本线从未 stage 过它们，
@@ -416,6 +430,16 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
    **145 次这个数不是候选数** —— `emit()`（`analysis.py:612-631`）无条件 append、
    `detector.py:98-113` 一一映射，故某规则候选为 0 ⇔ 该规则零 emit，此点由报告直接推出，
    未做第二遍插桩重跑。
+
+   **交付项 14 把这个"除非同时做谓词建模"量了**（
+   [20261017-caller-class-predicate-counterfactual.md](20261017-caller-class-predicate-counterfactual.md)）：
+   一条"实参是调用者 token + 名字在位测试集合"的派生谓词规则，在同一个 ceiling 仪器上把
+   **79 → 75**，删掉的**正好是服务侧那 4 条 `caller-class`**，新增 0；客户端 22 条一条不变。
+   服务侧第 5 条（camera）**不在规则层**：守卫宏 `CHECK_RETURN_RET_ELOG` 因定义体含
+   `##__VA_ARGS__` 被展开器拒绝（`variadic_stringify_or_token_paste`，该文件 842 处），
+   走查从未看到守卫；谓词、`do/while` 修复、两者合并都改变不了它的记录。因此"补谓词"的
+   真实收益是 **4 条，不是 5 条**。`dw` 修复另外量到一个副作用：候选零变化，但 camera 的
+   `all-files` 诊断 12 → 5（7 条 AUTH-01 只剩 `complete-ast` 来源），故**不建议单独采纳**。
 3. **机制字段（未做）** —— AUTH-01 有具名机制结果（`descriptor_identity` 等），
    AUTH-02/03/04、CAP-01、DATA-01 的候选仍只能靠 `message` 文本区分，没有可断言的字段。
    需要改 `analysis.py` / `models.py`，属并发 import 正在写的文件，本线未抢。
