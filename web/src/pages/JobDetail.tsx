@@ -44,7 +44,7 @@ import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 import SourceEvidence from "../SourceEvidence";
 const { Text, Title, Paragraph } = Typography;
-export default function JobDetail({ id }: { id: string }) {
+export default function JobDetail({ id, initialTab = "findings" }: { id: string; initialTab?: string }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -157,7 +157,7 @@ export default function JobDetail({ id }: { id: string }) {
       setError(String(e));
     }
   }
-  if (!job) return <Spin />;
+  if (!job) return error ? <Alert type="error" showIcon message={error} /> : <Spin />;
   const parse = report?.source_parsing.parsing_status || {};
   const coverage = report
     ? Object.entries(report.detector_coverage.detectors).map(
@@ -265,6 +265,7 @@ export default function JobDetail({ id }: { id: string }) {
       )}
       <Card className="section-gap">
         <Tabs
+          defaultActiveKey={initialTab}
           items={[
             {
               key: "findings",

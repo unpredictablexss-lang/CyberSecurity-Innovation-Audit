@@ -43,7 +43,7 @@ import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 const { Text, Title, Paragraph } = Typography;
-export default function Cases() {
+export default function Cases({ embedded = false }: { embedded?: boolean } = {}) {
   const [cases, setCases] = useState<any[]>([]);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -66,10 +66,10 @@ export default function Cases() {
   };
   return (
     <>
-      <Header
+      {!embedded && <Header
         title="调查案例"
         description="人工关联根因，保留逐条依据。案例、候选与确认漏洞分别计数。"
-      />
+      />}
       {error && <Alert type="error" message={error} />}
       <Card>
         <Table<any>

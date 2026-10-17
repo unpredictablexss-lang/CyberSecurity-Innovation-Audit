@@ -43,13 +43,13 @@ import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 const { Text, Title, Paragraph } = Typography;
-export default function Capabilities({ detectors }: { detectors: any[] }) {
+export default function Capabilities({ detectors, embedded = false }: { detectors: any[]; embedded?: boolean }) {
   return (
     <>
-      <Header
+      {!embedded && <Header
         title="能力与研发状态"
         description="区分已接入的操作、运行条件与仍未验证的安全结论。"
-      />
+      />}
       <Row gutter={20}>
         <Col span={14}>
           <Card title="已接入检测器">

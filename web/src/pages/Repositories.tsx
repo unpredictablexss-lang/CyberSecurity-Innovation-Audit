@@ -47,20 +47,22 @@ export default function Repositories({
   repos,
   roots,
   refresh,
+  embedded = false,
 }: {
   repos: any[];
   roots: string[];
   refresh: () => Promise<void>;
+  embedded?: boolean;
 }) {
   const [form] = Form.useForm();
   const [error, setError] = useState("");
   const [refs, setRefs] = useState<any[] | null>(null);
   return (
     <>
-      <Header
+      {!embedded && <Header
         title="仓库与版本"
         description="登记已有本地 Git 仓库；扫描固定对象，不读取未提交修改。"
-      />
+      />}
       <Row gutter={20}>
         <Col span={15}>
           <Card title="已登记仓库">
