@@ -35,3 +35,7 @@ C/D 未默认注册，精确门槛见 admission.json。没有降低 partial 门�
 - 真实范围未含 JS/TS，因此脚本检测器按 no_matching_language 跳过；JS 路径用独立控制通过 API/Worker 测试，不冒充真实脚本仓库验收。
 
 运行原始日志在 `/home/audit/ohscanner/records/owner-integration-20261017`，数据库/报告在独立 data，不入 Git。Windows 交付目录 `实验记录/OHScanner负责人集成验收_2026-10-17` 保存可阅读结果和真实浏览器截图。
+
+## 收尾时远端并行更新
+
+A 远端在本轮期间从 c60924cb 更新至 2418b3339a06fcfd97e79e2c9313380d1147cbbb。已对比 29 个变化路径：新增 holdout、镜像快照与 IPC 输入恢复研究材料；没有修改 Detector 源码。本轮仍按固定算法来源验收，未导入这批大型研究资产，也不引用其准确率/召回率作为当前系统结论。后续可独立审查，不影响本轮固定源码静态扫描接入。

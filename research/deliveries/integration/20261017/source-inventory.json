@@ -166,5 +166,9 @@
     "src/workbench/validation.py": "872d6270861b1cca3c62ec472d71a3817fc915e54b4421e8c216702048836a59",
     "src/workbench/validation_child.py": "ad5f15843f4639e700bebfe5fe3d210cdd890f664e36d1c37506c5e9a013a2de",
     "src/workbench/worker.py": "fbeca4e2d427fb07b70599e28dfcfc8973441c46c6c6cfabaccf42cebdd9d7be"
+  },
+  "remote_tip_observed_at_close": {
+    "a": "2418b3339a06fcfd97e79e2c9313380d1147cbbb",
+    "delta_from_imported_a": "Research holdout/registry snapshots and input recovery only; no src/ohscanner/detectors changes. Not imported or used as accuracy claims."
   }
 }
