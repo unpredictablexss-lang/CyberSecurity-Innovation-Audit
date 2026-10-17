@@ -383,3 +383,10 @@ li {
 }
 
 .workbench-v41 .sidebar .ant-menu-title-content { display: inline; }
+
+/* Keep table scrolling inside the card instead of widening the phone viewport. */
+@media (max-width: 800px) {
+  .workbench-v41 .ant-table { min-width: 0; }
+  .workbench-v41 .ant-table-content { max-width: 100%; overflow-x: auto; }
+  .workbench-v41 .ant-table-content > table { min-width: 650px; }
+}
