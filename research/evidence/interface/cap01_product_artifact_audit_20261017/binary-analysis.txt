@@ -1,0 +1,155 @@
+5.0.2 unstripped libscreen_session_manager
+         U OHOS::Rosen::SessionPermission::IsSystemCalling()
+000b7241 T OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()
+00103101 T OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()
+00111b99 T OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)
+00116295 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>::__clone(std::__h::__function::__base<bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>*) const
+0011627d t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>::__clone() const
+0011624d t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1>, bool (OHOS::Parcel&, OHOS::Rosen::Point&)>::__clone(std::__h::__function::__base<bool (OHOS::Parcel&, OHOS::Rosen::Point&)>*) const
+00116235 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1>, bool (OHOS::Parcel&, OHOS::Rosen::Point&)>::__clone() const
+00116225 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>::__clone(std::__h::__function::__base<bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>*) const
+0011620d t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>::__clone() const
+001161f5 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3>, bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>::__clone(std::__h::__function::__base<bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>*) const
+001161dd t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3>, bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>::__clone() const
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>::destroy_deallocate()
+0006bb85 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>::destroy()
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>::~__func()
+00116205 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_0>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)>::operator()(OHOS::Parcel&, OHOS::Rosen::ScreenColorGamut const&)
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1>, bool (OHOS::Parcel&, OHOS::Rosen::Point&)>::destroy_deallocate()
+0006bb85 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1>, bool (OHOS::Parcel&, OHOS::Rosen::Point&)>::destroy()
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1>, bool (OHOS::Parcel&, OHOS::Rosen::Point&)>::~__func()
+0011625d t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_1>, bool (OHOS::Parcel&, OHOS::Rosen::Point&)>::operator()(OHOS::Parcel&, OHOS::Rosen::Point&)
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>::destroy_deallocate()
+0006bb85 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>::destroy()
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>::~__func()
+00116205 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_2>, bool (OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)>::operator()(OHOS::Parcel&, OHOS::Rosen::ScreenHDRFormat const&)
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3>, bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>::destroy_deallocate()
+0006bb85 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3>, bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>::destroy()
+0006bb87 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3>, bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>::~__func()
+00116205 t std::__h::__function::__func<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3, std::__h::allocator<OHOS::Rosen::ScreenSessionManagerStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)::$_3>, bool (OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)>::operator()(OHOS::Parcel&, OHOS::GraphicCM_ColorSpaceType const&)
+
+5.0.2 constructor disassembly
+
+/mnt/e/网安/_product_targets/openharmony/5.0.2-Release/extracted/lib.unstripped/window/window_manager/libscreen_session_manager.z.so:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+000b7240 <OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()>:
+   b7240:	e92d 4ff0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, fp, lr}
+   b7244:	b081      	sub	sp, #4
+   b7246:	ed2d 8b04 	vpush	{d8-d9}
+   b724a:	b0a8      	sub	sp, #160	; 0xa0
+   b724c:	4605      	mov	r5, r0
+   b724e:	f8df 08e0 	ldr.w	r0, [pc, #2272]	; b7b30 <OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()+0x8f0>
+   b7252:	f205 599c 	addw	r9, r5, #1436	; 0x59c
+   b7256:	4478      	add	r0, pc
+   b7258:	6800      	ldr	r0, [r0, #0]
+   b725a:	6800      	ldr	r0, [r0, #0]
+   b725c:	9027      	str	r0, [sp, #156]	; 0x9c
+   b725e:	4648      	mov	r0, r9
+   b7260:	f05f ee96 	blx	116f90 <__ThumbV7PILongThunk__ZN4OHOS6Parcel9ReadInt32ERi+0x2dc>
+   b7264:	4805      	ldr	r0, [pc, #20]	; (b727c <OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()+0x3c>)
+   b7266:	4478      	add	r0, pc
+   b7268:	f8d0 8000 	ldr.w	r8, [r0]
+   b726c:	f205 5094 	addw	r0, r5, #1428	; 0x594
+   b7270:	f108 0164 	add.w	r1, r8, #100	; 0x64
+   b7274:	f060 e824 	blx	1172c0 <__ThumbV7PILongThunk__ZN4OHOS6Parcel9ReadInt32ERi+0x60c>
+   b7278:	e002      	b.n	b7280 <OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()+0x40>
+   b727a:	bf00      	nop
+   b727c:	0006aaee 	.word	0x0006aaee
+   b7280:	4628      	mov	r0, r5
+   b7282:	f241 11ff 	movw	r1, #4607	; 0x11ff
+   b7286:	2201      	movs	r2, #1
+   b7288:	f062 ee52 	blx	119f30 <__ThumbV7PILongThunk__ZN4OHOS6Parcel9ReadInt32ERi+0x327c>
+   b728c:	f105 0a68 	add.w	sl, r5, #104	; 0x68
+   b7290:	f108 0108 	add.w	r1, r8, #8
+   b7294:	4650      	mov	r0, sl
+   b7296:	f046 fe35 	bl	fdf04 <OHOS::IRemoteStub<OHOS::Rosen::IScreenSessionManager>::IRemoteStub(bool)>
+   b729a:	4818      	ldr	r0, [pc, #96]	; (b72fc <OHOS::Rosen::ScreenSessionManager::ScreenSessionManager()+0xbc>)
+   b729c:	ef80 8050 	vmov.i32	q4, #0	; 0x00000000
+
+5.0.2 candidate feature strings
+_ZTCN4OHOS5Rosen31ScreenSessionManagerClientProxyE0_NS_12IRemoteProxyINS0_27IScreenSessionManagerClientEEE
+_ZTCN4OHOS5Rosen31ScreenSessionManagerClientProxyE0_NS0_27IScreenSessionManagerClientE
+_ZN4OHOS5Rosen20ScreenSessionManager26AddScbClientDeathRecipientERKNS_4sptrINS0_27IScreenSessionManagerClientEEEi
+_ZN4OHOS5Rosen20ScreenSessionManager9SetClientERKNS_4sptrINS0_27IScreenSessionManagerClientEEE
+_ZThn164_N4OHOS5Rosen20ScreenSessionManager9SetClientERKNS_4sptrINS0_27IScreenSessionManagerClientEEE
+_ZTCN4OHOS5Rosen20ScreenSessionManagerE104_NS_11IRemoteStubINS0_21IScreenSessionManagerEEE
+_ZTCN4OHOS5Rosen20ScreenSessionManagerE164_NS0_21IScreenSessionManagerE
+_ZTCN4OHOS5Rosen24ScreenSessionManagerStubE0_NS_11IRemoteStubINS0_21IScreenSessionManagerEEE
+_ZTCN4OHOS5Rosen24ScreenSessionManagerStubE60_NS0_21IScreenSessionManagerE
+_ZN4OHOS5Rosen27IScreenSessionManagerClient22SetDisplayNodeScreenIdEyy
+_ZN4OHOS5Rosen21IScreenSessionManager27ConvertScreenIdToRsScreenIdEyRy
+_ZN4OHOS5Rosen21IScreenSessionManager10MakeMirrorEyNSt3__h6vectorIyNS2_9allocatorIyEEEERy
+_ZN4OHOS5Rosen21IScreenSessionManager10MakeExpandENSt3__h6vectorIyNS2_9allocatorIyEEEENS3_INS0_5PointENS4_IS7_EEEERy
+_ZN4OHOS5Rosen21IScreenSessionManager20GetPhyScreenPropertyEy
+_ZN4OHOS5Rosen21IScreenSessionManager17GetScreenPropertyEy
+_ZN4OHOS5Rosen27IScreenSessionManagerClient12OnScreenshotEy
+_ZN4OHOS5Rosen21IScreenSessionManager19GetScreenBrightnessEy
+_ZN4OHOS5Rosen21IScreenSessionManager14GetScreenPowerEy
+_ZN4OHOS5Rosen21IScreenSessionManager13GetCutoutInfoEy
+_ZN4OHOS5Rosen21IScreenSessionManager22GetDisplayInfoByScreenEy
+_ZN4OHOS5Rosen21IScreenSessionManager20DestroyVirtualScreenEy
+_ZN4OHOS5Rosen21IScreenSessionManager23SetScreenColorTransformEy
+_ZN4OHOS5Rosen21IScreenSessionManager28DisablePowerOffRenderControlEy
+_ZN4OHOS5Rosen21IScreenSessionManager15GetDisplayStateEy
+_ZN4OHOS5Rosen21IScreenSessionManager14GetDisplayNodeEy
+_ZN4OHOS5Rosen21IScreenSessionManager18GetDisplayInfoByIdEy
+_ZN4OHOS5Rosen21IScreenSessionManager22GetScreenGroupInfoByIdEy
+_ZN4OHOS5Rosen21IScreenSessionManager17GetScreenInfoByIdEy
+_ZNSt3__h9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEEE8allocateB6v15004EjPKv
+_ZNSt3__h9allocatorINS_4pairIKiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEE8allocateB6v15004EjPKv
+_ZNSt3__h9allocatorINS_12__value_typeIiN4OHOS4sptrINS2_5Rosen27IScreenSessionManagerClientEEEEEE8allocateB6v15004EjPKv
+_ZNK4OHOS4sptrINS_5Rosen27IScreenSessionManagerClientEEptEv
+_ZN4OHOS12IRemoteProxyINS_5Rosen27IScreenSessionManagerClientEE8AsObjectEv
+_ZThn60_N4OHOS11IRemoteStubINS_5Rosen21IScreenSessionManagerEE8AsObjectEv
+_ZN4OHOS11IRemoteStubINS_5Rosen21IScreenSessionManagerEE8AsObjectEv
+_ZN4OHOS5Rosen21IScreenSessionManager20ResetAllFreezeStatusEv
+_ZN4OHOS5Rosen21IScreenSessionManager13GetFoldStatusEv
+_ZN4OHOS5Rosen21IScreenSessionManager16GetAllDisplayIdsEv
+_ZNKSt3__h6__treeINS_12__value_typeIiN4OHOS4sptrINS2_5Rosen27IScreenSessionManagerClientEEEEENS_19__map_value_compareIiS7_NS_4lessIiEELb1EEENS_9allocatorIS7_EEE10__root_ptrEv
+_ZNK4OHOS4sptrINS_5Rosen27IScreenSessionManagerClientEE9GetRefPtrEv
+_ZN4OHOS5Rosen27IScreenSessionManagerClient13GetDescriptorEv
+_ZN4OHOS5Rosen21IScreenSessionManager13GetDescriptorEv
+_ZN4OHOS5Rosen21IScreenSessionManager10SwitchUserEv
+_ZN4OHOS4sptrINS_5Rosen27IScreenSessionManagerClientEE5clearEv
+_ZNSt3__h6__treeINS_12__value_typeIiN4OHOS4sptrINS2_5Rosen27IScreenSessionManagerClientEEEEENS_19__map_value_compareIiS7_NS_4lessIiEELb1EEENS_9allocatorIS7_EEE5clearEv
+_ZN4OHOS5Rosen21IScreenSessionManager21GetDefaultDisplayInfoEv
+_ZN4OHOS5Rosen21IScreenSessionManager31GetAllDisplayPhysicalResolutionEv
+_ZN4OHOS5Rosen21IScreenSessionManager26GetCurrentFoldCreaseRegionEv
+_ZN4OHOS5Rosen21IScreenSessionManager21GetDeviceScreenConfigEv
+_ZN4OHOS5Rosen21IScreenSessionManager20TryToCancelScreenOffEv
+_ZN4OHOS5Rosen21IScreenSessionManager10IsFoldableEv
+_ZN4OHOS5Rosen21IScreenSessionManager18GetFoldDisplayModeEv
+_ZNK4OHOS4sptrINS_5Rosen27IScreenSessionManagerClientEEdeEv
+_ZN4OHOS11IRemoteStubINS_5Rosen21IScreenSessionManagerEE11AsInterfaceEv
+_ZN4OHOS5Rosen21IScreenSessionManager9WakeUpEndEv
+_ZN4OHOS5Rosen21IScreenSessionManager10SuspendEndEv
+_ZN4OHOS5Rosen21IScreenSessionManager10IsCapturedEv
+_ZNK4OHOS4sptrINS_5Rosen27IScreenSessionManagerClientEEcvbEv
+_ZN4OHOS5Rosen21IScreenSessionManager24GetCurvedCompressionAreaEv
+_ZNK4OHOS4sptrINS_5Rosen27IScreenSessionManagerClientEEcvPS2_Ev
+_ZNSt3__h17__compressed_pairINS_15__tree_end_nodeIPNS_16__tree_node_baseIPvEEEENS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINSA_5Rosen27IScreenSessionManagerClientEEEEES3_EEEEEC2B6v15004ILb1EvEEv
+_ZNKSt3__h3mapIiN4OHOS4sptrINS1_5Rosen27IScreenSessionManagerClientEEENS_4lessIiEENS_9allocatorINS_4pairIKiS5_EEEEE5emptyB6v15004Ev
+_ZNSt3__h17__compressed_pairIPNS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEENS_22__tree_node_destructorINS_9allocatorISA_EEEEE5firstB6v15004Ev
+_ZNKSt3__h17__compressed_pairIPNS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEENS_22__tree_node_destructorINS_9allocatorISA_EEEEE5firstB6v15004Ev
+_ZNSt3__h17__compressed_pairINS_15__tree_end_nodeIPNS_16__tree_node_baseIPvEEEENS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINSA_5Rosen27IScreenSessionManagerClientEEEEES3_EEEEE5firstB6v15004Ev
+_ZNKSt3__h17__compressed_pairINS_15__tree_end_nodeIPNS_16__tree_node_baseIPvEEEENS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINSA_5Rosen27IScreenSessionManagerClientEEEEES3_EEEEE5firstB6v15004Ev
+_ZNSt3__h17__compressed_pairIjNS_19__map_value_compareIiNS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEENS_4lessIiEELb1EEEE5firstB6v15004Ev
+_ZNKSt3__h17__compressed_pairIjNS_19__map_value_compareIiNS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEENS_4lessIiEELb1EEEE5firstB6v15004Ev
+_ZNKSt3__h15__tree_iteratorINS_12__value_typeIiN4OHOS4sptrINS2_5Rosen27IScreenSessionManagerClientEEEEEPNS_11__tree_nodeIS7_PvEEiEptB6v15004Ev
+_ZNKSt3__h10unique_ptrINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEENS_22__tree_node_destructorINS_9allocatorISA_EEEEEptB6v15004Ev
+_ZNKSt3__h6__treeINS_12__value_typeIiN4OHOS4sptrINS2_5Rosen27IScreenSessionManagerClientEEEEENS_19__map_value_compareIiS7_NS_4lessIiEELb1EEENS_9allocatorIS7_EEE6__rootB6v15004Ev
+_ZNSt3__h22__compressed_pair_elemINS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS4_5Rosen27IScreenSessionManagerClientEEEEEPvEEEELi1ELb1EE5__getB6v15004Ev
+_ZNKSt3__h22__compressed_pair_elemINS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS4_5Rosen27IScreenSessionManagerClientEEEEEPvEEEELi1ELb1EE5__getB6v15004Ev
+_ZNSt3__h22__compressed_pair_elemINS_19__map_value_compareIiNS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEENS_4lessIiEELb1EEELi1ELb1EE5__getB6v15004Ev
+_ZNKSt3__h22__compressed_pair_elemINS_19__map_value_compareIiNS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEENS_4lessIiEELb1EEELi1ELb1EE5__getB6v15004Ev
+_ZNSt3__h22__compressed_pair_elemINS_22__tree_node_destructorINS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS5_5Rosen27IScreenSessionManagerClientEEEEEPvEEEEEELi1ELb0EE5__getB6v15004Ev
+_ZNKSt3__h22__compressed_pair_elemINS_22__tree_node_destructorINS_9allocatorINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS5_5Rosen27IScreenSessionManagerClientEEEEEPvEEEEEELi1ELb0EE5__getB6v15004Ev
+_ZNSt3__h22__compressed_pair_elemIPNS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEELi0ELb0EE5__getB6v15004Ev
+_ZNKSt3__h22__compressed_pair_elemIPNS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEELi0ELb0EE5__getB6v15004Ev
+_ZNKSt3__h10unique_ptrINS_11__tree_nodeINS_12__value_typeIiN4OHOS4sptrINS3_5Rosen27IScreenSessionManagerClientEEEEEPvEENS_22__tree_node_destructorINS_9allocatorISA_EEEEE3getB6v15004Ev
+
+7.0 GetRenderSession symbols
+         U OHOS::Rosen::ScreenSession::GetRenderSession()

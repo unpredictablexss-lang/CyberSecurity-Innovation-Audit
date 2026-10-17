@@ -1,0 +1,100 @@
+5.0.2 service_contexts
+0                                      u:object_r:sa_samgr_service:s0
+4600	                               u:object_r:sa_window_manager:s0
+4607                                   u:object_r:sa_foundation_dms:s0
+
+5.0.2 sesearch
+allow SP_daemon sa_foundation_dms:samgr_class get;
+allow aa sa_foundation_dms:samgr_class get;
+allow accessibility sa_foundation_dms:samgr_class get;
+allow audio_server sa_foundation_dms:samgr_class get;
+allow bootanimation sa_foundation_dms:samgr_class get;
+allow cadaemon sa_foundation_dms:samgr_class get;
+allow camera_service sa_foundation_dms:samgr_class get;
+allow dcamera sa_foundation_dms:samgr_class get;
+allow dhardware sa_foundation_dms:samgr_class get;
+allow dinput sa_foundation_dms:samgr_class get;
+allow drm_service sa_foundation_dms:samgr_class get;
+allow dscreen sa_foundation_dms:samgr_class get;
+allow edm_sa sa_foundation_dms:samgr_class get;
+allow foundation sa_foundation_dms:samgr_class { add get };
+allow hidumper_service sa_foundation_dms:samgr_class get;
+allow hiview sa_foundation_dms:samgr_class get;
+allow input_isolate_debug_hap sa_foundation_dms:samgr_class get;
+allow input_isolate_hap sa_foundation_dms:samgr_class get;
+allow media_service sa_foundation_dms:samgr_class get;
+allow msdp_sa sa_foundation_dms:samgr_class get;
+allow multimodalinput sa_foundation_dms:samgr_class get;
+allow normal_hap_attr sa_foundation_dms:samgr_class get;
+allow pasteboard_service sa_foundation_dms:samgr_class get;
+allow powermgr sa_foundation_dms:samgr_class get;
+allow resource_schedule_service sa_foundation_dms:samgr_class get;
+allow screenlock_server sa_foundation_dms:samgr_class get;
+allow security_collector sa_foundation_dms:samgr_class get;
+allow security_component_service sa_foundation_dms:samgr_class get;
+allow sharing_service sa_foundation_dms:samgr_class get;
+allow snapshot_display sa_foundation_dms:samgr_class get;
+allow system_basic_hap_attr sa_foundation_dms:samgr_class get;
+allow system_core_hap_attr sa_foundation_dms:samgr_class get;
+allow telephony_sa sa_foundation_dms:samgr_class get;
+allow ui_service sa_foundation_dms:samgr_class get;
+allow uitest sa_foundation_dms:samgr_class get;
+allow usb_service sa_foundation_dms:samgr_class get;
+allow useriam sa_foundation_dms:samgr_class get;
+allow wallpaper_service sa_foundation_dms:samgr_class get;
+allow wukong sa_foundation_dms:samgr_class get;
+
+7.0 service_contexts
+0                                      u:object_r:sa_samgr_service:s0
+4600	                               u:object_r:sa_window_manager:s0
+4607                                   u:object_r:sa_foundation_dms:s0
+
+7.0 sesearch
+allow SP_daemon sa_foundation_dms:samgr_class get;
+allow aa sa_foundation_dms:samgr_class get;
+allow accessibility sa_foundation_dms:samgr_class get;
+allow accountmgr sa_foundation_dms:samgr_class get;
+allow audio_server sa_foundation_dms:samgr_class get;
+allow bootanimation sa_foundation_dms:samgr_class get;
+allow cadaemon sa_foundation_dms:samgr_class get;
+allow camera_service sa_foundation_dms:samgr_class get;
+allow dcamera sa_foundation_dms:samgr_class get;
+allow dhardware sa_foundation_dms:samgr_class get;
+allow dinput sa_foundation_dms:samgr_class get;
+allow drm_service sa_foundation_dms:samgr_class get;
+allow dscreen sa_foundation_dms:samgr_class get;
+allow edm_sa sa_foundation_dms:samgr_class get;
+allow foundation sa_foundation_dms:samgr_class { add get };
+allow hidumper_service sa_foundation_dms:samgr_class get;
+allow hiview sa_foundation_dms:samgr_class get;
+allow input_isolate_debug_hap sa_foundation_dms:samgr_class get;
+allow input_isolate_hap sa_foundation_dms:samgr_class get;
+allow inputmethod_service sa_foundation_dms:samgr_class get;
+allow intell_voice_service sa_foundation_dms:samgr_class get;
+allow media_service sa_foundation_dms:samgr_class get;
+allow msdp_sa sa_foundation_dms:samgr_class get;
+allow multimodalinput sa_foundation_dms:samgr_class get;
+allow normal_hap_attr sa_foundation_dms:samgr_class get;
+allow pasteboard_service sa_foundation_dms:samgr_class get;
+allow powermgr sa_foundation_dms:samgr_class get;
+allow print_isolate_hap sa_foundation_dms:samgr_class get;
+allow resource_schedule_service sa_foundation_dms:samgr_class get;
+allow screenlock_server sa_foundation_dms:samgr_class get;
+allow security_collector sa_foundation_dms:samgr_class get;
+allow security_component_service sa_foundation_dms:samgr_class get;
+allow sensors sa_foundation_dms:samgr_class get;
+allow sharing_service sa_foundation_dms:samgr_class get;
+allow snapshot_display sa_foundation_dms:samgr_class get;
+allow softbus_server sa_foundation_dms:samgr_class get;
+allow system_basic_hap_attr sa_foundation_dms:samgr_class get;
+allow system_core_hap_attr sa_foundation_dms:samgr_class get;
+allow telecom sa_foundation_dms:samgr_class get;
+allow telephony_sa sa_foundation_dms:samgr_class get;
+allow ui_service sa_foundation_dms:samgr_class get;
+allow uitest sa_foundation_dms:samgr_class get;
+allow usb_service sa_foundation_dms:samgr_class get;
+allow useriam sa_foundation_dms:samgr_class get;
+allow vpn_isolate_hap sa_foundation_dms:samgr_class get;
+allow wallpaper_service sa_foundation_dms:samgr_class get;
+allow wifi_manager_service sa_foundation_dms:samgr_class get;
+allow wukong sa_foundation_dms:samgr_class get;

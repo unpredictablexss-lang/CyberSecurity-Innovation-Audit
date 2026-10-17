@@ -1,0 +1,100 @@
+{
+  "schema_version": "ohscanner.cap01-product-artifact-audit.v1",
+  "candidate_id": "ohscanner.interface.ipc:eaf73b5d3dd8cbed",
+  "candidate_status": "candidate/unknown",
+  "validated_vulnerability": 0,
+  "product_validation": false,
+  "candidate_source": {
+    "repository": "openharmony/window_window_manager",
+    "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+    "tree": "24e60146ba2fe4af3aaef20b306a1e306df44617",
+    "stub_path": "window_scene/screen_session_manager/src/zidl/screen_session_manager_stub.cpp",
+    "stub_blob": "26df3196683976a9f175292fcbf54efef262eaa0",
+    "stub_sha256": "404969d13de038e6deb4231dd68ba11af43e04f467c75e1866146a1df57de2ab"
+  },
+  "official_artifacts": [
+    {
+      "release": "OpenHarmony-5.0.2-Release",
+      "artifact": "dayu200_standard_arm32.tar.gz",
+      "source_url": "https://repo.huaweicloud.com/openharmony/os/5.0.2-Release/dayu200_standard_arm32.tar.gz",
+      "bytes": 14063472015,
+      "sha256": "6b099129fdaba688500dcc77023af66b3a109e7d708646ef0ba0d6c4b47a02f2",
+      "manifest_tag_sha256": "ce8fb1c2e6ac0863af9685e631259af5e6be6a85b6c397b1045a408d8fb518b4",
+      "window_commit": "047686498486f528fa71cf859c7829cb351d941f",
+      "window_tree": "d8a04cae86741e9f56c7fe8d8a0859228593a5e5",
+      "release_stub_path": "window_scene/session_manager/src/zidl/screen_session_manager_stub.cpp",
+      "release_stub_blob": "0ff9418da7b0aeea31eab14e4701b44dedc74a2d",
+      "candidate_exact_blob_occurrences": 0,
+      "candidate_feature_symbol_or_string_present": false,
+      "unstripped_library_sha256": "b002b4b955ce4f30290e9a1a2e41c2ebd5def159c4608fe55a88bf52fe019d65",
+      "shipped_library_sha256": "fdfe61b13f7eda7cae80e30067c71d716c2edcd0e06dc5f0c74532409fcf5a2c",
+      "samgr_sha256": "e622109c532d91082f1e0f3e2b85bd38af6a5552fd156fa058f288e4ea0726b5",
+      "render_service_sha256": "9f0c16a9242fcb1f83bb509dc72b993d91fa0c7bbde1e05e6751990697c8a9f5",
+      "access_token_atm_sha256": "30c50ada17786740b88d61178fda97ce03d9bf6150372dc6200a92f40667fa1d"
+    },
+    {
+      "release": "OpenHarmony-7.0-Release",
+      "artifact": "dayu200_standard_arm32_rom_20260829.tar.gz",
+      "source_url": "https://repo.huaweicloud.com/openharmony/os/7.0-Release/dayu200_standard_arm32_rom_20260829.tar.gz",
+      "bytes": 3982172873,
+      "sha256": "649e41c4abb54b44ba6da0c478b6149394bb531af813b62c6a157d5003daeced",
+      "manifest_tag_sha256": "b4d31383b332a43907c16adda5347b4b50f4a73059508bb44695bf23c950cbef",
+      "window_commit": "811b56683a415b2870876bcfca717354b6e44e10",
+      "window_tree": "fd7b5a7841ac8e8390a5e76c3ab2f7775767c56e",
+      "release_stub_blob": "ee16ac2dd33be3ae52f8390c167727f3556e188a",
+      "candidate_exact_blob_occurrences": 0,
+      "candidate_feature_symbol_or_string_present": false,
+      "unstripped_library_sha256": "f960980957c272708324e60324d4f625180dc25718504f26292ed1b379400956"
+    }
+  ],
+  "product_binary_facts": {
+    "architecture": "ARM32 EABI5 soft-float",
+    "display_manager_sa_id": 4607,
+    "display_manager_service_context": "u:object_r:sa_foundation_dms:s0",
+    "screen_session_manager_stub_entry_5_0_2": "0x00111b99",
+    "candidate_direct_get_render_session_symbol_in_public_release_binaries": false
+  },
+  "permission_facts": {
+    "service_context_4607_present": true,
+    "selinux_policy": "both verified 5.0.2 and 7.0 policy contain allow normal_hap_attr sa_foundation_dms:samgr_class get",
+    "system_basic_hap_get": true,
+    "normal_hap_get": true,
+    "samgr_register": "foundation only has add; normal HAP does not",
+    "stub_level_get_render_session_guard_in_candidate": false,
+    "public_kit_exposes_get_render_session_token": false,
+    "internal_client_symbol": "ScreenSessionManagerClient::GetRenderSessionToken"
+  },
+  "capability_facts": {
+    "returned_type": "sptr<OHOS::IRemoteObject>",
+    "origin": "ScreenSession::renderSession_ / RSUIContextContainer render-session token",
+    "consumer": "RSAdapterUtil::InitRSUIDirector -> RSUIDirector::Create(connectToRenderToken, rsUiContext)",
+    "concrete_remote_interface": "unknown; window_window_manager treats it as an opaque connect-to-render token",
+    "confidentiality": "unknown",
+    "integrity": "unknown",
+    "availability": "unknown"
+  },
+  "runtime_attempts": [
+    {
+      "target": "official 5.0.2 rootfs samgr under qemu-arm-static/proot",
+      "result": "failed before service readiness: qemu-user exited 127 after PR_SET_VMA guest-address prctl; proot reported SIGSEGV",
+      "used_for_security_conclusion": false
+    },
+    {
+      "target": "official 5.0.2 kernel/rootfs under qemu-system-aarch64 virt",
+      "result": "no guest serial output; kernel board-specific RK3568 boot path was not emulated",
+      "used_for_security_conclusion": false
+    },
+    {
+      "target": "official product SELinux policy queries through sesearch and product selinux_check_access",
+      "result": "sesearch gives explicit allow/deny rules; product wrapper returned zero even for impossible inputs and is inconclusive",
+      "used_for_security_conclusion": true
+    }
+  ],
+  "fallback_build": {
+    "required_by_plan": true,
+    "status": "not_completed",
+    "reason": "the candidate commit postdates all public 5.x/6.x/7.0 release artifacts; exact source dependency/toolchain closure is still being assembled",
+    "do_not_substitute": "component harness is not product evidence"
+  },
+  "conclusion": "Official product artifacts and policy are verified, but neither contains the exact candidate blob or direct GetRenderSession product implementation. Non-privileged HAP domains are allowed to look up SA 4607 at the SELinux/SAMGR object layer. Product-call reachability, the opaque render-session interface and CIA remain unknown, so CAP-01 remains candidate/unknown."
+}
