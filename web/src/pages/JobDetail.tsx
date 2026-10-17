@@ -43,6 +43,7 @@ import "antd/dist/reset.css";
 import { api, artifact, terminal } from "../api";
 import { State, Hash, go, CodeView, Header, labels } from "../components";
 import SourceEvidence from "../SourceEvidence";
+import CandidateActions from "../features/workbench/CandidateActions";
 const { Text, Title, Paragraph } = Typography;
 export default function JobDetail({ id, initialTab = "findings" }: { id: string; initialTab?: string }) {
   const [job, setJob] = useState<any>(null);
@@ -253,7 +254,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
                 (parse.failed || 0) +
                 (parse.not_run || 0),
             },
-            { title: "已确认漏洞", value: report.validated_vulnerability },
+            { title: "已确认漏洞", value: report.validated_vulnerability ?? "unknown" },
           ].map((x) => (
             <Col span={6} key={x.title}>
               <Card>
@@ -641,6 +642,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
               message={detail.rule_id + " · " + detail.candidate_cwe}
               description={detail.message}
             />
+            <CandidateActions job={job} candidate={detail} />
             <CodeView source={detail.source} line={detail.line} />
             <SourceEvidence
               key={detail.id}

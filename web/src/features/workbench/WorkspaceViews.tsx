@@ -7,6 +7,7 @@ import Capabilities from "../../pages/Capabilities";
 import Cases from "../../pages/Cases";
 import JobDetail from "../../pages/JobDetail";
 import OperationWorkspace from "../audits/OperationWorkspace";
+import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath } from "./navigation";
 const { Text, Paragraph } = Typography;
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
@@ -34,15 +35,26 @@ export function RiskCenter({ jobs }: { jobs: any[] }) {
     {id ? <div className="section-gap"><JobDetail key={id} id={id} initialTab="clusters" /></div> : <Card className="section-gap"><Empty description="暂无可复核的扫描报告"><Button onClick={() => go("/audits/repository")}>开始源码扫描</Button></Empty></Card>}
   </>;
 }
-export function Investigations() {
+export function Investigations({ context = {} }: { context?: SourceContext }) {
   return <><Header title="智能调查" description="围绕候选组织案例与只读调查，保留反证和仍未知的证据义务。" />
     <Alert className="section-gap" type="info" showIcon message="真实模型未连接" description="人工案例与固定只读工具可以使用；当前没有 LLM 调用、模型费用统计或自动确认漏洞。" />
-    <Tabs className="section-gap" items={[{ key: "cases", label: "调查案例", children: <Cases embedded /> },
-      { key: "tools", label: "只读调查步骤", children: <OperationWorkspace view="investigate" /> }]} /></>;
+    <Tabs className="section-gap" defaultActiveKey={context.candidate_id ? "tools" : "cases"} items={[{ key: "cases", label: "调查案例", children: <Cases embedded /> },
+      { key: "tools", label: "只读调查步骤", children: <OperationWorkspace view="investigate" context={context} /> }]} /></>;
 }
 export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
   const reports = jobs.filter((j) => j.report_sha256);
+  const [error, setError] = useState("");
+  const downloadCase = async (id: string, kind: "json" | "md") => {
+    try {
+      const response = await fetch("/api/v1/cases/" + id + "/report." + kind);
+      if (!response.ok) throw new Error(await response.text());
+      const url = URL.createObjectURL(await response.blob());
+      const anchor = document.createElement("a"); anchor.href = url; anchor.download = "ohscanner-case-" + id + "." + kind;
+      document.body.appendChild(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) { setError(String(e)); }
+  };
   return <><Header title="报告中心" description="导出真实扫描与案例记录；报告与固定源码、规则版本和证据哈希绑定。" />
+    {error && <Alert type="error" showIcon message={error} />}
     <Alert type="info" message="当前提供 JSON、Markdown、manifest 与复核包" description="PoC、产品影响、补丁与性能评估需要各自的实测证据；没有把缺失项补成已完成赛题报告。" />
     <Card className="section-gap" title="固定源码扫描报告"><Table<any> rowKey="id" dataSource={reports} scroll={{ x: 850 }} columns={[
       { title: "仓库与版本", render: (_, j) => <><Text strong>{j.spec.repository}</Text><div><Hash value={j.spec.commit} /></div></> },
@@ -53,7 +65,7 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
     ]} locale={{ emptyText: "暂无已发布的扫描报告" }} /></Card>
     <Card className="section-gap" title="调查案例报告"><Table<any> rowKey="id" dataSource={cases} columns={[
       { title: "案例", dataIndex: "title" }, { title: "关联候选", render: (_, c) => c.links.length },
-      { title: "导出", render: (_, c) => <Space><Button size="small" href={"/api/v1/cases/" + c.id + "/report.json"}>JSON</Button><Button size="small" href={"/api/v1/cases/" + c.id + "/report.md"}>Markdown</Button></Space> },
+      { title: "导出", render: (_, c) => <Space><Button size="small" onClick={() => void downloadCase(c.id, "json")}>JSON</Button><Button size="small" onClick={() => void downloadCase(c.id, "md")}>Markdown</Button></Space> },
     ]} locale={{ emptyText: "从风险中心的候选建立案例后可导出" }} /></Card>
   </>;
 }

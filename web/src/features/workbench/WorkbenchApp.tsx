@@ -34,6 +34,7 @@ function Workspace() {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [rawRoute, route.canonical]);
   const path = route.path;
+  const context = { job_id: route.query.get("job_id") || undefined, candidate_id: route.query.get("candidate_id") || undefined, repository_id: route.query.get("repository_id") || undefined };
   let content: React.ReactNode;
   const operationMatch = path.match(/^\/tasks\/operations\/([A-Za-z0-9_-]+)$/);
   const taskMatch = path.match(/^\/tasks\/([A-Za-z0-9_-]+)$/);
@@ -41,11 +42,11 @@ function Workspace() {
   else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} />;
   else if (path === "/audits/repository") content = <RepositoryAudit repos={repos} detectors={detectors} refresh={refresh} />;
   else if (path === "/audits/time") content = <OperationWorkspace key={path} view="date" />;
-  else if (path === "/audits/versions") content = <OperationWorkspace key={path} view="branches" />;
+  else if (path === "/audits/versions") content = <OperationWorkspace key={route.canonical} view="branches" context={context} />;
   else if (path === "/tasks") content = <TaskCenter jobs={jobs} />;
   else if (path === "/risks") content = <RiskCenter jobs={jobs} />;
-  else if (path === "/investigations") content = <Investigations />;
-  else if (path === "/poc") content = <OperationWorkspace key={path} view="validation" />;
+  else if (path === "/investigations") content = <Investigations key={route.canonical} context={context} />;
+  else if (path === "/poc") content = <OperationWorkspace key={route.canonical} view="validation" context={context} />;
   else if (path === "/impact") content = <OperationWorkspace key={path} view="matrix" />;
   else if (path === "/reports") content = <ReportCenter jobs={jobs} cases={cases} />;
   else if (path === "/settings" || path.startsWith("/settings/")) content = <SettingsView repos={repos} detectors={detectors} health={health} refresh={refresh} tab={path.split("/")[2] || "sources"} />;

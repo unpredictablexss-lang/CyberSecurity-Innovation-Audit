@@ -5,8 +5,9 @@ import { Hash, go } from "../../components";
 import { auditDefaults, RepositoryField, RefField, RuleNotice, ScopeAvailability, ScopeBudget, useRepositoryRefs } from "./AuditFields";
 import { approvedDetectorIds, datePreviewPayload, operationPayload, recentRange, requestGate } from "./model";
 const { Text } = Typography;
-export type OperationFormProps = { repos: any[]; detectors: any[]; cases: any[]; busy: boolean; submit: (path: string, payload: any) => Promise<void> };
-export function ComparisonForm({ kind, repos, detectors, cases, busy, submit }: OperationFormProps & { kind: "date" | "branches" | "range" | "matrix" }) {
+export type SourceContext = { job_id?: string; candidate_id?: string; repository_id?: string };
+export type OperationFormProps = { context?: SourceContext; repos: any[]; detectors: any[]; cases: any[]; busy: boolean; submit: (path: string, payload: any) => Promise<void> };
+export function ComparisonForm({ kind, repos, detectors, cases, busy, submit, context = {} }: OperationFormProps & { kind: "date" | "branches" | "range" | "matrix" }) {
   const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form);
   const { refs, error: refError } = useRepositoryRefs(repository);
   const [preview, setPreview] = useState<any>(null); const [previewBusy, setPreviewBusy] = useState(false);
@@ -18,7 +19,7 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit }: 
     {kind !== "matrix" && <ScopeAvailability />}
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
     {refError && <Alert type="warning" message={refError} />}
-    <Form name={"audit-" + kind} form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai" }} onValuesChange={invalidate}
+    <Form name={"audit-" + kind} form={form} layout="vertical" initialValues={{ ...auditDefaults, timezone: "Asia/Shanghai", repository_id: context.repository_id }} onValuesChange={invalidate}
       onFinish={async (values) => {
         try { await submit(kind === "date" ? "/operations/date-ranges" : kind === "matrix" ? "/operations/version-matrices" : kind === "range" ? "/operations/revision-ranges" : "/operations/branch-comparisons", operationPayload(kind, values, detectors)); }
         catch (e) { setError(String(e)); }
@@ -66,8 +67,8 @@ export function SyncForm({ busy, submit }: Pick<OperationFormProps, "busy" | "su
     <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>排队同步</Button>
   </Form></Card>;
 }
-export function InvestigationForm({ busy, submit }: Pick<OperationFormProps, "busy" | "submit">) {
-  return <Card title="启动只读候选调查"><Form name="candidate-investigation" layout="vertical" initialValues={{ max_output_bytes: 65536 }} onFinish={(v) => void submit("/operations/investigations", v)}>
+export function InvestigationForm({ busy, submit, context = {} }: Pick<OperationFormProps, "busy" | "submit" | "context">) {
+  return <Card title="启动只读候选调查"><Form name="candidate-investigation" layout="vertical" initialValues={{ max_output_bytes: 65536, job_id: context.job_id, candidate_id: context.candidate_id }} onFinish={(v) => void submit("/operations/investigations", v)}>
     <Form.Item name="job_id" label="已完成扫描任务 ID" rules={[{ required: true }]}><Input /></Form.Item>
     <Form.Item name="candidate_id" label="候选 ID" rules={[{ required: true }]}><Input /></Form.Item>
     <Form.Item name="max_output_bytes" label="最大输出字节数"><InputNumber min={1024} max={262144} /></Form.Item>
@@ -75,10 +76,10 @@ export function InvestigationForm({ busy, submit }: Pick<OperationFormProps, "bu
     <Button className="section-gap" type="primary" htmlType="submit" loading={busy}>创建只读调查</Button>
   </Form></Card>;
 }
-export function ValidationForm({ repos, cases, busy, submit }: Omit<OperationFormProps, "detectors">) {
+export function ValidationForm({ repos, cases, busy, submit, context = {} }: Omit<OperationFormProps, "detectors">) {
   const target = repos.filter((r) => r.name === "openharmony/inputmethod_imf");
   const support = repos.filter((r) => r.name === "openharmony/commonlibrary_c_utils");
-  return <Card title="受控 AUTH-01 验证计划"><Alert type="warning" showIcon message="仅限注册的 Docker Harness；组件复现不等于产品漏洞确认。" description="缺少 Docker daemon 或固定镜像时 Worker 会返回 blocked。当前未提供通用 PoC 上传、任意命令执行或产品确认能力。" />
+  return <Card title="受控 AUTH-01 验证计划">{context.candidate_id && <Alert className="section-gap" type="info" message={"来源候选 " + context.candidate_id} description="须先关联适用案例。当前仅有固定 AUTH-01 Harness，其他家族尚未接入此验证入口。" action={<Button onClick={() => go("/tasks/" + context.job_id)}>返回来源任务</Button>} />}<Alert type="warning" showIcon message="仅限注册的 Docker Harness；组件复现不等于产品漏洞确认。" description="缺少 Docker daemon 或固定镜像时 Worker 会返回 blocked。当前未提供通用 PoC 上传、任意命令执行或产品确认能力。" />
     <Form name="validation-plan" className="section-gap" layout="vertical" initialValues={{ harness_id: "auth01_descriptor_bypass", repeats: 3 }} onFinish={({ approval, ...payload }) => void submit("/operations/validations", payload)}>
       <Form.Item name="case_id" label="调查案例" rules={[{ required: true }]}><Select options={cases.map((c) => ({ value: c.id, label: c.title }))} /></Form.Item>
       <Form.Item name="harness_id" label="已注册 Harness"><Select options={[{ value: "auth01_descriptor_bypass", label: "AUTH-01 描述符边界" }]} /></Form.Item>

@@ -18,3 +18,11 @@ test("source report and operation deep links select the right navigation section
   assert.equal(resolveRoute("/settings/capabilities").section, "/settings");
   assert.equal(detailTab("untrusted-tab"), "findings");
 });
+
+test("candidate context survives route normalization without becoming an execution request", () => {
+  const route = resolveRoute("/cases?job_id=job-1&candidate_id=candidate-2&repository_id=repo-3");
+  assert.equal(route.path, "/investigations");
+  assert.equal(route.query.get("job_id"), "job-1");
+  assert.equal(route.query.get("candidate_id"), "candidate-2");
+  assert.equal(route.query.get("repository_id"), "repo-3");
+});

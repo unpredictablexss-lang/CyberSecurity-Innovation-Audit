@@ -3,7 +3,7 @@ import { Alert, Button, Card, Descriptions, Empty, Space, Table, Tabs, Typograph
 import { api, terminal } from "../../api";
 import { go, Hash, Header, State } from "../../components";
 import { refreshSelectedOperation } from "../../pages/operationSelection";
-import { ComparisonForm, InvestigationForm, SyncForm, ValidationForm } from "./OperationForms";
+import { ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
 const { Text } = Typography;
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "sync" | "queue";
 const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查" };
@@ -17,7 +17,7 @@ const headings: Record<OperationView, [string, string]> = {
   sync: ["源码同步", "显式同步 Git 对象；任务扫描只读固定版本。"],
   queue: ["持久化操作任务", "查看固定区间、版本比较、同步、调查和验证的真实状态。"],
 };
-export default function OperationWorkspace({ view = "all", operationId }: { view?: OperationView; operationId?: string }) {
+export default function OperationWorkspace({ view = "all", operationId, context = {} }: { view?: OperationView; operationId?: string; context?: SourceContext }) {
   const [repos, setRepos] = useState<any[]>([]), [detectors, setDetectors] = useState<any[]>([]), [cases, setCases] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]), [selected, setSelected] = useState<any>(null);
   const [error, setError] = useState(""), [busy, setBusy] = useState(false);
@@ -45,7 +45,7 @@ export default function OperationWorkspace({ view = "all", operationId }: { view
     try { const item = await api(path, payload); selectedId.current = item.id; setSelected(item); await refresh(); message.success("任务已加入持久化队列"); }
     catch (e) { setError(String(e)); } finally { setBusy(false); }
   };
-  const props = { repos, detectors, cases, busy, submit };
+  const props = { repos, detectors, cases, busy, submit, context };
   const forms = [
     { key: "sync", label: "同步源码", children: <SyncForm {...props} /> },
     { key: "range", label: "两个 SHA 区间", children: <ComparisonForm {...props} kind="range" /> },
