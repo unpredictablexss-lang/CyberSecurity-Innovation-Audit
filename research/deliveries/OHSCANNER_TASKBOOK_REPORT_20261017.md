@@ -113,7 +113,7 @@ A source-bound `window_window_manager` CAP-01 capability-export case was replaye
 - Proposed patch adds the existing system-caller guard before `GetRenderSession`.
 - `component_model_dynamic_validation=true`, `stable_replay=true`, `product_dynamic_validation=false`, `validated_vulnerability=0`.
 
-This is the strongest current real-source replay, but product permission/runtime/CIA/release evidence remains open.
+Source review further establishes that the transaction path lacks the same `SessionPermission::IsSystemCalling()` guard used by nearby service methods; the returned object remains an opaque RS UI/session token. This is the strongest current real-source replay, but deployed caller acquisition, remote-object capability surface, runtime/CIA and release evidence remain open.
 ## Recent increment and scale
 
 The local 2026-10-02..2026-10-18 increment covered 12 locally available repositories:
