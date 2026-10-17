@@ -6,14 +6,25 @@ export default function AuditPlanView({ plan }: { plan: any }) {
   const reasons: Record<string, string> = {
     language_match_attempt: "语言匹配，计划尝试", no_matching_language: "当前范围无适用语言",
     explicit_selection_required: "仅显式选择：先复核适用范围", not_selected: "未选择",
+    admission_not_approved: "尚未准入：真实证据或执行条件不足",
     required_facts_unavailable: "所需程序事实不足",
   };
   return <div className="section-gap">
     <Alert showIcon type={plan.suggested_detector_ids.length ? "info" : "warning"}
-      message={`规则计划：${plan.suggested_detector_ids.length} 项适用，${plan.parse_limitations.length} 个文件解析不完整`}
+      message={`规则计划：${plan.suggested_detector_ids.length} 项计划尝试，${plan.detectors.filter((d: any) => d.admission).length} 项尚未准入，${plan.parse_limitations.length} 个文件解析不完整`}
       description={`固定版本 ${plan.source.commit.slice(0, 12)}；仅计划尝试，实际执行和覆盖以扫描报告为准。`} />
     <Collapse items={[{ key: "plan", label: "查看规则版本与跳过原因", children: <>
-      <Table size="small" pagination={false} rowKey="id" dataSource={plan.detectors} columns={[
+      <Table size="small" pagination={false}
+        expandable={{
+          rowExpandable: (row: any) => !!row.admission,
+          expandedRowRender: (row: any) => <div>
+            <Typography.Paragraph>{row.admission.summary}。执行已禁用；安全结论 unknown。</Typography.Paragraph>
+            <Typography.Text strong>扫描准入还缺：</Typography.Text>
+            <ul>{row.admission.missing_evidence.map((item: string) => <li key={item}>{item}</li>)}</ul>
+            <Typography.Text strong>漏洞确认另需：</Typography.Text>
+            <ul>{row.admission.confirmation_evidence.map((item: string) => <li key={item}>{item}</li>)}</ul>
+          </div>,
+        }} rowKey="id" dataSource={plan.detectors} columns={[
         { title: "检测器", dataIndex: "id", render: (v) => <Typography.Text code>{v}</Typography.Text> },
         { title: "版本", dataIndex: "version" },
         { title: "计划", dataIndex: "decision", render: (v) => decisions[v] || v },

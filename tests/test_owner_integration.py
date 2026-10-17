@@ -66,7 +66,8 @@ class OwnerIntegrationTests(unittest.TestCase):
         plan = self.plan(include_paths=['dynamic.js'])
         self.assertEqual(plan['suggested_detector_ids'], ['ohscanner.oh.arkts_js'])
         self.assertTrue(all(d['decision']=='skipped' for d in plan['detectors']
-                            if d['id'] != 'ohscanner.oh.arkts_js'))
+                            if d['id'] != 'ohscanner.oh.arkts_js' and not d.get('admission')))
+        self.assertTrue(all(d['decision']=='blocked' for d in plan['detectors'] if d.get('admission')))
         job = self.scan(include_paths=['dynamic.js'])
         Worker(self.settings).run(once=True)
         report = service.read_report(self.settings, self.store.job(job['id']))

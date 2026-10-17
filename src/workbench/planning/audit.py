@@ -9,7 +9,7 @@ import json
 
 from src.workbench.sources.manifest import SourceManifest, canonical_sha256
 
-PLANNER_VERSION = "0.1.0"
+PLANNER_VERSION = "0.1.1"
 
 
 def _strings(value, *, nonempty=False):
@@ -90,7 +90,9 @@ def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
             reasons.append("missing_or_invalid_supported_languages")
         else:
             row["supported_languages"] = sorted(row["supported_languages"])
-        if row.get("kind") != "research_candidate":
+        if row.get("kind") == "admission_pending":
+            reasons.append("admission_not_approved")
+        elif row.get("kind") != "research_candidate":
             reasons.append("example_or_unrecognized_detector_kind")
         if "required_facts" in row:
             if not _strings(row["required_facts"]):
@@ -100,7 +102,7 @@ def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
         if "default_enabled" in row and not isinstance(row["default_enabled"], bool):
             reasons.append("invalid_default_admission")
         normalized.append(row)
-        valid_languages = row.get("supported_languages", []) if not reasons else []
+        valid_languages = row.get("supported_languages", []) if not reasons or reasons == ["admission_not_approved"] else []
         matched = [f.path for f in files if f.language in valid_languages]
         missing_facts = sorted(set(row.get("required_facts", [])) - set(source.available_facts)) if _strings(row.get("required_facts")) else []
         prerequisite = "unknown" if not _strings(row.get("required_facts")) else "missing" if missing_facts else "satisfied"
@@ -123,7 +125,11 @@ def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
         decisions.append({"id": row["id"], "version": row.get("version"), "decision": decision,
                           "reason_codes": reasons, "matched_files": matched,
                           "prerequisite_status": prerequisite, "missing_facts": missing_facts,
-                          "execution_status": "not_run"})
+                          "execution_status": "not_run",
+                          **({"admission": {k: row[k] for k in (
+                              "lane", "admission_status", "execution_enabled", "summary",
+                              "accepted_evidence", "missing_evidence", "confirmation_evidence")}}
+                             if row.get("kind") == "admission_pending" else {})})
     for ident in sorted((chosen or set()) - known_ids):
         review.append({"detector_id": ident, "reason": "unknown_selected_detector"})
     if chosen == set():

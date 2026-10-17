@@ -89,13 +89,53 @@ class InvestigationRequest(Strict):
     max_output_bytes: int = Field(default=65536, ge=1024, le=262144)
 
 
+class CandidateReviewQueueRequest(Strict):
+    job_id: str
+
+
 class AssessmentRequest(Strict):
-    outcome: Literal["candidate", "dynamic_reproduced_component_issue", "confirmed", "reportable"]
+    outcome: Literal["candidate", "dynamic_reproduced_component_issue", "confirmed", "reportable",
+                     "supports_vulnerability_hypothesis", "supports_false_positive_hypothesis",
+                     "unknown", "proposed_confirmation"]
+    reviewer_kind: Literal["human", "agent"] = "human"
     reviewer: str = Field(min_length=1, max_length=100)
     notes: str = Field(min_length=1, max_length=8000)
     evidence_ids: list[str] = Field(default_factory=list, max_length=50)
     validation_operation_ids: list[str] = Field(default_factory=list, max_length=10)
     remaining_unknowns: list[str] = Field(default_factory=list, max_length=50)
+
+
+class AgentEvidenceCitation(Strict):
+    file: str = Field(min_length=1, max_length=500)
+    blob: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    line_start: int = Field(ge=1)
+    line_end: int = Field(ge=1)
+    observation: str = Field(min_length=1, max_length=2000)
+
+
+class AgentProposalRequest(Strict):
+    candidate_id: str = Field(min_length=1, max_length=200)
+    agent_id: str = Field(min_length=1, max_length=100)
+    suggestion: Literal["supports_vulnerability_hypothesis", "supports_false_positive_hypothesis",
+                        "unknown", "proposed_confirmation"]
+    summary: str = Field(min_length=1, max_length=4000)
+    source_commit: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+    source_blob: str = Field(pattern=r"^(?:[0-9a-f]{40}|[0-9a-f]{64})$")
+    source_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    line_start: int = Field(ge=1)
+    line_end: int = Field(ge=1)
+    supporting_evidence: list[AgentEvidenceCitation] = Field(default_factory=list, max_length=30)
+    refuting_evidence: list[AgentEvidenceCitation] = Field(default_factory=list, max_length=30)
+    unresolved_obligations: list[str] = Field(default_factory=list, max_length=50)
+    provider: str = Field(min_length=1, max_length=100)
+    model_version: str = Field(min_length=1, max_length=100)
+    prompt_version: str = Field(min_length=1, max_length=100)
+    tool_version: str = Field(min_length=1, max_length=100)
+    run_id: str = Field(min_length=1, max_length=100)
+    input_tokens: int | None = Field(default=None, ge=0)
+    output_tokens: int | None = Field(default=None, ge=0)
+    duration_ms: int | None = Field(default=None, ge=0)
 
 
 def _case_links(store, case_id):
@@ -205,6 +245,24 @@ def install_routes(app: FastAPI, settings, store):
         return ops.create("investigation", {**body.model_dump(), "timeout_seconds": 60,
                                              "memory_mb": 512})
 
+    @router.get("/operations/agent-review-queue/status")
+    def agent_review_queue_status():
+        return ops.candidate_review_queue()
+
+    @router.post("/operations/agent-review-queue", status_code=201)
+    def agent_review_queue(body: CandidateReviewQueueRequest):
+        """Queue every candidate in one immutable report; never Top-K truncate."""
+        job = store.job(body.job_id)
+        report = service.read_report(settings, job)
+        candidates = service.findings(report)
+        spec = {"job_id": job["id"], "report_sha256": job["report_sha256"],
+                "candidate_count_at_enqueue": len(candidates), "timeout_seconds": 60,
+                "memory_mb": 512}
+        operation = ops.create("candidate_review_batch", spec)
+        return {**operation, "candidate_count": len(candidates),
+                "review_mode": "candidate_only", "model_available": False,
+                "note": "Candidates remain queued until a configured, source-bound review provider is available; no conclusion was inferred."}
+
     @router.get("/operations")
     def list_operations():
         return ops.list()
@@ -276,12 +334,57 @@ def install_routes(app: FastAPI, settings, store):
                  "", "确认漏洞数：0（本报告不会根据候选自动确认）。"]
         return Response("\n".join(rows) + "\n", media_type="text/markdown")
 
+    @router.post("/cases/{case_id}/agent-assessments", status_code=201)
+    def agent_assessment(case_id: str, body: AgentProposalRequest):
+        links = [link for link in _case_links(store, case_id) if link["candidate_id"] == body.candidate_id]
+        if not links:
+            raise KeyError("candidate is not linked to this case")
+        link = links[0]
+        job = store.job(link["job_id"])
+        report = service.read_report(settings, job)
+        candidate = service.finding(report, body.candidate_id)
+        if report["commit"] != body.source_commit:
+            raise ValueError("agent citation commit does not match the candidate's fixed source")
+        source = service.source(settings, store, job, candidate["file"])
+        if source["blob"] != body.source_blob or source["sha256"] != body.source_sha256:
+            raise ValueError("agent citation blob/hash does not match the fixed source")
+        lines = source["text"].splitlines()
+        if body.line_end < body.line_start or body.line_end > len(lines):
+            raise ValueError("agent citation line range is outside the fixed source")
+        for citation in (*body.supporting_evidence, *body.refuting_evidence):
+            cited_source = service.source(settings, store, job, citation.file)
+            cited_lines = cited_source["text"].splitlines()
+            if (cited_source["blob"] != citation.blob or cited_source["sha256"] != citation.source_sha256
+                    or citation.line_end < citation.line_start or citation.line_end > len(cited_lines)):
+                raise ValueError("agent evidence citation does not match the fixed source blob/hash/line range")
+        record = {
+            "record_kind": "agent_proposal", "reviewer_kind": "agent", "reviewer": body.agent_id,
+            "outcome": body.suggestion, "notes": body.summary,
+            "source_binding": {"job_id": job["id"], "report_sha256": job["report_sha256"],
+                "repository": report["repository"], "commit": report["commit"],
+                "candidate_id": candidate["id"], "file": candidate["file"],
+                "blob": source["blob"], "source_sha256": source["sha256"],
+                "line_start": body.line_start, "line_end": body.line_end},
+            "supporting_evidence": [c.model_dump() for c in body.supporting_evidence],
+            "refuting_evidence": [c.model_dump() for c in body.refuting_evidence],
+            "unresolved_obligations": body.unresolved_obligations,
+            "model_runtime": {"provider": body.provider, "model_version": body.model_version,
+                "prompt_version": body.prompt_version, "tool_version": body.tool_version,
+                "run_id": body.run_id, "input_tokens": body.input_tokens,
+                "output_tokens": body.output_tokens, "duration_ms": body.duration_ms,
+                "attestation": "provider/runtime metadata is caller-supplied and not authenticated"},
+            "confirmation_effect": "none; human approval and existing validation gate remain required",
+        }
+        return ops.assessment(case_id, record)
+
     @router.post("/cases/{case_id}/assessments", status_code=201)
     def assessment(case_id: str, body: AssessmentRequest):
         links = _case_links(store, case_id)
         if not links:
             raise KeyError("case not found or empty")
         record = body.model_dump()
+        if body.reviewer_kind == "agent":
+            raise ValueError("Agent proposals must use the source-bound /agent-assessments endpoint")
         valid_refs = {e["id"] for link in links for e in store.source_evidence(link["job_id"], link["candidate_id"])}
         if not set(body.evidence_ids).issubset(valid_refs):
             raise ValueError("assessment references evidence outside this case")

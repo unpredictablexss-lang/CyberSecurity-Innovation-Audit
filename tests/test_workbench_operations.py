@@ -70,6 +70,33 @@ class OperationsStoreTests(unittest.TestCase):
         self.assertEqual(self.ops.claim(validation=True)["id"], b["id"])
         self.assertEqual(self.ops.claim(validation=False)["id"], a["id"])
 
+    def test_candidate_review_batches_are_idempotent_unbounded_and_stay_queued_without_provider(self):
+        spec = {"job_id": "a" * 32, "report_sha256": "b" * 64,
+                "candidate_count_at_enqueue": 125, "timeout_seconds": 60, "memory_mb": 512}
+        first = self.ops.create("candidate_review_batch", spec)
+        duplicate = self.ops.create("candidate_review_batch", spec)
+        self.assertEqual(first["id"], duplicate["id"])
+        self.assertEqual(first["status"], "queued")
+        self.assertEqual(first["spec"]["candidate_count_at_enqueue"], 125)
+        summary = self.ops.candidate_review_queue()
+        self.assertEqual(summary["queued_batches"], 1)
+        self.assertEqual(summary["queued_candidates"], 125)
+        self.assertFalse(summary["model_provider_configured"])
+        self.assertIsNone(self.ops.claim())
+        self.assertEqual(self.ops.get(first["id"])["status"], "queued")
+
+    def test_candidate_batches_do_not_consume_normal_operation_capacity(self):
+        batch = self.ops.create("candidate_review_batch", {"job_id": "a" * 32, "report_sha256": "b" * 64})
+        normal = self.ops.create("investigation", {"job_id": "c" * 32})
+        self.assertEqual(self.ops.claim()["id"], normal["id"])
+        self.assertEqual(self.ops.get(batch["id"])["status"], "queued")
+
+    def test_candidate_review_queue_cannot_be_cancelled_and_lose_candidates(self):
+        batch = self.ops.create("candidate_review_batch", {"job_id": "a" * 32, "report_sha256": "b" * 64})
+        with self.assertRaisesRegex(ValueError, "cannot be cancelled"):
+            self.ops.cancel(batch["id"])
+        self.assertEqual(self.ops.get(batch["id"])["status"], "queued")
+
     def test_result_integrity_detects_tampering(self):
         task = self.ops.create("investigation", {})
         self.ops.claim()

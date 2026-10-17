@@ -137,6 +137,29 @@ class Worker:
             self.store.event(
                 key, final["status"], final["error"] or "Verified result published"
             )
+            if final["status"] in {"completed", "completed_with_limitations"} and final["report_sha256"]:
+                # Queue the full candidate set from this immutable report. Review batches
+                # remain queued until a source-handling-approved model provider is configured.
+                try:
+                    from .operations_store import Operations
+                    from . import service
+                    report = service.read_report(self.settings, final)
+                    candidates = service.findings(report)
+                    if candidates:
+                        task = Operations(self.store).create("candidate_review_batch", {
+                            "job_id": key, "report_sha256": final["report_sha256"],
+                            "candidate_count_at_enqueue": len(candidates),
+                            "timeout_seconds": 60, "memory_mb": 512,
+                        })
+                        self.store.event(key, "agent_review_queued",
+                                         f"All {len(candidates)} candidates queued in operation {task['id']}; no candidate truncation")
+                    else:
+                        self.store.event(key, "agent_review_not_required",
+                                         "Zero static candidates; no second-pass source exploration was run. Coverage/unknown remains governed by the scan report.")
+                except Exception as exc:
+                    self.store.event(key, "agent_review_queue_enqueue_failed",
+                                     "Candidate queue insertion failed; scan remains valid and re-enqueue is available: "
+                                     + type(exc).__name__ + ": " + str(exc)[:1000])
 
     def run(self, once=False):
         with (self.settings.data_dir / "worker.lock").open("a") as lock:

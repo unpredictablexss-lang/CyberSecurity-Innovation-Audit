@@ -154,6 +154,7 @@ def create_app(settings=None):
             "capabilities": {
                 "snapshot_scan": True,
                 "audit_planning": True,
+                "detector_admission": True,
                 "operations_framework": True,
                 "source_sync": True,
                 "revision_range": True,
@@ -176,6 +177,11 @@ def create_app(settings=None):
     @app.get("/api/v1/detectors")
     def detectors():
         return service.detector_metadata()
+
+    @app.get("/api/v1/detector-admissions")
+    def detector_admissions():
+        from src.ohscanner.detectors.admission import pending_admissions
+        return pending_admissions()
 
     @app.get("/api/v1/repositories")
     def repositories():

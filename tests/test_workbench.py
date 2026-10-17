@@ -357,6 +357,90 @@ class WorkbenchTests(unittest.TestCase):
         )
         self.assertEqual(r.status_code, 422)
 
+    def test_agent_review_queue_binds_entire_report_and_deduplicates(self):
+        job = self.completed()
+        expected = service.findings(service.read_report(self.settings, job))
+        # Scanner publication automatically places the full candidate set in the queue.
+        queued_items = [x for x in self.app.state.operations.list()
+                        if x["kind"] == "candidate_review_batch" and x["spec"].get("job_id") == job["id"]]
+        self.assertEqual(len(queued_items), 1)
+        queued = self.client.post("/api/v1/operations/agent-review-queue",
+                                  json={"job_id": job["id"]}, headers=HEADERS)
+        self.assertEqual(queued.status_code, 201, queued.text)
+        body = queued.json()
+        self.assertEqual(body["candidate_count"], len(expected))
+        self.assertEqual(body["status"], "queued")
+        self.assertFalse(body["model_available"])
+        self.assertEqual(body["spec"]["report_sha256"], job["report_sha256"])
+        queue_status = self.client.get("/api/v1/operations/agent-review-queue/status")
+        self.assertEqual(queue_status.status_code, 200, queue_status.text)
+        self.assertEqual(queue_status.json()["queued_batches"], 1)
+        self.assertEqual(queue_status.json()["queued_candidates"], len(expected))
+        again = self.client.post("/api/v1/operations/agent-review-queue",
+                                 json={"job_id": job["id"]}, headers=HEADERS)
+        self.assertEqual(again.status_code, 201, again.text)
+        self.assertEqual(again.json()["id"], body["id"])
+        self.assertEqual(self.app.state.operations.get(body["id"])["status"], "queued")
+
+    def test_agent_proposal_is_append_only_and_requires_exact_fixed_source_citation(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "agent citation binding",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        source = service.source(self.settings, self.store, job, candidate["file"])
+        payload = {
+            "candidate_id": candidate["id"], "agent_id": "agent:test",
+            "suggestion": "proposed_confirmation", "summary": "hypothesis only",
+            "source_commit": job["spec"]["commit"], "source_blob": source["blob"],
+            "source_sha256": source["sha256"], "line_start": candidate["line"],
+            "line_end": candidate["line"], "supporting_evidence": [{
+                "file": candidate["file"], "blob": source["blob"], "source_sha256": source["sha256"],
+                "line_start": candidate["line"], "line_end": candidate["line"],
+                "observation": "candidate location",
+            }], "refuting_evidence": [], "unresolved_obligations": ["product reachability"],
+            "provider": "test-fixture", "model_version": "none", "prompt_version": "test-v1",
+            "tool_version": "readonly-v1", "run_id": "run-test", "input_tokens": 1,
+            "output_tokens": 1, "duration_ms": 1,
+        }
+        response = self.client.post(f"/api/v1/cases/{case['id']}/agent-assessments",
+                                    headers=HEADERS, json=payload)
+        self.assertEqual(response.status_code, 201, response.text)
+        record = response.json()[-1]
+        self.assertEqual(record["record_kind"], "agent_proposal")
+        self.assertEqual(record["source_binding"]["blob"], source["blob"])
+        self.assertEqual(record["confirmation_effect"], "none; human approval and existing validation gate remain required")
+        self.assertIn("caller-supplied", record["model_runtime"]["attestation"])
+        self.assertEqual(service.read_report(self.settings, job)["validated_vulnerability"], 0)
+        payload["supporting_evidence"][0]["source_sha256"] = "0" * 64
+        bad_evidence = self.client.post(f"/api/v1/cases/{case['id']}/agent-assessments",
+                                        headers=HEADERS, json=payload)
+        self.assertEqual(bad_evidence.status_code, 409)
+        payload["supporting_evidence"][0]["source_sha256"] = source["sha256"]
+        payload["source_blob"] = "0" * len(source["blob"])
+        rejected = self.client.post(f"/api/v1/cases/{case['id']}/agent-assessments",
+                                    headers=HEADERS, json=payload)
+        self.assertEqual(rejected.status_code, 409)
+
+    def test_agent_assessment_cannot_confirm_or_report(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "agent proposal gate",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        })
+        self.assertEqual(case.status_code, 201, case.text)
+        for outcome in ("confirmed", "reportable", "dynamic_reproduced_component_issue"):
+            response = self.client.post(f"/api/v1/cases/{case.json()['id']}/assessments", headers=HEADERS, json={
+                "outcome": outcome, "reviewer_kind": "agent", "reviewer": "agent:test",
+                "notes": "suggestion only", "evidence_ids": [], "validation_operation_ids": [],
+                "remaining_unknowns": [],
+            })
+            self.assertEqual(response.status_code, 409, response.text)
+        report = service.read_report(self.settings, job)
+        self.assertEqual(report["validated_vulnerability"], 0)
+
     def test_case_links_require_existing_run_candidates(self):
         job = self.completed()
         identity = service.findings(service.read_report(self.settings, job))[0]["id"]

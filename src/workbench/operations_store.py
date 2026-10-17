@@ -44,12 +44,19 @@ class Operations:
         return self.store.root / "operations" / key
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation"}:
+        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch"}:
             raise ValueError("unknown operation kind")
         key = uuid.uuid4().hex
         with self.store.connect() as db:
             db.execute("BEGIN IMMEDIATE")
-            if db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running')").fetchone()[0] >= 100:
+            if kind == "candidate_review_batch":
+                # One immutable batch points at every finding in one fixed report. Keep it
+                # queued under load instead of rejecting/truncating the candidate set.
+                prior = db.execute("SELECT id FROM operations WHERE kind=? AND spec=? AND status IN ('queued','running','completed','completed_with_limitations') ORDER BY created_at DESC LIMIT 1",
+                                   (kind, json.dumps(spec, sort_keys=True))).fetchone()
+                if prior:
+                    return self.row(db.execute("SELECT * FROM operations WHERE id=?", (prior[0],)).fetchone())
+            elif db.execute("SELECT count(*) FROM operations WHERE status IN ('queued','running') AND kind!='candidate_review_batch'").fetchone()[0] >= 100:
                 raise ValueError("operation queue full")
             db.execute("INSERT INTO operations(id,kind,spec,status,created_at) VALUES(?,?,?,?,?)",
                        (key, kind, json.dumps(spec, sort_keys=True), "queued", now()))
@@ -99,6 +106,26 @@ class Operations:
         with self.store.connect() as db:
             return [self.row(r) for r in db.execute("SELECT * FROM operations ORDER BY created_at DESC LIMIT 200")]
 
+    def candidate_review_queue(self):
+        with self.store.connect() as db:
+            rows = list(db.execute("SELECT id,status,spec,created_at FROM operations WHERE kind='candidate_review_batch' ORDER BY created_at"))
+        counts = {"queued_batches": 0, "running_batches": 0, "finished_batches": 0,
+                  "queued_candidates": 0, "running_candidates": 0}
+        for row in rows:
+            spec = json.loads(row["spec"])
+            candidates = int(spec.get("candidate_count_at_enqueue", 0))
+            if row["status"] == "queued":
+                counts["queued_batches"] += 1
+                counts["queued_candidates"] += candidates
+            elif row["status"] == "running":
+                counts["running_batches"] += 1
+                counts["running_candidates"] += candidates
+            else:
+                counts["finished_batches"] += 1
+        return {"schema_version": 1, **counts, "model_provider_configured": False,
+                "limitations": ["Queue summary counts only static findings from completed reports.",
+                                "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."]}
+
     def event(self, key, stage, message):
         with self.store.connect() as db:
             db.execute("INSERT INTO operation_events(operation_id,created_at,stage,message) VALUES(?,?,?,?)",
@@ -113,7 +140,7 @@ class Operations:
         with self.store.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             sign = "=" if validation else "!="
-            row = db.execute("SELECT id FROM operations WHERE status='queued' AND kind " + sign + " 'validation' ORDER BY created_at LIMIT 1").fetchone()
+            row = db.execute("SELECT id FROM operations WHERE status='queued' AND kind " + sign + " 'validation' AND kind!='candidate_review_batch' ORDER BY created_at LIMIT 1").fetchone()
             if not row:
                 return None
             db.execute("UPDATE operations SET status='running',started_at=? WHERE id=?", (now(), row[0]))
@@ -123,6 +150,8 @@ class Operations:
         with self.store.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = self.row(db.execute("SELECT * FROM operations WHERE id=?", (key,)).fetchone())
+            if row["kind"] == "candidate_review_batch" and row["status"] not in END:
+                raise ValueError("candidate review batches cannot be cancelled; all candidates must remain queued until review or explicit resolution")
             if row["status"] not in END:
                 db.execute("UPDATE operations SET cancel_requested=1 WHERE id=?", (key,))
                 if row["status"] == "queued":

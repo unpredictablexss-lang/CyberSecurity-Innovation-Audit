@@ -4,6 +4,7 @@ These services have no FastAPI/DB dependency. CLI and Worker use the same plan;
 planning does not relax any detector's actual eligibility or evidence gate.
 """
 from pathlib import Path
+from .detectors.admission import pending_admissions
 from .detectors.catalog import build_registry, catalog_metadata
 from .indexing import prepare_git_context
 from .git_source import load_git_sources
@@ -21,7 +22,7 @@ def approved_metadata():
                      'supported_languages': list(detector.supported_languages),
                      'evidence_level': 'candidate/unassessed'})
         instances.append(detector)
-    return metadata_from_detectors(rows, instances)
+    return metadata_from_detectors(rows, instances) + pending_admissions()
 
 
 def plan_context(context, tree, inventory, sources, selected_detector_ids=None):

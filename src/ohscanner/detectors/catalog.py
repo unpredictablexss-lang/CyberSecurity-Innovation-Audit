@@ -3,6 +3,7 @@
 To ship teammate detectors: review code, tests, sample provenance and
 licenses; then explicitly register the imported factory in this file.
 """
+from .admission import pending_admission
 from .example import CppCopyCallExampleDetector
 from .cpp.bounds_detector import CppBoundsDetector
 from .cpp.integer_bounds_detector import CppIntegerBoundsDetector
@@ -108,6 +109,10 @@ def build_registry(detector_ids, *, allow_examples=False):
     for name in names:
         spec = _APPROVED.get(name)
         if spec is None:
+            pending = pending_admission(name)
+            if pending:
+                raise ValueError("not-yet-approved detector admission blocked: " + name + "; "
+                                 + "; ".join(pending["missing_evidence"]))
             raise ValueError(
                 "unknown or not-yet-approved detector: "
                 + str(name) + "; available: " + ", ".join(sorted(_APPROVED))

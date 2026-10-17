@@ -6,7 +6,7 @@ import { refreshSelectedOperation } from "../../pages/operationSelection";
 import { ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
 const { Text } = Typography;
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "sync" | "queue";
-const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查" };
+const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", candidate_review_batch: "候选复核队列" };
 const headings: Record<OperationView, [string, string]> = {
   all: ["高级源码与验证操作", "保留既有操作入口；任务持久化，候选变化与安全影响分别记录。"],
   date: ["时间增量扫描", "按明确时区选择提交区间，固定两个端点并比较候选观察。"],
@@ -20,12 +20,13 @@ const headings: Record<OperationView, [string, string]> = {
 export default function OperationWorkspace({ view = "all", operationId, context = {} }: { view?: OperationView; operationId?: string; context?: SourceContext }) {
   const [repos, setRepos] = useState<any[]>([]), [detectors, setDetectors] = useState<any[]>([]), [cases, setCases] = useState<any[]>([]);
   const [rows, setRows] = useState<any[]>([]), [selected, setSelected] = useState<any>(null);
+  const [reviewQueue, setReviewQueue] = useState<any>({ queued_batches: 0, running_batches: 0, queued_candidates: 0, running_candidates: 0 });
   const [error, setError] = useState(""), [busy, setBusy] = useState(false);
   const selectedId = useRef<string | null>(operationId || null), live = useRef(true);
   const refresh = useCallback(async () => {
-    const [r, d, c, o] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations")]);
+    const [r, d, c, o, q] = await Promise.all([api("/repositories"), api("/detectors"), api("/cases"), api("/operations"), api("/operations/agent-review-queue/status")]);
     if (!live.current) return;
-    setRepos(r); setDetectors(d); setCases(c); setRows(o);
+    setRepos(r); setDetectors(d); setCases(c); setRows(o); setReviewQueue(q);
     const id = selectedId.current;
     if (id) await refreshSelectedOperation(id, (key) => api("/operations/" + key), () => live.current ? selectedId.current : null, setSelected);
   }, []);
@@ -62,6 +63,9 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     {view === "all" ? <Tabs items={forms} /> : view === "branches" ? <Tabs items={[forms[3], forms[4]]} /> : forms.find((f) => f.key === view)?.children}
     {view === "matrix" && <Alert className="section-gap" type="info" showIcon message="影响与修复仍需独立证据" description="当前矩阵只记录候选观察。补丁生成、补丁应用和修复后产品验证尚未接入；不会用候选消失自动判定已修复。" />}
     <Card className="section-gap" title="操作任务" extra={<Button onClick={() => void refresh().catch((e) => setError(String(e)))}>刷新操作</Button>}>
+      <Alert className="section-gap" type={reviewBacklog.length ? "warning" : "info"} showIcon
+        message={`Agent 候选复核队列：${reviewQueue.queued_batches || 0} 个批次、${reviewQueue.queued_candidates || 0} 个候选排队；${reviewQueue.running_candidates || 0} 个候选处理中`}
+        description="当前模型 provider 尚未配置，候选固定绑定原报告并保持 queued；不会被 Top-K 截断，也不会被当作已复核或安全。零候选和 partial 覆盖仍以扫描覆盖状态为准。" />
       <Table<any> rowKey="id" dataSource={filtered} pagination={{ pageSize: 8 }} scroll={{ x: 640 }} columns={[
         { title: "任务", render: (_, row) => <><Text strong>{kinds[row.kind] || row.kind}</Text><div className="muted">{row.id.slice(0, 12)}</div></> },
         { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },
