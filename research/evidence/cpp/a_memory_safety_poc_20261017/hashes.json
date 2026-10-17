@@ -33,9 +33,19 @@
       "sha256": "43b2db0f11b2bfdb8bd8b58279dbdc177e9e1c9ca973b09a5127ddea1a977993"
     },
     {
+      "path": "validation\\cpp_memory_safety_poc\\resource_double_free_vulnerable.cpp",
+      "bytes": 249,
+      "sha256": "2681088b538d1fddbc3aa86770eb4c571d859ca2b4d1f787302f00897c309f57"
+    },
+    {
+      "path": "validation\\cpp_memory_safety_poc\\resource_double_free_fixed.cpp",
+      "bytes": 308,
+      "sha256": "f1d41229a264564d597c22a7604fd86f3e1a38428fb1be693465e07d03be3423"
+    },
+    {
       "path": "validation\\cpp_memory_safety_poc\\run.sh",
-      "bytes": 1710,
-      "sha256": "85a00043e1313fd14870547b70aca21d8f62673d9a20d2d179540ef4b5c2c717"
+      "bytes": 2157,
+      "sha256": "59bf53c8885f498ab60f14afabcd7c18c809139ed49ce1e30bc2622f43a2a29b"
     },
     {
       "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_fixed.exit.txt",
@@ -134,8 +144,38 @@
     },
     {
       "path": "research/evidence/cpp/a_memory_safety_poc_20261017/REPORT.md",
-      "bytes": 2797,
-      "sha256": "7199e40734acfc28d7e733cfb997f9cc49eaa72f4e9c8245c7caeb8b37d98ede"
+      "bytes": 3265,
+      "sha256": "8ab7b7e5af96e70ba132898e4b9df57765bf0c89f80b2264a017d5f0d097d7dc"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/resource_double_free_fixed.exit.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/resource_double_free_fixed.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/resource_double_free_fixed.stdout.txt",
+      "bytes": 30,
+      "sha256": "256acdc07bbfb984c153c1b1a7c44e36270bca8cc6421e8a9ded350625f052cb"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/resource_double_free_vulnerable.exit.txt",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/resource_double_free_vulnerable.stderr.txt",
+      "bytes": 1644,
+      "sha256": "12f70e3075cd7547c76999ca367e0a5dac847cec002176120b0605da12c80413"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/resource_double_free_vulnerable.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     }
   ]
 }

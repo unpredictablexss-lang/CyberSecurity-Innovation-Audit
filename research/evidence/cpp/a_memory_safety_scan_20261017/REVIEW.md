@@ -6,28 +6,29 @@
 
 - 5 个既有固定组件 scope manifests，4983 个 selected source files、51551827 bytes。
 - 精确 commit/tree/snapshot/source SHA、scope manifest SHA、profile `light-ast` 已写入各组件 JSON。
-- A-BOF-01/A-INT-01 总 wall 52.078s（每组件 1.0-20.5s），进程峰值 RSS 282652 KiB；这是本地固定范围成本，不是全 OpenHarmony 容量认证。
-- `bounds` 没有产生候选；其局部容量/索引覆盖仍因 partial parse、别名和宏上下文而 blocked/unknown。
+- A-BOF-01/A-INT-01/A-RES-01 总 wall 61.046s，进程峰值 RSS 282476 KiB；这是本地固定范围成本，不是全 OpenHarmony 容量认证。
+- 当前为 26 条 lexical candidates / 17 个 detector-rule-symbol groups：bounds/integer 16 条、resource lifetime 10 条（8 UAF、2 double-free）。分组不是漏洞或根因计数。
 
-## Candidate review
+## Historical capability replay
 
-当前快照为 16 条 lexical candidates / 10 个 detector-rule-symbol groups；不是 16 个漏洞。代表性高价值候选：
+5 个历史样本中 3 个对当前 A 规则适用：vulnerable 3/3 `possible_hit`，fixed 2/3 `miss`、1/3 保留 residual candidate；另 2 个 kernel race/user-kernel case 明确 `not_applicable`。这个小集合不是产品 Precision/Recall 或全局 Recall。
 
-| 组 | 固定位置 | 观察 | 当前结论 |
-|---|---|---|---|
-| A-INT-01-A | `communication_dsoftbus` `nstackx_file_list.c:269` | `userDataLength + 1` 进入 `calloc`，随后按同一长度 `memcpy_s` | 需追请求来源、长度上限、入口权限、分配/复制失败路径；保持 candidate |
-| A-INT-01-B | `communication_dsoftbus` `nstackx_common.c:165,198` | 网络/发现数据 `size + 1` 进入 `calloc` | 需证明 `size` 可达 `SIZE_MAX`、触发和 CIA；保持 candidate |
-| A-INT-01-C | `distributeddatamgr_kv_store` `dbm_kv_store.c:928,964` | DB value `len + KV_SUM_BLOCK_SIZE` 进入 `malloc` | 需核对 `unsigned int len`、上层限制、产品构建和可利用性；保持 candidate |
-| A-INT-01-D | `nstackx_util.c:153`、`security_access_token` `soft_bus_channel.cpp` | `len + 1`/`sendlen + 1` 形状 | 可能是复制/分配长度，需逐条补上下文；保持 candidate |
+- CVE-2025-26690 null dereference：vulnerable 5 -> fixed 0。
+- CVE-2025-23420 sort OOB：vulnerable 5 -> fixed 0。
+- c_utils historical UAF：vulnerable 2 -> fixed residual 3，说明 shared_ptr mixed synchronization 仍是 unknown/误报边界。
+
+## Old/new comparison
+
+相对 `ea7d13a69852d5e639e090671b040f7dcd32eebc`：candidates 16 -> 26（+10），lexical groups 10 -> 17（+7），wall 52.078s -> 61.046s。该 delta 只表示新增 resource lifetime 覆盖，不是准确率提升。
 
 ## Reviewed false-positive and scope limitations
 
-- `kvstoremock/**` 被 scope planner 的 `mock` 段规则漏排除；这些不是生产组件证据，不能计入产品候选。
-- `keyLen + 1` / `valueLen + 1` 的 `strnlen` + `keyLen >= MAX_KEY_LEN` 守卫形状已作为已审阅安全对照回归，当前版本不再报告。
-- `MAX_KEY_PATH + 1`、`PATH_MAX + 1` 等宏值未知表达式保持 unknown，不按宏值臆测溢出。
-- placement-new 的 `pos + offset` 不是 allocation size，已修正；窄 `uint16_t + 1` 整数提升形状不告警。
-- 任何没有真实入口/权限、触发条件、产品构建、可达敏感操作、CIA 影响和独立复核的候选都不能升级 confirmed/reportable。
+- `kvstoremock/**` 被 scope planner 的 `mock` 段规则漏排除，不能作为生产组件证据。
+- resource lifetime 不拼接 `if/else/goto/label` 跨段状态，避免互斥释放误报；代价是跨路径 UAF/double-free 保持 unknown。
+- `strnlen` + 上界 guard、宏-only、placement-new、窄整数提升等形状已固定为安全对照。
+- `MAX_KEY_PATH + 1` 等宏值未知保持 unknown，不按宏值臆测溢出。
+- 任何没有真实入口/权限、触发、产品构建、可达敏感操作、CIA 影响和独立复核的候选都不能升级 confirmed/reportable。
 
 ## Metrics boundary
 
-没有独立可靠人工 truth/holdout，因此不计算 Precision、Recall、F1、FP/FN，也不声称零误报/漏报。候选分组仅用于去重和复核组织，不是根因或漏洞计数。
+没有足够大的独立可靠人工 truth/holdout，因此不计算产品 Precision、Recall、F1、FP/FN，也不声称零误报/漏报。历史 capability counts 和候选分组仅用于能力验证与复核组织。

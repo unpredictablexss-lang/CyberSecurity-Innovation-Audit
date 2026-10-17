@@ -33,6 +33,12 @@ The isolated C++ harness models the published root cause: comparator execution m
 
 This is a runnable mechanism PoC and fix/revalidation control. It is not a direct ArkCompiler product build or a newly discovered vulnerability. The exact vulnerable/fixed upstream source, commit/tree/blob/source hashes and detector replay (5 direct element-access candidates -> 0 after fix) are retained in the historical replay package.
 
+## A-RES-01 resource lifetime PoC
+
+- `resource_double_free_vulnerable.cpp`: exit `1`，ASan `attempting double-free`，第二次 `free(p)` 精确触发。
+- `resource_double_free_fixed.cpp`: exit `0`，释放后 `p=nullptr` 并走条件 guard，输出 `fixed resource path completed`。
+
+这组 PoC 验证 `ohscanner.cpp.resource_lifetime` 的局部 release-state 机制和修复控制；跨函数 ownership、分支合并、容器和真实产品触发仍未闭合。
 ## Boundary
 
 `CVE-2025-23420` is historical published ground truth, not a new finding. No product build, permission boundary, attacker trace or CIA analysis is re-proven by this mechanism harness. The report therefore distinguishes: known historical CVE reproduced at mechanism level; new OpenHarmony candidates remain `candidate/unknown` and `validated_vulnerability=0`.

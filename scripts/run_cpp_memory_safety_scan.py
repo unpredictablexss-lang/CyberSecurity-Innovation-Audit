@@ -26,6 +26,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from src.ohscanner.contracts import DetectorRun
 from src.ohscanner.detectors.cpp.bounds_detector import CppBoundsDetector
 from src.ohscanner.detectors.cpp.integer_bounds_detector import CppIntegerBoundsDetector
+from src.ohscanner.detectors.cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from src.ohscanner.git_source import load_git_sources
 from src.ohscanner.indexing import environment_fingerprint, prepare_git_context
 
@@ -137,6 +138,7 @@ def _run_component(manifest_path: Path, out_dir: Path) -> Dict[str, Any]:
     detector_runs = [
         _json_run(CppBoundsDetector().detect(context, context.units)),
         _json_run(CppIntegerBoundsDetector().detect(context, context.units)),
+        _json_run(CppResourceLifetimeDetector().detect(context, context.units)),
     ]
     wall = time.perf_counter() - started
     findings = [item for run in detector_runs for item in run["findings"]]

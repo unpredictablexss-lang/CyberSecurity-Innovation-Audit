@@ -8,7 +8,7 @@
 - Snapshot SHA-256: `5c8702d6cafab30fdfc12c2b146f23a9afc33fcf296b45d75a8a6a1b77b1dbe7`
 - Scope manifest SHA-256: `bfe5509394b8cc176849bde1a49448d8f756736442ba929a35cb84d35869281f`
 - Selected files/bytes: 1656/15243597
-- Wall seconds: 15.256773
+- Wall seconds: 18.107227
 - Candidate findings/groups: 4/3
 
 ## Detector runs
@@ -23,6 +23,10 @@
 - `components/nstackx/nstackx_ctrl/core/nstackx_common.c:165:29` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `size + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
 - `components/nstackx/nstackx_ctrl/core/nstackx_common.c:198:29` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `size + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
 - `components/nstackx/nstackx_util/core/nstackx_util.c:153:19` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: allocation size expression `len + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation. Allocator semantics and reachability remain unknown.
+
+### `ohscanner.cpp.resource_lifetime` 0.1.0 (blocked)
+
+- No candidate emitted in the analyzed lexical scope.
 
 ## Limitations
 

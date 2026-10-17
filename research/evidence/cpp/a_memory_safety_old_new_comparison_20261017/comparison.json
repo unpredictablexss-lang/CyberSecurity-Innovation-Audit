@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_memory_safety_old_new_comparison",
+  "old_commit": "ea7d13a69852d5e639e090671b040f7dcd32eebc",
+  "old_totals": {
+    "components": 5,
+    "candidate_count": 16,
+    "candidate_groups": 10,
+    "validated_vulnerability": 0,
+    "eligible_for_metrics": false,
+    "wall_seconds": 52.07781963999997,
+    "selected_source_files": 4983,
+    "selected_source_bytes": 51551827,
+    "process_peak_rss_kib": 282652
+  },
+  "new_totals": {
+    "components": 5,
+    "candidate_count": 26,
+    "candidate_groups": 17,
+    "validated_vulnerability": 0,
+    "eligible_for_metrics": false,
+    "wall_seconds": 61.046064451999996,
+    "selected_source_files": 4983,
+    "selected_source_bytes": 51551827,
+    "process_peak_rss_kib": 282476
+  },
+  "components": [
+    {
+      "component": "communication_dsoftbus",
+      "old_candidates": 4,
+      "new_candidates": 4,
+      "delta": 0
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "old_candidates": 8,
+      "new_candidates": 11,
+      "delta": 3
+    },
+    {
+      "component": "security_access_token",
+      "old_candidates": 4,
+      "new_candidates": 4,
+      "delta": 0
+    },
+    {
+      "component": "update_updateservice",
+      "old_candidates": 0,
+      "new_candidates": 3,
+      "delta": 3
+    },
+    {
+      "component": "window_window_manager",
+      "old_candidates": 0,
+      "new_candidates": 4,
+      "delta": 4
+    }
+  ],
+  "rules": [
+    {
+      "detector_rule": "ohscanner.cpp.integer_bounds|ohcpp-integer-bounds-arithmetic-candidate-001",
+      "old": 16,
+      "new": 16,
+      "delta": 0
+    },
+    {
+      "detector_rule": "ohscanner.cpp.resource_lifetime|ohcpp-resource-lifetime-double-free-candidate-001",
+      "old": 0,
+      "new": 2,
+      "delta": 2
+    },
+    {
+      "detector_rule": "ohscanner.cpp.resource_lifetime|ohcpp-resource-lifetime-use-after-free-candidate-002",
+      "old": 0,
+      "new": 8,
+      "delta": 8
+    }
+  ],
+  "interpretation": [
+    "Candidate delta measures detector coverage and lexical grouping changes only.",
+    "It is not an accuracy improvement, vulnerability count, or Precision/Recall estimate."
+  ]
+}

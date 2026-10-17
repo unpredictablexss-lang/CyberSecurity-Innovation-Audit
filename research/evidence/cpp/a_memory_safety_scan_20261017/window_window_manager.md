@@ -8,8 +8,8 @@
 - Snapshot SHA-256: `b528cb54ffd2e4007bc3ae64b9cb06002bd7228fe8cc304cd1eeb9c457b836d9`
 - Scope manifest SHA-256: `cf4b29be492c671369efbf8fd0e5c1959c08243841d43e0b70bc9189efb3c94f`
 - Selected files/bytes: 1112/20206691
-- Wall seconds: 19.388137
-- Candidate findings/groups: 0/0
+- Wall seconds: 22.678362
+- Candidate findings/groups: 4/2
 
 ## Detector runs
 
@@ -20,6 +20,13 @@
 ### `ohscanner.cpp.integer_bounds` 0.1.0 (blocked)
 
 - No candidate emitted in the analyzed lexical scope.
+
+### `ohscanner.cpp.resource_lifetime` 0.1.0 (blocked)
+
+- `interfaces/kits/ani/embeddable_window_stage/src/ani_embeddable_window_stage.cpp:40:16` `ohcpp-resource-lifetime-use-after-free-candidate-002` `CWE-416` Candidate only: `obj->` uses `obj` after a modeled release. Reallocation, alias recovery, destructor timing and path feasibility remain unknown.
+- `interfaces/kits/ani/window_runtime/window_stage_ani/src/ani_window_stage.cpp:366:16` `ohcpp-resource-lifetime-use-after-free-candidate-002` `CWE-416` Candidate only: `obj->` uses `obj` after a modeled release. Reallocation, alias recovery, destructor timing and path feasibility remain unknown.
+- `snapshot/src/snapshot_utils.cpp:300:17` `ohcpp-resource-lifetime-use-after-free-candidate-002` `CWE-416` Candidate only: `*rgb888` uses `rgb888` after a modeled release. Reallocation, alias recovery, destructor timing and path feasibility remain unknown.
+- `snapshot/src/snapshot_utils.cpp:343:17` `ohcpp-resource-lifetime-use-after-free-candidate-002` `CWE-416` Candidate only: `*rgb888` uses `rgb888` after a modeled release. Reallocation, alias recovery, destructor timing and path feasibility remain unknown.
 
 ## Limitations
 

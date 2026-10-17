@@ -1,0 +1,21 @@
+=================================================================
+==903==ERROR: AddressSanitizer: attempting double-free on 0x502000000010 in thread T0:
+    #0 0x764091ab4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127
+    #1 0x5fed19e272b7 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/resource_double_free_vulnerable.cpp:9
+    #2 0x764090a29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+    #3 0x764090a29e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f)
+    #4 0x5fed19e271c4 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/a_memory_safety_20261017_runtime/resource_double_free_vulnerable+0x11c4)
+
+0x502000000010 is located 0 bytes inside of 16-byte region [0x502000000010,0x502000000020)
+freed by thread T0 here:
+    #0 0x764091ab4537 in __interceptor_free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127
+    #1 0x5fed19e272af in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/resource_double_free_vulnerable.cpp:8
+    #2 0x764090a29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+
+previously allocated by thread T0 here:
+    #0 0x764091ab4887 in __interceptor_malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:145
+    #1 0x5fed19e2729f in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/resource_double_free_vulnerable.cpp:4
+    #2 0x764090a29d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+
+SUMMARY: AddressSanitizer: double-free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:127 in __interceptor_free
+==903==ABORTING

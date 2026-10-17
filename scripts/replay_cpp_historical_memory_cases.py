@@ -20,10 +20,34 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.ohscanner.detectors.cpp.bounds_detector import CppBoundsDetector
 from src.ohscanner.detectors.cpp.integer_bounds_detector import CppIntegerBoundsDetector
+from src.ohscanner.detectors.cpp.null_dereference_detector import NullDereferenceDetector
+from src.ohscanner.detectors.cpp.shared_ptr_race_detector import SharedPtrRaceDetector
 from src.ohscanner.indexing import environment_fingerprint, prepare_git_context
 
 
 CASES = (
+    {
+        "sample_id": "c_utils-singleton-uaf-2026-01",
+        "cve": None,
+        "repository": "openharmony/commonlibrary_c_utils",
+        "repo_path": "/mnt/e/网安/_oh_targets/commonlibrary_c_utils",
+        "vulnerable_commit": "bdfafdaafddb01ab7ae13354ce2ada9555d7935c",
+        "fixed_commit": "9a3f281120307ec7dcce17fae882dcc4e6a6f4d7",
+        "affected_files": ("base/include/singleton.h",),
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "expected": "possible_hit",
+    },
+    {
+        "sample_id": "communication_dsoftbus_null_deref_001",
+        "cve": "CVE-2025-26690",
+        "repository": "openharmony/communication_dsoftbus",
+        "repo_path": "/mnt/e/网安/_oh_targets/communication_dsoftbus",
+        "vulnerable_commit": "258662cd9840b55a31546a72d91027f6368cea84",
+        "fixed_commit": "192f3e11d74beeaa3d879333471deb8a24a7e1c5",
+        "affected_files": ("core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp",),
+        "detector": "ohscanner.cpp.null_dereference",
+        "expected": "possible_hit",
+    },
     {
         "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
         "cve": "CVE-2025-23420",
@@ -98,6 +122,10 @@ def _run_case(case: Dict[str, Any]) -> Dict[str, Any]:
         detector = CppBoundsDetector()
     elif detector_id == "ohscanner.cpp.integer_bounds":
         detector = CppIntegerBoundsDetector()
+    elif detector_id == "ohscanner.cpp.shared_ptr_race":
+        detector = SharedPtrRaceDetector()
+    elif detector_id == "ohscanner.cpp.null_dereference":
+        detector = NullDereferenceDetector()
     else:
         detector = None
 
@@ -177,6 +205,20 @@ def main(argv: Sequence[str] | None = None) -> int:
     (args.out_dir / "summary.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
+    applicable = [row for row in rows if row["expected"] == "possible_hit"]
+    metrics = {
+        "schema_version": 1,
+        "eligible_historical_cases": len(applicable),
+        "vulnerable_possible_hit": sum(row["observations"][0]["status"] == "possible_hit" for row in applicable),
+        "fixed_miss": sum(row["observations"][1]["status"] == "miss" for row in applicable),
+        "fixed_residual_candidate": sum(row["observations"][1]["status"] == "possible_hit" for row in applicable),
+        "not_applicable_cases": sum(row["expected"] == "not_applicable" for row in rows),
+        "precision_recall_eligible": False,
+        "interpretation": "Small historical capability set only; these counts are not product Precision/Recall or global Recall.",
+    }
+    (args.out_dir / "metrics.json").write_text(
+        json.dumps(metrics, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     lines = [
         "# A memory-safety historical replay", "",
         "> Capability signal only; no new vulnerability claim.", "",
@@ -191,7 +233,20 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"({vuln['candidate_count']}) | {fixed['status']} "
             f"({fixed['candidate_count']}) | `{row['detector_id']}` |"
         )
-    lines.extend(["", "## Boundaries", ""])
+    lines.extend([
+        "",
+        "## Historical capability counts",
+        "",
+        f"- Applicable historical cases: {metrics['eligible_historical_cases']}",
+        f"- Vulnerable possible_hit: {metrics['vulnerable_possible_hit']}",
+        f"- Fixed miss: {metrics['fixed_miss']}; fixed residual candidate: {metrics['fixed_residual_candidate']}",
+        f"- Not-applicable cases: {metrics['not_applicable_cases']}",
+        "",
+        "These counts are not product Precision/Recall or global Recall.",
+        "",
+        "## Boundaries",
+        "",
+    ])
     lines.extend("- " + item for item in rows[0]["limitations"])
     (args.out_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return 0

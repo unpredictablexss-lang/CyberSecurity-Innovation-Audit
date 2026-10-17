@@ -6,3 +6,6 @@
 - `ohscanner.cpp.integer_bounds` -> `src.ohscanner.detectors.cpp.integer_bounds_detector.CppIntegerBoundsDetector`, version `0.1.0`, kind `research_candidate`.
 - 必须保持 source-bound schema v2、legacy v1 只读兼容、candidate/unassessed 默认状态。
 - 必须新增正/固定/安全/非相关/unknown 回归后再由负责人审查；不要把研究脚本的候选数当成漏洞数。
+
+
+- `ohscanner.cpp.resource_lifetime` -> `src.ohscanner.detectors.cpp.resource_lifetime_detector.CppResourceLifetimeDetector`, version `0.1.0`, kind `research_candidate`; keep branch/label transitions unknown and require the A-RES-01 controls before owner review.
