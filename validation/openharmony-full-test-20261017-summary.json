@@ -1,0 +1,121 @@
+{
+  "schema_version": "openharmony-full-test-wrapup-v1",
+  "metadata": {
+    "report_date": "2026-10-17",
+    "branch": "codex/a-line-openharmony-full-test-20261016",
+    "baseline": "origin/codex/teammate-a-static-module-20261013",
+    "status": "stopped_before_full_scan_completion_by_user_request",
+    "full_test_rerun": false,
+    "pull_request_created": false
+  },
+  "source_preparation": {
+    "manifest_project_count": 525,
+    "manifest_revision_length": 40,
+    "manifest_name_fallback_count": 4,
+    "manifest_sha256": "701683246A8B4393E61CDB75132D76AACC9E53F6F663D37E386BBD535511FBEE",
+    "repo_sync_completed": true,
+    "git_lfs_pull_exit_code": 0,
+    "git_lfs_pull_log_sha256": "872BE4734AFBA6FEB868BF9D79966168E6D0FD10B7A3DD685C2B3FA12DC699CF"
+  },
+  "ohscanner_regression": {
+    "platform": "WSL Ubuntu",
+    "python_version": "3.14.7",
+    "tests_run": 640,
+    "skipped": 48,
+    "result": "OK",
+    "unittest_exit_code": 0,
+    "target_test_exit_code": 0,
+    "compileall_passed": true,
+    "git_diff_check_passed": true,
+    "log_sha256": "B79E0E21EC8495C61FCADF7800DC48E0B5DB830F7C06457B6357215BDEB9A6A0"
+  },
+  "partial_scan_counts": {
+    "project_directories": 479,
+    "request_json": 479,
+    "run_meta_json": 478,
+    "stdout_log": 478,
+    "stderr_log": 478,
+    "result_json": 378,
+    "report_md": 378,
+    "runner_project_count": 478,
+    "runner_processed_count": 378,
+    "prepared_unexecuted_count": 1
+  },
+  "runner_summary": {
+    "project_count": 478,
+    "processed_count": 378,
+    "diagnostic_count_total": 1645,
+    "validated_vulnerability_total": 0,
+    "schema_version": "openharmony-full-scan-runner-v1"
+  },
+  "strict_totals": {
+    "runner_478": {
+      "completed": 0,
+      "failed": 100,
+      "unknown": 378
+    },
+    "including_prepared_479": {
+      "completed": 0,
+      "failed": 100,
+      "unknown": 379
+    }
+  },
+  "reconciliation": {
+    "key": [
+      "index",
+      "project_path",
+      "manifest_commit"
+    ],
+    "runner_entries_reconciled": 478,
+    "mismatch_count": 0
+  },
+  "detector_validation": {
+    "expected_tools": [
+      "ohscanner.interface.ipc",
+      "ohscanner.cpp.lifetime",
+      "ohscanner.cpp.shared_ptr_race"
+    ],
+    "result_count": 378,
+    "status_completed": 10,
+    "status_completed_with_limitations": 368,
+    "detector_runs_tool_mismatch_count": 0,
+    "detector_coverage_key_mismatch_count": 0,
+    "detector_set_mismatch_count": 0,
+    "strict_reason_counts": {
+      "scanner_status_not_completed": 368,
+      "execution_state_not_completed": 100,
+      "detector_set_mismatch": 0
+    }
+  },
+  "scanner_level_completions": {
+    "count": 10,
+    "strict_classification": "unknown",
+    "run_ids": [
+      "0044-applications_sample_wifi_iot-33cbeda99a",
+      "0156-drivers_liteos-4fb817ede7",
+      "0202-iothardware_peripheral-45ac7dae98",
+      "0341-third_party_e2fsprogs-3683208ccd",
+      "0350-third_party_freetype-133538172c",
+      "0376-third_party_libjpeg-turbo-4d2fc8d606",
+      "0379-third_party_libpng-d6baadab5f",
+      "0423-third_party_pyyaml-cdda299373",
+      "0431-third_party_rust_clang-sys-85ee4c7146",
+      "0447-third_party_rust_link-cplusplus-f77a7954b5"
+    ]
+  },
+  "included_git_paths": [
+    "PROGRAM_STATUS.md",
+    "src/ohscanner/git_source.py",
+    "docs/openharmony-full-test-20261017.md",
+    "validation/openharmony-full-test-20261017-summary.json"
+  ],
+  "exclusions": [
+    "D:\\openHarmonyScanner\\openharmony",
+    ".repo/",
+    "Git LFS objects and large source assets",
+    "raw scan outputs and generated experiment outputs",
+    "test and scan logs",
+    "virtual environments and dependency caches",
+    "build outputs and temporary directories"
+  ]
+}

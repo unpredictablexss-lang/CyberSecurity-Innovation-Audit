@@ -505,3 +505,34 @@ Tree-sitter partial 可能来自真实语法问题或宏/方言，不能据此�
   Node 22.23.3 `npm ci`/`npm run build`、3/3 source-binding verifier 通过。
 - 仍未实现 A 线 Agent loop、产品构建 profile、Joern 全 scope 覆盖、独立 holdout
   Precision/Recall；所有 finding 仍为 candidate/unassessed/unknown。
+
+## 29. 2026-10-17 OpenHarmony 全量测试准备与 OHScanner 自回归
+
+- D 盘空间评估通过：总容量约 953.87 GiB，当前可用约 259.35 GiB。最终 `du`
+  实测：源码工作树约 56 GiB，`.repo` 约 36 GiB。现有空间足供完整同步、测试暂存与
+  后续结果归档，无需分批下载/同步。
+- OpenHarmony 源码已同步至 `D:\openHarmonyScanner\openharmony`，固定 manifest 为
+  `D:\openHarmonyScanner\openharmony-manifest-fixed.xml`。manifest 共 525 个
+  project，均绑定完整 40 位 commit SHA。`repo sync -c` 与 `git lfs pull` 已完成；
+  LFS 日志为 `D:\openHarmonyScanner\repo-lfs-pull-20261017.log`，退出码 0。
+- A 线测试分支为 `codex/a-line-openharmony-full-test-20261016`，基于
+  `origin/codex/teammate-a-static-module-20261013` 创建。
+- OHScanner 在 WSL Ubuntu、Python 3.14.7 下自回归通过：`Ran 640 tests`、
+  `OK (skipped=48)`、`UNITTEST_EXIT_CODE=0`；目标回归
+  `tests.test_ohscanner_m15.OfflineGitTests.test_promisor_clone_never_fetches_missing_blob`
+  通过，`TARGET_TEST_EXIT_CODE=0`；`compileall` 通过，`GIT_DIFF_CHECK_EXIT_CODE=0`。
+  有效回归日志为 `D:\openHarmonyScanner\linux-tests-after-ls-tree-fix-python314-20261017.log`。
+  这 640 项是 OHScanner 自回归，不是 OpenHarmony 525 个 project 的正式全量扫描。
+- diff-check 使用 `git -c core.autocrlf=true diff --check`；WSL 默认 diff-check
+  对当前 CRLF 文件产生的提示属于换行转换误报，不构成代码问题。
+- OpenHarmony 扫描已启动但未完成即按要求停止。runner 已准备 479 个 project，其中
+  478 个进入执行状态，另有 `third_party/selinux` 仅准备 `request.json` 但未执行；
+  已生成 scanner result/report 的 project 为 378 个。原始扫描结果、日志和实验产物
+  留在 Git 外，本次只归档汇总报告与聚合校验信息。严格口径下 runner 状态为
+  `completed=0`、`failed=100`、`unknown=378`；计入未执行的第 479 项后为
+  `unknown=379`。不得宣称 525 个 project 全部完成扫描。
+- 本次收尾提交 `docs/openharmony-full-test-20261017.md`、
+  `validation/openharmony-full-test-20261017-summary.json`、离线 `git ls-tree`
+  缺失对象修复及状态更新，并 push 到 A 线测试分支。不包含 OpenHarmony 源码、
+  `.repo`、Git LFS 数据、原始扫描输出或生成实验产物；不创建 PR、不标记 ready、
+  不合并。
