@@ -3,7 +3,7 @@
 Run from the repository root, with the scan checkout outside the repository:
 
     python research/evidence/interface/ipc/b3_arkts_real_20261017/census.py \
-        <scan-root> <out.json>
+        <scan-root> <out.json> [repository] [commit]
 
 Only aggregate counts and finding metadata are written. Third-party source is
 read but never stored, which is why the artifact keeps shape counts instead of
@@ -70,7 +70,9 @@ def read_units(root):
     return files
 
 
-def main(scan_root, out_path):
+def main(scan_root, out_path,
+         repository="openharmony/applications_settings",
+         commit="5e8af0a2a104bc634f8d5e18ed03db202cd1ea02"):
     files = read_units(scan_root)
     counts = Counter()
     findings = []
@@ -81,10 +83,9 @@ def main(scan_root, out_path):
             SourceUnit(relative, language, text,
                        hashlib.sha256(text.encode("utf-8")).hexdigest())
             for relative, language, text in chunk)
-        request = ScanRequest("b3-census", "openharmony/applications_settings",
-                              "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
+        request = ScanRequest("b3-census", repository, commit,
                               snapshot_digest(units),
-                              "current-component:openharmony/applications_settings")
+                              "current-component:" + repository)
         result = ArkTsJsInterfaceDetector().detect(
             ScanContext(request, units, {}), units)
         assert result.status == "completed", result.status
@@ -115,8 +116,8 @@ def main(scan_root, out_path):
                 shape[key] += 1
 
     payload = {
-        "repository": "openharmony/applications_settings",
-        "commit": "5e8af0a2a104bc634f8d5e18ed03db202cd1ea02",
+        "repository": repository,
+        "commit": commit,
         "detector": "ohscanner.oh.arkts_js",
         "detector_version": "0.1.0",
         "files_seen": len(files),
@@ -145,6 +146,7 @@ def main(scan_root, out_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        raise SystemExit("usage: census.py <scan-root> <out.json>")
-    main(sys.argv[1], sys.argv[2])
+    if len(sys.argv) not in (3, 5):
+        raise SystemExit(
+            "usage: census.py <scan-root> <out.json> [repository] [commit]")
+    main(*sys.argv[1:])

@@ -1,0 +1,50 @@
+{
+  "repository": "openharmony-security/vulntraining",
+  "commit": "ceaf1b4fbe38e46cd18bfcffd7353516bdc34227",
+  "detector": "ohscanner.oh.arkts_js",
+  "detector_version": "0.1.0",
+  "files_seen": 16,
+  "by_language_status": {
+    "ets/complete": 7,
+    "ets/partial": 7,
+    "ts/complete": 2
+  },
+  "counters": {
+    "call_sites": 239,
+    "ability_classes": 1,
+    "bridge_sites": 0,
+    "bridge_guarded": 0,
+    "path_sinks": 2,
+    "path_guarded": 0,
+    "eval_sites": 0
+  },
+  "findings_total": 0,
+  "findings_by_rule": {},
+  "findings": [],
+  "text_shape_files": {
+    "bridge_text": 0,
+    "want_parameters_text": 0,
+    "file_sink_text": 2,
+    "eval_text": 0
+  },
+  "batch_coverage_lines": [
+    "ArkTS/JS frontend: 16 file(s) parsed; 9 complete, 7 partial, 0 unsupported; 239 call site(s) recovered.",
+    "Ability surface: 1 exported Ability/Extension class(es) seen; export/permission state is an obligation, never inferred from the class.",
+    "WebView bridge coverage: 0 registration(s), 0 with an origin predicate in the same function.",
+    "Taint coverage: 2 path sink(s), 0 behind a same-function path predicate; 0 eval site(s)."
+  ],
+  "limits": {
+    "max_bytes": 2097152,
+    "excluded_dirs": [
+      ".git",
+      "build",
+      "dist",
+      "node_modules",
+      "oh_modules",
+      "output",
+      "preview",
+      "third_party"
+    ],
+    "note": "Third-party source is not stored; only this aggregate is kept. Shape counts are text matches, not findings."
+  }
+}

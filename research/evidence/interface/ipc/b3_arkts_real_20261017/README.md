@@ -6,7 +6,7 @@
 ## 固定输入
 
 | 项 | 值 |
-|---|---|
+| --- | --- |
 | 目标仓库 | `openharmony/applications_settings` |
 | commit | `5e8af0a2a104bc634f8d5e18ed03db202cd1ea02` |
 | 前端 | `ohscanner.oh.arkts_js` 0.1.0（提交 `dfb187a`） |
@@ -20,7 +20,7 @@
 ## 结果
 
 | 项 | 值 |
-|---|---|
+| --- | --- |
 | 文件数 | 2045 |
 | `.ets` complete / partial | 1343 / 552 |
 | `.ts` complete / partial | 122 / 2 |
@@ -36,7 +36,7 @@
 文本形态计数（只用于解释覆盖，不是候选）：
 
 | 形态 | 文件数 |
-|---|---|
+| --- | --- |
 | `registerJavaScriptProxy` / `javaScriptProxy` | 0 |
 | `want.parameters` | 16 |
 | 文件类 API 调用 | 14 |
@@ -73,14 +73,16 @@
 ```sh
 python research/evidence/interface/ipc/b3_arkts_real_20261017/census.py \
     /path/to/applications_settings \
-    research/evidence/interface/ipc/b3_arkts_real_20261017/census.json
+    research/evidence/interface/ipc/b3_arkts_real_20261017/census.json \
+    openharmony/applications_settings \
+    5e8af0a2a104bc634f8d5e18ed03db202cd1ea02
 ```
 
-在仓库根目录执行；扫描检出必须在仓库外。
+在仓库根目录执行；扫描检出必须在仓库外。后两个参数可省略，默认即本目录记录的值。
 
 ## 哈希
 
-```
+```text
 ef724883598110e94d83b335cf3622e5c18407e65d33340f5080f38c5a868db9  census.json
-e0203db77f58358d55e698e54379e3bcc22ba9a28e64487d7546615f66fddead  census.py
+feae06292784017a0bb414239bf5498e72e7d8f82a178da6728402d1d41fa949  census.py
 ```

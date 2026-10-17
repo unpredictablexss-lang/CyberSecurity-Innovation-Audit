@@ -428,4 +428,6 @@ component_exposure 但路径规则仍触发"的分离控制。
 `new Function('return this')()`；16 个 `want.parameters` 文件里被抽样的是
 `bundleManager.getBundleInfoSync(want.parameters?.bundleName, ...)` 这类非文件 sink，
 且在 `isParamsValid` 守卫之后；40 个 Ability 类没有一个把 `want.parameters` 送进文件 API。
-这是覆盖结论，不是"该应用安全"。
+这是覆盖结论，不是"该应用安全"。第二个独立检出
+（`openharmony-security` 的 `vultraining`，`ceaf1b4f`，16 个文件 / 239 调用点 / 1 个
+Ability 类 / 2 个路径 sink）同样是 0 候选，记录在 `b3_arkts_vultraining_20261017/`。
