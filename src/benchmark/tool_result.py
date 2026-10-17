@@ -52,6 +52,11 @@ class ToolDiagnostic:
     # it can expose. Both optional, and neither replaces the other.
     consequence_impact: Optional[str] = None
     consequence_cwe: Optional[str] = None
+    # Optional A-CCR-03 identity sidecar. Omitted for legacy v1/v2 payloads so
+    # readers never mistake absent identity for a computed historical identity.
+    finding_identity_id: Optional[str] = None
+    occurrence_id: Optional[str] = None
+    finding_identity: Optional[Dict[str, Any]] = None
 
     def __post_init__(self) -> None:
         if not self.diagnostic_id.strip():
@@ -73,6 +78,12 @@ class ToolDiagnostic:
             raise ValueError("consequence_impact must be non-empty when provided")
         if self.consequence_cwe is not None and not _CWE.fullmatch(self.consequence_cwe):
             raise ValueError("invalid consequence CWE identifier")
+        for key, value in (("finding_identity_id", self.finding_identity_id),
+                           ("occurrence_id", self.occurrence_id)):
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ValueError(key + " must be non-empty when provided")
+        if self.finding_identity is not None and not isinstance(self.finding_identity, dict):
+            raise ValueError("finding_identity must be an object when provided")
 
     @property
     def source_binding(self) -> str:
@@ -86,6 +97,10 @@ class ToolDiagnostic:
     def to_dict(self) -> Dict[str, Any]:
         data = asdict(self)
         data["source_binding"] = self.source_binding
+        # Keep legacy payload shape byte-compatible when identity is absent.
+        for key in ("finding_identity_id", "occurrence_id", "finding_identity"):
+            if data.get(key) is None:
+                data.pop(key, None)
         return data
 
 
