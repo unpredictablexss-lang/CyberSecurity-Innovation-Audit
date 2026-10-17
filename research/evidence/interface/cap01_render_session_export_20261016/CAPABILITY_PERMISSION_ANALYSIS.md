@@ -26,6 +26,18 @@ This establishes a real source path from a binder request to an opaque remote-ob
 
 Therefore the candidate is specifically: a remote object handoff path lacks the same caller-category guard that other service methods use. Whether this is a real security boundary depends on SAMGR/SELinux/API access, deployment and the actual capability surface of the returned object.
 
+## Product build and service discovery evidence
+
+Local product build inputs add partial deployment evidence:
+
+- `_product_targets/build/indep_component_whitelist.json` contains `window_window_manager` and `display_manager`.
+- `_product_targets/build/third_party_allow_list.json` contains `display_manager`.
+- `_product_targets/manifest/ohos/ohos.xml` includes the OpenHarmony window project.
+- `ScreenSessionManager` registers as `SystemAbility(DISPLAY_MANAGER_SERVICE_SA_ID, true)` through `MakeAndRegisterAbility`.
+- Production/lite adapters and two project fuzzers retrieve the same SA ID through `SystemAbilityManagerClient::GetSystemAbility` or `CheckSystemAbility`, then cast it to `IScreenSessionManager`.
+- Vendor `install_list_permissions.json` files under `_product_targets/vendor_hihope` contain no explicit WINDOW/SCREEN/RENDER/DISPLAY/CAPTURE permission grants in the inspected entries.
+
+This shows the component is present in the inspected product build plan and that the service endpoint is intended for SAMGR discovery. It does not prove the final product image includes the exact blob, nor that SAMGR/SELinux permits an unprivileged third-party caller to obtain the proxy.
 ## Capability surface
 
 - The returned object is typed only as `sptr<IRemoteObject>`.
@@ -44,4 +56,4 @@ The isolated component replay in `validation/VALIDATION_UPDATE.md` verifies the 
 
 ## Fail-closed conclusion
 
-`candidate/unknown`, `validated_vulnerability=0`. Upgrade requires deployed caller acquisition evidence, SAMGR/SELinux/API policy, the actual remote object interface/capability surface, CIA measurement and product build/release identity.
+Product-build plan and service-discovery evidence are now partial, but `candidate/unknown`, `validated_vulnerability=0` remains. Upgrade requires exact image artifact, deployed caller acquisition evidence, SAMGR/SELinux/API policy, the actual remote object interface/capability surface, CIA measurement and product build/release identity.
