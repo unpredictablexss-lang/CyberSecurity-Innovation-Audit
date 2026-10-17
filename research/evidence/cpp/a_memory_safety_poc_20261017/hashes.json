@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_memory_safety_isolated_poc",
+  "files": [
+    {
+      "path": "validation\\cpp_memory_safety_poc\\bounds_vulnerable.cpp",
+      "bytes": 223,
+      "sha256": "98da2c020e29f79138599efb051ecc7087788d91660950ebac36ef53ce18135e"
+    },
+    {
+      "path": "validation\\cpp_memory_safety_poc\\bounds_fixed.cpp",
+      "bytes": 369,
+      "sha256": "3e16f496c4fa863288215a486ced2aa133f34546d7a0e41baebdc6565b25c2a8"
+    },
+    {
+      "path": "validation\\cpp_memory_safety_poc\\integer_vulnerable.cpp",
+      "bytes": 465,
+      "sha256": "14922d00c8393459408c38550d04be8854af6de9f410477fd45ba522ca639ed1"
+    },
+    {
+      "path": "validation\\cpp_memory_safety_poc\\integer_fixed.cpp",
+      "bytes": 567,
+      "sha256": "f7eab8e3372020cc1c02052cbe045de56ea691d1e69998c7f6f40cc6ba7fb581"
+    },
+    {
+      "path": "validation\\cpp_memory_safety_poc\\run.sh",
+      "bytes": 1318,
+      "sha256": "b9fa2f9efff3bc497925051a4e1aa27ca0cb14d063e1efb1d38e7772ba631cdf"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_fixed.exit.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_fixed.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_fixed.stdout.txt",
+      "bytes": 24,
+      "sha256": "6b2c7e8a949b93190be427236f56852045a354e75d045d57af10004cf8a31134"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_vulnerable.exit.txt",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_vulnerable.stderr.txt",
+      "bytes": 2859,
+      "sha256": "ead891b2c5c29eec3e8b2ae22bb07606ef00197323f290c1a08ffc0f12d0b3d2"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/bounds_vulnerable.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/environment.txt",
+      "bytes": 300,
+      "sha256": "23b845b710e5cba3dccc6b075636643e1b38cee2b27097936ff7ed74c6d43bc6"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/integer_fixed.exit.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/integer_fixed.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/integer_fixed.stdout.txt",
+      "bytes": 30,
+      "sha256": "d98f1b2c48c3005fb8a60e2820467610ef5f8bcec5fe9f4ad980545c2308620b"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/integer_vulnerable.exit.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/integer_vulnerable.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/integer_vulnerable.stdout.txt",
+      "bytes": 12,
+      "sha256": "af57c0b83a39c01d819933ffb577a2183bdc3b47e4d70e6352e487fe76f3b559"
+    },
+    {
+      "path": "research/evidence/cpp/a_memory_safety_poc_20261017/REPORT.md",
+      "bytes": 1365,
+      "sha256": "892a28ddd7eb7c697c2b9b2fe99c2c355df23479a3a8364eab7aeb5371ec4b70"
+    }
+  ]
+}

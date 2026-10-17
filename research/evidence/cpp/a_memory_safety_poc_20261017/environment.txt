@@ -1,0 +1,7 @@
+tool=g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0
+flags=-std=c++17 -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined
+root=/mnt/e/网安/CyberSecurity-Innovation-Audit
+compile_exit=bounds_vulnerable=0
+compile_exit=bounds_fixed=0
+compile_exit=integer_vulnerable=0
+compile_exit=integer_fixed=0
