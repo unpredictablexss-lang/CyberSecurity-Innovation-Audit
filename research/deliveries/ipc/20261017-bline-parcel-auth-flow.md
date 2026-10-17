@@ -415,6 +415,12 @@ AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的�
 `want.parameters?.x` 直接作实参的内联形态）、`partial` 三态报告，以及"非 Ability 类不产生
 component_exposure 但路径规则仍触发"的分离控制。
 
+**未纳入首批**：差距审查 B-3 还建议 `ohscanner.oh.native_bridge`（ArkTS/ETS → N-API
+C++ binding map、参数类型/长度约束，复用 A 线内存安全规则）。它需要 C++ 侧符号/事实与
+A 线引擎联动，而本 lane 只拥有 `detectors/interface/**` 且 Catalog 注册属 owner；在没有
+binding map 的情况下按 `.so` 导入名或函数名报候选会变成猜测，所以本批不做，也不以
+"前端存在"代替它。
+
 真实文件上还有两个实现修正（提交 `dfb187a`）：
 
 - `Node.start_point` 在真实 88 调用点的 `.ets` 文件上会让 tree-sitter 绑定段错误；行号改为
