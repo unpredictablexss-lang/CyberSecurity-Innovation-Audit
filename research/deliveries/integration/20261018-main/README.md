@@ -52,3 +52,9 @@ C 需生产适配器绑定目标/creator 依赖、精确版本与构建，并补
 ## 局限
 
 这是静态工程集成验收，未执行真实 Provider、独立准确率评价、完整上游构建或 Docker/产品漏洞验证；零候选范围也不是安全证明。原负责人 / A/B / UI / 平台 / C/D / Agent 工作树未被 reset、clean、stash、覆盖、切分支或重启；18775 原服务与数据保留。其他会话在本轮自行产生的新改动未盲目追入此冻结交付。
+
+## #10 直接合入的具体阻塞复核
+
+审计精确 HEAD aa79d57a3612c0bc5a04dac7af03c2a086dcddd8 的 src/report/vulnerability_report.py，在内存直接调用其 renderer：只提供六项 true 布尔值、poc_state=stable_reproduced、patch_revalidation=passed，缺少仓库、commit、源码 binding、static_evidence，仍返回 report_status=reportable。输入和实际输出及原源码 SHA 见 pr10-evidence-gate-review.json。
+
+该模块自称 renderer、信任上游提供的 gate；不能把它当作独立证据验证器接入当前系统。需要明确可信人工审批/不可变证据记录的来源并交叉核验 target/PoC/patch/report 身份，缺失或混用时拒绝升级。当前主线使用自己的证据门，此旧模块未迁入；不宣称 OH 产品漏洞或已利用缺陷。#10 保持 Draft，待拆分研究材料与验证适配后再审；不为了清空 Draft 而强合。
