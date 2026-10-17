@@ -1,0 +1,376 @@
+{
+  "schema_version": 1,
+  "family": "AUTH-01",
+  "family_name": "SA relay / confused deputy",
+  "harness": "auth01_descriptor_bypass",
+  "root_cause_instance_id": "cve-2023-0036",
+  "repository": "openharmony/inputmethod_imf",
+  "pr_url": "https://gitee.com/openharmony/inputmethod_imf/pulls/228",
+  "reported_symbol": "PlatformCallbackStub::OnRemoteRequest",
+  "candidate_cwe": "CWE-441",
+  "environment": {
+    "compiler": "clang++",
+    "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+    "sanitizers": [
+      "address",
+      "undefined"
+    ],
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "python": "3.10.12",
+    "source_origin": "local git object store: ~/openharmony-audit/ipc-research/repos/inputmethod_imf",
+    "recorded_at_utc": "2026-10-17T08:05:35Z"
+  },
+  "revisions": {
+    "vulnerable": {
+      "revision": "vulnerable",
+      "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+      "state": "stable_reproduced",
+      "build": {
+        "revision": "vulnerable",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "source_sha256": [
+          "59c980bf8923fe783ab1f02ac9d999b6eb0c6a3fbcf62a16b369000b5877e043"
+        ],
+        "compiler": "clang++",
+        "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+        "sanitizers": [
+          "address",
+          "undefined"
+        ],
+        "command": [
+          "clang++",
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-no-pie",
+          "-fsanitize=address,undefined",
+          "-include",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/poc_compat.h",
+          "-I",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub",
+          "-I",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass",
+          "-I",
+          "/work/out/component/vulnerable/services/include",
+          "-I",
+          "/work/cutils/base/include",
+          "-I",
+          "/work/cutils/base/src",
+          "/work/out/component/vulnerable/services/src/platform_callback_stub.cpp",
+          "/work/cutils/base/src/parcel.cpp",
+          "/work/cutils/base/src/refbase.cpp",
+          "/work/cutils/base/src/string_ex.cpp",
+          "/work/cutils/base/src/unicode_ex.cpp",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stubs.cpp",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/harness.cpp",
+          "-o",
+          "/work/out/bin/poc_vulnerable"
+        ],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "",
+        "binary": "/work/out/bin/poc_vulnerable"
+      },
+      "cases": [
+        {
+          "case_id": "no_token",
+          "role": "attack",
+          "args": [
+            "notoken"
+          ],
+          "returncode": 0,
+          "signals": {
+            "ret": 0,
+            "messages_sent": 1,
+            "msgId": 5,
+            "userId": 4242,
+            "contentCount": 2,
+            "contentBytes": 96
+          },
+          "verdict": "trigger",
+          "stdout": "mode=notoken ret=0 messages_sent=1 [msgId=5 userId=4242 contentCount=2 contentBytes=96]\n",
+          "stderr": ""
+        },
+        {
+          "case_id": "correct_token",
+          "role": "control",
+          "args": [
+            "token"
+          ],
+          "returncode": 0,
+          "signals": {
+            "ret": 0,
+            "messages_sent": 0
+          },
+          "verdict": "no_trigger",
+          "stdout": "mode=token ret=0 messages_sent=0\n",
+          "stderr": ""
+        },
+        {
+          "case_id": "foreign_token",
+          "role": "attack",
+          "args": [
+            "wrongtoken"
+          ],
+          "returncode": 0,
+          "signals": {
+            "ret": 0,
+            "messages_sent": 0
+          },
+          "verdict": "no_trigger",
+          "stdout": "mode=wrongtoken ret=0 messages_sent=0\n",
+          "stderr": ""
+        }
+      ],
+      "replay": {
+        "label": "stable_reproduced",
+        "attempts": 3,
+        "triggered": 3,
+        "all_cases_match": true,
+        "cases": [
+          {
+            "case_id": "no_token",
+            "role": "attack",
+            "expected": "trigger",
+            "observed": [
+              "trigger",
+              "trigger",
+              "trigger"
+            ],
+            "matches_expectation": [
+              true,
+              true,
+              true
+            ],
+            "label": "stable_reproduced"
+          }
+        ]
+      },
+      "expectations_met": {
+        "no_token": true,
+        "correct_token": true,
+        "foreign_token": true
+      }
+    },
+    "fixed": {
+      "revision": "fixed",
+      "commit": "5eaddcab19bc4b22544f4bee1e8894fc2d6505dc",
+      "state": "run_success",
+      "build": {
+        "revision": "fixed",
+        "commit": "5eaddcab19bc4b22544f4bee1e8894fc2d6505dc",
+        "source_sha256": [
+          "b6d7f66a909f23a92c7b38b5f6e6854480f464949d8e456733924af2e9b3c444"
+        ],
+        "compiler": "clang++",
+        "compiler_version": "Ubuntu clang version 14.0.0-1ubuntu1.1",
+        "sanitizers": [
+          "address",
+          "undefined"
+        ],
+        "command": [
+          "clang++",
+          "-std=c++17",
+          "-g",
+          "-O1",
+          "-fno-omit-frame-pointer",
+          "-no-pie",
+          "-fsanitize=address,undefined",
+          "-include",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/poc_compat.h",
+          "-I",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stub",
+          "-I",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass",
+          "-I",
+          "/work/out/component/fixed/services/include",
+          "-I",
+          "/work/cutils/base/include",
+          "-I",
+          "/work/cutils/base/src",
+          "/work/out/component/fixed/services/src/platform_callback_stub.cpp",
+          "/work/cutils/base/src/parcel.cpp",
+          "/work/cutils/base/src/refbase.cpp",
+          "/work/cutils/base/src/string_ex.cpp",
+          "/work/cutils/base/src/unicode_ex.cpp",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/stubs.cpp",
+          "/work/repo/src/ohscanner/poc/harnesses/auth01_descriptor_bypass/harness.cpp",
+          "-o",
+          "/work/out/bin/poc_fixed"
+        ],
+        "returncode": 0,
+        "stdout": "",
+        "stderr": "",
+        "binary": "/work/out/bin/poc_fixed"
+      },
+      "cases": [
+        {
+          "case_id": "no_token",
+          "role": "attack",
+          "args": [
+            "notoken"
+          ],
+          "returncode": 0,
+          "signals": {
+            "ret": -74,
+            "messages_sent": 0
+          },
+          "verdict": "no_trigger",
+          "stdout": "mode=notoken ret=-74 messages_sent=0\n",
+          "stderr": ""
+        },
+        {
+          "case_id": "correct_token",
+          "role": "control",
+          "args": [
+            "token"
+          ],
+          "returncode": 0,
+          "signals": {
+            "ret": 0,
+            "messages_sent": 1,
+            "msgId": 5,
+            "userId": 4242,
+            "contentCount": 2,
+            "contentBytes": 96
+          },
+          "verdict": "trigger",
+          "stdout": "mode=token ret=0 messages_sent=1 [msgId=5 userId=4242 contentCount=2 contentBytes=96]\n",
+          "stderr": ""
+        },
+        {
+          "case_id": "foreign_token",
+          "role": "attack",
+          "args": [
+            "wrongtoken"
+          ],
+          "returncode": 0,
+          "signals": {
+            "ret": -74,
+            "messages_sent": 0
+          },
+          "verdict": "no_trigger",
+          "stdout": "mode=wrongtoken ret=-74 messages_sent=0\n",
+          "stderr": ""
+        }
+      ],
+      "replay": {
+        "label": "stable_rejected",
+        "attempts": 9,
+        "triggered": 3,
+        "all_cases_match": true,
+        "cases": [
+          {
+            "case_id": "no_token",
+            "role": "attack",
+            "expected": "no_trigger",
+            "observed": [
+              "no_trigger",
+              "no_trigger",
+              "no_trigger"
+            ],
+            "matches_expectation": [
+              true,
+              true,
+              true
+            ],
+            "label": "stable_rejected"
+          },
+          {
+            "case_id": "correct_token",
+            "role": "control",
+            "expected": "trigger",
+            "observed": [
+              "trigger",
+              "trigger",
+              "trigger"
+            ],
+            "matches_expectation": [
+              true,
+              true,
+              true
+            ],
+            "label": "stable_reproduced"
+          },
+          {
+            "case_id": "foreign_token",
+            "role": "attack",
+            "expected": "no_trigger",
+            "observed": [
+              "no_trigger",
+              "no_trigger",
+              "no_trigger"
+            ],
+            "matches_expectation": [
+              true,
+              true,
+              true
+            ],
+            "label": "stable_rejected"
+          }
+        ]
+      },
+      "expectations_met": {
+        "no_token": true,
+        "correct_token": true,
+        "foreign_token": true
+      }
+    }
+  },
+  "state": "stable_reproduced",
+  "evidence_level": "stable_reproduced",
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Not reachability: the harness calls the stub directly. That a remote caller can reach this stub over real IPC, and under which ability registration and permission state, is not established here and stays an EvidenceObligation.",
+    "The interface token methods are supplied by a shim over the real Parcel; the shim forwards to WriteString16/ReadString16 and adds no policy.",
+    "MessageHandler::SendMessage records the call instead of dispatching it; the recording is the observable.",
+    "poc_compat.h supplies the using-directive for ErrorCode enumerators, which the historical header set does not expose unqualified; it changes no behaviour."
+  ],
+  "reachability": {
+    "status": "partial",
+    "summary": "The service exports the stub itself: Platform::SetPlatform constructs it and passes it as the argument of IPlatformApi::registerCallback, a pure virtual on an IRemoteBroker interface whose proxy marshals the object with WriteRemoteObject. A peer that holds that handle reaches OnRemoteRequest with a caller-chosen transaction code and payload, which is why an interface-descriptor check is the relevant defence. Whether an unprivileged or unrelated process can obtain the handle, and what identity the peer has, is NOT established here.",
+    "relations": [
+      {
+        "kind": "stub_is_constructed_in_the_service",
+        "path": "services/src/platform.cpp",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "sha256": "7ebe67fc4bc2c51e149a79f486c8ddea792d4b590cc22045992ce702167d31f4",
+        "line": 25,
+        "evidence": "sptr < IPlatformCallback > cb = new PlatformCallbackStub();",
+        "establishes": "the service process constructs the very stub object this PoC calls, so the target is a real product object rather than a test double",
+        "does_not_establish": "that any process other than the service can obtain it"
+      },
+      {
+        "kind": "stub_is_passed_to_a_remote_interface_call",
+        "path": "services/src/platform.cpp",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "sha256": "7ebe67fc4bc2c51e149a79f486c8ddea792d4b590cc22045992ce702167d31f4",
+        "line": 26,
+        "evidence": "this->platformApi->registerCallback(cb);",
+        "establishes": "the stub is handed to a call on IPlatformApi, an interface the service talks to over IPC, rather than kept local",
+        "does_not_establish": "which process implements IPlatformApi at this call site, nor the permission or registration gate on that call"
+      },
+      {
+        "kind": "register_callback_is_an_ipc_transaction",
+        "path": "services/include/i_platform_api.h",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "sha256": "c2985b3853e054da928cea51b12d7c7e1ddaef8fec613f4538e32ce1cb77a196",
+        "line": 48,
+        "evidence": "virtual int32_t registerCallback(const sptr<IPlatformCallback>& cb) = 0;",
+        "establishes": "registerCallback is a pure virtual on an IRemoteBroker interface, so passing the stub to it crosses a process boundary",
+        "does_not_establish": "the identity, privilege or category of the peer that receives the callback"
+      },
+      {
+        "kind": "callback_is_marshalled_to_the_peer",
+        "path": "services/src/platform_api_proxy.cpp",
+        "commit": "e663b47013d534a56165ab7467fbb3e14bf7172b",
+        "sha256": "8fc23c916124bf3dd817fcd7d5d0f19f4b346bdf4855928d58250ec5a6c28a60",
+        "line": 47,
+        "evidence": "data.WriteRemoteObject(cb->AsObject());",
+        "establishes": "the proxy writes the callback object into a Parcel, so the peer receives a usable remote handle to this stub and can send transactions to it",
+        "does_not_establish": "whether that peer forwards the handle onward, which is the scenario the missing interface-descriptor check would otherwise constrain"
+      }
+    ]
+  }
+}

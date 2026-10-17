@@ -334,11 +334,81 @@ B-2 要求"跨服务代理链保留身份变更点"。0.9.1 的实现是有界�
 | B-0 客户端 Kit/`Manager::` 不当作 IPC 边界 | 完成 | §10.4 控制之一：`CameraManager::GetInstance().OpenCamera()` 不计边界 |
 | B-0 Parcel API 语义 + 真实语料执行计数 | 完成 | §3、§4；插桩探针 `bline_rule_probe.py` |
 | B-1 `parcel.bounds` / `parcel.lifecycle` 与 taint/guard/unknown | 完成 | DATA-01..03；正/修复/安全控制；`all-files` 与 `complete-ast` 双视图 |
-| B-1 真实修复前/后漏洞对、隔离复现 | **受阻** | 语料为浅克隆，显式 fetch 属 owner 决定；无本地构建环境。已选候选见 §5，未升格 |
+| B-1 真实修复前/后漏洞对、隔离复现 | 完成一项（AUTH-01 族） | §12：CVE-2023-0036 vulnerable `e663b470` 稳定触发 3/3，fixed `5eaddcab` 拒绝；本地 Docker 镜像内 clang++/ASan/UBSan。Parcel 族（DATA-01..03）仍无对应的公开修复对，未作同类声明 |
 | B-2 事实模型 + guard 支配 | 完成 | AUTH-02/03/04/05 与 DATA-04；成对样本（有 guard / guard 在错误分支 / guard 不支配 / 客户端调用受服务端保护）见 `tests/fixtures/ipc/` |
 | B-2 跨服务代理链身份变更点 | 完成（有界） | §10.4；54 组件实测 10 次边界，0 次转发调用者 |
 | B-2 敏感 source → 不可信可见输出 | 完成（有界） | DATA-04：披露类结果 → reply 写入；文件/日志/共享内存 sink 未建模（§8.4） |
-| B-3 ArkTS/ETS + JS/TS 前端 | **受阻（共享工作）** | 本 lane 无 JS/TS 语法依赖，`src/parser/` 与依赖属共享面；见 §8.5 |
+| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py`（complete/partial/unsupported 三态）+ 4 条规则 + `tests/test_ipc_arkts_js.py`（13 条）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
 
 "完成"指该条的实现与控制存在于本提交，并且有可复核的运行结果；它不指这些规则在真实组件里
 找到了漏洞。
+
+## 12. 真实修复对：AUTH-01 本地隔离复现（CVE-2023-0036）
+
+差距审查 B-1 第 5 条要求"公开修复前/修复后真实漏洞 + 隔离伪造请求负例 + 无害对照，并尝试
+在容器/仿真安全环境复现"。本提交在本地 Docker 验证镜像中重跑了已有的 AUTH-01 harness；
+目标、两条修订与文件摘要全部由 manifest 固定，运行前逐文件校验 sha256。
+
+**目标**：`openharmony/inputmethod_imf`，`PlatformCallbackStub::OnRemoteRequest`
+（PR !228）。vulnerable `e663b47013d534a56165ab7467fbb3e14bf7172b`，
+fixed `5eaddcab19bc4b22544f4bee1e8894fc2d6505dc`，依赖
+`commonlibrary_c_utils b807d3dadb7dbb7639fe85b3a5f72da18d318da2`。
+
+**环境**：镜像 `ohscanner-validation-local:20261016`
+（`sha256:bfb8cbdda14a4654fccf5d61463d37c0ece1a2bd1af13520b21f7af0e539e712`），
+Ubuntu clang 14.0.0，ASan+UBSan，无网络；宿主 WSL2 `6.18.54.1`。
+
+**执行**（在容器内，`OHSCANNER_VALIDATION_CONTAINER=1` 由 `runner.py` 强制）：
+
+```sh
+docker run --rm --entrypoint sh -v 'C:\Users\16669\AppData\Local\Temp\ohpoc:/work' \
+  -w /work/repo -e OHSCANNER_VALIDATION_CONTAINER=1 -e PYTHONPATH=/work/repo \
+  ohscanner-validation-local:20261016 -c 'python3 /work/run_poc.py'
+```
+
+**结果**：
+
+| 修订 | 状态 | `no_token`（攻击） | `correct_token`（对照） | `foreign_token`（攻击） |
+|---|---|---|---|---|
+| vulnerable `e663b470` | `stable_reproduced`（3/3） | trigger，`messages_sent=1 userId=4242` | no_trigger | no_trigger |
+| fixed `5eaddcab` | `run_success` / `stable_rejected` | no_trigger，`ret=-74` | trigger（正常请求仍被服务） | no_trigger，`ret=-74` |
+
+完整记录与编译命令见 `research/evidence/interface/ipc/auth01_dynamic_20261017/`
+（`result.json` sha256 `20632c69…`，`result.md` sha256 `44047f51…`）。
+
+**没有证明的事**：`validated_vulnerability` 仍为 0；reachability 状态是 `partial`——harness
+直接调用 stub，真实 IPC 入口、调用者身份与权限状态仍是 EvidenceObligation。该样本属于
+AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的真实修复对；后者仍无
+可用的公开修复前后组合，不能借这一条类推。
+
+## 13. B-3 首批：ArkTS/ETS + JS/TS 前端与四条规则
+
+`src/ohscanner/detectors/interface/arkts_js.py` 先交付可审计的语言前端，再在其上放窄规则。
+前端三态是硬契约：
+
+- `.js` → tree-sitter-javascript；`.ts`/`.ets` → tree-sitter-typescript。
+- `complete`：AST 无 ERROR/MISSING；`partial`：有语法错误但仍恢复了调用/类结构；
+  `unsupported`：语法包缺失（此时整个 run 是 `blocked`，不是"0 发现"）。
+- **ArkTS 的 `struct` 与装饰器不在 TypeScript 语法内**，所以 `.ets` 通常报 `partial`；
+  结果里的 limitation 明确写"component/decorator semantics are NOT claimed"。这满足
+  "不可以看见 `.ets` 就声称有语义分析"。
+
+首批规则（全部 candidate，`candidate_cwe` 只作机制分类）：
+
+| 规则 | 触发 | 控制/抑制 |
+|---|---|---|
+| `ohscanner.oh.arkts.component_exposure` | 导出的 `UIAbility`/`ExtensionAbility` 生命周期方法把 `want.parameters` 派生值送进路径 API | 同函数/类内 `if (...startsWith/canonicalPath...)` 命中则不报；`module.json5` 未解析，finding 带 `manifest_export_state` 义务 |
+| `ohscanner.oh.arkts.webview_bridge` | `registerJavaScriptProxy` / `javaScriptProxy` 注册 | 同函数内 URL/origin 比较则不报；带 `page_origin` 义务 |
+| `ohscanner.js.path_taint` | `want.parameters` 派生值到达 `fileIo.*`/`fs.*` 路径 sink | 同函数路径谓词则不报 |
+| `ohscanner.js.dangerous_eval` | `eval(x)`、`new Function(x)` 且实参非字符串字面量 | 字面量实参不报 |
+
+覆盖数字写进每次运行的 limitation（前端文件数/三态、调用点、bridge 注册与守卫数、路径 sink
+与守卫数、ability 类数），与 IPC 检测器的计数口径一致。
+
+**边界**：无 CFG、无跨函数 taint、不解析 manifest、不判定页面来源；守卫判定是"同函数 `if`
+条件里出现被污染名字 + 路径谓词"的启发式，不是支配证明。`requirements*.txt` 与
+`catalog.py` 属 owner 共享面，本提交没有改动它们：语法包只在本地 venv 安装，检测器也尚未
+注册进 Catalog；接入前 CI 不会自动获得这两个依赖。
+
+控制：`tests/test_ipc_arkts_js.py` 13 条，包含每个规则的正例与抑制例、`partial` 三态报告、
+以及"非 Ability 类不产生 component_exposure 但路径规则仍触发"的分离控制。

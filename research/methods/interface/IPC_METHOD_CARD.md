@@ -206,12 +206,37 @@ in this policy credits that value`（读到了、没归属）——本候选是�
 差异来自 relay/描述符路径的修改；54 组件整轮约 16 分钟。
 
 **限制。** A 线的 Bounds/Integer 事实当前不可用，未联动；同文件 `static const` 与无参
-`#define` 的**值**可以解析，但默认策略没有审阅账户归属（见上）；跨服务代理链不保留身份
-变更点（只有同文件/同 owner 一跳与 `GetInstance` 委托，以及新增的显式限定名一跳）；
-敏感 source 仍是命名表而非通用 taint；ArkTS/ETS 与 JS/TS 前端（B-3）未实现，
-`applications_permission_manager` 在本语料中是 0 个 C/C++ 单元而非"扫描通过"；
-没有 PoC 或动态复现。615 条测试通过（skipped 4），lane 范围检查 `violations: []`。
-所有候选仍是未验证静态候选，`confirmed` 为 0。
+`#define` 的**值**可以解析，但默认策略没有审阅账户归属（见上）；跨服务代理链只记
+`iface_cast<>` 句柄上的边界（同文件/同 owner 一跳与 `GetInstance` 委托、显式限定名一跳），
+不读下游守卫；敏感 source 仍是命名表而非通用 taint；`applications_permission_manager`
+在本语料中是 0 个 C/C++ 单元而非"扫描通过"。动态复现与 B-3 首批的现状见本节之后的
+"0.9.1 + B-3 首批 + AUTH-01 动态复现"一节：AUTH-01 已有一对真实修订的隔离执行，
+Parcel 族没有。所有候选仍是未验证静态候选，`confirmed` 为 0。
+
+---
+
+# IPC 方法卡 — 0.9.1 增补：AUTH-01 真实修复对已隔离执行，B-3 首批前端落地（2026-10-17）
+
+**动态执行不再是零。** 在本地 Docker 验证镜像（`ohscanner-validation-local:20261016`，
+clang 14 + ASan/UBSan，无网络）里重跑了 `auth01_descriptor_bypass` harness：
+`inputmethod_imf` vulnerable `e663b470` 的 `no_token` 攻击用例 **3/3 稳定触发**
+（`messages_sent=1`），fixed `5eaddcab` 对同一用例返回 `-74` 并继续服务 `correct_token`
+对照。这是 B 线第一份**真实修复前/后 + 伪造请求负例 + 无害对照**的隔离执行记录，
+完整记录在 `research/evidence/interface/ipc/auth01_dynamic_20261017/`。
+
+它**不**把任何候选升级：`validated_vulnerability=0`，reachability 仍是 `partial`——
+harness 直接调用 stub，真实 IPC 入口与调用者身份没有被证明。它也**不是** Parcel 族
+（DATA-01..03）的修复对；后者的真实前后组合仍缺。
+
+**B-3 首批前端。** `src/ohscanner/detectors/interface/arkts_js.py` 用
+tree-sitter-javascript / tree-sitter-typescript 解析 `.js`/`.ts`/`.ets`，硬性输出
+`complete` / `partial` / `unsupported` 三态。ArkTS `struct` 与装饰器不在 TS 语法内，
+`.ets` 通常报 `partial`，结果里明确写"不声称 component/decorator 语义"。四条规则
+（component_exposure、webview_bridge、path_taint、dangerous_eval）都有正例与同函数守卫
+抑制例；`tests/test_ipc_arkts_js.py` 13 条。Catalog 注册与 `requirements*.txt` 依赖
+属 owner 共享面，未改；语法包只在本地 venv 安装。
+
+**口径。** 628 条测试通过（skipped 4），lane 范围检查 `violations: []`。
 
 ---
 
