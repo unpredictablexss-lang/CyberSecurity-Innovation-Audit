@@ -50,6 +50,7 @@ class RuntimeTypeModel:
 class AnalysisBudget:
     max_source_bytes: int = 1024 * 1024
     max_instructions: int = 4096
+    max_scope_depth: int = 128
     max_states: int = 2048
     max_steps: int = 8192
     max_seconds: float = 5.0

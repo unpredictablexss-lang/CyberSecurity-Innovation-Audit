@@ -55,6 +55,28 @@ class TypeOriginTests(unittest.TestCase):
         self.assertEqual(result.status, 'limited')
         self.assertEqual(result.file_outcome, 'not_analyzed')
 
+    def test_relevant_macro_redefinition_is_not_silently_ignored(self):
+        code = '#define StoreTypedArrayElement(a,b,c,d,e) something_else(a,b,c,d,e)\n' + case('C03').text
+        result = analyze_unit(unit(code))
+        self.assertEqual(result.file_outcome, 'not_analyzed')
+        self.assertIn('model_symbol_macro_redefined', result.limitations)
+
+    def test_conditional_compilation_needs_build_context(self):
+        code = '#ifdef UNKNOWN_BUILD\n' + case('C03').text + '\n#endif\n'
+        result = analyze_unit(unit(code))
+        self.assertFalse(any(o.kind == 'candidate' for o in result.observations))
+        self.assertIn('target_conditional_compilation_unresolved', result.limitations)
+
+    def test_unresolved_receiver_is_unknown_not_silently_matched(self):
+        code = wrap(PREFIX + 'foreign.StoreTypedArrayElement(glue, output, count, input, inputTag);')
+        self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['unknown'])
+
+    def test_unmodeled_lambda_is_not_expanded_as_current_function(self):
+        code = wrap(PREFIX + 'auto later = [&]() { StoreTypedArrayElement(glue, output, count, input, inputTag); };\nlater();')
+        result = analyze_unit(unit(code))
+        self.assertTrue(any(o.kind == 'unknown' for o in result.observations))
+        self.assertFalse(any(o.kind == 'candidate' for o in result.observations))
+
 
 if __name__ == '__main__':
     unittest.main()

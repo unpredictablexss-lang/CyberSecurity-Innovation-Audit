@@ -69,6 +69,14 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                               limitations=('target_not_resolved_in_partial_ast',) if actual_partial else ('not_applicable_to_rule',),
                               model_digest=model.digest)
     observations, limitations, total_steps = [], [], 0
+    model_names = {'GetObjectType', 'LoadHClass', model.store_name, model.creator_name,
+                   'NewObjectStubBuilder', 'GateRef', 'BRANCH', 'Bind', 'Jump', 'LoopBegin', 'LoopEnd'}
+    for node in walk(tree.root_node):
+        if node.type in ('preproc_def', 'preproc_function_def'):
+            name = node.child_by_field_name('name')
+            if name and data[name.start_byte:name.end_byte].decode() in model_names:
+                return AnalysisResult('limited', 'not_analyzed', limitations=('model_symbol_macro_redefined',),
+                                      model_digest=model.digest)
     if actual_partial or unit.parse_status != 'complete':
         limitations.extend(('research_only_partial_function_scope',
                             'parse_dependency_contamination_unknown', 'production_runner_not_admitted'))
@@ -76,6 +84,19 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     if signatures and any(tuple(f.parameter_types) != model.store_types for f in signatures):
         return AnalysisResult('limited', 'partial', limitations=('sink_definition_signature_mismatch',), model_digest=model.digest)
     for fn in targets:
+        if any(n.type in ('class_specifier', 'struct_specifier')
+               and fn.text(n.child_by_field_name('name')) == 'NewObjectStubBuilder'
+               for n in walk(fn.body)):
+            limitations.append('model_creator_type_shadowed')
+            continue
+        parent = fn.node.parent
+        conditional = False
+        while parent is not None:
+            conditional |= parent.type in ('preproc_if', 'preproc_ifdef', 'preproc_else', 'preproc_elif')
+            parent = parent.parent
+        if conditional:
+            limitations.append('target_conditional_compilation_unresolved')
+            continue
         if tuple(fn.parameter_types) != model.caller_types:
             limitations.append('caller_signature_mismatch')
             continue
@@ -152,7 +173,9 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     observations = tuple(unique[key] for key in sorted(unique))
     if any(o.kind == 'unknown' for o in observations):
         limitations.append('unresolved_local_observations')
-    if not observations and any(x in limitations for x in ('target_function_parse_error', 'caller_signature_mismatch')):
+    if not observations and any(x in limitations for x in ('target_function_parse_error', 'caller_signature_mismatch',
+                                                          'target_conditional_compilation_unresolved',
+                                                          'ambiguous_target_definition', 'model_creator_type_shadowed')):
         outcome = 'not_analyzed'
     else:
         outcome = 'partial' if limitations else 'complete'

@@ -19,16 +19,18 @@ UNKNOWN = Value()
 
 
 class OriginState:
-    def __init__(self, values=None, equivalent=(), invalidated=()):
+    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=()):
         self.values = dict(values or {})
         self.equivalent = frozenset(equivalent)
         self.invalidated = frozenset(invalidated)
+        self.predicates = frozenset(predicates)
 
     def copy(self):
-        return OriginState(self.values, self.equivalent, self.invalidated)
+        return OriginState(self.values, self.equivalent, self.invalidated, self.predicates)
 
     def key(self):
-        return (tuple(sorted(self.values.items())), tuple(sorted(self.equivalent)), tuple(sorted(self.invalidated)))
+        return (tuple(sorted(self.values.items())), tuple(sorted(self.equivalent)),
+                tuple(sorted(self.invalidated)), tuple(sorted(self.predicates)))
 
 
 class OriginEvaluator:
@@ -73,10 +75,12 @@ class OriginEvaluator:
                     return Value('object', f'new:{node.start_byte}', origin=source.identity,
                                  origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
                                  may_differ=self.model.species_may_change_type)
-        return UNKNOWN
+        return Value('unknown', identity=f'expr:{node.start_byte}')
 
     def update(self, instruction, state):
         fn, node = self.fn, instruction.node
+        if instruction.kind not in ('declaration', 'expression'):
+            return
         if instruction.kind == 'declaration':
             typ = compact(fn.text(node.child_by_field_name('type')))
             for child in node.named_children:
@@ -108,6 +112,11 @@ class OriginEvaluator:
                     and '.' not in name and '->' not in name):
                 objects = [self.value(a, state) for a in args]
                 state.invalidated |= frozenset(v.identity for v in objects if v.kind == 'object')
+            callee = node.child_by_field_name('function')
+            if callee and callee.type == 'field_expression':
+                obj = self.value(callee.child_by_field_name('argument'), state)
+                if obj.kind == 'object':
+                    state.invalidated |= frozenset((obj.identity,))
 
     def store_arguments(self, node, state):
         fn, model = self.fn, self.model
@@ -115,6 +124,9 @@ class OriginEvaluator:
             return None
         name = fn.call_name(node)
         if name not in (model.store_name, 'this->' + model.store_name, OWNER + '::' + model.store_name):
+            callee = node.child_by_field_name('function')
+            if callee and callee.type == 'field_expression' and fn.text(callee.child_by_field_name('field')) == model.store_name:
+                return ('unknown', UNKNOWN, UNKNOWN, 'unresolved_sink_receiver')
             return None
         if fn.resolve(model.store_name, node):
             return ('unknown', UNKNOWN, UNKNOWN, 'shadowed_sink')
@@ -127,7 +139,7 @@ class OriginEvaluator:
             return ('unknown', target, token, 'unresolved_target_or_type_origin')
         pair = tuple(sorted((target.identity, token.origin)))
         if token.origin == target.identity or pair in state.equivalent:
-            if target.identity in state.invalidated:
+            if target.identity in state.invalidated or token.origin in state.invalidated:
                 return ('unknown', target, token, 'type_fact_invalidated_by_call')
             return ('matched', target, token, 'target_origin_or_proved_type_equality')
         if target.may_differ and target.creation_line:
@@ -141,11 +153,19 @@ class OriginEvaluator:
             return state if truth else None
         if written in ('false', 'False()', 'Boolean(false)'):
             return state if not truth else None
+        if condition.type == 'identifier':
+            value = self.value(condition, state)
+            if value.identity and value.identity not in state.invalidated:
+                if (value.identity, not truth) in state.predicates:
+                    return None
+                state.predicates |= frozenset(((value.identity, truth),))
         if condition.type == 'call_expression' and fn.call_name(condition) in ('Int32Equal', 'Equal'):
             args = fn.arguments(condition)
             if len(args) == 2:
                 left, right = (self.value(a, state) for a in args)
                 if left.kind == right.kind == 'type':
+                    if left.origin in state.invalidated or right.origin in state.invalidated:
+                        return state
                     pair = tuple(sorted((left.origin, right.origin)))
                     known_equal = left.origin == right.origin or pair in state.equivalent
                     if known_equal and not truth:

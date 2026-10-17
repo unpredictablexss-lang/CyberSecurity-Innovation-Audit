@@ -1,6 +1,6 @@
 """Bounded generated-code graph. C++ nesting is not generated control flow."""
 from dataclasses import dataclass, field
-from .syntax import compact
+from .syntax import walk
 
 CONTROL = {'BRANCH', 'Bind', 'Jump', 'LoopBegin', 'LoopEnd'}
 
@@ -38,19 +38,24 @@ def build_graph(fn, budget):
     def append(node, kind, arguments=(), problem=''):
         instructions.append(Instruction(node, kind, arguments, problem=problem))
 
-    def visit(node):
+    def visit(node, depth=0):
+        if depth > budget.max_scope_depth:
+            raise ValueError('scope_depth_budget_exhausted')
         if len(instructions) >= budget.max_instructions:
             raise ValueError('instruction_budget_exhausted')
         if node.type == 'compound_statement':
             for child in node.named_children:
-                visit(child)
+                visit(child, depth + 1)
         elif node.type in ('if_statement', 'switch_statement', 'for_statement', 'while_statement',
                            'do_statement', 'try_statement', 'preproc_if', 'preproc_ifdef'):
             append(node, 'unknown', problem='unsupported_host_control_or_macro')
         elif node.type == 'return_statement':
             append(node, 'return')
         elif node.type == 'declaration':
-            append(node, 'declaration')
+            if any(n.type == 'lambda_expression' for n in walk(node)):
+                append(node, 'unknown', problem='unmodeled_lambda_or_escape')
+            else:
+                append(node, 'declaration')
         elif node.type == 'expression_statement':
             expression = node.named_children[0] if node.named_children else None
             if expression is None:
@@ -86,6 +91,8 @@ def build_graph(fn, budget):
             label = label_identity(fn, inst.arguments[0])
             if label is None:
                 inst.problem = 'unresolved_label_binding'
+            elif label in external:
+                inst.problem = 'unsupported_binding_of_external_label'
             elif label in labels:
                 duplicated.add(label)
             else:
