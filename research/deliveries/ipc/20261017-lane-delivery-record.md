@@ -6,7 +6,7 @@
 
 - lane `lanes.ipc`；branch `work/ipc-20261017`
 - base `6a41dc9b1aa030158e09be6241e2b14341f9256d`（integration base，本线**未** rebase）
-- head：**本记录所在提交**。本线在本 base 上共 9 个提交，按提交信息依次是
+- head：**本记录所在提交**。本线在本 base 上共 10 个提交，按提交信息依次是
   "per-rule controls for the six families, and an 18-component measurement"（`bb24978`）→
   "census the shapes the six silent rules key on"（`09f49d7`）→
   "why the six silent rules are silent, and 12 more components"（`46d4f64`）→
@@ -15,7 +15,8 @@
   "measure the coverage ceiling instead of assuming it"（`24c7f6c`）→
   "widen the corpus by mechanism, and measure the loudest rule"（`629f047`）→
   "screen every emitting rule with the same modes, and read every flagged row"（`4214a4f`）→
-  "fill the three family directories and cover the engine cases on both sides"（本提交）——
+  "fill the three family directories and cover the engine cases on both sides"（`50e776a`）→
+  "measure whether the five engine cases occur in real code, and what the reports keep"（本提交）——
   本提交的确切 SHA 会随 `--amend` 变化，故此处不写死；**未 push、未开 PR、未标 Ready、未 merge**
 - worktree `/home/audit/ohscanner/worktrees/parallel-ipc-20261017`
 
@@ -95,12 +96,14 @@ research/deliveries/ipc/20261017-engine-case-coverage-six-families.md          (
 research/deliveries/ipc/family_dir_measurement.py              (只读，按深度单元自己的 helper 复现全部 pin)
 research/deliveries/ipc/engine_boundary_probe.py               (只读，§4/§5/§6 三条边界的逐差探针)
 tests/test_ipc_family_depth.py                                 (12 → 19 项测试)
+research/deliveries/ipc/20261017-engine-case-corpus-census.md  (交付项 13)
+research/deliveries/ipc/engine_case_corpus_census.py           (只读，形状×语料×已保存报告×作用域计划四节)
 ```
 
 ```console
 $ .venv-web/bin/python scripts/check_change_scope.py \
     --base 6a41dc9b1aa030158e09be6241e2b14341f9256d --lane ipc
-  "checked_paths": 163 项
+  "checked_paths": 165 项
   "violations": []
   exit 0
 ```
@@ -117,7 +120,8 @@ $ .venv-web/bin/python scripts/check_change_scope.py \
 本批（交付项 11）新增交付项 11 本身、`rule_precision_screen.py`
 与 `rule_precision_screen_20261017/rule_precision_screen.json` 各一份；
 本批（交付项 12）新增 `auth02/` `auth04/` `cap01/` 三个家族目录共 16 个夹具 + 3 份 manifest、
-交付项 12 本身与两份只读仪器 —— **141 → 163**。）
+交付项 12 本身与两份只读仪器；本批（交付项 13）新增交付项 13 本身与
+`engine_case_corpus_census.py` 一份 —— **141 → 163 → 165**。）
 `--no-renames` 与策略取自 base 提交，本线**没有**为过检查改过策略。
 这份 141 项的清单同时含**三个来源**：本线七个提交新增的文件；并发 import 留在
 `src/ohscanner/detectors/interface/**` 与 `tests/**` 的既有脏文件（本线从未 stage 过它们，
@@ -459,6 +463,21 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
    （需读 `analysis.py` / `bind_result`）。**故意不做成夹具**：在预期行为定下来之前把它写进 pin 表
    等于替引擎定行为。详见交付项 12 §5。另两条边界（对象宏命名的类名使入口索引不绑定 dispatch、
    成员定义的角色谓词读 body 而文件作用域定义直接拒名）已固化为夹具并双侧断言。
+10. **引擎的 case 级推理不进已保存报告（交付项 13 §4，共享面）** —— 一跳采信/拒绝、
+   非唯一拒绝、同名遮蔽这些句子由 `IpcInterfaceDetector.detect(...)` 的
+   `run.limitations` 产出，深度单测就是靠它断言两侧的；但在 54 份已保存报告文件里，
+   七个 case 标记（`one-hop`/`Cross-TU`/`not unique`/`credited`/`shadow`/
+   `Dispatch handler`/`caller-role`）命中 **0**，`report.json` 的 `limitations` 是每组
+   10 条固定字符串。报告只带每候选的溯源（`file_analysis_status`/`file_parse_status`/
+   `passes`/`source_binding`），不带"为什么被采信/为什么这条一跳没被采信"。
+   报告面属 owner/共享面，本线只记录，**需集成人另开请求**再谈是否落盘。
+11. **本车道当前修订里搜不到那份生产段排除清单（交付项 13 §7.3）** —— 已保存 42 份报告的
+   作用域计划来自 pinned 修订（`635b3e0` 的 `interface/audit.py:122`
+   `PRODUCTION_EXCLUDED_SEGMENTS`）；在本 worktree 的当前修订里，`src/` 下搜不到等价清单，
+   `families/` 只有族适配。这**不是**缺陷判断（批量 run 用的是 pinned 仓库），
+   是要点名的一条开放项：从当前修订驱动的一次运行会在别处推导作用域，需与并行会话确认。
+   附带一条实测口径：分段规则下 `rdbmock/`、`kvstoremock/` **不**被排除（要求整段等于
+   `mock`），这两个组件的计划里确实点名了那 4 个 const 形式文件（921/921、1446/1446）。
 
 ## 本地提交完成；push/merge/Ready 需另有明确授权
 

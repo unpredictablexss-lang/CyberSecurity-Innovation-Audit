@@ -209,7 +209,10 @@ tests/test_ipc_detector.py:168 AssertionError: 'partial' != 'blocked'
    `denied_complement_positive`；本线未提交该文件。
 4. **本交付只到静态候选与合成夹具**：无 PoC、无动态验证、`validated_vulnerability` 恒为 0、
    `confirmed` 候选 0 条。夹具把它自己的规则触发起来 ≠ 该规则在真实代码上会响，
-   更 ≠ 发现漏洞。**未做**在真实组件语料上复测本次新增夹具所覆盖的五种模式。
+   更 ≠ 发现漏洞。**（本条后半已由交付项 13 补上：五种模式在三条语料与 42 份已保存报告上
+   复测完毕 —— 三种形状真实存在、S1 的 const 形式全语料 6 处且非入口形态、S4 与夹具同形的
+   0 处；触及候选的只有 S1 可变形式与 S5，S3/S4 零触及。详见
+   `20261017-engine-case-corpus-census.md`。）**
 
 ## 11. 本地提交；push / merge / Ready 需另有明确授权
 
