@@ -5,3 +5,5 @@ compile_exit=bounds_vulnerable=0
 compile_exit=bounds_fixed=0
 compile_exit=integer_vulnerable=0
 compile_exit=integer_fixed=0
+compile_exit=cve_2025_23420_vulnerable=0
+compile_exit=cve_2025_23420_fixed=0

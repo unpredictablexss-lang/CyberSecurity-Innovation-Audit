@@ -8,12 +8,12 @@
 - Snapshot SHA-256: `ed782acd6668c44b92c66e1dfa27e2641c8abfb5bc2bd4d5af4a274377332a8d`
 - Scope manifest SHA-256: `efe84b4b11aa36a4bf072438acd1171dd6769be1877fdfd1f8f4897b66cffe4e`
 - Selected files/bytes: 550/3484891
-- Wall seconds: 4.265939
+- Wall seconds: 4.339193
 - Candidate findings/groups: 4/2
 
 ## Detector runs
 
-### `ohscanner.cpp.bounds` 0.1.0 (blocked)
+### `ohscanner.cpp.bounds` 0.2.0 (blocked)
 
 - No candidate emitted in the analyzed lexical scope.
 

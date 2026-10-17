@@ -11,7 +11,7 @@ FLAGS=(-std=c++17 -O1 -g -fno-omit-frame-pointer -fsanitize=address,undefined)
   echo "flags=${FLAGS[*]}"
   echo "root=$ROOT"
 } > "$OUT/environment.txt"
-for name in bounds_vulnerable bounds_fixed integer_vulnerable integer_fixed; do
+for name in bounds_vulnerable bounds_fixed integer_vulnerable integer_fixed cve_2025_23420_vulnerable cve_2025_23420_fixed; do
   "$CXX" "${FLAGS[@]}" "$SRC/$name.cpp" -o "$OUT/$name"
   echo "compile_exit=$name=$?" >> "$OUT/environment.txt"
 done
@@ -24,5 +24,9 @@ echo "$?" > "$OUT/bounds_fixed.exit.txt"
 echo "$?" > "$OUT/integer_vulnerable.exit.txt"
 "$OUT/integer_fixed" 4294967295 > "$OUT/integer_fixed.stdout.txt" 2> "$OUT/integer_fixed.stderr.txt"
 echo "$?" > "$OUT/integer_fixed.exit.txt"
+"$OUT/cve_2025_23420_vulnerable" > "$OUT/cve_2025_23420_vulnerable.stdout.txt" 2> "$OUT/cve_2025_23420_vulnerable.stderr.txt"
+echo "$?" > "$OUT/cve_2025_23420_vulnerable.exit.txt"
+"$OUT/cve_2025_23420_fixed" fixed > "$OUT/cve_2025_23420_fixed.stdout.txt" 2> "$OUT/cve_2025_23420_fixed.stderr.txt"
+echo "$?" > "$OUT/cve_2025_23420_fixed.exit.txt"
 set -e
 sha256sum "$SRC"/*.cpp "$OUT"/*.stdout.txt "$OUT"/*.stderr.txt "$OUT"/*.exit.txt > "$OUT/sha256sums.txt"

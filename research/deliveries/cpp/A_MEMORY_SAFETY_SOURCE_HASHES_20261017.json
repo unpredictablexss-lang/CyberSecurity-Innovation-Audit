@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_memory_safety_source_hashes",
+  "files": [
+    {
+      "path": "src/ohscanner/detectors/cpp/memory_safety.py",
+      "bytes": 17049,
+      "sha256": "e7a09e26e068303cbbfded657004e21346833c803820fa3e62df66be73478bf8"
+    },
+    {
+      "path": "src/ohscanner/detectors/cpp/bounds_detector.py",
+      "bytes": 14680,
+      "sha256": "57cbaf792e74f6ae4d9b48d5ffd2e29c61ecfb53c748ffbc2d2ba8bca97733d6"
+    },
+    {
+      "path": "src/ohscanner/detectors/cpp/integer_bounds_detector.py",
+      "bytes": 16143,
+      "sha256": "ee3efaf917726a7e32aa7b6d6059b2b95b9b03c60c8701517778d07394701500"
+    },
+    {
+      "path": "scripts/run_cpp_memory_safety_scan.py",
+      "bytes": 12561,
+      "sha256": "ec96e7845f55dc936a79e9fdaca0a7b05661107eea52e6c29946b359278683de"
+    },
+    {
+      "path": "scripts/replay_cpp_historical_memory_cases.py",
+      "bytes": 7576,
+      "sha256": "fc46c895ca52406f6d41af6953ed1e931969b4d510352debca93f4fa6a6eb039"
+    },
+    {
+      "path": "tests/detectors/test_cpp_memory_safety_detectors.py",
+      "bytes": 12512,
+      "sha256": "6ed73437db540a4b4a3b824905968cc35bf11554b3f96c681f6ba13e5e4eaf73"
+    },
+    {
+      "path": "validation/cpp_memory_safety_poc/run.sh",
+      "bytes": 1710,
+      "sha256": "85a00043e1313fd14870547b70aca21d8f62673d9a20d2d179540ef4b5c2c717"
+    },
+    {
+      "path": "validation/cpp_memory_safety_poc/cve_2025_23420_vulnerable.cpp",
+      "bytes": 1656,
+      "sha256": "045a9d4a09e11f4d403730f641f48392dbec3cc7f2f7a52211d0aa2ac0ee4727"
+    },
+    {
+      "path": "validation/cpp_memory_safety_poc/cve_2025_23420_fixed.cpp",
+      "bytes": 1540,
+      "sha256": "43b2db0f11b2bfdb8bd8b58279dbdc177e9e1c9ca973b09a5127ddea1a977993"
+    }
+  ]
+}

@@ -50,7 +50,7 @@ void positive(char *src, unsigned int n) {
 """)
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.bounds")
-        self.assertEqual(self.detector.version, "0.1.0")
+        self.assertEqual(self.detector.version, "0.2.0")
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
         self.assertEqual({item.rule_id for item in run.findings}, {
@@ -59,7 +59,7 @@ void positive(char *src, unsigned int n) {
         })
         for finding in run.findings:
             self.assertEqual(finding.source_sha256, source.sha256)
-            self.assertEqual(finding.rule_version, "0.1.0")
+            self.assertEqual(finding.rule_version, "0.2.0")
             self.assertEqual(finding.rule_lineage_id, "A-BOF-01:ohcpp-memory-bounds-candidate")
             self.assertEqual(finding.identity_quality, "partial")
             self.assertGreaterEqual(len(finding.evidence_obligations), 7)
@@ -85,6 +85,42 @@ void exact(char *src) {
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
 
+    def test_direct_sort_element_access_without_stability_guard_is_candidate(self) -> None:
+        source = unit("positive/sort_element_access.cpp", """
+struct Handle {};
+struct Value {};
+namespace ElementAccessor {
+Value Get(Handle, unsigned int);
+void Set(Handle, unsigned int, Value, bool);
+}
+void SortElementsByObject(Handle h, Value v, unsigned int len) {
+    for (unsigned int i = 1; i < len; i++) {
+        Value x = ElementAccessor::Get(h, i);
+        ElementAccessor::Set(h, i, x, false);
+    }
+}
+""")
+        run = self.detector.detect(context_for(source), (source,))
+        self.assertGreaterEqual(len(run.findings), 2)
+        self.assertIn("ohcpp-memory-bounds-element-access-candidate-003", {item.rule_id for item in run.findings})
+
+    def test_stable_array_wrapper_and_unrelated_accessor_are_quiet(self) -> None:
+        source = unit("fixed/stable_element_access.cpp", """
+struct Handle {};
+struct Value {};
+namespace ElementAccessor {
+Value Get(Handle, unsigned int);
+void Set(Handle, unsigned int, Value, bool);
+unsigned int GetElementsLength(Handle);
+}
+Value CheckStableArrayAndGet(Handle h, unsigned int index) {
+    if (index < ElementAccessor::GetElementsLength(h)) return ElementAccessor::Get(h, index);
+    return Value();
+}
+void Unrelated(Handle h) { ElementAccessor::Set(h, 0, Value(), false); }
+""")
+        run = self.detector.detect(context_for(source), (source,))
+        self.assertEqual(run.findings, ())
     def test_unrelated_dynamic_destination_is_unknown_not_candidate(self) -> None:
         source = unit("unrelated/dynamic.cpp", """
 void unrelated(char *dst, char *src, unsigned int n) {
@@ -266,4 +302,3 @@ class MemorySafetyControlManifestTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

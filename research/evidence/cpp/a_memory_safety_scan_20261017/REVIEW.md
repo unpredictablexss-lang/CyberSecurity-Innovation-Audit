@@ -6,12 +6,12 @@
 
 - 5 个既有固定组件 scope manifests，4983 个 selected source files、51551827 bytes。
 - 精确 commit/tree/snapshot/source SHA、scope manifest SHA、profile `light-ast` 已写入各组件 JSON。
-- A-BOF-01/A-INT-01 总 wall 52.4s（每组件 1.0-20.5s），进程峰值 RSS 282800 KiB；这是本地固定范围成本，不是全 OpenHarmony 容量认证。
+- A-BOF-01/A-INT-01 总 wall 52.078s（每组件 1.0-20.5s），进程峰值 RSS 282652 KiB；这是本地固定范围成本，不是全 OpenHarmony 容量认证。
 - `bounds` 没有产生候选；其局部容量/索引覆盖仍因 partial parse、别名和宏上下文而 blocked/unknown。
 
 ## Candidate review
 
-当前快照为 16 条 lexical candidates / 11 个 detector-rule-symbol groups；不是 16 个漏洞。代表性高价值候选：
+当前快照为 16 条 lexical candidates / 10 个 detector-rule-symbol groups；不是 16 个漏洞。代表性高价值候选：
 
 | 组 | 固定位置 | 观察 | 当前结论 |
 |---|---|---|---|

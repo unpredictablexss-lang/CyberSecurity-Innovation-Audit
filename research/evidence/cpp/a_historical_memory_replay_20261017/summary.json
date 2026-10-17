@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_memory_safety_historical_replay",
+  "status": "completed_with_limitations",
+  "cases": [
+    {
+      "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
+      "cve": "CVE-2025-23420",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "source_repo_path": "/mnt/e/网安/_oh_targets/arkcompiler_ets_runtime",
+      "vulnerable": {
+        "commit": "aeee3fd12c03193545edea4b8e0fdfa3d9a03d11",
+        "git_tree": "0eea26c9eb6846f4d19926be83092c06f0d98692",
+        "files": [
+          {
+            "path": "ecmascript/js_array.cpp",
+            "blob_oid": "2c58914ad27b6b3c5f570dbd2fe0ed02d1d9e471",
+            "bytes": 31896,
+            "sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "1b23531531e768398682582969c2a9f17e72cafe",
+        "git_tree": "52f27683e2f6e1ba8272aee7d5202c73059e10b4",
+        "files": [
+          {
+            "path": "ecmascript/js_array.cpp",
+            "blob_oid": "58266855967e3dc4af97721d3a2fc5417cb887b6",
+            "bytes": 32924,
+            "sha256": "f6325075773451b9c9a314c6fec0c0177331786f5c9e6ce3069974eb4c79b0f6"
+          }
+        ]
+      },
+      "patch_sha256": "e0b61dde4058080ee28184d49b3d7da80e4ad428bc2030a04fc5f69bccbc0512",
+      "detector_id": "ohscanner.cpp.bounds",
+      "expected": "possible_hit",
+      "observations": [
+        {
+          "revision": "vulnerable",
+          "status": "possible_hit",
+          "raw_status": "possible_hit",
+          "candidate_count": 5,
+          "detector_status": "completed",
+          "findings": [
+            {
+              "file": "ecmascript/js_array.cpp",
+              "line": 650,
+              "column": 29,
+              "rule_id": "ohcpp-memory-bounds-element-access-candidate-003",
+              "candidate_cwe": "CWE-125",
+              "symbol": "SortElementsByObject",
+              "message": "Candidate only: direct `ElementAccessor::Get` in `SortElementsByObject` lacks a modeled stable-array/index guard; backing-store shrink or comparator mutation may cause an out-of-bounds read/write. Runtime reachability and product impact remain unknown.",
+              "source_sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b"
+            },
+            {
+              "file": "ecmascript/js_array.cpp",
+              "line": 653,
+              "column": 32,
+              "rule_id": "ohcpp-memory-bounds-element-access-candidate-003",
+              "candidate_cwe": "CWE-125",
+              "symbol": "SortElementsByObject",
+              "message": "Candidate only: direct `ElementAccessor::Get` in `SortElementsByObject` lacks a modeled stable-array/index guard; backing-store shrink or comparator mutation may cause an out-of-bounds read/write. Runtime reachability and product impact remain unknown.",
+              "source_sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b"
+            },
+            {
+              "file": "ecmascript/js_array.cpp",
+              "line": 665,
+              "column": 38,
+              "rule_id": "ohcpp-memory-bounds-element-access-candidate-003",
+              "candidate_cwe": "CWE-125",
+              "symbol": "SortElementsByObject",
+              "message": "Candidate only: direct `ElementAccessor::Get` in `SortElementsByObject` lacks a modeled stable-array/index guard; backing-store shrink or comparator mutation may cause an out-of-bounds read/write. Runtime reachability and product impact remain unknown.",
+              "source_sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b"
+            },
+            {
+              "file": "ecmascript/js_array.cpp",
+              "line": 666,
+              "column": 17,
+              "rule_id": "ohcpp-memory-bounds-element-access-candidate-003",
+              "candidate_cwe": "CWE-787",
+              "symbol": "SortElementsByObject",
+              "message": "Candidate only: direct `ElementAccessor::Set` in `SortElementsByObject` lacks a modeled stable-array/index guard; backing-store shrink or comparator mutation may cause an out-of-bounds read/write. Runtime reachability and product impact remain unknown.",
+              "source_sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b"
+            },
+            {
+              "file": "ecmascript/js_array.cpp",
+              "line": 668,
+              "column": 13,
+              "rule_id": "ohcpp-memory-bounds-element-access-candidate-003",
+              "candidate_cwe": "CWE-787",
+              "symbol": "SortElementsByObject",
+              "message": "Candidate only: direct `ElementAccessor::Set` in `SortElementsByObject` lacks a modeled stable-array/index guard; backing-store shrink or comparator mutation may cause an out-of-bounds read/write. Runtime reachability and product impact remain unknown.",
+              "source_sha256": "b7f28be2f63850ba1cb57a35d518930986855784d2081124e555f2a57d673e9b"
+            }
+          ]
+        },
+        {
+          "revision": "fixed",
+          "status": "miss",
+          "raw_status": "miss",
+          "candidate_count": 0,
+          "detector_status": "completed",
+          "findings": []
+        }
+      ],
+      "limitations": [
+        "Historical replay is a capability signal, not a new vulnerability claim.",
+        "A possible_hit is not a confirmed product vulnerability; a miss is not a global detector recall claim.",
+        "Kernel race and user/kernel boundary cases are not_applicable to the current bounds/integer lexical rules."
+      ]
+    },
+    {
+      "sample_id": "kernel_liteos_a-getgroups-oob-2025-03",
+      "cve": "CVE-2025-20042",
+      "repository": "openharmony/kernel_liteos_a",
+      "source_repo_path": "/mnt/e/网安/_wsl_targets_stage/kernel_liteos_a",
+      "vulnerable": {
+        "commit": "6ac8e246b0efd57a28ea05b6e6973ae0602fe032",
+        "git_tree": "d871d7772afffa7a084485d2e8570d1bb7634ea3",
+        "files": [
+          {
+            "path": "syscall/process_syscall.c",
+            "blob_oid": "48c5f81791cfe3f8682a5c2f8ad5d1fddfa6e041",
+            "bytes": 33053,
+            "sha256": "c00871f4989136366672035383dfa03464f32cb9f675f3f5c7d4cb9ddaf1ccc7"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "940a5a8c2cd1ced84d435933dbcdbb1a7fbf3000",
+        "git_tree": "220e1d9eb5278e1f5a6804f7c42b3ee7f269297c",
+        "files": [
+          {
+            "path": "syscall/process_syscall.c",
+            "blob_oid": "59d914f784bdfb37781b8e7c142fe251527d80f9",
+            "bytes": 33133,
+            "sha256": "36a5c34f9fd5c38e4f0011e4ae207e8b22c74ecffccdce8700470f53e1ace10d"
+          }
+        ]
+      },
+      "patch_sha256": "0de5b45a31831c4984efc5e594897e200ea2dd5041c5a21545e107b1a3dd0ebc",
+      "detector_id": "ohscanner.cpp.bounds",
+      "expected": "not_applicable",
+      "observations": [
+        {
+          "revision": "vulnerable",
+          "status": "not_applicable",
+          "raw_status": "miss",
+          "candidate_count": 0,
+          "detector_status": "blocked",
+          "findings": []
+        },
+        {
+          "revision": "fixed",
+          "status": "not_applicable",
+          "raw_status": "miss",
+          "candidate_count": 0,
+          "detector_status": "blocked",
+          "findings": []
+        }
+      ],
+      "limitations": [
+        "Historical replay is a capability signal, not a new vulnerability claim.",
+        "A possible_hit is not a confirmed product vulnerability; a miss is not a global detector recall claim.",
+        "Kernel race and user/kernel boundary cases are not_applicable to the current bounds/integer lexical rules."
+      ]
+    },
+    {
+      "sample_id": "kernel_liteos_a-os-copy-user-param-bypass-2025-03",
+      "cve": "CVE-2025-21098",
+      "repository": "openharmony/kernel_liteos_a",
+      "source_repo_path": "/mnt/e/网安/_wsl_targets_stage/kernel_liteos_a",
+      "vulnerable": {
+        "commit": "f83c7205e7d685a999e5de360423c13db1886453",
+        "git_tree": "fe762b18386c3000cd5b494ad5cdccd02ef76cba",
+        "files": [
+          {
+            "path": "kernel/extended/dynload/src/los_exec_elf.c",
+            "blob_oid": "57d8969b92041e93b7dc74c43c6a88a704b5d2b3",
+            "bytes": 5822,
+            "sha256": "02cf9c442349e6e6280edf5c9bfc0c97ef749440a87632a5d4c50e1bb1c0a312"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "e6eb21f55e4768f6cfbf09cedb0b35259bafcb4b",
+        "git_tree": "bb66df0667d93cd81c2dee2bd4d6028168f6e79d",
+        "files": [
+          {
+            "path": "kernel/extended/dynload/src/los_exec_elf.c",
+            "blob_oid": "90bd24b9ed8668470eb8f154259af4fa627f1640",
+            "bytes": 6150,
+            "sha256": "051f484a585d01ccc99e992342774203b64f8b59035cfc6849372bfb8fd40e6b"
+          }
+        ]
+      },
+      "patch_sha256": "0e0668e5989b5f7f46ee6daf367049a065ba678ba91f3052e60499620ade1888",
+      "detector_id": "not_applicable",
+      "expected": "not_applicable",
+      "observations": [
+        {
+          "revision": "vulnerable",
+          "status": "not_applicable",
+          "candidate_count": null,
+          "detector_status": "not_applicable",
+          "findings": []
+        },
+        {
+          "revision": "fixed",
+          "status": "not_applicable",
+          "candidate_count": null,
+          "detector_status": "not_applicable",
+          "findings": []
+        }
+      ],
+      "limitations": [
+        "Historical replay is a capability signal, not a new vulnerability claim.",
+        "A possible_hit is not a confirmed product vulnerability; a miss is not a global detector recall claim.",
+        "Kernel race and user/kernel boundary cases are not_applicable to the current bounds/integer lexical rules."
+      ]
+    }
+  ],
+  "environment": {
+    "python": "3.10.12",
+    "git": "git version 2.34.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "exact_argv": [
+    "scripts/replay_cpp_historical_memory_cases.py",
+    "--out-dir",
+    "research/evidence/cpp/a_historical_memory_replay_20261017"
+  ]
+}

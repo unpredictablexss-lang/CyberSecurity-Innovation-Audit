@@ -1,14 +1,14 @@
 =================================================================
-==1012==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffedbf38680 at pc 0x64b0b942d486 bp 0x7ffedbf38650 sp 0x7ffedbf38640
-WRITE of size 16 at 0x7ffedbf38680 thread T0
-    #0 0x64b0b942d485 in memcpy /usr/include/x86_64-linux-gnu/bits/string_fortified.h:29
-    #1 0x64b0b942d485 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/bounds_vulnerable.cpp:6
-    #2 0x7d8dc0829d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
-    #3 0x7d8dc0829e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f)
-    #4 0x64b0b942d224 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/a_memory_safety_20261017_runtime/bounds_vulnerable+0x1224)
+==936==ERROR: AddressSanitizer: stack-buffer-overflow on address 0x7ffda2934960 at pc 0x5c1fe8d41486 bp 0x7ffda2934930 sp 0x7ffda2934920
+WRITE of size 16 at 0x7ffda2934960 thread T0
+    #0 0x5c1fe8d41485 in memcpy /usr/include/x86_64-linux-gnu/bits/string_fortified.h:29
+    #1 0x5c1fe8d41485 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/bounds_vulnerable.cpp:6
+    #2 0x7c5d26629d8f  (/lib/x86_64-linux-gnu/libc.so.6+0x29d8f)
+    #3 0x7c5d26629e3f in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29e3f)
+    #4 0x5c1fe8d41224 in _start (/mnt/e/网安/CyberSecurity-Innovation-Audit/outputs/poc/a_memory_safety_20261017_runtime/bounds_vulnerable+0x1224)
 
-Address 0x7ffedbf38680 is located in stack of thread T0 at offset 32 in frame
-    #0 0x64b0b942d2f8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/bounds_vulnerable.cpp:3
+Address 0x7ffda2934960 is located in stack of thread T0 at offset 32 in frame
+    #0 0x5c1fe8d412f8 in main /mnt/e/网安/CyberSecurity-Innovation-Audit/validation/cpp_memory_safety_poc/bounds_vulnerable.cpp:3
 
   This frame has 2 object(s):
     [32, 40) 'destination' (line 5) <== Memory access at offset 32 partially overflows this variable
@@ -17,17 +17,17 @@ HINT: this may be a false positive if your program uses some custom stack unwind
       (longjmp and C++ exceptions *are* supported)
 SUMMARY: AddressSanitizer: stack-buffer-overflow /usr/include/x86_64-linux-gnu/bits/string_fortified.h:29 in memcpy
 Shadow bytes around the buggy address:
-  0x10005b7df080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df0a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df0b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df0c0: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
-=>0x10005b7df0d0:[00]f2 f2 f2 00 00 f3 f3 00 00 00 00 00 00 00 00
-  0x10005b7df0e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df0f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df110: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  0x10005b7df120: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e8d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e8e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e8f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e910: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x10003451e920: 00 00 00 00 00 00 00 00 f1 f1 f1 f1[00]f2 f2 f2
+  0x10003451e930: 00 00 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e940: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e950: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e960: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x10003451e970: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 Shadow byte legend (one shadow byte represents 8 application bytes):
   Addressable:           00
   Partially addressable: 01 02 03 04 05 06 07 
@@ -48,4 +48,4 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
   Left alloca redzone:     ca
   Right alloca redzone:    cb
   Shadow gap:              cc
-==1012==ABORTING
+==936==ABORTING

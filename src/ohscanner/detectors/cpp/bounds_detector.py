@@ -28,6 +28,7 @@ from .memory_safety import (
     declarations,
     expression_interval,
     function_shapes,
+    function_at,
     guard_constraints,
     guard_shapes,
     line_column,
@@ -38,7 +39,8 @@ from .memory_safety import (
 
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
-RULE_VERSION = "0.1.0"
+RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
+RULE_VERSION = "0.2.0"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -268,6 +270,27 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "CWE-125" if not definite or interval.maximum is not None and interval.maximum < 0 else "CWE-787",
                 "CWE-125" if interval.maximum is not None and interval.maximum < 0 else "CWE-787",
             ))
+    for match in re.finditer(r"\bElementAccessor::(?P<kind>Get|Set)\s*\(", masked):
+        function = function_at(functions, match.start())
+        if function is None or not re.search(r"SortElements", function.name):
+            continue
+        if function.name.startswith("CheckStableArray"):
+            continue
+        body = function.text
+        if re.search(r"\bindex\s*<\s*ElementAccessor::GetElementsLength", body):
+            continue
+        findings.append(_finding(
+            unit,
+            unit.text,
+            match.start(),
+            RULE_ELEMENT_ACCESS,
+            function.name,
+            f"Candidate only: direct `ElementAccessor::{match.group('kind')}` in `{function.name}` lacks a "
+            "modeled stable-array/index guard; backing-store shrink or comparator mutation may cause an "
+            "out-of-bounds read/write. Runtime reachability and product impact remain unknown.",
+            "CWE-787" if match.group("kind") == "Set" else "CWE-125",
+            "CWE-787" if match.group("kind") == "Set" else "CWE-125",
+        ))
     return findings, limitations, complete
 
 
@@ -328,4 +351,3 @@ class CppBoundsDetector:
             findings=_stable_unique(findings),
             limitations=tuple(sorted(set(limitations))),
         )
-

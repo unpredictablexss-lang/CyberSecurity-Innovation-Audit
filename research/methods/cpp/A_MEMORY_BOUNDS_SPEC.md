@@ -6,7 +6,7 @@
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.1.0` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002` | CWE-119/125/787 |
+| `ohscanner.cpp.bounds` | `0.2.0` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
 | `ohscanner.cpp.integer_bounds` | `0.1.0` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002` | CWE-190/191/681/680 |
 
 实现入口：
@@ -23,7 +23,7 @@
 
 1. 固定 C 数组或 `std::array<T,N>` 的 `memcpy`、`memmove`、`strncpy`、`snprintf`、`strcpy`、`strcat`。
 2. 固定数组索引，包含常量越界和未证明上界的符号索引。
-3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。
+3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。`SortElements*` 中未被 stable-array/index guard 保护的直接 `ElementAccessor::Get/Set` 作为历史 OOB 候选。
 
 候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
 
@@ -82,3 +82,8 @@
 ```
 
 未注册前不改变当前生产 Catalog；研究脚本直接调用 Detector。示例 Detector 永不作为漏洞能力启用。
+
+
+## Historical replay
+
+CVE-2025-23420 / `arkcompiler_ets_runtime-jsarray-sort-oob-2025-02` 在 vulnerable `aeee3fd12c03193545edea4b8e0fdfa3d9a03d11` 上得到 5 个 direct `ElementAccessor` candidates，在 fixed `1b23531531e768398682582969c2a9f17e72cafe` 上为 0。这个结果是 known historical capability hit，不是新漏洞或全局 Recall。`kernel_liteos_a` 的 concurrency/user-kernel cases 对当前 lexical bounds/integer rules 明确 `not_applicable`。

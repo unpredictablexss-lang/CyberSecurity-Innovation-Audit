@@ -1155,7 +1155,7 @@
   "detector_runs": [
     {
       "detector_id": "ohscanner.cpp.bounds",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "status": "blocked",
       "analyzed_files": [
         "dm/include/display_manager_agent_default.h",
@@ -3346,10 +3346,10 @@
   "eligible_for_metrics": false,
   "precision_recall": null,
   "performance": {
-    "wall_seconds": 19.615000924000014,
+    "wall_seconds": 19.388136543,
     "selected_source_files": 1112,
     "selected_source_bytes": 20206691,
-    "process_peak_rss_kib": 282488
+    "process_peak_rss_kib": 282652
   },
   "environment": {
     "python": "3.10.12",
