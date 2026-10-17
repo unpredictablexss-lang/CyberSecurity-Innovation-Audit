@@ -1,0 +1,598 @@
+[
+  {
+    "id": "H01",
+    "source_sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:298",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 430,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 6,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H02",
+    "source_sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:298",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 470,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H03",
+    "source_sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:298",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            6,
+            7
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 475,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H04",
+    "source_sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "candidate",
+          "line": 7,
+          "column": 1,
+          "reason": "different_origin_with_species_creation",
+          "target_identity": "new:298",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            6,
+            6,
+            7
+          ],
+          "constraints": [
+            [
+              6,
+              "count",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 499,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 8,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H05",
+    "source_sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 8,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:298",
+          "token_origin": "new:298",
+          "token_line": 6,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 478,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H06",
+    "source_sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 8,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:298",
+          "token_origin": "new:298",
+          "token_line": 6,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 484,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H07",
+    "source_sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 8,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:298",
+          "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+          "token_line": 3,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7,
+            7,
+            7,
+            8
+          ],
+          "constraints": [
+            [
+              7,
+              "Int32Equal(preserved, current)",
+              true
+            ]
+          ],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 556,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 9,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H08",
+    "source_sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [
+        {
+          "kind": "matched",
+          "line": 8,
+          "column": 1,
+          "reason": "target_origin_or_proved_type_equality",
+          "target_identity": "new:298",
+          "token_origin": "new:298",
+          "token_line": 6,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 489,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ]
+          ]
+        }
+      ],
+      "limitations": [],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H09",
+    "source_sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [],
+      "limitations": [
+        "not_applicable_to_rule"
+      ],
+      "steps": 0,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H10",
+    "source_sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [],
+      "limitations": [
+        "not_applicable_to_rule"
+      ],
+      "steps": 0,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H11",
+    "source_sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377",
+    "result": {
+      "status": "completed",
+      "file_outcome": "complete",
+      "observations": [],
+      "limitations": [],
+      "steps": 1,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H12",
+    "source_sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 6,
+          "column": 1,
+          "reason": "unresolved_sink_receiver",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 415,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ],
+            [
+              6,
+              "foreign.StoreTypedArrayElement"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 5,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H13",
+    "source_sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "unresolved_target_or_type_origin",
+          "target_identity": "",
+          "token_origin": "new:298",
+          "token_line": 6,
+          "creation_line": 0,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 488,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ],
+            [
+              7,
+              "UnknownMutator"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H14",
+    "source_sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 8,
+          "column": 1,
+          "reason": "creation_relationship_invalidated_by_call",
+          "target_identity": "new:298",
+          "token_origin": "new:298",
+          "token_line": 6,
+          "creation_line": 5,
+          "path": [
+            3,
+            4,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 476,
+          "effect_sites": [
+            [
+              5,
+              "alloc.NewTypedArray"
+            ],
+            [
+              7,
+              "UnknownSideEffect"
+            ]
+          ]
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations"
+      ],
+      "steps": 7,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H15",
+    "source_sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "unmodeled_cpp_writable_alias",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 504,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations",
+        "unsupported_host_expression_effects"
+      ],
+      "steps": 0,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  },
+  {
+    "id": "H16",
+    "source_sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd",
+    "result": {
+      "status": "limited",
+      "file_outcome": "partial",
+      "observations": [
+        {
+          "kind": "unknown",
+          "line": 7,
+          "column": 1,
+          "reason": "host_rebinding_across_generated_blocks_unmodeled",
+          "target_identity": "",
+          "token_origin": "",
+          "token_line": 0,
+          "creation_line": 0,
+          "path": [],
+          "constraints": [],
+          "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+          "region_start_byte": 38,
+          "region_end_byte": 540,
+          "effect_sites": []
+        }
+      ],
+      "limitations": [
+        "unresolved_local_observations",
+        "unsupported_host_expression_effects"
+      ],
+      "steps": 0,
+      "model_digest": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe"
+    }
+  }
+]

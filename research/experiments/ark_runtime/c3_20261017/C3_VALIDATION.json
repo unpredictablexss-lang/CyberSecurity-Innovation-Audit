@@ -1,0 +1,358 @@
+{
+  "algorithm_commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+  "detector_version": "0.2.0",
+  "model_sha256": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe",
+  "outcome": "PASS_WITH_EXPLICIT_SKIPS",
+  "windows_c_tests": {
+    "run": 66,
+    "passed": 66,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 10.732,
+    "command": "python -m unittest discover -s tests/detectors/ark_runtime -t . -q",
+    "python": "3.12.0",
+    "historical_object_tests_executed": true
+  },
+  "linux": {
+    "commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+    "python": "3.10.12",
+    "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "checkout": "/root/.cache/ohscanner-c3/validation-ll_fmk9v/repo",
+    "dependency_directory": "/root/.cache/ohscanner-c3/validation-ll_fmk9v/deps",
+    "records": [
+      {
+        "name": "c-tests",
+        "argv": [
+          "/usr/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests/detectors/ark_runtime",
+          "-t",
+          ".",
+          "-v"
+        ],
+        "exit_code": 0,
+        "seconds": 1.9488645149999995,
+        "log_sha256": "199e5154a6506f357a090af80f23666625287b8782100f22287c1a38177c7e86"
+      },
+      {
+        "name": "all-tests",
+        "argv": [
+          "/usr/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tests",
+          "-v"
+        ],
+        "exit_code": 0,
+        "seconds": 26.113774571,
+        "log_sha256": "932e21eaf3515e50863b68598b1e9fdd2a1d1c1f5bc5578708aeccdb847f082c"
+      },
+      {
+        "name": "compileall",
+        "argv": [
+          "/usr/bin/python3",
+          "-m",
+          "compileall",
+          "-q",
+          "src",
+          "tests"
+        ],
+        "exit_code": 0,
+        "seconds": 0.06391290899999547,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "diff-check",
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "seconds": 0.1086418610000024,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "source_cache": "/root/.cache/ohscanner-c3/validation-ll_fmk9v/ark-source.git",
+    "all_promisor_remotes_disabled_in_temporary_copy": true,
+    "supersedes": "prior run disallowed explicit local file fetches in two existing validation fixtures; retained unchanged",
+    "dependency_versions": "{\"pydantic_core\": \"2.50.1\", \"certifi\": \"2020.6.20\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"annotated-types\": \"0.8.0\", \"annotated-doc\": \"0.0.5\", \"pydantic\": \"2.14.1\", \"typing-inspection\": \"0.4.4\", \"exceptiongroup\": \"1.3.1\", \"tree-sitter-cpp\": \"0.23.4\", \"uvicorn\": \"0.54.0\", \"typing_extensions\": \"4.16.0\", \"tree-sitter\": \"0.26.0\", \"fastapi\": \"0.143.0\", \"starlette\": \"1.7.0\", \"h11\": \"0.16.0\", \"tree-sitter-c\": \"0.24.2\", \"opentelemetry-api\": \"1.45.1\", \"anyio\": \"4.15.1\", \"click\": \"8.0.3\", \"idna\": \"3.3\", \"Jinja2\": \"3.0.3\", \"python-apt\": \"2.4.0+ubuntu4.1\", \"six\": \"1.16.0\", \"distro\": \"1.7.0\", \"launchpadlib\": \"1.10.16\", \"zope.interface\": \"5.4.0\", \"hyperlink\": \"21.0.0\", \"wadllib\": \"1.3.6\", \"bcrypt\": \"3.2.0\", \"PyHamcrest\": \"2.0.2\", \"distro-info\": \"1.1+ubuntu0.2\", \"configobj\": \"5.0.6\", \"jsonpointer\": \"2.0\", \"jsonpatch\": \"1.32\", \"lazr.restfulclient\": \"0.14.4\", \"lazr.uri\": \"1.0.6\", \"pyrsistent\": \"0.18.1\", \"setuptools\": \"59.6.0\", \"cryptography\": \"3.4.8\", \"ubuntu-pro-client\": \"8001\", \"cloud-init\": \"25.3\", \"zipp\": \"1.0.0\", \"PyGObject\": \"3.42.1\", \"service-identity\": \"18.1.0\", \"blinker\": \"1.4\", \"colorama\": \"0.4.4\", \"attrs\": \"21.2.0\", \"requests\": \"2.25.1\", \"keyring\": \"23.5.0\", \"systemd-python\": \"234\", \"pyasn1-modules\": \"0.2.1\", \"pytz\": \"2022.1\", \"MarkupSafe\": \"2.0.1\", \"PyYAML\": \"5.4.1\", \"importlib-metadata\": \"4.6.4\", \"Babel\": \"2.8.0\", \"jsonschema\": \"3.2.0\", \"netifaces\": \"0.11.0\", \"unattended-upgrades\": \"0.1\", \"ufw\": \"0.36.1\", \"chardet\": \"4.0.0\", \"command-not-found\": \"0.3\", \"dbus-python\": \"1.2.18\", \"oauthlib\": \"3.2.0\", \"pycurl\": \"7.44.1\", \"jeepney\": \"0.7.1\", \"incremental\": \"21.3.0\", \"urllib3\": \"1.26.5\", \"pyOpenSSL\": \"21.0.0\", \"constantly\": \"15.1.0\", \"pyparsing\": \"2.4.7\", \"PyJWT\": \"2.3.0\", \"more-itertools\": \"8.10.0\", \"Twisted\": \"22.1.0\", \"pyasn1\": \"0.4.8\", \"httplib2\": \"0.20.2\", \"SecretStorage\": \"3.3.1\", \"Automat\": \"20.2.0\", \"pyserial\": \"3.5\"}\n",
+    "upstream_build_executed": false,
+    "dynamic_poc_executed": false
+  },
+  "linux_counts": {
+    "run": 578,
+    "passed": 567,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 11
+  },
+  "linux_c_counts": {
+    "run": 66,
+    "passed": 66,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "skipped_tests": [
+    "test_corpus_ipc_object_stub_send_request_dispatch (test_ipc_entry_index.EntryIndexTests) ... skipped 'perf-corpus/communication_ipc not present'",
+    "test_attack_triggers_on_the_vulnerable_revision_only (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_record_keeps_validated_vulnerability_at_zero (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_a_changed_digest_fails (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_a_moved_quote_fails_instead_of_describing_other_code (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_no_block_means_no_claim (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_harness_declares_a_partial_reachability_block (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_rendered_record_states_what_is_not_established (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_verification_checks_the_digest_and_the_quoted_line (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_real_historical_sources_produce_linked_detector_candidates (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'historical detector replay requires locally preserved source artifacts: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'",
+    "test_source_hashes_and_quotes_are_verified (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'optional preserved historical source artifacts are unavailable: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'"
+  ],
+  "mechanisms": {
+    "run": 24,
+    "passed": 24,
+    "baseline_c2_failed": 12
+  },
+  "legacy_cases": {
+    "run": 12,
+    "passed": 12,
+    "skipped": 0
+  },
+  "historical": {
+    "independent_research_candidate_counts": [
+      1,
+      0
+    ],
+    "observations": [
+      "candidate",
+      "matched"
+    ],
+    "production_status": [
+      "blocked",
+      "blocked"
+    ],
+    "file_parse_status": [
+      "partial",
+      "partial"
+    ]
+  },
+  "census": {
+    "indexed_functions": 53,
+    "reviewed_caller_profiles": 4,
+    "new_candidates": 0,
+    "matched_profiles": [
+      "Filter",
+      "Set"
+    ],
+    "unknown_profiles": [
+      "CopyWithin",
+      "With"
+    ]
+  },
+  "holdout": {
+    "samples": 16,
+    "raw_predictions_executed": true,
+    "independently_labelled": false,
+    "scored": false,
+    "used_for_tuning": false,
+    "precision": null,
+    "recall": null,
+    "status": "PREPARED_AWAITING_INDEPENDENT_LABELS"
+  },
+  "dynamic": {
+    "status": "BLOCKED",
+    "upstream_build_executed": false,
+    "poc_executed": false,
+    "ubuntu_installed": true,
+    "python": "3.10.12",
+    "unavailable": [
+      "cc",
+      "docker",
+      "podman",
+      "bwrap",
+      "nsjail",
+      "Docker socket",
+      "pinned upstream build toolchain"
+    ]
+  },
+  "remote_ci": {
+    "status": "PENDING_AT_BUNDLE_FREEZE",
+    "verification_location": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/pull/16",
+    "requirement": "Check final published head SHA, both jobs and explicit C history skips. Publication evidence is recorded in PR body and local C3_REMOTE_VALIDATION.json after this immutable bundle commit."
+  },
+  "earlier_runs": [
+    {
+      "run": "c3-linux-4ea5f4020884",
+      "reason": "old Git partial-store inventory timed out",
+      "manifest": {
+        "commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+        "python": "3.10.12",
+        "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+        "checkout": "/tmp/ohscanner-c3-validation-tsf8lvbh/repo",
+        "dependency_directory": "/tmp/ohscanner-c3-validation-tsf8lvbh/deps",
+        "records": [
+          {
+            "name": "c-tests",
+            "argv": [
+              "/usr/bin/python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests/detectors/ark_runtime",
+              "-t",
+              ".",
+              "-v"
+            ],
+            "exit_code": 1,
+            "seconds": 60.81652475200001,
+            "log_sha256": "bb16ca76a3ed146789a50e98bc1b2d833f1965e39e550b0c23248a9fc10aa7d9"
+          },
+          {
+            "name": "all-tests",
+            "argv": [
+              "/usr/bin/python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests",
+              "-v"
+            ],
+            "exit_code": 1,
+            "seconds": 85.687620087,
+            "log_sha256": "6cdb3083dfe5e0119728249467c94eb7d9fc3b3e511b0b34002394b00582c1be"
+          },
+          {
+            "name": "compileall",
+            "argv": [
+              "/usr/bin/python3",
+              "-m",
+              "compileall",
+              "-q",
+              "src",
+              "tests"
+            ],
+            "exit_code": 0,
+            "seconds": 0.07537669300000971,
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "diff-check",
+            "argv": [
+              "git",
+              "diff",
+              "--check"
+            ],
+            "exit_code": 0,
+            "seconds": 0.03068487199999481,
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "upstream_build_executed": false,
+        "dynamic_poc_executed": false
+      },
+      "log_location": "D:\\GitHub\\CyberSecurity-Innovation-Audit\\.tmp\\c3-linux-4ea5f4020884",
+      "superseded": true
+    },
+    {
+      "run": "c3-linux-final",
+      "reason": "outer test environment prohibited explicit local file fetch fixtures",
+      "manifest": {
+        "commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+        "python": "3.10.12",
+        "platform": "Linux-6.18.54.1-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+        "checkout": "/root/.cache/ohscanner-c3/validation-ll_fmk9v/repo",
+        "dependency_directory": "/root/.cache/ohscanner-c3/validation-ll_fmk9v/deps",
+        "records": [
+          {
+            "name": "c-tests",
+            "argv": [
+              "/usr/bin/python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests/detectors/ark_runtime",
+              "-t",
+              ".",
+              "-v"
+            ],
+            "exit_code": 0,
+            "seconds": 2.084882077999964,
+            "log_sha256": "bb42d3ca9ca146d9538dafb0b742d6e04fd85aa58f336dfa5cefa20d2d7436ca"
+          },
+          {
+            "name": "all-tests",
+            "argv": [
+              "/usr/bin/python3",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "tests",
+              "-v"
+            ],
+            "exit_code": 1,
+            "seconds": 28.872882130999983,
+            "log_sha256": "fcc1550e39bc58123695839149ba52f06c39603f964a87032e28e0036cb3b98c"
+          },
+          {
+            "name": "compileall",
+            "argv": [
+              "/usr/bin/python3",
+              "-m",
+              "compileall",
+              "-q",
+              "src",
+              "tests"
+            ],
+            "exit_code": 0,
+            "seconds": 0.06410179699997798,
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "name": "diff-check",
+            "argv": [
+              "git",
+              "diff",
+              "--check"
+            ],
+            "exit_code": 0,
+            "seconds": 0.03385628300003418,
+            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "source_cache": "/root/.cache/ohscanner-c3/validation-ll_fmk9v/ark-source.git",
+        "all_promisor_remotes_disabled_in_temporary_copy": true,
+        "dependency_versions": "{\"pydantic_core\": \"2.50.1\", \"certifi\": \"2020.6.20\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"annotated-types\": \"0.8.0\", \"annotated-doc\": \"0.0.5\", \"pydantic\": \"2.14.1\", \"typing-inspection\": \"0.4.4\", \"exceptiongroup\": \"1.3.1\", \"tree-sitter-cpp\": \"0.23.4\", \"uvicorn\": \"0.54.0\", \"typing_extensions\": \"4.16.0\", \"tree-sitter\": \"0.26.0\", \"fastapi\": \"0.143.0\", \"starlette\": \"1.7.0\", \"h11\": \"0.16.0\", \"tree-sitter-c\": \"0.24.2\", \"opentelemetry-api\": \"1.45.1\", \"anyio\": \"4.15.1\", \"click\": \"8.0.3\", \"idna\": \"3.3\", \"Jinja2\": \"3.0.3\", \"python-apt\": \"2.4.0+ubuntu4.1\", \"six\": \"1.16.0\", \"distro\": \"1.7.0\", \"launchpadlib\": \"1.10.16\", \"zope.interface\": \"5.4.0\", \"hyperlink\": \"21.0.0\", \"wadllib\": \"1.3.6\", \"bcrypt\": \"3.2.0\", \"PyHamcrest\": \"2.0.2\", \"distro-info\": \"1.1+ubuntu0.2\", \"configobj\": \"5.0.6\", \"jsonpointer\": \"2.0\", \"jsonpatch\": \"1.32\", \"lazr.restfulclient\": \"0.14.4\", \"lazr.uri\": \"1.0.6\", \"pyrsistent\": \"0.18.1\", \"setuptools\": \"59.6.0\", \"cryptography\": \"3.4.8\", \"ubuntu-pro-client\": \"8001\", \"cloud-init\": \"25.3\", \"zipp\": \"1.0.0\", \"PyGObject\": \"3.42.1\", \"service-identity\": \"18.1.0\", \"blinker\": \"1.4\", \"colorama\": \"0.4.4\", \"attrs\": \"21.2.0\", \"requests\": \"2.25.1\", \"keyring\": \"23.5.0\", \"systemd-python\": \"234\", \"pyasn1-modules\": \"0.2.1\", \"pytz\": \"2022.1\", \"MarkupSafe\": \"2.0.1\", \"PyYAML\": \"5.4.1\", \"importlib-metadata\": \"4.6.4\", \"Babel\": \"2.8.0\", \"jsonschema\": \"3.2.0\", \"netifaces\": \"0.11.0\", \"unattended-upgrades\": \"0.1\", \"ufw\": \"0.36.1\", \"chardet\": \"4.0.0\", \"command-not-found\": \"0.3\", \"dbus-python\": \"1.2.18\", \"oauthlib\": \"3.2.0\", \"pycurl\": \"7.44.1\", \"jeepney\": \"0.7.1\", \"incremental\": \"21.3.0\", \"urllib3\": \"1.26.5\", \"pyOpenSSL\": \"21.0.0\", \"constantly\": \"15.1.0\", \"pyparsing\": \"2.4.7\", \"PyJWT\": \"2.3.0\", \"more-itertools\": \"8.10.0\", \"Twisted\": \"22.1.0\", \"pyasn1\": \"0.4.8\", \"httplib2\": \"0.20.2\", \"SecretStorage\": \"3.3.1\", \"Automat\": \"20.2.0\", \"pyserial\": \"3.5\"}\n",
+        "upstream_build_executed": false,
+        "dynamic_poc_executed": false
+      },
+      "log_location": "D:\\GitHub\\CyberSecurity-Innovation-Audit\\.tmp\\c3-linux-final",
+      "superseded": true
+    }
+  ],
+  "windows_intermediate_full_run": {
+    "run": 518,
+    "failures": 3,
+    "errors": 10,
+    "skipped": 13,
+    "code_stage": "intermediate C3 before final fixes, not the frozen commit",
+    "sha256": "754e313775e5c8116147a2067321a15064aa13886d81ebe9bf2f1adc49bc9421",
+    "local_log": "D:\\GitHub\\CyberSecurity-Innovation-Audit\\.tmp\\c3-full-test.log",
+    "interpretation": "two historical failures fixed before freeze; platform/optional dependency failures separately retained; not claimed green"
+  },
+  "operational_notes": [
+    "WSL initially denied in sandbox; elevated read-only checks proved Ubuntu exists.",
+    "One auxiliary historical git show --stat attempted promisor fetch without no-fetch environment; both requests failed at the unavailable local proxy and retrieved no objects. Subsequent static access forbids transports.",
+    "Linux uses a private source-store copy with every promisor disabled; original store and public Git service unchanged.",
+    "Linux full-suite fixtures permit explicit local file fetch only; static load_git_sources still overrides all transports to empty.",
+    "No actual upstream build, dynamic product validation or independent label authority is claimed."
+  ]
+}

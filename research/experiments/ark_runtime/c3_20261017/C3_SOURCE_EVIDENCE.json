@@ -1,0 +1,250 @@
+[
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+    "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+    "bytes": 150433
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+    "blob": "757b8d050d306d349822600deacb295c7a54245e",
+    "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+    "bytes": 126036
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+    "blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+    "source_sha256": "c665d4e13208dc00e809331e13a0135b5ae4c63f9c47f4e99e85dc51eb491ee2",
+    "bytes": 11828,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+    "blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+    "source_sha256": "64263f8d75dae7f7f924d9e34fb7a41e2180ae4e6f73e16f1c139e79987e4e76",
+    "bytes": 33980,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/call_stub_builder.h",
+    "blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+    "source_sha256": "3bcb06509efea7261bdaef4c108e31281275c8eff4cbbda24632d710edc98d21",
+    "bytes": 8168,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/circuit_builder.cpp",
+    "blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+    "source_sha256": "beb2668526a760d30c2fe8ae181a1cd5544a45d4b6bf888d92f96fb10452077c",
+    "bytes": 59182,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/hcr_circuit_builder.h",
+    "blob": "176dd0a5ee320f814049c2b671119515c746380d",
+    "source_sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+    "bytes": 16622,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+    "blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+    "source_sha256": "838a127ac98866a44f73ff71b574820b7175b8424a0fbb1fda0dfb3cedfd1739",
+    "bytes": 12359,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/mcr_circuit_builder.h",
+    "blob": "631911dec663addd62533d6a6808ffe699a6f884",
+    "source_sha256": "a92932e25ab94f020403bdfd30a5848076bcd444e587461b61d3630805de5ba9",
+    "bytes": 26077,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/new_object_stub_builder.h",
+    "blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+    "source_sha256": "4b2d3586c0df13bdc25a2b029cc6a445c6f6bc1b95349968ca2b221df6779bb4",
+    "bytes": 10540,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/profiler_operation.h",
+    "blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+    "source_sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+    "bytes": 4176,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/stub_builder-inl.h",
+    "blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+    "source_sha256": "a41ac4bc896fc56c93176b80590620976f0fedd8105bff61f30d9548b0da2520",
+    "bytes": 140690,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/stub_builder.cpp",
+    "blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+    "source_sha256": "6a58a43a3bc1dd018acb57bf54b8c85bda5bbf197eedf7f4fd41dd63941799b8",
+    "bytes": 436814,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+    "path": "ecmascript/compiler/stub_builder.h",
+    "blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+    "source_sha256": "37757e96a98a20c3598af837d27003912d0f41a6a633e5ec99c04078ef2c8c1d",
+    "bytes": 65907,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+    "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+    "bytes": 150509
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+    "blob": "757b8d050d306d349822600deacb295c7a54245e",
+    "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+    "bytes": 126036
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+    "blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+    "source_sha256": "c665d4e13208dc00e809331e13a0135b5ae4c63f9c47f4e99e85dc51eb491ee2",
+    "bytes": 11828,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+    "blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+    "source_sha256": "64263f8d75dae7f7f924d9e34fb7a41e2180ae4e6f73e16f1c139e79987e4e76",
+    "bytes": 33980,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/call_stub_builder.h",
+    "blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+    "source_sha256": "3bcb06509efea7261bdaef4c108e31281275c8eff4cbbda24632d710edc98d21",
+    "bytes": 8168,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/circuit_builder.cpp",
+    "blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+    "source_sha256": "beb2668526a760d30c2fe8ae181a1cd5544a45d4b6bf888d92f96fb10452077c",
+    "bytes": 59182,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/hcr_circuit_builder.h",
+    "blob": "176dd0a5ee320f814049c2b671119515c746380d",
+    "source_sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+    "bytes": 16622,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+    "blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+    "source_sha256": "838a127ac98866a44f73ff71b574820b7175b8424a0fbb1fda0dfb3cedfd1739",
+    "bytes": 12359,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/mcr_circuit_builder.h",
+    "blob": "631911dec663addd62533d6a6808ffe699a6f884",
+    "source_sha256": "a92932e25ab94f020403bdfd30a5848076bcd444e587461b61d3630805de5ba9",
+    "bytes": 26077,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/new_object_stub_builder.h",
+    "blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+    "source_sha256": "4b2d3586c0df13bdc25a2b029cc6a445c6f6bc1b95349968ca2b221df6779bb4",
+    "bytes": 10540,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/profiler_operation.h",
+    "blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+    "source_sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+    "bytes": 4176,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/stub_builder-inl.h",
+    "blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+    "source_sha256": "a41ac4bc896fc56c93176b80590620976f0fedd8105bff61f30d9548b0da2520",
+    "bytes": 140690,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/stub_builder.cpp",
+    "blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+    "source_sha256": "6a58a43a3bc1dd018acb57bf54b8c85bda5bbf197eedf7f4fd41dd63941799b8",
+    "bytes": 436814,
+    "role": "reviewed_effect_or_parameter_summary"
+  },
+  {
+    "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "tree": "82af11ced4297818410ccf61906b703d25b69165",
+    "path": "ecmascript/compiler/stub_builder.h",
+    "blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+    "source_sha256": "37757e96a98a20c3598af837d27003912d0f41a6a633e5ec99c04078ef2c8c1d",
+    "bytes": 65907,
+    "role": "reviewed_effect_or_parameter_summary"
+  }
+]
