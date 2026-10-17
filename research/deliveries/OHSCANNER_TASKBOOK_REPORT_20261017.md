@@ -163,4 +163,4 @@ Whole-community/807-repository execution is explicitly `not_executed` because on
 4. Freeze a larger independent labelled holdout and then compute root-cause Precision/Recall/F1.
 5. Complete product permission/entry/CIA/version/branch evidence for any new candidate.
 
-Until those items are proven, the correct taskbook status is `incomplete`.
+A bounded local product-artifact search found source/build configuration but no final image, shipped window/screen/display binaries or deployed SAMGR/SELinux policy. Until external product/image evidence is supplied or an authorized product build is available, the correct taskbook status is `incomplete` and the remaining product closure is blocked on that evidence.

@@ -29,14 +29,16 @@
   ],
   "incomplete": [
     "all_community_and_recent_15_day_scale",
-    "product_level_new_vulnerability_closure",
     "direct_ArkCompiler_product_build_PoC",
-    "large_independent_labelled_holdout"
+    "large_independent_labelled_holdout",
+    "product_image_artifact_and_deployment_policy_evidence",
+    "product_level_new_vulnerability_closure"
   ],
   "evidence": [
     "research/deliveries/CODEX0_BRANCH_RECONCILIATION_20261017.md",
     "research/deliveries/OHSCANNER_TASKBOOK_COMPLETION_AUDIT_20261017.md",
     "research/deliveries/OHSCANNER_TASKBOOK_REPORT_20261017.md",
+    "research/deliveries/PRODUCT_ARTIFACT_INVENTORY_20261017.md",
     "research/evidence/cpp/cross_ab_parcel_case_20261017.md",
     "research/evidence/cpp/script_security_scan_20261017/summary.md",
     "research/evidence/interface/cap01_render_session_export_20261016/CAPABILITY_PERMISSION_ANALYSIS.md",
