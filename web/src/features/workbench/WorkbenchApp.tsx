@@ -31,6 +31,7 @@ function Workspace() {
   }, [refresh]);
   useEffect(() => {
     if (rawRoute !== route.canonical) window.history.replaceState(null, "", "#" + route.canonical);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [rawRoute, route.canonical]);
   const path = route.path;
   let content: React.ReactNode;

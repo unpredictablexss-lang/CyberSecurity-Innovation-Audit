@@ -28,8 +28,8 @@ export function ComparisonForm({ kind, repos, detectors, cases, busy, submit }: 
       {kind === "date" ? <>
         <RefField name="branch" label="分支或标签" refs={refs} />
         <div className="form-shortcuts"><Text type="secondary">快捷时间范围</Text><Space wrap>{[7, 15, 30].map((days) => <Button key={days} onClick={() => { invalidate(); form.setFieldsValue(recentRange(days, form.getFieldValue("timezone") || "Asia/Shanghai")); }}>近 {days} 天</Button>)}</Space></div>
-        <Form.Item name="start" label="开始时间（包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} /></Form.Item>
-        <Form.Item name="end" label="结束时间（不包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} /></Form.Item>
+        <Form.Item name="start" label="开始时间（包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} onInput={(event) => { form.setFieldValue("start", event.currentTarget.value); invalidate(); }} /></Form.Item>
+        <Form.Item name="end" label="结束时间（不包含）" rules={[{ required: true }]}><Input type="datetime-local" step={1} onInput={(event) => { form.setFieldValue("end", event.currentTarget.value); invalidate(); }} /></Form.Item>
         <Form.Item name="timezone" label="所选时间的时区" rules={[{ required: true }]}><Select options={["Asia/Shanghai", "UTC", "America/Los_Angeles", "Europe/London"].map((value) => ({ value, label: value }))} /></Form.Item>
         <Alert type="info" message="按提交者时间与 first-parent 选择 [开始, 结束) 区间；当前扫描固定两端。" description="不等于逐提交扫描、合入时间审计或完整增量引擎。预览可能包含拓扑跨度内的区间外提交。" />
         <Button className="section-gap" loading={previewBusy} onClick={async () => {
