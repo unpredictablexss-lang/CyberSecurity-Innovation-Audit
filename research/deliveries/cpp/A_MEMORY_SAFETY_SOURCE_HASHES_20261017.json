@@ -23,9 +23,14 @@
       "sha256": "aebee09ce83982dcf3222c9470be62cc073b42e066e90d3d74c68b4e79e60a0b"
     },
     {
+      "path": "src/ohscanner/detectors/cpp/unsafe_memory_call_detector.py",
+      "bytes": 8073,
+      "sha256": "cd4825a5387c5fd2415a7b5ac8d6fc7989a2222bd7f699507e63ad4c4b443e52"
+    },
+    {
       "path": "scripts/run_cpp_memory_safety_scan.py",
-      "bytes": 12739,
-      "sha256": "087c92be74de05184803336bd1c07c86c288e781a6c44fa1bb709c4dfa31dbe0"
+      "bytes": 12623,
+      "sha256": "f49bed4fb4c8a678ef4820e7c4a7261256216203d18d95e9a49b0e6d6defaf00"
     },
     {
       "path": "scripts/replay_cpp_historical_memory_cases.py",
@@ -46,6 +51,11 @@
       "path": "tests/detectors/test_cpp_resource_lifetime_detector.py",
       "bytes": 4358,
       "sha256": "c3e0b62f0ec351f179bc19f40fd88b623a7cf0ec2d1fd8371e4bb6920401217e"
+    },
+    {
+      "path": "tests/detectors/test_cpp_unsafe_memory_call_detector.py",
+      "bytes": 4036,
+      "sha256": "d8b965e3959fc9d4f95db349b47a72f574dfbff00010e606cf6da8c1740a454f"
     },
     {
       "path": "validation/cpp_memory_safety_poc/run.sh",

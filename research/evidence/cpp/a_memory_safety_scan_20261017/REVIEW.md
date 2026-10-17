@@ -6,8 +6,8 @@
 
 - 5 个既有固定组件 scope manifests，4983 个 selected source files、51551827 bytes。
 - 精确 commit/tree/snapshot/source SHA、scope manifest SHA、profile `light-ast` 已写入各组件 JSON。
-- A-BOF-01/A-INT-01/A-RES-01 总 wall 61.046s，进程峰值 RSS 282476 KiB；这是本地固定范围成本，不是全 OpenHarmony 容量认证。
-- 当前为 26 条 lexical candidates / 17 个 detector-rule-symbol groups：bounds/integer 16 条、resource lifetime 10 条（8 UAF、2 double-free）。分组不是漏洞或根因计数。
+- A-BOF-01/A-INT-01/A-RES-01/A-UNSAFE-01 总 wall 66.487s，进程峰值 RSS 282736 KiB；这是本地固定范围成本，不是全 OpenHarmony 容量认证。
+- 当前为 33 条 lexical candidates / 22 个 detector-rule-symbol groups：bounds/integer 16 条、resource lifetime 10 条（8 UAF、2 double-free）、unsafe/format 7 条。分组不是漏洞或根因计数。
 
 ## Historical capability replay
 
@@ -19,11 +19,11 @@
 
 ## Old/new comparison
 
-相对 `ea7d13a69852d5e639e090671b040f7dcd32eebc`：candidates 16 -> 26（+10），lexical groups 10 -> 17（+7），wall 52.078s -> 61.046s。该 delta 只表示新增 resource lifetime 覆盖，不是准确率提升。
+相对 `ea7d13a69852d5e639e090671b040f7dcd32eebc`：candidates 16 -> 33（+17），lexical groups 10 -> 22（+12），wall 52.078s -> 66.487s。该 delta 表示新增 resource lifetime 与 unsafe/format 覆盖，不是准确率提升。
 
 ## Reviewed false-positive and scope limitations
 
-- `kvstoremock/**` 被 scope planner 的 `mock` 段规则漏排除，不能作为生产组件证据。
+- `kvstoremock/**` 被 scope planner 的 `mock` 段规则漏排除，不能作为生产组件证据；`LOG_TAG ": "...` 等宏拼接 format 仍产生低价值 lexical candidates，列为已知 precision 缺口。
 - resource lifetime 不拼接 `if/else/goto/label` 跨段状态，避免互斥释放误报；代价是跨路径 UAF/double-free 保持 unknown。
 - `strnlen` + 上界 guard、宏-only、placement-new、窄整数提升等形状已固定为安全对照。
 - `MAX_KEY_PATH + 1` 等宏值未知保持 unknown，不按宏值臆测溢出。

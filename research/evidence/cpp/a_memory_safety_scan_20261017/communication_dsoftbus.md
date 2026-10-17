@@ -8,8 +8,8 @@
 - Snapshot SHA-256: `5c8702d6cafab30fdfc12c2b146f23a9afc33fcf296b45d75a8a6a1b77b1dbe7`
 - Scope manifest SHA-256: `bfe5509394b8cc176849bde1a49448d8f756736442ba929a35cb84d35869281f`
 - Selected files/bytes: 1656/15243597
-- Wall seconds: 18.107227
-- Candidate findings/groups: 4/3
+- Wall seconds: 19.789593
+- Candidate findings/groups: 7/4
 
 ## Detector runs
 
@@ -27,6 +27,12 @@
 ### `ohscanner.cpp.resource_lifetime` 0.1.0 (blocked)
 
 - No candidate emitted in the analyzed lexical scope.
+
+### `ohscanner.cpp.unsafe_memory_call` 0.1.0 (blocked)
+
+- `components/nstackx/nstackx_util/core/nstackx_log.c:31:5` `ohcpp-format-string-candidate-002` `CWE-134` Candidate only: `vprintf` receives a non-literal format expression `format`. Control, intended format ownership and concrete impact remain unknown.
+- `components/nstackx/nstackx_util/platform/liteos/sys_log.c:29:5` `ohcpp-format-string-candidate-002` `CWE-134` Candidate only: `vprintf` receives a non-literal format expression `format`. Control, intended format ownership and concrete impact remain unknown.
+- `components/nstackx/nstackx_util/platform/unix/sys_log.c:29:5` `ohcpp-format-string-candidate-002` `CWE-134` Candidate only: `vprintf` receives a non-literal format expression `format`. Control, intended format ownership and concrete impact remain unknown.
 
 ## Limitations
 

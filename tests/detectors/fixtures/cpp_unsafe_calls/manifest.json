@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "change_request_id": "A-UNSAFE-01",
+  "source": "self-authored synthetic controls",
+  "cases": [
+    {
+      "expected_min": 5,
+      "category": "positive",
+      "fixture": "positive_unsafe.cpp",
+      "sha256": "f0b96d52643ed5f1eb3bd3f404df8c9384f45a5038fe2bdfe4524494b5d5096a",
+      "byte_length": 194
+    },
+    {
+      "expected_max": 0,
+      "category": "fixed",
+      "fixture": "fixed_bounded.cpp",
+      "sha256": "c0ce9362859a7e82aa7f782b95e9404fe0b2f75433e1d991b45ed8515de9204f",
+      "byte_length": 228
+    },
+    {
+      "expected_max": 0,
+      "category": "safe",
+      "fixture": "safe_literal.cpp",
+      "sha256": "4c39655f7912267a3ed83feca091ecfa3934aa12cef181af152d654d5b6f3b73",
+      "byte_length": 106
+    },
+    {
+      "expected_max": 0,
+      "category": "unrelated",
+      "fixture": "unrelated.cpp",
+      "sha256": "f7fad5cbd7c484b709a00d773ade231fe1a57cb1f135c16e5eca676dacf86181",
+      "byte_length": 47
+    },
+    {
+      "expected_status": "blocked",
+      "category": "unknown",
+      "fixture": "unknown_partial.cpp",
+      "sha256": "011aa21dea038895a13bd020d18fe8774402eb2d018941d97b78815f9201ea50",
+      "byte_length": 68
+    }
+  ]
+}

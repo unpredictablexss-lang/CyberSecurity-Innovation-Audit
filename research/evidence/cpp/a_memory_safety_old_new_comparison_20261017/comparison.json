@@ -15,21 +15,21 @@
   },
   "new_totals": {
     "components": 5,
-    "candidate_count": 26,
-    "candidate_groups": 17,
+    "candidate_count": 33,
+    "candidate_groups": 22,
     "validated_vulnerability": 0,
     "eligible_for_metrics": false,
-    "wall_seconds": 61.046064451999996,
+    "wall_seconds": 66.48711383,
     "selected_source_files": 4983,
     "selected_source_bytes": 51551827,
-    "process_peak_rss_kib": 282476
+    "process_peak_rss_kib": 282736
   },
   "components": [
     {
       "component": "communication_dsoftbus",
       "old_candidates": 4,
-      "new_candidates": 4,
-      "delta": 0
+      "new_candidates": 7,
+      "delta": 3
     },
     {
       "component": "distributeddatamgr_kv_store",
@@ -46,8 +46,8 @@
     {
       "component": "update_updateservice",
       "old_candidates": 0,
-      "new_candidates": 3,
-      "delta": 3
+      "new_candidates": 7,
+      "delta": 7
     },
     {
       "component": "window_window_manager",
@@ -74,6 +74,12 @@
       "old": 0,
       "new": 8,
       "delta": 8
+    },
+    {
+      "detector_rule": "ohscanner.cpp.unsafe_memory_call|ohcpp-format-string-candidate-002",
+      "old": 0,
+      "new": 7,
+      "delta": 7
     }
   ],
   "interpretation": [

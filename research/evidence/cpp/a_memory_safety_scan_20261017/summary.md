@@ -4,11 +4,11 @@
 
 | Component | Files | Bytes | Candidates | Groups | Wall s | Commit |
 |---|---:|---:|---:|---:|---:|---|
-| `communication_dsoftbus` | 1656 | 15243597 | 4 | 3 | 18.107 | `652f88e0261ce4d0610f73cc451c26b84d2597af` |
-| `distributeddatamgr_kv_store` | 1446 | 11765303 | 11 | 8 | 14.129 | `acfb22aac16161d8fb0cefb6cc9b92f04f489a80` |
-| `security_access_token` | 550 | 3484891 | 4 | 2 | 4.958 | `17d88bfb36bea6c9370ba919ac41a22d16dd66b3` |
-| `update_updateservice` | 219 | 851345 | 3 | 2 | 1.173 | `e4942a33cc5ed29040e5c720bea3b2a8e4a79221` |
-| `window_window_manager` | 1112 | 20206691 | 4 | 2 | 22.678 | `8b0d8fe1b973d865904c942c286b3d2a3b9b08e7` |
+| `communication_dsoftbus` | 1656 | 15243597 | 7 | 4 | 19.790 | `652f88e0261ce4d0610f73cc451c26b84d2597af` |
+| `distributeddatamgr_kv_store` | 1446 | 11765303 | 11 | 8 | 15.957 | `acfb22aac16161d8fb0cefb6cc9b92f04f489a80` |
+| `security_access_token` | 550 | 3484891 | 4 | 2 | 6.023 | `17d88bfb36bea6c9370ba919ac41a22d16dd66b3` |
+| `update_updateservice` | 219 | 851345 | 7 | 6 | 1.412 | `e4942a33cc5ed29040e5c720bea3b2a8e4a79221` |
+| `window_window_manager` | 1112 | 20206691 | 4 | 2 | 23.306 | `8b0d8fe1b973d865904c942c286b3d2a3b9b08e7` |
 
 ## Limitations
 

@@ -17,7 +17,7 @@
 |---|---|---|
 | Array/copy bounds | `ohscanner.cpp.bounds` `0.2.0` | fixed array/`std::array`, copy length, index interval, stable sort element access, narrow guards |
 | Integer/size arithmetic | `ohscanner.cpp.integer_bounds` `0.1.0` | `* + -`, constant truncation, allocation/copy consequence, checked arithmetic controls |
-| Resource lifetime | `ohscanner.cpp.resource_lifetime` `0.1.0` | local Alloc/Release/Alias/Null/Realloc state, UAF and double-free candidates |
+| Resource lifetime | `ohscanner.cpp.resource_lifetime` `0.1.0` | local Alloc/Release/Alias/Null/Realloc state, UAF and double-free candidates |`n| Unsafe calls | `ohscanner.cpp.unsafe_memory_call` `0.1.0` | unbounded memory calls and non-literal format candidates |
 | Reusable lexical facts | `memory_safety.py` | masked C/C++ text, function/guard spans, declarations, intervals and precision exclusions |
 | Fixed-source verification | `run_cpp_memory_safety_scan.py` | exact pinned Git object reads, double-read drift checks, source-bound reports |
 | Historical replay | `replay_cpp_historical_memory_cases.py` | vulnerable/fixed capability replay across null, UAF and OOB families |
@@ -30,13 +30,13 @@ Five pre-existing local component manifests were used. No fetch, checkout, exter
 
 | Component | Commit | Files | Bytes | Candidates | Groups | Wall s |
 |---|---|---:|---:|---:|---:|---:|
-| `communication_dsoftbus` | `652f88e0261ce4d0610f73cc451c26b84d2597af` | 1656 | 15243597 | 4 | 3 | 18.107 |
-| `distributeddatamgr_kv_store` | `acfb22aac16161d8fb0cefb6cc9b92f04f489a80` | 1446 | 11765303 | 11 | 8 | 14.129 |
-| `security_access_token` | `17d88bfb36bea6c9370ba919ac41a22d16dd66b3` | 550 | 3484891 | 4 | 2 | 4.958 |
-| `update_updateservice` | `e4942a33cc5ed29040e5c720bea3b2a8e4a79221` | 219 | 851345 | 3 | 2 | 1.173 |
-| `window_window_manager` | `8b0d8fe1b973d865904c942c286b3d2a3b9b08e7` | 1112 | 20206691 | 4 | 2 | 22.678 |
+| `communication_dsoftbus` | `652f88e0261ce4d0610f73cc451c26b84d2597af` | 1656 | 15243597 | 7 | 4 | 19.790 |
+| `distributeddatamgr_kv_store` | `acfb22aac16161d8fb0cefb6cc9b92f04f489a80` | 1446 | 11765303 | 11 | 8 | 15.957 |
+| `security_access_token` | `17d88bfb36bea6c9370ba919ac41a22d16dd66b3` | 550 | 3484891 | 4 | 2 | 6.023 |
+| `update_updateservice` | `e4942a33cc5ed29040e5c720bea3b2a8e4a79221` | 219 | 851345 | 7 | 6 | 1.412 |
+| `window_window_manager` | `8b0d8fe1b973d865904c942c286b3d2a3b9b08e7` | 1112 | 20206691 | 4 | 2 | 23.306 |
 
-Total: 4983 files / 51551827 bytes, 26 candidates / 17 lexical groups, 61.046s summed wall and 282476 KiB process peak RSS. Groups are lexical deduplication only.
+Total: 4983 files / 51551827 bytes, 33 candidates / 22 lexical groups, 66.487s summed wall and 282736 KiB process peak RSS. Groups are lexical deduplication only.
 
 ## Historical CVE and fix/revalidation
 
@@ -65,14 +65,14 @@ These are runnable mechanism PoCs and fix controls. They are not direct ArkCompi
 
 ## Old/new comparison
 
-Against `ea7d13a69852d5e639e090671b040f7dcd32eebc`: candidates 16 -> 26, lexical groups 10 -> 17, wall 52.078s -> 61.046s. The delta is added resource-lifetime coverage, not an accuracy improvement.
+Against `ea7d13a69852d5e639e090671b040f7dcd32eebc`: candidates 16 -> 33, lexical groups 10 -> 22, wall 52.078s -> 66.487s. The delta is added resource-lifetime and unsafe/format coverage, not an accuracy improvement.
 
 ## Controls and validation
 
 - Hash-bound controls cover positive/fixed/safe/unrelated/unknown for bounds, integer and resource lifetime.
 - Precision exclusions include `strnlen` guards, macro-only sizes, placement-new pointer arithmetic, narrow integer promotion, branch/label-separated releases and `kvstoremock/**` scope leakage.
-- Full Python regression: 704 tests executed, 696 passed, 8 skipped, 109.836s.
-- Memory-safety-specific regression: 20 tests passed.
+- Full Python regression: 708 tests executed, 700 passed, 8 skipped, 109.966s.
+- Memory-safety-specific regression: 24 tests passed.
 - `compileall`, JSON parsing and `git diff --check`: passed.
 - Exact commands, logs and hashes are in `research/evidence/cpp/a_memory_safety_poc_20261017/` and `research/evidence/cpp/a_historical_memory_replay_20261017/`.
 
