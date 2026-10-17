@@ -6,6 +6,7 @@
     "A1_bounds_detector",
     "A2_integer_detector",
     "automatic_detector_selection",
+    "current_state_competition_report",
     "E1_A_detector_controls",
     "E1_B_IPC_six_family_controls",
     "remote_sync_current_branch"
@@ -19,7 +20,6 @@
     "B2_auth_flow",
     "B3_arkts_js",
     "Codex0_branch_reconciliation",
-    "competition_report",
     "E2_fixed_source_comparison",
     "E3_independent_holdout",
     "E4_isolated_verification",
@@ -35,6 +35,7 @@
   "evidence": [
     "research/deliveries/CODEX0_BRANCH_RECONCILIATION_20261017.md",
     "research/deliveries/OHSCANNER_TASKBOOK_COMPLETION_AUDIT_20261017.md",
+    "research/deliveries/OHSCANNER_TASKBOOK_REPORT_20261017.md",
     "research/evidence/cpp/cross_ab_parcel_case_20261017.md",
     "research/evidence/cpp/script_security_scan_20261017/summary.md",
     "research/evidence/interface/ipc_family_census_20261017/summary.md"
