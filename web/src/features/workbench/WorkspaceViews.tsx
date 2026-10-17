@@ -11,7 +11,7 @@ import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource } from "./navigation";
 const { Text, Paragraph } = Typography;
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
-  return <Table<any> rowKey="id" dataSource={compact ? jobs.slice(0, 5) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
+  return <Table<any> rowKey="id" size={compact ? "small" : "middle"} dataSource={compact ? jobs.slice(0, 4) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
     { title: "仓库 / 固定版本", render: (_, j) => <><a onClick={() => go("/tasks/" + j.id)}>{j.spec.repository}</a><div className="muted"><Hash value={j.spec.commit} /></div></> },
     { title: "状态", dataIndex: "status", render: (v) => <State value={v} /> },
     { title: "实际耗时", render: (_, j) => j.elapsed_seconds == null ? "尚未结束" : Number(j.elapsed_seconds).toFixed(2) + " s" },
