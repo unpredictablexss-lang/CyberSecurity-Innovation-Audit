@@ -166,9 +166,9 @@ def write_report(repo, output):
                               'No target build or PoC was executed.'],
                 }}
     for name, value in payloads.items():
-        (output / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        (output / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
     hashes = {name: sha256((output / name).read_bytes()).hexdigest() for name in payloads}
-    (output / 'artifact_hashes.json').write_text(json.dumps(hashes, indent=2) + '\n', encoding='utf-8')
+    (output / 'artifact_hashes.json').write_text(json.dumps(hashes, indent=2) + '\n', encoding='utf-8', newline='\n')
     return report
 
 
