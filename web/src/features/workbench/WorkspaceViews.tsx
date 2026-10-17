@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, Col, Descriptions, Empty, Row, Select, Space, Table, Tabs, Tag, Typography } from "antd";
 import { api, artifact, terminal } from "../../api";
 import { go, Hash, Header, State } from "../../components";
@@ -8,7 +8,7 @@ import Cases from "../../pages/Cases";
 import JobDetail from "../../pages/JobDetail";
 import OperationWorkspace from "../audits/OperationWorkspace";
 import { SourceContext } from "../audits/OperationForms";
-import { jobDetailPath } from "./navigation";
+import { jobDetailPath, retainRiskSource } from "./navigation";
 const { Text, Paragraph } = Typography;
 export function ScanTable({ jobs, compact = false }: { jobs: any[]; compact?: boolean }) {
   return <Table<any> rowKey="id" dataSource={compact ? jobs.slice(0, 5) : jobs} pagination={compact ? false : { pageSize: 10 }} scroll={{ x: 650 }} columns={[
@@ -25,9 +25,10 @@ export function TaskCenter({ jobs }: { jobs: any[] }) {
       { key: "operations", label: "区间与验证操作", children: <OperationWorkspace view="queue" /> }]} /></>;
 }
 export function RiskCenter({ jobs }: { jobs: any[] }) {
-  const [selected, setSelected] = useState<string | undefined>();
+  const [selected, setSelected] = useState<string | undefined>(() => retainRiskSource(undefined, jobs));
   const completed = jobs.filter((j) => j.report_sha256);
-  const id = completed.some((j) => j.id === selected) ? selected : completed[0]?.id;
+  useEffect(() => { setSelected((current) => retainRiskSource(current, jobs)); }, [jobs]);
+  const id = selected;
   return <><Header title="风险中心" description="按固定快照分组浏览候选；保留原始位置、证据义务和人工复核。" />
     <Card className="section-gap"><Space wrap><Text>来源扫描</Text><Select aria-label="风险来源扫描" className="wide-select" value={id} onChange={setSelected}
       options={completed.map((j) => ({ value: j.id, label: j.spec.repository + " · " + j.spec.commit.slice(0, 12) + " · " + j.id.slice(0, 8) }))} /></Space></Card>

@@ -20,3 +20,7 @@ export function jobDetailPath(id, tab = "findings") {
 export function detailTab(value) {
   return ["findings", "clusters", "coverage", "source", "events", "reports"].includes(value) ? value : "findings";
 }
+
+export function retainRiskSource(selected, jobs) {
+  return selected || jobs.find((job) => job.report_sha256)?.id;
+}

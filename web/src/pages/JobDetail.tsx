@@ -402,6 +402,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
                       showSizeChanger: false,
                     }}
                     expandable={{
+                      expandIcon: ({ expanded, onExpand, record }) => <Button size="small" type="text" aria-label={expanded ? "收起候选组" : "展开候选组"} onClick={(event) => onExpand(record, event)}>{expanded ? "−" : "+"}</Button>,
                       expandedRowRender: (group: any) => (
                         <Space wrap>
                           {group.candidates.map((candidate: any) => (
