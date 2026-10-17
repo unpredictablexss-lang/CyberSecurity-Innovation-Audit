@@ -23,7 +23,7 @@
     "Codex0_branch_reconciliation",
     "E2_fixed_source_comparison",
     "E3_independent_holdout",
-    "E4_product_verification",
+    "E4_product_build_and_permission_evidence",
     "performance_metrics",
     "public_facts_v2"
   ],
