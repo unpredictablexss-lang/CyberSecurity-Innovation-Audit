@@ -85,6 +85,7 @@ def main() -> int:
                 result_path.parent.mkdir(parents=True, exist_ok=True)
                 payload = json.dumps(result, sort_keys=True, ensure_ascii=False).encode("utf-8")
                 result_path.write_bytes(gzip.compress(payload, compresslevel=9, mtime=0))
+                state["failed"].pop(key, None)
                 state["completed"][key] = {
                     "result_path": str(result_path),
                     "result_sha256": hashlib.sha256(result_path.read_bytes()).hexdigest(),

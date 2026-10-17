@@ -62,6 +62,18 @@ class CommunityPlanningTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "source SHA-256 drift"):
                 load_source_units(root, "openharmony/demo", "a" * 40, [item])
 
+    def test_non_utf8_source_is_partial_not_fatal(self):
+        valid = b"int ok;\n"
+        invalid = b"\xff\xfeint bad;\n"
+        rows = [row("ok.cpp", valid), row("bad.cpp", invalid)]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ok.cpp").write_bytes(valid)
+            (root / "bad.cpp").write_bytes(invalid)
+            context, coverage = load_source_units(root, "openharmony/demo", "a" * 40, rows)
+        self.assertEqual([unit.path for unit in context.units], ["ok.cpp"])
+        self.assertEqual(coverage["not_analyzed_files"][0]["path"], "bad.cpp")
+        self.assertEqual(coverage["parse_counts"]["not_analyzed"], 1)
     def test_offline_shard_scan_is_deterministic(self):
         data = b"void f(int *p) { *p = 1; }\n"
         item = row("f.cpp", data)

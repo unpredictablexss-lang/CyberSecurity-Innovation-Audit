@@ -179,6 +179,7 @@ def load_source_units(
     units: list[SourceUnit] = []
     ast_summary: dict[str, Any] = {}
     parse_counts: Counter[str] = Counter()
+    not_analyzed: list[dict[str, str]] = []
     total_loc = 0
     for row in sorted(rows, key=lambda item: str(item["path"])):
         path = _safe_manifest_path(str(row["path"]))
@@ -188,7 +189,16 @@ def load_source_units(
             raise ValueError("source blob drift: " + path)
         if hashlib.sha256(data).hexdigest() != row["source_sha256"]:
             raise ValueError("source SHA-256 drift: " + path)
-        text = data.decode("utf-8")
+        try:
+            text = data.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            parse_counts["not_analyzed"] += 1
+            not_analyzed.append({
+                "path": path,
+                "reason": "non_utf8_source",
+                "detail": type(exc).__name__,
+            })
+            continue
         language = source_language(path)
         if language is None:
             raise ValueError("unsupported source path: " + path)
@@ -219,7 +229,7 @@ def load_source_units(
             sha256=hashlib.sha256(data).hexdigest(),
             parse_status=status, parse_issues=issues,
         ))
-    if not units:
+    if not units and not not_analyzed:
         raise ValueError("scan shard has no source units")
     units_tuple = tuple(sorted(units, key=lambda item: item.path))
     request = ScanRequest(
@@ -236,6 +246,7 @@ def load_source_units(
         "loc": total_loc,
         "bytes": sum(len(unit.text.encode("utf-8")) for unit in units_tuple),
         "parse_counts": dict(sorted(parse_counts.items())),
+        "not_analyzed_files": not_analyzed,
     }
 
 
