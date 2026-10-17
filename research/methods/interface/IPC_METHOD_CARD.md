@@ -32,28 +32,26 @@ Detailed Chinese methods and per-root/tool comparison: https://github.com/unpred
 
 ---
 
-# IPC method card — what is implemented now: 54 real components, six families, and where the remaining zeros come from (2026-10-17)
+# IPC 方法卡 — 当前实现到什么程度：54 个真实组件、六个子类，以及剩下的零从哪里来（2026-10-17）
 
-Status snapshot of lane `lanes.ipc` on `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
-(`0.8.0`, model `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0449c5`). This is the current
-answer to "how far are the six families implemented"; the dated sections below are the record of how
-each conclusion was reached. Machine-readable table:
-`research/evidence/interface/ipc/family_parity_20261017/parity.json`; records:
-`research/deliveries/ipc/20261017-family-parity-and-batch3.md` and
-`20261017-lane-delivery-record.md`.
+本 lane `lanes.ipc`、分支 `work/ipc-20261017`、基线 `6a41dc9` 的状态快照。检测器未改
+（`0.8.0`，模型 `oh-ipc-2026.10-v6`，只读固定树 `635b3e0449c5`）。本节是"六个子类实现到
+什么程度"的当前答案；下方带日期的小节是每个结论的形成记录。机器可读表：
+`research/evidence/interface/ipc/family_parity_20261017/parity.json`；记录：
+`research/deliveries/ipc/20261017-family-parity-and-batch3.md` 与
+`20261017-lane-delivery-record.md`。
 
-**Corpus.** 54 clean components, no component counted twice, across four audit roots
-(`wtmp/ipc-audit` 30, `ipc-audit-bline` 12, `ipc-audit-extra` 7, `ipc-audit-batch3` 5):
-**31,817 files / 274,766,178 bytes**, 24,150 complete + 7,074 partial ASTs, **264 candidates,
-0 confirmed**. Every component is a 2026-10-17 `master` snapshot; `account_app_account` had no
-`master` and was not cloned.
+**语料。** 54 个干净组件，无重复计数，分布在四个 audit 根
+（`wtmp/ipc-audit` 30、`ipc-audit-bline` 12、`ipc-audit-extra` 7、`ipc-audit-batch3` 5）：
+**31,817 个文件 / 274,766,178 字节**，24,150 个完整 + 7,074 个部分 AST，**264 条候选、
+0 条 confirmed**。全部是 2026-10-17 的 `master` 快照；`account_app_account` 没有 `master`，
+未克隆。
 
-## Per-rule status
+## 逐规则状态
 
-Controls are counted from the family manifests; `fixed`/`safe` are family-level negative controls,
-`positive` is per rule.
+控制数按家族 manifest 统计；`fixed`/`safe` 是家族级负控制，`positive` 是逐规则的正控制。
 
-| family | rule | CWE | candidates | components | positive | fixed | safe |
+| 族 | 规则 | CWE | 候选数 | 命中组件 | positive | fixed | safe |
 |---|---|---|---:|---:|---:|---:|---:|
 | AUTH-01 | `ipc.relay.descriptor-boundary` | CWE-441 | **175** | 16 | 17 | 6 | 1 |
 | AUTH-02 | `ipc.auth.missing` | CWE-862 | **22** | 7 | 17 | 4 | 3 |
@@ -67,70 +65,65 @@ Controls are counted from the family manifests; `fixed`/`safe` are family-level 
 | DATA-01 | `ipc.parcel.copy-range` | CWE-20 | **1** | 1 | 2 | 2 | 1 |
 | DATA-01 | `ipc.parcel.position-underflow` | CWE-20 | 0 | 0 | 1 | 2 | 1 |
 
-Every family now has at least one candidate the shipped detector raised from real code, and every
-family has positive/fixed/safe controls. "Emit once" is the floor, not parity of yield: AUTH-01 and
-CAP-01 carry 87 % of the 264, while AUTH-03's other four rules and `position-underflow` carry none.
+现在每个族都至少有一条由已发布检测器从真实代码产生的候选，且每个族都有
+positive/fixed/safe 控制。"能发射一次"是下限，不是产量对齐：AUTH-01 与 CAP-01 占 264 条中的
+87%，而 AUTH-03 其余四条规则与 `position-underflow` 仍为 0。
 
-## What the six zeros mean now
+## 六条零候选现在分别意味着什么
 
-They are not one finding. Each is a measured statement with its instrument named in
-`20261017-family-parity-and-batch3.md` §7 and `20261017-interpreter-attribution-auth03.md`:
+它们不是同一个结论。每一条都是带仪器的实测陈述，仪器与证据在
+`20261017-family-parity-and-batch3.md` §7 与 `20261017-interpreter-attribution-auth03.md`：
 
-- **`caller-class` — coverage, entries are IDL-generated.** 12 `caller_class_sensitive_calls` sites
-  in 6 components; 6 sit under `*mock*` include paths. The caller-class probe recorded **zero**
-  evaluations in the three components holding the other 6
-  (`multimedia_audio_framework`, `ability_ability_runtime`, `bundlemanager_bundle_framework`).
-  With no modelled entry, there is nothing to reach the call from — this is a scope/coverage fact,
-  not a rule defect.
-- **`identity-domain` — the shape is absent.** 0 of 54 components contains a `Verify*Token` call
-  whose argument is a caller UID; the same call shape occurs **260** times with token-ID arguments.
-  A different corpus, not a rule fix.
-- **`service-identity` / `request-identity` — evaluated, but the subject is not there.** The
-  predicate probe records no entry-reachable `Verify*Token` site consuming a self identity, and no
-  caller/self/request subject at those calls; measured over 30 components: 145 predicate
-  evaluations, `caller` 102, `request` 4, **`caller_uid` 0, `self` 0**.
-- **`position-underflow` — the checked subtraction is present.** 14 `RewindRead` sites in 5
-  components; exactly one size-minus shape, behind
-  `readPosition > PIXELMAP_UNMARSHALLING_DEBUG_OFFSET`
-  (`graphic_graphic_2d` `rs_marshalling_helper.cpp:2327`), and the rule emitted nothing at it.
+- **`caller-class` — 覆盖问题，入口是 IDL 生成的。** 12 处 `caller_class_sensitive_calls`
+  分布在 6 个组件；其中 6 处在 `*mock*` 路径下。caller-class 探针在持有另外 6 处的三个组件
+  （`multimedia_audio_framework`、`ability_ability_runtime`、`bundlemanager_bundle_framework`）
+  里记录了**零次**求值。没有被建模的入口，就没有路径能走到该调用——这是范围/覆盖事实，
+  不是规则缺陷。
+- **`identity-domain` — 形状本身不存在。** 54 个组件里没有一处 `Verify*Token` 调用的实参是
+  caller UID；同一调用形状以 token-ID 为实参出现 **260** 次。这是语料不同，不是规则要修。
+- **`service-identity` / `request-identity` — 求值了，但 subject 不在。** 谓词探针没有记录到
+  任何入口可达、且消费 self 身份的 `Verify*Token` 站点，也没有记录到这些调用处的
+  caller/self/request subject；在 30 个组件上实测：145 次谓词求值，`caller` 102、`request` 4，
+  **`caller_uid` 0、`self` 0**。
+- **`position-underflow` — 唯一的带减号形状是受检减法。** 5 个组件里有 14 处 `RewindRead`；
+  只有一处 size-minus 形状，位于
+  `readPosition > PIXELMAP_UNMARSHALLING_DEBUG_OFFSET` 之后
+  （`graphic_graphic_2d` `rs_marshalling_helper.cpp:2327`），规则在此处没有发射。
 
-## Emitted sites reviewed at source (candidates preserved, none deleted)
+## 已发射站点的源码复核（候选全部保留，未删除）
 
-- **AUTH-03 `object-owner`, 2 candidates.** `bg_continuous_task_mgr.cpp:907/:909` in
-  `resourceschedule_background_task_mgr`. The path records
-  `CheckPermissionForInner(...) => True`; that callee (`:912-925`) accepts either a fixed system-SA
-  uid from `g_innerApiReqBgRunningConfig` (`:137-147`, per-SA fixed mode) or
-  `callingUid == taskParam->uid_`. The first branch does not bind the target uid — the candidate's
-  statement is true in the source, and whether it is a defect is a product-policy question the
-  static evidence cannot decide. Stays `candidate`, not promoted.
-- **AUTH-02, `ability_form_fwk`.** `form_mgr_stub.cpp:1698` calls pure virtual
-  `IFormMgr::StartAbility`; `FormMgrService` inherits `FormMgrStub` and holds the guard. One-class-hop
-  virtual dispatch is not bound by the walk: a known false-positive class.
-- **AUTH-02 + AUTH-04, `multimedia_camera_framework`.** `hcamera_service.cpp:1098` is guarded by
-  `CHECK_RETURN_RET_ELOG`, whose body contains `...` / `##__VA_ARGS__`; the macro expander refuses
-  it (`cpp_macros.py:235-237`), so the guard is invisible. Third and fourth independent instance of
-  the class, after `FALSE_RETURN_V` and `ENFORCE` (both AUTH-01).
-- **DATA-01 `copy-range`, `communication_wifi`.** `wifi_p2p_callback_stub.cpp:385` copies `cfgLen`
-  bytes into a buffer of `cfgLen`, after `0 < cfgLen <= 1024`; the rule accepts only an upper bound
-  equal to a capacity key and does not treat `cap == length` as matched.
+- **AUTH-03 `object-owner`，2 条。** `resourceschedule_background_task_mgr` 的
+  `bg_continuous_task_mgr.cpp:907/:909`。路径已记录 `CheckPermissionForInner(...) => True`；
+  被调方（`:912-925`）接受两种分支：来自 `g_innerApiReqBgRunningConfig`（`:137-147`，每个 SA
+  固定一种模式）的固定系统 SA uid，或 `callingUid == taskParam->uid_`。前一个分支不绑定目标
+  uid——候选的陈述在源码上成立；它是否构成缺陷属于产品策略问题，静态证据无法判定。保持
+  `candidate`，未升格。
+- **AUTH-02，`ability_form_fwk`。** `form_mgr_stub.cpp:1698` 调用纯虚的
+  `IFormMgr::StartAbility`；`FormMgrService` 继承 `FormMgrStub` 并持有守卫。走查没有绑定
+  一跳的虚分派：已知误报类。
+- **AUTH-02 + AUTH-04，`multimedia_camera_framework`。** `hcamera_service.cpp:1098` 的守卫是
+  `CHECK_RETURN_RET_ELOG`，宏体含 `...` / `##__VA_ARGS__`；宏展开器拒绝展开
+  （`cpp_macros.py:235-237`），守卫因此不可见。这是该类的第三、第四个独立实例，前两个是
+  `FALSE_RETURN_V` 与 `ENFORCE`（都在 AUTH-01）。
+- **DATA-01 `copy-range`，`communication_wifi`。** `wifi_p2p_callback_stub.cpp:385` 把
+  `cfgLen` 字节拷进容量同为 `cfgLen` 的缓冲区，且此前有 `0 < cfgLen <= 1024`；规则只接受
+  与容量键相等的上界，不把 `cap == length` 当作匹配。
 
-## Scanner capabilities, stated as what the code does
+## 扫描器能力（按代码实际行为陈述）
 
-Implemented and exercised on real code: descriptor identity read from the base clause; one-hop
-same-file/class delegation as a guard; bounded macro expansion; path-budgeted interpretation with
-fact intersection; identity domains (token / uid / self / request) with a sensitive-effect
-precondition; owner relation; guard coverage (ignored, late, one-branch, switch); capability export;
-Parcel copy range with destination-matched bounds.
+已实现并在真实代码上跑过：从基类子句读描述符身份；把一跳同文件/同类委托读成守卫；有界宏
+展开；带路径预算与事实求交的解释执行；身份域（token / uid / self / request）加敏感效果
+前提；属主关系；守卫覆盖（忽略、迟到、单分支、switch）；能力导出；带目的容量匹配的 Parcel
+拷贝范围。
 
-Not implemented, and each has an observed consequence above: variadic/stringify macro guards
-(`##__VA_ARGS__`, `...`); virtual or member-pointer dispatch binding; IDL-generated dispatcher
-entries (the stub does not exist in the source tree); hops across translation units; ArkTS/JS
-front ends. These are engine/coverage work in `analysis.py`/`entry_index.py`, which a concurrent
-import owns — not changes this lane may commit unilaterally.
+未实现，且每项在上面都有观测到的后果：变参/字符串化宏守卫（`##__VA_ARGS__`、`...`）；
+虚分派或成员指针分派绑定；IDL 生成的 dispatcher 入口（stub 不存在于源码树）；跨翻译单元
+跳转；ArkTS/JS 前端。这些属于 `analysis.py`/`entry_index.py` 的引擎/覆盖工作，由并发导入
+拥有——不是本 lane 可以单方面提交的改动。
 
-**Evidence level.** All 264 are unverified static candidates; `validated_vulnerability` is 0 in
-every report and `confirmed` is 0. A zero component is not a safe component, and a candidate is not
-a vulnerability. The 54 components are a 2026-10-17 snapshot, not the whole OpenHarmony community.
+**证据等级。** 264 条全部是未验证的静态候选；每份报告里 `validated_vulnerability` 都是 0，
+`confirmed` 为 0。某个组件为 0 不等于它安全，一条候选也不等于一个漏洞。54 个组件是
+2026-10-17 的快照，不代表整个 OpenHarmony 社区。
 
 ---
 
