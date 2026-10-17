@@ -3,27 +3,28 @@
   "experiment_kind": "ohscanner_taskbook_status",
   "overall": "incomplete",
   "complete": [
-    "remote_sync_current_branch",
     "A1_bounds_detector",
     "A2_integer_detector",
+    "automatic_detector_selection",
     "E1_A_detector_controls",
-    "automatic_detector_selection"
+    "E1_B_IPC_six_family_controls",
+    "remote_sync_current_branch"
   ],
   "partial": [
-    "Codex0_branch_reconciliation",
     "A0_review_boundary",
     "A3_resource_lifetime",
     "A4_cross_ab",
-    "B0_ipc_closure",
+    "B0_product_ipc_migration",
     "B1_parcel",
     "B2_auth_flow",
     "B3_arkts_js",
-    "public_facts_v2",
+    "Codex0_branch_reconciliation",
+    "competition_report",
     "E2_fixed_source_comparison",
     "E3_independent_holdout",
     "E4_isolated_verification",
     "performance_metrics",
-    "competition_report"
+    "public_facts_v2"
   ],
   "incomplete": [
     "all_community_and_recent_15_day_scale",
@@ -32,9 +33,10 @@
     "large_independent_labelled_holdout"
   ],
   "evidence": [
-    "research/deliveries/OHSCANNER_TASKBOOK_COMPLETION_AUDIT_20261017.md",
     "research/deliveries/CODEX0_BRANCH_RECONCILIATION_20261017.md",
+    "research/deliveries/OHSCANNER_TASKBOOK_COMPLETION_AUDIT_20261017.md",
     "research/evidence/cpp/cross_ab_parcel_case_20261017.md",
-    "research/evidence/cpp/script_security_scan_20261017/summary.md"
+    "research/evidence/cpp/script_security_scan_20261017/summary.md",
+    "research/evidence/interface/ipc_family_census_20261017/summary.md"
   ]
 }

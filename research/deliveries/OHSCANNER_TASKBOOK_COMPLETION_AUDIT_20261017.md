@@ -18,7 +18,7 @@ The taskbook is **not fully complete**. Automatic selection, v2 fact slots, Code
 | A-2 integer/size detector | `ohscanner.cpp.integer_bounds` 0.2.0, CVE-2025-0587 1->0 | Complete for bounded lexical scope |
 | A-3 null/UAF/double-free/resource | null 0.2.0, lifetime, resource 0.1.0, unsafe calls 0.1.0 | Substantially complete; leak/interprocedural summaries incomplete |
 | A-4 expose A facts to B Parcel/Native Bridge | v2 fact view plus controlled A/B Parcel case now exists; real product Parcel/Native Bridge integration remains open | Partial |
-| B-0 six-family IPC closure | Interface models/analysis exist; migration/census comparison with missing `work/ipc-20261017` is not closed | Partial |
+| B-0 six-family IPC closure | Current synthetic six-family census is 48/48 matched; product entry migration/census comparison with missing `work/ipc-20261017` remains open | Partial |
 | B-1 Parcel bounds/lifecycle | `ipc.parcel.*` rules and tests exist; no taskbook-complete real vulnerable/fixed Parcel case | Partial |
 | B-2 authorization/identity/sensitive flow | `ipc.auth.*`, consequence model and tests exist; no complete product authorization PoC | Partial |
 | B-3 ArkTS/JS frontends and four rule families | `language.py` lexical frontend and `script_security_detector.py` rules exist with controls and pinned scan; product/manifest semantics remain open | Partial |
@@ -26,7 +26,7 @@ The taskbook is **not fully complete**. Automatic selection, v2 fact slots, Code
 | Automatic detector selection | Catalog/API/Web/CLI omit selection to auto-select approved security detectors; example remains opt-in | Complete for ordinary scan entry |
 | Repository/all-community/15-day/807-scale plan | Local 12-repository 15-day increment executed (4 commits / 118 changed source files); all-community/807 scale remains not executed | Partial |
 | Agent/tool evidence foundation | Historical R0/R1/R2 artifacts exist; no new taskbook-wide Agent completion | Partial |
-| E1 rule controls | New A detectors have positive/fixed/safe/unrelated/unknown controls | Complete for A detectors |
+| E1 rule controls | A/B/script rule controls exist; IPC six-family synthetic census is 48/48 matched | Complete for current synthetic rule suites |
 | E2 real fixed-source comparison | 5 pinned components and old/new comparison exist | Partial for A only |
 | E3 independent holdout metrics | 6 historical cases / 4 applicable, 4 vulnerable hits, 3 fixed misses, 1 residual; too small for published Precision/Recall | Partial |
 | E4 vulnerable/fixed/patched + harmless isolated verification | Historical CVE mechanism PoCs and controls exist; direct product builds absent | Partial |

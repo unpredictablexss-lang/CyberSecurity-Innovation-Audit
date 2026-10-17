@@ -1,0 +1,602 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "ipc_six_family_coverage_census",
+  "status": "completed_with_limitations",
+  "families": {
+    "AUTH-01": {
+      "positive": 17,
+      "matched": 23,
+      "fixed": 6
+    },
+    "AUTH-02": {
+      "positive": 2,
+      "matched": 6,
+      "fixed": 2,
+      "safe": 2
+    },
+    "AUTH-03": {
+      "positive": 4,
+      "matched": 7,
+      "fixed": 3
+    },
+    "AUTH-04": {
+      "positive": 4,
+      "matched": 6,
+      "fixed": 1,
+      "safe": 1
+    },
+    "CAP-01": {
+      "positive": 1,
+      "matched": 3,
+      "fixed": 1,
+      "safe": 1
+    },
+    "DATA-01": {
+      "positive": 2,
+      "matched": 3,
+      "fixed": 1
+    }
+  },
+  "totals": {
+    "samples": 48,
+    "matched": 48,
+    "mismatch": 0
+  },
+  "rows": [
+    {
+      "sample_id": "relay_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "3f0adc6541c293e013496f021f09a24472fe6b4e02504f71526de527378ba90d"
+    },
+    {
+      "sample_id": "relay_fixed",
+      "family": "AUTH-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "423c2bd4b4b3230e82fa5ee018a5ff5f93f1dde9c8fe8ab9028028d4cd1f706a"
+    },
+    {
+      "sample_id": "relay_read_only_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "7ba3ac22f53b9cb02a202e682395d52bafb7da8ff54e04443a2c5e5be1cc1ea7"
+    },
+    {
+      "sample_id": "auth_positive",
+      "family": "AUTH-02",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.missing",
+      "observed_rules": [
+        "ipc.auth.missing"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "f0a6e35771addd75c78a54aadacc20c5adf1db6f56efad571f78c7f8d7187d51"
+    },
+    {
+      "sample_id": "auth_fixed",
+      "family": "AUTH-02",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "ab3d3d58ab163049ebd1e4d3ee91ac24e69dcb6d75d3a5ad7ddc48d72b972433"
+    },
+    {
+      "sample_id": "auth_ignored_positive",
+      "family": "AUTH-04",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.guard-coverage",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "50d8be5ec7abb35c2b1884afbaabaa10e2ecb7b9bf563f6106e5f16c7497781c"
+    },
+    {
+      "sample_id": "identity_positive",
+      "family": "AUTH-03",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.service-identity",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing",
+        "ipc.auth.service-identity"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "1e90ab5d963b80545f9d3c72438d1ff571f714a4f18225ae1eec3fa2fa59e108"
+    },
+    {
+      "sample_id": "identity_fixed",
+      "family": "AUTH-03",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "c55bb89fcd43ed0dfbb7cff2e1952b807c07beeb2498b344069d457e682152ec"
+    },
+    {
+      "sample_id": "request_identity_positive",
+      "family": "AUTH-03",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.request-identity",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing",
+        "ipc.auth.request-identity"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "9d1d9ad1f4f5e451dc61a022205eff2429bccea01a41315259070bc2b725633c"
+    },
+    {
+      "sample_id": "coverage_positive",
+      "family": "AUTH-04",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.guard-coverage",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "716cc71681ed863318034e24af944d49cac7fec363abbd32fb0c1c95cac7c269"
+    },
+    {
+      "sample_id": "coverage_fixed",
+      "family": "AUTH-04",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "8f992c5f2afee3f974d7669e71311c9f23ce69f6a8414db17a6e61fe8abb9520"
+    },
+    {
+      "sample_id": "coverage_late_positive",
+      "family": "AUTH-04",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.guard-coverage",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "01f891b52efd99c8fc178647c8aefbcf2de2641dff7af974acb00b4e5dab858d"
+    },
+    {
+      "sample_id": "parcel_positive",
+      "family": "DATA-01",
+      "variant": "positive",
+      "expected_rule": "ipc.parcel.copy-range",
+      "observed_rules": [
+        "ipc.parcel.copy-range"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "8e9efb7708d6a8f5955b6dd3f58707449841f00e363c6fe87552543a90d247cc"
+    },
+    {
+      "sample_id": "parcel_fixed",
+      "family": "DATA-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "7a71bcda0642472623dc835e1b2c641c5ce65f70b4336aa6b3268a3ad81b2b62"
+    },
+    {
+      "sample_id": "parcel_unrelated_bound_positive",
+      "family": "DATA-01",
+      "variant": "positive",
+      "expected_rule": "ipc.parcel.copy-range",
+      "observed_rules": [
+        "ipc.parcel.copy-range"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "c9ddb01541dea46b72e5f66c216179235c06d18c2a875db5974da34f8fdec0bc"
+    },
+    {
+      "sample_id": "capability_positive",
+      "family": "CAP-01",
+      "variant": "positive",
+      "expected_rule": "ipc.capability.export",
+      "observed_rules": [
+        "ipc.capability.export"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "9b50baf4651affa3c5ea8252193a6047db38d7be11d0c53e031f61cda02108b8"
+    },
+    {
+      "sample_id": "capability_fixed",
+      "family": "CAP-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "7906133663e88909300b9a534ee65aab933bba88565d5063b0980aaecb363413"
+    },
+    {
+      "sample_id": "capability_null_safe",
+      "family": "CAP-01",
+      "variant": "safe",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "d3642c1cae692a28ac407c4e99c1ae61d0a46bc5bf8a9a420aac8a4a8563b32d"
+    },
+    {
+      "sample_id": "owner_positive",
+      "family": "AUTH-03",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.object-owner",
+      "observed_rules": [
+        "ipc.auth.object-owner"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "b125a72a2f6a3dadb2ab802b8e8af4488ce85622dbd948d9797bc81b7ea5a41a"
+    },
+    {
+      "sample_id": "owner_fixed",
+      "family": "AUTH-03",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "419425e2926bd42efaa3b1fa7d6ea5149cd6bb1d847e6cf93f6f04d11230e625"
+    },
+    {
+      "sample_id": "helper_fixed",
+      "family": "AUTH-02",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "ee73fa16cc5bfc8458406bbb66f1cf3d90bf40b33f25fdffde2fc2662a29d59e"
+    },
+    {
+      "sample_id": "helper_positive",
+      "family": "AUTH-02",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.missing",
+      "observed_rules": [
+        "ipc.auth.missing"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "21d33d31450b22911f3facd839956b33eaa57d43f202a277f2fc63b52887d27c"
+    },
+    {
+      "sample_id": "comments_safe",
+      "family": "AUTH-02",
+      "variant": "safe",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "7302cb0dac589d1cf1cb4dd8f9fe62a548ae9dc7f87d6220ab5df0b1c980db79"
+    },
+    {
+      "sample_id": "dead_path_safe",
+      "family": "AUTH-02",
+      "variant": "safe",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "30c6e22ebfa1d98172ae75f9fb1ac1b5f9f899238553e8b588ce80f18acbcf7e"
+    },
+    {
+      "sample_id": "wrong_parcel_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "1ee2f8334800409312ddba2ede0c00cbc4b0a4ce628e3ff38acd1e2414c63947"
+    },
+    {
+      "sample_id": "reset_identity_positive",
+      "family": "AUTH-03",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.service-identity",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing",
+        "ipc.auth.service-identity"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "950b51368ef8253268547bd40ffd1e54a1538e5ffd6906e8a2bca60cd328f006"
+    },
+    {
+      "sample_id": "cached_caller_fixed",
+      "family": "AUTH-03",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "401abb4eedaad89471b166fd63ce2d555e85e994a74a5d9593c8bd5f4d69afa0"
+    },
+    {
+      "sample_id": "switch_positive",
+      "family": "AUTH-04",
+      "variant": "positive",
+      "expected_rule": "ipc.auth.guard-coverage",
+      "observed_rules": [
+        "ipc.auth.guard-coverage",
+        "ipc.auth.missing"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "bc2256e0f7845f0d2dd1a5beef0f9421022f66b57e035d88bf7265d1463dc84d"
+    },
+    {
+      "sample_id": "denied_complement_positive",
+      "family": "AUTH-04",
+      "variant": "safe",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "3f829c9a76c78df2f0589eca0183dd9fb996e72e39479857516639df1a7e9177"
+    },
+    {
+      "sample_id": "descriptor_interface_fixed",
+      "family": "AUTH-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "80a1af3340c9c3b4df2e929ff23ff5b2bb0053df1e9b723e1c63a78d98b5b6b9"
+    },
+    {
+      "sample_id": "descriptor_no_prefix_fixed",
+      "family": "AUTH-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "9635f7036ba42e4d61d1aabca0024a4f2ad3c5f7f389a27caab98e61e80d4a1b"
+    },
+    {
+      "sample_id": "descriptor_inherited_fixed",
+      "family": "AUTH-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "a738861304ea2038963ee76a183146e4aa42aaa9d722844d7a8fba5fe1e799a2"
+    },
+    {
+      "sample_id": "descriptor_wrong_interface_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "3c48145969a2216af8f756b888208e159c95c1aaa8cdf7f7e07a33d6d61a9aad"
+    },
+    {
+      "sample_id": "descriptor_unrelated_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "2b2592d96e7a370e808b6805f0a9791c13ced2406d210518a31642783c404252"
+    },
+    {
+      "sample_id": "descriptor_alias_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "cb34eaf057e9ffa9eeb7bb91f7ceb3d726a5ab4ecb564c24514880cb082a6830"
+    },
+    {
+      "sample_id": "descriptor_unresolved_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "40d3afa6e938121f28519a214789add7abcb93fe55e382b85b3a177bc3383ba2"
+    },
+    {
+      "sample_id": "descriptor_call_only_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "d52900c30e2d8826db991273d05367c1499c18d9085b931a754390527fc68e89"
+    },
+    {
+      "sample_id": "descriptor_no_reject_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "bb1ca6681a58d8e7770eac84f3e4e45dd0812793589c2afb044a390f14c280b7"
+    },
+    {
+      "sample_id": "descriptor_after_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "beeca6f7275e1cf43e160f77193f3f69e701fa4f0265deacc8932d50429b239c"
+    },
+    {
+      "sample_id": "descriptor_one_branch_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "b26c92a542de61d13da470800585480b6ff0d124ec1c461afc2055673154766f"
+    },
+    {
+      "sample_id": "relay_inner_guard_fixed",
+      "family": "AUTH-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "172720121ec5b36f298583e523c724d9a64eebed9a07851969961c73f6c65ce4"
+    },
+    {
+      "sample_id": "relay_inner_local_guard_fixed",
+      "family": "AUTH-01",
+      "variant": "fixed",
+      "expected_rule": null,
+      "observed_rules": [],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "61a5c87c65064747c2ab549c98cfca446c40be26c58e182ee9a9cf38349da99e"
+    },
+    {
+      "sample_id": "relay_inner_no_guard_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "88b94b5a8a392db8e905d35ae7faa7969e26c3fb197f6737c64830f81292116f"
+    },
+    {
+      "sample_id": "relay_inner_after_dispatch_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "f14ef0aa118ac79a410c368e440e6530d9ae33c0e8549f46b56b1279797ba0a0"
+    },
+    {
+      "sample_id": "relay_inner_no_reject_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "cbe72e6755f0abae5447e85650d87e43c4c4978a7113136f77e2bc283f0812a2"
+    },
+    {
+      "sample_id": "relay_inner_nested_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "a8047b478ba6510b8f31c4f1289c5fc5280b8fc0f60e7007e323cd2808cc80a7"
+    },
+    {
+      "sample_id": "relay_inner_substituted_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "f17d3bce541b2bf820d56e289cac57c14c1413ec46ef8e50424332aa16464860"
+    },
+    {
+      "sample_id": "relay_inner_wrong_interface_positive",
+      "family": "AUTH-01",
+      "variant": "positive",
+      "expected_rule": "ipc.relay.descriptor-boundary",
+      "observed_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "matched": true,
+      "detector_status": "completed",
+      "source_sha256": "fe2823a8a52b5c01f415dfce42f3bfb128830a981cb6b797713c4277e7f3afb9"
+    }
+  ],
+  "limitations": [
+    "Synthetic design controls only; not product entry reachability or vulnerability truth.",
+    "A matched expected rule is rule coverage, not a validated vulnerability.",
+    "The missing work/ipc-20261017 ref prevents comparison with that branch's six-family census."
+  ]
+}
