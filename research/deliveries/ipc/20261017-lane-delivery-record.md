@@ -529,3 +529,30 @@ research/deliveries/ipc/ceiling_yield.py  （该次汇总所用的脚本本体�
   基线 48 行的 `variant` 与 `expected_rule` 一致、`family` 与 `family_of_rule()` 一致，
   正例覆盖 8/11 条规则，本线补上其余 3 条后正好 11/11。
   **但这只在 `families/` 包存在时才成立**，所以它不构成"可单独检出"。
+
+## 追加：交付项 15（新语料 7 组件）
+
+本批新增路径（只增不改；未动检测器、策略、模型、共享面）：
+
+```text
+research/deliveries/ipc/20261017-extra-corpus-seven-components.md
+research/deliveries/ipc/extra_corpus_measurement.py
+research/evidence/interface/ipc/extra_corpus_20261017/components.json
+research/evidence/interface/ipc/extra_corpus_20261017/attribution.json
+```
+
+结果：7 个浅克隆组件（1859 个入选文件 / 11,979,860 字节 / 1488 完整 AST +
+347 部分 AST）合计 1 条候选，为 `multimedia_media_foundation`
+`src/buffer/avbuffer_queue/avbuffer_queue_producer_stub.cpp:49` 的 AUTH-01；
+源码第 47 行有描述符比较，宏 `FALSE_RETURN_V` 的宏体含 `#exec`
+（字符串化），展开器拒绝，故 `path=()` —— 交付项 11 那类宏守卫误报的
+第二个独立实例。
+
+其余 6 个组件的零候选按 `zero_reason` 分开：2 个 `no_entry_roots`、
+1 个 `mock_only_entry_roots`、3 个 `entry_roots_walked_no_rule_conjunction`
+（`multimedia_media_foundation` 也走到了入口，只是有那 1 条候选）。
+全语料只有 2 次权限谓词求值，`subject` 均为 `unknown`
+（`analysis.py:1364-1365`，实参是权限名字符串），
+`caller_class_sensitive_calls_reached_without_a_caller_class = 0`。
+
+`validated_vulnerability` 在 7 份报告中均为 0；未删除任何负结果。

@@ -1,0 +1,390 @@
+{
+  "schema_version": 1,
+  "kind": "ipc_component_audit_measurement",
+  "batch": "B-line corpus extension (7 repositories added 2026-10-17)",
+  "generated": "2026-10-17 Asia/Shanghai",
+  "detector": {
+    "path": "src/ohscanner/detectors/interface",
+    "version": "0.8.0",
+    "model_version": "oh-ipc-2026.10-v6",
+    "source": "read-only pinned tree of the interface branch",
+    "source_commit": "635b3e0449c552f0ccc25118850d245962845568",
+    "driver": "src/ohscanner/detectors/interface/audit.py",
+    "passes": [
+      "complete-ast",
+      "all-files"
+    ]
+  },
+  "instruments": {
+    "root_probe": "research/deliveries/ipc/root_probe_site/sitecustomize.py",
+    "predicate_probe": "research/deliveries/ipc/probe_site/sitecustomize.py",
+    "mechanism": "PYTHONPATH sitecustomize wrappers over the pinned Interpreter; the driver argv is otherwise unchanged and neither wrapper changes a computed value.",
+    "attribution": "research/evidence/interface/ipc/extra_corpus_20261017/attribution.json"
+  },
+  "totals": {
+    "candidates": 1,
+    "parsed_complete": 1488,
+    "parsed_partial": 347,
+    "selected_bytes": 11979860,
+    "selected_files": 1859,
+    "value_calls": 4977
+  },
+  "per_rule": {
+    "ipc.relay.descriptor-boundary": {
+      "multimedia_media_foundation": 1
+    }
+  },
+  "components": [
+    {
+      "component": "communication_netmanager_ext",
+      "repository": "openharmony/communication_netmanager_ext",
+      "commit": "8c35917b7e2f152813b13a20530a8452cf73d938",
+      "git_tree": "e26372f6cd65be928b9c1cf4a96d3c7dd5ece804",
+      "snapshot_sha256": "dfc65b5c859ccf09cb74e0bcd2653c203d29f0aac5c66aeac941f6d270f6d645",
+      "plan_sha256": "beff29c1af73796ea1bc10b230f80a63e0265b773852062c3bca894e2dac8c64",
+      "scope": {
+        "selected_files": 482,
+        "selected_bytes": 3419149
+      },
+      "analysis": {
+        "parsed_complete": 409,
+        "parsed_partial": 51,
+        "analyzed_files": 409,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 51
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "arkts": 10,
+          "js": 3,
+          "ts": 9
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "entry_roots_walked_no_rule_conjunction",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 14.234,
+      "report_sha256": "855ed5e1b65c0f9229bdcfe05b10826dd72f8b52abbcd83ac7b41eea1e33b095",
+      "root_probe": {
+        "distinct_roots": 16,
+        "distinct_root_files": 6,
+        "value_calls": 3352,
+        "distinct_functions": 18,
+        "root_files": [
+          "frameworks/native/ethernetclient/src/proxy/interface_state_callback_stub.cpp",
+          "frameworks/native/ethernetclient/src/proxy/net_eap_callback_stub.cpp",
+          "frameworks/native/netfirewallclient/src/netfirewall_intercept_record_callback_stub.cpp",
+          "frameworks/native/netshareclient/src/proxy/ipccallback/sharing_event_callback_stub.cpp",
+          "services/netfirewallmanager/src/netfirewall_stub.cpp",
+          "services/networkslicemanager/src/networkslice_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 2,
+        "evaluations_by_subject": {
+          "unknown": 2
+        },
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "distributeddatamgr_objectstore",
+      "repository": "openharmony/distributeddatamgr_objectstore",
+      "commit": "1a63f5a9827dc68ebd9b02b58935cd18996b2c1b",
+      "git_tree": "4fb305a6023ff8067e8abd2af643798fcf67dc6b",
+      "snapshot_sha256": "361bb0c5e6bd27e4b1f7d7b3d9e90a5c3efa4b9766cbc42a84adda05d832136e",
+      "plan_sha256": "ab1f52a67927f88152008fd68c1a1e64e63a109a166b8ff6f72c70f1e0a823c7",
+      "scope": {
+        "selected_files": 63,
+        "selected_bytes": 256540
+      },
+      "analysis": {
+        "parsed_complete": 56,
+        "parsed_partial": 6,
+        "analyzed_files": 56,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 6
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "js": 1
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "no_entry_roots",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 1.352,
+      "report_sha256": "97d59629ed2fb98c463a759f7746e1ef3e2c7407a7f50887740ce6ee13f717d3",
+      "root_probe": {
+        "distinct_roots": 0,
+        "distinct_root_files": 0,
+        "value_calls": 0,
+        "distinct_functions": 0,
+        "root_files": []
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "distributeddatamgr_preferences",
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+      "git_tree": "7761d9e273ae7007046ae115797f255e554523ae",
+      "snapshot_sha256": "06949cd875ab9aa43059459c524971db041bde25c14aab3539f32771e55ddad7",
+      "plan_sha256": "cdbc11ccdd6b1c0b1340defd59d5fca707254710a8e3f3181a5d54c16d00a577",
+      "scope": {
+        "selected_files": 341,
+        "selected_bytes": 2118436
+      },
+      "analysis": {
+        "parsed_complete": 277,
+        "parsed_partial": 64,
+        "analyzed_files": 277,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 64
+        },
+        "files_in_scope_without_a_claiming_detector": {},
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "mock_only_entry_roots",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 8.537,
+      "report_sha256": "0b3724e027637ae2f0086a904b215a2f0168cfec74402f939ea367fa75734edb",
+      "root_probe": {
+        "distinct_roots": 1,
+        "distinct_root_files": 1,
+        "value_calls": 2,
+        "distinct_functions": 1,
+        "root_files": [
+          "preferencesmock/external_inner_kit/ipc/mock_ipc_object_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "multimedia_media_foundation",
+      "repository": "openharmony/multimedia_media_foundation",
+      "commit": "486aae6c8ed9c22499e6bc171748fb44fe7d88b0",
+      "git_tree": "defda8e14325689e1db1a9c2e976c6c8408b1c6e",
+      "snapshot_sha256": "0104e89c1d3db34c9955ca8e7a299ba8fd14001044143530ccda0109c4bb38f0",
+      "plan_sha256": "0d58f77a263c8627a3b20e018f7ac1b0b064271c999c41b9d9490ff4ec923c90",
+      "scope": {
+        "selected_files": 534,
+        "selected_bytes": 3172759
+      },
+      "analysis": {
+        "parsed_complete": 352,
+        "parsed_partial": 182,
+        "analyzed_files": 352,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 182
+        },
+        "files_in_scope_without_a_claiming_detector": {},
+        "bucket_closure_closed": true
+      },
+      "zero_reason": null,
+      "candidates": {
+        "ipc.relay.descriptor-boundary": 1
+      },
+      "candidates_total": 1,
+      "candidate_sites": [
+        {
+          "file": "src/buffer/avbuffer_queue/avbuffer_queue_producer_stub.cpp",
+          "line": 49,
+          "rule_id": "ipc.relay.descriptor-boundary",
+          "symbol": "AVBufferQueueProducerStub::OnRemoteRequest",
+          "passes": [
+            "all-files"
+          ],
+          "file_parse_status": "partial",
+          "file_analysis_status": "not_analyzed",
+          "source_sha256": "5706cc04c3157ed79dbe90ffa33a0c79137838410f839c276503ee761b7a978c"
+        }
+      ],
+      "candidates_with_runner_obligations": 1,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 14.763,
+      "report_sha256": "62ea34887b55a99325f95554ae06fc3b5dd35c92e1f09420c1527b498b90e989",
+      "root_probe": {
+        "distinct_roots": 11,
+        "distinct_root_files": 1,
+        "value_calls": 155,
+        "distinct_functions": 11,
+        "root_files": [
+          "src/buffer/avbuffer_queue/avbuffer_queue_producer_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "powermgr_battery_statistics",
+      "repository": "openharmony/powermgr_battery_statistics",
+      "commit": "271a545acc0ececc746cfe0bb7c1501943df7c64",
+      "git_tree": "fd32c4da257effb689a86f7946f51805360fbf70",
+      "snapshot_sha256": "d7b67ba192fa4547327f803de8f7c1bc4033d099b961772f32578ae3db4f6d12",
+      "plan_sha256": "70dbf1f00ef9fccc4e025fda4a8d112f095df90c58c22fe92c33989c4e65abd5",
+      "scope": {
+        "selected_files": 77,
+        "selected_bytes": 414803
+      },
+      "analysis": {
+        "parsed_complete": 62,
+        "parsed_partial": 15,
+        "analyzed_files": 62,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 15
+        },
+        "files_in_scope_without_a_claiming_detector": {},
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "no_entry_roots",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 1.706,
+      "report_sha256": "90cbec0d97203255d5ef243de77be77a21cc6388eac112bb1ce4e4736c29346b",
+      "root_probe": {
+        "distinct_roots": 0,
+        "distinct_root_files": 0,
+        "value_calls": 0,
+        "distinct_functions": 0,
+        "root_files": []
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "powermgr_display_manager",
+      "repository": "openharmony/powermgr_display_manager",
+      "commit": "6b2ee24ce30ca93a3fba451b912e0af59538b794",
+      "git_tree": "e8c85c0aff0e8853387b033f094c07070cfdedce",
+      "snapshot_sha256": "ba646cf5adaaa10eb4bc4826f7ced128de2eb9d41d6fef5a555e7c6d0dd57691",
+      "plan_sha256": "7a2851f0fd7c633d469d818a54581a72d5bb8f52e5d9321fc3f00b0531e790ea",
+      "scope": {
+        "selected_files": 102,
+        "selected_bytes": 530105
+      },
+      "analysis": {
+        "parsed_complete": 94,
+        "parsed_partial": 8,
+        "analyzed_files": 94,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 8
+        },
+        "files_in_scope_without_a_claiming_detector": {},
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "entry_roots_walked_no_rule_conjunction",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 2.231,
+      "report_sha256": "e3c50fde8f2095ca1f61690adfdcdd68b8e547e497e98ae4c74a8461570a0185",
+      "root_probe": {
+        "distinct_roots": 4,
+        "distinct_root_files": 4,
+        "value_calls": 794,
+        "distinct_functions": 7,
+        "root_files": [
+          "state_manager/service/zidl/src/display_brightness_callback_stub.cpp",
+          "state_manager/service/zidl/src/display_brightness_listener_stub.cpp",
+          "state_manager/service/zidl/src/display_power_callback_stub.cpp",
+          "state_manager/service/zidl/src/multi_screen_display_state_callback_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    },
+    {
+      "component": "telephony_sms_mms",
+      "repository": "openharmony/telephony_sms_mms",
+      "commit": "41cef006c6c4b7fdc9ee0bb8d9ae659ee2ebbfd8",
+      "git_tree": "c7815e6f0b9033ca71cf4edc119a2e5b8393b85a",
+      "snapshot_sha256": "b98763a04a8d36a30a53a45a510f80fa6bb13116d3f7fb471bf75b2a8edc5b12",
+      "plan_sha256": "adce65c806100c95d8a79436f96b931cd0008bce1001ab269926790649426146",
+      "scope": {
+        "selected_files": 260,
+        "selected_bytes": 2068068
+      },
+      "analysis": {
+        "parsed_complete": 238,
+        "parsed_partial": 21,
+        "analyzed_files": 238,
+        "unexamined_reasons": {
+          "incomplete_ast:partial": 21
+        },
+        "files_in_scope_without_a_claiming_detector": {
+          "ts": 1
+        },
+        "bucket_closure_closed": true
+      },
+      "zero_reason": "entry_roots_walked_no_rule_conjunction",
+      "candidates": {},
+      "candidates_total": 0,
+      "candidate_sites": [],
+      "candidates_with_runner_obligations": 0,
+      "confirmed_vulnerabilities": 0,
+      "validated_vulnerability": 0,
+      "elapsed_seconds": 8.207,
+      "report_sha256": "3f339a8a547e203f6fc346a7a6a2b62ce05d927dcb107c85ca0520db498e2b4c",
+      "root_probe": {
+        "distinct_roots": 11,
+        "distinct_root_files": 6,
+        "value_calls": 674,
+        "distinct_functions": 14,
+        "root_files": [
+          "frameworks/native/sms/src/delivery_short_message_callback_stub.cpp",
+          "frameworks/native/sms/src/send_short_message_callback_stub.cpp",
+          "services/sms/ims_reg_state_callback_stub.cpp",
+          "services/sms/ims_service_interaction/src/ims_sms_callback_stub.cpp",
+          "services/sms/satellite_service_interaction/src/satellite_sms_callback_stub.cpp",
+          "services/sms/sms_interface_stub.cpp"
+        ]
+      },
+      "predicate_probe": {
+        "records": 0,
+        "evaluations_by_subject": {},
+        "caller_class_evaluations": {}
+      }
+    }
+  ],
+  "refused_runs": [],
+  "note": "Candidates are unverified static evidence, not vulnerabilities; validated_vulnerability is 0 in every report and confirmed_vulnerabilities is 0 by construction. A zero in a component is not a statement that the component is free of findings: read `zero_reason` first. 'no_entry_roots' means the walk had nowhere to start in this component; 'mock_only_entry_roots' means every entry it found sits under a path segment named mock; only 'entry_roots_walked_no_rule_conjunction' attributes the zero to the rules. Raw reports stay outside Git; report_sha256 binds each row to the report it came from."
+}
