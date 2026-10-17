@@ -32,6 +32,108 @@ Detailed Chinese methods and per-root/tool comparison: https://github.com/unpred
 
 ---
 
+# IPC method card — what is implemented now: 54 real components, six families, and where the remaining zeros come from (2026-10-17)
+
+Status snapshot of lane `lanes.ipc` on `work/ipc-20261017`, base `6a41dc9`. Detector unchanged
+(`0.8.0`, model `oh-ipc-2026.10-v6`, pinned read-only tree `635b3e0449c5`). This is the current
+answer to "how far are the six families implemented"; the dated sections below are the record of how
+each conclusion was reached. Machine-readable table:
+`research/evidence/interface/ipc/family_parity_20261017/parity.json`; records:
+`research/deliveries/ipc/20261017-family-parity-and-batch3.md` and
+`20261017-lane-delivery-record.md`.
+
+**Corpus.** 54 clean components, no component counted twice, across four audit roots
+(`wtmp/ipc-audit` 30, `ipc-audit-bline` 12, `ipc-audit-extra` 7, `ipc-audit-batch3` 5):
+**31,817 files / 274,766,178 bytes**, 24,150 complete + 7,074 partial ASTs, **264 candidates,
+0 confirmed**. Every component is a 2026-10-17 `master` snapshot; `account_app_account` had no
+`master` and was not cloned.
+
+## Per-rule status
+
+Controls are counted from the family manifests; `fixed`/`safe` are family-level negative controls,
+`positive` is per rule.
+
+| family | rule | CWE | candidates | components | positive | fixed | safe |
+|---|---|---|---:|---:|---:|---:|---:|
+| AUTH-01 | `ipc.relay.descriptor-boundary` | CWE-441 | **175** | 16 | 17 | 6 | 1 |
+| AUTH-02 | `ipc.auth.missing` | CWE-862 | **22** | 7 | 17 | 4 | 3 |
+| AUTH-03 | `ipc.auth.caller-class` | CWE-863 | 0 | 0 | 1 | 5 | 1 |
+| AUTH-03 | `ipc.auth.object-owner` | CWE-863 | **2** | 1 | 1 | 5 | 1 |
+| AUTH-03 | `ipc.auth.identity-domain` | CWE-863 | 0 | 0 | 1 | 5 | 1 |
+| AUTH-03 | `ipc.auth.service-identity` | CWE-863 | 0 | 0 | 2 | 5 | 1 |
+| AUTH-03 | `ipc.auth.request-identity` | CWE-863 | 0 | 0 | 1 | 5 | 1 |
+| AUTH-04 | `ipc.auth.guard-coverage` | CWE-863 | **8** | 3 | 5 | 2 | 2 |
+| CAP-01 | `ipc.capability.export` | CWE-926 | **56** | 8 | 10 | 4 | 2 |
+| DATA-01 | `ipc.parcel.copy-range` | CWE-20 | **1** | 1 | 2 | 2 | 1 |
+| DATA-01 | `ipc.parcel.position-underflow` | CWE-20 | 0 | 0 | 1 | 2 | 1 |
+
+Every family now has at least one candidate the shipped detector raised from real code, and every
+family has positive/fixed/safe controls. "Emit once" is the floor, not parity of yield: AUTH-01 and
+CAP-01 carry 87 % of the 264, while AUTH-03's other four rules and `position-underflow` carry none.
+
+## What the six zeros mean now
+
+They are not one finding. Each is a measured statement with its instrument named in
+`20261017-family-parity-and-batch3.md` §7 and `20261017-interpreter-attribution-auth03.md`:
+
+- **`caller-class` — coverage, entries are IDL-generated.** 12 `caller_class_sensitive_calls` sites
+  in 6 components; 6 sit under `*mock*` include paths. The caller-class probe recorded **zero**
+  evaluations in the three components holding the other 6
+  (`multimedia_audio_framework`, `ability_ability_runtime`, `bundlemanager_bundle_framework`).
+  With no modelled entry, there is nothing to reach the call from — this is a scope/coverage fact,
+  not a rule defect.
+- **`identity-domain` — the shape is absent.** 0 of 54 components contains a `Verify*Token` call
+  whose argument is a caller UID; the same call shape occurs **260** times with token-ID arguments.
+  A different corpus, not a rule fix.
+- **`service-identity` / `request-identity` — evaluated, but the subject is not there.** The
+  predicate probe records no entry-reachable `Verify*Token` site consuming a self identity, and no
+  caller/self/request subject at those calls; measured over 30 components: 145 predicate
+  evaluations, `caller` 102, `request` 4, **`caller_uid` 0, `self` 0**.
+- **`position-underflow` — the checked subtraction is present.** 14 `RewindRead` sites in 5
+  components; exactly one size-minus shape, behind
+  `readPosition > PIXELMAP_UNMARSHALLING_DEBUG_OFFSET`
+  (`graphic_graphic_2d` `rs_marshalling_helper.cpp:2327`), and the rule emitted nothing at it.
+
+## Emitted sites reviewed at source (candidates preserved, none deleted)
+
+- **AUTH-03 `object-owner`, 2 candidates.** `bg_continuous_task_mgr.cpp:907/:909` in
+  `resourceschedule_background_task_mgr`. The path records
+  `CheckPermissionForInner(...) => True`; that callee (`:912-925`) accepts either a fixed system-SA
+  uid from `g_innerApiReqBgRunningConfig` (`:137-147`, per-SA fixed mode) or
+  `callingUid == taskParam->uid_`. The first branch does not bind the target uid — the candidate's
+  statement is true in the source, and whether it is a defect is a product-policy question the
+  static evidence cannot decide. Stays `candidate`, not promoted.
+- **AUTH-02, `ability_form_fwk`.** `form_mgr_stub.cpp:1698` calls pure virtual
+  `IFormMgr::StartAbility`; `FormMgrService` inherits `FormMgrStub` and holds the guard. One-class-hop
+  virtual dispatch is not bound by the walk: a known false-positive class.
+- **AUTH-02 + AUTH-04, `multimedia_camera_framework`.** `hcamera_service.cpp:1098` is guarded by
+  `CHECK_RETURN_RET_ELOG`, whose body contains `...` / `##__VA_ARGS__`; the macro expander refuses
+  it (`cpp_macros.py:235-237`), so the guard is invisible. Third and fourth independent instance of
+  the class, after `FALSE_RETURN_V` and `ENFORCE` (both AUTH-01).
+- **DATA-01 `copy-range`, `communication_wifi`.** `wifi_p2p_callback_stub.cpp:385` copies `cfgLen`
+  bytes into a buffer of `cfgLen`, after `0 < cfgLen <= 1024`; the rule accepts only an upper bound
+  equal to a capacity key and does not treat `cap == length` as matched.
+
+## Scanner capabilities, stated as what the code does
+
+Implemented and exercised on real code: descriptor identity read from the base clause; one-hop
+same-file/class delegation as a guard; bounded macro expansion; path-budgeted interpretation with
+fact intersection; identity domains (token / uid / self / request) with a sensitive-effect
+precondition; owner relation; guard coverage (ignored, late, one-branch, switch); capability export;
+Parcel copy range with destination-matched bounds.
+
+Not implemented, and each has an observed consequence above: variadic/stringify macro guards
+(`##__VA_ARGS__`, `...`); virtual or member-pointer dispatch binding; IDL-generated dispatcher
+entries (the stub does not exist in the source tree); hops across translation units; ArkTS/JS
+front ends. These are engine/coverage work in `analysis.py`/`entry_index.py`, which a concurrent
+import owns — not changes this lane may commit unilaterally.
+
+**Evidence level.** All 264 are unverified static candidates; `validated_vulnerability` is 0 in
+every report and `confirmed` is 0. A zero component is not a safe component, and a candidate is not
+a vulnerability. The 54 components are a 2026-10-17 snapshot, not the whole OpenHarmony community.
+
+---
+
 # IPC method card — six-family control depth, and what 18 real components say about the rules (2026-10-17)
 
 Deliverable of lane `lanes.ipc` on branch `work/ipc-20261017`, base `6a41dc9`. Detector unchanged

@@ -609,3 +609,8 @@ AUTH-03 `object-owner` 的两条候选也已逐条复核（`20261017-family-pari
 系统 SA 表并要求模式相等，不绑定目标 uid。候选陈述在源码上成立，保持 `candidate`；
 是否构成问题取决于"受信 SA 可否为任意应用 uid 申请该模式"的产品策略，静态证据不能判定。
 这与前面三类可判误报的形态不同，未删除候选。
+
+**方法卡同步（同日）**：`research/methods/interface/IPC_METHOD_CARD.md` 顶部新增
+"What is implemented now" 状态快照——54 个干净组件 / 31,817 文件 / 264 条候选，11 条规则
+逐条的发射数与 positive/fixed/safe 控制数，六条零候选的四类实测原因，以及四类已发射站点的
+源码复核结论。该节只汇总已提交的证据，没有新增测量；`validated_vulnerability` 仍为 0。
