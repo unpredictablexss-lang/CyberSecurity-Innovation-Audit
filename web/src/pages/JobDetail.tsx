@@ -47,7 +47,7 @@ import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
 const { Text, Title, Paragraph } = Typography;
-export default function JobDetail({ id, initialTab = "findings" }: { id: string; initialTab?: string }) {
+export default function JobDetail({ id, initialTab = "findings", candidateId }: { id: string; initialTab?: string; candidateId?: string }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -63,6 +63,7 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
   const [detail, setDetail] = useState<any>(null);
   const selectedDetailId = useRef<string | null>(null);
   const detailGate = useRef(requestGate());
+  const candidateAutoOpened = useRef<string | null>(null);
   const [source, setSource] = useState<any>(null);
   const [selected, setSelected] = useState<React.Key[]>([]);
   const [caseOpen, setCaseOpen] = useState(false);
@@ -157,6 +158,12 @@ export default function JobDetail({ id, initialTab = "findings" }: { id: string;
       setError(String(e));
     }
   }
+  useEffect(() => {
+    if (job && candidateId && candidateAutoOpened.current !== candidateId) {
+      candidateAutoOpened.current = candidateId;
+      void open({ id: candidateId });
+    }
+  }, [job?.id, candidateId]);
   async function action(name: string) {
     try {
       const j = await api("/scans/" + id + "/" + name, {});

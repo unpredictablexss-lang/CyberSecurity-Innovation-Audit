@@ -37,8 +37,14 @@ export function RiskCenter({ jobs }: { jobs: any[] }) {
   </>;
 }
 export function Investigations({ context = {} }: { context?: SourceContext }) {
+  const [agentStatus, setAgentStatus] = useState<any>(null);
+  useEffect(() => { void api("/agent/status").then(setAgentStatus).catch(() => setAgentStatus(null)); }, []);
   return <><Header title="智能调查" description="围绕候选组织案例与只读调查，保留反证和仍未知的证据义务。" />
-    <Alert className="section-gap" type="info" showIcon message="真实模型未连接" description="人工案例与固定只读工具可以使用；当前没有 LLM 调用、模型费用统计或自动确认漏洞。" />
+    {agentStatus ? <Alert className="section-gap" type={agentStatus.configured ? "info" : "warning"} showIcon
+      message={agentStatus.configured ? "受限 Agent 已配置" : "真实模型未配置"}
+      description={agentStatus.configured ? "服务目标 " + agentStatus.endpoint_host + " · 模型 " + agentStatus.model + "。调用仍需在候选工具页逐次同意源码外发。" :
+        "人工案例与固定只读工具可用。配置后才可调用真实模型；模型费用/效果尚未实测，且不会自动确认漏洞。"} /> :
+      <Alert className="section-gap" type="warning" showIcon message="模型配置状态暂不可用" description="可继续使用人工案例和确定性只读工具。" />}
     <Tabs className="section-gap" defaultActiveKey={context.candidate_id ? "tools" : "cases"} items={[{ key: "cases", label: "调查案例", children: <Cases embedded /> },
       { key: "tools", label: "只读调查步骤", children: <OperationWorkspace view="investigate" context={context} /> }]} /></>;
 }

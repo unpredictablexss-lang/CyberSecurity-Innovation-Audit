@@ -16,6 +16,9 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+ENGINE_MODEL_FILES = ()  # Reviewed shipped model data only; C/D models remain withheld.
+
+
 def engine_fingerprint():
     root = Path(__file__).resolve().parents[2]
     digest = hashlib.sha256()
@@ -27,6 +30,10 @@ def engine_fingerprint():
         ):
             continue
         digest.update(str(file.relative_to(root)).encode())
+        digest.update(file.read_bytes())
+    for relative in ENGINE_MODEL_FILES:
+        file = root / relative
+        digest.update(relative.encode())
         digest.update(file.read_bytes())
     return digest.hexdigest()
 

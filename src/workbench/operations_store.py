@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import sqlite3
+import statistics
 import uuid
 from .store import now
 
@@ -38,13 +39,37 @@ class Operations:
                     INSERT OR IGNORE INTO schema_migrations VALUES(3);
                     """)
 
+            with store.connect() as db:
+                current_version = db.execute("SELECT max(version) FROM schema_migrations").fetchone()[0]
+            if current_version < 4:
+                backups = store.root / "backups"
+                backups.mkdir(exist_ok=True)
+                with sqlite3.connect(store.path) as src, sqlite3.connect(backups / ("before-v4-" + uuid.uuid4().hex + ".sqlite3")) as dst:
+                    src.backup(dst)
+                with store.connect() as db:
+                    db.executescript("""
+                    CREATE TABLE IF NOT EXISTS agent_baseline_reviews(
+                      id INTEGER PRIMARY KEY AUTOINCREMENT,
+                      experiment_id TEXT NOT NULL,
+                      repository TEXT NOT NULL,
+                      source_commit TEXT NOT NULL,
+                      job_id TEXT NOT NULL,
+                      candidate_id TEXT NOT NULL,
+                      record TEXT NOT NULL,
+                      record_sha256 TEXT NOT NULL,
+                      created_at TEXT NOT NULL
+                    );
+                    CREATE INDEX IF NOT EXISTS agent_baseline_pair
+                      ON agent_baseline_reviews(experiment_id,repository,source_commit,candidate_id);
+                    INSERT OR IGNORE INTO schema_migrations VALUES(4);
+                    """)
     def directory(self, key):
         if len(key) != 32 or any(c not in "0123456789abcdef" for c in key):
             raise ValueError("invalid operation ID")
         return self.store.root / "operations" / key
 
     def create(self, kind, spec):
-        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch"}:
+        if kind not in {"source_sync", "revision_range", "version_matrix", "branch_comparison", "validation", "investigation", "candidate_review_batch", "agent_investigation"}:
             raise ValueError("unknown operation kind")
         key = uuid.uuid4().hex
         with self.store.connect() as db:
@@ -122,7 +147,10 @@ class Operations:
                 counts["running_candidates"] += candidates
             else:
                 counts["finished_batches"] += 1
-        return {"schema_version": 1, **counts, "model_provider_configured": False,
+        from .agent import public_status
+        return {"schema_version": 1, **counts,
+                "model_provider_configured": public_status()["configured"],
+                "automatic_batch_processing_enabled": False,
                 "limitations": ["Queue summary counts only static findings from completed reports.",
                                 "Zero-candidate and partial/unanalyzed source coverage remain in scan reports and are not second-pass Agent reviews."]}
 
@@ -200,6 +228,180 @@ class Operations:
             sign = "=" if validation else "!="
             db.execute("UPDATE operations SET status='interrupted',finished_at=?,error=? WHERE status='running' AND kind " + sign + " 'validation'",
                        (now(), "Worker stopped; retry explicitly"))
+
+    def record_agent_baseline_review(self, record):
+        body = json.dumps(record, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+        digest = hashlib.sha256(body.encode("utf-8")).hexdigest()
+        stamp = now()
+        with self.store.connect() as db:
+            db.execute(
+                "INSERT INTO agent_baseline_reviews(experiment_id,repository,source_commit,job_id,candidate_id,record,record_sha256,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                (record["experiment_id"], record["repository"], record["commit"], record["job_id"],
+                 record["candidate_id"], body, digest, stamp))
+            review_id = db.execute("SELECT last_insert_rowid()").fetchone()[0]
+        return {"id": review_id, **record, "record_sha256": digest, "created_at": stamp}
+
+    def agent_baseline_reviews(self, experiment_id=None):
+        query = "SELECT * FROM agent_baseline_reviews"
+        params = ()
+        if experiment_id:
+            query += " WHERE experiment_id=?"
+            params = (experiment_id,)
+        query += " ORDER BY id"
+        with self.store.connect() as db:
+            rows = db.execute(query, params).fetchall()
+        output = []
+        for row in rows:
+            body = row["record"]
+            if hashlib.sha256(body.encode("utf-8")).hexdigest() != row["record_sha256"]:
+                raise ValueError("agent baseline review integrity mismatch")
+            output.append({"id": row["id"], **json.loads(body),
+                           "record_sha256": row["record_sha256"], "created_at": row["created_at"]})
+        return output
+
+    def agent_evaluation_summary(self):
+        groups = {}
+        paired = {}
+        baseline_reviews = self.agent_baseline_reviews()
+        baseline_by_candidate = {}
+        for baseline in baseline_reviews:
+            key = (baseline["experiment_id"], baseline["repository"], baseline["commit"], baseline["candidate_id"])
+            baseline_by_candidate.setdefault(key, []).append(baseline)
+        for task in self.list():
+            if task["kind"] != "agent_investigation" or not task["result_sha256"]:
+                continue
+            reviews = self.agent_reviews(task["id"])
+            if not reviews:
+                continue
+            result = self.result(task["id"])
+            binding = result.get("binding") or {}
+            experiment_id = task["spec"].get("experiment_id") or result.get("experiment_id")
+            dimensions = {
+                "experiment_id": experiment_id,
+                "mode": result.get("mode", "unknown"),
+                "model": (result.get("provider") or {}).get("model") or "unknown",
+                "prompt_version": result.get("prompt_version", "unknown"),
+                "tool_policy_version": result.get("tool_policy_version", "unknown"),
+            }
+            key = tuple(dimensions[name] or "" for name in
+                        ("experiment_id", "mode", "model", "prompt_version", "tool_policy_version"))
+            group = groups.setdefault(key, {
+                **dimensions, "operation_ids": set(), "candidate_ids": set(), "reviews": [],
+                "usefulness": {"useful": 0, "partially_useful": 0, "not_useful": 0, "unsafe": 0},
+                "citation_accuracy": {"all_accurate": 0, "some_incorrect": 0, "mostly_incorrect": 0, "not_checked": 0},
+            })
+            group["operation_ids"].add(task["id"])
+            candidate_key = (binding.get("repository"), binding.get("commit"),
+                             binding.get("candidate_id", "unknown"))
+            group["candidate_ids"].add(candidate_key)
+            for review in reviews:
+                group["reviews"].append(review)
+                group["usefulness"][review["usefulness"]] += 1
+                group["citation_accuracy"][review["citation_accuracy"]] += 1
+
+            # Pair only explicitly tagged runs of the same immutable candidate,
+            # provider model and prompt/tool versions. Untagged history is not
+            # silently presented as a controlled comparison.
+            if experiment_id and dimensions["mode"] in {"single_shot", "tool_agent"}:
+                pair_key = (experiment_id, dimensions["model"], dimensions["prompt_version"],
+                            dimensions["tool_policy_version"], *candidate_key)
+                pair = paired.setdefault(pair_key, {})
+                arm = pair.setdefault(dimensions["mode"], {"operation_ids": set(), "reviews": []})
+                arm["operation_ids"].add(task["id"])
+                arm["reviews"].extend(reviews)
+
+        output = []
+        for key in sorted(groups):
+            group = groups[key]
+            times = [item["elapsed_seconds"] for item in group["reviews"] if item.get("elapsed_seconds") is not None]
+            output.append({
+                **{name: group[name] for name in ("experiment_id", "mode", "model", "prompt_version", "tool_policy_version")},
+                "operation_count": len(group["operation_ids"]),
+                "candidate_count": len(group["candidate_ids"]),
+                "review_count": len(group["reviews"]),
+                "usefulness": group["usefulness"],
+                "citation_accuracy": group["citation_accuracy"],
+                "median_elapsed_seconds": statistics.median(times) if times else None,
+            })
+
+        def arm_summary(arm):
+            reviews = arm["reviews"]
+            times = [item["elapsed_seconds"] for item in reviews if item.get("elapsed_seconds") is not None]
+            usefulness = {"useful": 0, "partially_useful": 0, "not_useful": 0, "unsafe": 0}
+            citation_accuracy = {"all_accurate": 0, "some_incorrect": 0, "mostly_incorrect": 0, "not_checked": 0}
+            for item in reviews:
+                usefulness[item["usefulness"]] += 1
+                citation_accuracy[item["citation_accuracy"]] += 1
+            return {
+                "operation_count": len(arm["operation_ids"]), "review_count": len(reviews),
+                "usefulness": usefulness, "citation_accuracy": citation_accuracy,
+                "median_elapsed_seconds": statistics.median(times) if times else None,
+            }
+
+        def baseline_summary(items):
+            if not items:
+                return None
+            dispositions = {"investigate": 0, "likely_noise": 0, "unknown": 0}
+            for item in items:
+                dispositions[item["disposition"]] += 1
+            times = [item["elapsed_seconds"] for item in items if item.get("elapsed_seconds") is not None]
+            return {"review_count": len(items), "dispositions": dispositions,
+                    "median_elapsed_seconds": statistics.median(times) if times else None}
+
+        paired_comparisons = []
+        for key in sorted(paired):
+            arms = paired[key]
+            if not {"single_shot", "tool_agent"}.issubset(arms):
+                continue
+            experiment_id, model, prompt_version, tool_policy_version, repository, commit, candidate_id = key
+            paired_comparisons.append({
+                "experiment_id": experiment_id, "repository": repository, "commit": commit,
+                "candidate_id": candidate_id, "model": model,
+                "prompt_version": prompt_version, "tool_policy_version": tool_policy_version,
+                "single_shot": arm_summary(arms["single_shot"]),
+                "tool_agent": arm_summary(arms["tool_agent"]),
+                "r0_static_baseline": baseline_summary(baseline_by_candidate.get((experiment_id, repository, commit, candidate_id), [])),
+            })
+        return {
+            "scope": "operator_feedback_only",
+            "accuracy_claim": False,
+            "paired_comparison_scope": "matched_candidate_operator_feedback_only",
+            "limitation": "Self-reported reviews measure perceived utility and citation quality, not vulnerability precision, recall, or ground truth. R1/R2 pairs are descriptive, not randomized causal estimates; R0 static-only human triage is shown when recorded before the LLM run; it is still a reviewer opinion, not ground truth.",
+            "groups": output,
+            "paired_comparisons": paired_comparisons,
+            "r0_baseline_reviews": baseline_reviews,
+        }
+    def record_agent_review(self, key, record):
+        task = self.get(key)
+        if task["kind"] != "agent_investigation" or task["status"] not in {"completed", "completed_with_limitations"}:
+            raise ValueError("human Agent review requires a completed Agent investigation")
+        result = self.result(key)
+        if result.get("vulnerability_state") != "candidate" or result.get("validated_vulnerability") != 0:
+            raise ValueError("Agent review cannot be attached to a promoted vulnerability result")
+        review = {
+            **record,
+            "operation_id": key,
+            "result_sha256": task["result_sha256"],
+            "binding": result.get("binding"),
+            "model_assessment": result.get("agent_assessment", {}).get("assessment", "unknown"),
+            "review_scope": "model_triage_quality_only",
+        }
+        encoded = json.dumps(review, ensure_ascii=False, sort_keys=True)
+        if len(encoded.encode("utf-8")) > 3500:
+            raise ValueError("Agent human review is too large for the append-only audit event")
+        self.event(key, "agent_human_review", encoded)
+        return self.agent_reviews(key)[-1]
+
+    def agent_reviews(self, key):
+        task = self.get(key)
+        if task["kind"] != "agent_investigation":
+            raise ValueError("human Agent review exists only for Agent investigations")
+        reviews = []
+        for event in self.events(key):
+            if event["stage"] == "agent_human_review":
+                record = json.loads(event["message"])
+                reviews.append({"created_at": event["created_at"], **record})
+        return reviews
 
     def assessment(self, case_id, record):
         with self.store.connect() as db:

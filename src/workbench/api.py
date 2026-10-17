@@ -147,6 +147,8 @@ def create_app(settings=None):
 
     @app.get("/api/v1/health")
     def health():
+        from .agent import public_status
+        agent = public_status()
         return {
             "status": "ok",
             "version": "0.1.0",
@@ -161,7 +163,8 @@ def create_app(settings=None):
                 "read_only_investigation": True,
                 "manual_review": True,
                 "case_linking": True,
-                "agent": False,
+                "agent": agent["configured"],
+                "agent_provider": agent,
                 "runtime_validation": False,
                 "version_impact": False,
             },

@@ -242,6 +242,9 @@ def execute(settings, store, ops, task):
                 "limitations": ["No checkout or scan was performed; choose a returned immutable commit explicitly."]}
     if kind == "investigation":
         return investigation(settings, store, spec)
+    if kind == "agent_investigation":
+        from .agent import execute_agent
+        return execute_agent(settings, store, ops, task)
     if kind == "validation":
         from .validation import execute_validation
         return execute_validation(settings, store, ops, task)

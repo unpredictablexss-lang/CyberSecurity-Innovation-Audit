@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from src.ohscanner.contracts import ScanRequest
 from src.ohscanner.frontend import index_sources
@@ -61,6 +62,52 @@ class GitObjectIndexTests(unittest.TestCase):
         self.assertGreaterEqual(len(context.shared_facts["ast"]["src/a.cpp"]["functions"]), 1)
         self.assertNotIn("src/bridge.ets", context.shared_facts["ast"])
         self.assertEqual([s.path for s in sources], sorted(s.path for s in sources))
+
+    def test_git_blobs_are_read_in_one_bounded_batch(self):
+        original_run = subprocess.run
+        commands = []
+
+        def record_run(*args, **kwargs):
+            commands.append(args[0])
+            return original_run(*args, **kwargs)
+
+        with patch("src.ohscanner.git_source.subprocess.run", side_effect=record_run):
+            _, _, sources, inventory = load_git_sources(self.repo, self.commit)
+
+        cat_file_calls = [command for command in commands
+                          if command[-2:] == ["cat-file", "--batch"]]
+        self.assertEqual(len(cat_file_calls), 1)
+        self.assertFalse(any(command[-2:-1] == ["blob"] for command in commands))
+        by_path = {source.path: source.data for source in sources}
+        self.assertEqual(by_path["src/a.cpp"],
+                         (self.repo / "src" / "a.cpp").read_bytes())
+        self.assertEqual(by_path["src/bridge.ets"],
+                         (self.repo / "src" / "bridge.ets").read_bytes())
+        self.assertEqual(inventory["selected_source_files"], 2)
+
+    def test_git_blob_batches_are_capped_at_512_files(self):
+        for index in range(511):
+            (self.repo / "src" / f"batch_{index:03d}.c").write_text(
+                "int sample(void) { return 0; }\n", encoding="utf-8"
+            )
+        git(self.repo, "add", "-A")
+        git(self.repo, "commit", "-qm", "more source files")
+        commit = git(self.repo, "rev-parse", "HEAD")
+        original_run = subprocess.run
+        commands = []
+
+        def record_run(*args, **kwargs):
+            commands.append(args[0])
+            return original_run(*args, **kwargs)
+
+        with patch("src.ohscanner.git_source.subprocess.run", side_effect=record_run):
+            _, _, sources, inventory = load_git_sources(self.repo, commit)
+
+        cat_file_calls = [command for command in commands
+                          if command[-2:] == ["cat-file", "--batch"]]
+        self.assertEqual(len(cat_file_calls), 2)
+        self.assertEqual(len(sources), 513)
+        self.assertEqual(inventory["selected_source_files"], 513)
 
     def test_pinned_commit_ignores_worktree_and_new_head(self):
         first = prepare_git_context(self.repo, "fixture/m1-sample", self.commit)

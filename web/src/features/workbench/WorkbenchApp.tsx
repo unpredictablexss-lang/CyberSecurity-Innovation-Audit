@@ -39,7 +39,7 @@ function Workspace() {
   const operationMatch = path.match(/^\/tasks\/operations\/([A-Za-z0-9_-]+)$/);
   const taskMatch = path.match(/^\/tasks\/([A-Za-z0-9_-]+)$/);
   if (operationMatch) content = <OperationWorkspace key={path} view="queue" operationId={operationMatch[1]} />;
-  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} />;
+  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} />;
   else if (path === "/audits/repository") content = <RepositoryAudit repos={repos} detectors={detectors} refresh={refresh} />;
   else if (path === "/audits/time") content = <OperationWorkspace key={path} view="date" />;
   else if (path === "/audits/versions") content = <OperationWorkspace key={route.canonical} view="branches" context={context} />;
