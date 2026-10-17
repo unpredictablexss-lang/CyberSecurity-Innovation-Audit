@@ -8,6 +8,7 @@ becomes real interpreted control flow, and everything the expander refused is
 reported rather than assumed.
 """
 from dataclasses import dataclass, field, replace
+from contextlib import contextmanager
 import re
 from typing import Optional
 
@@ -17,6 +18,7 @@ import tree_sitter_c
 
 from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
+from .families import merge_policy
 from .models import IpcPolicy, consequence_for
 
 
@@ -66,6 +68,44 @@ _DESCRIPTOR_ACCEPTED = frozenset({"unqualified", "self", "interface"})
 _RELAY_LEAVES = ("return_statement", "throw_statement")
 
 
+class _Suspended:
+    """Inert stand-in for a reporting sink while a value is computed, not walked."""
+
+    def add(self, *items):
+        return None
+
+    def __call__(self, *args, **kwargs):
+        return None
+
+
+def _returns_true(value):
+    """Whether a returned expression's value is the boolean true.
+
+    A returned comparison counts. `return callingUid == ROOT_UID;` is true on
+    exactly the paths where that fact holds, so the return carries the fact
+    rather than being an unexplained UNKNOWN for its caller.
+    """
+    if value.key in ("true", "1"):
+        return True
+    return (value.kind == "predicate" and len(value.predicate) >= 3
+            and value.predicate[2] is True)
+
+
+def _returned_fact(value):
+    """The authorization fact a returned expression names, when it names one.
+
+    Only an authorization predicate contributes. A caller-class or descriptor
+    predicate already has its own channel through the plain value path, and
+    relabelling one of those as an authorization fact here would credit a guard
+    the helper did not make.
+    """
+    if value.kind != "predicate" or len(value.predicate) < 3:
+        return frozenset()
+    if value.predicate[0] == "auth" and value.predicate[2] is True:
+        return frozenset({value.predicate[1]})
+    return frozenset()
+
+
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
@@ -76,6 +116,10 @@ class State:
     upper: frozenset = frozenset()
     size_lower: frozenset = frozenset()
     caller_class: frozenset = frozenset()
+    # Reviewed service-account roles established on this path. Separate from
+    # `auth` because an account is not a permission: what it authorizes is fixed
+    # by the reviewed record that named it, not by the fact that a guard ran.
+    service_account: frozenset = frozenset()
     identity_issues: tuple = ()
     # Descriptor comparisons seen on this path whose interface identity could not
     # be accepted as this transaction's guard: ((outcome, name, where_compared,
@@ -102,6 +146,13 @@ class Function:
     source: bytes
     params: tuple
     parcel_params: tuple
+    # Parameter names declared as non-const lvalue references, when the frame came
+    # from the entry index's one-hop lookup: an argument bound to one of these can
+    # carry the callee's result back to the caller, which is how a stub receives
+    # the remote object it then writes into the reply.
+    ref_params: tuple = ()
+    # 1-based line of the definition, when the frame came from the index.
+    line: int = 0
 
     def text(self, node):
         if node is None:
@@ -137,14 +188,28 @@ def normalize_syntax(source):
     Byte lengths/newlines remain unchanged. Original source is retained for
     evidence. This is not macro expansion or resolution of member pointers.
     """
-    pattern = rb'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|\x27(?:\\.|[^\x27\\])*\x27|(?P<fmt>\bPRI[diouxX](?:8|16|32|64|MAX|PTR)\b)'
+    pattern = (rb'//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|\x27(?:\\.|[^\x27\\])*\x27'
+               rb'|(?P<fmt>\b(?:PRI|SCN)[diouxX](?:LEAST|FAST)?(?:8|16|32|64|MAX|PTR)\b)')
     def fmt(match):
         token=match.group('fmt')
-        if token is not None:
-            before=source[:match.start()].rstrip();after=source[match.end():].lstrip()
-            if before.endswith(b'"') and after.startswith(b'"'):
-                return b'"'+b' '*(len(token)-2)+b'"'
-        return match.group(0)
+        if token is None:
+            return match.group(0)
+        # A format macro only means anything next to a string literal: it is the
+        # width token that completes `"%{public}" PRIu32`. Requiring a literal on
+        # both sides, as this rule first did, misses the commonest spelling in
+        # OpenHarmony -- the macro *ends* the literal sequence, because it sits
+        # last before the comma: `COMM_LOGE(TAG, "count=%{public}" PRIu32, n)`.
+        # `SCNd64` in `sscanf_s(p, "pkg_%" SCNd64 "_%" SCNd64, ...)` was missed
+        # twice over: the width family was not matched at all, and the first
+        # occurrence ends its sequence. Either way tree-sitter sees a bare
+        # identifier between/after string literals and drops the whole
+        # translation unit to partial, which the complete-ast pass then skips.
+        index=match.start()-1
+        while index>=0 and source[index] in b" \t\r\n":
+            index-=1
+        if index<0 or source[index:index+1]!=b'"':
+            return match.group(0)
+        return b'""'+b' '*(len(token)-2)
     normalized=re.sub(pattern,fmt,source,flags=re.S)
     # `(this->*Ident)(args)` parses once the member-pointer operator is read as a
     # plain member access, which keeps the receiver visible.
@@ -247,6 +312,45 @@ def _skip_quoted(source, index, quote):
     return len(source)
 
 
+_PREPROC_HEADS = {"preproc_ifdef": 1, "preproc_if": 1, "preproc_elif": 1, "preproc_else": 0}
+
+
+def _preproc_arms(node, text):
+    """Every arm of one preprocessor conditional, in order: `(condition, statements)`.
+
+    `#ifdef X ... #else ... #endif` is two arms, and `#if/#elif/#else` nests its
+    later arms inside the previous node, so this walks the chain rather than only
+    reading the outer node. A chain with no `#else` gets no arm synthesised here:
+    the caller adds the "no arm taken" path, because that path is real, and
+    dropping it would let `#ifdef X return; #endif Work();` read as though
+    `Work()` were unreachable.
+    """
+    head = _PREPROC_HEADS[node.type]
+    children = list(node.named_children)
+    condition = ""
+    if node.type in ("preproc_if", "preproc_elif") and children:
+        condition = text(children[0])
+    elif node.type == "preproc_ifdef" and children:
+        directive = node.children[0].type if node.children else "#ifdef"
+        condition = directive + " " + text(children[0])
+    elif node.type == "preproc_else":
+        condition = "#else"
+    arms, body = [], []
+    for child in children[head:]:
+        if child.type in ("preproc_elif", "preproc_else"):
+            arms.append((condition, body))
+            arms.extend(_preproc_arms(child, text))
+            return arms
+        body.append(child)
+    arms.append((condition, body))
+    return arms
+
+
+def _preproc_closed(node):
+    """Whether a conditional chain ends in `#else`, so some arm is always taken."""
+    return any(item.type == "preproc_else" for item in walk(node))
+
+
 def _top_level_arguments(source, open_index, close_index):
     """Comma-separated argument spans between the parentheses, outermost level only."""
     arguments, start = [], open_index + 1
@@ -278,12 +382,35 @@ def _top_level_arguments(source, open_index, close_index):
 
 
 class Interpreter:
-    def __init__(self, units, policy: IpcPolicy):
-        self.policy = policy
+    def __init__(self, units, policy: IpcPolicy, request=None):
+        # A harness may hand this walk a hand-built policy; the families' reviewed
+        # additions are merged in either way, so a walk through the detector and a
+        # walk through a script interpret the same sources under the same policy.
+        self.policy = merge_policy(policy)
+        # The scan this walk belongs to, when the caller bound one. Only used to
+        # name the target a service-account claim was read against; a walk without
+        # it still runs, and says the target is unstated rather than inventing one.
+        self.request = request
+        # Reviewed service-account roles by the constant a guard names, and the
+        # operations each role authorizes. An account role is not a permission, so
+        # it travels on its own channel and is consumed only by `authorized`.
+        self.account_roles = {entry.constant: entry
+                              for entry in self.policy.service_account_roles}
+        self.account_accepts = {entry.role: frozenset(entry.accepted_operations)
+                               for entry in self.policy.service_account_roles}
+        self.account_notes = set()
         self.functions = []
         self.observations = []
         self.limitations = set()
         self.seen_permissions = set()
+        # Provenance for every cross-TU one-hop guard this run credited, one line
+        # each. Kept separately from `limitations` while the walk is in progress so
+        # a hop note is never mistaken for a refusal, and merged in `run()`.
+        self.hop_notes = set()
+        # `(owner, name) -> implementation or None`. Source-derived and
+        # root-independent, so it is built once per detector run rather than
+        # re-walked for every unqualified call met in the corpus.
+        self.hop_cache = {}
         self.root = None
         self.active = ()
         self.capacities = {}
@@ -453,12 +580,34 @@ class Interpreter:
             result.append(State(env=env, auth=intersection("auth"),
                                 descriptor=intersection("descriptor"), owner=intersection("owner"),
                                 lower=intersection("lower"), upper=intersection("upper"), size_lower=intersection("size_lower"), caller_class=intersection("caller_class"),
+                                service_account=intersection("service_account"),
                                 identity_issues=tuple(issue for s in group for issue in s.identity_issues),
                                 descriptor_issues=tuple(dict.fromkeys(
                                     issue for s in group for issue in s.descriptor_issues)),
                                 reset=any(s.reset for s in group), flow=flow,
                                 trace=((0, "conservative path join"),)))
         return result
+
+    @contextmanager
+    def lookahead(self):
+        """Suspend reporting while a value is computed rather than a path walked.
+
+        `relay_guard` reads into a handler body to find its descriptor comparison.
+        That read starts from the state preceding the handler's own guards, so the
+        state it computes in is not one the program can be in: a sensitive call met
+        on the way there would be reported with those guards missing, while the
+        real walk reports the same call with them present. The look-ahead only
+        needs the values it computes, so emission and coverage bookkeeping are
+        suspended for its duration -- a permission read seen only on a look-ahead
+        does not show that an analysed path performed one.
+        """
+        sink = _Suspended()
+        saved = self.emit, self.limitations, self.seen_permissions
+        self.emit, self.limitations, self.seen_permissions = sink, sink, sink
+        try:
+            yield
+        finally:
+            self.emit, self.limitations, self.seen_permissions = saved
 
     def emit(self, family, rule, fn, node, state, message, call=None):
         impact, impact_cwe, basis = consequence_for(rule, (call,) if call else ())
@@ -510,14 +659,373 @@ class Interpreter:
         matches = self.functions_by_owner_name.get((owner.rsplit("::", 1)[-1], name), [])
         return matches[0] if len(matches) == 1 else None
 
+    def one_hop_dispatch(self, fn, node, callee, name, args, state):
+        """Read one class hop past an unqualified virtual dispatch, when it guards.
+
+        OpenHarmony implements an IPC stub by inheritance: the concrete service
+        derives from its stub (`class ScreenSessionManager : public SystemAbility,
+        public ScreenSessionManagerStub`) and supplies the handler body in another
+        translation unit. The call written in the stub is an unqualified member
+        call, so `resolve` (same file only) and `delegated` (an explicit
+        `GetInstance()` receiver) both decline it, and the body that actually runs
+        was never read. A `::`, `.` or `->` qualified callee is not this case and is
+        left alone.
+
+        Returns ``(None, None)`` when no single implementer was found -- an overload
+        set, a class the shard does not contain, an unresolvable name -- which keeps
+        the call a candidate rather than guessing at one. The lookup is memoised
+        because it is source-derived and independent of which root is being walked.
+        """
+        if self.index is None or not name:
+            return None, None
+        if "::" in callee or "." in callee or "->" in callee:
+            return None, None
+        key = (fn.owner, name)
+        if key not in self.hop_cache:
+            self.hop_cache[key] = self.index.one_hop_definition(fn.owner, name)
+        entry = self.hop_cache[key]
+        if entry is None:
+            return None, None
+        # Read the implementer through the same frame type the rest of the walk
+        # uses, so one body-walking implementation covers both. A body written
+        # inside the class carries only its own name, so the owner is put back:
+        # a provenance line naming a bare `Get` cannot be checked against source.
+        qualified = entry.qualified if "::" in entry.qualified or not entry.owner \
+            else entry.owner + "::" + entry.name
+        implementation = Function(entry.file, entry.name, qualified, entry.owner,
+                                  entry.node, entry.body, entry.source,
+                                  tuple(name for _type, name in entry.params), (),
+                                  tuple(entry.ref_params), entry.line)
+        # What this call site settles about the implementer's parameters, by
+        # position. The implementer's names are not the caller's, so the binding is
+        # positional, the same way the body walk binds a locally resolved callee.
+        arguments = node.child_by_field_name("arguments")
+        supplied = list(arguments.named_children) if arguments is not None else []
+        bindings = {}
+        for position, name in enumerate(implementation.params):
+            if position >= len(supplied):
+                break
+            if not name:
+                continue
+            decided = self._decisive(fn, supplied[position])
+            if decided is not None:
+                bindings[name] = decided
+        # Reading the implementer's body must not report into this walk: it starts
+        # from that body's own guards, not from this path's.
+        with self.lookahead():
+            gate = self.dispatch_guard(implementation, bindings)
+        # What the call hands back comes from the body this hop reached, so a later
+        # `WriteRemoteObject` of one of those values exports *that* call's product.
+        self.bind_result(state, implementation, args,
+                         Value("call_result", implementation.qualified,
+                               "guarded" if gate else "unguarded"))
+        if gate is not None:
+            self.hop_notes.add(
+                "Cross-TU one-hop guard credited: " + fn.qualified + " at "
+                + self._where(fn.file, fn, node) + " dispatches to "
+                + implementation.qualified + " at " + implementation.file + ":"
+                + str(implementation.line) + ", whose caller-role gate at "
+                + self._where(implementation.file, implementation, gate[0])
+                + " admits " + ", ".join(gate[1]) + ".")
+        return implementation, gate
+
+    def _where(self, file, fn, node):
+        """`file:line` for a node, read back through the macro line map."""
+        if node is None:
+            return file + ":" + str(fn.line)
+        line_map = self.line_maps.get(file) or {}
+        line = node.start_point[0] + 1
+        return file + ":" + str(line_map.get(line, line))
+
+    def bind_result(self, state, implementation, args, produced):
+        """Bind what a dispatched call hands back, so a later export can be traced.
+
+        A stub receives the remote object from the implementation it dispatches to
+        and then writes it into the reply. Which caller variable holds it is a
+        call-site fact -- the implementer's parameter names are not the caller's
+        variable names -- so the binding is by argument position and only over the
+        reference parameters, which is the shape that carries a result back.
+        Pointer out-parameters are not bound: a pointer argument does not say
+        whether it is written to.
+        """
+        params = implementation.params
+        for position in range(min(len(params), len(args))):
+            if params[position] not in implementation.ref_params:
+                continue
+            if args[position].key:
+                state.env[args[position].key] = produced
+
+    @staticmethod
+    def _leaves(branch):
+        """Whether a branch ends by leaving the transaction on the paths it has."""
+        block = branch if branch.type == "compound_statement" else None
+        statements = list(block.named_children) if block is not None else [branch]
+        return bool(statements) and statements[-1].type in _RELAY_LEAVES
+
+    def _modelled_before(self, implementation, statements):
+        """Known effects or potential reference-output writes before a gate.
+
+        This is a conservative syntactic check, not alias or side-effect proof.
+        A write in the rejected arm is also before the alleged safe return.
+        """
+        modelled = (self.policy.sensitive_calls | self.policy.object_sensitive_calls
+                    | self.policy.capability_calls | self.policy.copy_calls
+                    | self.policy.boolean_permissions | self.policy.result_permissions)
+        outputs = set(implementation.ref_params)
+        for statement in statements:
+            for item in walk(statement):
+                if item.type in ("assignment_expression", "update_expression"):
+                    left = item.child_by_field_name("left") or item.child_by_field_name("argument")
+                    identifiers = {implementation.text(n) for n in walk(left, "identifier")} if left else set()
+                    if outputs & identifiers:
+                        return True
+                if item.type != "call_expression":
+                    continue
+                function = item.child_by_field_name("function")
+                if terminal(implementation.text(function)) in modelled:
+                    return True
+                # Unknown calls that receive or operate on a reference output
+                # may write it. Decline credit rather than assuming purity.
+                identifiers = {implementation.text(n) for n in walk(item, "identifier")}
+                if outputs & identifiers:
+                    return True
+        return False
+
+    def dispatch_guard(self, implementation, bindings=None):
+        """What a cross-TU one-hop dispatch lands on, when the callee gates on role.
+
+        Returns ``(gate_node, roles)`` when the implementer's own body rejects
+        callers that hold no privileged role before it does anything this analysis
+        models, else ``None`` -- and then the call site keeps its candidate.
+
+        The body is read on a frame holding its parameters and nothing else: a
+        function starts with its parameters, so a fact that happened to hold at the
+        call site cannot stand in for a guard the callee never made. `bindings` is
+        the exception, and it is the caller's own: an argument that proves something
+        about a parameter -- `&errorCode`, a null literal -- is a fact about *this*
+        call, not about the callee. Three conditions decide whether the gate is real:
+
+        * the branch the condition *takes* leaves the transaction and carries no
+          caller role on any path that reaches it, and
+        * the continuing branch is reachable, and *every* path out of the gate
+          carries one,
+
+        which is what "callers that are neither system nor shell are rejected here"
+        means in terms of the facts this analysis tracks. Both directions are needed.
+        A gate that can be short-circuited past by the callers it was meant to stop
+        -- ``!IsSystemCalling() || !IsShellCall()``, or ``!IsSystemCalling() &&
+        <undecided>`` -- leaves a continuing path holding no role, and one that turns
+        away the callers it was meant to admit leaves a taken path holding one. Both
+        are declined, so an unread or partial guard leaves the call a candidate
+        rather than being read as one.
+        """
+        if implementation.body is None:
+            return None
+        frame = State(env={name: Value("request", name)
+                           for name in implementation.params if name})
+        # What the call site proves about the parameters. `&& errorCode` is true
+        # whenever the caller passed an address, so a conjunct the caller settles is
+        # decided rather than left open -- without this, the branch where the caller
+        # passed a null is a continuing path with no role and the gate is declined.
+        frame.env.update(bindings or {})
+        statements = list(implementation.body.named_children)
+        for position, item in enumerate(statements):
+            if item.type != "if_statement":
+                continue
+            taken = item.child_by_field_name("consequence")
+            if taken is None or not self._leaves(taken):
+                continue
+            if self._modelled_before(implementation, statements[:position] + [taken]):
+                return None
+            condition = item.child_by_field_name("condition")
+            if self._modelled_before(implementation, [condition]):
+                return None
+            yes = self.refine(implementation, condition, frame, True, 0)
+            no = self.refine(implementation, condition, frame, False, 0)
+            # Rejected branch: no path taken here carries a privileged caller role --
+            # otherwise the gate turns away the callers it was meant to admit.
+            if not yes or any(s.auth or s.caller_class for s in yes):
+                continue
+            # Continuing branch: *every* path out of the gate carries one. A single
+            # path that reaches the body holding no role is a caller the gate let
+            # through, which is what a conjunct the callee cannot settle for an
+            # unauthorized caller looks like (`!IsSystemCalling() && <undecided>`).
+            if not no or not all(s.auth or s.caller_class for s in no):
+                continue
+            roles = sorted(set().union(*(s.auth | s.caller_class for s in no)))
+            if roles:
+                return item, roles
+        return None
+
+    @staticmethod
+    def _decisive(fn, node):
+        """The constant an argument proves about the parameter it binds, if any.
+
+        `&errorCode` hands the callee a non-null address, so a conjunct naming that
+        parameter is decided at this call site; a null literal decides it the other
+        way. Any other argument says nothing about the parameter, which leaves the
+        conjunct open and the gate uncredited rather than assumed.
+        """
+        if node is None:
+            return None
+        text = fn.text(node).strip()
+        if text in ("nullptr", "NULL", "0", "null"):
+            return Value("constant", "0")
+        # `&x` is a `pointer_expression` in the grammar this pipeline parses with,
+        # not a `unary_expression`; reading it as the latter is what left the
+        # `&& errorCode` conjunct undecided on a call that passes an address.
+        if node.type == "pointer_expression" \
+                and fn.text(node.child_by_field_name("operator")) == "&":
+            inner = node.child_by_field_name("argument")
+            if inner is not None and fn.text(inner).strip() not in ("nullptr", "NULL", "0", "null"):
+                return Value("constant", "1")
+        return None
+
     def authorized(self, state, name):
         expected = dict(self.policy.expected_permissions).get(name)
         if expected:return expected in state.auth
+        # A service-account role is accepted only for the operations the reviewed
+        # record names. Recognizing the account that guards an interface is not a
+        # statement that the account may do anything else, so this set is computed
+        # per operation rather than read as a general authorization.
+        account = {role for role in state.service_account
+                   if name in self.account_accepts.get(role, ())}
         if name in ("GetRemoteHapTokenInfo","DeleteRemoteHapTokenInfo","UpdateRemoteHapTokenInfo"):
-            return bool(state.auth or state.caller_class.intersection({"TOKEN_NATIVE"}))
-        return bool(state.auth)
+            return bool(state.auth or state.caller_class.intersection({"TOKEN_NATIVE"}) or account)
+        return bool(state.auth or account)
 
-    def action(self, fn, node, state, name, args, depth=0):
+    def account_role(self, fn, node, left, right, op):
+        """The reviewed account role a caller-UID comparison names, when it names one.
+
+        Three conditions have to hold at once, and each of them is a control:
+
+        * the compared value is the *calling* UID -- `IPCSkeleton::GetCallingUid()`
+          on a path whose identity was not reset. A caller TokenID is a different
+          domain and a request-derived value is not the caller, so neither is read
+          here;
+        * the other side names a constant the reviewed account model carries, so a
+          bare literal has no reviewed binding to cite;
+        * that constant resolves, in the scanned sources, to the value the model
+          records. A same-named constant bound to another value is a different
+          guard, and nothing is derived from it.
+
+        Every refusal is recorded, because a candidate produced by a guard whose
+        value did not line up must not read as a candidate produced by no guard.
+        """
+        for caller_side, other in ((left, right), (right, left)):
+            if caller_side.kind != "caller" or caller_side.subject != "uid":
+                continue
+            if other.kind != "constant":
+                continue
+            entry = self.account_roles.get(terminal(other.key))
+            if entry is None:
+                continue
+            definition = (self.index.define_constant(entry.constant, fn.file)
+                          if self.index is not None else None)
+            if definition is None:
+                self.account_notes.add(
+                    "Caller-UID guard in " + fn.qualified + " at "
+                    + self._where(fn.file, fn, node) + " compares the calling UID with "
+                    + entry.constant + ", which the scanned sources do not resolve to a single "
+                    "literal definition; the reviewed account role " + entry.role + " was not "
+                    "derived, so the call this guard protects stays a candidate. Account model: "
+                    + entry.uid + " (" + entry.origin + ").")
+                return None
+            if definition.value != entry.uid:
+                self.account_notes.add(
+                    "Caller-UID guard in " + fn.qualified + " at "
+                    + self._where(fn.file, fn, node) + " compares the calling UID with "
+                    + entry.constant + ", which the scanned sources bind to " + definition.value
+                    + " at " + definition.file + ":" + str(definition.line) + " ("
+                    + definition.symbol + ", \"" + definition.text + "\"). The reviewed account "
+                    "role " + entry.role + " is defined for " + entry.uid + ", so it was not "
+                    "derived here and the call this guard protects stays a candidate.")
+                return None
+            note = ("Service-account role credited: caller-UID guard in " + fn.qualified + " at "
+                    + self._where(fn.file, fn, node) + " compares the calling UID with "
+                    + entry.constant + ", which the scanned sources bind to " + definition.value
+                    + " at " + definition.file + ":" + str(definition.line) + " ("
+                    + definition.symbol + ", \"" + definition.text + "\").")
+            note += (" The role " + entry.role + " is accepted for "
+                    + ", ".join(entry.accepted_operations) + " and for nothing else; target "
+                    + self._target() + "; policy origin: " + entry.origin + ".")
+            self.account_notes.add(note)
+            return entry.role
+        # A reviewed account constant compared with something that is not the
+        # calling UID: recorded, because "the guard the model describes is written
+        # here and answers about something else" is exactly what has to be
+        # reviewed. Silence would read as though no such guard existed.
+        for side, other in ((left, right), (right, left)):
+            entry = (self.account_roles.get(terminal(side.key))
+                     if side.kind == "constant" else None)
+            if entry is None:
+                continue
+            if other.kind == "caller" and other.subject == "token":
+                because = "a caller TokenID, which is a different identity domain from a UID"
+            elif other.kind == "request":
+                because = "a request-derived value, which is not the caller"
+            elif other.kind == "self":
+                because = "the service's own identity, not the caller's"
+            else:
+                because = "a value this analysis does not establish as the caller's identity"
+            self.account_notes.add(
+                "Reviewed account constant " + entry.constant + " is compared in "
+                + fn.qualified + " at " + self._where(fn.file, fn, node) + " against "
+                + because + "; no caller-identity fact was derived, so the call this "
+                "comparison guards stays a candidate.")
+            return None
+        return None
+
+    def _target(self):
+        if self.request is None:
+            return "unstated scan target"
+        return self.request.repository + "@" + self.request.commit
+
+    def note_shadowed_role_predicate(self, helper):
+        """Record that a reviewed caller-role name was read from the file's own body.
+
+        A reviewed caller-role name is credited only where the scanned sources do
+        not define the name: a locally written function of that name is a different
+        function, and it is interpreted from its body instead. That is the point of
+        the rule -- a file may write a function called `IsSACalling` that answers
+        something else entirely, and inheriting the reviewed meaning of the name
+        would credit a guard the body never made. When the body then answers with a
+        UID no reviewed fact covers -- `GetCallingUid() == ACCESSTOKEN_UID`, on a
+        constant this policy carries no role for -- the call sites keep their
+        candidates. Which body took the name's place is written down, so that a
+        candidate is read against the body that has to be reviewed rather than as a
+        guard that was never written. Whether the body did establish a reviewed fact
+        is not claimed here: `helper_preproc_guard_fixed` defines two of these names
+        itself and both bodies do carry one.
+        """
+        name = helper.name.split("::")[-1]
+        if not any(role_name == name
+                   for role_name, _kind, _label in self.policy.caller_role_guards):
+            return
+        # `Function.line` is filled in by the entry index's one-hop lookup and stays 0
+        # for a frame read out of the sources directly, so the definition node is the
+        # line of record here: a citation of `:0` tells a reviewer nothing.
+        line = helper.line or (helper.node.start_point[0] + 1 if helper.node is not None
+                               else 0)
+        self.limitations.add(
+            "Reviewed caller-role predicate " + name + " is also defined in the scanned "
+            "sources at " + helper.file + ":" + str(line) + " (" + helper.qualified
+            + "); a call to it was read from that body, and the reviewed name itself was "
+            "not credited for it. Whether that body derives a fact is a separate question: "
+            "a comparison it makes against a reviewed service account is recorded on its "
+            "own account-model line when the source resolves it.")
+
+    def action(self, fn, node, state, name, args, depth=0, guard=None):
+        """Report the candidate a modelled call is, unless `guard` explains it.
+
+        `guard` is what `dispatch_guard` read one class hop away, when this call is
+        an unqualified virtual dispatch into an implementer in another translation
+        unit. "No matched caller authorization on this path" is then the wrong
+        statement: the operation runs in a body that does reject unauthorized
+        callers, and the authorization call is simply not in this file. The
+        remaining consequences of the call are still computed -- only the
+        absent-authorization and capability-export candidates are withheld.
+        """
         if self.root is None:
             return
         root_key = (self.root.file, self.root.qualified)
@@ -525,7 +1033,7 @@ class Interpreter:
         if sensitive:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
-        if sensitive and not self.authorized(state, name):
+        if sensitive and not self.authorized(state, name) and guard is None:
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
                 # (does it dominate this transaction?), not an absent-authorization
@@ -553,7 +1061,15 @@ class Interpreter:
                           "Caller/resource relation is not established for " + name + ": " + ", ".join(sorted(resources)),
                           call=name)
         if name in self.policy.capability_calls and not state.auth:
-            if args and args[0].key not in ("nullptr", "NULL", "0"):
+            # An object the reply carries is only an unguarded export if the code
+            # that produced it was unguarded. When the value written came back from
+            # a one-hop dispatch whose implementer rejects unauthorized callers,
+            # the capability was never handed to a caller this boundary fails to
+            # check; treating the write as the export would put the finding one
+            # frame too late.
+            exported = args[0] if args else UNKNOWN
+            from_guarded_dispatch = exported.kind == "call_result" and exported.subject == "guarded"
+            if args and args[0].key not in ("nullptr", "NULL", "0") and not from_guarded_dispatch:
                 self.emit("CAP-01", "ipc.capability.export", fn, node, state,
                           "Capability export " + name + " lacks a recognized caller authorization on this path.",
                           call=name)
@@ -756,6 +1272,22 @@ class Interpreter:
                 return Value("descriptor_read", rv.key) if rv.kind == "parcel" else UNKNOWN
             if name == "GetDescriptor":
                 return self.descriptor_expectation(fn, callee, state)
+            if name == "AsObject" and receiver and not args:
+                # `sptr<T>::AsObject()` hands back the IRemoteObject that smart
+                # pointer already holds -- the same object, not a new one. A reply
+                # that writes `x->AsObject()` therefore exports whatever `x` was,
+                # and reading the accessor as an unknown is what hid that relation
+                # from the capability-export check.
+                #
+                # Only a `call_result` is passed through. Any other value is left to
+                # the ordinary path: a receiver holding a null literal would
+                # otherwise be handed back as the written argument, and "nullptr" is
+                # the sentinel that check uses for "nothing is being exported", so
+                # the export would be argued away by a value that in fact proves the
+                # opposite.
+                held = state.env.get(receiver)
+                if held is not None and held.kind == "call_result":
+                    return held
             if name in ("GetTokenTypeFlag", "GetTokenType") and args and args[0].kind=="caller" and args[0].subject=="token":
                 return Value("caller_type",args[0].key)
             if name=="GetNativeTokenInfo" and len(args)>1 and args[0].kind=="caller" and args[0].subject=="token":
@@ -766,10 +1298,6 @@ class Interpreter:
                 rv=self.value(fn,receiver_arg,state,depth)
                 if rv.kind=="caller_process" and args[0].key=='"hdcd"':
                     return Value("permission_result",text,"caller","<caller-native-process:hdcd>")
-            if name in ("IsSystemAppCalling","CheckCallerIsSystemApp"):
-                return Value("predicate",predicate=("caller_class","system_app",True))
-            if name in ("IsPrivilegedCalling","IsAccessTokenCalling"):
-                return Value("predicate",predicate=("auth","<caller-service-role>",True))
             if name=="GetDataSize" and state.env.get(receiver,UNKNOWN).kind=="parcel":
                 return Value("parcel_size",re.sub(r"\s+","",text))
             if name=="RewindRead" and args:
@@ -786,9 +1314,35 @@ class Interpreter:
             helper = self.resolve(fn, callee)
             if helper is None:
                 helper = self.delegated(callee)
-            self.action(fn, node, state, name, args, depth)
+            if helper is not None:
+                self.note_shadowed_role_predicate(helper)
+            implementation = guard = None
+            if helper is None:
+                implementation, guard = self.one_hop_dispatch(fn, node, callee, name, args, state)
+                if implementation is None:
+                    # Reviewed caller-role predicates, by exact name, and only for a
+                    # call this file does not itself define: a local function of the
+                    # same name is interpreted above, never assumed to be the
+                    # framework's. Each answers whether the caller holds a privileged
+                    # role and none takes a permission, so the fact it yields is a
+                    # caller class, not a permission -- `IsPrivilegedCalling` and
+                    # `IsAccessTokenCalling` are the two that answer with the
+                    # service-role authorization fact their helper summaries derive.
+                    local = [f for f in self.functions if f.file == fn.file and f.name == name]
+                    role = next(((kind, label) for role_name, kind, label
+                                 in self.policy.caller_role_guards if role_name == name), None)
+                    if role is not None and local:
+                        definitions = ", ".join(f.file + ":" + str(f.line or f.node.start_point[0] + 1)
+                                                for f in local)
+                        self.limitations.add("Local caller-role definition is unresolved: " + name
+                                             + " at " + definitions
+                                             + "; reviewed-name credit refused; caller authorization remains unknown.")
+                    elif role is not None and not args:
+                        return Value("predicate", predicate=(role[0], role[1], True))
+            self.action(fn, node, state, name, args, depth, guard=guard)
             if helper and self.root.name in self.policy.entry_names and not state.descriptor:
-                relay = self.relay_guard(fn, node, args, helper, state, depth)
+                with self.lookahead():
+                    relay = self.relay_guard(fn, node, args, helper, state, depth)
                 if relay is None:
                     self.emit("AUTH-01","ipc.relay.descriptor-boundary",fn,node,state,
                         "IPC entry reaches a locally resolved handler without interface-descriptor validation: "+helper.qualified)
@@ -804,16 +1358,25 @@ class Interpreter:
                 old = self.active;self.active = old + (helper,)
                 ends = self.block(helper, helper.body, [local], depth + 1)
                 self.active = old
-                returned = [s.returned for s in ends if s.flow == "return"]
-                # A helper is summarized only when all its returns agree. A
+                returned = [s for s in ends if s.flow == "return"]
+                # A helper is summarized only when all its paths agree. A
                 # conditional boolean return gets its guards bound to truth.
-                values = set(returned)
+                values = {s.returned for s in returned}
                 if len(values) == 1 and len(returned) == len(ends):
-                    return values.pop()
-                good = [s for s in ends if s.flow == "return" and s.returned.key in ("true", "1")]
-                bad = [s for s in ends if s.flow == "return" and s.returned.key in ("false", "0")]
+                    return returned[0].returned
+                # Otherwise the helper decides a boolean, and what the caller needs
+                # is what returning true implies. Two things imply a fact: a guard
+                # bound on the way to that return, and the returned expression
+                # itself when it is a comparison -- `return uid == ROOT_UID;` is
+                # true exactly where that fact holds. Reading only the first left a
+                # local predicate such as `IsRootCalling()` as UNKNOWN, so the
+                # caller's `if (!IsRootCalling() && !IsNativeProcessCalling())
+                # return;` still looked unguarded on that disjunct.
+                good = [s for s in returned if _returns_true(s.returned)]
+                bad = [s for s in returned if s.returned.key in ("false", "0")]
                 if good and bad and len(good)+len(bad) == len(ends):
-                    common = frozenset.intersection(*(s.auth for s in good)) - state.auth
+                    common = frozenset.intersection(
+                        *(s.auth | _returned_fact(s.returned) for s in good)) - state.auth
                     if common:
                         return Value("predicate", predicate=("auth", sorted(common)[0], True))
                 self.limitations.add("Unresolved multi-outcome helper return: " + helper.qualified)
@@ -866,6 +1429,13 @@ class Interpreter:
                     return Value("predicate",predicate=("owner",ov.key,op=="=="))
                 if op in ("==","!=") and ((left.kind=="caller" and left.subject=="uid" and right.key in self.policy.trusted_uids) or (right.kind=="caller" and right.subject=="uid" and left.key in self.policy.trusted_uids)):
                     return Value("predicate",predicate=("auth","<trusted-uid>",op=="=="))
+                if op in ("==","!="):
+                    # A reviewed account, resolved from the source rather than from
+                    # the name: only the value the scanned definitions bind the
+                    # constant to decides whether this is the guard the model means.
+                    account = self.account_role(fn, node, left, right, op)
+                    if account:
+                        return Value("predicate",predicate=("account",account,op=="=="))
                 if left.kind == "request" and right.kind != "request":
                     if op=="<" and right.key=="0":
                         return Value("predicate",predicate=("lower",left.key,False))
@@ -978,7 +1548,7 @@ class Interpreter:
                 if issue not in out.descriptor_issues:
                     out.descriptor_issues=out.descriptor_issues+(issue,)
             if truth==when and accepted:
-                attr={"auth":"auth","descriptor":"descriptor","owner":"owner","lower":"lower","upper":"upper","size_lower":"size_lower","caller_class":"caller_class"}[kind]
+                attr={"auth":"auth","descriptor":"descriptor","owner":"owner","lower":"lower","upper":"upper","size_lower":"size_lower","caller_class":"caller_class","account":"service_account"}[kind]
                 setattr(out,attr,getattr(out,attr)|{key})
         out.trace=(out.trace+((node.start_point[0]+1,fn.text(node)+" => "+str(truth)),))[-20:]
         return [out]
@@ -1035,7 +1605,33 @@ class Interpreter:
             return done+active
         if kind in ("break_statement","continue_statement"):
             return done+[s.fork(flow="break" if kind=="break_statement" else "continue") for s in active]
-        if kind in ("goto_statement","try_statement","preproc_if","preproc_ifdef"):
+        if kind in ("preproc_if", "preproc_ifdef"):
+            # A conditional inside a body is a build-time fork this analysis cannot
+            # resolve, so every arm is explored as an alternative instead of one arm
+            # being assumed. Facts proved before the conditional survive into each
+            # arm -- they hold in every build -- while a guard written inside an arm
+            # is credited only on that arm's paths. A chain with no `#else` keeps its
+            # no-arm-taken path, so the fall-through that exists when the condition
+            # is false is not lost along with the arm it guards.
+            arms = _preproc_arms(node, fn.text)
+            self.limitations.add(
+                "Preprocessor conditional inside a function body: arms are explored as alternatives "
+                "because the build variant is unknown. A guard written inside an arm is credited only "
+                "on that arm's paths, the no-arm-taken path is kept when the chain has no #else, and "
+                "facts proved before the conditional still hold in every arm.")
+            result = []
+            for s in active:
+                for condition, statements in arms:
+                    arm = [s.fork(trace=s.trace + ((node.start_point[0] + 1,
+                                                    "preproc " + (condition or "#if")),))]
+                    for item in statements:
+                        arm = self.statement(fn, item, arm, depth)
+                    result.extend(arm)
+                if not _preproc_closed(node):
+                    result.extend([s.fork(trace=s.trace + ((node.start_point[0] + 1,
+                                                            "preproc no arm taken"),))])
+            return self.bounded(done + result)
+        if kind in ("goto_statement","try_statement"):
             self.limitations.add("Unsupported control construct: "+kind+"; guards not proved through it.")
             for s in active:
                 s.auth=frozenset();s.descriptor=frozenset();s.owner=frozenset()
@@ -1112,6 +1708,50 @@ class Interpreter:
         summary=self._macro_summary()
         if summary is not None:
             self.limitations.add(summary)
+        if self.index is not None:
+            # A refused hop is the whole reason a one-hop call site keeps its
+            # candidate, and the reason is recorded on the index rather than in
+            # this walk. Only the hop refusals are pulled through, so the reader
+            # can tell "the implementer does not guard" from "the implementer was
+            # never established"; the index's other limitations stay where they
+            # were written.
+            for refusal in sorted(self.index.limitations):
+                if refusal.startswith("One-hop callee is not unique"):
+                    self.limitations.add(refusal
+                                         + " The call site therefore stays a candidate.")
+        if self.account_notes:
+            # One provenance line per service-account comparison, then one line
+            # saying what the model does and does not cover. The refusals are
+            # listed next to the credits: a guard whose value did not line up is
+            # the reason its call site is still a candidate, and that reason has to
+            # be readable somewhere.
+            self.limitations.update(self.account_notes)
+            self.limitations.add(
+                "Service-account model: " + str(len(self.policy.service_account_roles))
+                + " reviewed account role(s) are applied, each credited only where the "
+                "calling UID is compared with the constant the record names *and* the "
+                "scanned definitions bind that constant to the recorded value, and each "
+                "accepted only for the operations the record lists. The role is not a "
+                "permission and not a general caller role: it satisfies no capability, "
+                "relay or cross-TU dispatch question, and a guard written against a "
+                "same-named constant bound to another value (or against a TokenID, or "
+                "against a request-derived value) derives nothing.")
+        if self.hop_notes:
+            # One provenance line per credited hop, then one line saying what the
+            # credit does and does not cover, so the difference between "the callee
+            # guards" and "the callee was read" stays visible.
+            self.limitations.update(self.hop_notes)
+            self.limitations.add(
+                "Cross-TU one-hop dispatch: " + str(len(self.hop_notes)) + " implementer "
+                "guard(s) were read one class hop from an unqualified virtual dispatch and "
+                "their caller-role gate credited, each listed above with its source. A hop "
+                "that is not unique, is not in the analysed sources, or whose gate does not "
+                "dominate the implementer's body leaves the call a candidate. The implementer "
+                "credited is the one the scanned sources give for that virtual call: a subclass "
+                "outside the scanned set that overrides nothing inherits whatever body its own "
+                "bases carry, and that inherited body is not read here. Pointer out-parameters "
+                "are not followed, so an object written back through one is not traced to the "
+                "call that produced it.")
         unique={}
         for obs in revised:
             unique.setdefault((obs.file,obs.line,obs.rule,obs.symbol),obs)

@@ -266,6 +266,46 @@ RECEIVER_ALIAS = r"""
 #define SVC DelayedSingleton<Demand>::GetInstance()
 """
 
+# One-hop virtual dispatch: the stub in the zidl unit, the service in the unit
+# that implements it. `Peek` is the const-reference control.
+HOP_BASE = r"""
+class IPCObjectStub {};
+class SvcStub : public IPCObjectStub {
+public:
+    virtual int Get(int32_t persistentId, sptr<IRemoteObject> &object);
+    virtual int Peek(const sptr<IRemoteObject> &object);
+};
+"""
+
+HOP_ONE = r"""
+class Svc : public SvcStub {
+public:
+    int Get(int32_t persistentId, sptr<IRemoteObject> &object) override { return 0; }
+    int Peek(const sptr<IRemoteObject> &object) override { return 0; }
+};
+"""
+
+HOP_TWO = r"""
+class SvcA : public SvcStub {
+public:
+    int Get(int32_t persistentId, sptr<IRemoteObject> &object) override { return 0; }
+};
+class SvcB : public SvcStub {
+public:
+    int Get(int32_t persistentId, sptr<IRemoteObject> &object) override { return 0; }
+};
+"""
+
+HOP_OWN_BODY = r"""
+class Svc : public SvcStub {
+public:
+    int Get(int32_t persistentId, sptr<IRemoteObject> &object) override { return 0; }
+};
+int SvcStub::Get(int32_t persistentId, sptr<IRemoteObject> &object) {
+    return -1;
+}
+"""
+
 
 class EntryIndexTests(unittest.TestCase):
     # -- 1. switch/return dispatcher with an enum transaction -----------------
@@ -509,6 +549,57 @@ class EntryIndexTests(unittest.TestCase):
         self.assertIn("ifndef CONFIG_IPC_SINGLE", entry.conditional)
         self.assertEqual(entry.evidence, SOURCE_DISPATCH)
         self.assertTrue(entry.handler_bound)
+
+
+    # -- 17. one-hop virtual dispatch -----------------------------------------
+    def test_one_hop_returns_the_single_definition_one_class_away(self):
+        """The stub declares; the concrete service derives and supplies the body.
+
+        This is the shape M6 exists for: the call written in the stub is an
+        unqualified member call the stub itself does not define, so the body that
+        actually runs is in the class one hop away. A body written inside the
+        class body carries only its own name -- `qualified` is `Get`, not
+        `Svc::Get` -- which is why a caller that has to name the implementer in
+        its own output puts the owner back.
+        """
+        index = build(unit("zidl/svc_stub.cpp", HOP_BASE), unit("svc.cpp", HOP_ONE))
+        entry = index.one_hop_definition("SvcStub", "Get")
+        self.assertIsNotNone(entry)
+        self.assertEqual((entry.name, entry.owner), ("Get", "Svc"))
+        self.assertEqual(entry.file, "svc.cpp")
+
+    def test_one_hop_records_reference_parameters_but_not_const_ones(self):
+        """Only a non-const lvalue reference can carry a result back.
+
+        The reference parameter is what lets the caller ask which of its own
+        variables the callee wrote, so a `const &` counted as one would attribute
+        a result to an argument that cannot receive it.
+        """
+        index = build(unit("zidl/svc_stub.cpp", HOP_BASE), unit("svc.cpp", HOP_ONE))
+        self.assertEqual(index.one_hop_definition("SvcStub", "Get").ref_params, ("object",))
+        self.assertEqual(index.one_hop_definition("SvcStub", "Peek").ref_params, ())
+
+    def test_one_hop_declines_two_implementers_and_records_why(self):
+        index = build(unit("zidl/svc_stub.cpp", HOP_BASE), unit("svc.cpp", HOP_TWO))
+        self.assertIsNone(index.one_hop_definition("SvcStub", "Get"))
+        self.assertTrue(any("not unique" in lim and "SvcStub::Get" in lim
+                            for lim in index.limitations))
+
+    def test_one_hop_declines_when_the_owner_defines_the_name_too(self):
+        """One derived definition plus the owner's own body is still two bodies.
+
+        A virtual call written in `SvcStub` runs on whatever `this` is, and a
+        subclass that does not override runs `SvcStub`'s body, so the derived
+        definition alone is not the answer.
+        """
+        index = build(unit("zidl/svc_stub.cpp", HOP_BASE), unit("svc.cpp", HOP_OWN_BODY))
+        self.assertIsNone(index.one_hop_definition("SvcStub", "Get"))
+        self.assertTrue(any("SvcStub defines Get itself" in lim
+                            for lim in index.limitations))
+
+    def test_one_hop_declines_when_no_implementer_is_in_the_scanned_sources(self):
+        index = build(unit("zidl/svc_stub.cpp", HOP_BASE))
+        self.assertIsNone(index.one_hop_definition("SvcStub", "Get"))
 
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v3"
+MODEL_VERSION = "oh-ipc-2026.10-v7"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -110,6 +110,33 @@ assert set(IMPACT_BY_RULE.values()) <= set(IMPACT_DESCRIPTION), sorted(
 assert set(IMPACT_CWE) <= set(IMPACT_DESCRIPTION), sorted(
     set(IMPACT_CWE) - set(IMPACT_DESCRIPTION))
 
+
+@dataclass(frozen=True)
+class ServiceAccountRole:
+    """A caller UID a reviewed source assigns to a named service account.
+
+    Deliberately not a `trusted_uids` entry. `trusted_uids` is read as
+    authorization wherever a calling UID is compared with it, so adding a value
+    there credits every guard that names it, in every component, for every
+    operation -- which is the generalization this record exists to avoid. An
+    account is not a permission and not a general caller role, so an entry names
+    the operations that account's role authorizes, the constant a guard has to
+    compare against, and the value the scanned definitions have to bind that
+    constant to.
+
+    Nothing here is credited from a name. The constant has to resolve, in the
+    scanned sources, to a definition whose literal is `uid`; a same-named constant
+    bound to something else is a different guard, and a value written without a
+    definition has no binding a reviewer can check.
+    """
+
+    constant: str                        # the name a guard compares the calling UID with
+    uid: str                             # the value the reviewed definitions bind it to
+    role: str                            # the fact derived, e.g. "<caller-account:...>"
+    accepted_operations: Tuple[str, ...]  # operations this role authorizes, and no others
+    origin: str                          # the reviewed source of the account assignment
+
+
 @dataclass(frozen=True)
 class IpcPolicy:
     sensitive_calls: FrozenSet[str] = frozenset({
@@ -138,6 +165,30 @@ class IpcPolicy:
     copy_calls: FrozenSet[str] = frozenset({"memcpy", "memmove", "memcpy_s", "memmove_s", "ReadRawData", "ReadBuffer"})
     entry_names: FrozenSet[str] = frozenset({"OnRemoteRequest", "OnRemoteMessageRequest"})
     caller_class_sensitive_calls: FrozenSet[str] = frozenset({"GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords", "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy"})
+    # Reviewed caller-role authorization predicates, by exact name: `(name, kind,
+    # label)`. Each answers whether the *caller* holds a privileged role and none
+    # takes a permission argument, so a path carrying one is not a path carrying a
+    # permission check -- `auth` facts name a permission, `caller_class` facts name
+    # a role, and conflating them would let a role question satisfy a permission
+    # one. Read only for a call this file does not itself define: a locally written
+    # function of the same name is interpreted, never assumed to be the framework's.
+    caller_role_guards: Tuple[Tuple[str, str, str], ...] = (
+        ("IsSystemCalling", "caller_class", "<system-caller>"),
+        ("IsSACalling", "caller_class", "<sa-caller>"),
+        ("IsShellCall", "caller_class", "<shell-caller>"),
+        ("IsSystemAppCalling", "caller_class", "system_app"),
+        ("CheckCallerIsSystemApp", "caller_class", "system_app"),
+        # Kept identical to the facts a helper summary derives for these two names
+        # (`<trusted-uid>` / TOKEN_NATIVE), so the same predicate is one identity
+        # whether it is called directly or reached through a local helper.
+        ("IsRootCalling", "auth", "<trusted-uid>"),
+        ("IsNativeProcessCalling", "caller_class", "TOKEN_NATIVE"),
+        ("IsPrivilegedCalling", "auth", "<caller-service-role>"),
+        ("IsAccessTokenCalling", "auth", "<caller-service-role>"),
+    )
+    # Explicit caller-supplied reviewed account models only. The default remains
+    # empty: a named constant/value alone is not an approved account assignment.
+    service_account_roles: Tuple[ServiceAccountRole, ...] = ()
     service_entries: FrozenSet[str] = frozenset({"HCameraService::CreateCameraDevice", "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",
