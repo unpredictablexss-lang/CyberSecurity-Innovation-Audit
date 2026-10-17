@@ -1,19 +1,35 @@
-# D 首轮：Native 敏感材料日志局部数据流候选（Draft）
+## D2：修复提前退出传播，补齐固定范围审计（保持 Draft）
 
-本轮新增敏感来源/日志Sink模型及 data.log.sensitive-value 单规则，输出来源→赋值/复制/格式化→public日志操作数的受限证据链。排除密钥长度、状态、布尔比较和纯关键字匹配；未知宏、格式、调用/类型/运行配置保留partial/unknown。
+D1工程原型保留。本轮只升级D模块到Detector0.2.0，Source/Sink语义模型仍0.1.0；唯一规则
+`data.log.sensitive-value`，拟议ID `ohscanner.data.sensitive_exposure`，未注册Catalog/UI。
 
-基线：e510c99c67f31ec6c73365f9ab749c79ca6ff0a1。Detector拟议ID为 ohscanner.data.sensitive_exposure，尚需负责人确认；未注册Catalog，未修改公共API/Runner/UI及A/B/C检测器。
+### 问题与变化
 
-验证：32个合成控制/10个新增测试方法；全量522项，511通过、11环境/历史证据/Docker限制跳过；compileall通过。固定官方dsoftbus提交0e0c18c4的9文件双跑0候选，coverage complete0/partial3/not_analyzed6，候选/覆盖一致。详见research/data_sensitive/validation.json和fixed_scope_summary.json。
+D1把已return分支的敏感赋值合并到后继日志，同时漏掉部分活跃else/短路效果。
+先加入33控制，在D1实测12个失败子用例；修复后仅合并存活后继，显式返回退出状态，恢复块作用域绑定。
+补充格式/实参/状态与同名函数指针对照，最终新增39控制；旧32控制及预期哈希不变。
 
-限制：无已确认真实漏洞/独立holdout/真实漏洞修复对；不提供Precision/Recall。日志读权限、API绑定、初始化和产品CIA影响待审查。源/日志模型审批、可选共享表达式事实和partial AST策略见frontend_request.md。第三方源码仅本地缓存，未提交。
+### 实际验证
 
-请先确认ID与模型/接口边界，再决定正式注册或选择性迁入。保持Draft，不自动ready/merge。
+- 实现与测试HEAD：`3b646c881716eb6b0c86195cdeeb1012ac9c921b`；D1 HEAD `f11d5fd`，merge-base `e510c99`。
+- D专项16方法通过（含32旧+39新控制）；全项目528项，517通过、11历史来源/Docker等条件跳过，0失败/错误；compileall和diff检查通过。
+- 固定dsoftbus `0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132`、相同9文件、相同源模型：D1/D2均0候选，覆盖均complete0/partial3/not_analyzed6/failed0；D2双跑观察和覆盖一致。
+- 逐文件错误/函数/模型审计及私有探针已区分；15个不与错误直接交叠函数不等于已批准准入。
 
-## 审核入口
+### 审核入口
 
-- 第一阶段验收：`research/data_sensitive/phase1_acceptance_zh.md`
-- 初步接口需求：`research/data_sensitive/interface_requirements_zh.md`
-- 后续研究方案：`research/data_sensitive/research_plan_zh.md`
+- [D2交付总览](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_HANDOFF.md)
+- [基线](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_BASELINE.md) / [实现与回归](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_IMPLEMENTATION.md)
+- [9文件覆盖](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_COVERAGE.md) / [机器证据](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_COVERAGE.json)
+- [历史调查](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_HISTORICAL.md) / [来源manifest](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_HISTORY_MANIFEST.json)
+- [独立评估计划](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_EVALUATION.md) / [隔离验证计划](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_POC_PLAN.md)
+- [最小前端RFC](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/frontend_request.md) / [实际测试记录](https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/feat/teammate-d-sensitive-exposure-20261017/research/data_sensitive/D2_VALIDATION.json)
+- D1的独立验收、接口需求、研究方案仍保留；D1 validation push=false是当时快照，不是当前PR状态。
 
-用户本次明确授权发布到独立分支并创建 Draft PR，供队长审核；这不表示拟议 ID 已通过负责人确认或允许注册上线。
+### 限制
+
+没有确认真实漏洞、CVE或产品影响；两组可核实日志删除硬化对尚不具备当前规则的真实正例标签/模型。
+GitCode具体API请求404，使用明确标注的GitHub镜像/API证据，未声称双源核验成功。
+独立holdout和Docker PoC仅完成方案，未执行。零候选不是安全结论，不提供Precision/Recall。
+公共Runner/Catalog/contracts/frontend/indexing/DB/UI与A/B/C均未改动；D2增量只限D目录。
+负责人请审查局部partial资格/共享事实RFC。保持Draft，不自动Ready/Merge。

@@ -187,3 +187,13 @@ AUTH_LOGI(AUTH_KEY, "%{private}s %{public}u", key->value, key->len);
 6. 负责人决定 Catalog 注册和 Draft PR 选择性集成，之后再安排真实修复对及独立 holdout。
 
 本文只是接口申请。实现、冻结协议、注册平台和升级漏洞结论均未由本文自动授权或完成。
+
+## D2 最小请求（2026-10-17，未获公共修改批准）
+
+固定commit0e0c18c4的auth_session_key.c因LIST_FOR_EACH_ENTRY缺失标点被整文件跳过；私有探针
+30函数中15个无直接错误交叠。这不是自动准入证据。优先请求一个可选函数事实：
+file/blob/SHA、profile/解析器版本、函数范围、错误范围、局部绑定/赋值和日志operand，
+并保留外围宏/类型依赖缺口。负责人先定义错误隔离/资格及兼容性测试，再考虑准入；
+D不修改Runner。头文件单独提供受审声明/宏事实，不把无函数头文件说成flow complete。
+验收最小对照：返回分支不流向后继、存活else继续产生候选；相同固定9文件覆盖计数闭合；
+partial候选与unknown独立保留，不改A/B/C语义。完整依据见D2_COVERAGE.md/json。

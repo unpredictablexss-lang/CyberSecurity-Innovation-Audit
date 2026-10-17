@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.1.0 (review prototype)
+# D: sensitive-material log exposure, v0.2.0 (D2 review prototype)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
@@ -34,3 +34,9 @@ D_REVIEW.md, D_LIMITATIONS.md and method_card.md under research/data_sensitive
 explain actual results and pending acceptance. No verified real vulnerability,
 independent holdout or Precision/Recall is claimed. Do not deploy as complete
 whole-component taint analysis. No changes to A/B/C detectors or common platform.
+
+D2: branch exits now explicitly remove non-fallthrough paths; lexical bindings
+restore on scope exit; short-circuit/conditional effects use conservative may-flow.
+D1 source/sink model semantics remain0.1.0. Old32 controls unchanged, new39 D2 controls.
+Read research/data_sensitive/D2_HANDOFF.md for current publication/tests; D1 records
+with push=false describe the historical pre-publication snapshot, not current PR #17.
