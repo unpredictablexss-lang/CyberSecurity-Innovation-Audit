@@ -1,0 +1,2711 @@
+{
+  "created_at": "2026-10-17T20:30:00+08:00",
+  "detector_bindings": [
+    {
+      "detector_id": "ohscanner.cpp.bounds",
+      "family": "cpp.bounds",
+      "version": "0.2.0"
+    },
+    {
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "family": "cpp.integer_bounds",
+      "version": "0.2.0"
+    },
+    {
+      "detector_id": "ohscanner.cpp.lifetime",
+      "family": "cpp.lifetime_uaf",
+      "version": "0.4.0"
+    },
+    {
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "family": "cpp.null_dereference",
+      "version": "0.2.0"
+    },
+    {
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "family": "cpp.resource_lifetime",
+      "version": "0.1.0"
+    },
+    {
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "family": "cpp.unsafe_memory_call",
+      "version": "0.1.0"
+    }
+  ],
+  "detector_tuning_after_freeze": false,
+  "eligible_for_metrics": true,
+  "explicit_blob_prefetch": [],
+  "family_min_root_causes": 5,
+  "kind": "ohscanner.independent-holdout.v1",
+  "metric_semantics": {
+    "family_publication": "publish only families with at least five independent root causes",
+    "sample_level": "vulnerable+detected=TP, vulnerable+not_detected=FN, fixed+detected=FP, fixed+not_detected=TN",
+    "security_claim": "metrics measure fix-labelled defect detection, not exploitability or CIA impact",
+    "unknown": "blocked/failed/partial/unexecuted is unable-to-analyze and excluded, never a miss"
+  },
+  "root_causes": [
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-09-12T17:47:38+08:00",
+        "body": "",
+        "committer_time": "2025-09-13T10:03:16+08:00",
+        "subject": "fix null pointer dereference Signed-off-by: 18392170496 <magentang4@huawei.com>"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-476",
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: core/common/message_handler/message_handler_ffrt.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.null_dereference",
+      "fix_commit": "d272051eb605be1c17655da57439598bf545f1ce",
+      "fix_tree": "0b8e4ec2eba700b9b0bf56666373846400a8a190",
+      "fixed": {
+        "category": "fixed",
+        "commit": "d272051eb605be1c17655da57439598bf545f1ce",
+        "files": [
+          {
+            "blob_oid": "9d61afd255ed0569f7e583455b5c27079e0d1b45",
+            "bytes": 24084,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 670,
+            "path": "core/common/message_handler/message_handler_ffrt.cpp",
+            "source_sha256": "8134405f2c42f2d367d86377c820fff4021d243feb7963f940aaca724c33fbd7"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-01:fixed",
+        "tree": "0b8e4ec2eba700b9b0bf56666373846400a8a190"
+      },
+      "ignored_non_source_paths": [
+        "tests/core/common/message_handler/ffrttest/message_handler_ffrt_test.cpp"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/d272051eb605be1c17655da57439598bf545f1ce",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/d272051eb605be1c17655da57439598bf545f1ce"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/d272051eb605be1c17655da57439598bf545f1ce",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-01",
+      "stable_patch_id": "67bcf9c4fe03fc45fbef4afbdd037d4ba0c86158",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed C/C++ function on a path where the pre-fix null condition is dereferenced.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "48ac70ef9eeedfe5fc5f8533910a02183d48c27e",
+        "files": [
+          {
+            "blob_oid": "57c5d33e89fa5ec87559032c4eda276f7f633258",
+            "bytes": 23902,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 666,
+            "path": "core/common/message_handler/message_handler_ffrt.cpp",
+            "source_sha256": "7e55dfe89af12b57bf8afdd16b9dd96e49431887cf9077be53fe374672e15ec6"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-01:vulnerable",
+        "tree": "deaa01366901280fa5d1e76249e9acc6f5a5d41c"
+      },
+      "vulnerable_parent": "48ac70ef9eeedfe5fc5f8533910a02183d48c27e",
+      "vulnerable_tree": "deaa01366901280fa5d1e76249e9acc6f5a5d41c"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-07-28T21:17:56+08:00",
+        "body": "Signed-off-by: y30078931 <yangxiaotian4@h-partners.com>",
+        "committer_time": "2025-07-28T21:18:18+08:00",
+        "subject": "fix: null pointer"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-476",
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: adapter/common/net/wifi/common/softbus_wifi_api_adapter.c, core/bus_center/lnn/net_buscenter/src/lnn_ip_network_impl.c, core/bus_center/lnn/net_buscenter/src/lnn_usb_network_impl.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.null_dereference",
+      "fix_commit": "8b0ef63ef1f591e86255ea0bf9d9c1083dfa39c2",
+      "fix_tree": "22c98f7ccbe6b2d7e2452ecfe35caec9ad88dabc",
+      "fixed": {
+        "category": "fixed",
+        "commit": "8b0ef63ef1f591e86255ea0bf9d9c1083dfa39c2",
+        "files": [
+          {
+            "blob_oid": "a9d8f49a527c584610858fda5348d42ab78e5685",
+            "bytes": 15136,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 488,
+            "path": "adapter/common/net/wifi/common/softbus_wifi_api_adapter.c",
+            "source_sha256": "534d4c56c5a6a551b35b2ae8a3509fec9aab3a3d89aa4d76e45255893fa7cb31"
+          },
+          {
+            "blob_oid": "80119b6e2fc30366ba65e7d3fd55afc58a26439a",
+            "bytes": 26656,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 765,
+            "path": "core/bus_center/lnn/net_buscenter/src/lnn_ip_network_impl.c",
+            "source_sha256": "deb2edba87f6348aeff78185455aeb3b0b212982c238d98a97ddc1fe32b940e2"
+          },
+          {
+            "blob_oid": "0310aeca1d3692e83ea4ebc8aceb3b23174fb6de",
+            "bytes": 22228,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 640,
+            "path": "core/bus_center/lnn/net_buscenter/src/lnn_usb_network_impl.c",
+            "source_sha256": "ca9961ee55c2dccf8363f2e5f9b61ae5f5aba6a4f2defb406bf35676466398ca"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-02:fixed",
+        "tree": "22c98f7ccbe6b2d7e2452ecfe35caec9ad88dabc"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/8b0ef63ef1f591e86255ea0bf9d9c1083dfa39c2",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/8b0ef63ef1f591e86255ea0bf9d9c1083dfa39c2"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/8b0ef63ef1f591e86255ea0bf9d9c1083dfa39c2",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-02",
+      "stable_patch_id": "c4d9d90b1a7e130e4d739789e3db20bec757e9dc",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed C/C++ function on a path where the pre-fix null condition is dereferenced.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "99a849f6ec133c657831dea57a15e4c2e40133d2",
+        "files": [
+          {
+            "blob_oid": "10711a5edff3b90f12b985d127371710412bf129",
+            "bytes": 15085,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 487,
+            "path": "adapter/common/net/wifi/common/softbus_wifi_api_adapter.c",
+            "source_sha256": "e7825f99d127202c4538e6899f2f491ca924ef798e25a368bbc1e03261038402"
+          },
+          {
+            "blob_oid": "a6bb3b9edfd5d3c4cf4e630b6f0e9bc85a7d2992",
+            "bytes": 25894,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 758,
+            "path": "core/bus_center/lnn/net_buscenter/src/lnn_ip_network_impl.c",
+            "source_sha256": "b96a65d58db080412266c457a3d339b74cf6d0e52d4aa23585a464a0047da678"
+          },
+          {
+            "blob_oid": "ee915326258a11acf6f4c48173df1da65e0ab3b4",
+            "bytes": 21762,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 635,
+            "path": "core/bus_center/lnn/net_buscenter/src/lnn_usb_network_impl.c",
+            "source_sha256": "3702097fc8a503f1df0079a02101c83339ff7bc258887fcd8b5a9098e280dd44"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-02:vulnerable",
+        "tree": "59721200af4f238af676e2533755c44c8ba22ebf"
+      },
+      "vulnerable_parent": "99a849f6ec133c657831dea57a15e4c2e40133d2",
+      "vulnerable_tree": "59721200af4f238af676e2533755c44c8ba22ebf"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-07-01T10:00:23+08:00",
+        "body": "Signed-off-by: erliangqi <zhangjiaxiang7@huawei.com>",
+        "committer_time": "2025-07-01T10:00:23+08:00",
+        "subject": "The null pointer problem is modified"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-476",
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: sdk/transmission/ipc/standard/src/trans_server_proxy.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.null_dereference",
+      "fix_commit": "783a1dd8dacc9ccded5189069b56221902c074bd",
+      "fix_tree": "51aa09de3a10efd2f5e814f2e8eb615d2705ac73",
+      "fixed": {
+        "category": "fixed",
+        "commit": "783a1dd8dacc9ccded5189069b56221902c074bd",
+        "files": [
+          {
+            "blob_oid": "4c36f23f401fc78d5280b904f705935b8ebc1b5a",
+            "bytes": 15525,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 434,
+            "path": "sdk/transmission/ipc/standard/src/trans_server_proxy.cpp",
+            "source_sha256": "7f2648369d4018e4b6e6498ef47767c0072dc428cd8fb0f770695c73d0f56110"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-03:fixed",
+        "tree": "51aa09de3a10efd2f5e814f2e8eb615d2705ac73"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/783a1dd8dacc9ccded5189069b56221902c074bd",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/783a1dd8dacc9ccded5189069b56221902c074bd"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/783a1dd8dacc9ccded5189069b56221902c074bd",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-03",
+      "stable_patch_id": "e39ff29dbf3bd3cf1363a1eba4065762d0fa5c10",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed C/C++ function on a path where the pre-fix null condition is dereferenced.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "a5f97ff9f87b9ba08db668a6c6015feac0cf9c86",
+        "files": [
+          {
+            "blob_oid": "73c923d6b8053c7604c63ea01eacbea67ab9b7cb",
+            "bytes": 15281,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 430,
+            "path": "sdk/transmission/ipc/standard/src/trans_server_proxy.cpp",
+            "source_sha256": "f937ca88c42643605af3fc464c39843143090d395c130b439de11d02f0652f3a"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-03:vulnerable",
+        "tree": "73807ae62d5c218677974ab5064c2feada44f9d9"
+      },
+      "vulnerable_parent": "a5f97ff9f87b9ba08db668a6c6015feac0cf9c86",
+      "vulnerable_tree": "73807ae62d5c218677974ab5064c2feada44f9d9"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-09-22T19:24:56+08:00",
+        "body": "Signed-off-by: erliangqi <zhangjiaxiang7@huawei.com>",
+        "committer_time": "2024-09-22T19:24:56+08:00",
+        "subject": "Prevent null pointer dereference"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-476",
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: core/common/security/permission/common/permission_entry.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.null_dereference",
+      "fix_commit": "13570b766f728793b51ec83693293acc998438f0",
+      "fix_tree": "5f06fb0a82c184259df3d10f0b06ab34cb86ded9",
+      "fixed": {
+        "category": "fixed",
+        "commit": "13570b766f728793b51ec83693293acc998438f0",
+        "files": [
+          {
+            "blob_oid": "8b521ba566e7bdb355d7c018d6565ee40fb37df3",
+            "bytes": 25827,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 772,
+            "path": "core/common/security/permission/common/permission_entry.c",
+            "source_sha256": "21bb1202e3623ab6f4beacddfcac9d7be5e585b6ba65f37d24d964f6dfc2bfa9"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-04:fixed",
+        "tree": "5f06fb0a82c184259df3d10f0b06ab34cb86ded9"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/13570b766f728793b51ec83693293acc998438f0",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/13570b766f728793b51ec83693293acc998438f0"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/13570b766f728793b51ec83693293acc998438f0",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-04",
+      "stable_patch_id": "1009e17176fa8bde0a5e648289750d08a182b7d8",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed C/C++ function on a path where the pre-fix null condition is dereferenced.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "545cc1918b6a009c42b1d15f952f1f02cf014d91",
+        "files": [
+          {
+            "blob_oid": "4e9d55ff67527e64ea83ba65a1c1159b3f82750f",
+            "bytes": 25742,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 769,
+            "path": "core/common/security/permission/common/permission_entry.c",
+            "source_sha256": "6f9f21a960400ba53f821b835a08da91e178bce0e1cc030260ee27c2d302c2fc"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-04:vulnerable",
+        "tree": "61ed90279b379e81d26c00babeccc3a4165f592d"
+      },
+      "vulnerable_parent": "545cc1918b6a009c42b1d15f952f1f02cf014d91",
+      "vulnerable_tree": "61ed90279b379e81d26c00babeccc3a4165f592d"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2026-07-02T17:14:30+08:00",
+        "body": "Add nullptr check for EcmaRuntimeCallInfo returned by\nNewRuntimeCallInfo in TYPED_ARRAY_NEW and SENDABLE_TYPED_ARRAY_NEW\nmacros. Return undefined when info is nullptr to avoid null pointer\ndereference.\n\nIssue: https://gitcode.com/openharmony/arkui_napi/issues/2150\nSigned-off-by: tuxiaohang <tuxiaohang@huawei.com>\nCo-Authored-By: Agent\nChange-Id: I235cc5f458d4ead4a317f651f4133510c275b675",
+        "committer_time": "2026-07-08T15:16:56+08:00",
+        "subject": "fix new null pointer dereference"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-476",
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/napi/jsnapi.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.null_dereference",
+      "fix_commit": "e8dc367f6dddde646424f84dce6f32210e408afd",
+      "fix_tree": "873e3b07ac38f43cf74297c742c7ccbe70740c41",
+      "fixed": {
+        "category": "fixed",
+        "commit": "e8dc367f6dddde646424f84dce6f32210e408afd",
+        "files": [
+          {
+            "blob_oid": "374b192a3bb5829b4c1ffe32641ffe66fe4baa52",
+            "bytes": 22971,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 479,
+            "path": "ecmascript/napi/jsnapi.cpp",
+            "source_sha256": "e81183da06bbcd860454432bebaf3721f80a09e059b00fd4f11678f9a1557295"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-05:fixed",
+        "tree": "873e3b07ac38f43cf74297c742c7ccbe70740c41"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/e8dc367f6dddde646424f84dce6f32210e408afd",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/e8dc367f6dddde646424f84dce6f32210e408afd"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/e8dc367f6dddde646424f84dce6f32210e408afd",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-NULL-05",
+      "stable_patch_id": "3304caff0719f35dfec94aba3ae6fd317c0337ed",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed C/C++ function on a path where the pre-fix null condition is dereferenced.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "dafc855eeda0cadebc15c5d92342d764305372b7",
+        "files": [
+          {
+            "blob_oid": "b3b8b3620ed6d1bfff520d343b873d4123d32abe",
+            "bytes": 21863,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 473,
+            "path": "ecmascript/napi/jsnapi.cpp",
+            "source_sha256": "858378b355f480ed9c895504c0cd65dc64027c307675d5ab66398d5269cc9f8a"
+          }
+        ],
+        "sample_id": "HOLDOUT-NULL-05:vulnerable",
+        "tree": "d141338f1b542fb750e9023ef87b3a1ed61ea0eb"
+      },
+      "vulnerable_parent": "dafc855eeda0cadebc15c5d92342d764305372b7",
+      "vulnerable_tree": "d141338f1b542fb750e9023ef87b3a1ed61ea0eb"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-09-01T16:21:44+08:00",
+        "body": "Signed-off-by: yexiaokang <yexiaokang3@huawei.com>",
+        "committer_time": "2025-09-01T16:21:44+08:00",
+        "subject": "fix task->handle use-after-free"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-416",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.4.0",
+      "entry": "Changed C/C++ units: components/nstackx/nstackx_ctrl/core/nstackx_common.c, components/nstackx/nstackx_ctrl/core/nstackx_device_local.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "393f0a734cc968ecd405fbebe2610f0562fda2cb",
+      "fix_tree": "c0dc4ea42367c66068db776ccf008ee8f9c387fd",
+      "fixed": {
+        "category": "fixed",
+        "commit": "393f0a734cc968ecd405fbebe2610f0562fda2cb",
+        "files": [
+          {
+            "blob_oid": "4991423a0790e00d56375fc0ee6a9da378f02b1c",
+            "bytes": 79696,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 2437,
+            "path": "components/nstackx/nstackx_ctrl/core/nstackx_common.c",
+            "source_sha256": "63229d8406616101e2374583b77658cb1d0e9ecfb10540332fe117fd7260cb87"
+          },
+          {
+            "blob_oid": "dfcf452af2df37d3969d1d4aa26d4fe8d1181388",
+            "bytes": 34299,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1049,
+            "path": "components/nstackx/nstackx_ctrl/core/nstackx_device_local.c",
+            "source_sha256": "600166340aa91318871a08258b742d9057e656fb852de880eb2cdaeca3376d7e"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-01:fixed",
+        "tree": "c0dc4ea42367c66068db776ccf008ee8f9c387fd"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/393f0a734cc968ecd405fbebe2610f0562fda2cb",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/393f0a734cc968ecd405fbebe2610f0562fda2cb"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/393f0a734cc968ecd405fbebe2610f0562fda2cb",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-01",
+      "stable_patch_id": "428b62a1ee78937780539aeb1a67cfcd8fa62b30",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Trigger the pre-fix owner destruction/reset while the changed alias or task handle remains live.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "aa73ae251f9e3033ab40ea850c19ed5c1b240e8a",
+        "files": [
+          {
+            "blob_oid": "37645d7cceaba192ab50cc241914b684954854d7",
+            "bytes": 79641,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 2436,
+            "path": "components/nstackx/nstackx_ctrl/core/nstackx_common.c",
+            "source_sha256": "496910f72032d22c211208693c602339ca43da10c923845c70eb78af1cdc6934"
+          },
+          {
+            "blob_oid": "c37b965e3ff42d4568726dddd25685ca5f778b26",
+            "bytes": 34298,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1049,
+            "path": "components/nstackx/nstackx_ctrl/core/nstackx_device_local.c",
+            "source_sha256": "3a758cbcc83dd13a82edcfd183616b93349874ed43a5957e46cf95b79d2c95da"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-01:vulnerable",
+        "tree": "be755020be1eebaae676449b651c7cea37fc6010"
+      },
+      "vulnerable_parent": "aa73ae251f9e3033ab40ea850c19ed5c1b240e8a",
+      "vulnerable_tree": "be755020be1eebaae676449b651c7cea37fc6010"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-06-26T17:19:09+08:00",
+        "body": "Signed-off-by: yexiaokang <yexiaokang3@huawei.com>",
+        "committer_time": "2025-06-26T19:27:12+08:00",
+        "subject": "fix use after free iface"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-416",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.4.0",
+      "entry": "Changed C/C++ units: components/nstackx/nstackx_ctrl/core/coap_discover/coap_discover.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "34fb261bcbf27fdbbdc87ba6346b1b84fc540069",
+      "fix_tree": "eba53fc7634c2c8e2fd83eaa1b51c3432d61dc87",
+      "fixed": {
+        "category": "fixed",
+        "commit": "34fb261bcbf27fdbbdc87ba6346b1b84fc540069",
+        "files": [
+          {
+            "blob_oid": "3cdfd89f77d7f1f854c13e1f4f44b1442f62fce9",
+            "bytes": 49792,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1444,
+            "path": "components/nstackx/nstackx_ctrl/core/coap_discover/coap_discover.c",
+            "source_sha256": "8bf2c7a820658049d3719e49fc37c52cb3694afd76313a30a37dca28b313ac93"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-02:fixed",
+        "tree": "eba53fc7634c2c8e2fd83eaa1b51c3432d61dc87"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/34fb261bcbf27fdbbdc87ba6346b1b84fc540069",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/34fb261bcbf27fdbbdc87ba6346b1b84fc540069"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/34fb261bcbf27fdbbdc87ba6346b1b84fc540069",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-02",
+      "stable_patch_id": "12b1baba1bb181790b5b38dad648c94b6ef320cf",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Trigger the pre-fix owner destruction/reset while the changed alias or task handle remains live.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "dfa7924b5cf916d3d4a73c7dfe0250e9cdbc5820",
+        "files": [
+          {
+            "blob_oid": "b221ddd4c624876d259616b1aca0719bdd92eb61",
+            "bytes": 49534,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1434,
+            "path": "components/nstackx/nstackx_ctrl/core/coap_discover/coap_discover.c",
+            "source_sha256": "4da6b6431c7db52bf1797f8c250f39bf06e5699e4e83780c5a5f62c952376559"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-02:vulnerable",
+        "tree": "8110ef829855f4a2effe891a69fd055a1b8cf953"
+      },
+      "vulnerable_parent": "dfa7924b5cf916d3d4a73c7dfe0250e9cdbc5820",
+      "vulnerable_tree": "8110ef829855f4a2effe891a69fd055a1b8cf953"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-02-26T17:35:05+08:00",
+        "body": "Signed-off-by: yexiaokang <yexiaokang3@huawei.com>",
+        "committer_time": "2025-03-05T11:34:25+08:00",
+        "subject": "fix nstsckx_util in unix epoll use-after-free"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-416",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.4.0",
+      "entry": "Changed C/C++ units: components/nstackx/nstackx_util/platform/unix/sys_epoll.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "05c5dfec907eafc8314192863d4fd2526831f4ec",
+      "fix_tree": "fc2da8ef6e3d4596fb20b46ac65cff7b91fe72cd",
+      "fixed": {
+        "category": "fixed",
+        "commit": "05c5dfec907eafc8314192863d4fd2526831f4ec",
+        "files": [
+          {
+            "blob_oid": "60c3cfbd9d6a586a2f829630900a59e237b5676c",
+            "bytes": 7642,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 263,
+            "path": "components/nstackx/nstackx_util/platform/unix/sys_epoll.c",
+            "source_sha256": "d2e606b012d646b70081a3cfb0e0733dc29b57c27ab196694e6097b32fedc2ba"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-03:fixed",
+        "tree": "fc2da8ef6e3d4596fb20b46ac65cff7b91fe72cd"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/05c5dfec907eafc8314192863d4fd2526831f4ec",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/05c5dfec907eafc8314192863d4fd2526831f4ec"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/05c5dfec907eafc8314192863d4fd2526831f4ec",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-03",
+      "stable_patch_id": "57fdea0e99669e459c871e63d1aa0f53b0b589a2",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Trigger the pre-fix owner destruction/reset while the changed alias or task handle remains live.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "bc605d5ee4dd605b42ff57ab72746a06a9d6f0f1",
+        "files": [
+          {
+            "blob_oid": "7216eea4e88b20c2ae958a6c6120861eab0e099b",
+            "bytes": 2879,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 109,
+            "path": "components/nstackx/nstackx_util/platform/unix/sys_epoll.c",
+            "source_sha256": "7f889d281206447ad7eb943a80241b7c088d8144d9f86c1d3eb392401749245f"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-03:vulnerable",
+        "tree": "13d61e4ced91ae612cc520ba069828e2851eea6d"
+      },
+      "vulnerable_parent": "bc605d5ee4dd605b42ff57ab72746a06a9d6f0f1",
+      "vulnerable_tree": "13d61e4ced91ae612cc520ba069828e2851eea6d"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-01-10T14:48:00+08:00",
+        "body": "Signed-off-by: guoqi11 <guoqi53@huawei.com>",
+        "committer_time": "2025-01-10T16:36:57+08:00",
+        "subject": "fix use after free"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-416",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.4.0",
+      "entry": "Changed C/C++ units: core/transmission/trans_channel/proxy/src/softbus_proxychannel_transceiver.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "a3bf544e1fbb8052cb3c1ce1997acbc5ed7bd4ab",
+      "fix_tree": "704b05eeba6f87ea712fc31075d011c970cd7d1d",
+      "fixed": {
+        "category": "fixed",
+        "commit": "a3bf544e1fbb8052cb3c1ce1997acbc5ed7bd4ab",
+        "files": [
+          {
+            "blob_oid": "2a8f87603e9ee6d3d14da5e8dc97237c901da124",
+            "bytes": 43005,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1111,
+            "path": "core/transmission/trans_channel/proxy/src/softbus_proxychannel_transceiver.c",
+            "source_sha256": "af86a6fb3c9dfd18f505694caf2a0bd4ef30f0241cc88e1a30188842b5c946ac"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-04:fixed",
+        "tree": "704b05eeba6f87ea712fc31075d011c970cd7d1d"
+      },
+      "ignored_non_source_paths": [
+        "tests/core/transmission/trans_channel/proxy_channel/softbus_trans_proxy_transceiver_test.cpp"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/a3bf544e1fbb8052cb3c1ce1997acbc5ed7bd4ab",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/a3bf544e1fbb8052cb3c1ce1997acbc5ed7bd4ab"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/a3bf544e1fbb8052cb3c1ce1997acbc5ed7bd4ab",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-04",
+      "stable_patch_id": "86efd03f2d5ca0935964f7a994095ff0fb94dcdb",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Trigger the pre-fix owner destruction/reset while the changed alias or task handle remains live.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "135a34a84ee5158e4803321394268775fce17fd9",
+        "files": [
+          {
+            "blob_oid": "0ce2e74c05eb39af7133ab15748924a76c782dbf",
+            "bytes": 42660,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1107,
+            "path": "core/transmission/trans_channel/proxy/src/softbus_proxychannel_transceiver.c",
+            "source_sha256": "0b28fce7bf88fbaaa9182edbd5e62805bcc6ba37a8278b1cb03d147c5005a8f8"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-04:vulnerable",
+        "tree": "e61780c9e152a34272207aa7895922f6bb1e4d61"
+      },
+      "vulnerable_parent": "135a34a84ee5158e4803321394268775fce17fd9",
+      "vulnerable_tree": "e61780c9e152a34272207aa7895922f6bb1e4d61"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2026-03-19T15:09:28+08:00",
+        "body": "Issue: https://gitcode.com/openharmony/arkcompiler_ets_runtime/issues/12710\n\nCo-Authored-By: NA\nSigned-off-by: yaochaonan <yaochaonan@huawei.com>\nChange-Id: Iaa191d9cb2bb0c30606fb1ffe5c1adf72df02b68",
+        "committer_time": "2026-03-23T19:27:37+08:00",
+        "subject": "Fix subThread use after free"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-416",
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_version": "0.4.0",
+      "entry": "Changed C/C++ units: ecmascript/jspandafile/js_pandafile.cpp, ecmascript/jspandafile/js_pandafile.h. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "2540d999ab23a37b3681e1ff5ad30ffd9890754f",
+      "fix_tree": "5f6708afba0cb81d0a0986372073dab8508c6b1a",
+      "fixed": {
+        "category": "fixed",
+        "commit": "2540d999ab23a37b3681e1ff5ad30ffd9890754f",
+        "files": [
+          {
+            "blob_oid": "4d10a4b9f5029708dd888f04c197927231b612bc",
+            "bytes": 23735,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 610,
+            "path": "ecmascript/jspandafile/js_pandafile.cpp",
+            "source_sha256": "732fafba5666c882390510c0fe486c9bb716aa1ddad31429a3830f5da174a559"
+          },
+          {
+            "blob_oid": "b9d8832bf19a3dfb60367185ce17e2de961ece5c",
+            "bytes": 20696,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 607,
+            "path": "ecmascript/jspandafile/js_pandafile.h",
+            "source_sha256": "74e2eadd52fced5612e128907c5e0db789e8ff298b9b74368b3e7c0780b7c33d"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-05:fixed",
+        "tree": "5f6708afba0cb81d0a0986372073dab8508c6b1a"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/2540d999ab23a37b3681e1ff5ad30ffd9890754f",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/2540d999ab23a37b3681e1ff5ad30ffd9890754f"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/2540d999ab23a37b3681e1ff5ad30ffd9890754f",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-UAF-05",
+      "stable_patch_id": "71a989eb5d185a9119f69e3eb89d8075cbb3130f",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Trigger the pre-fix owner destruction/reset while the changed alias or task handle remains live.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "c96d8677afa893af29ff7afc0ecd80c2d8f9f998",
+        "files": [
+          {
+            "blob_oid": "8c09d3d11286f8aefefb216b90c4f8c97ebde531",
+            "bytes": 24131,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 627,
+            "path": "ecmascript/jspandafile/js_pandafile.cpp",
+            "source_sha256": "942bc8b0f2c85cfefceb6735af9856c0a4d1bdd54b153549d014d346c1a1ec0d"
+          },
+          {
+            "blob_oid": "b3c83f07dc605f9edb6e4bf7019fd1a882253fcd",
+            "bytes": 20795,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 610,
+            "path": "ecmascript/jspandafile/js_pandafile.h",
+            "source_sha256": "090555717aa5fd8cdd67c561bab9862d6b9c411dc5cfdb4fc0fbf26e90b24530"
+          }
+        ],
+        "sample_id": "HOLDOUT-UAF-05:vulnerable",
+        "tree": "74b2f51fc4e0c7f0605e236af58c134536fbb4bc"
+      },
+      "vulnerable_parent": "c96d8677afa893af29ff7afc0ecd80c2d8f9f998",
+      "vulnerable_tree": "74b2f51fc4e0c7f0605e236af58c134536fbb4bc"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-09-03T11:16:07+08:00",
+        "body": "Signed-off-by: 霍宝宝 <huobaobao@huawei.com>",
+        "committer_time": "2025-09-03T11:16:28+08:00",
+        "subject": "fix memory leak issues."
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-401",
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/connection/br/include/softbus_conn_br_pending_packet.h, core/connection/br/src/softbus_conn_br_pending_packet.c, core/connection/br/src/softbus_conn_br_trans.c, core/connection/wifi_direct_cpp/processor/p2p_v1_processor.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "c1dfba0022330b96267ce5fee75cc7d4dabbc6b1",
+      "fix_tree": "36937e78339490231d371f02b08916bc836813c9",
+      "fixed": {
+        "category": "fixed",
+        "commit": "c1dfba0022330b96267ce5fee75cc7d4dabbc6b1",
+        "files": [
+          {
+            "blob_oid": "13e7e1882ef46a6cccfa39bd4871e5494e9e027c",
+            "bytes": 1406,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 40,
+            "path": "core/connection/br/include/softbus_conn_br_pending_packet.h",
+            "source_sha256": "506842c551003d2693854e9b57fe234a10cae9d9692220e530753c2ea84f6208"
+          },
+          {
+            "blob_oid": "327ae282fffba54fbb5c6a61315b3a780770f2d7",
+            "bytes": 9447,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 265,
+            "path": "core/connection/br/src/softbus_conn_br_pending_packet.c",
+            "source_sha256": "2a194ec49e4413c95d44eac79ab410a7f37b0171ffc998b622baced1bf41ad8e"
+          },
+          {
+            "blob_oid": "b6a292981f3b21a1af5b699bd5ae2755bac99c18",
+            "bytes": 25932,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 590,
+            "path": "core/connection/br/src/softbus_conn_br_trans.c",
+            "source_sha256": "addf3dc9dbd4b22facbacd6f953eddb5294fec0e3c13367203df5ab2461cc2d6"
+          },
+          {
+            "blob_oid": "c4cb95585d921fb0102424d18a9cfddeadbfdfd6",
+            "bytes": 91903,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 2143,
+            "path": "core/connection/wifi_direct_cpp/processor/p2p_v1_processor.cpp",
+            "source_sha256": "a20aa815940ced580ec910c8e1644128ff9eb433b8344cf65fb490539887eb3c"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-01:fixed",
+        "tree": "36937e78339490231d371f02b08916bc836813c9"
+      },
+      "ignored_non_source_paths": [
+        "tests/core/connection/br/mock/softbus_conn_br_connection_mock.cpp",
+        "tests/core/connection/br/mock/softbus_conn_br_connection_mock.h",
+        "tests/core/connection/br/softbus_conn_br_connection_test.cpp"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/c1dfba0022330b96267ce5fee75cc7d4dabbc6b1",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/c1dfba0022330b96267ce5fee75cc7d4dabbc6b1"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/c1dfba0022330b96267ce5fee75cc7d4dabbc6b1",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-01",
+      "stable_patch_id": "2d1ad5fa3508ee8840e41c8e011b0f9d7dcec93f",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Follow the changed allocation/error/cleanup path that the public fix makes leak- or double-release-free.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "00c88f38ab380f06777e465b14ca8a63335179b2",
+        "files": [
+          {
+            "blob_oid": "12a508a23af41785385fd700716b54add91e8d8d",
+            "bytes": 1358,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 39,
+            "path": "core/connection/br/include/softbus_conn_br_pending_packet.h",
+            "source_sha256": "0d5c72f226aa28480ad6edadbc9b01aea71a378ee646102d2df93bd5a0cb9e99"
+          },
+          {
+            "blob_oid": "420d9d6a241dce84eff1126eabf2017033924c11",
+            "bytes": 8846,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 249,
+            "path": "core/connection/br/src/softbus_conn_br_pending_packet.c",
+            "source_sha256": "680a164a521854e6dd9a096ae1c1514a7b1ef0a3318d8eb3b88306fe3a4cc0da"
+          },
+          {
+            "blob_oid": "1361242379132462ae776c6ed702a7ca4da2c260",
+            "bytes": 25838,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 587,
+            "path": "core/connection/br/src/softbus_conn_br_trans.c",
+            "source_sha256": "50fe19464e5cd5bb5f4c29f480b44179e48eba70c0b1d266844e208f81a3bafe"
+          },
+          {
+            "blob_oid": "c88bcaee14be28f5379bf0fcc2f8ab04ecc96c2c",
+            "bytes": 91903,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 2143,
+            "path": "core/connection/wifi_direct_cpp/processor/p2p_v1_processor.cpp",
+            "source_sha256": "52e84df12c5b1b9b99976ff671562c5d6e153aafc33b5f9802672da80e0e61b0"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-01:vulnerable",
+        "tree": "c1490ce26d11de80f72e7fdf1e63d806af629e55"
+      },
+      "vulnerable_parent": "00c88f38ab380f06777e465b14ca8a63335179b2",
+      "vulnerable_tree": "c1490ce26d11de80f72e7fdf1e63d806af629e55"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-05-21T22:02:56+08:00",
+        "body": "Signed-off-by: 霍宝宝 <huobaobao@huawei.com>",
+        "committer_time": "2025-08-25T15:17:41+08:00",
+        "subject": "fix memory leak issues."
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-401",
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/connection/br/include/softbus_conn_br_pending_packet.h, core/connection/br/src/softbus_conn_br_pending_packet.c, core/connection/br/src/softbus_conn_br_trans.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "f4b069d1f3cecc82fe08563080057ed6db45fd0e",
+      "fix_tree": "ea2169cbeb08e42e4112ed059601a1f4ce120d31",
+      "fixed": {
+        "category": "fixed",
+        "commit": "f4b069d1f3cecc82fe08563080057ed6db45fd0e",
+        "files": [
+          {
+            "blob_oid": "5af7743cbff92270cdf7aad20fdb4ec124dce9af",
+            "bytes": 1427,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 42,
+            "path": "core/connection/br/include/softbus_conn_br_pending_packet.h",
+            "source_sha256": "e048217e13d8888f95c9ded548ba4110b014ff3c8672aa0335b2259e2ed918fd"
+          },
+          {
+            "blob_oid": "b2baf0645146a26968aa8f5f2bbed6f09eec66ad",
+            "bytes": 9397,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 269,
+            "path": "core/connection/br/src/softbus_conn_br_pending_packet.c",
+            "source_sha256": "d9aaf8ab3ea9124c6c03f6fbaed5011b8475075f81f680997553c8b8de61a3e9"
+          },
+          {
+            "blob_oid": "9137f5ece9c0ba5de70538c4683080958fc53742",
+            "bytes": 25848,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 582,
+            "path": "core/connection/br/src/softbus_conn_br_trans.c",
+            "source_sha256": "ba47c3615e5ad134be37c75bd1fa86014ca11be23198aa496a1d3059a5bc852b"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-02:fixed",
+        "tree": "ea2169cbeb08e42e4112ed059601a1f4ce120d31"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/f4b069d1f3cecc82fe08563080057ed6db45fd0e",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/f4b069d1f3cecc82fe08563080057ed6db45fd0e"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/f4b069d1f3cecc82fe08563080057ed6db45fd0e",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-02",
+      "stable_patch_id": "9ef3a07307352c16454db94befbaa7d9495f96f9",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Follow the changed allocation/error/cleanup path that the public fix makes leak- or double-release-free.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "c47088ebf661027c9da06ee1524f5265397c5713",
+        "files": [
+          {
+            "blob_oid": "76635722c9a98d0bb91bf72737c38f65b6b7c674",
+            "bytes": 1379,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 41,
+            "path": "core/connection/br/include/softbus_conn_br_pending_packet.h",
+            "source_sha256": "bf1a90efebb4605c629f58183c75e69b2de6f01287eddab44c219cfef925fe08"
+          },
+          {
+            "blob_oid": "20ad99852cae45378f08ddc91c076ca5f44c444f",
+            "bytes": 8862,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 249,
+            "path": "core/connection/br/src/softbus_conn_br_pending_packet.c",
+            "source_sha256": "ebcbc7041bfcd6c4e8006536e84e39f197c98c1969e8c991484ff5f2c2328b35"
+          },
+          {
+            "blob_oid": "5eeccb23a6695e5e29919f1b8737c42695d1a75b",
+            "bytes": 25754,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 579,
+            "path": "core/connection/br/src/softbus_conn_br_trans.c",
+            "source_sha256": "e723839efe7b41c37e9518a2d7cb21bfb2c4e7dc8139e32d12c4ed78b6392650"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-02:vulnerable",
+        "tree": "a0c6f5d5485f22ba9029da4b1b388de1c2795e0a"
+      },
+      "vulnerable_parent": "c47088ebf661027c9da06ee1524f5265397c5713",
+      "vulnerable_tree": "a0c6f5d5485f22ba9029da4b1b388de1c2795e0a"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-07-28T15:32:41+08:00",
+        "body": "Signed-off-by: chengchen <chengchen55@huawei.com>",
+        "committer_time": "2025-07-28T15:32:41+08:00",
+        "subject": "fix: resolve memory leak in service info management"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-772",
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/discovery/service_discovery/service_database/src/service_database.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "e5bb84a5709a4dcc80249a6b2f79256ce5a2e0b5",
+      "fix_tree": "b12594a380376be2f4626d4fe775d1dc2c26cc08",
+      "fixed": {
+        "category": "fixed",
+        "commit": "e5bb84a5709a4dcc80249a6b2f79256ce5a2e0b5",
+        "files": [
+          {
+            "blob_oid": "311558f7ea072d8d148805a932533327d6269e5c",
+            "bytes": 10633,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 284,
+            "path": "core/discovery/service_discovery/service_database/src/service_database.c",
+            "source_sha256": "5ff85e82ab0037e221c051ad7876737eb32573be76707c4760faaeb989c23552"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-03:fixed",
+        "tree": "b12594a380376be2f4626d4fe775d1dc2c26cc08"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/e5bb84a5709a4dcc80249a6b2f79256ce5a2e0b5",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/e5bb84a5709a4dcc80249a6b2f79256ce5a2e0b5"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/e5bb84a5709a4dcc80249a6b2f79256ce5a2e0b5",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-03",
+      "stable_patch_id": "a93f96302771c390d070e5ae97a90705934b1360",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Follow the changed allocation/error/cleanup path that the public fix makes leak- or double-release-free.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "8a4f0469eb827b063d7b4ec2a7fd796d5f89a64b",
+        "files": [
+          {
+            "blob_oid": "a65e03caf049be5cb3c80675ddb4cd21cd484dfd",
+            "bytes": 10590,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 283,
+            "path": "core/discovery/service_discovery/service_database/src/service_database.c",
+            "source_sha256": "2ce9f1f2686d08adee1b9ff6db01c4fbb80dd217cc03cb86c5e7b4d0583f47c1"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-03:vulnerable",
+        "tree": "409054e52384a05104660b92a074761fadd751c0"
+      },
+      "vulnerable_parent": "8a4f0469eb827b063d7b4ec2a7fd796d5f89a64b",
+      "vulnerable_tree": "409054e52384a05104660b92a074761fadd751c0"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-09-20T11:04:35+08:00",
+        "body": "Signed-off-by: zhangjianwei <zhangjianwei37@huawei.com>\nChange-Id: I7f4d93e4883232106494343bdcfe06ef50c6258d",
+        "committer_time": "2024-09-20T11:04:35+08:00",
+        "subject": "fd double free"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-415",
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/connection/tcp/src/softbus_tcp_connect_manager.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "0c057c8351113841e691bf7f4cf10c106405b8c1",
+      "fix_tree": "081d9755570c66addac949324ed55789ea6ab5d2",
+      "fixed": {
+        "category": "fixed",
+        "commit": "0c057c8351113841e691bf7f4cf10c106405b8c1",
+        "files": [
+          {
+            "blob_oid": "39f4b2bc90ebfb8a066eec7afbc956319cf93dab",
+            "bytes": 31590,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 812,
+            "path": "core/connection/tcp/src/softbus_tcp_connect_manager.c",
+            "source_sha256": "d4e70a6e7603f7d520e8d66d01948d809afdad6fd41b2d9aa3c2387cf2155d81"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-04:fixed",
+        "tree": "081d9755570c66addac949324ed55789ea6ab5d2"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/0c057c8351113841e691bf7f4cf10c106405b8c1",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/0c057c8351113841e691bf7f4cf10c106405b8c1"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/0c057c8351113841e691bf7f4cf10c106405b8c1",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-04",
+      "stable_patch_id": "c8d8d41399007bf3510b7423451777dc2e55bcf8",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Follow the changed allocation/error/cleanup path that the public fix makes leak- or double-release-free.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "49431aa4fef2b78713a8b34107d7c5f1ce4df718",
+        "files": [
+          {
+            "blob_oid": "f2f426c8169b19eed28bcb344f358faaa6e23b59",
+            "bytes": 31759,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 818,
+            "path": "core/connection/tcp/src/softbus_tcp_connect_manager.c",
+            "source_sha256": "e122f3ea0b6f57fa482167e3d7c604a1a91650f07837a6a7e217435ad3bf9b42"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-04:vulnerable",
+        "tree": "db5977a733136ae8b1e194dec006a786639e5948"
+      },
+      "vulnerable_parent": "49431aa4fef2b78713a8b34107d7c5f1ce4df718",
+      "vulnerable_tree": "db5977a733136ae8b1e194dec006a786639e5948"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-12-13T18:24:07+08:00",
+        "body": "Signed-off-by: law <liyuhang47@huawei.com>",
+        "committer_time": "2024-12-13T18:24:07+08:00",
+        "subject": "double stopListening induce double free"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-415",
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/connection/tcp/src/softbus_tcp_connect_manager.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "9e5cf8e7c9ade887d576402151ba9fadd9e08b1e",
+      "fix_tree": "de886a111568380d3f223e0461c8f6933c55ae4c",
+      "fixed": {
+        "category": "fixed",
+        "commit": "9e5cf8e7c9ade887d576402151ba9fadd9e08b1e",
+        "files": [
+          {
+            "blob_oid": "4d8a14ff87979b176b3f661f696ff1d0b96745fa",
+            "bytes": 31686,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 810,
+            "path": "core/connection/tcp/src/softbus_tcp_connect_manager.c",
+            "source_sha256": "4dc74a570a6ba470a7a65b2a5a0ada678ccb87069c052f22203183fa5cc2cfe1"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-05:fixed",
+        "tree": "de886a111568380d3f223e0461c8f6933c55ae4c"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/9e5cf8e7c9ade887d576402151ba9fadd9e08b1e",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/9e5cf8e7c9ade887d576402151ba9fadd9e08b1e"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/9e5cf8e7c9ade887d576402151ba9fadd9e08b1e",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-05",
+      "stable_patch_id": "0c3f092052d23ddcfb47d37b0f0c104e7ee0c5a0",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Follow the changed allocation/error/cleanup path that the public fix makes leak- or double-release-free.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "7d6103872b87fd6c8e8fa91bf60addf492baa640",
+        "files": [
+          {
+            "blob_oid": "953c41def15a25913704471375fd4049a3fc5779",
+            "bytes": 31485,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 804,
+            "path": "core/connection/tcp/src/softbus_tcp_connect_manager.c",
+            "source_sha256": "15f81c69da55e851f497e64505095308be925a576b90aea9354c4a4a8e255857"
+          }
+        ],
+        "sample_id": "HOLDOUT-RES-05:vulnerable",
+        "tree": "cffd1433fb170ef00e0150055cbf15851e96b8b6"
+      },
+      "vulnerable_parent": "7d6103872b87fd6c8e8fa91bf60addf492baa640",
+      "vulnerable_tree": "cffd1433fb170ef00e0150055cbf15851e96b8b6"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2026-08-31T15:08:32+08:00",
+        "body": "In JSStableArray::Fill, the end parameter could exceed the actual\narray length when the array is shortened via valueOf side effects\nduring the fill operation. Clamp end to the real array length to\nprevent out-of-bounds access. Add test case for fill with valueOf\nthat splices the array.\n\nIssue: https://gitcode.com/openharmony/arkcompiler_ets_runtime/issues/13624\nSigned-off-by: hecunmao <hecunmao@h-partners.com>\nCo-Authored-By: Agent\n\nAI[0%] Human Fixed[0%] Human[100%] AI Adopted[0%]\n\nChange-Id: I202e8e806f2625a45f829b2269bc74f760efae49",
+        "committer_time": "2026-08-31T15:08:32+08:00",
+        "subject": "fix(array): clamp fill end to array length"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-787",
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/builtins/builtins_array.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.bounds",
+      "fix_commit": "e338dbe3a2a83e5131cd1252749b0db321b6a2da",
+      "fix_tree": "062041691c2590be99491e07aac81b760301281c",
+      "fixed": {
+        "category": "fixed",
+        "commit": "e338dbe3a2a83e5131cd1252749b0db321b6a2da",
+        "files": [
+          {
+            "blob_oid": "641b7785acd6cf73abcd404dcdcf0727c92c1fda",
+            "bytes": 157628,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 3493,
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "source_sha256": "6c7a2081e8d59311099b4ebaed6d4f1f84265a8602ba8de647e65fa7c6092cfa"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-01:fixed",
+        "tree": "062041691c2590be99491e07aac81b760301281c"
+      },
+      "ignored_non_source_paths": [
+        "test/moduletest/arrayfill/arrayfill.js"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/e338dbe3a2a83e5131cd1252749b0db321b6a2da",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/e338dbe3a2a83e5131cd1252749b0db321b6a2da"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/e338dbe3a2a83e5131cd1252749b0db321b6a2da",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-BOUNDS-01",
+      "stable_patch_id": "09dd379e3b9907ba1b2d2b2af8f6910126681742",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply the index, length or serialization input that reaches the changed access with the pre-fix insufficient bound condition.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "7fb4241bf7597e1965ade32910042d3fe1a66058",
+        "files": [
+          {
+            "blob_oid": "51f0df431394eadcada629b62430437089459445",
+            "bytes": 157575,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 3493,
+            "path": "ecmascript/builtins/builtins_array.cpp",
+            "source_sha256": "8887b51a5455ea0014c443f1b5eb6f5d4333c145b3168ab07de7f85c114233ac"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-01:vulnerable",
+        "tree": "d2f3cca931d767413d74c7ca087737e075f12678"
+      },
+      "vulnerable_parent": "7fb4241bf7597e1965ade32910042d3fe1a66058",
+      "vulnerable_tree": "d2f3cca931d767413d74c7ca087737e075f12678"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2026-08-22T17:35:11+08:00",
+        "body": "Issue: https://gitcode.com/openharmony/arkcompiler_ets_runtime/issues/13601\nCo-Authored-By: Agent\n\nAI[94%] Human Fixed[0%] Human[6%] AI Adopted[100%]\nCo-authored-by: opencode (glm-5.2) <ai@local>\n\nChange-Id: I60f393166f8cc8158e34249ae2b683af0fc65a4c\nSigned-off-by: xiongkang <xiongkang15@huawei.com>",
+        "committer_time": "2026-08-22T17:35:11+08:00",
+        "subject": "Fix buffer overflow in stackinfo and zip"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-787",
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/dfx/stackinfo/js_stackinfo.cpp, ecmascript/dfx/stackinfo/js_stackinfo.h, ecmascript/extractortool/src/zip_file.cpp, ecmascript/extractortool/src/zip_file.h. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.bounds",
+      "fix_commit": "466e8099c860a81d4155d666403773b01d1007b2",
+      "fix_tree": "7409c47b33e145378fd88a735e6b5849a5a9aba6",
+      "fixed": {
+        "category": "fixed",
+        "commit": "466e8099c860a81d4155d666403773b01d1007b2",
+        "files": [
+          {
+            "blob_oid": "de05222e63ed5b1f60de02a7bd2a327c8a1eb08a",
+            "bytes": 62118,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1648,
+            "path": "ecmascript/dfx/stackinfo/js_stackinfo.cpp",
+            "source_sha256": "557f096c35d03287815363a4f69ae678663be12733445468440d1af3b30003b7"
+          },
+          {
+            "blob_oid": "4abebf743ea8b4a5c5ee57cdf57bb42cdcd3fac0",
+            "bytes": 12249,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 291,
+            "path": "ecmascript/dfx/stackinfo/js_stackinfo.h",
+            "source_sha256": "a94220d4193da8f89e0c7a7acd90e7f361bdeb281fb1d75b63fee7ea993fb99d"
+          },
+          {
+            "blob_oid": "f37598da7fe162c5a9981fe2e6a5d29a7a2fcf4f",
+            "bytes": 24449,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 825,
+            "path": "ecmascript/extractortool/src/zip_file.cpp",
+            "source_sha256": "0a84c095949f54d845bce87f3f3a01a3d0a4c4719b8c70da99112eb8cfbd7c65"
+          },
+          {
+            "blob_oid": "9a325c7fee6c779dbb5754e64dbb846ccf5766f8",
+            "bytes": 13271,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 341,
+            "path": "ecmascript/extractortool/src/zip_file.h",
+            "source_sha256": "cb904ca80f43687ff984789bd40801a0cd2da416c3b96c8af0463b42442583c9"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-02:fixed",
+        "tree": "7409c47b33e145378fd88a735e6b5849a5a9aba6"
+      },
+      "ignored_non_source_paths": [
+        "ecmascript/dfx/stackinfo/tests/js_stackinfo_test.cpp",
+        "ecmascript/extractortool/tests/zip_file_test.cpp"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/466e8099c860a81d4155d666403773b01d1007b2",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/466e8099c860a81d4155d666403773b01d1007b2"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/466e8099c860a81d4155d666403773b01d1007b2",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-BOUNDS-02",
+      "stable_patch_id": "f0381caac26fdbd6c666341d708e34b95f1bb4b5",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply the index, length or serialization input that reaches the changed access with the pre-fix insufficient bound condition.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "0507952a47cc9ee63bc55c999832d1f75ad34aa9",
+        "files": [
+          {
+            "blob_oid": "2cb0a6387faf93293e27a9c4e75c5a1bd6b79a2e",
+            "bytes": 61873,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1636,
+            "path": "ecmascript/dfx/stackinfo/js_stackinfo.cpp",
+            "source_sha256": "8c6433e17c008ebcf401a26ca4d79ecef4986e39c9b45131d21aa3df55ec6d9b"
+          },
+          {
+            "blob_oid": "76f5800efd1fb68d338118d4e054602892f69edd",
+            "bytes": 12249,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 291,
+            "path": "ecmascript/dfx/stackinfo/js_stackinfo.h",
+            "source_sha256": "eb6ce7944ec4d129641de84cbdcfc2368b43548d174d44418f844a8bfb52e6c0"
+          },
+          {
+            "blob_oid": "dc32d1d6149e0a13d9c009715d61ed0420507faa",
+            "bytes": 23433,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 800,
+            "path": "ecmascript/extractortool/src/zip_file.cpp",
+            "source_sha256": "72d0d7f38f2009afd1ca68904bb49f2de0b12936fceeb5d72dd9fd503e824751"
+          },
+          {
+            "blob_oid": "c5914b3b015fb0bd645433a8763e93a74772dfff",
+            "bytes": 13058,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 339,
+            "path": "ecmascript/extractortool/src/zip_file.h",
+            "source_sha256": "6cb414155e660f3322d6c749f0229c8de7b346e3927a756561468758996e8cf8"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-02:vulnerable",
+        "tree": "2b7fc6a247ac7bb34c7a640ee64066650d9d70a2"
+      },
+      "vulnerable_parent": "0507952a47cc9ee63bc55c999832d1f75ad34aa9",
+      "vulnerable_tree": "2b7fc6a247ac7bb34c7a640ee64066650d9d70a2"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-09-16T12:36:43+08:00",
+        "body": "Issue:https://gitcode.com/openharmony/arkcompiler_ets_runtime/issues/11667\nSigned-off-by: yangxiaoshuai2022 <yangxiaoshuai@huawei.com>",
+        "committer_time": "2025-09-23T16:31:54+08:00",
+        "subject": "Fix out of bounds issue during treemap access"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-125",
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/tagged_tree.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.bounds",
+      "fix_commit": "00206c93e988b4ae32f7982a5061383a1e8c530f",
+      "fix_tree": "cebd0e6a6489e3d5e9342ec001e72dd652bbdd10",
+      "fixed": {
+        "category": "fixed",
+        "commit": "00206c93e988b4ae32f7982a5061383a1e8c530f",
+        "files": [
+          {
+            "blob_oid": "a164ff44e50f39f7ff4f41612d89a3156e19dde2",
+            "bytes": 27126,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 685,
+            "path": "ecmascript/tagged_tree.cpp",
+            "source_sha256": "df996660c9af93e7299c03578d2c084f0e1d0a49bc63b2794b29f0305c32d197"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-03:fixed",
+        "tree": "cebd0e6a6489e3d5e9342ec001e72dd652bbdd10"
+      },
+      "ignored_non_source_paths": [
+        "ecmascript/tests/tagged_tree_test.cpp"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/00206c93e988b4ae32f7982a5061383a1e8c530f",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/00206c93e988b4ae32f7982a5061383a1e8c530f"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/00206c93e988b4ae32f7982a5061383a1e8c530f",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-BOUNDS-03",
+      "stable_patch_id": "163a59e1b01450f44f59a880ed30fde4decf67e4",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply the index, length or serialization input that reaches the changed access with the pre-fix insufficient bound condition.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "642c071eaca9c52be5fe31465950430187b94fc2",
+        "files": [
+          {
+            "blob_oid": "a6b7b41c8095f42292ad46fdf2c97c53bbe54e6f",
+            "bytes": 27073,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 684,
+            "path": "ecmascript/tagged_tree.cpp",
+            "source_sha256": "7229735aa34f36c2d9fbf334382fdb7387b7fd7ad186f04f957bf484751e3839"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-03:vulnerable",
+        "tree": "be625f1abc5b718c61c915c859acbffcbe465100"
+      },
+      "vulnerable_parent": "642c071eaca9c52be5fe31465950430187b94fc2",
+      "vulnerable_tree": "be625f1abc5b718c61c915c859acbffcbe465100"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2022-11-28T15:01:10+08:00",
+        "body": "Signed-off-by: lianhuixxx <xulianhui1@huawei.com>",
+        "committer_time": "2022-11-29T03:29:57Z",
+        "subject": "Fix heap overflow when remove device data"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-787",
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_natural_store.cpp, frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_natural_store.h, frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_engine.cpp, frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_engine.h, frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_executor.cpp, frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_executor.h. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.bounds",
+      "fix_commit": "c9a4847d70b41e4d35f0da1786874784ca5a6c3b",
+      "fix_tree": "73aecd4bff04b69da51605182573bf13bdae40e4",
+      "fixed": {
+        "category": "fixed",
+        "commit": "c9a4847d70b41e4d35f0da1786874784ca5a6c3b",
+        "files": [
+          {
+            "blob_oid": "f59e8d3d4c2a0ef709b89d2acca3a2a62a9900d4",
+            "bytes": 82403,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 2398,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_natural_store.cpp",
+            "source_sha256": "3b567a6bfbacecd07bdb094c06391783e59c217107eadad6b6395ec7d31d7604"
+          },
+          {
+            "blob_oid": "9baffad0c55f341c1290fe5e9bd540ee9d3a3d20",
+            "bytes": 11612,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 303,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_natural_store.h",
+            "source_sha256": "292af02baa875b2111cbda211015da3224404de98116a75d7f36f425f7ea326b"
+          },
+          {
+            "blob_oid": "72ca2ef49cfc408f23fdc423901c838b8848d67c",
+            "bytes": 45142,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1183,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_engine.cpp",
+            "source_sha256": "cfd65b3c9aed9e8560360eec89391e3f98e6189a8f1fa09915400e8b2fb479b1"
+          },
+          {
+            "blob_oid": "7b7c235e3e7b50a7b3d8c870fa36f1435157f817",
+            "bytes": 5451,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 131,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_engine.h",
+            "source_sha256": "a702904885b51a8be33b3dc01207d303a5d0027cd235795adafe0652c3bdbd33"
+          },
+          {
+            "blob_oid": "03431d1c4a409a4ec2bcd88100645933fce21d3f",
+            "bytes": 82596,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 2255,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_executor.cpp",
+            "source_sha256": "3a5699569bbae01966ca822d5529ad6685545d74a58c7d4e265e2ba246a26caa"
+          },
+          {
+            "blob_oid": "36b899c67eb2e5c42f29323ba1f1c80e9de87493",
+            "bytes": 16159,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 424,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_executor.h",
+            "source_sha256": "e352e1f8ae204f0285e809c10a5dc49eb8b21806caeef6d45616cc09fd318440"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-04:fixed",
+        "tree": "73aecd4bff04b69da51605182573bf13bdae40e4"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/distributeddatamgr_kv_store/commit/c9a4847d70b41e4d35f0da1786874784ca5a6c3b",
+        "github": "https://github.com/openharmony/distributeddatamgr_kv_store/commit/c9a4847d70b41e4d35f0da1786874784ca5a6c3b"
+      },
+      "official_reference": "https://gitcode.com/openharmony/distributeddatamgr_kv_store/commit/c9a4847d70b41e4d35f0da1786874784ca5a6c3b",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "repository_root_key": "distributeddatamgr_kv_store",
+      "root_cause_id": "HOLDOUT-BOUNDS-04",
+      "stable_patch_id": "476aff2cf60a2c7f3d1125410946651bd75ffeca",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply the index, length or serialization input that reaches the changed access with the pre-fix insufficient bound condition.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "7cb30b9e43ac222994a5421fe66351671829356c",
+        "files": [
+          {
+            "blob_oid": "20c9834f5c904a0618190b9c6bf82367d5b1773d",
+            "bytes": 82412,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 2398,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_natural_store.cpp",
+            "source_sha256": "cabe5b16595542fd31b24f1cc668e09a4630217785f7b957626b75dd35b06db2"
+          },
+          {
+            "blob_oid": "ca7ffe9c56eef9dda2881e03b97b4a52094436db",
+            "bytes": 11615,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 303,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_natural_store.h",
+            "source_sha256": "982b0c99e5c3231d5880ab5952a1079ccd60a0b5894cc77786cd1d6ac7133b9e"
+          },
+          {
+            "blob_oid": "12586c6047738b8be4675e61e84474f6fbf25d9b",
+            "bytes": 43789,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1144,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_engine.cpp",
+            "source_sha256": "319a8ae70550121a4aa1b1ff3c2dbf94479ea4d0ebd7b9a472137c8146528f15"
+          },
+          {
+            "blob_oid": "871081469467f1fbde9c0cea30dadae513adf315",
+            "bytes": 5197,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 128,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_engine.h",
+            "source_sha256": "7e2c7c71c5f51909154b7d16bb7a1883e64a1264816869c6e464b141fe3560e1"
+          },
+          {
+            "blob_oid": "ddfe5001b64e8e5d24615e963febf01a46d1955f",
+            "bytes": 82534,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 2253,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_executor.cpp",
+            "source_sha256": "081a91641c06a484493fc56f0c71a7e6099cf6c1139d21ee968b9faa9a666580"
+          },
+          {
+            "blob_oid": "76178a325cee467154d636d6875725061da88ad3",
+            "bytes": 16165,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 424,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/sqlite_single_ver_storage_executor.h",
+            "source_sha256": "b35d37492195e0a64a3fe7b9c61f112be67f61d36391b69cd5b9e70b704ac8f8"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-04:vulnerable",
+        "tree": "bbd61c73f6f0c94273b50042d58a995d8c5e8b3e"
+      },
+      "vulnerable_parent": "7cb30b9e43ac222994a5421fe66351671829356c",
+      "vulnerable_tree": "bbd61c73f6f0c94273b50042d58a995d8c5e8b3e"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-02-06T09:27:07+08:00",
+        "body": "Signed-off-by: lobty <butaoyu@huawei.com>",
+        "committer_time": "2024-04-26T10:23:35+08:00",
+        "subject": "fix the issue of possible data out of bounds in RemoveDeviceData"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-787",
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: frameworks/libs/distributeddb/storage/src/sqlite/relational/sqlite_single_ver_relational_storage_executor.cpp, frameworks/libs/distributeddb/storage/src/sqlite/relational/sqlite_single_ver_relational_storage_executor_extend.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.bounds",
+      "fix_commit": "a3ec506867acda22acac92e654c3e27a6c3c1d07",
+      "fix_tree": "e42bbb7b4eafcda1f2cb2684cc154e216840e5f4",
+      "fixed": {
+        "category": "fixed",
+        "commit": "a3ec506867acda22acac92e654c3e27a6c3c1d07",
+        "files": [
+          {
+            "blob_oid": "1cb4a02c83ba93633e70703f98b49efd8b2fe1a7",
+            "bytes": 73506,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1886,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/relational/sqlite_single_ver_relational_storage_executor.cpp",
+            "source_sha256": "fce6e4297f9418e4b277b2b0393c397cf9b71d915ac9e42b308f6fbe30e6f697"
+          },
+          {
+            "blob_oid": "94ce13de99c2e7973c5599837c10a521a4931a7c",
+            "bytes": 41957,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1037,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/relational/sqlite_single_ver_relational_storage_executor_extend.cpp",
+            "source_sha256": "d796fa19b34790e6e83721ede733945609cc138b76c6149ceccf2b6d2f06892c"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-05:fixed",
+        "tree": "e42bbb7b4eafcda1f2cb2684cc154e216840e5f4"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/distributeddatamgr_kv_store/commit/a3ec506867acda22acac92e654c3e27a6c3c1d07",
+        "github": "https://github.com/openharmony/distributeddatamgr_kv_store/commit/a3ec506867acda22acac92e654c3e27a6c3c1d07"
+      },
+      "official_reference": "https://gitcode.com/openharmony/distributeddatamgr_kv_store/commit/a3ec506867acda22acac92e654c3e27a6c3c1d07",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/distributeddatamgr_kv_store",
+      "repository_root_key": "distributeddatamgr_kv_store",
+      "root_cause_id": "HOLDOUT-BOUNDS-05",
+      "stable_patch_id": "bd9d7c6dbd65f46fa5c9e07f3ae2187b1f1cb329",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply the index, length or serialization input that reaches the changed access with the pre-fix insufficient bound condition.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "bd6e47ba1a95146115373a3df51589387a161d06",
+        "files": [
+          {
+            "blob_oid": "d5063fbb122d0b03aad464530f82e03b02ddabc9",
+            "bytes": 73485,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1886,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/relational/sqlite_single_ver_relational_storage_executor.cpp",
+            "source_sha256": "673f8820e661741318192b3e082a0446a4ebbc4864041a954546f6368ba32b3f"
+          },
+          {
+            "blob_oid": "2fd59d42aba73dbf782766dc21e9b05dd5284817",
+            "bytes": 41895,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1035,
+            "path": "frameworks/libs/distributeddb/storage/src/sqlite/relational/sqlite_single_ver_relational_storage_executor_extend.cpp",
+            "source_sha256": "f370d4765f2dadbf37b533d711931649604d0e4f7988c83f03cd21188bf459af"
+          }
+        ],
+        "sample_id": "HOLDOUT-BOUNDS-05:vulnerable",
+        "tree": "ac89df5340aac2c55713d5a37e97875441e7d31c"
+      },
+      "vulnerable_parent": "bd6e47ba1a95146115373a3df51589387a161d06",
+      "vulnerable_tree": "ac89df5340aac2c55713d5a37e97875441e7d31c"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2026-09-29T11:43:53+08:00",
+        "body": "Issue:https://gitcode.com/openharmony/arkcompiler_ets_runtime/issues/13712\nCo-Authored-By: AGENT\nSigned-off-by: zhangyukun8 <zhangyukun8@huawei.com>\n\nAI[0%] Human Fixed[0%] Human[100%] AI Adopted[0%]",
+        "committer_time": "2026-09-29T11:43:53+08:00",
+        "subject": "Fix multiply overflow"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-190",
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/platform/unix/time.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "dfe612a32cb73bf4b28769347f7ddd30d5e0a44b",
+      "fix_tree": "9cc432386600f3e603eacd2b38d30ff31f3dbea6",
+      "fixed": {
+        "category": "fixed",
+        "commit": "dfe612a32cb73bf4b28769347f7ddd30d5e0a44b",
+        "files": [
+          {
+            "blob_oid": "10db10e60153228aa84c737ff9a3744e8fe88520",
+            "bytes": 2756,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 91,
+            "path": "ecmascript/platform/unix/time.cpp",
+            "source_sha256": "b6aaaafc4e01917a5c6b8dabadc3c57565db4c13254e14906c4692dc8a2efba5"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-01:fixed",
+        "tree": "9cc432386600f3e603eacd2b38d30ff31f3dbea6"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/dfe612a32cb73bf4b28769347f7ddd30d5e0a44b",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/dfe612a32cb73bf4b28769347f7ddd30d5e0a44b"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/dfe612a32cb73bf4b28769347f7ddd30d5e0a44b",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-INT-01",
+      "stable_patch_id": "fd3bdca1a5bc4b3603072f70c2ccfaac6a723a16",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply arithmetic, length or index input that triggers the overflow/narrowing condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "be1904e07effc19bc68f123e7a3b7ae4da321df5",
+        "files": [
+          {
+            "blob_oid": "47acbe4d8b0ac1f4e438d7ee88f0c5f3222e2fe0",
+            "bytes": 2736,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 91,
+            "path": "ecmascript/platform/unix/time.cpp",
+            "source_sha256": "7b6ad2419c7eb082a5ba45b5199a1132856ed52d7b203000d05c399292bad519"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-01:vulnerable",
+        "tree": "37a4ef688bde7ab61ff9e990b9b294534d3b7cd1"
+      },
+      "vulnerable_parent": "be1904e07effc19bc68f123e7a3b7ae4da321df5",
+      "vulnerable_tree": "37a4ef688bde7ab61ff9e990b9b294534d3b7cd1"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-08-23T14:32:04+08:00",
+        "body": "Issue:https://gitee.com/openharmony/commonlibrary_c_utils/issues/IAIJLO?from=project-issue\nSigned-off-by: chenkeyu <chenkeyu13@huawei.com>",
+        "committer_time": "2024-08-23T14:32:04+08:00",
+        "subject": "check utf8Len to prevent add overflow"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-190",
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: base/src/string_ex.cpp, base/src/unicode_ex.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "502d434b084dbf725d6849384e81e2854dff034f",
+      "fix_tree": "574438e2ef4e4b2fa4b13ad337a7a6f64827ad8c",
+      "fixed": {
+        "category": "fixed",
+        "commit": "502d434b084dbf725d6849384e81e2854dff034f",
+        "files": [
+          {
+            "blob_oid": "eb56b0d0e060cbd3002c6ada24624eec4827a1e3",
+            "bytes": 7617,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 309,
+            "path": "base/src/string_ex.cpp",
+            "source_sha256": "827ce7e1c791e5f77e5758fae9a71138d754cc29715a614e0a3b2bf6db8688f1"
+          },
+          {
+            "blob_oid": "ff455be6a3cabc317b30aa4f09ccab57980e372a",
+            "bytes": 11290,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 368,
+            "path": "base/src/unicode_ex.cpp",
+            "source_sha256": "35f20185bda355f6f95337c5b7594144cf565ecd4fc6da9d80b9bd15afcb6a44"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-02:fixed",
+        "tree": "574438e2ef4e4b2fa4b13ad337a7a6f64827ad8c"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/commonlibrary_c_utils/commit/502d434b084dbf725d6849384e81e2854dff034f",
+        "github": "https://github.com/openharmony/commonlibrary_c_utils/commit/502d434b084dbf725d6849384e81e2854dff034f"
+      },
+      "official_reference": "https://gitcode.com/openharmony/commonlibrary_c_utils/commit/502d434b084dbf725d6849384e81e2854dff034f",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "repository_root_key": "commonlibrary_c_utils",
+      "root_cause_id": "HOLDOUT-INT-02",
+      "stable_patch_id": "b0731b4761a9b261b2a2c57e41b78862c9ea736e",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply arithmetic, length or index input that triggers the overflow/narrowing condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "2f64b50ee40073819dcf8417f464c76e114e3b93",
+        "files": [
+          {
+            "blob_oid": "f54e7bf263c6d48d6dfef2175dd804c4d5ed640b",
+            "bytes": 7595,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 309,
+            "path": "base/src/string_ex.cpp",
+            "source_sha256": "59725540e125760a8ccd8c6de008a3746ec358ee4d7ae1e862462307db9377a0"
+          },
+          {
+            "blob_oid": "c21e39ee861d1f39bb714c473703218298a4f4e7",
+            "bytes": 11268,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 368,
+            "path": "base/src/unicode_ex.cpp",
+            "source_sha256": "22886aa2792364238877575f43099787f9d864e870d802f65576a7e3d1ffc9b0"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-02:vulnerable",
+        "tree": "29be87ec3fd38d1b1d0a9d62769c3bb490fbf2e3"
+      },
+      "vulnerable_parent": "2f64b50ee40073819dcf8417f464c76e114e3b93",
+      "vulnerable_tree": "29be87ec3fd38d1b1d0a9d62769c3bb490fbf2e3"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2025-02-26T11:12:30+08:00",
+        "body": "Issue:https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBOZ1A\n\nSigned-off-by: dov1s <maojunwei1@huawei.com>\nChange-Id: Ieb2793ffcadb9767404e19c671633c4005ebd0e2",
+        "committer_time": "2025-02-26T11:12:30+08:00",
+        "subject": "Fix typedarray doubletoint64_t overflow"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-190",
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/builtins/builtins_arraybuffer.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "6a832492054e8a6e7aec45fd8dfde3ebe4109185",
+      "fix_tree": "860f432eeb7ee96e7c792fcc787d9df5f665e01b",
+      "fixed": {
+        "category": "fixed",
+        "commit": "6a832492054e8a6e7aec45fd8dfde3ebe4109185",
+        "files": [
+          {
+            "blob_oid": "44ca29e3d4b3ba83e8b458bf64dc285303dd7da0",
+            "bytes": 43892,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 974,
+            "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+            "source_sha256": "ccf5281e92af41022b25be409f7e69c5bb269a1ad2e32b4d01f9c73c57d42f08"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-03:fixed",
+        "tree": "860f432eeb7ee96e7c792fcc787d9df5f665e01b"
+      },
+      "ignored_non_source_paths": [
+        "test/moduletest/typedarrayat/typedarrayat.js"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/6a832492054e8a6e7aec45fd8dfde3ebe4109185",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/6a832492054e8a6e7aec45fd8dfde3ebe4109185"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/6a832492054e8a6e7aec45fd8dfde3ebe4109185",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-INT-03",
+      "stable_patch_id": "3e10ea0b9b9a9beaeb14e019ebbc12a2ecb8fcad",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply arithmetic, length or index input that triggers the overflow/narrowing condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "5980de2cd5d519f5789947c4b620316c06f24678",
+        "files": [
+          {
+            "blob_oid": "36e3b5c78407383c69ec65d76ec0223008c7012d",
+            "bytes": 43776,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 974,
+            "path": "ecmascript/builtins/builtins_arraybuffer.cpp",
+            "source_sha256": "cf1e9761533ba59fee5be6d58b0a41f2ce3e396b3465e358cb5c61b1ff809894"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-03:vulnerable",
+        "tree": "edd42e43bb342ce0b5fe6b2311d5bed35570fe84"
+      },
+      "vulnerable_parent": "5980de2cd5d519f5789947c4b620316c06f24678",
+      "vulnerable_tree": "edd42e43bb342ce0b5fe6b2311d5bed35570fe84"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-12-25T14:31:32+08:00",
+        "body": "Issue: https://gitee.com/openharmony/arkcompiler_ets_runtime/issues/IBDK44\n\nSigned-off-by: wuxiesaber <wuxie@huawei.com>\nChange-Id: I81e42c6ae968aa2cc6f7f306f179988bf6fca5c8",
+        "committer_time": "2025-02-18T10:04:49+08:00",
+        "subject": "fix double overflow in GetValueFromBuffer"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-190",
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "191aab2aedd9f2e82037dae4335d367db46d7635",
+      "fix_tree": "dd1d79d2490b05e6d28ad241f4d38f0e5b6b929b",
+      "fixed": {
+        "category": "fixed",
+        "commit": "191aab2aedd9f2e82037dae4335d367db46d7635",
+        "files": [
+          {
+            "blob_oid": "6b3d51822baa28292e07b51e77a65b7a30e2436d",
+            "bytes": 126112,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 3098,
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "source_sha256": "34277ca2e348977d3d2eae762159e83c6ce943bf9c1769a2fe6e1f2b6b696cc9"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-04:fixed",
+        "tree": "dd1d79d2490b05e6d28ad241f4d38f0e5b6b929b"
+      },
+      "ignored_non_source_paths": [
+        "test/moduletest/BUILD.gn",
+        "test/moduletest/getvaluefrombuffer/BUILD.gn",
+        "test/moduletest/getvaluefrombuffer/getvaluefrombuffer.js",
+        "test/moduletest/proxyrelease/expect_output.txt",
+        "test/moduletest/proxyrelease/proxyrelease.js",
+        "test/moduletest/typedarrayiterator/BUILD.gn"
+      ],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4a459866a57c25462afad17f3fe0b50d440da080",
+        "license_path": "LICENSE",
+        "license_sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/arkcompiler_ets_runtime/commit/191aab2aedd9f2e82037dae4335d367db46d7635",
+        "github": "https://github.com/openharmony/arkcompiler_ets_runtime/commit/191aab2aedd9f2e82037dae4335d367db46d7635"
+      },
+      "official_reference": "https://gitcode.com/openharmony/arkcompiler_ets_runtime/commit/191aab2aedd9f2e82037dae4335d367db46d7635",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-INT-04",
+      "stable_patch_id": "406259674f36604de978b89fbe42d94f1fb22f87",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply arithmetic, length or index input that triggers the overflow/narrowing condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "f7f47712ed5a53f7252bc7ef37c6bae5b6610a9c",
+        "files": [
+          {
+            "blob_oid": "8e46ee42c2b40b645e66a7cba9c585edc9044a39",
+            "bytes": 125705,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 3090,
+            "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+            "source_sha256": "863a13e665fb9627830a658bfea082153f814b047b72ad42f052f93010a60d9d"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-04:vulnerable",
+        "tree": "8499fb1b1717313d0144023e973c82228407113b"
+      },
+      "vulnerable_parent": "f7f47712ed5a53f7252bc7ef37c6bae5b6610a9c",
+      "vulnerable_tree": "8499fb1b1717313d0144023e973c82228407113b"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2023-08-28T20:16:11+08:00",
+        "body": "1.If the datalength exceeds the supported length, intercept it to prevent subsequent calculations from occurring\n\nIssue:https://gitee.com/openharmony/commonlibrary_c_utils/issues/I7WM9L\nSigned-off-by: lijincheng <lijincheng13@huawei.com>",
+        "committer_time": "2023-08-28T20:16:11+08:00",
+        "subject": "[Bug] Parcel module lack length detection in extreme cases, leading to the risk of numerical overflow"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-190",
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_version": "0.2.0",
+      "entry": "Changed C/C++ units: base/src/parcel.cpp. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "a265735fe983f88a56e5034eed2d3815d890b9e8",
+      "fix_tree": "46de2c03cbe551892b65ef2b808f72b55abb5eef",
+      "fixed": {
+        "category": "fixed",
+        "commit": "a265735fe983f88a56e5034eed2d3815d890b9e8",
+        "files": [
+          {
+            "blob_oid": "991c669aca9572b03dd9fa5550695fe3a6c6736f",
+            "bytes": 32478,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1404,
+            "path": "base/src/parcel.cpp",
+            "source_sha256": "e8dbbdd7bdda46df5a052e4251fc234fa45c1ab64068052da558fa04a02f8fd5"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-05:fixed",
+        "tree": "46de2c03cbe551892b65ef2b808f72b55abb5eef"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/commonlibrary_c_utils/commit/a265735fe983f88a56e5034eed2d3815d890b9e8",
+        "github": "https://github.com/openharmony/commonlibrary_c_utils/commit/a265735fe983f88a56e5034eed2d3815d890b9e8"
+      },
+      "official_reference": "https://gitcode.com/openharmony/commonlibrary_c_utils/commit/a265735fe983f88a56e5034eed2d3815d890b9e8",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "repository_root_key": "commonlibrary_c_utils",
+      "root_cause_id": "HOLDOUT-INT-05",
+      "stable_patch_id": "fb1a5e68653b761467143ebfed07644b9625958c",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Supply arithmetic, length or index input that triggers the overflow/narrowing condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "47b21d7164a9885fbbfdbfd379da45400cbbde81",
+        "files": [
+          {
+            "blob_oid": "1dfe9311cf8100a0406f9d4a82731b06ce7fb432",
+            "bytes": 32316,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 1404,
+            "path": "base/src/parcel.cpp",
+            "source_sha256": "a28153d75047107ce9222fc7e69a2a68999cfe5b71012e8fa8f2bce09add9ba1"
+          }
+        ],
+        "sample_id": "HOLDOUT-INT-05:vulnerable",
+        "tree": "ad8ebcb2bc6baf1b6d0bcb2c454145a19f4493ed"
+      },
+      "vulnerable_parent": "47b21d7164a9885fbbfdbfd379da45400cbbde81",
+      "vulnerable_tree": "ad8ebcb2bc6baf1b6d0bcb2c454145a19f4493ed"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-08-09T07:39:23Z",
+        "body": "Signed-off-by: song-chenxi050 <songchenxi2@huawei.com>",
+        "committer_time": "2024-08-09T07:40:35Z",
+        "subject": "strcpy_s use EOK judgment"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-120",
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/bus_center/lnn/net_ledger/distributed_ledger/src/lnn_distributed_net_ledger.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "098e7bbf24a77646cc55e1bc9f1503c85de72a99",
+      "fix_tree": "5cf42e97fef4321b92745fcb0d6742aa0ce4aa86",
+      "fixed": {
+        "category": "fixed",
+        "commit": "098e7bbf24a77646cc55e1bc9f1503c85de72a99",
+        "files": [
+          {
+            "blob_oid": "b6317350ba20239ad5ea7b679fc36babe700ac31",
+            "bytes": 65443,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1786,
+            "path": "core/bus_center/lnn/net_ledger/distributed_ledger/src/lnn_distributed_net_ledger.c",
+            "source_sha256": "8ab70269b6c1aa48073517d33dee0895f16060df101d4cd2997f4f36c60527c7"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-01:fixed",
+        "tree": "5cf42e97fef4321b92745fcb0d6742aa0ce4aa86"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/098e7bbf24a77646cc55e1bc9f1503c85de72a99",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/098e7bbf24a77646cc55e1bc9f1503c85de72a99"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/098e7bbf24a77646cc55e1bc9f1503c85de72a99",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-01",
+      "stable_patch_id": "40779e8780e0a34a218d14a2e17b103405d2dd18",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed copy/string operation with the input, size or return condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "3b18cb693e6fe99af7166f93cb86a635dbae877f",
+        "files": [
+          {
+            "blob_oid": "b92bdedd11c481d6318a4abf332480cd5e9b8421",
+            "bytes": 65439,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1786,
+            "path": "core/bus_center/lnn/net_ledger/distributed_ledger/src/lnn_distributed_net_ledger.c",
+            "source_sha256": "ab00d1aaddae909db702ae538978174ddccf2809893b4213d137332e489f0ae3"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-01:vulnerable",
+        "tree": "cd08c74d615b60871d61a4abdf0212ac2fea4324"
+      },
+      "vulnerable_parent": "3b18cb693e6fe99af7166f93cb86a635dbae877f",
+      "vulnerable_tree": "cd08c74d615b60871d61a4abdf0212ac2fea4324"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-07-15T09:36:39+08:00",
+        "body": "Signed-off-by: erliangqi <zhangjiaxiang7@huawei.com>",
+        "committer_time": "2024-07-15T20:09:31+08:00",
+        "subject": "The memcpy_s function does not return value judgment"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-120",
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/transmission/trans_channel/proxy/src/softbus_proxychannel_manager.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "2da9eb080c0865fbedb8a83624bf6acd49bbf9c0",
+      "fix_tree": "6e1ddaca86b7855bbf20bbc95fd900471c066e14",
+      "fixed": {
+        "category": "fixed",
+        "commit": "2da9eb080c0865fbedb8a83624bf6acd49bbf9c0",
+        "files": [
+          {
+            "blob_oid": "e1dc5b9a4e97d5b15475f16546dedd75a968d6c0",
+            "bytes": 83493,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 2183,
+            "path": "core/transmission/trans_channel/proxy/src/softbus_proxychannel_manager.c",
+            "source_sha256": "d75e7caed7ab2fc28dd031cd68d8194b913840e2092cd47292386e249373d8f0"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-02:fixed",
+        "tree": "6e1ddaca86b7855bbf20bbc95fd900471c066e14"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/2da9eb080c0865fbedb8a83624bf6acd49bbf9c0",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/2da9eb080c0865fbedb8a83624bf6acd49bbf9c0"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/2da9eb080c0865fbedb8a83624bf6acd49bbf9c0",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-02",
+      "stable_patch_id": "e79e211af9e4affcd947439c3631158a7772aa70",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed copy/string operation with the input, size or return condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "72143aaffe972f31abcb8b3d564a81939ccbd782",
+        "files": [
+          {
+            "blob_oid": "9ed2f9ba66ff76f5e71419d0a5a7c3d9a6acf4f4",
+            "bytes": 81678,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 2142,
+            "path": "core/transmission/trans_channel/proxy/src/softbus_proxychannel_manager.c",
+            "source_sha256": "f9388367bec961b2cfec8aa46ba9e9f5f89af4495d60183226aee5be97a3ba75"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-02:vulnerable",
+        "tree": "4e51288f6354c3d98a81ecc1f60822dd28524bff"
+      },
+      "vulnerable_parent": "72143aaffe972f31abcb8b3d564a81939ccbd782",
+      "vulnerable_tree": "4e51288f6354c3d98a81ecc1f60822dd28524bff"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2024-05-08T14:07:30+08:00",
+        "body": "Signed-off-by: wangzhaohao <wangzhaohao@huawei.com>",
+        "committer_time": "2024-05-08T14:07:30+08:00",
+        "subject": "strcpy_s判断返回值"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-120",
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/bus_center/lnn/net_builder/src/lnn_data_cloud_sync.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "2cfd3192cfda2c8f1bbe3af421bec10b7226a37c",
+      "fix_tree": "24a3c321597a6c769c68aff35569f0bd1a908729",
+      "fixed": {
+        "category": "fixed",
+        "commit": "2cfd3192cfda2c8f1bbe3af421bec10b7226a37c",
+        "files": [
+          {
+            "blob_oid": "af99a75562099f149252fb5ab086cea7b857e097",
+            "bytes": 43138,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1004,
+            "path": "core/bus_center/lnn/net_builder/src/lnn_data_cloud_sync.c",
+            "source_sha256": "e822e0ba3f17db78a9e14e3eef453b1006546612425ea105731b22c1b1054a00"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-03:fixed",
+        "tree": "24a3c321597a6c769c68aff35569f0bd1a908729"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/2cfd3192cfda2c8f1bbe3af421bec10b7226a37c",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/2cfd3192cfda2c8f1bbe3af421bec10b7226a37c"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/2cfd3192cfda2c8f1bbe3af421bec10b7226a37c",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-03",
+      "stable_patch_id": "f301aadaf16a97d4ba9f89cb21d261fce97c5d27",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed copy/string operation with the input, size or return condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "2eda32ae254f04b2cd03a4c18733b359a4419a89",
+        "files": [
+          {
+            "blob_oid": "94bf5aeb1e2fbdd9dde32ae2fa1f47881f640ebf",
+            "bytes": 43138,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1004,
+            "path": "core/bus_center/lnn/net_builder/src/lnn_data_cloud_sync.c",
+            "source_sha256": "73e57690d570bc56be800be2018857bd15bebb10269ac1652c42465927231a99"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-03:vulnerable",
+        "tree": "02779605c2470f5aab0e67559da1aba235612ac0"
+      },
+      "vulnerable_parent": "2eda32ae254f04b2cd03a4c18733b359a4419a89",
+      "vulnerable_tree": "02779605c2470f5aab0e67559da1aba235612ac0"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2023-12-07T11:39:13+08:00",
+        "body": "Signed-off-by: guowen666 <guowen31@huawei.com>",
+        "committer_time": "2023-12-07T11:39:13+08:00",
+        "subject": "fix memcpy_s bug"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-120",
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: core/discovery/ble/softbus_ble/include/disc_ble_utils.h, core/discovery/ble/softbus_ble/src/disc_ble.c, core/discovery/ble/softbus_ble/src/disc_ble_utils.c. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "2c6909b8c807448e58f6816020da7f430f503f25",
+      "fix_tree": "3748a7d7200e1e0f7f760a186d88f953f0eb7cbe",
+      "fixed": {
+        "category": "fixed",
+        "commit": "2c6909b8c807448e58f6816020da7f430f503f25",
+        "files": [
+          {
+            "blob_oid": "af470462f61d060309b46e4ce125e9511541f558",
+            "bytes": 2364,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 81,
+            "path": "core/discovery/ble/softbus_ble/include/disc_ble_utils.h",
+            "source_sha256": "36583a0e0a0aac92607b354660664ca89e14e6cbce23421f78ddb43209edfbcf"
+          },
+          {
+            "blob_oid": "1d97078415959358a620091370e74225db41bf86",
+            "bytes": 67670,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1825,
+            "path": "core/discovery/ble/softbus_ble/src/disc_ble.c",
+            "source_sha256": "fec8e1bb0614446d1e07496941f944839d0485bb08c62c35aac67560bda0186b"
+          },
+          {
+            "blob_oid": "341904708d3ed02779252f90a31080109c3ab905",
+            "bytes": 15345,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 403,
+            "path": "core/discovery/ble/softbus_ble/src/disc_ble_utils.c",
+            "source_sha256": "3ea76b4a79c737b5fe56c35de3d9a1e6616b1ba9e9aee0ebd3363f8b433e1c5b"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-04:fixed",
+        "tree": "3748a7d7200e1e0f7f760a186d88f953f0eb7cbe"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/communication_dsoftbus/commit/2c6909b8c807448e58f6816020da7f430f503f25",
+        "github": "https://github.com/openharmony/communication_dsoftbus/commit/2c6909b8c807448e58f6816020da7f430f503f25"
+      },
+      "official_reference": "https://gitcode.com/openharmony/communication_dsoftbus/commit/2c6909b8c807448e58f6816020da7f430f503f25",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-04",
+      "stable_patch_id": "b73fec56ee32b26c6a085776d818ff24864f44c4",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed copy/string operation with the input, size or return condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "226bb119668b5999dc39370f157f80ab290fb45c",
+        "files": [
+          {
+            "blob_oid": "97eee1a76cd617312259471e300ddc553f8d9554",
+            "bytes": 2350,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 81,
+            "path": "core/discovery/ble/softbus_ble/include/disc_ble_utils.h",
+            "source_sha256": "5b4613e8d3ccec9a5241076756578f26ef2bfad5f10b39ef2d15df55f6b768dc"
+          },
+          {
+            "blob_oid": "ed830bf44a3e5f4de041adc0b8521e8f97b27235",
+            "bytes": 67589,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 1825,
+            "path": "core/discovery/ble/softbus_ble/src/disc_ble.c",
+            "source_sha256": "d9b94f5a058bcceeb5d74f55cfeeb2aa8763a34113dd4305c2ede9e7686bab50"
+          },
+          {
+            "blob_oid": "945820bbc7dce18e78b2069de601cf3099b7ae2a",
+            "bytes": 14938,
+            "git_object_type": "blob",
+            "language": "c",
+            "lines": 392,
+            "path": "core/discovery/ble/softbus_ble/src/disc_ble_utils.c",
+            "source_sha256": "f2f38806d60309166cc7cc468027dfb83c88ea1c47fcb85542fffde47f3d4a60"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-04:vulnerable",
+        "tree": "d6a690a0b1231c6f5792a886e38c56f43d50b725"
+      },
+      "vulnerable_parent": "226bb119668b5999dc39370f157f80ab290fb45c",
+      "vulnerable_tree": "d6a690a0b1231c6f5792a886e38c56f43d50b725"
+    },
+    {
+      "attacker_control": "Unknown; the official fix proves a code-defect boundary but does not establish attacker-controlled input or product privileges.",
+      "commit_metadata": {
+        "author_time": "2022-09-01T20:11:36+08:00",
+        "body": "Signed-off-by: sam <sam_ran1998@foxmail.com>",
+        "committer_time": "2022-09-01T20:11:36+08:00",
+        "subject": "change memcpy to (void)memcpy"
+      },
+      "cve_id": null,
+      "cve_status": "not_assigned_or_not_located; no CVE is inferred from the fix",
+      "cwe": "CWE-120",
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_version": "0.1.0",
+      "entry": "Changed C/C++ units: base/include/securectype.h. Actual product entry and caller permission boundary remain unknown.",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "d79caeff7f3cffc86e11a57d6706cdf82909a750",
+      "fix_tree": "2f45a5ddf26ff9f3768a62d89431eb9c7dc6877a",
+      "fixed": {
+        "category": "fixed",
+        "commit": "d79caeff7f3cffc86e11a57d6706cdf82909a750",
+        "files": [
+          {
+            "blob_oid": "029772c7c98307375125e3257efed5ee7d4479fa",
+            "bytes": 10553,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 279,
+            "path": "base/include/securectype.h",
+            "source_sha256": "b9c545da8acae8b18bff1a582df9c969a2854c334408a3cc06afd7dc83b35516"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-05:fixed",
+        "tree": "2f45a5ddf26ff9f3768a62d89431eb9c7dc6877a"
+      },
+      "ignored_non_source_paths": [],
+      "license": {
+        "basis": "repository root license file",
+        "declared_license": "Apache-2.0",
+        "license_blob_oid": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d",
+        "license_path": "LICENSE",
+        "license_sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9"
+      },
+      "limitations": "Official fix-labelled code defect only. No claim of product exploitability, reachability, CIA impact, CVE assignment, or fixed-product deployment.",
+      "mirror_references": {
+        "gitee": "https://gitee.com/openharmony/commonlibrary_c_utils/commit/d79caeff7f3cffc86e11a57d6706cdf82909a750",
+        "github": "https://github.com/openharmony/commonlibrary_c_utils/commit/d79caeff7f3cffc86e11a57d6706cdf82909a750"
+      },
+      "official_reference": "https://gitcode.com/openharmony/commonlibrary_c_utils/commit/d79caeff7f3cffc86e11a57d6706cdf82909a750",
+      "repair": "The public official commit fixes the vulnerable parent; exact source/blob and stable patch identity are frozen in this manifest.",
+      "repository": "openharmony/commonlibrary_c_utils",
+      "repository_root_key": "commonlibrary_c_utils",
+      "root_cause_id": "HOLDOUT-UNSAFE-05",
+      "stable_patch_id": "dedf574f88ee3c039fa028af8c2989b1ee86af42",
+      "stable_patch_scope": "modified non-test C/C++ source paths only; test and non-source files are excluded from holdout analysis scope",
+      "trigger": "Reach the changed copy/string operation with the input, size or return condition addressed by the public fix.",
+      "vulnerable": {
+        "category": "vulnerable",
+        "commit": "f6910b9e6de9b3c47810788af5d3325553dc5a99",
+        "files": [
+          {
+            "blob_oid": "976328bb902ea193bea6e6efb8db3b553725e7ea",
+            "bytes": 10535,
+            "git_object_type": "blob",
+            "language": "cpp",
+            "lines": 279,
+            "path": "base/include/securectype.h",
+            "source_sha256": "22bbc9a3acec715aaf4daebae8cf16235305d114ac808230c3078a45eb85a020"
+          }
+        ],
+        "sample_id": "HOLDOUT-UNSAFE-05:vulnerable",
+        "tree": "18b6547d0acf9c1fd514b9118b3fa1221ac1319a"
+      },
+      "vulnerable_parent": "f6910b9e6de9b3c47810788af5d3325553dc5a99",
+      "vulnerable_tree": "18b6547d0acf9c1fd514b9118b3fa1221ac1319a"
+    }
+  ],
+  "schema_version": 1,
+  "selection_sha256": "eb311ca6c9644e44251a278f29a2fcc3c268cb3262e096bdc530184434b40088",
+  "source_repository_policy": {
+    "external_source_size": "not copied into this repository",
+    "lazy_fetch": "disabled; missing exact source blobs are explicitly fetched by OID before the offline freeze/scan",
+    "network": "disabled",
+    "reads": "local pinned Git objects only"
+  },
+  "truth_independence": "official-public-fix-labels",
+  "truth_scope": "developer-acknowledged code defect in official public source history",
+  "verified_raw_blob_acquisition": []
+}

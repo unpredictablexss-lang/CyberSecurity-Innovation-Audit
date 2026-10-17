@@ -1,0 +1,2816 @@
+{
+  "canonical_content_digest": "a59ce9a54ea15c9062bb4ac9dcf0c78c3a95e572496a8d128ba29efd5c7febc7",
+  "counts": {
+    "categories": {
+      "fixtures": 50,
+      "interface_source": 7,
+      "models": 1,
+      "tests": 7
+    },
+    "entries": 65,
+    "missing_required_categories": [
+      "analysis",
+      "index"
+    ],
+    "statuses": {
+      "exact_source_blob_present_in_current_head": 65
+    }
+  },
+  "entries": [
+    {
+      "category": "models",
+      "first_observed_pr": 8,
+      "path": "models/README.md",
+      "source_observations": [
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "aa79d57a3612c0bc5a04dac7af03c2a086dcddd8",
+          "pr": 10
+        },
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+          "category": "models",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/__init__.py",
+      "source_observations": [
+        {
+          "blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/analysis.py",
+      "source_observations": [
+        {
+          "blob_oid": "14beb512559c79bbdb201f6065a363c29c07cbf9",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "14beb512559c79bbdb201f6065a363c29c07cbf9",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "58100c98f62f2cf20d9b7dbf1b443e527201910b",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "58100c98f62f2cf20d9b7dbf1b443e527201910b",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "58100c98f62f2cf20d9b7dbf1b443e527201910b",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "58100c98f62f2cf20d9b7dbf1b443e527201910b",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "58100c98f62f2cf20d9b7dbf1b443e527201910b",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/cpp_macros.py",
+      "source_observations": [
+        {
+          "blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/detector.py",
+      "source_observations": [
+        {
+          "blob_oid": "fb85612054fee9a0cebb0835a8dff563b0a7ac5c",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "fb85612054fee9a0cebb0835a8dff563b0a7ac5c",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "7d608ebc35562a82621fd58bd5f25e989507a866",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "7d608ebc35562a82621fd58bd5f25e989507a866",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "7d608ebc35562a82621fd58bd5f25e989507a866",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "7d608ebc35562a82621fd58bd5f25e989507a866",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "7d608ebc35562a82621fd58bd5f25e989507a866",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/entry_index.py",
+      "source_observations": [
+        {
+          "blob_oid": "386c5e40dac33e2308d57a6c0e8a68d29e1e5b45",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "386c5e40dac33e2308d57a6c0e8a68d29e1e5b45",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "54555dab841dd39a1fc3a8b3fe8e2f4b0f05d79f",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "54555dab841dd39a1fc3a8b3fe8e2f4b0f05d79f",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "54555dab841dd39a1fc3a8b3fe8e2f4b0f05d79f",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "54555dab841dd39a1fc3a8b3fe8e2f4b0f05d79f",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "54555dab841dd39a1fc3a8b3fe8e2f4b0f05d79f",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/m2_adapter.py",
+      "source_observations": [
+        {
+          "blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "interface_source",
+      "first_observed_pr": 8,
+      "path": "src/ohscanner/detectors/interface/models.py",
+      "source_observations": [
+        {
+          "blob_oid": "617a10f4f8108afe3a613a919254c0e03c2b25a1",
+          "category": "interface_source",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "617a10f4f8108afe3a613a919254c0e03c2b25a1",
+          "category": "interface_source",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "75e7848039c56055c4fc22031b3d975f68299d84",
+          "category": "interface_source",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "75e7848039c56055c4fc22031b3d975f68299d84",
+          "category": "interface_source",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "75e7848039c56055c4fc22031b3d975f68299d84",
+          "category": "interface_source",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "75e7848039c56055c4fc22031b3d975f68299d84",
+          "category": "interface_source",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "75e7848039c56055c4fc22031b3d975f68299d84",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/auth_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/auth_ignored_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/auth_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/cached_caller_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/capability_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/capability_null_safe.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/capability_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/comments_safe.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/common_types.h",
+      "source_observations": [
+        {
+          "blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/coverage_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/coverage_late_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/coverage_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/dead_path_safe.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/denied_complement_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_after_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_alias_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_call_only_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_inherited_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_interface_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_no_prefix_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_no_reject_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_one_branch_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_unrelated_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_unresolved_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/descriptor_wrong_interface_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/helper_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/helper_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/identity_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/identity_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/manifest.json",
+      "source_observations": [
+        {
+          "blob_oid": "779f43c081a2847a00a56c9234cab9cc52c73c3c",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "779f43c081a2847a00a56c9234cab9cc52c73c3c",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "1e4f520a11cb0bbb46c7c9d6903979d7ac34d66e",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "1e4f520a11cb0bbb46c7c9d6903979d7ac34d66e",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "1e4f520a11cb0bbb46c7c9d6903979d7ac34d66e",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "1e4f520a11cb0bbb46c7c9d6903979d7ac34d66e",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "1e4f520a11cb0bbb46c7c9d6903979d7ac34d66e",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/owner_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/owner_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/parcel_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/parcel_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/parcel_unrelated_bound_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/relay_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_after_dispatch_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_guard_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_local_guard_fixed.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_nested_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_no_guard_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_no_reject_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_substituted_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 11,
+      "path": "tests/fixtures/ipc/relay_inner_wrong_interface_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/relay_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/relay_read_only_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/request_identity_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/reset_identity_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/switch_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "fixtures",
+      "first_observed_pr": 8,
+      "path": "tests/fixtures/ipc/wrong_parcel_positive.cpp",
+      "source_observations": [
+        {
+          "blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+          "category": "fixtures",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+          "category": "fixtures",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+          "category": "fixtures",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+          "category": "fixtures",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+          "category": "fixtures",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+          "category": "fixtures",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 11,
+      "path": "tests/test_ipc_descriptor_identity.py",
+      "source_observations": [
+        {
+          "blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 8,
+      "path": "tests/test_ipc_detector.py",
+      "source_observations": [
+        {
+          "blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+          "category": "tests",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+          "category": "tests",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 8,
+      "path": "tests/test_ipc_disclosure_consequence.py",
+      "source_observations": [
+        {
+          "blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+          "category": "tests",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+          "category": "tests",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 8,
+      "path": "tests/test_ipc_entry_index.py",
+      "source_observations": [
+        {
+          "blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+          "category": "tests",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+          "category": "tests",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 8,
+      "path": "tests/test_ipc_macros.py",
+      "source_observations": [
+        {
+          "blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+          "category": "tests",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+          "category": "tests",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 11,
+      "path": "tests/test_ipc_relay_guard.py",
+      "source_observations": [
+        {
+          "blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    },
+    {
+      "category": "tests",
+      "first_observed_pr": 8,
+      "path": "tests/test_owner_ipc_platform.py",
+      "source_observations": [
+        {
+          "blob_oid": "dcd5c521dd805c417aa2841c55a673e2f3984d22",
+          "category": "tests",
+          "commit": "86fbf9951967aaab879d24748a8231744d6977aa",
+          "pr": 8
+        },
+        {
+          "blob_oid": "dcd5c521dd805c417aa2841c55a673e2f3984d22",
+          "category": "tests",
+          "commit": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+          "pr": 9
+        },
+        {
+          "blob_oid": "dcd5c521dd805c417aa2841c55a673e2f3984d22",
+          "category": "tests",
+          "commit": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+          "pr": 11
+        },
+        {
+          "blob_oid": "2a3c0be887ed3162a095c5e35221d11cc938ad4c",
+          "category": "tests",
+          "commit": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+          "pr": 12
+        },
+        {
+          "blob_oid": "2a3c0be887ed3162a095c5e35221d11cc938ad4c",
+          "category": "tests",
+          "commit": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+          "pr": 13
+        },
+        {
+          "blob_oid": "2a3c0be887ed3162a095c5e35221d11cc938ad4c",
+          "category": "tests",
+          "commit": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+          "pr": 14
+        }
+      ],
+      "status": "exact_source_blob_present_in_current_head",
+      "target_blob_oid": "2a3c0be887ed3162a095c5e35221d11cc938ad4c",
+      "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+    }
+  ],
+  "kind": "ohscanner.ipc-external-input-recovery.v1",
+  "limitations": "PR refs prove repository-local external input provenance only. They do not prove authorship, product deployment, runtime reachability or security impact.",
+  "migration_semantics": {
+    "current_head_modified_after_recovery": "Recovered source is present but later reviewed changes exist; source and target blobs remain separately bound.",
+    "exact_source_blob_present_in_current_head": "Recovered external input is already migrated byte-for-byte; no duplicate copy is created.",
+    "not_present_in_current_head": "External source exists in a PR ref but is not migrated and remains a fail-closed gap."
+  },
+  "recovered_work_id": "work/ipc-20261017",
+  "recovery_method": "Exact GitHub refs/pull/8/head through refs/pull/14/head were fetched without checkout. Every selected analysis/index/models/interface/fixtures/tests blob is enumerated and compared with current HEAD; no source is synthesized.",
+  "repository": {
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "target_head": "c60924cb0fb8e4bb11dfede3b929bada06b3fd70"
+  },
+  "schema_version": 1,
+  "source_refs": {
+    "10": {
+      "github_ref": "refs/pull/10/head",
+      "head": "aa79d57a3612c0bc5a04dac7af03c2a086dcddd8",
+      "ref": "refs/remotes/origin/pr/10"
+    },
+    "11": {
+      "github_ref": "refs/pull/11/head",
+      "head": "54a4d980766ca9b8f2e3aaeccf3420bd98700399",
+      "ref": "refs/remotes/origin/pr/11"
+    },
+    "12": {
+      "github_ref": "refs/pull/12/head",
+      "head": "7e6ff537f23c1adde6cb82859e714d4025e0d375",
+      "ref": "refs/remotes/origin/pr/12"
+    },
+    "13": {
+      "github_ref": "refs/pull/13/head",
+      "head": "09d79b14bfa0d242932037076e8cbd22a0de53d1",
+      "ref": "refs/remotes/origin/pr/13"
+    },
+    "14": {
+      "github_ref": "refs/pull/14/head",
+      "head": "dcac1dccf205269e772ccac0df910007bf22ad9b",
+      "ref": "refs/remotes/origin/pr/14"
+    },
+    "8": {
+      "github_ref": "refs/pull/8/head",
+      "head": "86fbf9951967aaab879d24748a8231744d6977aa",
+      "ref": "refs/remotes/origin/pr/8"
+    },
+    "9": {
+      "github_ref": "refs/pull/9/head",
+      "head": "d443f11bff917d475e4b1e3e92a0c1cbc2637a58",
+      "ref": "refs/remotes/origin/pr/9"
+    }
+  }
+}

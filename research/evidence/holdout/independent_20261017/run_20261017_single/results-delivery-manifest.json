@@ -1,0 +1,17 @@
+{
+  "compressed_artifact": {
+    "bytes": 1206397,
+    "completeness": "lossless complete raw results",
+    "compression": "gzip -9, deterministic mtime=0",
+    "path": "results.json.gz",
+    "sha256": "99669e751d7bdf2514188991e1775159e3273a1a91b9969e6de59e3e58bf051c"
+  },
+  "kind": "ohscanner.independent-holdout-results-delivery.v1",
+  "raw_artifact": {
+    "bytes": 37152092,
+    "path": "results.json",
+    "retention": "local generated evidence; not committed due size",
+    "sha256": "1be01d5008aa3ede14701112ee4491564dea0998d36f68a3a4fb7c6700b657d4"
+  },
+  "schema_version": 1
+}

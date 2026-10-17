@@ -1,0 +1,23 @@
+{
+  "canonical_content_digest": "a59ce9a54ea15c9062bb4ac9dcf0c78c3a95e572496a8d128ba29efd5c7febc7",
+  "counts": {
+    "categories": {
+      "fixtures": 50,
+      "interface_source": 7,
+      "models": 1,
+      "tests": 7
+    },
+    "entries": 65,
+    "missing_required_categories": [
+      "analysis",
+      "index"
+    ],
+    "statuses": {
+      "exact_source_blob_present_in_current_head": 65
+    }
+  },
+  "kind": "ohscanner.ipc-external-input-recovery-evidence.v1",
+  "recovery_manifest": "work/ipc-20261017/recovery-manifest.json",
+  "recovery_manifest_sha256": "c51f37203e83a4d7a64d15785af878fd9d82d03c198e26a06fc9acd0e9c4e0c3",
+  "schema_version": 1
+}

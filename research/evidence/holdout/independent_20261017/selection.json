@@ -1,0 +1,286 @@
+{
+  "cases": [
+    {
+      "cve_id": null,
+      "cwe": "CWE-476",
+      "family": "cpp.null_dereference",
+      "fix_commit": "d272051eb605be1c17655da57439598bf545f1ce",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-01"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-476",
+      "family": "cpp.null_dereference",
+      "fix_commit": "8b0ef63ef1f591e86255ea0bf9d9c1083dfa39c2",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-02"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-476",
+      "family": "cpp.null_dereference",
+      "fix_commit": "783a1dd8dacc9ccded5189069b56221902c074bd",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-03"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-476",
+      "family": "cpp.null_dereference",
+      "fix_commit": "13570b766f728793b51ec83693293acc998438f0",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-NULL-04"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-476",
+      "family": "cpp.null_dereference",
+      "fix_commit": "e8dc367f6dddde646424f84dce6f32210e408afd",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-NULL-05"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-416",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "393f0a734cc968ecd405fbebe2610f0562fda2cb",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-01"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-416",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "34fb261bcbf27fdbbdc87ba6346b1b84fc540069",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-02"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-416",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "05c5dfec907eafc8314192863d4fd2526831f4ec",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-03"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-416",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "a3bf544e1fbb8052cb3c1ce1997acbc5ed7bd4ab",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UAF-04"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-416",
+      "family": "cpp.lifetime_uaf",
+      "fix_commit": "2540d999ab23a37b3681e1ff5ad30ffd9890754f",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-UAF-05"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-401",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "c1dfba0022330b96267ce5fee75cc7d4dabbc6b1",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-01"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-401",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "f4b069d1f3cecc82fe08563080057ed6db45fd0e",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-02"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-772",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "e5bb84a5709a4dcc80249a6b2f79256ce5a2e0b5",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-03"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-415",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "0c057c8351113841e691bf7f4cf10c106405b8c1",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-04"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-415",
+      "family": "cpp.resource_lifetime",
+      "fix_commit": "9e5cf8e7c9ade887d576402151ba9fadd9e08b1e",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-RES-05"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-787",
+      "family": "cpp.bounds",
+      "fix_commit": "e338dbe3a2a83e5131cd1252749b0db321b6a2da",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-BOUNDS-01"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-787",
+      "family": "cpp.bounds",
+      "fix_commit": "466e8099c860a81d4155d666403773b01d1007b2",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-BOUNDS-02"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-125",
+      "family": "cpp.bounds",
+      "fix_commit": "00206c93e988b4ae32f7982a5061383a1e8c530f",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-BOUNDS-03"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-787",
+      "family": "cpp.bounds",
+      "fix_commit": "c9a4847d70b41e4d35f0da1786874784ca5a6c3b",
+      "repository": "distributeddatamgr_kv_store",
+      "repository_root_key": "distributeddatamgr_kv_store",
+      "root_cause_id": "HOLDOUT-BOUNDS-04"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-787",
+      "family": "cpp.bounds",
+      "fix_commit": "a3ec506867acda22acac92e654c3e27a6c3c1d07",
+      "repository": "distributeddatamgr_kv_store",
+      "repository_root_key": "distributeddatamgr_kv_store",
+      "root_cause_id": "HOLDOUT-BOUNDS-05"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-190",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "dfe612a32cb73bf4b28769347f7ddd30d5e0a44b",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-INT-01"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-190",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "502d434b084dbf725d6849384e81e2854dff034f",
+      "repository": "commonlibrary_c_utils",
+      "repository_root_key": "commonlibrary_c_utils",
+      "root_cause_id": "HOLDOUT-INT-02"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-190",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "6a832492054e8a6e7aec45fd8dfde3ebe4109185",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-INT-03"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-190",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "191aab2aedd9f2e82037dae4335d367db46d7635",
+      "repository": "arkcompiler_ets_runtime",
+      "repository_root_key": "arkcompiler_ets_runtime",
+      "root_cause_id": "HOLDOUT-INT-04"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-190",
+      "family": "cpp.integer_bounds",
+      "fix_commit": "a265735fe983f88a56e5034eed2d3815d890b9e8",
+      "repository": "commonlibrary_c_utils",
+      "repository_root_key": "commonlibrary_c_utils",
+      "root_cause_id": "HOLDOUT-INT-05"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-120",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "098e7bbf24a77646cc55e1bc9f1503c85de72a99",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-01"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-120",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "2da9eb080c0865fbedb8a83624bf6acd49bbf9c0",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-02"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-120",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "2cfd3192cfda2c8f1bbe3af421bec10b7226a37c",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-03"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-120",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "2c6909b8c807448e58f6816020da7f430f503f25",
+      "repository": "communication_dsoftbus",
+      "repository_root_key": "communication_dsoftbus",
+      "root_cause_id": "HOLDOUT-UNSAFE-04"
+    },
+    {
+      "cve_id": null,
+      "cwe": "CWE-120",
+      "family": "cpp.unsafe_memory_call",
+      "fix_commit": "d79caeff7f3cffc86e11a57d6706cdf82909a750",
+      "repository": "commonlibrary_c_utils",
+      "repository_root_key": "commonlibrary_c_utils",
+      "root_cause_id": "HOLDOUT-UNSAFE-05"
+    }
+  ],
+  "kind": "ohscanner.independent-holdout-selection.v1",
+  "schema_version": 1,
+  "selection_policy": {
+    "excluded_tuning_samples": [
+      "CVE-2025-23420",
+      "CVE-2025-0587",
+      "commonlibrary_c_utils shared_ptr tuning sample",
+      "communication_dsoftbus null tuning sample"
+    ],
+    "frozen_before_detector_tuning": true,
+    "root_cause_unit": "distinct official public fix commit with unique stable patch-id"
+  }
+}

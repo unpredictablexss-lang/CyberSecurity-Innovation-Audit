@@ -1,0 +1,27 @@
+{
+  "aborted_preflight": {
+    "detector_execution": "one sample reached run_all before a result-serialization TypeError",
+    "detector_tuning": false,
+    "outputs_retained": false,
+    "used_for_metrics": false
+  },
+  "artifacts": {
+    "metrics.json": "5578ba411d966ca95f5bd73d6192379b90d9add8a2aabf5e319733ecee500df6",
+    "predictions.json": "1e67ce70e90657d5e30e979f3d2bca7e995f2a6ae5505fdcc708782d56a1042d",
+    "results-delivery-manifest.json": "916ceec72388b25646cb7c27c1b2f5e8b8c0c3f3ba20f92385f37a38d9a4d09d",
+    "results.json": "1be01d5008aa3ede14701112ee4491564dea0998d36f68a3a4fb7c6700b657d4",
+    "results.json.gz": "99669e751d7bdf2514188991e1775159e3273a1a91b9969e6de59e3e58bf051c"
+  },
+  "kind": "ohscanner.independent-holdout-run-manifest.v1",
+  "metrics_recompute_reason": "Fail-closed semantics were corrected so unknown samples never become FN and families without complete paired coverage do not publish Precision/Recall/F1.",
+  "metrics_recomputed_without_detector_execution": true,
+  "results_delivery": {
+    "git_artifact": "results.json.gz",
+    "raw_results_committed": false,
+    "raw_results_retained_locally": true,
+    "reason": "37 MB generated JSON is losslessly compressed for repository delivery"
+  },
+  "sample_count": 60,
+  "schema_version": 1,
+  "truth_record_count": 60
+}

@@ -1,0 +1,2049 @@
+{
+  "detector_tuning_after_freeze": false,
+  "family_metrics": {
+    "cpp.bounds": {
+      "FN": 4,
+      "FP": 0,
+      "TN": 4,
+      "TP": 0,
+      "coverage_complete": false,
+      "eligible_for_metrics": false,
+      "f1": null,
+      "metric_scope": "not-published",
+      "observed_counts": {
+        "FN": 4,
+        "FP": 0,
+        "TN": 4,
+        "TP": 0
+      },
+      "precision": null,
+      "recall": null,
+      "root_causes": 5,
+      "scored_samples": 8,
+      "total_samples": 10,
+      "unable_to_analyze_count": 2
+    },
+    "cpp.integer_bounds": {
+      "FN": 3,
+      "FP": 1,
+      "TN": 3,
+      "TP": 1,
+      "coverage_complete": false,
+      "eligible_for_metrics": false,
+      "f1": null,
+      "metric_scope": "not-published",
+      "observed_counts": {
+        "FN": 3,
+        "FP": 1,
+        "TN": 3,
+        "TP": 1
+      },
+      "precision": null,
+      "recall": null,
+      "root_causes": 5,
+      "scored_samples": 8,
+      "total_samples": 10,
+      "unable_to_analyze_count": 2
+    },
+    "cpp.lifetime_uaf": {
+      "FN": 0,
+      "FP": 0,
+      "TN": 0,
+      "TP": 0,
+      "coverage_complete": false,
+      "eligible_for_metrics": false,
+      "f1": null,
+      "metric_scope": "not-published",
+      "observed_counts": {
+        "FN": 0,
+        "FP": 0,
+        "TN": 0,
+        "TP": 0
+      },
+      "precision": null,
+      "recall": null,
+      "root_causes": 5,
+      "scored_samples": 0,
+      "total_samples": 10,
+      "unable_to_analyze_count": 10
+    },
+    "cpp.null_dereference": {
+      "FN": 0,
+      "FP": 0,
+      "TN": 0,
+      "TP": 0,
+      "coverage_complete": false,
+      "eligible_for_metrics": false,
+      "f1": null,
+      "metric_scope": "not-published",
+      "observed_counts": {
+        "FN": 0,
+        "FP": 0,
+        "TN": 0,
+        "TP": 0
+      },
+      "precision": null,
+      "recall": null,
+      "root_causes": 5,
+      "scored_samples": 0,
+      "total_samples": 10,
+      "unable_to_analyze_count": 10
+    },
+    "cpp.resource_lifetime": {
+      "FN": 0,
+      "FP": 0,
+      "TN": 0,
+      "TP": 0,
+      "coverage_complete": false,
+      "eligible_for_metrics": false,
+      "f1": null,
+      "metric_scope": "not-published",
+      "observed_counts": {
+        "FN": 0,
+        "FP": 0,
+        "TN": 0,
+        "TP": 0
+      },
+      "precision": null,
+      "recall": null,
+      "root_causes": 5,
+      "scored_samples": 0,
+      "total_samples": 10,
+      "unable_to_analyze_count": 10
+    },
+    "cpp.unsafe_memory_call": {
+      "FN": 3,
+      "FP": 0,
+      "TN": 3,
+      "TP": 0,
+      "coverage_complete": false,
+      "eligible_for_metrics": false,
+      "f1": null,
+      "metric_scope": "not-published",
+      "observed_counts": {
+        "FN": 3,
+        "FP": 0,
+        "TN": 3,
+        "TP": 0
+      },
+      "precision": null,
+      "recall": null,
+      "root_causes": 5,
+      "scored_samples": 6,
+      "total_samples": 10,
+      "unable_to_analyze_count": 4
+    }
+  },
+  "holdout_manifest_sha256": "53e97de6b84498aa4a24bf9c8914f73ea99ccd251e4fdf9e77b3ba7616ddc264",
+  "independent_holdout": true,
+  "interpretation": "Metrics use official public vulnerable/fixed fix pairs as independent code-defect truth. They do not establish exploitability or product CIA impact.",
+  "kind": "ohscanner.independent-holdout-results.v1",
+  "root_cause_level": {
+    "fixed_axis_counts": {
+      "FP": 1,
+      "TN": 10,
+      "unable_to_analyze": 19
+    },
+    "root_causes": [
+      {
+        "family": "cpp.null_dereference",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-NULL-01",
+        "sample_ids": [
+          "HOLDOUT-NULL-01:vulnerable",
+          "HOLDOUT-NULL-01:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.null_dereference",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-NULL-02",
+        "sample_ids": [
+          "HOLDOUT-NULL-02:vulnerable",
+          "HOLDOUT-NULL-02:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.null_dereference",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-NULL-03",
+        "sample_ids": [
+          "HOLDOUT-NULL-03:vulnerable",
+          "HOLDOUT-NULL-03:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.null_dereference",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-NULL-04",
+        "sample_ids": [
+          "HOLDOUT-NULL-04:vulnerable",
+          "HOLDOUT-NULL-04:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.null_dereference",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-NULL-05",
+        "sample_ids": [
+          "HOLDOUT-NULL-05:vulnerable",
+          "HOLDOUT-NULL-05:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.lifetime_uaf",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UAF-01",
+        "sample_ids": [
+          "HOLDOUT-UAF-01:vulnerable",
+          "HOLDOUT-UAF-01:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.lifetime_uaf",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UAF-02",
+        "sample_ids": [
+          "HOLDOUT-UAF-02:vulnerable",
+          "HOLDOUT-UAF-02:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.lifetime_uaf",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UAF-03",
+        "sample_ids": [
+          "HOLDOUT-UAF-03:vulnerable",
+          "HOLDOUT-UAF-03:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.lifetime_uaf",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UAF-04",
+        "sample_ids": [
+          "HOLDOUT-UAF-04:vulnerable",
+          "HOLDOUT-UAF-04:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.lifetime_uaf",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UAF-05",
+        "sample_ids": [
+          "HOLDOUT-UAF-05:vulnerable",
+          "HOLDOUT-UAF-05:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.resource_lifetime",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-RES-01",
+        "sample_ids": [
+          "HOLDOUT-RES-01:vulnerable",
+          "HOLDOUT-RES-01:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.resource_lifetime",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-RES-02",
+        "sample_ids": [
+          "HOLDOUT-RES-02:vulnerable",
+          "HOLDOUT-RES-02:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.resource_lifetime",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-RES-03",
+        "sample_ids": [
+          "HOLDOUT-RES-03:vulnerable",
+          "HOLDOUT-RES-03:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.resource_lifetime",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-RES-04",
+        "sample_ids": [
+          "HOLDOUT-RES-04:vulnerable",
+          "HOLDOUT-RES-04:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.resource_lifetime",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-RES-05",
+        "sample_ids": [
+          "HOLDOUT-RES-05:vulnerable",
+          "HOLDOUT-RES-05:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-BOUNDS-01",
+        "sample_ids": [
+          "HOLDOUT-BOUNDS-01:vulnerable",
+          "HOLDOUT-BOUNDS-01:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-BOUNDS-02",
+        "sample_ids": [
+          "HOLDOUT-BOUNDS-02:vulnerable",
+          "HOLDOUT-BOUNDS-02:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-BOUNDS-03",
+        "sample_ids": [
+          "HOLDOUT-BOUNDS-03:vulnerable",
+          "HOLDOUT-BOUNDS-03:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.bounds",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-BOUNDS-04",
+        "sample_ids": [
+          "HOLDOUT-BOUNDS-04:vulnerable",
+          "HOLDOUT-BOUNDS-04:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-BOUNDS-05",
+        "sample_ids": [
+          "HOLDOUT-BOUNDS-05:vulnerable",
+          "HOLDOUT-BOUNDS-05:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.integer_bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-INT-01",
+        "sample_ids": [
+          "HOLDOUT-INT-01:vulnerable",
+          "HOLDOUT-INT-01:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.integer_bounds",
+        "fixed_outcome": "FP",
+        "root_cause_id": "HOLDOUT-INT-02",
+        "sample_ids": [
+          "HOLDOUT-INT-02:vulnerable",
+          "HOLDOUT-INT-02:fixed"
+        ],
+        "vulnerable_outcome": "TP"
+      },
+      {
+        "family": "cpp.integer_bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-INT-03",
+        "sample_ids": [
+          "HOLDOUT-INT-03:vulnerable",
+          "HOLDOUT-INT-03:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.integer_bounds",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-INT-04",
+        "sample_ids": [
+          "HOLDOUT-INT-04:vulnerable",
+          "HOLDOUT-INT-04:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.integer_bounds",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-INT-05",
+        "sample_ids": [
+          "HOLDOUT-INT-05:vulnerable",
+          "HOLDOUT-INT-05:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.unsafe_memory_call",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-UNSAFE-01",
+        "sample_ids": [
+          "HOLDOUT-UNSAFE-01:vulnerable",
+          "HOLDOUT-UNSAFE-01:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.unsafe_memory_call",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UNSAFE-02",
+        "sample_ids": [
+          "HOLDOUT-UNSAFE-02:vulnerable",
+          "HOLDOUT-UNSAFE-02:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.unsafe_memory_call",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-UNSAFE-03",
+        "sample_ids": [
+          "HOLDOUT-UNSAFE-03:vulnerable",
+          "HOLDOUT-UNSAFE-03:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      },
+      {
+        "family": "cpp.unsafe_memory_call",
+        "fixed_outcome": "unable_to_analyze",
+        "root_cause_id": "HOLDOUT-UNSAFE-04",
+        "sample_ids": [
+          "HOLDOUT-UNSAFE-04:vulnerable",
+          "HOLDOUT-UNSAFE-04:fixed"
+        ],
+        "vulnerable_outcome": "unable_to_analyze"
+      },
+      {
+        "family": "cpp.unsafe_memory_call",
+        "fixed_outcome": "TN",
+        "root_cause_id": "HOLDOUT-UNSAFE-05",
+        "sample_ids": [
+          "HOLDOUT-UNSAFE-05:vulnerable",
+          "HOLDOUT-UNSAFE-05:fixed"
+        ],
+        "vulnerable_outcome": "FN"
+      }
+    ],
+    "vulnerable_axis_counts": {
+      "FN": 10,
+      "TP": 1,
+      "unable_to_analyze": 19
+    }
+  },
+  "sample_level": {
+    "FN": 10,
+    "FP": 1,
+    "TN": 10,
+    "TP": 1,
+    "coverage_complete": false,
+    "eligible_for_metrics": true,
+    "f1": 0.15384615384615385,
+    "metric_scope": "known-scored-samples-only",
+    "observed_counts": {
+      "FN": 10,
+      "FP": 1,
+      "TN": 10,
+      "TP": 1
+    },
+    "precision": 0.5,
+    "recall": 0.09090909090909091,
+    "scored_samples": 22,
+    "total_samples": 60,
+    "unable_to_analyze_count": 38
+  },
+  "samples": [
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-01",
+      "sample_id": "HOLDOUT-BOUNDS-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-01",
+      "sample_id": "HOLDOUT-BOUNDS-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 4,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-02",
+      "sample_id": "HOLDOUT-BOUNDS-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 4,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-02",
+      "sample_id": "HOLDOUT-BOUNDS-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-03",
+      "sample_id": "HOLDOUT-BOUNDS-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-03",
+      "sample_id": "HOLDOUT-BOUNDS-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-BOUNDS-04",
+      "sample_id": "HOLDOUT-BOUNDS-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-BOUNDS-04",
+      "sample_id": "HOLDOUT-BOUNDS-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 2,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-05",
+      "sample_id": "HOLDOUT-BOUNDS-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 2,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-BOUNDS-05",
+      "sample_id": "HOLDOUT-BOUNDS-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-INT-01",
+      "sample_id": "HOLDOUT-INT-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-INT-01",
+      "sample_id": "HOLDOUT-INT-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 2,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 1,
+      "family": "cpp.integer_bounds",
+      "prediction": "detected",
+      "root_cause_id": "HOLDOUT-INT-02",
+      "sample_id": "HOLDOUT-INT-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 2,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 1,
+      "family": "cpp.integer_bounds",
+      "prediction": "detected",
+      "root_cause_id": "HOLDOUT-INT-02",
+      "sample_id": "HOLDOUT-INT-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-INT-03",
+      "sample_id": "HOLDOUT-INT-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-INT-03",
+      "sample_id": "HOLDOUT-INT-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-INT-04",
+      "sample_id": "HOLDOUT-INT-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-INT-04",
+      "sample_id": "HOLDOUT-INT-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-INT-05",
+      "sample_id": "HOLDOUT-INT-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-INT-05",
+      "sample_id": "HOLDOUT-INT-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 88,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-01",
+      "sample_id": "HOLDOUT-NULL-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 87,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-01",
+      "sample_id": "HOLDOUT-NULL-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 73,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-02",
+      "sample_id": "HOLDOUT-NULL-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 73,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-02",
+      "sample_id": "HOLDOUT-NULL-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-03",
+      "sample_id": "HOLDOUT-NULL-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-03",
+      "sample_id": "HOLDOUT-NULL-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 50,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-04",
+      "sample_id": "HOLDOUT-NULL-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 51,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-04",
+      "sample_id": "HOLDOUT-NULL-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 16,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-05",
+      "sample_id": "HOLDOUT-NULL-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 16,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-05",
+      "sample_id": "HOLDOUT-NULL-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-01",
+      "sample_id": "HOLDOUT-RES-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-01",
+      "sample_id": "HOLDOUT-RES-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-02",
+      "sample_id": "HOLDOUT-RES-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-02",
+      "sample_id": "HOLDOUT-RES-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-03",
+      "sample_id": "HOLDOUT-RES-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-03",
+      "sample_id": "HOLDOUT-RES-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-04",
+      "sample_id": "HOLDOUT-RES-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-04",
+      "sample_id": "HOLDOUT-RES-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-05",
+      "sample_id": "HOLDOUT-RES-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-05",
+      "sample_id": "HOLDOUT-RES-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-01",
+      "sample_id": "HOLDOUT-UAF-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-01",
+      "sample_id": "HOLDOUT-UAF-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-02",
+      "sample_id": "HOLDOUT-UAF-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-02",
+      "sample_id": "HOLDOUT-UAF-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-03",
+      "sample_id": "HOLDOUT-UAF-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-03",
+      "sample_id": "HOLDOUT-UAF-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-04",
+      "sample_id": "HOLDOUT-UAF-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-04",
+      "sample_id": "HOLDOUT-UAF-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-05",
+      "sample_id": "HOLDOUT-UAF-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-05",
+      "sample_id": "HOLDOUT-UAF-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-UNSAFE-01",
+      "sample_id": "HOLDOUT-UNSAFE-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-UNSAFE-01",
+      "sample_id": "HOLDOUT-UNSAFE-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-02",
+      "sample_id": "HOLDOUT-UNSAFE-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-02",
+      "sample_id": "HOLDOUT-UNSAFE-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-UNSAFE-03",
+      "sample_id": "HOLDOUT-UNSAFE-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-UNSAFE-03",
+      "sample_id": "HOLDOUT-UNSAFE-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-04",
+      "sample_id": "HOLDOUT-UNSAFE-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-04",
+      "sample_id": "HOLDOUT-UNSAFE-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-UNSAFE-05",
+      "sample_id": "HOLDOUT-UNSAFE-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 1,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "not_detected",
+      "root_cause_id": "HOLDOUT-UNSAFE-05",
+      "sample_id": "HOLDOUT-UNSAFE-05:vulnerable",
+      "truth": "vulnerable"
+    }
+  ],
+  "schema_version": 1,
+  "unable_to_analyze": [
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 87,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-01",
+      "sample_id": "HOLDOUT-NULL-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 88,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-01",
+      "sample_id": "HOLDOUT-NULL-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 73,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-02",
+      "sample_id": "HOLDOUT-NULL-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 73,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-02",
+      "sample_id": "HOLDOUT-NULL-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-03",
+      "sample_id": "HOLDOUT-NULL-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-03",
+      "sample_id": "HOLDOUT-NULL-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 51,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-04",
+      "sample_id": "HOLDOUT-NULL-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 50,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-04",
+      "sample_id": "HOLDOUT-NULL-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 16,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-05",
+      "sample_id": "HOLDOUT-NULL-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.null_dereference",
+      "detector_status": "blocked",
+      "diagnostic_count": 16,
+      "family": "cpp.null_dereference",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-NULL-05",
+      "sample_id": "HOLDOUT-NULL-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-01",
+      "sample_id": "HOLDOUT-UAF-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-01",
+      "sample_id": "HOLDOUT-UAF-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-02",
+      "sample_id": "HOLDOUT-UAF-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-02",
+      "sample_id": "HOLDOUT-UAF-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-03",
+      "sample_id": "HOLDOUT-UAF-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-03",
+      "sample_id": "HOLDOUT-UAF-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-04",
+      "sample_id": "HOLDOUT-UAF-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 0,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-04",
+      "sample_id": "HOLDOUT-UAF-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-05",
+      "sample_id": "HOLDOUT-UAF-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.lifetime_uaf",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UAF-05",
+      "sample_id": "HOLDOUT-UAF-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-01",
+      "sample_id": "HOLDOUT-RES-01:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-01",
+      "sample_id": "HOLDOUT-RES-01:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-02",
+      "sample_id": "HOLDOUT-RES-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-02",
+      "sample_id": "HOLDOUT-RES-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-03",
+      "sample_id": "HOLDOUT-RES-03:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-03",
+      "sample_id": "HOLDOUT-RES-03:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-04",
+      "sample_id": "HOLDOUT-RES-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-04",
+      "sample_id": "HOLDOUT-RES-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-05",
+      "sample_id": "HOLDOUT-RES-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.resource_lifetime",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.resource_lifetime",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-RES-05",
+      "sample_id": "HOLDOUT-RES-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-BOUNDS-04",
+      "sample_id": "HOLDOUT-BOUNDS-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 3,
+        "partial": 3
+      },
+      "detector_id": "ohscanner.cpp.bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-BOUNDS-04",
+      "sample_id": "HOLDOUT-BOUNDS-04:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-INT-05",
+      "sample_id": "HOLDOUT-INT-05:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.integer_bounds",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-INT-05",
+      "sample_id": "HOLDOUT-INT-05:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-02",
+      "sample_id": "HOLDOUT-UNSAFE-02:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 1,
+        "partial": 0
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-02",
+      "sample_id": "HOLDOUT-UNSAFE-02:fixed",
+      "truth": "fixed"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-04",
+      "sample_id": "HOLDOUT-UNSAFE-04:vulnerable",
+      "truth": "vulnerable"
+    },
+    {
+      "coverage": {
+        "complete": 0,
+        "failed": 0,
+        "not_analyzed": 2,
+        "partial": 1
+      },
+      "detector_id": "ohscanner.cpp.unsafe_memory_call",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "family": "cpp.unsafe_memory_call",
+      "prediction": "unknown",
+      "root_cause_id": "HOLDOUT-UNSAFE-04",
+      "sample_id": "HOLDOUT-UNSAFE-04:fixed",
+      "truth": "fixed"
+    }
+  ]
+}

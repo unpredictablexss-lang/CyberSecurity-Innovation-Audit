@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kind": "ohscanner.ipc-census-recovery-comparison.v1",
+  "baseline_path": "research/evidence/interface/ipc_family_census_20261017/summary.json",
+  "after_path": "research/evidence/platform/ipc_census_after_recovery_20261017/summary.json",
+  "baseline_totals": {
+    "samples": 48,
+    "matched": 48,
+    "mismatch": 0
+  },
+  "after_totals": {
+    "samples": 48,
+    "matched": 48,
+    "mismatch": 0
+  },
+  "added_sample_ids": [],
+  "removed_sample_ids": [],
+  "changed_sample_ids": [],
+  "new_count": 0,
+  "removed_count": 0,
+  "changed_count": 0,
+  "explanation": "PR #8-#14 recovery adds provenance and migration evidence but no new or removed fixture rows; all 48 existing sample identities and expectations are unchanged."
+}

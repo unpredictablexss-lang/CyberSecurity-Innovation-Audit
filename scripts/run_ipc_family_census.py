@@ -45,7 +45,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fixtures", type=Path, default=PROJECT_ROOT / "tests/fixtures/ipc")
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--recovery-manifest", type=Path)
     args = parser.parse_args()
+    recovery = json.loads(args.recovery_manifest.read_text(encoding="utf-8")) if args.recovery_manifest else None
     manifest = json.loads((args.fixtures / "manifest.json").read_text(encoding="utf-8"))
     rows = []
     counts = defaultdict(Counter)
@@ -78,10 +80,11 @@ def main() -> int:
             "mismatch": sum(not row["matched"] for row in rows),
         },
         "rows": rows,
+        "external_input_recovery": {"canonical_content_digest": recovery["canonical_content_digest"], "counts": recovery["counts"]} if recovery else None,
         "limitations": [
             "Synthetic design controls only; not product entry reachability or vulnerability truth.",
             "A matched expected rule is rule coverage, not a validated vulnerability.",
-            "The missing work/ipc-20261017 ref prevents comparison with that branch's six-family census.",
+            ("Recovered work/ipc-20261017 source is bound by " + recovery["canonical_content_digest"] + "; PR-ref recovery shows every selected source blob already present at current HEAD.") if recovery else "No external IPC recovery manifest was supplied.",
         ],
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)

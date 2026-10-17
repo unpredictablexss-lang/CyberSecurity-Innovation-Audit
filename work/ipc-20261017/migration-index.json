@@ -1,0 +1,405 @@
+{
+  "categories": {
+    "fixtures": [
+      {
+        "path": "tests/fixtures/ipc/auth_fixed.cpp",
+        "source_blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "4d0df32a0af809454061a2b3fa592994663edb03"
+      },
+      {
+        "path": "tests/fixtures/ipc/auth_ignored_positive.cpp",
+        "source_blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "9fc6a064c87cfc558fea8491b67fdb1fdd47aa3c"
+      },
+      {
+        "path": "tests/fixtures/ipc/auth_positive.cpp",
+        "source_blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "9d80882a8a48eeaa79bb2e010c55a7579b7232aa"
+      },
+      {
+        "path": "tests/fixtures/ipc/cached_caller_fixed.cpp",
+        "source_blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "318df35a4e58d030ee66a26c9b849d10baadb8f0"
+      },
+      {
+        "path": "tests/fixtures/ipc/capability_fixed.cpp",
+        "source_blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "e0d1ed4d9b0485856365b9fddca811bf86d08577"
+      },
+      {
+        "path": "tests/fixtures/ipc/capability_null_safe.cpp",
+        "source_blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "5561e8986846add100a328b8fbe5ce9bf9f20e65"
+      },
+      {
+        "path": "tests/fixtures/ipc/capability_positive.cpp",
+        "source_blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "d0b7af900536ae9fc1b64229036f0e404cb845ac"
+      },
+      {
+        "path": "tests/fixtures/ipc/comments_safe.cpp",
+        "source_blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "1d7c14be7ba59cfde7a0f266676710ad036b3447"
+      },
+      {
+        "path": "tests/fixtures/ipc/common_types.h",
+        "source_blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "2204588f2b3b7572b0b73c9bb39e6235e7ff69de"
+      },
+      {
+        "path": "tests/fixtures/ipc/coverage_fixed.cpp",
+        "source_blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "24a9e43c6a9dd0cec2f1f0c510c81b9fc89b5dd9"
+      },
+      {
+        "path": "tests/fixtures/ipc/coverage_late_positive.cpp",
+        "source_blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "e17019cdc9d1dbfa56f8130403b4021d218bef83"
+      },
+      {
+        "path": "tests/fixtures/ipc/coverage_positive.cpp",
+        "source_blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "5489060289cae133b32dadcbc0dc6ad94c8ded4a"
+      },
+      {
+        "path": "tests/fixtures/ipc/dead_path_safe.cpp",
+        "source_blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "eaf71fe39d4cfd16a84cd1469bca951c01983b68"
+      },
+      {
+        "path": "tests/fixtures/ipc/denied_complement_positive.cpp",
+        "source_blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "4e2be4cdd42519f191ce3d2f44fc61b4bf9fa1ee"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_after_positive.cpp",
+        "source_blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "e6f40430fb6df00043ee6203c66867be378c505c"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_alias_positive.cpp",
+        "source_blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "a7a2f373fa64cf30d9b65e04bf41f10db534ef50"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_call_only_positive.cpp",
+        "source_blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "cfdd6de29f4baa3d939210ded1c2b68c4a0e9b53"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_inherited_fixed.cpp",
+        "source_blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "960c8d69aa2ff82eb6eb2ec37c91f6e9c0cf9332"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_interface_fixed.cpp",
+        "source_blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "598e5434096efbb48ff02d5ffecda284620b0d46"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_no_prefix_fixed.cpp",
+        "source_blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "f38f6899132c527e769cc3c6e066028e62ccd3c7"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_no_reject_positive.cpp",
+        "source_blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "68a8acd4cc504973434f0a1dedd93dbb39741325"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_one_branch_positive.cpp",
+        "source_blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "fc264014f74748db6cc70d633ba7cf7f27f305d2"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_unrelated_positive.cpp",
+        "source_blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "016d606af4644795231bfe6f416dd2ad8a49ee22"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_unresolved_positive.cpp",
+        "source_blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "9fa3ab2f20016fa466ec8dc9d2506f209e903e6a"
+      },
+      {
+        "path": "tests/fixtures/ipc/descriptor_wrong_interface_positive.cpp",
+        "source_blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "8917d2d6f24e494ac627425c4a9b7e01ab001aeb"
+      },
+      {
+        "path": "tests/fixtures/ipc/helper_fixed.cpp",
+        "source_blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "f9364df02229967824a9ef65b132cc997e36e31c"
+      },
+      {
+        "path": "tests/fixtures/ipc/helper_positive.cpp",
+        "source_blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "29a227541f0b906a595921f2bc407c8c80d1fd5b"
+      },
+      {
+        "path": "tests/fixtures/ipc/identity_fixed.cpp",
+        "source_blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "28b7a88dd1496083c5348dd254c4900be5a30038"
+      },
+      {
+        "path": "tests/fixtures/ipc/identity_positive.cpp",
+        "source_blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "8182404ab9061d77d3b789f8bf8fe205966ffe89"
+      },
+      {
+        "path": "tests/fixtures/ipc/manifest.json",
+        "source_blob_oid": "779f43c081a2847a00a56c9234cab9cc52c73c3c",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "1e4f520a11cb0bbb46c7c9d6903979d7ac34d66e"
+      },
+      {
+        "path": "tests/fixtures/ipc/owner_fixed.cpp",
+        "source_blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "1e2f74d860d3cee7fd1545a494b58efdaf2f1515"
+      },
+      {
+        "path": "tests/fixtures/ipc/owner_positive.cpp",
+        "source_blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "a7b6b1dc921db37021d4a02334583c4d081f512d"
+      },
+      {
+        "path": "tests/fixtures/ipc/parcel_fixed.cpp",
+        "source_blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "a501fc04248b690296db68f7955e9159e05b41b7"
+      },
+      {
+        "path": "tests/fixtures/ipc/parcel_positive.cpp",
+        "source_blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "23a0008b1e0b2bc72082fd030a16627d3451161e"
+      },
+      {
+        "path": "tests/fixtures/ipc/parcel_unrelated_bound_positive.cpp",
+        "source_blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "208826fc5db38e7b3bdef4466264032f9053bdc8"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_fixed.cpp",
+        "source_blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "22a4827c934332858e3b9b934e424c9d621090d7"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_after_dispatch_positive.cpp",
+        "source_blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "50b13aa10cb2fd05687c351e13d8ca48432601ef"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_guard_fixed.cpp",
+        "source_blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "64413cc4ea3bc42021af3f572b65aaaac54b6fa0"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_local_guard_fixed.cpp",
+        "source_blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "0b6608e1cfda76a948185d763d46fe144a4fdcf9"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_nested_positive.cpp",
+        "source_blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "335560b5be4ca8b89b3ac4e9abab33d71a99f5a6"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_no_guard_positive.cpp",
+        "source_blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "53e55ab7a965d95598161b78f67240f9cc02e8b2"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_no_reject_positive.cpp",
+        "source_blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "24b519edf403fd6d546808ec22fe7b432f7dfd4a"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_substituted_positive.cpp",
+        "source_blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "e16aa5f3063999a6c7e0613935906c8ca5141d37"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_inner_wrong_interface_positive.cpp",
+        "source_blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "063f30b333c766017a8aad1d50e2e9cc99f7cddc"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_positive.cpp",
+        "source_blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "0bb60a5bb09d711e760b998dfc672478f8c1ed39"
+      },
+      {
+        "path": "tests/fixtures/ipc/relay_read_only_positive.cpp",
+        "source_blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "a952ae4c163d4d14e2a7c525d36bc9b709205856"
+      },
+      {
+        "path": "tests/fixtures/ipc/request_identity_positive.cpp",
+        "source_blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "00bab1351a369d2eb04ea5e255c772026dc7d236"
+      },
+      {
+        "path": "tests/fixtures/ipc/reset_identity_positive.cpp",
+        "source_blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "748941de08dc3dbc78d30b8df1d53ad473b5a289"
+      },
+      {
+        "path": "tests/fixtures/ipc/switch_positive.cpp",
+        "source_blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "7c08e3c48cb809a96955a7bd30faa0ca81b4a298"
+      },
+      {
+        "path": "tests/fixtures/ipc/wrong_parcel_positive.cpp",
+        "source_blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "b5d984e76732e70eb53dda500fc0e34271d8394a"
+      }
+    ],
+    "interface_source": [
+      {
+        "path": "src/ohscanner/detectors/interface/__init__.py",
+        "source_blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "45fb1317cb503cdcdf68b9b9945cd6a761df732a"
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/analysis.py",
+        "source_blob_oid": "14beb512559c79bbdb201f6065a363c29c07cbf9",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "58100c98f62f2cf20d9b7dbf1b443e527201910b"
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/cpp_macros.py",
+        "source_blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "1855b8366ee7c4b3303c03abd03b495a49872dbe"
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/detector.py",
+        "source_blob_oid": "fb85612054fee9a0cebb0835a8dff563b0a7ac5c",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "7d608ebc35562a82621fd58bd5f25e989507a866"
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/entry_index.py",
+        "source_blob_oid": "386c5e40dac33e2308d57a6c0e8a68d29e1e5b45",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "54555dab841dd39a1fc3a8b3fe8e2f4b0f05d79f"
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/m2_adapter.py",
+        "source_blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "eb787beb461bb5c8e1328ed4ded231517939dc43"
+      },
+      {
+        "path": "src/ohscanner/detectors/interface/models.py",
+        "source_blob_oid": "617a10f4f8108afe3a613a919254c0e03c2b25a1",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "75e7848039c56055c4fc22031b3d975f68299d84"
+      }
+    ],
+    "models": [
+      {
+        "path": "models/README.md",
+        "source_blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "3144122c600f8ff57a14a922c37c4ae8351e6e78"
+      }
+    ],
+    "tests": [
+      {
+        "path": "tests/test_ipc_descriptor_identity.py",
+        "source_blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "683812c4c6f63f8ebb5256ff42da8e7d9f8ff925"
+      },
+      {
+        "path": "tests/test_ipc_detector.py",
+        "source_blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "9b499790f5f54fc09eaaa89fd43620317b3ce972"
+      },
+      {
+        "path": "tests/test_ipc_disclosure_consequence.py",
+        "source_blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "55f40e1b653a70b55127243c3a726d50f7f5d200"
+      },
+      {
+        "path": "tests/test_ipc_entry_index.py",
+        "source_blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "2c979894d862c0971182b962f99c17859e6c22a4"
+      },
+      {
+        "path": "tests/test_ipc_macros.py",
+        "source_blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "8bd7c9d0c4d285363837f50d58c2e49963e21b35"
+      },
+      {
+        "path": "tests/test_ipc_relay_guard.py",
+        "source_blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "c0864f3834b0828935ead40a6f539897d3efc200"
+      },
+      {
+        "path": "tests/test_owner_ipc_platform.py",
+        "source_blob_oid": "dcd5c521dd805c417aa2841c55a673e2f3984d22",
+        "status": "exact_source_blob_present_in_current_head",
+        "target_blob_oid": "2a3c0be887ed3162a095c5e35221d11cc938ad4c"
+      }
+    ]
+  },
+  "kind": "ohscanner.ipc-external-input-migration-index.v1",
+  "recovery_manifest_sha256": "c51f37203e83a4d7a64d15785af878fd9d82d03c198e26a06fc9acd0e9c4e0c3",
+  "schema_version": 1
+}
