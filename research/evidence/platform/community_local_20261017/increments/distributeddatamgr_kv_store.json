@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+      "committer_time": "2026-10-08T15:11:42+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!2705 merge kv into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-23T15:11:42.0000000+08:00",
+  "until": "2026-10-08T15:11:42+08:00"
+}

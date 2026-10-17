@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <project name="communication_dsoftbus" path="communication_dsoftbus" revision="652f88e0261ce4d0610f73cc451c26b84d2597af"/>
+  <project name="communication_ipc" path="communication_ipc" revision="bbb92dbb2f52aca54ab268307c9476ac1802f3ff"/>
+  <project name="distributeddatamgr_kv_store" path="distributeddatamgr_kv_store" revision="acfb22aac16161d8fb0cefb6cc9b92f04f489a80"/>
+  <project name="inputmethod_imf" path="inputmethod_imf" revision="7777cba9eb19085af8e7b90088531028d2937460"/>
+  <project name="multimedia_camera_framework" path="multimedia_camera_framework" revision="085a5d0e2dc1c90a4b676bad55675a1cf12a6380"/>
+  <project name="multimedia_player_framework" path="multimedia_player_framework" revision="9f9a285ff489afa66861a85dcc4213336a463b36"/>
+  <project name="notification_common_event_service" path="notification_common_event_service" revision="aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f"/>
+  <project name="resourceschedule_background_task_mgr" path="resourceschedule_background_task_mgr" revision="cff2ff475e3885ee814651f6a13d7f8a5782efdd"/>
+  <project name="security_access_token" path="security_access_token" revision="17d88bfb36bea6c9370ba919ac41a22d16dd66b3"/>
+  <project name="telephony_call_manager" path="telephony_call_manager" revision="6638d1b37f278d7ed380d907674820e7467cedf8"/>
+  <project name="update_updateservice" path="update_updateservice" revision="e4942a33cc5ed29040e5c720bea3b2a8e4a79221"/>
+  <project name="window_window_manager" path="window_window_manager" revision="8b0d8fe1b973d865904c942c286b3d2a3b9b08e7"/>
+</manifest>

@@ -1,0 +1,119 @@
+{
+  "coverage": {
+    "analyzed_files": 14406,
+    "analyzed_loc": 4129945,
+    "source_binding": "locally computed Git blob IDs; upstream tree matching remains incomplete"
+  },
+  "diagnostics": {
+    "count": 57454,
+    "semantics": "candidate diagnostics only; not vulnerability counts"
+  },
+  "increments_15_day": {
+    "commits": 12,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0,
+    "repositories": 12,
+    "shallow_endpoint_limitation": true
+  },
+  "kind": "ohscanner.community-local-scan-summary.v1",
+  "limitations": [
+    "This is a 12-repository local validation corpus, not the 514-repository full community run.",
+    "Source bytes match locally computed Git blob IDs but were not all matched to upstream repository trees.",
+    "Ten shallow repositories expose only their endpoint in the current 15-day selection; first-parent merge coverage is incomplete.",
+    "Candidate diagnostics are not vulnerabilities and no accuracy metric is inferred."
+  ],
+  "performance": {
+    "candidate_density_per_kloc": 13.911565408256042,
+    "compressed_result_bytes": 23534587,
+    "note": "raw result size is retained locally; per-shard wall/RSS/I/O is inside compressed results"
+  },
+  "replay": {
+    "required_by_full_plan": true,
+    "status": "not_performed_for_this_local_validation_run"
+  },
+  "repositories": {
+    "communication_dsoftbus": {
+      "diagnostics": 32062,
+      "files": 2975,
+      "loc": 844622,
+      "shards": 3
+    },
+    "communication_ipc": {
+      "diagnostics": 3038,
+      "files": 697,
+      "loc": 205024,
+      "shards": 1
+    },
+    "distributeddatamgr_kv_store": {
+      "diagnostics": 4039,
+      "files": 2040,
+      "loc": 595487,
+      "shards": 3
+    },
+    "inputmethod_imf": {
+      "diagnostics": 568,
+      "files": 698,
+      "loc": 161323,
+      "shards": 1
+    },
+    "multimedia_camera_framework": {
+      "diagnostics": 3895,
+      "files": 1696,
+      "loc": 433959,
+      "shards": 2
+    },
+    "multimedia_player_framework": {
+      "diagnostics": 5971,
+      "files": 1773,
+      "loc": 440206,
+      "shards": 3
+    },
+    "notification_common_event_service": {
+      "diagnostics": 802,
+      "files": 293,
+      "loc": 86910,
+      "shards": 1
+    },
+    "resourceschedule_background_task_mgr": {
+      "diagnostics": 874,
+      "files": 284,
+      "loc": 55189,
+      "shards": 1
+    },
+    "security_access_token": {
+      "diagnostics": 1607,
+      "files": 1249,
+      "loc": 236650,
+      "shards": 2
+    },
+    "telephony_call_manager": {
+      "diagnostics": 232,
+      "files": 513,
+      "loc": 147258,
+      "shards": 1
+    },
+    "update_updateservice": {
+      "diagnostics": 77,
+      "files": 238,
+      "loc": 25060,
+      "shards": 1
+    },
+    "window_window_manager": {
+      "diagnostics": 4289,
+      "files": 1950,
+      "loc": 898257,
+      "shards": 3
+    }
+  },
+  "schema_version": 1,
+  "scope": {
+    "completed_shards": 22,
+    "inventory_bytes": 177484384,
+    "inventory_files": 14412,
+    "planned_shards": 22,
+    "repositories": 12,
+    "stale_failures_resolved_by_completed_retry": 1,
+    "unresolved_failed_shards": 0
+  }
+}

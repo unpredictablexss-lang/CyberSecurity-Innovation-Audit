@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "6638d1b37f278d7ed380d907674820e7467cedf8",
+      "committer_time": "2026-09-29T20:48:55+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!2958 merge 920 into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "6638d1b37f278d7ed380d907674820e7467cedf8",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-14T20:48:55.0000000+08:00",
+  "until": "2026-09-29T20:48:55+08:00"
+}

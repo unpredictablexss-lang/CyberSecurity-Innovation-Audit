@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+      "committer_time": "2026-09-30T17:08:50+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!1713 merge feat/user-app-subscriber-type into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-15T17:08:50.0000000+08:00",
+  "until": "2026-09-30T17:08:50+08:00"
+}

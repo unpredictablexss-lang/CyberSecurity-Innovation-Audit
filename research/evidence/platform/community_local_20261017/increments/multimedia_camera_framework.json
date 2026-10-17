@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+      "committer_time": "2026-09-28T19:34:26+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!4865 merge master into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-13T19:34:26.0000000+08:00",
+  "until": "2026-09-28T19:34:26+08:00"
+}

@@ -1,0 +1,82 @@
+{
+  "files": {
+    "SCAN_REPORT.md": {
+      "bytes": 870,
+      "sha256": "1c5011a5155c112ee99a79bba164eeb55119986e9b76f75a3208d057e649f907"
+    },
+    "checkpoint-final.json": {
+      "bytes": 69497,
+      "sha256": "400cec9eb33258295f8be081c142a98a0819a1d9c1ff5fe99e2b3800f2cb7cd5"
+    },
+    "increments\\communication_dsoftbus.json": {
+      "bytes": 774,
+      "sha256": "7e23cec364928efb899e67ffcf291779c12bdea9fc773b1e815b69907353486a"
+    },
+    "increments\\communication_ipc.json": {
+      "bytes": 773,
+      "sha256": "86a63c41cb9b25a7c82c019d83a7051cbbc8b3e6294c80c5ce0dd93048591160"
+    },
+    "increments\\distributeddatamgr_kv_store.json": {
+      "bytes": 769,
+      "sha256": "c9300797740578dcc94845169ae3b46f96893b8242b995bffe2aa36841513855"
+    },
+    "increments\\inputmethod_imf.json": {
+      "bytes": 796,
+      "sha256": "3eae5dcb1e35da1ee1eaaa68deb3e8b8356bbd68ed4c658d0cb883c9a3b58a94"
+    },
+    "increments\\multimedia_camera_framework.json": {
+      "bytes": 773,
+      "sha256": "b29c65d84a447fc660c71f3ae0ce7514f4ca9c9fd4cc0a93e9db951ce34901d2"
+    },
+    "increments\\multimedia_player_framework.json": {
+      "bytes": 774,
+      "sha256": "4545d98f790f3fb89d005c6b25f1bd202844941a49b127af57897a154235de76"
+    },
+    "increments\\notification_common_event_service.json": {
+      "bytes": 796,
+      "sha256": "017f169b9d95b4c8ae329e5af520530d483a14df77a4a7ff507f1d4ca0df098a"
+    },
+    "increments\\resourceschedule_background_task_mgr.json": {
+      "bytes": 773,
+      "sha256": "b5f93107d7b8b63eceb94141b6bde4e5244274ae3feb7eed1e876c7013a7eff0"
+    },
+    "increments\\security_access_token.json": {
+      "bytes": 771,
+      "sha256": "5c62477bb5df3e207555cd221e240643fa14d182172165f8ab8859016d1e7271"
+    },
+    "increments\\summary.json": {
+      "bytes": 3564,
+      "sha256": "9ac7313e97f061c6d06e8ae4d3741314f26b2e6facbec60f6ca3548c8e1ddf46"
+    },
+    "increments\\telephony_call_manager.json": {
+      "bytes": 770,
+      "sha256": "c3210c90dc0d07f087de746a08965b1a4485893f69542344cc161e6ee1e9435d"
+    },
+    "increments\\update_updateservice.json": {
+      "bytes": 817,
+      "sha256": "b8c94b8db6ec249e402a9e0a6dddbe25646d48e0cbfc05f8a3a053a579a69d9f"
+    },
+    "increments\\window_window_manager.json": {
+      "bytes": 785,
+      "sha256": "503377b5320085a1a24ec4fa3f110dc5d41e902f42c66de0020bce32ab0ce90e"
+    },
+    "inventory.json": {
+      "bytes": 5136518,
+      "sha256": "7617592293bb4b915b4f979c38b7c752de00c81c0606e68e8fa13cf717a390c1"
+    },
+    "inventory.json.gz": {
+      "bytes": 1199996,
+      "sha256": "ddfc41315a6ef51493b1e580985b0ab26c257bed2fd2d03fda230a217c6eff85"
+    },
+    "local-manifest.xml": {
+      "bytes": 1625,
+      "sha256": "72d9136bbb4a239ae9a279006959b2ab4709dc2386f87c5bef3b23286de26b03"
+    },
+    "scan-summary.json": {
+      "bytes": 3257,
+      "sha256": "f8070e658d1b577d40dc48baa0f72dc15958eae1f4e158dead2de656c938a333"
+    }
+  },
+  "kind": "ohscanner.community-local-delivery-manifest.v1",
+  "schema_version": 1
+}

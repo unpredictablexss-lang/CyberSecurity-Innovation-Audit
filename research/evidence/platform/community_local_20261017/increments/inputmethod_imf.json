@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "7777cba9eb19085af8e7b90088531028d2937460",
+      "committer_time": "2026-09-29T17:17:22+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!2759 merge feature/ptt-code-review-fixes into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "7777cba9eb19085af8e7b90088531028d2937460",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-14T17:17:22.0000000+08:00",
+  "until": "2026-09-29T17:17:22+08:00"
+}

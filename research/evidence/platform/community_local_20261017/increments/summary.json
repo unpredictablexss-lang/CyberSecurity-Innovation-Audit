@@ -1,0 +1,122 @@
+[
+  {
+    "Repository": "communication_dsoftbus",
+    "Endpoint": "652f88e0261ce4d0610f73cc451c26b84d2597af",
+    "Since": "2026-09-26T10:10:28.0000000+08:00",
+    "Until": "2026-10-11T10:10:28+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "communication_ipc",
+    "Endpoint": "bbb92dbb2f52aca54ab268307c9476ac1802f3ff",
+    "Since": "2026-08-30T14:09:31.0000000+08:00",
+    "Until": "2026-09-14T14:09:31+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "distributeddatamgr_kv_store",
+    "Endpoint": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+    "Since": "2026-09-23T15:11:42.0000000+08:00",
+    "Until": "2026-10-08T15:11:42+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "inputmethod_imf",
+    "Endpoint": "7777cba9eb19085af8e7b90088531028d2937460",
+    "Since": "2026-09-14T17:17:22.0000000+08:00",
+    "Until": "2026-09-29T17:17:22+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "multimedia_camera_framework",
+    "Endpoint": "085a5d0e2dc1c90a4b676bad55675a1cf12a6380",
+    "Since": "2026-09-13T19:34:26.0000000+08:00",
+    "Until": "2026-09-28T19:34:26+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "multimedia_player_framework",
+    "Endpoint": "9f9a285ff489afa66861a85dcc4213336a463b36",
+    "Since": "2026-09-15T14:40:39.0000000+08:00",
+    "Until": "2026-09-30T14:40:39+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "notification_common_event_service",
+    "Endpoint": "aaaaf6d10aa8e1f6bd28673f10d5791d7e9c9e3f",
+    "Since": "2026-09-15T17:08:50.0000000+08:00",
+    "Until": "2026-09-30T17:08:50+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "resourceschedule_background_task_mgr",
+    "Endpoint": "cff2ff475e3885ee814651f6a13d7f8a5782efdd",
+    "Since": "2026-09-15T10:35:35.0000000+08:00",
+    "Until": "2026-09-30T10:35:35+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "security_access_token",
+    "Endpoint": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+    "Since": "2026-09-22T11:16:35.0000000+08:00",
+    "Until": "2026-10-07T11:16:35+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "telephony_call_manager",
+    "Endpoint": "6638d1b37f278d7ed380d907674820e7467cedf8",
+    "Since": "2026-09-14T20:48:55.0000000+08:00",
+    "Until": "2026-09-29T20:48:55+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "update_updateservice",
+    "Endpoint": "e4942a33cc5ed29040e5c720bea3b2a8e4a79221",
+    "Since": "2023-08-23T02:31:00.0000000+00:00",
+    "Until": "2023-09-07T02:31:00Z",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  },
+  {
+    "Repository": "window_window_manager",
+    "Endpoint": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+    "Since": "2026-09-23T11:45:03.0000000+08:00",
+    "Until": "2026-10-08T11:45:03+08:00",
+    "Commits": 1,
+    "NonMerge": 0,
+    "Merge": 0,
+    "DuplicatePatchIds": 0
+  }
+]

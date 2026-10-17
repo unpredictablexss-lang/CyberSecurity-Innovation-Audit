@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "9f9a285ff489afa66861a85dcc4213336a463b36",
+      "committer_time": "2026-09-30T14:40:39+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!8460 merge 0929sqr into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "9f9a285ff489afa66861a85dcc4213336a463b36",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-15T14:40:39.0000000+08:00",
+  "until": "2026-09-30T14:40:39+08:00"
+}

@@ -1,0 +1,26 @@
+{
+  "commits": [
+    {
+      "changed_paths": [],
+      "commit": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+      "committer_time": "2026-10-08T11:45:03+08:00",
+      "duplicate_patch_id": false,
+      "first_parent_diff": true,
+      "parents": [],
+      "stable_patch_id": null,
+      "subject": "!20325 merge interceptMaximize into master"
+    }
+  ],
+  "counts": {
+    "commits": 1,
+    "duplicate_patch_ids": 0,
+    "merge": 0,
+    "non_merge": 0
+  },
+  "endpoint": "8b0d8fe1b973d865904c942c286b3d2a3b9b08e7",
+  "kind": "ohscanner.community-increment-selection.v1",
+  "schema_version": 1,
+  "selection": "first-parent history and each commit's first-parent diff",
+  "since": "2026-09-23T11:45:03.0000000+08:00",
+  "until": "2026-10-08T11:45:03+08:00"
+}
