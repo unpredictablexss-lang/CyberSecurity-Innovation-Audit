@@ -606,5 +606,131 @@
     "split": "design",
     "variant": "positive",
     "notes": "The compared value is read out of the parcel, so a caller that writes the reviewed account number into its own request satisfies the check. The condition is about the request, not about the caller, and nothing is credited."
+  },
+  {
+    "sample_id": "parcel_bounds_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": "ipc.parcel.bounds",
+    "file": "parcel_bounds_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_bounds_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "parcel_bounds_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_bounds_unknown_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "parcel_bounds_unknown_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "parcel_write_bounds_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": "ipc.parcel.write-bounds",
+    "file": "parcel_write_bounds_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_write_bounds_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-02",
+    "expected_rule": null,
+    "file": "parcel_write_bounds_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_lifecycle_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-03",
+    "expected_rule": "ipc.parcel.lifecycle",
+    "file": "parcel_lifecycle_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "parcel_lifecycle_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-03",
+    "expected_rule": null,
+    "file": "parcel_lifecycle_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "parcel_lifecycle_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-03",
+    "expected_rule": null,
+    "file": "parcel_lifecycle_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "auth_flow_positive",
+    "data_origin": "synthetic",
+    "family": "AUTH-05",
+    "expected_rule": "ipc.auth.flow",
+    "file": "auth_flow_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "auth_flow_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-05",
+    "expected_rule": null,
+    "file": "auth_flow_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "sensitive_flow_positive",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": "ipc.data.sensitive-flow",
+    "file": "sensitive_flow_positive.cpp",
+    "split": "design",
+    "variant": "positive"
+  },
+  {
+    "sample_id": "sensitive_flow_fixed",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "sensitive_flow_fixed.cpp",
+    "split": "design",
+    "variant": "fixed"
+  },
+  {
+    "sample_id": "sensitive_flow_safe",
+    "data_origin": "synthetic",
+    "family": "DATA-04",
+    "expected_rule": null,
+    "file": "sensitive_flow_safe.cpp",
+    "split": "design",
+    "variant": "safe"
+  },
+  {
+    "sample_id": "auth_flow_safe",
+    "data_origin": "synthetic",
+    "family": "AUTH-05",
+    "expected_rule": null,
+    "file": "auth_flow_safe.cpp",
+    "split": "design",
+    "variant": "safe"
   }
 ]

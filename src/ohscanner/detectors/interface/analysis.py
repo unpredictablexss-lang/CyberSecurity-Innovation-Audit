@@ -19,7 +19,7 @@ import tree_sitter_c
 from .cpp_macros import Expansion, catalog_for_units, expand_with_catalog
 from .entry_index import EntryIndex
 from .families import merge_policy
-from .models import IpcPolicy, consequence_for
+from .models import DISCLOSURE_CALLS, IpcPolicy, consequence_for
 
 
 def parses_clean(source, grammar):
@@ -116,6 +116,17 @@ class State:
     upper: frozenset = frozenset()
     size_lower: frozenset = frozenset()
     caller_class: frozenset = frozenset()
+    # Variables holding a pointer into a parcel's own buffer, and the variables
+    # whose view was invalidated by a later reuse/rewind on that parcel. Kept on
+    # the path state because the invalidation is an operation on the path, not a
+    # property of the declaration.
+    parcel_views: frozenset = frozenset()
+    invalidated_views: tuple = ()
+    # `ResetCallingIdentity()` was called and its returned identity was thrown
+    # away, so there is nothing on this path that can restore the caller. Kept
+    # apart from `reset` itself: saving the identity and acting as the service is
+    # a deliberate, restorable protocol; dropping the saved identity is not.
+    identity_discarded: bool = False
     # Reviewed service-account roles established on this path. Separate from
     # `auth` because an account is not a permission: what it authorizes is fixed
     # by the reviewed record that named it, not by the fact that a guard ran.
@@ -126,6 +137,11 @@ class State:
     # what_the_stub_states), ...). A record of what was seen, so a candidate can
     # say "present but mismatched/unresolved" instead of "absent".
     descriptor_issues: tuple = ()
+    # Symbols a caller-identity comparison was made against, when this analysis
+    # does not bind them to a value. The comparison is real, so the guard cannot
+    # be read as absent; its effect is unknown here, so it cannot be credited
+    # either. Kept on the path so the candidate can say which it is.
+    auth_issues: tuple = ()
     reset: bool = False
     trace: tuple = ()
     flow: str = "normal"
@@ -153,6 +169,11 @@ class Function:
     ref_params: tuple = ()
     # 1-based line of the definition, when the frame came from the index.
     line: int = 0
+    # Parcel parameters after the request parcel. In the OpenHarmony stub shape
+    # `(code, data, reply, option)` the second parcel is the reply buffer; a
+    # write to it is what makes a value visible to the remote caller, so it is
+    # modelled separately from the request rather than as another request.
+    reply_params: tuple = ()
 
     def text(self, node):
         if node is None:
@@ -482,7 +503,8 @@ class Interpreter:
                 body = node.child_by_field_name("body")
                 if body and not node.has_error:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
-                                                   source, tuple(params), tuple(parcels[:1])))
+                                                   source, tuple(params), tuple(parcels[:1]),
+                                                   reply_params=tuple(parcels[1:])))
         self._build_index(units)
 
     def _build_macro_catalog(self, units):
@@ -557,9 +579,15 @@ class Interpreter:
             self.limitations.add("Entry index unavailable (" + type(error).__name__
                                  + "); entry discovery fell back to the name allowlist.")
         self.functions_by_owner_name = {}
+        # Call resolution looks a name up in the current file. A component can
+        # carry tens of thousands of functions, so that lookup is indexed rather
+        # than scanned: the scan was the dominant cost on graphic_graphic_2d
+        # (3411 files) and made a single component take longer than the other 53.
+        self.functions_by_file_name = {}
         for fn in self.functions:
             owner = fn.owner.rsplit("::", 1)[-1] if fn.owner else ""
             self.functions_by_owner_name.setdefault((owner, fn.name), []).append(fn)
+            self.functions_by_file_name.setdefault((fn.file, fn.name), []).append(fn)
 
     def bounded(self, states):
         # Keep a conservative merged state when the disjunction exceeds budget.
@@ -580,10 +608,21 @@ class Interpreter:
             result.append(State(env=env, auth=intersection("auth"),
                                 descriptor=intersection("descriptor"), owner=intersection("owner"),
                                 lower=intersection("lower"), upper=intersection("upper"), size_lower=intersection("size_lower"), caller_class=intersection("caller_class"),
+                                # A view live on every path is still a view; an
+                                # invalidation seen on any path is kept, because
+                                # the joined state must not report a use as safe
+                                # on the strength of the paths that did not
+                                # invalidate.
+                                parcel_views=intersection("parcel_views"),
+                                invalidated_views=tuple(dict.fromkeys(
+                                    item for s in group for item in s.invalidated_views)),
+                                identity_discarded=any(s.identity_discarded for s in group),
                                 service_account=intersection("service_account"),
                                 identity_issues=tuple(issue for s in group for issue in s.identity_issues),
                                 descriptor_issues=tuple(dict.fromkeys(
                                     issue for s in group for issue in s.descriptor_issues)),
+                                auth_issues=tuple(dict.fromkeys(
+                                    issue for s in group for issue in s.auth_issues)),
                                 reset=any(s.reset for s in group), flow=flow,
                                 trace=((0, "conservative path join"),)))
         return result
@@ -636,8 +675,8 @@ class Interpreter:
         if "." in name or (receiver is not None and receiver != "this"):
             return None
         prefix = name.rsplit("::", 1)[0] if "::" in name else fn.owner
-        matches = [f for f in self.functions if f.file == fn.file
-                   and f.name == terminal(name) and f.owner == prefix]
+        matches = [f for f in self.functions_by_file_name.get((fn.file, terminal(name)), ())
+                   if f.owner == prefix]
         return matches[0] if len(matches) == 1 else None
 
     def delegated(self, callee):
@@ -1041,11 +1080,24 @@ class Interpreter:
                 self.emit("AUTH-04", "ipc.auth.guard-coverage", fn, node, state,
                           "Sensitive modeled call " + name + " has no matched caller authorization on "
                           "this path, but the dispatcher performs an authorization call before dispatch; "
-                          "its dominance over this transaction is not established.", call=name)
+                          "its dominance over this transaction is not established."
+                          + self.auth_note(state), call=name)
             else:
                 self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
-                          "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization.",
+                          "Sensitive modeled call " + name + " has a structured path without a recognized caller authorization."
+                          + self.auth_note(state),
                           call=name)
+        if sensitive and state.reset and state.identity_discarded and state.auth:
+            # A guard established before the identity change authorizes the
+            # original caller; after `ResetCallingIdentity` the operation runs as
+            # the service. The pair is the finding: each half is fine alone, and
+            # together they mean the guard did not dominate the principal the
+            # effect is attributed to.
+            self.emit("AUTH-05", "ipc.auth.flow", fn, node, state,
+                      "Caller identity was reset and the returned identity discarded before "
+                      + name + "; the path retains a guard computed for the original caller, "
+                        "while the operation runs as the service and nothing on this path can "
+                        "restore the caller.", call=name)
         if name in self.policy.caller_class_sensitive_calls and not state.caller_class:
             self.emit("AUTH-03","ipc.auth.caller-class",fn,node,state,
                       "Sensitive token/privacy operation lacks a caller-class/system-application boundary: "+name,
@@ -1170,6 +1222,22 @@ class Interpreter:
                   "determined (" + item[2] + "; " + item[3] + ")" for item in unresolved]
         return ("mismatch" if mismatch else "unresolved"), "Guard seen, not accepted: " + "; ".join(parts) + "."
 
+    def auth_note(self, state):
+        """The unresolved caller-identity comparison on this path, if any.
+
+        A missing-authorization message must not be read as "no guard was
+        written". When the walk saw the caller's identity compared against a
+        symbol the scanned sources never bind, the guard is real but unreadable
+        here; the candidate stays, and the message says which fact is missing.
+        """
+        if not state.auth_issues:
+            return ""
+        return (" Guard seen, not accepted: the caller identity is compared against "
+                + ", ".join(sorted(state.auth_issues))
+                + " on this path, but this analysis does not resolve that symbol to "
+                  "a value (a same-file constant initializer is not modelled here), "
+                  "so the comparison cannot be credited as authorization.")
+
     def relay_guard(self, fn, node, args, helper, state, depth):
         """What a one-hop same-file relay out of an entry lands on.
 
@@ -1247,6 +1315,13 @@ class Interpreter:
             child = node.child_by_field_name("value")
             return self.value(fn, child or (node.named_children[-1] if node.named_children else None), state, depth)
         if node.type in ("identifier", "field_identifier"):
+            for view, why in state.invalidated_views:
+                if view == text:
+                    self.emit("DATA-03", "ipc.parcel.lifecycle", fn, node, state,
+                              "Parcel-backed view " + text + " is read after " + why
+                              + " released or rewound the parcel it points into; on this "
+                                "path the view has no live owner.")
+                    break
             return state.env.get(text, Value("constant", text))
         if node.type in ("number_literal", "true", "false", "null", "nullptr", "string_literal", "concatenated_string"):
             return Value("constant", text)
@@ -1304,6 +1379,20 @@ class Interpreter:
                 self.check_subtractions(fn,node,state,args[0])
             if name in self.policy.owner_calls:
                 return Value("owner", args[0].key if args else receiver)
+            if name in self.policy.parcel_view_calls:
+                rv = state.env.get(receiver, UNKNOWN)
+                if rv.kind == "parcel":
+                    # A view, not a copy: the parcel keeps ownership of the bytes.
+                    return Value("parcel_view", text, receiver)
+            if name in self.policy.parcel_dest_reads and len(args) >= 2:
+                self.parcel_destination_bound(fn, node, state, name, args)
+                rv = state.env.get(receiver, UNKNOWN)
+                if rv.kind == "parcel":
+                    return Value("request", text, "signed")
+            if name in self.policy.parcel_invalidating_calls:
+                rv = state.env.get(receiver, UNKNOWN)
+                if rv.kind == "parcel":
+                    self.invalidate_views(state, receiver, name)
             if name in self.policy.parcel_reads:
                 rv = state.env.get(receiver, UNKNOWN)
                 if rv.kind == "parcel":
@@ -1328,7 +1417,7 @@ class Interpreter:
                     # caller class, not a permission -- `IsPrivilegedCalling` and
                     # `IsAccessTokenCalling` are the two that answer with the
                     # service-role authorization fact their helper summaries derive.
-                    local = [f for f in self.functions if f.file == fn.file and f.name == name]
+                    local = self.functions_by_file_name.get((fn.file, name), [])
                     role = next(((kind, label) for role_name, kind, label
                                  in self.policy.caller_role_guards if role_name == name), None)
                     if role is not None and local:
@@ -1340,6 +1429,10 @@ class Interpreter:
                     elif role is not None and not args:
                         return Value("predicate", predicate=(role[0], role[1], True))
             self.action(fn, node, state, name, args, depth, guard=guard)
+            if name in self.policy.reply_write_calls:
+                rv = state.env.get(receiver, UNKNOWN)
+                if rv.kind == "reply_parcel":
+                    self.reply_flow(fn, node, state, name, args)
             if helper and self.root.name in self.policy.entry_names and not state.descriptor:
                 with self.lookahead():
                     relay = self.relay_guard(fn, node, args, helper, state, depth)
@@ -1400,6 +1493,11 @@ class Interpreter:
                 return Value(kind, text, subject, perm)
             if helper and (depth >= self.policy.max_call_depth or helper in self.active):
                 self.limitations.add("Call depth/recursion budget reached at " + helper.qualified)
+            if name in DISCLOSURE_CALLS:
+                # A disclosure-class call's product is the sensitive value. The
+                # value is only a candidate *source*: whether it reaches a caller
+                # is decided by what the path does with it, not by the call.
+                return Value("sensitive_result", text, name)
             return Value("unknown", text)
         if node.type == "binary_expression":
             left = self.value(fn,node.child_by_field_name("left"),state,depth)
@@ -1436,6 +1534,22 @@ class Interpreter:
                     account = self.account_role(fn, node, left, right, op)
                     if account:
                         return Value("predicate",predicate=("account",account,op=="=="))
+                if op in ("==","!="):
+                    # A caller-identity comparison whose other side the scan does
+                    # not bind to a value. Checked after the reviewed account, so
+                    # a comparison the account model can resolve is not demoted to
+                    # "unknown". The comparison exists, so the guard is not absent;
+                    # the value is unknown, so the guard cannot be credited.
+                    # Recorded rather than silently yielded, because "the helper
+                    # has no guard" and "the helper compares against a constant
+                    # this scan never saw" are different facts.
+                    caller_side = (left.kind == "caller"
+                                   and right.kind == "constant" and right.key.isidentifier())
+                    symbol = right.key if caller_side else (
+                        left.key if right.kind == "caller"
+                        and left.kind == "constant" and left.key.isidentifier() else None)
+                    if symbol:
+                        return Value("predicate",predicate=("auth_unknown",symbol,op=="=="))
                 if left.kind == "request" and right.kind != "request":
                     if op=="<" and right.key=="0":
                         return Value("predicate",predicate=("lower",left.key,False))
@@ -1482,16 +1596,128 @@ class Interpreter:
         if node.type == "sizeof_expression":
             return Value("constant",text)
         if node.type == "assignment_expression":
-            left=fn.text(node.child_by_field_name("left"))
+            left_node=node.child_by_field_name("left")
+            if left_node is not None and left_node.type == "subscript_expression":
+                # The write side indexes the destination just as the read side
+                # does; reading only the right-hand side left an index taken
+                # from the parcel unexamined whenever it was used to store.
+                self.value(fn,left_node,state,depth)
+            left=fn.text(left_node)
             value=self.value(fn,node.child_by_field_name("right"),state,depth)
             self.assign(state,left,value)
             return state.env[left]
-        if node.type in ("subscript_expression","subscript_argument_list"):
+        if node.type == "subscript_expression":
+            base_node = node.child_by_field_name("argument")
+            base = self.value(fn, base_node, state, depth)
+            indices = node.child_by_field_name("indices")
+            if indices is not None:
+                for sub in indices.named_children:
+                    index = self.value(fn, sub, state, depth)
+                    self.parcel_index_bound(fn, node, state, fn.text(base_node), index)
+            return UNKNOWN
+        if node.type == "subscript_argument_list":
             for sub in node.named_children:self.value(fn,sub,state,depth)
             return UNKNOWN
         # Visit nested calls without treating comments or strings as executable.
         for child in node.named_children:self.value(fn,child,state,depth)
         return Value("unknown",text)
+
+    def parcel_index_bound(self, fn, node, state, base, index):
+        """An index read out of the request parcel, used to select from a buffer.
+
+        The criterion is the same one the copy rule uses: the bound has to name
+        the same destination. A bound checked against another array, or against
+        the parcel's size rather than the selected buffer, does not establish that
+        this selection stays inside it. The capacity has to be stated by a
+        declaration in the analysed function; a pointer argument has no capacity
+        in the source, so the question is left open rather than guessed.
+        """
+        if index.kind != "request" or not index.key:
+            return
+        name = terminal(base)
+        capacity = self.capacities.get(name)
+        if capacity is None:
+            return
+        upper = any(key == index.key and bound in (capacity, "sizeof(" + name + ")")
+                    for key, bound in state.upper)
+        nonnegative = index.subject != "signed" or index.key in state.lower
+        if upper and nonnegative:
+            return
+        missing = []
+        if not upper:
+            missing.append("an upper bound against " + name + "'s declared capacity " + capacity)
+        if not nonnegative:
+            missing.append("a non-negative check")
+        self.emit("DATA-02", "ipc.parcel.bounds", fn, node, state,
+                  "Parcel-derived index " + index.key + " selects from " + name
+                  + " with no matched " + " or ".join(missing) + ".")
+
+    def parcel_destination_bound(self, fn, node, state, name, args):
+        """`ReadRawData(destination, size)` with `size` taken out of the request.
+
+        The length is argument 1 of that API, not the memcpy position. It is
+        reported only when the destination's capacity is stated by a declaration
+        here: a caller-supplied pointer carries no capacity the source states, and
+        the parcel's own remaining size is not a capacity of the destination.
+        """
+        destination, length = args[0], args[1]
+        if length.kind != "request" or not length.key:
+            return
+        target = terminal(destination.key)
+        capacity = self.capacities.get(target)
+        if capacity is None:
+            return
+        upper = any(key == length.key and bound in (capacity, "sizeof(" + target + ")")
+                    for key, bound in state.upper)
+        nonnegative = length.subject != "signed" or length.key in state.lower
+        if upper and nonnegative:
+            return
+        missing = []
+        if not upper:
+            missing.append("an upper bound against " + target + "'s declared capacity " + capacity)
+        if not nonnegative:
+            missing.append("a non-negative check")
+        self.emit("DATA-02", "ipc.parcel.write-bounds", fn, node, state,
+                  "Parcel-derived length " + length.key + " is passed to " + name
+                  + " writing into " + target + " with no matched " + " or ".join(missing) + ".")
+
+    def invalidate_views(self, state, receiver, call):
+        """Mark parcel-backed views of `receiver` as no longer owned.
+
+        `Reuse`, `RewindRead`, `SetReadPosition` and `Seek` release or move the
+        parcel's buffer; a pointer `ReadBuffer` handed out points into that buffer.
+        Only views whose producing receiver is exactly this parcel are marked: a
+        view from another parcel is a different owner.
+        """
+        marked = []
+        for view in sorted(state.parcel_views):
+            held = state.env.get(view)
+            if held is None or held.kind != "parcel_view" or held.subject != receiver:
+                continue
+            marked.append((view, call + "()"))
+        if marked:
+            state.invalidated_views = tuple(dict.fromkeys(
+                state.invalidated_views + tuple(marked)))
+
+    def reply_flow(self, fn, node, state, name, args):
+        """A modelled sensitive result written into the reply parcel.
+
+        The reply is the caller-visible output of the transaction. A value a
+        disclosure-class call produced, written here on a path with no matched
+        caller authorization, is a data-flow candidate: the mechanism is the
+        missing guard on a path whose product is handed back, not the read alone.
+        """
+        for value in args:
+            if value.kind != "sensitive_result":
+                continue
+            source = value.subject
+            if self.authorized(state, source):
+                continue
+            self.emit("DATA-04", "ipc.data.sensitive-flow", fn, node, state,
+                      "Result of " + source + " is written into the reply parcel by "
+                      + name + " on a path without a matched caller authorization."
+                      + self.auth_note(state))
+            return
 
     def check_subtractions(self,fn,node,state,value):
         if not value.terms or value.terms[0]!="-":return
@@ -1509,9 +1735,19 @@ class Interpreter:
             state.lower=state.lower-{old.key}
             state.upper=frozenset((k,b) for k,b in state.upper if k!=old.key)
             state.owner=state.owner-{old.key}
+            if old.kind=="parcel_view" and value.kind!="parcel_view":
+                state.parcel_views=state.parcel_views-{name}
+        # A fresh value is not the invalidated view it replaced.
+        state.invalidated_views=tuple(item for item in state.invalidated_views if item[0]!=name)
         if value.kind=="request":
             value=replace(value,key=name)
             if value.subject=="unsigned":state.lower=state.lower|{name}
+        if value.kind=="saved_identity":
+            # The returned identity now has a holder, so it can be restored.
+            state.identity_discarded=False
+        if value.kind=="parcel_view" and name.isidentifier():
+            value=replace(value,key=name)
+            state.parcel_views=state.parcel_views|{name}
         state.env[name]=value
 
     def refine(self,fn,node,state,truth,depth):
@@ -1547,6 +1783,12 @@ class Interpreter:
                 issue=(pred[3].subject,pred[3].key)+tuple(pred[3].terms)
                 if issue not in out.descriptor_issues:
                     out.descriptor_issues=out.descriptor_issues+(issue,)
+            if kind=="auth_unknown":
+                # The comparison was seen; the symbol's value was not. It is a
+                # record of an unresolved guard, not a fact on this path.
+                accepted=False
+                if key not in out.auth_issues:
+                    out.auth_issues=out.auth_issues+(key,)
             if truth==when and accepted:
                 attr={"auth":"auth","descriptor":"descriptor","owner":"owner","lower":"lower","upper":"upper","size_lower":"size_lower","caller_class":"caller_class","account":"service_account"}[kind]
                 setattr(out,attr,getattr(out,attr)|{key})
@@ -1650,6 +1892,13 @@ class Interpreter:
                         self.capacities["sizeof("+name+")"]=size
             elif kind=="expression_statement":
                 for expr in node.named_children:
+                    if (expr.type=="call_expression" and terminal(fn.text(expr.child_by_field_name("function")))
+                            == "ResetCallingIdentity"):
+                        # The call stands alone, so its returned identity has no
+                        # holder. `ResetCallingIdentity()` used this way cannot be
+                        # undone, and a guarded operation after it is attributed to
+                        # a principal the guard never checked.
+                        s.identity_discarded=True
                     if expr.type=="binary_expression" and fn.text(expr.child_by_field_name("operator")) in ("&&","||"):
                         # Evaluate both *paths*, never blindly execute both operands.
                         forks=self.refine(fn,expr,s,True,depth)+self.refine(fn,expr,s,False,depth)
@@ -1693,7 +1942,8 @@ class Interpreter:
         for fn, grade, note in self._entry_roots():
             self.root=fn;self.root_grade=grade;self.root_note=note
             self.capacities={};self.active=(fn,)
-            env={p:Value("parcel",p) if p in fn.parcel_params else Value("request",p)
+            env={p:(Value("parcel",p) if p in fn.parcel_params else
+                    Value("reply_parcel",p) if p in fn.reply_params else Value("request",p))
                  for p in fn.params}
             self.block(fn,fn.body,[State(env=env)],0)
         revised=[]
@@ -1719,6 +1969,23 @@ class Interpreter:
                 if refusal.startswith("One-hop callee is not unique"):
                     self.limitations.add(refusal
                                          + " The call site therefore stays a candidate.")
+            # The explicit coverage record for entry discovery: what was bound,
+            # at which grade, and what was refused. Emitted even when there are
+            # no findings, because "no dispatcher was found" and "dispatchers
+            # were found but no handler bound" are different coverage statements
+            # that a candidate count cannot distinguish.
+            coverage = self.index.dispatch_coverage()
+            self.limitations.add(
+                "Entry/dispatch coverage: " + str(coverage["dispatchers"]) + " dispatcher(s) ("
+                + str(coverage["dispatchers_in_stub"]) + " in stub classes, "
+                + str(coverage["dispatchers_guarded_before_dispatch"])
+                + " with a recognizable guard before dispatch), " + str(coverage["bindings"])
+                + " binding(s) by grade " + repr(coverage["by_grade"]) + ", transactions "
+                + repr(coverage["transaction_resolution"]) + ", unresolved dispatch "
+                + repr(coverage["unresolved_dispatch"]) + ", "
+                + str(coverage["conditional_bindings"])
+                + " binding(s) under a preprocessor condition. A binding is not "
+                  "reachability; a refused binding is unknown, not safe.")
         if self.account_notes:
             # One provenance line per service-account comparison, then one line
             # saying what the model does and does not cover. The refusals are

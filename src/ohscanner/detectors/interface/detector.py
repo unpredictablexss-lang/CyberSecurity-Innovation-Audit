@@ -9,7 +9,8 @@ from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 # than repeated here, so a family's id, its rules and its CWE land together and a
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
-assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "CAP-01"}, sorted(_CWE)
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05",
+                     "DATA-01", "DATA-02", "DATA-03", "DATA-04", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -64,7 +65,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.8.1"
+    version = "0.9.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.

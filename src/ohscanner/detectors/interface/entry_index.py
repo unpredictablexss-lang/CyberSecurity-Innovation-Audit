@@ -1006,6 +1006,44 @@ class EntryIndex:
     def dispatcher_guard_roots(self):
         return self._guard_roots
 
+    def dispatch_coverage(self):
+        """Counts describing what entry discovery saw, including what it refused.
+
+        A candidate list alone cannot say whether a quiet component had no
+        dispatcher, had dispatchers whose handlers were never bound, or had
+        bindings whose transaction codes never resolved. These counts are the
+        explicit coverage record for that question: they are emitted beside the
+        findings rather than inferred from them. Every number is a count of
+        records already in `entries`/`dispatchers`; nothing is re-classified here.
+        """
+        entries = self.entries
+        grade = {}
+        for entry in entries:
+            grade[entry.evidence] = grade.get(entry.evidence, 0) + 1
+        unresolved = {}
+        for entry in entries:
+            if entry.evidence != UNRESOLVED_HANDLER:
+                continue
+            reason = entry.transaction_reason or "unstated"
+            if entry.ambiguity:
+                reason = ",".join(sorted(entry.ambiguity))
+            unresolved[reason] = unresolved.get(reason, 0) + 1
+        resolution = {}
+        for entry in entries:
+            resolution[entry.transaction_resolution] = resolution.get(
+                entry.transaction_resolution, 0) + 1
+        return {
+            "dispatchers": len(self.dispatchers),
+            "dispatchers_in_stub": sum(1 for d in self.dispatchers if d.owner_is_stub),
+            "dispatchers_guarded_before_dispatch": sum(
+                1 for d in self.dispatchers if d.guard_before_dispatch),
+            "bindings": len(entries),
+            "by_grade": dict(sorted(grade.items())),
+            "unresolved_dispatch": dict(sorted(unresolved.items())),
+            "transaction_resolution": dict(sorted(resolution.items())),
+            "conditional_bindings": sum(1 for e in entries if e.conditional),
+        }
+
     def root_bindings(self):
         """Handlers admitted as roots from a source-verified dispatch binding.
 

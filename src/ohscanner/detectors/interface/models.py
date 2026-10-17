@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v7"
+MODEL_VERSION = "oh-ipc-2026.10-v8"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -45,6 +45,11 @@ IMPACT_BY_RULE = {
     "ipc.auth.object-owner": "cross_principal_effect",
     "ipc.parcel.copy-range": "out_of_bounds_read",
     "ipc.parcel.position-underflow": "out_of_bounds_read",
+    "ipc.parcel.bounds": "out_of_bounds_read",
+    "ipc.parcel.write-bounds": "out_of_bounds_write",
+    "ipc.parcel.lifecycle": "use_after_release",
+    "ipc.auth.flow": "identity_confusion",
+    "ipc.data.sensitive-flow": "information_disclosure",
     "ipc.capability.export": "capability_exposure",
 }
 
@@ -54,12 +59,16 @@ IMPACT_BY_RULE = {
 IMPACT_CWE = {
     "information_disclosure": "CWE-200",
     "out_of_bounds_read": "CWE-125",
+    "out_of_bounds_write": "CWE-787",
+    "use_after_release": "CWE-416",
     "capability_exposure": "CWE-668",
 }
 
 IMPACT_DESCRIPTION = {
     "information_disclosure": "data the caller is not entitled to read may be returned to it",
     "out_of_bounds_read": "an out-of-bounds read may return adjacent memory to the caller",
+    "out_of_bounds_write": "an out-of-bounds write may corrupt memory adjacent to the destination",
+    "use_after_release": "memory the parcel owns may be read after the parcel released or moved it",
     "capability_exposure": "an object reference, file descriptor or service capability may leave the authorized owner",
     "boundary_bypass": "a caller of one interface may reach behaviour reserved for another",
     "unauthorized_effect": "an operation intended to require authorization may run without it",
@@ -162,7 +171,32 @@ class IpcPolicy:
     trusted_uids: FrozenSet[str] = frozenset({"0", "ROOT_UID", "SYSTEM_UID", "1000"})
     owner_calls: FrozenSet[str] = frozenset({"GetOwnerUid", "GetOwnerUID", "GetResourceOwnerUid"})
     parcel_reads: FrozenSet[str] = frozenset({"ReadInt32", "ReadUint32", "ReadUint8", "ReadInt8", "ReadInt64", "ReadUint64", "ReadUint16", "ReadInt16", "ReadString", "ReadString16", "ReadBuffer", "ReadRawData", "ReadRemoteObject", "ReadFileDescriptor"})
-    copy_calls: FrozenSet[str] = frozenset({"memcpy", "memmove", "memcpy_s", "memmove_s", "ReadRawData", "ReadBuffer"})
+    # Copy calls whose length argument is positional in their own signature.
+    # `ReadRawData` and `ReadBuffer` are deliberately absent: their lengths sit at
+    # different positions, and reading the parcel API by the memcpy shape is what
+    # made a `ReadRawData(dst, len)` length look like argument 2 (the argument
+    # after it) and drop the call entirely. They are modelled below instead.
+    copy_calls: FrozenSet[str] = frozenset({"memcpy", "memmove", "memcpy_s", "memmove_s"})
+    # `ReadRawData(void *data, int32_t size)` copies `size` bytes out of the
+    # parcel into a caller-provided destination; `(destination, size)` is the
+    # whole signature and the size is argument 1.
+    parcel_dest_reads: FrozenSet[str] = frozenset({"ReadRawData"})
+    # `ReadBuffer(size_t length)` returns a pointer into the parcel's own buffer
+    # for `length` bytes. The pointer is a view, not a copy: the parcel stays its
+    # owner, so any later operation that releases or rewinds that buffer leaves
+    # the pointer dangling.
+    parcel_view_calls: FrozenSet[str] = frozenset({"ReadBuffer"})
+    parcel_invalidating_calls: FrozenSet[str] = frozenset({"Reuse", "RewindRead", "SetReadPosition", "Seek"})
+    # Right-hand-side writers of the reply parcel. A modelled sensitive result
+    # handed to one of these is the point where it becomes visible to the caller.
+    reply_write_calls: FrozenSet[str] = frozenset({
+        "WriteInt8", "WriteInt16", "WriteInt32", "WriteInt64",
+        "WriteUint8", "WriteUint16", "WriteUint32", "WriteUint64",
+        "WriteFloat", "WriteDouble", "WriteBool", "WriteChar",
+        "WriteString", "WriteString16", "WriteStringVector", "WriteBuffer",
+        "WriteRawData", "WriteParcelable", "WriteParcelableVector", "WriteByteArray",
+        "WriteRemoteObject", "WriteFileDescriptor", "WriteInterfaceToken", "WriteVector",
+    })
     entry_names: FrozenSet[str] = frozenset({"OnRemoteRequest", "OnRemoteMessageRequest"})
     caller_class_sensitive_calls: FrozenSet[str] = frozenset({"GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords", "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy"})
     # Reviewed caller-role authorization predicates, by exact name: `(name, kind,
