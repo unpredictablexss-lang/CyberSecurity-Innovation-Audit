@@ -31,9 +31,9 @@ The rules are deliberately narrow and stay candidates:
     ``eval``/``new Function`` with a non-literal argument.
 
 What this module does not do, and says so in every result: no CFG, no
-cross-function taint, no decorator/struct modelling, no manifest parsing, no
-page-origin determination, and no claim that a candidate is reachable or
-exploitable.
+cross-function taint beyond one same-file hop between function declarations,
+no decorator/struct modelling, no manifest parsing, no page-origin
+determination, and no claim that a candidate is reachable or exploitable.
 """
 from dataclasses import dataclass
 import bisect
@@ -286,6 +286,69 @@ def _exported_ability_bases(node, source: bytes) -> List[str]:
     return _ABILITY_BASES.findall(_text(heritage, source))
 
 
+def _split_top_level(text: str) -> List[str]:
+    """Split on commas that are not inside brackets or string literals."""
+    parts: List[str] = []
+    depth = 0
+    quote = ""
+    current = ""
+    for character in text:
+        if quote:
+            current += character
+            if character == quote:
+                quote = ""
+            continue
+        if character in "'\"`":
+            quote = character
+            current += character
+        elif character in "([{<":
+            depth += 1
+            current += character
+        elif character in ")]}>":
+            depth = max(0, depth - 1)
+            current += character
+        elif character == "," and depth == 0:
+            parts.append(current)
+            current = ""
+        else:
+            current += character
+    if current.strip():
+        parts.append(current)
+    return [part.strip() for part in parts if part.strip()]
+
+
+def _parameter_names(parameters, source: bytes) -> List[str]:
+    text = _text(parameters, source).strip()
+    if text.startswith("(") and text.endswith(")"):
+        text = text[1:-1]
+    names: List[str] = []
+    for part in _split_top_level(text):
+        match = re.match(r"\s*(?:\.\.\.)?\s*([A-Za-z_$][\w$]*)", part)
+        if match:
+            names.append(match.group(1))
+    return names
+
+
+def _function_index(root, source: bytes) -> Dict[str, Tuple[object, List[str]]]:
+    """Same-file function declarations, one hop only.
+
+    Methods and arrow functions are not indexed: their names are less reliable
+    without a symbol table, and the first bounded version would rather miss
+    than guess.
+    """
+    index: Dict[str, Tuple[object, List[str]]] = {}
+    for node in _walk(root):
+        if node.type != "function_declaration":
+            continue
+        name = node.child_by_field_name("name")
+        parameters = node.child_by_field_name("parameters")
+        if name is None or parameters is None:
+            continue
+        index[_text(name, source).strip()] = (
+            node, _parameter_names(parameters, source))
+    return index
+
+
 def _class_method_names(node, source: bytes) -> List[str]:
     names: List[str] = []
     for item in _walk(node):
@@ -380,6 +443,51 @@ def _analyze_file(unit: SourceUnit, frontend_file: FrontendFile,
                         + " with no path predicate in the same function. "
                         "Caller reachability and API-level sanitisation are "
                         "obligations.", "CWE-22"))
+
+    # One-hop same-file propagation: a helper parameter receives a
+    # want.parameters-derived value at a call site, and the helper passes that
+    # parameter to a path sink. Deeper chains and methods are out of scope.
+    index = _function_index(root, source)
+    tainted_parameters: Dict[str, set] = {name: set() for name in index}
+    for call in calls:
+        callee = _callee_text(call, source)
+        if callee not in index:
+            continue
+        _target, parameter_names = index[callee]
+        arguments_node = call.child_by_field_name("arguments")
+        if arguments_node is None:
+            continue
+        caller_names = _tainted_names(_scope_text(call, source))
+        for position, argument in enumerate(arguments_node.named_children):
+            if position >= len(parameter_names):
+                break
+            argument_text = _text(argument, source)
+            if _inline_source(argument_text) or _mentions(argument_text, caller_names):
+                tainted_parameters[callee].add(parameter_names[position])
+    for callee, (function_node, parameter_names) in index.items():
+        tainted = tainted_parameters[callee]
+        if not tainted:
+            continue
+        for call in _walk(function_node):
+            if call.type != "call_expression":
+                continue
+            sink = _callee_text(call, source)
+            if not any(sink.endswith(item) for item in _PATH_SINKS):
+                continue
+            arguments_text = _arguments_text(call, source)
+            used = [name for name in parameter_names if name in tainted
+                    and re.search(r"\b" + re.escape(name) + r"\b", arguments_text)]
+            if not used:
+                continue
+            if _path_guarded(_scope_text(call, source), used):
+                continue
+            observation_list.append(Observation(
+                "ohscanner.js.path_taint", line_at(call.start_byte),
+                sink + " <- " + callee,
+                "A same-file caller passes a want.parameters-derived value into "
+                + callee + "(); parameter " + ", ".join(used) + " reaches "
+                + sink + " with no path predicate in the callee. One hop only; "
+                "the call site's reachability is an obligation.", "CWE-22"))
 
     # Exported Ability/Extension classes reading want.parameters in a lifecycle
     # method and reaching a path sink.
@@ -482,8 +590,10 @@ class ArkTsJsInterfaceDetector:
             "grammar; a partial parse is reported for every such file and no "
             "component/decorator semantics are claimed from it. Only recovered "
             "call/class/property structure is read.",
-            "No CFG, cross-function taint, manifest (module.json5) parsing, "
-            "installed-package or page-origin facts. Guard detection is a "
+            "No CFG; taint crosses one same-file function hop at most "
+            "(function declarations only, not methods or arrow functions). "
+            "No manifest (module.json5) parsing, installed-package or "
+            "page-origin facts. Guard detection is a "
             "same-function `if (...)` predicate containing the tainted name; it "
             "is a heuristic boundary on the candidate, not dominance proof.",
             "Ability surface: " + str(counters["ability_classes"])

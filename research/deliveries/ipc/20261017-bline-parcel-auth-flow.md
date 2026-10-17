@@ -338,7 +338,7 @@ B-2 要求"跨服务代理链保留身份变更点"。0.9.1 的实现是有界�
 | B-2 事实模型 + guard 支配 | 完成 | AUTH-02/03/04/05 与 DATA-04；成对样本（有 guard / guard 在错误分支 / guard 不支配 / 客户端调用受服务端保护）见 `tests/fixtures/ipc/` |
 | B-2 跨服务代理链身份变更点 | 完成（有界） | §10.4；54 组件实测 10 次边界，0 次转发调用者 |
 | B-2 敏感 source → 不可信可见输出 | 完成（有界） | DATA-04：披露类结果 → reply 写入；文件/日志/共享内存 sink 未建模（§8.4） |
-| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py`（complete/partial/unsupported 三态）+ 4 条规则 + `tests/test_ipc_arkts_js.py`（15 条）；真实语料 2045 文件全量解析、0 候选（`research/evidence/interface/ipc/b3_arkts_real_20261017/`）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
+| B-3 ArkTS/ETS + JS/TS 前端 | 完成首批（有界） | §13：`arkts_js.py`（complete/partial/unsupported 三态）+ 4 条规则 + `tests/test_ipc_arkts_js.py`（18 条）；真实语料 2045 文件全量解析、0 候选（`research/evidence/interface/ipc/b3_arkts_real_20261017/`）。Catalog 注册与 `requirements*.txt` 依赖仍属 owner；未解析 module.json5 |
 
 "完成"指该条的实现与控制存在于本提交，并且有可复核的运行结果；它不指这些规则在真实组件里
 找到了漏洞。
@@ -399,18 +399,19 @@ AUTH-01（relay/confused deputy），**不是** Parcel 族（DATA-01..03）的�
 |---|---|---|
 | `ohscanner.oh.arkts.component_exposure` | 导出的 `UIAbility`/`ExtensionAbility` 生命周期方法把 `want.parameters` 派生值送进路径 API | 同函数/类内 `if (...startsWith/canonicalPath...)` 命中则不报；`module.json5` 未解析，finding 带 `manifest_export_state` 义务 |
 | `ohscanner.oh.arkts.webview_bridge` | `registerJavaScriptProxy` / `javaScriptProxy` 注册 | 同函数内 URL/origin 比较则不报；带 `page_origin` 义务 |
-| `ohscanner.js.path_taint` | `want.parameters` 派生值到达 `fileIo.*`/`fs.*` 路径 sink | 同函数路径谓词则不报 |
+| `ohscanner.js.path_taint` | `want.parameters` 派生值到达 `fileIo.*`/`fs.*` 路径 sink；含一层同文件函数声明调用（实参污染 → helper 形参 → sink） | 同函数（或 helper 内针对该形参）路径谓词则不报 |
 | `ohscanner.js.dangerous_eval` | `eval(x)`、`new Function(x)` 且实参非字符串字面量 | 字面量实参不报 |
 
 覆盖数字写进每次运行的 limitation（前端文件数/三态、调用点、bridge 注册与守卫数、路径 sink
 与守卫数、ability 类数），与 IPC 检测器的计数口径一致。
 
-**边界**：无 CFG、无跨函数 taint、不解析 manifest、不判定页面来源；守卫判定是"同函数 `if`
-条件里出现被污染名字 + 路径谓词"的启发式，不是支配证明。`requirements*.txt` 与
+**边界**：无 CFG；taint 最多跨一层同文件函数声明（不含方法/箭头函数），不解析 manifest、
+不判定页面来源；守卫判定是"同函数 `if` 条件里出现被污染名字 + 路径谓词"的启发式，不是
+支配证明。跨函数形态的候选带 "`sink <- helper`" 符号，调用点可达性仍是义务。`requirements*.txt` 与
 `catalog.py` 属 owner 共享面，本提交没有改动它们：语法包只在本地 venv 安装，检测器也尚未
 注册进 Catalog；接入前 CI 不会自动获得这两个依赖。
 
-控制：`tests/test_ipc_arkts_js.py` 15 条，包含每个规则的正例与抑制例（含
+控制：`tests/test_ipc_arkts_js.py` 18 条，包含每个规则的正例与抑制例（含
 `want.parameters?.x` 直接作实参的内联形态）、`partial` 三态报告，以及"非 Ability 类不产生
 component_exposure 但路径规则仍触发"的分离控制。
 

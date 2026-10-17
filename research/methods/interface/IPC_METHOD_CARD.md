@@ -233,7 +233,8 @@ tree-sitter-javascript / tree-sitter-typescript 解析 `.js`/`.ts`/`.ets`，硬�
 `complete` / `partial` / `unsupported` 三态。ArkTS `struct` 与装饰器不在 TS 语法内，
 `.ets` 通常报 `partial`，结果里明确写"不声称 component/decorator 语义"。四条规则
 （component_exposure、webview_bridge、path_taint、dangerous_eval）都有正例与同函数守卫
-抑制例，含 `want.parameters?.x` 直接作实参的内联形态；`tests/test_ipc_arkts_js.py` 15 条。
+抑制例，含 `want.parameters?.x` 直接作实参的内联形态与一层同文件 helper 传播
+（`sink <- helper`）；`tests/test_ipc_arkts_js.py` 18 条。
 真实文件上还修了两个绑定级问题（`dfb187a`）：行号改用字节偏移，Parser 每次新建。
 Catalog 注册与 `requirements*.txt` 依赖属 owner 共享面，未改；语法包只在本地 venv 安装。
 
@@ -245,7 +246,7 @@ Catalog 注册与 `requirements*.txt` 依赖属 owner 共享面，未改；语�
 sink），记录在 `research/evidence/interface/ipc/b3_arkts_real_20261017/`。这是覆盖
 结论，不是安全结论。
 
-**口径。** 630 条测试通过（skipped 4），lane 范围检查 `violations: []`。
+**口径。** 633 条测试通过（skipped 4），lane 范围检查 `violations: []`。
 
 ---
 

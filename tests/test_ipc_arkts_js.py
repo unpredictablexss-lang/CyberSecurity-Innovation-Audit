@@ -109,6 +109,32 @@ class PathTaintTests(unittest.TestCase):
         result = run(("a.js", text))
         self.assertIn("ohscanner.js.path_taint", rules(result))
 
+    def test_a_one_hop_helper_receiving_want_parameters_is_a_candidate(self):
+        text = ("function openPath(path) {\n"
+                "  return fileIo.openSync(path);\n}\n"
+                "function handle(want) {\n"
+                "  return openPath(want.parameters.path);\n}\n")
+        result = run(("a.js", text))
+        self.assertIn("ohscanner.js.path_taint", rules(result))
+        self.assertIn("<- openPath", result.findings[0].symbol)
+
+    def test_a_helper_called_with_a_literal_is_not_a_candidate(self):
+        text = ("function openPath(path) {\n"
+                "  return fileIo.openSync(path);\n}\n"
+                "function handle() {\n"
+                "  return openPath('/data/storage/el2/base/a.txt');\n}\n")
+        result = run(("a.js", text))
+        self.assertNotIn("ohscanner.js.path_taint", rules(result))
+
+    def test_a_path_predicate_inside_the_helper_suppresses_it(self):
+        text = ("function openPath(path) {\n"
+                "  if (!path.startsWith('/data/storage/el2/base/')) { return; }\n"
+                "  return fileIo.openSync(path);\n}\n"
+                "function handle(want) {\n"
+                "  return openPath(want.parameters.path);\n}\n")
+        result = run(("a.js", text))
+        self.assertNotIn("ohscanner.js.path_taint", rules(result))
+
     def test_a_same_function_path_predicate_suppresses_the_candidate(self):
         text = ("function openFromWant(want) {\n"
                 "  const path = want.parameters.path;\n"
