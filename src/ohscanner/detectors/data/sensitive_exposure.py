@@ -47,7 +47,7 @@ def walk(n):
         yield from walk(c)
 
 
-def formats(value):
+def formats(value, default_privacy='private'):
     """(privacy, consumed operand indexes, conversion); unsupported => ValueError."""
     out, pos, arg = [], 0, 0
     pattern = re.compile(r'%(?:\{(public|private)\})?[-+ #0]*(\*|\d+)?(?:\.(\*|\d+))?(?:hh|ll|h|l|j|z|t|L)?([diuoxXfFeEgGaAcsp])')
@@ -66,7 +66,7 @@ def formats(value):
             if star == '*':
                 indexes.append(arg); arg += 1
         indexes.append(arg); arg += 1
-        out.append((match.group(1) or 'private', tuple(indexes), match.group(4)))
+        out.append((match.group(1) or default_privacy, tuple(indexes), match.group(4)))
         pos = match.end()
     return out, arg
 
@@ -79,6 +79,9 @@ class SensitiveExposureDetector:
 
     def __init__(self, model=DEFAULT_SOURCE):
         self.model = model
+
+    def make_flow(self, unit):
+        return LocalFlow(unit, self.model)
 
     def detect(self, context, units):
         if (context.request.repository, context.request.commit) != (self.model.repository, self.model.commit):
@@ -96,7 +99,7 @@ class SensitiveExposureDetector:
                 outcomes.append((u.path, 'failed')); continue
             if u.parse_status == 'not_run' or not outline:
                 outcomes.append((u.path, 'not_analyzed')); continue
-            analysis = LocalFlow(u, self.model)
+            analysis = self.make_flow(u)
             rows = analysis.run()
             findings.extend(rows)
             partial = analysis.gaps or u.parse_status != 'complete' or outline.get('parse_status') != 'complete'
@@ -250,7 +253,7 @@ class LocalFlow:
         if len(args)<=sink.format_index:
             self.gaps.add('missing log format');return
         try:
-            slots,count=formats(self.literal(args[sink.format_index]))
+            slots,count=formats(self.literal(args[sink.format_index]), 'private' if sink.default_private else 'public')
             operands=args[sink.format_index+1:]
             if count!=len(operands):raise ValueError('format/argument mismatch')
         except (ValueError,SyntaxError):
