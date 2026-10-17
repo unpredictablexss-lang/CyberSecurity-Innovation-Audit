@@ -1,0 +1,36 @@
+# D: sensitive-material log exposure, v0.1.0 (review prototype)
+
+Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
+`data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
+registration are pending. Nothing is registered in the panel or global catalog.
+
+Entry: `SensitiveExposureDetector(model=DEFAULT_SOURCE).detect(context, units)`.
+Requires the existing `ast` fact. Existing Runner/ToolRunResult v2 and obligations
+carry source SHA and trace; no new global schema/CLI/network/scanner invocation.
+
+Exact default repository/commit is in models.py. Other versions are blocked until
+reviewed models are supplied. Fixtures explicitly inject a synthetic model.
+
+Algorithm: detailed Tree-sitter statement walk -> typed material fields or reviewed
+callback/output argument -> local assignments/copies/formatting -> explicitly
+public HiLog operand. Per-operand format mapping handles %% and * width/precision;
+unsupported formats become partial. No keyword password/token matching. Buffer
+contents are not written to diagnostics; only symbol/location dependency steps.
+Unknown wrappers retain tentative dependencies and are not assumed sanitizers.
+Branch joins are may-flow, never path proof. Type binding, initialization, API
+identity, return status, aliases, log runtime configuration/readers and impact
+remain unknown obligations. Detailed expression facts need owner frontend review.
+
+Use the project Python environment with requirements.txt. Local test command:
+`python -m unittest tests.detectors.data.test_sensitive_exposure -v`.
+
+Offline real-source experiment (explicitly reviewed programmatic registry):
+`python -m research.data_sensitive.replay --repo-dir /path/to/pinned/dsoftbus.git --output-dir outputs/reports/d-sensitive`.
+The selected paths and hashes are fixed in research/data_sensitive/source_manifest.json.
+No third-party source is bundled. Obtain the official Git objects separately and
+verify the exact commit; do not substitute an unrelated latest checkout.
+
+D_REVIEW.md, D_LIMITATIONS.md and method_card.md under research/data_sensitive
+explain actual results and pending acceptance. No verified real vulnerability,
+independent holdout or Precision/Recall is claimed. Do not deploy as complete
+whole-component taint analysis. No changes to A/B/C detectors or common platform.
