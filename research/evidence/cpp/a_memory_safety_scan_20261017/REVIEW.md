@@ -11,10 +11,10 @@
 
 ## Historical capability replay
 
-5 个历史样本中 3 个对当前 A 规则适用：vulnerable 3/3 `possible_hit`，fixed 2/3 `miss`、1/3 保留 residual candidate；另 2 个 kernel race/user-kernel case 明确 `not_applicable`。这个小集合不是产品 Precision/Recall 或全局 Recall。
+6 个历史样本中 4 个对当前 A 规则适用：vulnerable 4/4 `possible_hit`，fixed 3/4 `miss`、1/4 保留 residual candidate；另 2 个 kernel race/user-kernel case 明确 `not_applicable`。这个小集合不是产品 Precision/Recall 或全局 Recall。
 
 - CVE-2025-26690 null dereference：vulnerable 5 -> fixed 0。
-- CVE-2025-23420 sort OOB：vulnerable 5 -> fixed 0。
+- CVE-2025-0587 narrowing index：vulnerable 1 -> fixed 0。`n- CVE-2025-23420 sort OOB：vulnerable 5 -> fixed 0。
 - c_utils historical UAF：vulnerable 2 -> fixed residual 3，说明 shared_ptr mixed synchronization 仍是 unknown/误报边界。
 
 ## Old/new comparison

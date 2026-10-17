@@ -219,6 +219,73 @@
       ]
     },
     {
+      "sample_id": "arkcompiler_ets_runtime-atomic-index-overflow-2025-03",
+      "cve": "CVE-2025-0587",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "source_repo_path": "/mnt/e/网安/_oh_targets/arkcompiler_ets_runtime",
+      "vulnerable": {
+        "commit": "cae11f121c030a90ba41d8e4d866f91292f25892",
+        "git_tree": "61ff01d9a06b4186125a04e2b790e07640f57198",
+        "files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob_oid": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+            "bytes": 7176,
+            "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+          }
+        ]
+      },
+      "fixed": {
+        "commit": "5aa9c035e98911ec7ed28065a2138c2709792a42",
+        "git_tree": "05ac3902979e37ae08efa2d1e3ed32472a69d0cc",
+        "files": [
+          {
+            "path": "ecmascript/base/atomic_helper.cpp",
+            "blob_oid": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+            "bytes": 6995,
+            "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+          }
+        ]
+      },
+      "patch_sha256": "de240a4fe965f89985f1561b3718c78299a09e0007b9305a328746ee00143e44",
+      "detector_id": "ohscanner.cpp.integer_bounds",
+      "expected": "possible_hit",
+      "observations": [
+        {
+          "revision": "vulnerable",
+          "status": "possible_hit",
+          "raw_status": "possible_hit",
+          "candidate_count": 1,
+          "detector_status": "completed",
+          "findings": [
+            {
+              "file": "ecmascript/base/atomic_helper.cpp",
+              "line": 71,
+              "column": 5,
+              "rule_id": "ohcpp-integer-bounds-narrow-index-candidate-003",
+              "candidate_cwe": "CWE-190",
+              "symbol": "index",
+              "message": "Candidate only: `index` narrows a ToIndex/double result to `int32_t` before a bounds check and offset multiplication; wrap/truncation may bypass the check. Exact runtime range and product reachability remain unknown.",
+              "source_sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+            }
+          ]
+        },
+        {
+          "revision": "fixed",
+          "status": "miss",
+          "raw_status": "miss",
+          "candidate_count": 0,
+          "detector_status": "completed",
+          "findings": []
+        }
+      ],
+      "limitations": [
+        "Historical replay is a capability signal, not a new vulnerability claim.",
+        "A possible_hit is not a confirmed product vulnerability; a miss is not a global detector recall claim.",
+        "Kernel race and user/kernel boundary cases are not_applicable to the current bounds/integer lexical rules."
+      ]
+    },
+    {
       "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
       "cve": "CVE-2025-23420",
       "repository": "openharmony/arkcompiler_ets_runtime",

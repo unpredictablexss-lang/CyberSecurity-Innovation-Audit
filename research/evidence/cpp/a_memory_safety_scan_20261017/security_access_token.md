@@ -8,7 +8,7 @@
 - Snapshot SHA-256: `ed782acd6668c44b92c66e1dfa27e2641c8abfb5bc2bd4d5af4a274377332a8d`
 - Scope manifest SHA-256: `efe84b4b11aa36a4bf072438acd1171dd6769be1877fdfd1f8f4897b66cffe4e`
 - Selected files/bytes: 550/3484891
-- Wall seconds: 6.022792
+- Wall seconds: 5.709071
 - Candidate findings/groups: 4/2
 
 ## Detector runs
@@ -17,7 +17,7 @@
 
 - No candidate emitted in the analyzed lexical scope.
 
-### `ohscanner.cpp.integer_bounds` 0.1.0 (blocked)
+### `ohscanner.cpp.integer_bounds` 0.2.0 (blocked)
 
 - `services/tokensyncmanager/src/remote/soft_bus_channel.cpp:210:26` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: array allocation size `len + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation.
 - `services/tokensyncmanager/src/remote/soft_bus_channel.cpp:340:26` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: array allocation size `len + 1` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation.

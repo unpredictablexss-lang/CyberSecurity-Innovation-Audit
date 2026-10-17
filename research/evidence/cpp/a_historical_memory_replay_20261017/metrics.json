@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "eligible_historical_cases": 3,
-  "vulnerable_possible_hit": 3,
-  "fixed_miss": 2,
+  "eligible_historical_cases": 4,
+  "vulnerable_possible_hit": 4,
+  "fixed_miss": 3,
   "fixed_residual_candidate": 1,
   "not_applicable_cases": 2,
   "precision_recall_eligible": false,

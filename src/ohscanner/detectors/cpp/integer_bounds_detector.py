@@ -30,7 +30,8 @@ from .memory_safety import (
 
 RULE_ARITHMETIC = "ohcpp-integer-bounds-arithmetic-candidate-001"
 RULE_TRUNCATION = "ohcpp-integer-bounds-truncation-candidate-002"
-RULE_VERSION = "0.1.0"
+RULE_NARROW_INDEX = "ohcpp-integer-bounds-narrow-index-candidate-003"
+RULE_VERSION = "0.2.0"
 RULE_LINEAGE_ID = "A-INT-01:ohcpp-integer-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -280,6 +281,31 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 cwe, consequence = "CWE-191", "CWE-787"
             findings.append(_finding(
                 unit, unit.text, match.start(), RULE_ARITHMETIC, name, message, cwe, consequence,
+            ))
+
+    for match in re.finditer(
+        r"\bint32_t\s+(?P<name>[A-Za-z_]\w*)\s*=\s*[^;]*?DoubleInRangeInt32\s*\(",
+        masked,
+    ):
+        name = match.group("name")
+        function = function_at(functions, match.start())
+        if function is None:
+            continue
+        body = function.text
+        guarded_compare = re.search(r"\bif\s*\([^)]*\b" + re.escape(name) + r"\s*>=\s*[A-Za-z_]\w*[^)]*\)", body)
+        arithmetic_use = re.search(r"\b" + re.escape(name) + r"\b(?:\s*\)|\s*\*)?\s*\*|static_cast<[^>]+>\(\s*" + re.escape(name) + r"\s*\)\s*\*", body)
+        if guarded_compare and arithmetic_use:
+            findings.append(_finding(
+                unit,
+                unit.text,
+                match.start(),
+                RULE_NARROW_INDEX,
+                name,
+                f"Candidate only: `{name}` narrows a ToIndex/double result to `int32_t` before a bounds check "
+                "and offset multiplication; wrap/truncation may bypass the check. Exact runtime range and "
+                "product reachability remain unknown.",
+                "CWE-190",
+                "CWE-787",
             ))
 
     for match in re.finditer(r"\b(?:malloc|calloc)\s*\(", masked):

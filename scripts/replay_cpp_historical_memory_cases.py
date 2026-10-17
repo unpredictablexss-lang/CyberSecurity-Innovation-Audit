@@ -49,6 +49,16 @@ CASES = (
         "expected": "possible_hit",
     },
     {
+        "sample_id": "arkcompiler_ets_runtime-atomic-index-overflow-2025-03",
+        "cve": "CVE-2025-0587",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "repo_path": "/mnt/e/网安/_oh_targets/arkcompiler_ets_runtime",
+        "vulnerable_commit": "cae11f121c030a90ba41d8e4d866f91292f25892",
+        "fixed_commit": "5aa9c035e98911ec7ed28065a2138c2709792a42",
+        "affected_files": ("ecmascript/base/atomic_helper.cpp",),
+        "detector": "ohscanner.cpp.integer_bounds",
+        "expected": "possible_hit",
+    },    {
         "sample_id": "arkcompiler_ets_runtime-jsarray-sort-oob-2025-02",
         "cve": "CVE-2025-23420",
         "repository": "openharmony/arkcompiler_ets_runtime",

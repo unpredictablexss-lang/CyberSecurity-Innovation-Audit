@@ -3,7 +3,7 @@
 这是队友 A 的建议，不是已合入的公共契约变更。当前 Catalog 仍由公共负责人维护。
 
 - `ohscanner.cpp.bounds` -> `src.ohscanner.detectors.cpp.bounds_detector.CppBoundsDetector`, version `0.2.0`, kind `research_candidate`.
-- `ohscanner.cpp.integer_bounds` -> `src.ohscanner.detectors.cpp.integer_bounds_detector.CppIntegerBoundsDetector`, version `0.1.0`, kind `research_candidate`.
+- `ohscanner.cpp.integer_bounds` -> `src.ohscanner.detectors.cpp.integer_bounds_detector.CppIntegerBoundsDetector`, version `0.2.0`, kind `research_candidate`.
 - 必须保持 source-bound schema v2、legacy v1 只读兼容、candidate/unassessed 默认状态。
 - 必须新增正/固定/安全/非相关/unknown 回归后再由负责人审查；不要把研究脚本的候选数当成漏洞数。
 

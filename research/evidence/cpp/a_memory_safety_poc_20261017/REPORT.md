@@ -33,6 +33,11 @@ The isolated C++ harness models the published root cause: comparator execution m
 
 This is a runnable mechanism PoC and fix/revalidation control. It is not a direct ArkCompiler product build or a newly discovered vulnerability. The exact vulnerable/fixed upstream source, commit/tree/blob/source hashes and detector replay (5 direct element-access candidates -> 0 after fix) are retained in the historical replay package.
 
+## CVE-2025-0587 narrowing-index mechanism PoC
+
+The exact historical vulnerable/fixed `atomic_helper.cpp` blobs are bound in the historical replay package. The isolated harness converts a large ToIndex-like double to `int32_t`, bypasses `index >= length`, computes a wrapped offset and completes unexpectedly. The fixed harness uses `uint64_t`, rejects the large index and exits 0.
+
+The vulnerable harness does not crash under this allocator/optimizer combination, so it is reported as a deterministic bounds-check-bypass control, not an ASan crash or product exploit.
 ## A-RES-01 resource lifetime PoC
 
 - `resource_double_free_vulnerable.cpp`: exit `1`，ASan `attempting double-free`，第二次 `free(p)` 精确触发。

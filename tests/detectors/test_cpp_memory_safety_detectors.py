@@ -212,6 +212,23 @@ void unknown_macro() {
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
 
+    def test_narrow_integer_index_before_bounds_check_is_candidate(self) -> None:
+        source = unit("positive/narrow_atomic_index.cpp", """
+#include <cstdint>
+double DoubleInRangeInt32(double value);
+unsigned int GetArrayLength();
+unsigned int GetSizeFromType();
+void Validate(unsigned int offset, double request) {
+    int32_t length = static_cast<int32_t>(GetArrayLength());
+    int32_t index = DoubleInRangeInt32(request);
+    if (index >= length) return;
+    unsigned int elementSize = GetSizeFromType();
+    unsigned int allOffset = static_cast<uint32_t>(index) * elementSize + offset;
+    (void)allOffset;
+}
+""")
+        run = self.detector.detect(context_for(source), (source,))
+        self.assertIn("ohcpp-integer-bounds-narrow-index-candidate-003", {item.rule_id for item in run.findings})
     def test_reviewed_false_positive_shapes_are_quiet(self) -> None:
         source = unit("fixed/reviewed_fp_shapes.cpp", """
 #include <cstdlib>

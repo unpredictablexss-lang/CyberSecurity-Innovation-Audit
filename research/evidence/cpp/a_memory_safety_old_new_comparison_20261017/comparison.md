@@ -6,7 +6,7 @@ Old commit: `ea7d13a69852d5e639e090671b040f7dcd32eebc`
 |---|---:|---:|---:|
 | Candidates | 16 | 33 | 17 |
 | Lexical groups | 10 | 22 | 12 |
-| Wall s | 52.078 | 66.487 | 14.409 |
+| Wall s | 52.078 | 67.107 | 15.030 |
 
 ## Interpretation
 

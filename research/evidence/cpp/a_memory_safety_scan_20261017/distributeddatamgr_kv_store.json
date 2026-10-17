@@ -2946,7 +2946,7 @@
     },
     {
       "detector_id": "ohscanner.cpp.integer_bounds",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "status": "blocked",
       "analyzed_files": [
         "databaseutils/src/acl.cpp",
@@ -4097,7 +4097,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "32629d2f86e9dfae3960994eef0c29e97b77b159f5521b2e9d904d628c2de620",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4150,7 +4150,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "3559183047a4f136070bc1d54b3863a607f1af8b6e983992a621db452e7daa64",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4203,7 +4203,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "c8c3f29ab744785e7cbbef7d8bdc3093c258176b13698c89c9e16aeeaebb1cf7",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4256,7 +4256,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "12364ec614c1b3ee4216dedb149484f70f6baf3b3969e9ffc2f88a8537b334c8",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4309,7 +4309,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "fc6a2af105883cf385b105a912ae341c7d567042ed9476647894a92dd7ab63ce",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4362,7 +4362,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "fc6a2af105883cf385b105a912ae341c7d567042ed9476647894a92dd7ab63ce",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4415,7 +4415,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "d5a2c39d9e852ba78cd5813f8218177fc731a8f2b0d32124c2f62128396e8e13",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -4468,7 +4468,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "989ffe1556d065ad2d89bf7d4f7053bbdedc9238be6b2d259d5e10f0e4a4a410",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -8258,10 +8258,10 @@
   "eligible_for_metrics": false,
   "precision_recall": null,
   "performance": {
-    "wall_seconds": 15.957362849999996,
+    "wall_seconds": 16.13479853199999,
     "selected_source_files": 1446,
     "selected_source_bytes": 11765303,
-    "process_peak_rss_kib": 196780
+    "process_peak_rss_kib": 196756
   },
   "environment": {
     "python": "3.10.12",

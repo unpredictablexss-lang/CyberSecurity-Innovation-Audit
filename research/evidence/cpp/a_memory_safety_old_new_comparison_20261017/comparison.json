@@ -19,10 +19,10 @@
     "candidate_groups": 22,
     "validated_vulnerability": 0,
     "eligible_for_metrics": false,
-    "wall_seconds": 66.48711383,
+    "wall_seconds": 67.10733378500001,
     "selected_source_files": 4983,
     "selected_source_bytes": 51551827,
-    "process_peak_rss_kib": 282736
+    "process_peak_rss_kib": 282972
   },
   "components": [
     {

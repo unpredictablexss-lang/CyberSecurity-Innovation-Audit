@@ -14,8 +14,8 @@
     },
     {
       "path": "src/ohscanner/detectors/cpp/integer_bounds_detector.py",
-      "bytes": 16143,
-      "sha256": "ee3efaf917726a7e32aa7b6d6059b2b95b9b03c60c8701517778d07394701500"
+      "bytes": 17350,
+      "sha256": "f3092a4e5bfcc2cbc8be1a2294219b5685af95bd02e4f2c4859a4185d7ab5f0b"
     },
     {
       "path": "src/ohscanner/detectors/cpp/resource_lifetime_detector.py",
@@ -34,8 +34,8 @@
     },
     {
       "path": "scripts/replay_cpp_historical_memory_cases.py",
-      "bytes": 10460,
-      "sha256": "742b786235fc54b3ec63563c3fb1a3d01350958b5733c2c009f9f936510baad7"
+      "bytes": 11012,
+      "sha256": "dd7fe711ee84f6d891bf973d0055085374b716f8bf9300d1647e4fa434aa5924"
     },
     {
       "path": "scripts/compare_memory_safety_runs.py",
@@ -44,8 +44,8 @@
     },
     {
       "path": "tests/detectors/test_cpp_memory_safety_detectors.py",
-      "bytes": 12512,
-      "sha256": "6ed73437db540a4b4a3b824905968cc35bf11554b3f96c681f6ba13e5e4eaf73"
+      "bytes": 13316,
+      "sha256": "19270e4bb856c6a504fb363e67fdbd1bf0645bc042f5d7402196218f4ab15b2c"
     },
     {
       "path": "tests/detectors/test_cpp_resource_lifetime_detector.py",
@@ -59,8 +59,8 @@
     },
     {
       "path": "validation/cpp_memory_safety_poc/run.sh",
-      "bytes": 2157,
-      "sha256": "59bf53c8885f498ab60f14afabcd7c18c809139ed49ce1e30bc2622f43a2a29b"
+      "bytes": 2556,
+      "sha256": "c9a3da0cd3a1752c61a92a9017b3d9e01191430f03197baf711972c0e3225ef8"
     },
     {
       "path": "validation/cpp_memory_safety_poc/cve_2025_23420_vulnerable.cpp",
@@ -71,6 +71,16 @@
       "path": "validation/cpp_memory_safety_poc/cve_2025_23420_fixed.cpp",
       "bytes": 1540,
       "sha256": "43b2db0f11b2bfdb8bd8b58279dbdc177e9e1c9ca973b09a5127ddea1a977993"
+    },
+    {
+      "path": "validation/cpp_memory_safety_poc/cve_2025_0587_vulnerable.cpp",
+      "bytes": 520,
+      "sha256": "4c898980acc920696a812acdb759659c387f6f25b687f9bf707efd08324f1d7f"
+    },
+    {
+      "path": "validation/cpp_memory_safety_poc/cve_2025_0587_fixed.cpp",
+      "bytes": 523,
+      "sha256": "2dcd9868574a3180690052ccdb9da3a3a2cd48dffd28446bad6077d1cfc88479"
     },
     {
       "path": "validation/cpp_memory_safety_poc/resource_double_free_vulnerable.cpp",

@@ -493,7 +493,7 @@
     },
     {
       "detector_id": "ohscanner.cpp.integer_bounds",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "status": "blocked",
       "analyzed_files": [
         "frameworks/js/napi/base/include/client_define.h",
@@ -1574,10 +1574,10 @@
   "eligible_for_metrics": false,
   "precision_recall": null,
   "performance": {
-    "wall_seconds": 1.411776455000009,
+    "wall_seconds": 1.4116225970000187,
     "selected_source_files": 219,
     "selected_source_bytes": 851345,
-    "process_peak_rss_kib": 196780
+    "process_peak_rss_kib": 196756
   },
   "environment": {
     "python": "3.10.12",

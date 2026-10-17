@@ -8,7 +8,7 @@
 - Snapshot SHA-256: `a7917342d0733f226781468dab51d85f793f27213ba4ff7a1c5db708af4a1ff3`
 - Scope manifest SHA-256: `0a2c104fdcfc6c1c617ca312569f923102c6bb9a433079097315b5f37f51417d`
 - Selected files/bytes: 1446/11765303
-- Wall seconds: 15.957363
+- Wall seconds: 16.134799
 - Candidate findings/groups: 11/8
 
 ## Detector runs
@@ -17,7 +17,7 @@
 
 - No candidate emitted in the analyzed lexical scope.
 
-### `ohscanner.cpp.integer_bounds` 0.1.0 (blocked)
+### `ohscanner.cpp.integer_bounds` 0.2.0 (blocked)
 
 - `frameworks/jskitsimpl/distributeddata/src/js_util.cpp:118:17` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: array allocation size `maxLen + STR_TAIL_LENGTH` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation.
 - `frameworks/jskitsimpl/distributedkvstore/src/js_util.cpp:140:17` `ohcpp-integer-bounds-arithmetic-candidate-001` `CWE-190` Candidate only: array allocation size `maxLen + STR_TAIL_LENGTH` uses `+` without a modeled checked-arithmetic guard; overflow may yield an undersized allocation.

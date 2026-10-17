@@ -1151,7 +1151,7 @@
     },
     {
       "detector_id": "ohscanner.cpp.integer_bounds",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "status": "blocked",
       "analyzed_files": [
         "frameworks/accesstoken/include/atm_tools_param_info_parcel.h",
@@ -1657,7 +1657,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "f94f05cd7a0f62469f6adb8e6a7c9c873b3702807b27bbe5e39e6550316f892c",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -1710,7 +1710,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "f94f05cd7a0f62469f6adb8e6a7c9c873b3702807b27bbe5e39e6550316f892c",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -1763,7 +1763,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "f94f05cd7a0f62469f6adb8e6a7c9c873b3702807b27bbe5e39e6550316f892c",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -1816,7 +1816,7 @@
           "consequence_impact": "allocation_or_memory_safety",
           "consequence_cwe": "CWE-787",
           "source_sha256": "f94f05cd7a0f62469f6adb8e6a7c9c873b3702807b27bbe5e39e6550316f892c",
-          "rule_version": "0.1.0",
+          "rule_version": "0.2.0",
           "rule_lineage_id": "A-INT-01:ohcpp-integer-bounds-candidate",
           "identity_quality": "partial",
           "evidence_obligations": [
@@ -3174,10 +3174,10 @@
   "eligible_for_metrics": false,
   "precision_recall": null,
   "performance": {
-    "wall_seconds": 6.022791604999995,
+    "wall_seconds": 5.709071421999994,
     "selected_source_files": 550,
     "selected_source_bytes": 3484891,
-    "process_peak_rss_kib": 196780
+    "process_peak_rss_kib": 196756
   },
   "environment": {
     "python": "3.10.12",
