@@ -1,7 +1,8 @@
 """Explicit source/sink models; no sensitive-name heuristics or catalog registration."""
 from dataclasses import dataclass
 
-SOURCE_MODEL_VERSION = '0.1.0'  # D2 keeps D1 source/sink semantics and pinned scope.
+SOURCE_MODEL_VERSION = '0.1.0'  # Historical source semantics remain unchanged.
+SINK_MODEL_VERSION = '0.2.0'  # Adds the public OpenHarmony HiLog macro surface.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
 
@@ -34,6 +35,12 @@ SINKS = (tuple(ExposureSinkModel('AUTH_LOG'+level, 1) for level in 'FEWID') +
         'TRANS_CHECK_AND_RETURN_LOGD', 'COMM_CHECK_AND_RETURN_LOGW',
         'COMM_CHECK_AND_RETURN_LOGE')) +
     (ExposureSinkModel('HiLogPrint', 4), ExposureSinkModel('OH_LOG_Print', 4),
-     ExposureSinkModel('HILOG_IMPL', 4)))
+     ExposureSinkModel('HILOG_IMPL', 4)) +
+    tuple(ExposureSinkModel('HILOG_' + level, 1) for level in
+          ('DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')) +
+    tuple(ExposureSinkModel('HILOG_COMM_' + level, 0) for level in
+          ('INFO', 'WARN', 'ERROR', 'FATAL')) +
+    tuple(ExposureSinkModel('HiLog' + level.title(), 1) for level in
+          ('debug', 'info', 'warn', 'error', 'fatal')))
 
 DEFAULT_SOURCE = SensitiveSourceModel('openharmony/communication_dsoftbus', DSOFTBUS_COMMIT)

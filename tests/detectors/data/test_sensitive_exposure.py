@@ -93,6 +93,53 @@ class SensitiveTests(unittest.TestCase):
                     self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
                     self.assertEqual(run.findings[0].candidate_cwe,'CWE-532')
                     self.assertTrue(run.findings[0].evidence_obligations)
+    def test_hilog_native_macro_families_are_source_bound_sinks(self):
+        public_calls=(
+            'HILOG_DEBUG(HILOG_MODULE_SOFTBUS,"%{public}s",secret->value);',
+            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",secret->value);',
+            'HILOG_WARN(HILOG_MODULE_SOFTBUS,"%{public}s",secret->value);',
+            'HILOG_ERROR(HILOG_MODULE_SOFTBUS,"%{public}s",secret->value);',
+            'HILOG_FATAL(HILOG_MODULE_SOFTBUS,"%{public}s",secret->value);',
+            'HILOG_COMM_INFO("%{public}s",secret->value);',
+            'HILOG_COMM_WARN("%{public}s",secret->value);',
+            'HILOG_COMM_ERROR("%{public}s",secret->value);',
+            'HILOG_COMM_FATAL("%{public}s",secret->value);',
+            'HiLogDebug(label,"%{public}s",secret->value);',
+            'HiLogInfo(label,"%{public}s",secret->value);',
+            'HiLogWarn(label,"%{public}s",secret->value);',
+            'HiLogError(label,"%{public}s",secret->value);',
+            'HiLogFatal(label,"%{public}s",secret->value);',
+        )
+        for call in public_calls:
+            with self.subTest(call=call):
+                run=self.analyze('void Callback(SessionKey *secret){'+call+'}')
+                self.assertEqual(len(run.findings),1)
+                self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
+                self.assertEqual(run.findings[0].candidate_cwe,'CWE-532')
+                self.assertTrue(run.findings[0].evidence_obligations)
+        private_calls=(
+            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{private}s",secret->value);',
+            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%s",secret->value);',
+            'HILOG_COMM_INFO("%{private}s",secret->value);',
+            'HiLogInfo(label,"%s",secret->value);',
+            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"literal only");',
+        )
+        for call in private_calls:
+            with self.subTest(call=call):
+                self.assertEqual(self.analyze('void Callback(SessionKey *secret){'+call+'}').findings,())
+
+    def test_d9_hilog_cases_from_additive_manifest(self):
+        cases=json.loads((ROOT/"fixtures/data_sensitive/d9_hilog_cases.json").read_text())
+        for case in cases:
+            with self.subTest(case=case["id"]):
+                text=(ROOT/"fixtures/data_sensitive"/case["file"]).read_text()
+                run=self.analyze(text)
+                self.assertEqual(len(run.findings),case["expected_candidates"])
+                if case["expected_candidates"]:
+                    self.assertEqual(run.findings[0].rule_id,"data.log.sensitive-value")
+                    self.assertEqual(run.findings[0].candidate_cwe,"CWE-532")
+                    self.assertTrue(run.findings[0].evidence_obligations)
+
     def test_repeat_stable(self):
         text='void Callback(const char *x){ const char *b=x; AUTH_LOGI(0,"%{public}s",b); }'
         self.assertEqual(self.analyze(text),self.analyze(text))

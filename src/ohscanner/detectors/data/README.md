@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.5.0 (D8 review prototype)
+# D: sensitive-material log exposure, v0.6.0 (D9 HiLog sink expansion)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
@@ -53,7 +53,9 @@ it does not establish alias identity, product impact, or a confirmed vulnerabili
 See research/data_sensitive/D7_IMPLEMENTATION.md and D7_VALIDATION.json.
 
 D8 adds the fixed-source `TRANS_LOG*` and `COMM_LOG*` families plus their
-conditional check-and-return wrappers. Their public/private format slots follow
-the reviewed `softbus_log.h` privacy format, and unsupported/dynamic formats keep
-an unresolved candidate. See research/data_sensitive/D8_IMPLEMENTATION.md and
-D8_VALIDATION.json.
+conditional check-and-return wrappers. D9 adds the upstream HiLog C/C++ public
+macro families with pinned format argument positions; formats remain private by
+default. Unsupported/dynamic formats keep an unresolved candidate. See
+`research/data_sensitive/D8_IMPLEMENTATION.md`, `D9_IMPLEMENTATION.md`, and the
+matching validation records. Neither regression fixtures nor macro mapping alone
+confirm a product vulnerability.
