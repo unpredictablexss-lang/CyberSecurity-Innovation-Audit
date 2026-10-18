@@ -1,0 +1,2766 @@
+{
+  "source_repository": "openharmony/communication_dsoftbus",
+  "source_commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+  "source_tree": "bd915661eedd139df17f249191e2a691e76f7565",
+  "snapshot_sha256": "cd873f97cfbfa8740efbf31545cb4ddd7c4dd9755ea60f3bc96e8b15b408174f",
+  "scope_paths": [
+    "core/authentication/include/auth_session_key.h",
+    "core/authentication/src/auth_session_key.c",
+    "interfaces/kits/authentication/auth_session_key_struct.h",
+    "core/authentication/src/auth_hichain.c",
+    "core/authentication/src/auth_hichain_adapter.c",
+    "adapter/common/include/softbus_adapter_crypto.h",
+    "dfx/interface/include/auth_log.h",
+    "dfx/interface/include/softbus_log.h",
+    "dfx/log/src/auth_log.c"
+  ],
+  "source_model_version": "0.1.0",
+  "detector_versions": {
+    "baseline": "0.1.0",
+    "current": "0.2.0"
+  },
+  "development_head": "3b646c881716eb6b0c86195cdeeb1012ac9c921b",
+  "implementation_sha256": "63f6ab9a87ce100233ae73629cae3f894a6a3e768154d4dd9c1d54d40ff303b7",
+  "model_file_sha256": "ddfa2e262accb12f70f878265125bc80c79461935cffd599e8048222bac1fdca",
+  "runner_sha256": "80844a2b4c7497a7c48e043a59e6a35d4929cf49615c5969b2ddde896885c342",
+  "environment": {
+    "python": "3.10.12",
+    "git": "git version 2.34.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "public_coverage_counts": {
+    "complete": 0,
+    "partial": 3,
+    "not_analyzed": 6,
+    "failed": 0
+  },
+  "d1_candidates": 0,
+  "d2_candidates": 0,
+  "coverage_changed": false,
+  "algorithm_changed": true,
+  "scope_and_model_semantics_changed": false,
+  "d2_repeat_equal": true,
+  "report_sha256": {
+    "d1.json": "e3813a8c0086368e69c80ecae8d113fdea82477dbfca8c548e5ef49aca69da5c",
+    "d2-first.json": "c3f7e5b0e17e4b2a883fdc3700c506567c9e160146f7d89350bab5aad5f463c4",
+    "d2-second.json": "ddf0eb940a32e66aea37a308cf34bdab7da93a7bdec2d896a1fe2e27c7a597e8"
+  },
+  "files": [
+    {
+      "file": "adapter/common/include/softbus_adapter_crypto.h",
+      "blob": "0799d2acad2d876d9d02e206be40dd39927c8101",
+      "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea",
+      "ast_status": "partial",
+      "production_outcome": "not_analyzed",
+      "parse_issues": [
+        "{\"end_line\": 121, \"kind\": \"error\", \"start_line\": 16}",
+        "{\"end_line\": 117, \"kind\": \"error\", \"start_line\": 117}"
+      ],
+      "parser_error_regions": [
+        {
+          "type": "ERROR",
+          "missing": false,
+          "start_line": 16,
+          "end_line": 121,
+          "parent_type": "translation_unit"
+        },
+        {
+          "type": "ERROR",
+          "missing": false,
+          "start_line": 117,
+          "end_line": 117,
+          "parent_type": "preproc_if"
+        }
+      ],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [],
+      "functions": [],
+      "model_limitations": [
+        "detailed syntax partial",
+        "local type definition needs identity review",
+        "preprocessor/build context not expanded"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "core/authentication/include/auth_session_key.h",
+      "blob": "e8ff24702ea0da2b3dc4300740e5da42366c0b4b",
+      "sha256": "e7c41081253debc12aae90380b91bc4302b0b06c23f2a301d6b68682b27e8df2",
+      "ast_status": "partial",
+      "production_outcome": "not_analyzed",
+      "parse_issues": [
+        "{\"end_line\": 72, \"kind\": \"error\", \"start_line\": 16}",
+        "{\"end_line\": 68, \"kind\": \"error\", \"start_line\": 68}"
+      ],
+      "parser_error_regions": [
+        {
+          "type": "ERROR",
+          "missing": false,
+          "start_line": 16,
+          "end_line": 72,
+          "parent_type": "translation_unit"
+        },
+        {
+          "type": "ERROR",
+          "missing": false,
+          "start_line": 68,
+          "end_line": 68,
+          "parent_type": "preproc_if"
+        }
+      ],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [],
+      "functions": [],
+      "model_limitations": [
+        "detailed syntax partial",
+        "preprocessor/build context not expanded"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "core/authentication/src/auth_hichain.c",
+      "blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+      "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+      "ast_status": "complete",
+      "production_outcome": "partial",
+      "parse_issues": [],
+      "parser_error_regions": [],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [
+        {
+          "description": "OnSessionKeyReturned parameter 1",
+          "line": 126
+        }
+      ],
+      "sink_sites": [
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 84,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 86,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 117,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 128,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGW",
+          "line": 132,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 155,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 163,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 180,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 191,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 196,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 205,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 215,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 220,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGW",
+          "line": 232,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 238,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 242,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 250,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 278,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 288,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 295,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 300,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 310,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 324,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 331,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 338,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 357,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 364,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 369,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 384,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 393,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 397,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 403,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGW",
+          "line": 417,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 425,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGW",
+          "line": 434,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 444,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 448,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 455,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 466,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 474,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGW",
+          "line": 483,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 488,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 494,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 498,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 520,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 530,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 538,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 543,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 555,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 559,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 567,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 572,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 578,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 591,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 601,
+          "format_index": 1
+        }
+      ],
+      "functions": [
+        {
+          "symbol": "OnTransmit",
+          "start_line": 80,
+          "end_line": 90,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 87
+            },
+            {
+              "kind": "return_statement",
+              "line": 89
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "nonliteral/unsupported log format: AUTH_LOGE",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "DfxRecordLnnExchangekeyEnd",
+          "start_line": 92,
+          "end_line": 100,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "conditional effects are may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "DfxRecordCertEndTime",
+          "start_line": 102,
+          "end_line": 124,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 113
+            },
+            {
+              "kind": "return_statement",
+              "line": 119
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "OnSessionKeyReturned",
+          "start_line": 126,
+          "end_line": 138,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 133
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unmodeled call may mutate/escape sensitive value: AuthSessionSaveSessionKey"
+          ]
+        },
+        {
+          "symbol": "DfxRecordLnnEndHichainEnd",
+          "start_line": 140,
+          "end_line": 148,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "conditional effects are may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "OnFinish",
+          "start_line": 150,
+          "end_line": 158,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "conditional effects are may-flow; no path feasibility proof",
+            "conditional value is may-flow; no path feasibility proof",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "GetSoftbusHichainAuthErrorCode",
+          "start_line": 160,
+          "end_line": 182,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 164
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "GetDeviceSideFlag",
+          "start_line": 184,
+          "end_line": 199,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 187
+            },
+            {
+              "kind": "return_statement",
+              "line": 193
+            },
+            {
+              "kind": "return_statement",
+              "line": 198
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "CheckErrReturnValidity",
+          "start_line": 201,
+          "end_line": 210,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 206
+            },
+            {
+              "kind": "return_statement",
+              "line": 209
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "ProcessAuthFailCallBack",
+          "start_line": 212,
+          "end_line": 225,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 216
+            },
+            {
+              "kind": "return_statement",
+              "line": 222
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "NotifyAuthFailEvent",
+          "start_line": 227,
+          "end_line": 254,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 239
+            },
+            {
+              "kind": "return_statement",
+              "line": 244
+            },
+            {
+              "kind": "return_statement",
+              "line": 252
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "member/pointer output copy unsupported",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "NotifyPcAuthFail",
+          "start_line": 256,
+          "end_line": 270,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 269
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "OnError",
+          "start_line": 272,
+          "end_line": 282,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "nonliteral/unsupported log format: AUTH_LOGE",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "PackSourceUserId",
+          "start_line": 284,
+          "end_line": 290,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "OnRequest",
+          "start_line": 292,
+          "end_line": 344,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 301
+            },
+            {
+              "kind": "return_statement",
+              "line": 305
+            },
+            {
+              "kind": "return_statement",
+              "line": 312
+            },
+            {
+              "kind": "return_statement",
+              "line": 326
+            },
+            {
+              "kind": "return_statement",
+              "line": 333
+            },
+            {
+              "kind": "return_statement",
+              "line": 340
+            },
+            {
+              "kind": "return_statement",
+              "line": 343
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "GetUdidHash",
+          "start_line": 354,
+          "end_line": 373,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 358
+            },
+            {
+              "kind": "return_statement",
+              "line": 365
+            },
+            {
+              "kind": "return_statement",
+              "line": 370
+            },
+            {
+              "kind": "return_statement",
+              "line": 372
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "DeletePcRestrictNode",
+          "start_line": 375,
+          "end_line": 387,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "ParseGroupInfo",
+          "start_line": 389,
+          "end_line": 412,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 394
+            },
+            {
+              "kind": "return_statement",
+              "line": 399
+            },
+            {
+              "kind": "return_statement",
+              "line": 405
+            },
+            {
+              "kind": "return_statement",
+              "line": 411
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "OnGroupCreated",
+          "start_line": 414,
+          "end_line": 429,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 418
+            },
+            {
+              "kind": "return_statement",
+              "line": 423
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "OnDeviceBound",
+          "start_line": 431,
+          "end_line": 461,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 435
+            },
+            {
+              "kind": "return_statement",
+              "line": 440
+            },
+            {
+              "kind": "return_statement",
+              "line": 450
+            },
+            {
+              "kind": "return_statement",
+              "line": 456
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "OnGroupDeleted",
+          "start_line": 463,
+          "end_line": 478,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 467
+            },
+            {
+              "kind": "return_statement",
+              "line": 472
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "OnDeviceNotTrusted",
+          "start_line": 480,
+          "end_line": 504,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 484
+            },
+            {
+              "kind": "return_statement",
+              "line": 495
+            },
+            {
+              "kind": "return_statement",
+              "line": 499
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "RegTrustDataChangeListener",
+          "start_line": 506,
+          "end_line": 524,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 509
+            },
+            {
+              "kind": "return_statement",
+              "line": 521
+            },
+            {
+              "kind": "return_statement",
+              "line": 523
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "UnregTrustDataChangeListener",
+          "start_line": 526,
+          "end_line": 533,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "HichainStartAuth",
+          "start_line": 535,
+          "end_line": 562,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 539
+            },
+            {
+              "kind": "return_statement",
+              "line": 544
+            },
+            {
+              "kind": "return_statement",
+              "line": 557
+            },
+            {
+              "kind": "return_statement",
+              "line": 561
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "HichainProcessData",
+          "start_line": 564,
+          "end_line": 582,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 568
+            },
+            {
+              "kind": "return_statement",
+              "line": 573
+            },
+            {
+              "kind": "return_statement",
+              "line": 579
+            },
+            {
+              "kind": "return_statement",
+              "line": 581
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "HichainProcessUkNegoData",
+          "start_line": 584,
+          "end_line": 595,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 592
+            },
+            {
+              "kind": "return_statement",
+              "line": 594
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "HichainDestroy",
+          "start_line": 597,
+          "end_line": 602,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "HichainCancelRequest",
+          "start_line": 604,
+          "end_line": 607,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "preprocessor/build context not expanded"
+          ]
+        }
+      ],
+      "model_limitations": [
+        "branch merge is may-flow; no path feasibility proof",
+        "conditional effects are may-flow; no path feasibility proof",
+        "conditional value is may-flow; no path feasibility proof",
+        "member/pointer output copy unsupported",
+        "nonliteral/unsupported log format: AUTH_LOGE",
+        "nonliteral/unsupported log format: AUTH_LOGI",
+        "pointer/member assignment requires alias proof",
+        "preprocessor/build context not expanded",
+        "short-circuit effects are may-flow; no path feasibility proof",
+        "unknown field/alias propagation",
+        "unmodeled call may mutate/escape sensitive value: AuthSessionSaveSessionKey"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "core/authentication/src/auth_hichain_adapter.c",
+      "blob": "5b4f711bd9de233843fd6efe48267e0b10831206",
+      "sha256": "0bbbfe21cf79a85343848f59620cedb1b67a42d5f1196d7e36816e9cd562f6de",
+      "ast_status": "complete",
+      "production_outcome": "partial",
+      "parse_issues": [],
+      "parser_error_regions": [],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 45,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 51,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 60,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 66,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 70,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 82,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 92,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 97,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 101,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 186,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 207,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 213,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 218,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 230,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 235,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 241,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 281,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 286,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 292,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 327,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 332,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 338,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 344,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 359,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 381,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 385,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 391,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 396,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 400,
+          "format_index": 1
+        }
+      ],
+      "functions": [
+        {
+          "symbol": "GenDeviceLevelParam",
+          "start_line": 42,
+          "end_line": 86,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 46
+            },
+            {
+              "kind": "return_statement",
+              "line": 52
+            },
+            {
+              "kind": "return_statement",
+              "line": 62
+            },
+            {
+              "kind": "return_statement",
+              "line": 85
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unsupported statement preproc_ifdef at line 72"
+          ]
+        },
+        {
+          "symbol": "InitHichain",
+          "start_line": 88,
+          "end_line": 103,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 93
+            },
+            {
+              "kind": "return_statement",
+              "line": 99
+            },
+            {
+              "kind": "return_statement",
+              "line": 102
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "RegChangeListener",
+          "start_line": 105,
+          "end_line": 126,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 125
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "UnregChangeListener",
+          "start_line": 128,
+          "end_line": 140,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 139
+            }
+          ],
+          "limitations": [
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "AuthDevice",
+          "start_line": 142,
+          "end_line": 172,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 171
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unsupported statement for_statement at line 155"
+          ]
+        },
+        {
+          "symbol": "ProcessAuthData",
+          "start_line": 174,
+          "end_line": 193,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 189
+            },
+            {
+              "kind": "return_statement",
+              "line": 192
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "CheckDeviceInGroupByType",
+          "start_line": 195,
+          "end_line": 201,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 200
+            }
+          ],
+          "limitations": [
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "DestroyDeviceAuth",
+          "start_line": 203,
+          "end_line": 208,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "PrintfUntrustedDeviceId",
+          "start_line": 210,
+          "end_line": 221,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 214
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "IsTrustedDeviceInAGroup",
+          "start_line": 223,
+          "end_line": 273,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 231
+            },
+            {
+              "kind": "return_statement",
+              "line": 236
+            },
+            {
+              "kind": "return_statement",
+              "line": 242
+            },
+            {
+              "kind": "return_statement",
+              "line": 272
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "unsupported statement for_statement at line 245"
+          ]
+        },
+        {
+          "symbol": "HasTrustedRelationWithLocalDevice",
+          "start_line": 275,
+          "end_line": 320,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 283
+            },
+            {
+              "kind": "return_statement",
+              "line": 288
+            },
+            {
+              "kind": "return_statement",
+              "line": 294
+            },
+            {
+              "kind": "return_statement",
+              "line": 319
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded",
+            "unsupported statement for_statement at line 297"
+          ]
+        },
+        {
+          "symbol": "IsPotentialTrustedDevice",
+          "start_line": 322,
+          "end_line": 348,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 328
+            },
+            {
+              "kind": "return_statement",
+              "line": 333
+            },
+            {
+              "kind": "return_statement",
+              "line": 339
+            },
+            {
+              "kind": "return_statement",
+              "line": 345
+            },
+            {
+              "kind": "return_statement",
+              "line": 347
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "calls in return expression not analyzed",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "HichainGetJoinedGroups",
+          "start_line": 350,
+          "end_line": 366,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 365
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "IsSameAccountGroupDevice",
+          "start_line": 368,
+          "end_line": 372,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 371
+            }
+          ],
+          "limitations": [
+            "calls in return expression not analyzed",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "IsSameAccountGroupDeviceByUserId",
+          "start_line": 374,
+          "end_line": 404,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 382
+            },
+            {
+              "kind": "return_statement",
+              "line": 386
+            },
+            {
+              "kind": "return_statement",
+              "line": 393
+            },
+            {
+              "kind": "return_statement",
+              "line": 398
+            },
+            {
+              "kind": "return_statement",
+              "line": 402
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "CancelRequest",
+          "start_line": 406,
+          "end_line": 414,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "preprocessor/build context not expanded"
+          ]
+        }
+      ],
+      "model_limitations": [
+        "branch merge is may-flow; no path feasibility proof",
+        "calls in return expression not analyzed",
+        "preprocessor/build context not expanded",
+        "short-circuit effects are may-flow; no path feasibility proof",
+        "unsupported statement for_statement at line 155",
+        "unsupported statement for_statement at line 245",
+        "unsupported statement for_statement at line 297",
+        "unsupported statement preproc_ifdef at line 72"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "core/authentication/src/auth_session_key.c",
+      "blob": "0569ee21db9bf2a3ccfd10c020b3c0d45c01cc50",
+      "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
+      "ast_status": "partial",
+      "production_outcome": "not_analyzed",
+      "parse_issues": [
+        "{\"end_line\": 45, \"kind\": \"missing\", \"start_line\": 45}",
+        "{\"end_line\": 54, \"kind\": \"missing\", \"start_line\": 54}",
+        "{\"end_line\": 111, \"kind\": \"missing\", \"start_line\": 111}",
+        "{\"end_line\": 123, \"kind\": \"missing\", \"start_line\": 123}",
+        "{\"end_line\": 135, \"kind\": \"missing\", \"start_line\": 135}",
+        "{\"end_line\": 149, \"kind\": \"missing\", \"start_line\": 149}",
+        "{\"end_line\": 166, \"kind\": \"missing\", \"start_line\": 166}",
+        "{\"end_line\": 184, \"kind\": \"missing\", \"start_line\": 184}",
+        "{\"end_line\": 212, \"kind\": \"missing\", \"start_line\": 212}",
+        "{\"end_line\": 234, \"kind\": \"missing\", \"start_line\": 234}",
+        "{\"end_line\": 294, \"kind\": \"missing\", \"start_line\": 294}",
+        "{\"end_line\": 328, \"kind\": \"missing\", \"start_line\": 328}",
+        "{\"end_line\": 352, \"kind\": \"missing\", \"start_line\": 352}",
+        "{\"end_line\": 375, \"kind\": \"missing\", \"start_line\": 375}",
+        "{\"end_line\": 401, \"kind\": \"missing\", \"start_line\": 401}",
+        "{\"end_line\": 539, \"kind\": \"missing\", \"start_line\": 539}"
+      ],
+      "parser_error_regions": [
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 45,
+          "end_line": 45,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 54,
+          "end_line": 54,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 111,
+          "end_line": 111,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 123,
+          "end_line": 123,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 135,
+          "end_line": 135,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 149,
+          "end_line": 149,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 166,
+          "end_line": 166,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 184,
+          "end_line": 184,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 212,
+          "end_line": 212,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 234,
+          "end_line": 234,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 294,
+          "end_line": 294,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 328,
+          "end_line": 328,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 352,
+          "end_line": 352,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 375,
+          "end_line": 375,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 401,
+          "end_line": 401,
+          "parent_type": "expression_statement"
+        },
+        {
+          "type": ";",
+          "missing": true,
+          "start_line": 539,
+          "end_line": 539,
+          "parent_type": "expression_statement"
+        }
+      ],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 61,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 65,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 152,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 206,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 225,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 240,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 253,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGD",
+          "line": 256,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 259,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 269,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 284,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 288,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 304,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 309,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 315,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 324,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 335,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 348,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 357,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 362,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 384,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 389,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 392,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 407,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 422,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 429,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGD",
+          "line": 430,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 437,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 446,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 458,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 465,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 470,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 479,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 490,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 496,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 500,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 514,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 520,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 524,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 540,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 549,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 556,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 573,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGI",
+          "line": 585,
+          "format_index": 1
+        },
+        {
+          "symbol": "AUTH_LOGE",
+          "line": 594,
+          "format_index": 1
+        }
+      ],
+      "functions": [
+        {
+          "symbol": "RemoveOldKey",
+          "start_line": 41,
+          "end_line": 69,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 49
+            },
+            {
+              "kind": "return_statement",
+              "line": 62
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "InitSessionKeyList",
+          "start_line": 71,
+          "end_line": 75,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "SessionKeyHasAuthLinkType",
+          "start_line": 77,
+          "end_line": 80,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 79
+            }
+          ],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "SetAuthLinkType",
+          "start_line": 82,
+          "end_line": 85,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "ClearAuthLinkType",
+          "start_line": 87,
+          "end_line": 90,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "UpdateLatestUseTime",
+          "start_line": 92,
+          "end_line": 105,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 96
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "unsupported statement for_statement at line 100"
+          ]
+        },
+        {
+          "symbol": "CheckSessionKeyListExistType",
+          "start_line": 107,
+          "end_line": 117,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 113
+            },
+            {
+              "kind": "return_statement",
+              "line": 116
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "CheckSessionKeyListHasOldKey",
+          "start_line": 119,
+          "end_line": 129,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 125
+            },
+            {
+              "kind": "return_statement",
+              "line": 128
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "ClearOldKey",
+          "start_line": 131,
+          "end_line": 141,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 140
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "DupSessionKeyList",
+          "start_line": 143,
+          "end_line": 159,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 154
+            },
+            {
+              "kind": "return_statement",
+              "line": 158
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "DestroySessionKeyList",
+          "start_line": 161,
+          "end_line": 171,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "HasSessionKey",
+          "start_line": 173,
+          "end_line": 177,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 176
+            }
+          ],
+          "limitations": [
+            "calls in return expression not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "GetSessionKeyTypeByIndex",
+          "start_line": 179,
+          "end_line": 200,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "break_statement",
+              "line": 187
+            },
+            {
+              "kind": "return_statement",
+              "line": 191
+            },
+            {
+              "kind": "return_statement",
+              "line": 199
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation",
+            "unsupported statement for_statement at line 193"
+          ]
+        },
+        {
+          "symbol": "GetLatestAvailableSessionKeyTime",
+          "start_line": 202,
+          "end_line": 228,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 207
+            },
+            {
+              "kind": "continue_statement",
+              "line": 214
+            },
+            {
+              "kind": "return_statement",
+              "line": 223
+            },
+            {
+              "kind": "return_statement",
+              "line": 227
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "SetSessionKeyAvailable",
+          "start_line": 230,
+          "end_line": 246,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "continue_statement",
+              "line": 236
+            },
+            {
+              "kind": "return_statement",
+              "line": 242
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "AddSessionKey",
+          "start_line": 248,
+          "end_line": 276,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 254
+            },
+            {
+              "kind": "return_statement",
+              "line": 260
+            },
+            {
+              "kind": "return_statement",
+              "line": 271
+            },
+            {
+              "kind": "return_statement",
+              "line": 275
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "member/pointer output copy unsupported",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "shadowed sensitive record type withheld",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "GetLatestSessionKey",
+          "start_line": 278,
+          "end_line": 318,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 285
+            },
+            {
+              "kind": "return_statement",
+              "line": 289
+            },
+            {
+              "kind": "continue_statement",
+              "line": 296
+            },
+            {
+              "kind": "return_statement",
+              "line": 306
+            },
+            {
+              "kind": "return_statement",
+              "line": 310
+            },
+            {
+              "kind": "return_statement",
+              "line": 317
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "SetSessionKeyAuthLinkType",
+          "start_line": 320,
+          "end_line": 341,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 325
+            },
+            {
+              "kind": "continue_statement",
+              "line": 330
+            },
+            {
+              "kind": "return_statement",
+              "line": 337
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "GetSessionKeyByIndex",
+          "start_line": 343,
+          "end_line": 368,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 349
+            },
+            {
+              "kind": "continue_statement",
+              "line": 354
+            },
+            {
+              "kind": "return_statement",
+              "line": 358
+            },
+            {
+              "kind": "return_statement",
+              "line": 364
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "RemoveSessionkeyByIndex",
+          "start_line": 370,
+          "end_line": 394,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "break_statement",
+              "line": 378
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "ClearSessionkeyByAuthLinkType",
+          "start_line": 396,
+          "end_line": 415,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "continue_statement",
+              "line": 403
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "break/continue exits need enclosing-loop proof; loops not analyzed",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "EncryptData",
+          "start_line": 417,
+          "end_line": 451,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 423
+            },
+            {
+              "kind": "return_statement",
+              "line": 431
+            },
+            {
+              "kind": "return_statement",
+              "line": 439
+            },
+            {
+              "kind": "return_statement",
+              "line": 447
+            },
+            {
+              "kind": "return_statement",
+              "line": 450
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "member/pointer output copy unsupported",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "shadowed sensitive record type withheld",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "DecryptData",
+          "start_line": 453,
+          "end_line": 483,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 459
+            },
+            {
+              "kind": "return_statement",
+              "line": 466
+            },
+            {
+              "kind": "return_statement",
+              "line": 472
+            },
+            {
+              "kind": "return_statement",
+              "line": 480
+            },
+            {
+              "kind": "return_statement",
+              "line": 482
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "member/pointer output copy unsupported",
+            "preprocessor/build context not expanded",
+            "shadowed sensitive record type withheld",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "EncryptInner",
+          "start_line": 485,
+          "end_line": 507,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 491
+            },
+            {
+              "kind": "return_statement",
+              "line": 497
+            },
+            {
+              "kind": "return_statement",
+              "line": 502
+            },
+            {
+              "kind": "return_statement",
+              "line": 506
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "DecryptInner",
+          "start_line": 509,
+          "end_line": 531,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 515
+            },
+            {
+              "kind": "return_statement",
+              "line": 521
+            },
+            {
+              "kind": "return_statement",
+              "line": 526
+            },
+            {
+              "kind": "return_statement",
+              "line": 530
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "pointer/member assignment requires alias proof",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "DumpSessionkeyList",
+          "start_line": 534,
+          "end_line": 550,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "HandleUpdateSessionKeyEvent",
+          "start_line": 552,
+          "end_line": 577,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 559
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded",
+            "unknown field/alias propagation"
+          ]
+        },
+        {
+          "symbol": "RemoveUpdateSessionKeyFunc",
+          "start_line": 579,
+          "end_line": 589,
+          "fallthrough": false,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 586
+            },
+            {
+              "kind": "return_statement",
+              "line": 588
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "nonliteral/unsupported log format: AUTH_LOGI",
+            "preprocessor/build context not expanded"
+          ]
+        },
+        {
+          "symbol": "ScheduleUpdateSessionKey",
+          "start_line": 591,
+          "end_line": 599,
+          "fallthrough": true,
+          "exits": [
+            {
+              "kind": "return_statement",
+              "line": 595
+            }
+          ],
+          "limitations": [
+            "branch merge is may-flow; no path feasibility proof",
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded",
+            "short-circuit effects are may-flow; no path feasibility proof"
+          ]
+        },
+        {
+          "symbol": "CancelUpdateSessionKey",
+          "start_line": 601,
+          "end_line": 604,
+          "fallthrough": true,
+          "exits": [],
+          "limitations": [
+            "detailed syntax partial",
+            "local type definition needs identity review",
+            "preprocessor/build context not expanded"
+          ]
+        }
+      ],
+      "model_limitations": [
+        "branch merge is may-flow; no path feasibility proof",
+        "break/continue exits need enclosing-loop proof; loops not analyzed",
+        "calls in return expression not analyzed",
+        "detailed syntax partial",
+        "local type definition needs identity review",
+        "member/pointer output copy unsupported",
+        "nonliteral/unsupported log format: AUTH_LOGI",
+        "pointer/member assignment requires alias proof",
+        "preprocessor/build context not expanded",
+        "shadowed sensitive record type withheld",
+        "short-circuit effects are may-flow; no path feasibility proof",
+        "unknown field/alias propagation",
+        "unsupported statement for_statement at line 100",
+        "unsupported statement for_statement at line 193"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "dfx/interface/include/auth_log.h",
+      "blob": "c3b3ebba9eaebcb1b64fed20b954daa9955d8d6f",
+      "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f",
+      "ast_status": "partial",
+      "production_outcome": "not_analyzed",
+      "parse_issues": [
+        "{\"end_line\": 60, \"kind\": \"missing\", \"start_line\": 60}"
+      ],
+      "parser_error_regions": [
+        {
+          "type": "#endif",
+          "missing": true,
+          "start_line": 60,
+          "end_line": 60,
+          "parent_type": "preproc_ifdef"
+        }
+      ],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [],
+      "functions": [],
+      "model_limitations": [
+        "detailed syntax partial",
+        "preprocessor/build context not expanded"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "dfx/interface/include/softbus_log.h",
+      "blob": "9c6a0df46b533c97a2419a38323eefc9458aab87",
+      "sha256": "c9627e6e71bc70c4e4cc677b88f56efdb1c29de0d96eac7861df2ecc6a974a7e",
+      "ast_status": "partial",
+      "production_outcome": "not_analyzed",
+      "parse_issues": [
+        "{\"end_line\": 117, \"kind\": \"missing\", \"start_line\": 117}"
+      ],
+      "parser_error_regions": [
+        {
+          "type": "#endif",
+          "missing": true,
+          "start_line": 117,
+          "end_line": 117,
+          "parent_type": "preproc_ifdef"
+        }
+      ],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [],
+      "functions": [],
+      "model_limitations": [
+        "detailed syntax partial",
+        "preprocessor/build context not expanded"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "dfx/log/src/auth_log.c",
+      "blob": "f499877ece96baee3173bd43326607ad0fb91268",
+      "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+      "ast_status": "complete",
+      "production_outcome": "partial",
+      "parse_issues": [],
+      "parser_error_regions": [],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [],
+      "functions": [],
+      "model_limitations": [
+        "preprocessor/build context not expanded"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    },
+    {
+      "file": "interfaces/kits/authentication/auth_session_key_struct.h",
+      "blob": "ca31a384eaf5bc147997ba4a21a41b6cae9a7410",
+      "sha256": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db",
+      "ast_status": "partial",
+      "production_outcome": "not_analyzed",
+      "parse_issues": [
+        "{\"end_line\": 49, \"kind\": \"error\", \"start_line\": 16}",
+        "{\"end_line\": 46, \"kind\": \"error\", \"start_line\": 46}"
+      ],
+      "parser_error_regions": [
+        {
+          "type": "ERROR",
+          "missing": false,
+          "start_line": 16,
+          "end_line": 49,
+          "parent_type": "translation_unit"
+        },
+        {
+          "type": "ERROR",
+          "missing": false,
+          "start_line": 46,
+          "end_line": 46,
+          "parent_type": "preproc_if"
+        }
+      ],
+      "private_probe_only": true,
+      "probe_not_production_eligible_override": true,
+      "probe_candidate_count": 0,
+      "source_sites": [],
+      "sink_sites": [],
+      "functions": [],
+      "model_limitations": [
+        "detailed syntax partial",
+        "local type definition needs identity review",
+        "preprocessor/build context not expanded"
+      ],
+      "potential_benefit": "Only error-free local syntax may be considered after owner review; include/build/binding remain unknown."
+    }
+  ],
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Private probe is not production scanning and does not override Runner.",
+    "No accuracy/safety conclusion from zero findings or counts."
+  ]
+}

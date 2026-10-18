@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "scope": "component-level isolated Harness plan; not a product PoC",
+  "execution": "not_run",
+  "reason": "No approved disposable container/runtime or exact product build recipe is available in this D worktree.",
+  "validated_vulnerability": 0,
+  "tests": [
+    {"id":"H01","status":"not_run","evidence":null},
+    {"id":"H02","status":"not_run","evidence":null},
+    {"id":"H03","status":"not_run","evidence":null},
+    {"id":"H04","status":"not_run","evidence":null},
+    {"id":"H05","status":"not_run","evidence":null},
+    {"id":"H06","status":"not_run","evidence":null},
+    {"id":"H07","status":"not_run","evidence":null},
+    {"id":"H08","status":"not_run","evidence":null}
+  ]
+}

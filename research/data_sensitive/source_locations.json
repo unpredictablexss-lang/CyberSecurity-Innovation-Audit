@@ -1,0 +1,221 @@
+[
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/include/auth_session_key.h",
+    "needle": "GetLatestSessionKey(",
+    "lines": [
+      41
+    ],
+    "sha256": "e7c41081253debc12aae90380b91bc4302b0b06c23f2a301d6b68682b27e8df2"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/include/auth_session_key.h",
+    "needle": "GetSessionKeyByIndex(",
+    "lines": [
+      42
+    ],
+    "sha256": "e7c41081253debc12aae90380b91bc4302b0b06c23f2a301d6b68682b27e8df2"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_session_key.c",
+    "needle": "keyLen=%{public}d",
+    "lines": [
+      256,
+      430
+    ],
+    "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_session_key.c",
+    "needle": "get session key succ, index=",
+    "lines": [
+      315,
+      362
+    ],
+    "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "interfaces/kits/authentication/auth_session_key_struct.h",
+    "needle": "uint8_t value[",
+    "lines": [
+      34
+    ],
+    "sha256": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_hichain.c",
+    "needle": "static void OnSessionKeyReturned",
+    "lines": [
+      126
+    ],
+    "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_hichain.c",
+    "needle": "hichain OnSessionKeyReturned:",
+    "lines": [
+      128
+    ],
+    "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_hichain.c",
+    "needle": "invalid sessionKey",
+    "lines": [
+      132
+    ],
+    "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_hichain.c",
+    "needle": "errorReturn=%{public}s",
+    "lines": [
+      232
+    ],
+    "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "core/authentication/src/auth_hichain.c",
+    "needle": "udid=%{public}s",
+    "lines": [
+      384,
+      444,
+      488
+    ],
+    "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "adapter/common/include/softbus_adapter_crypto.h",
+    "needle": "} AesGcmCipherKey",
+    "lines": [
+      59
+    ],
+    "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "adapter/common/include/softbus_adapter_crypto.h",
+    "needle": "} AesGcm128CipherKey",
+    "lines": [
+      65
+    ],
+    "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "adapter/common/include/softbus_adapter_crypto.h",
+    "needle": "} AesCtrCipherKey",
+    "lines": [
+      71
+    ],
+    "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "adapter/common/include/softbus_adapter_crypto.h",
+    "needle": "SoftBusGenerateSessionKey(",
+    "lines": [
+      81
+    ],
+    "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "dfx/interface/include/auth_log.h",
+    "needle": "#define AUTH_LOGF",
+    "lines": [
+      38,
+      44
+    ],
+    "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "dfx/interface/include/auth_log.h",
+    "needle": "#define AUTH_LOGE",
+    "lines": [
+      39,
+      45
+    ],
+    "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "dfx/interface/include/auth_log.h",
+    "needle": "#define AUTH_LOGW",
+    "lines": [
+      40,
+      46
+    ],
+    "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "dfx/interface/include/auth_log.h",
+    "needle": "#define AUTH_LOGI",
+    "lines": [
+      41,
+      47
+    ],
+    "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f"
+  },
+  {
+    "repository": "openharmony/communication_dsoftbus",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "file": "dfx/interface/include/auth_log.h",
+    "needle": "#define AUTH_LOGD",
+    "lines": [
+      42,
+      48
+    ],
+    "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f"
+  },
+  {
+    "repository": "openharmony/hiviewdfx_hilog",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "file": "interfaces/native/kits/include/hilog/log.h",
+    "needle": "parameter is considered",
+    "lines": [
+      47
+    ],
+    "sha256": "6259e8c52302224c76a51fd03e67c03decdb46e81742602f1ecc7a3825a7f461"
+  },
+  {
+    "repository": "openharmony/hiviewdfx_hilog",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "file": "interfaces/native/kits/include/hilog/log.h",
+    "needle": "int OH_LOG_Print(",
+    "lines": [
+      175
+    ],
+    "sha256": "6259e8c52302224c76a51fd03e67c03decdb46e81742602f1ecc7a3825a7f461"
+  }
+]

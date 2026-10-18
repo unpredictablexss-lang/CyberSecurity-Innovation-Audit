@@ -1,0 +1,114 @@
+[
+  {
+    "file": "core/authentication/include/auth_session_key.h",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "e7c41081253debc12aae90380b91bc4302b0b06c23f2a301d6b68682b27e8df2",
+    "size": 3026,
+    "blob": "e8ff24702ea0da2b3dc4300740e5da42366c0b4b"
+  },
+  {
+    "file": "core/authentication/src/auth_session_key.c",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
+    "size": 23151,
+    "blob": "0569ee21db9bf2a3ccfd10c020b3c0d45c01cc50"
+  },
+  {
+    "file": "interfaces/kits/authentication/auth_session_key_struct.h",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db",
+    "size": 1232,
+    "blob": "ca31a384eaf5bc147997ba4a21a41b6cae9a7410"
+  },
+  {
+    "file": "core/authentication/src/auth_hichain.c",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+    "size": 22279,
+    "blob": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d"
+  },
+  {
+    "file": "core/authentication/src/auth_hichain_adapter.c",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "0bbbfe21cf79a85343848f59620cedb1b67a42d5f1196d7e36816e9cd562f6de",
+    "size": 14989,
+    "blob": "5b4f711bd9de233843fd6efe48267e0b10831206"
+  },
+  {
+    "file": "adapter/common/include/softbus_adapter_crypto.h",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea",
+    "size": 3780,
+    "blob": "0799d2acad2d876d9d02e206be40dd39927c8101"
+  },
+  {
+    "file": "dfx/interface/include/auth_log.h",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f",
+    "size": 2593,
+    "blob": "c3b3ebba9eaebcb1b64fed20b954daa9955d8d6f"
+  },
+  {
+    "file": "dfx/interface/include/softbus_log.h",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "c9627e6e71bc70c4e4cc677b88f56efdb1c29de0d96eac7861df2ecc6a974a7e",
+    "size": 4892,
+    "blob": "9c6a0df46b533c97a2419a38323eefc9458aab87"
+  },
+  {
+    "file": "dfx/log/src/auth_log.c",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+    "size": 1041,
+    "blob": "f499877ece96baee3173bd43326607ad0fb91268"
+  },
+  {
+    "file": "LICENSE",
+    "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+    "repository": "openharmony/communication_dsoftbus",
+    "sha256": "0cec06e0e55fbc3dc5cee4fca9b607f66cb8f4e4dbcf3b3c013594dd156732e9",
+    "size": 10173,
+    "blob": "4947287f7b5ccb5d1e8b7b2d3aa5d89f322c160d"
+  },
+  {
+    "file": "interfaces/native/innerkits/include/hilog/log.h",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "repository": "openharmony/hiviewdfx_hilog",
+    "sha256": "f18fd0fb46103c5c8f8a8d3b1272baafbd10e4b0576bffd8ddc22a61b1310307",
+    "size": 744,
+    "blob": "f905b409bf6ea38b369c5e79910302a9b4fe2f84"
+  },
+  {
+    "file": "interfaces/native/kits/include/hilog/log.h",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "repository": "openharmony/hiviewdfx_hilog",
+    "sha256": "6259e8c52302224c76a51fd03e67c03decdb46e81742602f1ecc7a3825a7f461",
+    "size": 16877,
+    "blob": "7db4a31047c91b42e87db4c492d238b13645abad"
+  },
+  {
+    "file": "README.md",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "repository": "openharmony/hiviewdfx_hilog",
+    "sha256": "9a0cac9ececf7bb3719b2321685dbf969b971ae2812498e329344851115c37df",
+    "size": 5827,
+    "blob": "fd612768993cc011e483d604556e1a70c94b8e80"
+  },
+  {
+    "file": "LICENSE",
+    "commit": "393d7e9a690edb76ed27e710b472623daf650dc8",
+    "repository": "openharmony/hiviewdfx_hilog",
+    "sha256": "9264a6b3c134511ccfcae48ed3808320688ae6933ec4fc547476a005095fc1ef",
+    "size": 10349,
+    "blob": "4a459866a57c25462afad17f3fe0b50d440da080"
+  }
+]

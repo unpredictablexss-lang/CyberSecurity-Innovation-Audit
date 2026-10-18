@@ -1,0 +1,50 @@
+[
+  {
+    "id": "loop_unknown",
+    "file": "d2_loop_unknown.cpp",
+    "expected_candidates": 1,
+    "split": "d5_semantics_regression",
+    "partial": true,
+    "reason": "A loop may assign sensitive material before a sink after the loop; the bounded analysis retains the possible path."
+  },
+  {
+    "id": "loop_partial",
+    "file": "loop_partial.cpp",
+    "expected_candidates": 1,
+    "split": "d5_semantics_regression",
+    "partial": true,
+    "reason": "The modeled public sink is syntactically inside the loop; iteration count is unknown but does not erase the possible sink event."
+  },
+  {
+    "id": "same_named_copy_definition",
+    "file": "d5_shadow_copy.cpp",
+    "expected_candidates": 1,
+    "split": "d5_semantics_regression",
+    "partial": true,
+    "reason": "A same-file implementation with a library-like name is not trusted as the reviewed copy API; its destination may receive sensitive input."
+  },
+  {
+    "id": "same_named_memcpy_definition",
+    "file": "d5_shadow_memcpy.cpp",
+    "expected_candidates": 1,
+    "split": "d5_semantics_regression",
+    "partial": true,
+    "reason": "The third argument is the source buffer; the fourth is a byte count and must not be mistaken for source material."
+  },
+  {
+    "id": "for_loop_may_flow",
+    "file": "d5_for_loop.cpp",
+    "expected_candidates": 1,
+    "split": "d5_semantics_regression",
+    "partial": true,
+    "reason": "A loop may assign the sensitive source before the post-loop log; loop iteration and branch feasibility remain unknown."
+  },
+  {
+    "id": "same_named_format_definition",
+    "file": "d5_shadow_snprintf.cpp",
+    "expected_candidates": 1,
+    "split": "d5_semantics_regression",
+    "partial": true,
+    "reason": "An unresolved same-name formatting function may write a sensitive argument to its destination buffer."
+  }
+]

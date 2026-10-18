@@ -1,0 +1,121 @@
+{
+  "date": "2026-10-17",
+  "implementation_and_tests_head": "88528b791323e25ea96108ab6c95cbc8f3ce646f",
+  "frozen_at": "2026-10-17T13:25:29.959813+00:00",
+  "full_suite": {
+    "cases": 537,
+    "passed": 526,
+    "skipped": 11,
+    "failed": 0,
+    "errors": 0
+  },
+  "d_targeted_methods": 25,
+  "existing_design_controls": 71,
+  "d3_design_controls": 24,
+  "total_design_controls": 95,
+  "existing_control_hashes_unchanged": true,
+  "compileall": "passed",
+  "git_diff_check": "passed",
+  "logs_sha256": {
+    "d3-real.log": "b70b3f7f3be432d3b31b17150ea4462d21aa8c66b5cbd2543a04b07f19a10682",
+    "d3-design-tests.log": "e6258299e814e83ae0da3ba371558f5a8c71674558090318355e22ec8ab9d413",
+    "d3-full-tests.log": "63885820080e95a3933f90766c3e6bc39c38920efd2fe13be0a1cad26780060a",
+    "d3-baseline.log": "dde702aa24744ca10820966b52cf8725f0412740a2a6b3b98fd53c0c8bc4914d"
+  },
+  "skip_reasons": [
+    "test_corpus_ipc_object_stub_send_request_dispatch (test_ipc_entry_index.EntryIndexTests) ... skipped 'perf-corpus/communication_ipc not present'",
+    "test_attack_triggers_on_the_vulnerable_revision_only (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_record_keeps_validated_vulnerability_at_zero (test_poc_runner.Auth01IntegrationTests) ... skipped 'AUTH-01 runtime harness must execute only through the Docker validation worker'",
+    "test_a_changed_digest_fails (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_a_moved_quote_fails_instead_of_describing_other_code (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_no_block_means_no_claim (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_harness_declares_a_partial_reachability_block (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_the_rendered_record_states_what_is_not_established (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_verification_checks_the_digest_and_the_quoted_line (test_poc_runner.ReachabilityEvidenceTests) ... skipped 'the pinned source store is required'",
+    "test_real_historical_sources_produce_linked_detector_candidates (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'historical detector replay requires locally preserved source artifacts: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'",
+    "test_source_hashes_and_quotes_are_verified (test_shared_ptr_race_poc.SharedPtrRacePocTests) ... skipped 'optional preserved historical source artifacts are unavailable: outputs/reports/static_baselines/c_utils_singleton_uaf.vulnerable.codeql/source/base/include/singleton.h, outputs/reports/static_baselines/c_utils_singleton_uaf.fixed.codeql/source/base/include/singleton.h'"
+  ],
+  "runs": [
+    {
+      "name": "nine-file-baseline",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "tree": "bd915661eedd139df17f249191e2a691e76f7565",
+      "snapshot_sha256": "cd873f97cfbfa8740efbf31545cb4ddd7c4dd9755ea60f3bc96e8b15b408174f",
+      "public_candidate_count": 0,
+      "public_coverage": {
+        "complete": 0,
+        "partial": 3,
+        "not_analyzed": 6,
+        "failed": 0
+      },
+      "private_candidate_count": 0,
+      "public_repeat_equal": true,
+      "private_repeat_equal": true,
+      "public_report_hashes": {
+        "first": "3212e7be58610f905d3e373a77c823e9ace18d3ffa14c00f5668c03fcc6facbe",
+        "second": "2a31e8adec00df667714a5af0214dac3b04d4531dd8df7b3e7860adb56f86466"
+      }
+    },
+    {
+      "name": "tcp-before",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "snapshot_sha256": "599078a71da5b6bb6629348f4ca2a05518fa58292ba45abdd2e426e308dfd26b",
+      "public_candidate_count": 0,
+      "public_coverage": {
+        "complete": 0,
+        "partial": 4,
+        "not_analyzed": 6,
+        "failed": 0
+      },
+      "private_candidate_count": 1,
+      "public_repeat_equal": true,
+      "private_repeat_equal": true,
+      "public_report_hashes": {
+        "first": "3c412f055a2efbd60f54a7aace6911b6639a452473720c6f559f00f61020b0da",
+        "second": "b0c972721a9e9d4fd5f6399181ccac79aab1ca044b48e3ee0146db8dc3d923ba"
+      }
+    },
+    {
+      "name": "tcp-after",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "snapshot_sha256": "2db99083317b7905718084d3905d7ff4c9c0c290a49665a1922e9807868dafb4",
+      "public_candidate_count": 0,
+      "public_coverage": {
+        "complete": 0,
+        "partial": 4,
+        "not_analyzed": 6,
+        "failed": 0
+      },
+      "private_candidate_count": 0,
+      "public_repeat_equal": true,
+      "private_repeat_equal": true,
+      "public_report_hashes": {
+        "first": "088f3a4f1a0a9aeb0cd4d980b0a300aa94ea4fff6e4b46eff0f826079f3dee18",
+        "second": "aa64243329149e81efc99ea78ba26cb740a29a65994bffe48c073b394294660b"
+      }
+    }
+  ],
+  "holdout_collection_files": 3,
+  "independent_holdout_evaluation_executed": false,
+  "runtime_poc_executed": false,
+  "validated_vulnerability": 0,
+  "historical_hardening_pairs_reviewed": 2,
+  "qualified_conditional_research_pairs": 1,
+  "source_manifest_sha256": "01917bbe7c8815f43752b01f7f6149631e44958e92c500c6d7a941029648cb3b",
+  "real_scan_sha256": "79ee1c1d067341046d7eb31ace8ec25e76f87ed30bc35e321f31a5b50d77bae6",
+  "freeze_sha256": "8d837313747b556f4bee83f81a2d1de379e871c8a9fbd2b90e6be59385e6e846",
+  "holdout_collection_sha256": "af93a407c8ce504a8af74d0fb17742a702d3e2127b6a910418da73f512f063f2",
+  "environment": {
+    "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+    "platform": "Linux lzc 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux"
+  },
+  "commands": [
+    "python -m unittest tests.detectors.data.test_sensitive_exposure tests.detectors.data.test_d2_semantics tests.detectors.data.test_d3_historical -v",
+    "TMPDIR=\"$PWD/.tmp\" python -m unittest discover -s tests -v",
+    "python -m research.data_sensitive.d3_experiment --history-repo <d3-upstream.git> --baseline-repo <dsoftbus-replay.git> --output-dir outputs/reports/d-sensitive/d3/real",
+    "python -m compileall -q src/ohscanner/detectors/data tests/detectors/data research/data_sensitive",
+    "git diff --check"
+  ]
+}
