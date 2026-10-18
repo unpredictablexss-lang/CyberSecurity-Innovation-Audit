@@ -1,38 +1,26 @@
 # D5 isolated Harness design
 
-Status: design only; execution is `not_run`. No product build, target device,
-container image, or explicitly approved isolated runtime has been supplied in
-this worktree. The static controls in `tests/fixtures/data_sensitive/` are
-synthetic detector regressions and are not the H01–H08 Harness.
+Status: a narrow extracted-function component harness has run; the product H01–H08 matrix remains `not_run`. The harness compiles the exact `ProcessReceivedData` function body from two manifest-pinned D4 source files, after verifying file size, SHA-256, and Git blob SHA-1. It uses deterministic stubs for decryption, JSON parsing, message processing, and logging. A synthetic `SESSION_KEY` marker is used; no real credential or device is involved.
 
-The Harness should build only the pinned component revision in an isolated
-container with a recorded immutable image digest. Inputs use a synthetic
-SESSION_KEY and synthetic request/reply bodies. It must not connect to a
-production device, request a real credential, or attempt to read logs outside
-the container. The container should have a bounded CPU, memory, wall-time, and
-temporary output directory; destruction of that temporary directory is the
-cleanup step. The run manifest records source commit, patch hash, image digest,
-compiler/build profile, configuration, tool versions, argv, exit code, and
-hashes of captured output. Captured output is checked to contain only the
-synthetic marker before it is retained.
+Run with `d5_component_harness.py --run-isolated`. GCC builds a static binary; each scenario runs in a rootless user, mount, and no-network namespace. A tmpfs chroot contains only that binary. The report records source identities, extracted function/generated C/binary hashes, compiler, observations, and runtime: `D5_COMPONENT_HARNESS.json`.
 
-Each test starts from a fresh process and isolated log sink. It records actual
-formatting return values and emitted bytes; expectations are hypotheses, not
-assumed outcomes. No case is considered proof of product impact or reader
-authorization without a matching product build and access-control evidence.
+Observed component behavior:
 
-| ID | Controlled input and observation | Status |
+- Before log hardening, a valid synthetic secret request reached the stub logger with the marker (`marker=1`); ordinary reply and decrypt-failure cases did not contain the marker.
+- After log hardening, neither valid request nor ordinary reply called the stub logger; decrypt failure still emitted one generic log call, with no marker. All three scenarios still followed the expected stub processing/return behavior.
+- The assertions passed for both revisions.
+
+This demonstrates only the behavior of the exact extracted function bodies at stubbed boundaries. It does not validate a full product build, actual crypto/parser/log service, persistent log output, production log level, authorized or unauthorized readers, affected releases, or product impact. It is not the H01–H08 product harness, and it does not confirm a vulnerability or a deployed fix. `validated_vulnerability=0`; product impact remains unknown.
+
+| ID | Controlled input and observation | Product status |
 |---|---|---|
-| H01 | Valid request containing synthetic SESSION_KEY, below buffer boundary; compare emitted bytes before/after log hardening | `not_run` |
-| H02 | Normal reply JSON without SESSION_KEY; confirm no sensitive-material output | `not_run` |
-| H03 | Decrypt/Auth failure; observe return status and whether any buffer reaches the logger | `not_run` |
+| H01 | Valid request containing synthetic SESSION_KEY; actual product log output before/after hardening | `not_run` |
+| H02 | Normal reply JSON; actual product output | `not_run` |
+| H03 | Decrypt/Auth failure; actual product return and output | `not_run` |
 | H04 | Valid JSON without SESSION_KEY | `not_run` |
-| H05 | Formatting at boundary−1, boundary, boundary+1; retain actual status and output rather than presuming truncation | `not_run` |
-| H06 | Controlled log-level configurations; verify the selected build branch and actual output | `not_run` |
-| H07 | Same synthetic input on old, log-hardened, and safe-control builds; verify output and normal communication behavior | `not_run` |
-| H08 | Read attempt by explicitly authorized and unauthorized test identities inside the isolated image; record identity, policy, allow/deny | `not_run` |
+| H05 | Formatting at boundary−1, boundary, boundary+1 | `not_run` |
+| H06 | Controlled product log-level configurations | `not_run` |
+| H07 | Old, log-hardened, and independently patched product builds; output and communication behavior | `not_run` |
+| H08 | Authorized and unauthorized reader access to the product log sink | `not_run` |
 
-Execution prerequisite: an approved disposable container/runtime and exact
-build recipe with known image digest. If that prerequisite is unavailable, keep
-all rows `not_run`; do not substitute host `hilog`, `hdc shell`, or detector
-Harness results for these observations.
+The component harness is an additional low-level experiment only. Product H01–H08 still require a reproducible target build and controlled log/read-permission observations. Component results must not be substituted for product evidence.

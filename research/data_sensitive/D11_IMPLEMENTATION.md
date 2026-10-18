@@ -21,8 +21,13 @@ The replay evidence is in `D11_D4_HISTORICAL_REPLAY.json`. Downloaded pinned fil
 - DSoftBus D10 current-source replay: 10/10 manifest files and 3 HiLog API headers verified; 9 source files scanned; status blocked with 1 candidate.
 - D4 historical replay: 11 manifest source files verified per revision; old 1 candidate / newer 0; both blocked.
 - `git diff --check` passed.
-- Docker is unavailable in this WSL environment. H01-H08 remain `not_run`; no compiled target Harness was executed.
+- Docker integration is unavailable in this WSL environment. The extracted-function experiment is recorded in `D5_COMPONENT_HARNESS.json`; product H01-H08 remain `not_run`.
 
+## D5 extracted-function component experiment
+
+A separate harness compiled the exact pinned `ProcessReceivedData` bodies from the two D4 revisions and ran three synthetic cases in a rootless no-network namespace and tmpfs chroot. The pre-hardening body sent the synthetic `SESSION_KEY` marker to the logger stub; the post-hardening body did not. Ordinary request/reply processing continued in the stub, and decrypt failure returned an error without exposing the marker. All assertions passed. Source, generated C, binary hashes, and observations are recorded in `D5_COMPONENT_HARNESS.json`.
+
+This is component-only evidence with deterministic stubs. The product H01–H08 matrix remains `not_run`; this does not prove product logs, readers, versions, impact, or a deployed fix. `validated_vulnerability=0`.
 ## Limits and next gate
 
 The direct replays are not public Git Runner/API/Worker integration, an independent labeled holdout, or a product build/runtime PoC. Product impact and reader access remain unknown. Neither candidate is a confirmed product vulnerability. The D line remains research-only and does not meet mainline admission gates. Before M0, compare against current main in a clean checkout, run latest-main CI and frontend validation, and complete the source/license/security review. H01-H08 require an approved disposable runtime with a pinned image digest; absence of Docker is not a pass.
