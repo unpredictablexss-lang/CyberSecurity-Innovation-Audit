@@ -64,7 +64,7 @@ class AdmissionApiTests(unittest.TestCase):
         response = self.client.get('/api/v1/detector-admissions')
         self.assertEqual(response.status_code, 200)
         records = response.json()
-        self.assertEqual({r['lane'] for r in records}, {'C', 'D'})
+        self.assertEqual({r['lane'] for r in records}, {'D'})
         before = self.client.get('/api/v1/scans').json()
         for row in records:
             for ids in ([row['id']], ['ohscanner.interface.ipc', row['id']]):
@@ -82,6 +82,6 @@ class AdmissionApiTests(unittest.TestCase):
         self.assertEqual(result.status_code, 200, result.text)
         plan = result.json()
         pending = [d for d in plan['detectors'] if d.get('admission')]
-        self.assertEqual(len(pending), 2)
+        self.assertEqual(len(pending), 1)
         self.assertTrue(all(d['decision'] == 'blocked' for d in pending))
         self.assertEqual(self.client.get('/api/v1/scans').json(), before)

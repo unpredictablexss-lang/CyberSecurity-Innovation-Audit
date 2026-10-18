@@ -211,14 +211,35 @@ def run_all_with_coverage(context: ScanContext, registry: DetectorRegistry):
         raise ValueError("source unit manifest does not match ScanRequest")
     reports, sidecar = [], {"schema_version": 1, "detectors": {}}
     for detector in registry.detectors():
-        applicable = tuple(unit for unit in context.units
+        candidates = tuple(unit for unit in context.units
                            if unit.language in detector.supported_languages)
+        selector = getattr(detector, "select_applicable_units", None)
+        candidate_map = {unit.path: unit.sha256 for unit in candidates}
+        selection_error = None
+        try:
+            applicable = tuple(selector(context, candidates)) if callable(selector) else candidates
+            if (len({unit.path for unit in applicable}) != len(applicable)
+                    or any(candidate_map.get(unit.path) != unit.sha256 for unit in applicable)):
+                raise ValueError("selector returned an out-of-scope source unit")
+        except Exception as exc:
+            # A detector-specific scope bug must fail this detector closed without
+            # aborting the other engines in the same scan.
+            applicable = candidates
+            selection_error = exc
         selected = applicable
-        skipped = {}
+        skipped = ({unit.path: "applicability_selection_failed" for unit in applicable}
+                   if selection_error is not None else {})
         run = None
         error = None
         start = perf_counter()
-        if not applicable:
+        if selection_error is not None:
+            run = DetectorRun(
+                detector.detector_id, detector.version, "failed",
+                limitations=("Applicability selection failed closed: "
+                             + type(selection_error).__name__ + ".",),
+            )
+            selected = ()
+        elif not applicable:
             run = DetectorRun(detector.detector_id, detector.version, "blocked",
                               limitations=("not_applicable: no source with supported language.",))
         else:

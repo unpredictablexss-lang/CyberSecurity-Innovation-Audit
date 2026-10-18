@@ -93,11 +93,24 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(r.status_code, 422)
         self.assertEqual(self.store.jobs(), [])
 
-    def test_unadmitted_c_d_ids_cannot_be_submitted_as_production(self):
-        for ident in ['ohscanner.ark.runtime.type_safety', 'ohscanner.data.sensitive_exposure']:
-            r = self.client.post('/api/v1/scans', json=self.request(detector_ids=[ident]), headers=fixtures.HEADERS)
-            self.assertEqual(r.status_code, 409, r.text)
-            self.assertIn('not-yet-approved', r.text)
+    def test_c_requires_explicit_selection_and_is_not_applicable_to_other_repos(self):
+        from src.ohscanner.detectors.catalog import default_detector_ids
+        ident = 'ohscanner.ark.runtime.type_safety'
+        self.assertNotIn(ident, default_detector_ids())
+        r = self.client.post('/api/v1/scans', json=self.request(detector_ids=[ident]), headers=fixtures.HEADERS)
+        self.assertEqual(r.status_code, 201, r.text)
+        Worker(self.settings).run(once=True)
+        report = service.read_report(self.settings, self.store.job(r.json()['id']))
+        run = next(item for item in report['detector_runs'] if item['tool'] == ident)
+        self.assertEqual(run['status'], 'blocked')
+        self.assertEqual(run['diagnostics'], [])
+        self.assertEqual(report['validated_vulnerability'], 0)
+
+    def test_d_stays_blocked_for_production_selection(self):
+        ident = 'ohscanner.data.sensitive_exposure'
+        r = self.client.post('/api/v1/scans', json=self.request(detector_ids=[ident]), headers=fixtures.HEADERS)
+        self.assertEqual(r.status_code, 409, r.text)
+        self.assertIn('not-yet-approved', r.text)
         self.assertEqual(self.store.jobs(), [])
 
     def test_changed_branch_after_preview_requires_new_plan(self):

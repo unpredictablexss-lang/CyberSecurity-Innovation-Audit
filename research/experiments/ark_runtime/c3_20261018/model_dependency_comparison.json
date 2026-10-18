@@ -1,0 +1,144 @@
+{
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "model_version": "0.6.2",
+  "model_sha256": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a",
+  "dependency_count": 19,
+  "unchanged_count": 1,
+  "changed_count": 18,
+  "dependencies": [
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/stub_builder.h",
+      "expected_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+      "current_blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/stub_builder-inl.h",
+      "expected_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+      "current_blob": "c0521ab7a55cd63850736c2db8a290115965373c",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/stub_builder.cpp",
+      "expected_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+      "current_blob": "c630a6200215705843d11c0dd86c565709e8c6c4",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/hcr_circuit_builder.h",
+      "expected_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+      "current_blob": "e66c414a7a739284b474c234e6f90bae0368cd11",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/mcr_circuit_builder.h",
+      "expected_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+      "current_blob": "297a46c06349c0ed7e881ee4475291a41361f743",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+      "expected_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+      "current_blob": "a6df4cba87c9a49f09a292648e7ea7d7cad1b24c",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/circuit_builder.cpp",
+      "expected_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+      "current_blob": "225f09385632bfc2a6ff20bbdf2bfd8694fcffb6",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/new_object_stub_builder.h",
+      "expected_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+      "current_blob": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+      "expected_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+      "current_blob": "f9c026f6b732cf090aca9df620c4d79bf7597f3b",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "expected_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+      "current_blob": "c9b5a66c12c657533047286ec79406a639fb8232",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/call_stub_builder.h",
+      "expected_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+      "current_blob": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/compiler/profiler_operation.h",
+      "expected_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+      "current_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+      "matches": true
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/base/typed_array_helper-inl.h",
+      "expected_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+      "current_blob": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "expected_blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+      "current_blob": "bcb422fe67f4e670adcca31fffd4da7e2b3b0b21",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/stubs/runtime_stubs.cpp",
+      "expected_blob": "c7ce18a76e25289ee7274354fd85950fa9b17af8",
+      "current_blob": "14dc06350881b1fa0fdabeeb8465ae9063224d6c",
+      "matches": false
+    },
+    {
+      "kind": "effect_summary",
+      "path": "ecmascript/js_typed_array.cpp",
+      "expected_blob": "892e376de57c08c768831936503a8e4dac4b39bb",
+      "current_blob": "098c2a22cae3152af3a59063dda25e145f03bbd7",
+      "matches": false
+    },
+    {
+      "kind": "type_dependency",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "expected_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "current_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+      "matches": false
+    },
+    {
+      "kind": "exception_guard_dependency",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "expected_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "current_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+      "matches": false
+    },
+    {
+      "kind": "exception_guard_dependency",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "expected_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "current_blob": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+      "matches": false
+    }
+  ]
+}
