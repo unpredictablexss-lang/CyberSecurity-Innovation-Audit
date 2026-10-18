@@ -1,0 +1,2596 @@
+{
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+  "scope": [
+    "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+  ],
+  "scope_limit": "one pinned compiler builtin file, not the whole Runtime repository",
+  "functions": [
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::GetDataPointFromBuffer",
+      "parameter_types": [
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 977,
+        "end_byte": 1799,
+        "start_line": 24,
+        "end_line": 50
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CheckTypedArrayIndexInRange",
+      "parameter_types": [
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 1803,
+        "end_byte": 2597,
+        "start_line": 52,
+        "end_line": 76
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::LoadTypedArrayElement",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 2601,
+        "end_byte": 3848,
+        "start_line": 78,
+        "end_line": 111
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 3852,
+        "end_byte": 4849,
+        "start_line": 113,
+        "end_line": 139
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FastGetPropertyByIndex",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 4853,
+        "end_byte": 6217,
+        "start_line": 141,
+        "end_line": 181
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FastCopyElementToArray",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 6221,
+        "end_byte": 7954,
+        "start_line": 183,
+        "end_line": 236
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass",
+        "GetObjectType"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::GetValueFromBuffer",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 7958,
+        "end_byte": 14576,
+        "start_line": 238,
+        "end_line": 394
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CalculatePositionWithLength",
+      "parameter_types": [
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 14580,
+        "end_byte": 16049,
+        "start_line": 396,
+        "end_line": 438
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Reverse",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 16053,
+        "end_byte": 17225,
+        "start_line": 440,
+        "end_line": 469
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::LastIndexOf",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 17229,
+        "end_byte": 21164,
+        "start_line": 471,
+        "end_line": 578
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass",
+        "GetObjectType"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::IndexOf",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 21168,
+        "end_byte": 25048,
+        "start_line": 580,
+        "end_line": 677
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Find",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 25052,
+        "end_byte": 28002,
+        "start_line": 679,
+        "end_line": 754
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Includes",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 28006,
+        "end_byte": 31695,
+        "start_line": 756,
+        "end_line": 845
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 31699,
+        "end_byte": 37106,
+        "start_line": 847,
+        "end_line": 978
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 1,
+      "sink_references": [
+        {
+          "mode": "lexical_definition_reference_not_path_proof",
+          "line": 964,
+          "target_expression": "thisValue",
+          "token_expression": "jsType",
+          "token_load_object": "thisValue",
+          "same_written_object": true
+        }
+      ],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": true,
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 964,
+            "column": 21,
+            "reason": "creation_relationship_invalidated_by_call",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:31760:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin:31760:thisValue",
+            "token_line": 856,
+            "creation_line": 0,
+            "path": [
+              850,
+              851,
+              852,
+              853,
+              854,
+              855,
+              856,
+              857,
+              858,
+              859,
+              860,
+              862,
+              863,
+              864,
+              865,
+              866,
+              867,
+              868,
+              869,
+              870,
+              871,
+              872,
+              874,
+              875,
+              876,
+              877,
+              878,
+              879,
+              881,
+              888,
+              889,
+              891,
+              898,
+              900,
+              901,
+              902,
+              903,
+              904,
+              905,
+              906,
+              907,
+              908,
+              909,
+              910,
+              911,
+              912,
+              913,
+              915,
+              917,
+              918,
+              925,
+              927,
+              928,
+              929,
+              930,
+              931,
+              941,
+              943,
+              944,
+              945,
+              946,
+              947,
+              948,
+              949,
+              951,
+              952,
+              953,
+              954,
+              955,
+              956,
+              962,
+              964
+            ],
+            "constraints": [
+              [
+                854,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                857,
+                "IsFastTypeArray(jsType)",
+                true
+              ],
+              [
+                859,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                874,
+                "Int64GreaterThanOrEqual(IntPtr(0), numArgs)",
+                false
+              ],
+              [
+                877,
+                "TaggedIsInt(targetTag)",
+                true
+              ],
+              [
+                881,
+                "Int64GreaterThanOrEqual(IntPtr(1), numArgs)",
+                true
+              ],
+              [
+                891,
+                "Int64GreaterThanOrEqual(IntPtr(2), numArgs)",
+                true
+              ],
+              [
+                913,
+                "Int64LessThan(Int64Sub(*copyEnd, *copyFrom), Int64Sub(thisLen, *copyTo))",
+                true
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal, copyToVal))\r\n            .And(Int64LessThan(copyToVal, Int64Add(copyFromVal, countVal))).Done()",
+                false
+              ],
+              [
+                953,
+                "Int64GreaterThan(*count, Int64(0))",
+                true
+              ],
+              [
+                956,
+                "HasPendingException(glue)",
+                false
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+            "region_start_byte": 31699,
+            "region_end_byte": 37106,
+            "effect_sites": [
+              [
+                854,
+                "TaggedIsHeapObject"
+              ],
+              [
+                857,
+                "IsFastTypeArray"
+              ],
+              [
+                859,
+                "HasConstructor"
+              ],
+              [
+                872,
+                "GetArrayLength"
+              ],
+              [
+                874,
+                "Int64GreaterThanOrEqual"
+              ],
+              [
+                876,
+                "GetCallArg0"
+              ],
+              [
+                877,
+                "TaggedIsInt"
+              ],
+              [
+                879,
+                "TaggedGetInt"
+              ],
+              [
+                881,
+                "Int64GreaterThanOrEqual"
+              ],
+              [
+                891,
+                "Int64GreaterThanOrEqual"
+              ],
+              [
+                910,
+                "CalculatePositionWithLength"
+              ],
+              [
+                911,
+                "CalculatePositionWithLength"
+              ],
+              [
+                912,
+                "CalculatePositionWithLength"
+              ],
+              [
+                931,
+                "LogicAndBuilder"
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And"
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal,copyToVal)).And"
+              ],
+              [
+                931,
+                "LogicAndBuilder(env).And(Int64LessThan(copyFromVal,copyToVal)).And(Int64LessThan(copyToVal,Int64Add(copyFromVal,countVal))).Done"
+              ],
+              [
+                953,
+                "Int64GreaterThan"
+              ],
+              [
+                955,
+                "FastGetPropertyByIndex"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "parse_dependency_contamination_unknown",
+          "production_runner_not_admitted",
+          "research_only_partial_function_scope",
+          "unresolved_local_observations"
+        ],
+        "steps": 993,
+        "model_digest": "e5b64cc3cc3aaef493fa24836993154bdfd577d8443714682969613dde361576"
+      },
+      "no_candidate_reason": "unknown dependencies/effects: see observation.effect_sites",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::ReduceRight",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 37110,
+        "end_byte": 42036,
+        "start_line": 980,
+        "end_line": 1086
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Reduce",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 42040,
+        "end_byte": 46972,
+        "start_line": 1088,
+        "end_line": 1195
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Every",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 46976,
+        "end_byte": 50173,
+        "start_line": 1197,
+        "end_line": 1279
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Some",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 50177,
+        "end_byte": 53850,
+        "start_line": 1281,
+        "end_line": 1370
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 53854,
+        "end_byte": 60258,
+        "start_line": 1372,
+        "end_line": 1512
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass",
+        "LoadHClass",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [
+        "newBuilder.NewTypedArray"
+      ],
+      "sink_count": 1,
+      "sink_references": [
+        {
+          "mode": "lexical_definition_reference_not_path_proof",
+          "line": 1499,
+          "target_expression": "newArray",
+          "token_expression": "newArrayType",
+          "token_load_object": "newArray",
+          "same_written_object": true
+        }
+      ],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": true,
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 1499,
+            "column": 21,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:58949",
+            "token_origin": "new:58949",
+            "token_line": 1479,
+            "creation_line": 1478,
+            "path": [
+              1375,
+              1376,
+              1377,
+              1378,
+              1379,
+              1380,
+              1381,
+              1382,
+              1383,
+              1384,
+              1385,
+              1386,
+              1387,
+              1388,
+              1389,
+              1390,
+              1391,
+              1392,
+              1393,
+              1394,
+              1395,
+              1396,
+              1397,
+              1398,
+              1399,
+              1400,
+              1401,
+              1402,
+              1403,
+              1405,
+              1406,
+              1407,
+              1408,
+              1409,
+              1411,
+              1412,
+              1414,
+              1415,
+              1416,
+              1417,
+              1418,
+              1419,
+              1420,
+              1421,
+              1422,
+              1423,
+              1424,
+              1425,
+              1427,
+              1428,
+              1429,
+              1430,
+              1431,
+              1432,
+              1473,
+              1474,
+              1475,
+              1476,
+              1477,
+              1478,
+              1479,
+              1480,
+              1486,
+              1487,
+              1488,
+              1489,
+              1490,
+              1491,
+              1492,
+              1493,
+              1495,
+              1496,
+              1498,
+              1499
+            ],
+            "constraints": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                1386,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                1389,
+                "IsFastTypeArray(arrayType)",
+                true
+              ],
+              [
+                1392,
+                "IsDetachedBuffer(buffer)",
+                false
+              ],
+              [
+                1394,
+                "HasConstructor(thisValue)",
+                false
+              ],
+              [
+                1397,
+                "IsEcmaObject(prototype)",
+                true
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker(marker)",
+                true
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged(marker)",
+                false
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject(callbackFnHandle)",
+                true
+              ],
+              [
+                1411,
+                "IsCallable(callbackFnHandle)",
+                true
+              ],
+              [
+                1432,
+                "Int32LessThan(*i, thisLen)",
+                false
+              ],
+              [
+                1480,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1495,
+                "Int32LessThan(*i, *newArrayLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 53854,
+            "region_end_byte": 60258,
+            "effect_sites": [
+              [
+                1384,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                1386,
+                "IsEcmaObject"
+              ],
+              [
+                1389,
+                "IsFastTypeArray"
+              ],
+              [
+                1391,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                1392,
+                "IsDetachedBuffer"
+              ],
+              [
+                1394,
+                "HasConstructor"
+              ],
+              [
+                1396,
+                "GetPrototypeFromHClass"
+              ],
+              [
+                1397,
+                "IsEcmaObject"
+              ],
+              [
+                1399,
+                "GetProtoChangeMarkerFromHClass"
+              ],
+              [
+                1400,
+                "TaggedIsProtoChangeMarker"
+              ],
+              [
+                1402,
+                "GetAccessorHasChanged"
+              ],
+              [
+                1407,
+                "GetCallArg0"
+              ],
+              [
+                1408,
+                "TaggedIsHeapObject"
+              ],
+              [
+                1411,
+                "IsCallable"
+              ],
+              [
+                1414,
+                "GetCallArg1"
+              ],
+              [
+                1415,
+                "GetArrayLength"
+              ],
+              [
+                1417,
+                "arrayStubBuilder.NewArray"
+              ],
+              [
+                1478,
+                "newBuilder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "parse_dependency_contamination_unknown",
+          "production_runner_not_admitted",
+          "research_only_partial_function_scope"
+        ],
+        "steps": 266,
+        "model_digest": "a0d105e8030d151adda6d2214029e8f16c61f5dae4ad109d8f62a047b64e4853"
+      },
+      "no_candidate_reason": "destination-origin or guarded match in bounded model",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Slice",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 60262,
+        "end_byte": 63987,
+        "start_line": 1514,
+        "end_line": 1606
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [
+        "newBuilder.NewTypedArray"
+      ],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::SubArray",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 63991,
+        "end_byte": 66971,
+        "start_line": 1608,
+        "end_line": 1687
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 66975,
+        "end_byte": 70342,
+        "start_line": 1689,
+        "end_line": 1775
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass",
+        "GetObjectType"
+      ],
+      "creator_calls": [
+        "newBuilder.NewTypedArraySameType"
+      ],
+      "sink_count": 1,
+      "sink_references": [
+        {
+          "mode": "lexical_definition_reference_not_path_proof",
+          "line": 1763,
+          "target_expression": "newArray",
+          "token_expression": "jsType",
+          "token_load_object": null,
+          "same_written_object": null
+        }
+      ],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": true,
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 1763,
+            "column": 21,
+            "reason": "unresolved_target_or_type_origin",
+            "target_identity": "expr:68326",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              1692,
+              1693,
+              1694,
+              1695,
+              1696,
+              1697,
+              1698,
+              1699,
+              1700,
+              1701,
+              1702,
+              1703,
+              1704,
+              1705,
+              1706,
+              1707,
+              1708,
+              1709,
+              1710,
+              1711,
+              1712,
+              1713,
+              1714,
+              1715,
+              1716,
+              1717,
+              1718,
+              1719,
+              1720,
+              1721,
+              1722,
+              1723,
+              1729,
+              1730,
+              1732,
+              1733,
+              1735,
+              1736,
+              1743,
+              1745,
+              1747,
+              1749,
+              1750,
+              1751,
+              1752,
+              1753,
+              1754,
+              1755,
+              1756,
+              1758,
+              1759,
+              1760,
+              1761,
+              1763
+            ],
+            "constraints": [
+              [
+                1698,
+                "TaggedIsHeapObject(thisValue)",
+                true
+              ],
+              [
+                1700,
+                "IsTypedArray(thisValue)",
+                true
+              ],
+              [
+                1702,
+                "IsJsCOWArray(thisValue)",
+                false
+              ],
+              [
+                1707,
+                "TaggedIsInt(index)",
+                true
+              ],
+              [
+                1723,
+                "HasPendingException(glue)",
+                false
+              ],
+              [
+                1732,
+                "Int64GreaterThanOrEqual(*relativeIndex, Int64(0))",
+                true
+              ],
+              [
+                1745,
+                "BitOr(Int64GreaterThanOrEqual(*actualIndex, thisLen), Int64LessThan(*actualIndex, Int64(0)))",
+                false
+              ],
+              [
+                1758,
+                "Int64LessThan(*k, thisLen)",
+                true
+              ],
+              [
+                1760,
+                "Int64Equal(*k, *actualIndex)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With",
+            "region_start_byte": 66975,
+            "region_end_byte": 70342,
+            "effect_sites": [
+              [
+                1698,
+                "TaggedIsHeapObject"
+              ],
+              [
+                1700,
+                "IsTypedArray"
+              ],
+              [
+                1702,
+                "IsJsCOWArray"
+              ],
+              [
+                1704,
+                "GetArrayLength"
+              ],
+              [
+                1705,
+                "GetCallArg0"
+              ],
+              [
+                1707,
+                "TaggedIsInt"
+              ],
+              [
+                1709,
+                "GetInt64OfTInt"
+              ],
+              [
+                1715,
+                "GetCallArg1"
+              ],
+              [
+                1720,
+                "newBuilder.NewTypedArraySameType"
+              ],
+              [
+                1730,
+                "CallNGCRuntime"
+              ],
+              [
+                1730,
+                "RTSTUB_ID"
+              ],
+              [
+                1732,
+                "Int64GreaterThanOrEqual"
+              ],
+              [
+                1745,
+                "BitOr"
+              ],
+              [
+                1745,
+                "Int64GreaterThanOrEqual"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "parse_dependency_contamination_unknown",
+          "production_runner_not_admitted",
+          "research_only_partial_function_scope",
+          "unresolved_local_observations"
+        ],
+        "steps": 114,
+        "model_digest": "8ece90eaf766bc460ae77c868d10dc7ca628b01d5052a46d80f57537f49f00d5"
+      },
+      "no_candidate_reason": "unknown dependencies/effects: see observation.effect_sites",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::GetByteLength",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 70346,
+        "end_byte": 71183,
+        "start_line": 1777,
+        "end_line": 1801
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::DoSort",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 71187,
+        "end_byte": 84702,
+        "start_line": 1803,
+        "end_line": 2091
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Sort",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 84706,
+        "end_byte": 85762,
+        "start_line": 2093,
+        "end_line": 2117
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::GetByteOffset",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 85766,
+        "end_byte": 86602,
+        "start_line": 2119,
+        "end_line": 2143
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 86606,
+        "end_byte": 91158,
+        "start_line": 2145,
+        "end_line": 2250
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 1,
+      "sink_references": [
+        {
+          "mode": "lexical_definition_reference_not_path_proof",
+          "line": 2235,
+          "target_expression": "thisValue",
+          "token_expression": "GetObjectType(LoadHClass(thisValue))",
+          "token_load_object": "thisValue",
+          "same_written_object": true
+        }
+      ],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": true,
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 2235,
+            "column": 25,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:86660:thisValue",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set:86660:thisValue",
+            "token_line": 2236,
+            "creation_line": 0,
+            "path": [
+              2148,
+              2149,
+              2150,
+              2151,
+              2153,
+              2154,
+              2155,
+              2156,
+              2157,
+              2158,
+              2159,
+              2160,
+              2161,
+              2162,
+              2163,
+              2164,
+              2165,
+              2166,
+              2167,
+              2168,
+              2169,
+              2170,
+              2185,
+              2187,
+              2188,
+              2189,
+              2190,
+              2191,
+              2192,
+              2193,
+              2194,
+              2196,
+              2197,
+              2198,
+              2199,
+              2200,
+              2201,
+              2202,
+              2203,
+              2204,
+              2205,
+              2206,
+              2207,
+              2208,
+              2210,
+              2211,
+              2212,
+              2221,
+              2223,
+              2224,
+              2225,
+              2226,
+              2227,
+              2228,
+              2230,
+              2231,
+              2233,
+              2235
+            ],
+            "constraints": [
+              [
+                2153,
+                "TaggedIsUndefinedOrNull(thisValue)",
+                false
+              ],
+              [
+                2155,
+                "IsEcmaObject(thisValue)",
+                true
+              ],
+              [
+                2157,
+                "IsFastTypeArray(GetObjectType(LoadHClass(thisValue)))",
+                true
+              ],
+              [
+                2162,
+                "Int64Equal(len, Int64(0))",
+                false
+              ],
+              [
+                2170,
+                "TaggedIsUndefinedOrNull(fromOffset)",
+                true
+              ],
+              [
+                2191,
+                "IsEcmaObject(srcArray)",
+                true
+              ],
+              [
+                2193,
+                "IsTypedArray(srcArray)",
+                true
+              ],
+              [
+                2198,
+                "IsFastTypeArray(srcType)",
+                true
+              ],
+              [
+                2203,
+                "SameValue(glue, targetBuffer, srcBuffer)",
+                false
+              ],
+              [
+                2207,
+                "Int64GreaterThan(Int64Add(*realOffset, srcLen), len)",
+                false
+              ],
+              [
+                2212,
+                "Equal(srcType, arrayType)",
+                false
+              ],
+              [
+                2230,
+                "Int64LessThan(*startIndex, srcLen)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+            "region_start_byte": 86606,
+            "region_end_byte": 91158,
+            "effect_sites": [
+              [
+                2153,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2155,
+                "IsEcmaObject"
+              ],
+              [
+                2157,
+                "IsFastTypeArray"
+              ],
+              [
+                2159,
+                "GetArrayLength"
+              ],
+              [
+                2169,
+                "GetCallArg1"
+              ],
+              [
+                2170,
+                "TaggedIsUndefinedOrNull"
+              ],
+              [
+                2190,
+                "GetCallArg0"
+              ],
+              [
+                2191,
+                "IsEcmaObject"
+              ],
+              [
+                2193,
+                "IsTypedArray"
+              ],
+              [
+                2198,
+                "IsFastTypeArray"
+              ],
+              [
+                2201,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2202,
+                "GetViewedArrayBuffer"
+              ],
+              [
+                2203,
+                "SameValue"
+              ],
+              [
+                2206,
+                "GetArrayLength"
+              ],
+              [
+                2207,
+                "Int64GreaterThan"
+              ],
+              [
+                2233,
+                "FastGetPropertyByIndex"
+              ]
+            ]
+          }
+        ],
+        "limitations": [
+          "parse_dependency_contamination_unknown",
+          "production_runner_not_admitted",
+          "research_only_partial_function_scope"
+        ],
+        "steps": 152,
+        "model_digest": "5b55f5a3a6a8012469ca69b54eb946c1e0694ff2caf3423ef2f51b27bf801fc7"
+      },
+      "no_candidate_reason": "destination-origin or guarded match in bounded model",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FindIndex",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 91162,
+        "end_byte": 94456,
+        "start_line": 2252,
+        "end_line": 2333
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Entries",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 94460,
+        "end_byte": 94717,
+        "start_line": 2335,
+        "end_line": 2339
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Keys",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 94721,
+        "end_byte": 94965,
+        "start_line": 2341,
+        "end_line": 2345
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Values",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 94969,
+        "end_byte": 95217,
+        "start_line": 2347,
+        "end_line": 2351
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::BuildArrayIterator",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*",
+        "IterationKind"
+      ],
+      "function_region": {
+        "start_byte": 95221,
+        "end_byte": 96048,
+        "start_line": 2353,
+        "end_line": 2372
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FindLastIndex",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 96052,
+        "end_byte": 98702,
+        "start_line": 2374,
+        "end_line": 2440
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass",
+        "GetObjectType"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::ToSorted",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 98706,
+        "end_byte": 100560,
+        "start_line": 2442,
+        "end_line": 2484
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [
+        "newBuilder.NewTypedArraySameType"
+      ],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Of",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 100564,
+        "end_byte": 105024,
+        "start_line": 2486,
+        "end_line": 2596
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 105028,
+        "end_byte": 108935,
+        "start_line": 2598,
+        "end_line": 2685
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass",
+        "LoadHClass",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass",
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [
+        "newBuilder.NewTypedArray"
+      ],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::ToReversed",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "Label*",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 108939,
+        "end_byte": 111347,
+        "start_line": 2687,
+        "end_line": 2747
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "GetObjectType",
+        "LoadHClass"
+      ],
+      "creator_calls": [
+        "newBuilder.NewTypedArraySameType"
+      ],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FastSetPropertyByIndex",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 111351,
+        "end_byte": 113057,
+        "start_line": 2749,
+        "end_line": 2798
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::SetValueToBuffer",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "Label*"
+      ],
+      "function_region": {
+        "start_byte": 113061,
+        "end_byte": 126732,
+        "start_line": 2800,
+        "end_line": 3109
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::GenTypedArrayConstructor",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 126736,
+        "end_byte": 131182,
+        "start_line": 3111,
+        "end_line": 3212
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::AllocateTypedArray",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 131186,
+        "end_byte": 132343,
+        "start_line": 3214,
+        "end_line": 3244
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::AllocateTypedArray",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 132347,
+        "end_byte": 133800,
+        "start_line": 3246,
+        "end_line": 3284
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::AllocateTypedArrayBuffer",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 133804,
+        "end_byte": 136619,
+        "start_line": 3286,
+        "end_line": 3348
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [
+        "LoadHClass"
+      ],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CreateFromArrayBuffer",
+      "parameter_types": [
+        "Variable*",
+        "GateRef",
+        "GateRef",
+        "Label*",
+        "Label*",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 136623,
+        "end_byte": 139666,
+        "start_line": 3350,
+        "end_line": 3418
+      },
+      "subtree_parse_status": "partial",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FastCopyElementFromArray",
+      "parameter_types": [
+        "Variable*",
+        "GateRef",
+        "GateRef",
+        "Label*",
+        "Label*",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 139670,
+        "end_byte": 140844,
+        "start_line": 3420,
+        "end_line": 3448
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FastCopyFromArrayToTypedArray",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "Variable*",
+        "GateRef",
+        "GateRef",
+        "Label*",
+        "Label*",
+        "DataViewType",
+        "bool"
+      ],
+      "function_region": {
+        "start_byte": 140848,
+        "end_byte": 142803,
+        "start_line": 3450,
+        "end_line": 3496
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyElementsToArrayBuffer",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "DataViewType",
+        "bool"
+      ],
+      "function_region": {
+        "start_byte": 142807,
+        "end_byte": 144344,
+        "start_line": 3498,
+        "end_line": 3535
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::FastSetValueInBuffer",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 144409,
+        "end_byte": 145810,
+        "start_line": 3538,
+        "end_line": 3571
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::SetValueInBufferForByte",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 145814,
+        "end_byte": 146519,
+        "start_line": 3573,
+        "end_line": 3596
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::SetValueInBufferForInteger",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 146545,
+        "end_byte": 147452,
+        "start_line": 3599,
+        "end_line": 3626
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::SetValueInBufferForFloat",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 147478,
+        "end_byte": 147846,
+        "start_line": 3629,
+        "end_line": 3637
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::SetArrayBufferProperties",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef",
+        "GateRef"
+      ],
+      "function_region": {
+        "start_byte": 147850,
+        "end_byte": 148284,
+        "start_line": 3639,
+        "end_line": 3647
+      },
+      "subtree_parse_status": "complete",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    },
+    {
+      "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::GetOnHeapHclassFromType",
+      "parameter_types": [
+        "GateRef",
+        "GateRef",
+        "DataViewType"
+      ],
+      "function_region": {
+        "start_byte": 148288,
+        "end_byte": 150464,
+        "start_line": 3649,
+        "end_line": 3693
+      },
+      "subtree_parse_status": "partial",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "ast_error_regions": [],
+      "type_source_calls": [],
+      "creator_calls": [],
+      "sink_count": 0,
+      "sink_references": [],
+      "independent_same_type_proof": "only explicit origin/guard observations; external dependencies unverified",
+      "applicable": false,
+      "result": null,
+      "no_candidate_reason": "no corresponding store sink",
+      "file_parse_status": "partial",
+      "dependency_verification": "partial: pinned creator/sink blobs; scalar semantics and build binding still obligations"
+    }
+  ],
+  "new_candidates": 0
+}

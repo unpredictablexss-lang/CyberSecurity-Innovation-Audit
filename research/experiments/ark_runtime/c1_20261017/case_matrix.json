@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "C1_planned_rule_behavior_cases_not_test_results",
+  "date": "2026-10-17",
+  "detector_id_proposed": "ohscanner.ark.runtime.type_safety",
+  "rule_id_proposed": "ark.runtime.typedarray-store-type-origin",
+  "rule_version_proposed": "0.1.0",
+  "scope": "单个来源已核验的 TypedArray Filter 内建函数快路径家族",
+  "approval_status": "awaiting_owner_review",
+  "case_count": 12,
+  "status": "planned_not_executed",
+  "metrics": {
+    "precision": null,
+    "recall": null,
+    "validated_vulnerabilities": null
+  },
+  "notes": [
+    "expected_if_supported 是未来在已批准能力下的验收预期，不是已运行结果。",
+    "片段为待扩充为完整 fixture 的自编控制，不是可运行 PoC 或 CVE 真值。",
+    "历史修复前后案例当前受 partial 文件准入和 IR 控制模型缺口阻塞。",
+    "no_rule_candidate 不等于 safe。"
+  ],
+  "cases": [
+    {
+      "id": "C01",
+      "name": "真实修复前",
+      "kind": "historical_before",
+      "source_commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "source_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "source_lines": [
+        1372,
+        1511
+      ],
+      "expected_if_supported": "candidate",
+      "reason": "newArray 为写入目标，类型参数 arrayType 来自 thisValue；NewTypedArray 的 species 路径不能保证同型。",
+      "actual": "not_run",
+      "current_gate": "blocked: whole-file partial; partial eligibility and IR model not approved"
+    },
+    {
+      "id": "C02",
+      "name": "真实修复后",
+      "kind": "historical_fixed",
+      "source_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "source_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "source_lines": [
+        1372,
+        1512
+      ],
+      "expected_if_supported": "no_rule_candidate",
+      "reason": "类型参数 newArrayType 从目标 newArray 自身取得；只表示此条窄规则的匹配条件消失，不证明产品安全。",
+      "actual": "not_run",
+      "current_gate": "blocked: whole-file partial; partial eligibility and IR model not approved"
+    },
+    {
+      "id": "C03",
+      "name": "变量改名仍保留错误来源",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "GateRef originTag = GetObjectType(LoadHClass(input));\nGateRef output = builder.NewTypedArray(glue, input, originTag, length);\nStoreTypedArrayElement(glue, output, index, value, originTag);",
+      "expected_if_supported": "candidate",
+      "reason": "以已解析的定义和调用身份判定，不依赖 arrayType/newArray 等变量拼写。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C04",
+      "name": "从目标取得类型",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "GateRef outputTag = GetObjectType(LoadHClass(output));\nStoreTypedArrayElement(glue, output, index, value, outputTag);",
+      "expected_if_supported": "no_rule_candidate",
+      "reason": "类型 token 和 sink 绑定同一个目标定义版本。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C05",
+      "name": "目标的简单局部别名",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "GateRef alias = output;\nGateRef tag = GetObjectType(LoadHClass(output));\nStoreTypedArrayElement(glue, alias, index, value, tag);",
+      "expected_if_supported": "no_rule_candidate",
+      "reason": "仅支持未重赋值、未逃逸的直接局部别名；须证明 alias 与 output 为同一版本。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C06",
+      "name": "类型 token 的简单复制",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "GateRef tag = GetObjectType(LoadHClass(output));\nGateRef copiedTag = tag;\nStoreTypedArrayElement(glue, output, index, value, copiedTag);",
+      "expected_if_supported": "no_rule_candidate",
+      "reason": "复制保留类型来源，不能因为类型表达式不内联而误报。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C07",
+      "name": "取类型后目标被未知调用重赋值",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "GateRef tag = GetObjectType(LoadHClass(output));\noutput = UnknownHelper(glue);\nStoreTypedArrayElement(glue, output, index, value, tag);",
+      "expected_if_supported": "unknown",
+      "reason": "旧定义不能套在新对象上；未知 helper 的返回身份和语义不能猜测。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C08",
+      "name": "其他类的同名 API",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "void OtherBuilder::Filter() {\n  GateRef tag = GetObjectType(LoadHClass(input));\n  StoreTypedArrayElement(glue, output, index, value, tag);\n}",
+      "expected_if_supported": "not_applicable_to_rule",
+      "reason": "首版仅识别来源模型绑定的 BuiltinsTypedArrayStubBuilder::Filter 及其解析明确的 API 身份；不能仅按函数末尾名字套用模型。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C09",
+      "name": "不同来源在 C++ 分支汇合",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "if (flag) { tag = GetObjectType(LoadHClass(output)); }\nelse { tag = GetObjectType(LoadHClass(input)); }\nStoreTypedArrayElement(glue, output, index, value, tag);",
+      "expected_if_supported": "unknown",
+      "reason": "首版不宣称任意 C++ CFG/phi 推理，冲突来源汇合需保留未知。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C10",
+      "name": "未建模的 IR 分支操作",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "BRANCH_WITH_DEOPT(condition, &storeLabel, &exitLabel);\nBind(&storeLabel);\nStoreTypedArrayElement(glue, output, index, value, inputTag);",
+      "expected_if_supported": "unknown",
+      "reason": "不能把未识别控制操作忽略后按源码顺序报告可达冲突。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C11",
+      "name": "目标函数自身解析损坏",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "void BuiltinsTypedArrayStubBuilder::Filter( {\n  StoreTypedArrayElement(glue, output, index, value, tag);",
+      "expected_if_supported": "unknown",
+      "expected_file_outcome": "not_analyzed",
+      "reason": "目标函数有 ERROR/missing 节点时不提取推断；不得升级 complete。",
+      "actual": "not_run"
+    },
+    {
+      "id": "C12",
+      "name": "生成图中的不可达写入",
+      "kind": "self_authored_synthetic_plan",
+      "fragment": "Jump(exit);\nBind(&unreferencedLabel);\nStoreTypedArrayElement(glue, output, index, value, inputTag);\nBind(exit);",
+      "expected_if_supported": "no_rule_candidate_if_unreachability_proved_otherwise_unknown",
+      "reason": "不存在前驱的标签不是可达路径；必须根据完整已支持的 IR 边证明，不能按源码中有 sink 就报警。",
+      "actual": "not_run"
+    }
+  ]
+}

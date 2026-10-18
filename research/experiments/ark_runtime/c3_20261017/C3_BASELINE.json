@@ -1,0 +1,1001 @@
+{
+  "stage": "C3_pre_change_baseline",
+  "commit": "33242fbd2b58e2f510fa74f1521e247fea08db27",
+  "version": "0.1.0",
+  "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3",
+  "budget": {
+    "max_source_bytes": 1048576,
+    "max_instructions": 4096,
+    "max_scope_depth": 128,
+    "max_states": 2048,
+    "max_steps": 8192,
+    "max_seconds": 5.0
+  },
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "56b622d3c9ab54a5e0b3636f3e810644d46493fe54ab7b9dcbbd3d999f785d40",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "09fb9e68b227750ac237210b73ad9cd6d79075923f2b91c5dcee717acd8ac20b",
+    "src/ohscanner/detectors/ark_runtime/model.py": "a0bb794b7dca58cfb9128597ea727f0bdfda8e19a0b5a57abfdcd8682064b11a",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "34852fcedb0b300928c0f93e997679d7e8801c91d6cf3f29a2d10e1c9cb333af",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "2b781276a7d66416252317a4452870b306f028c0ef608ab60130fe80fc0e6702",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "08c81c92c209b2689a742b0d73f0c7f2c7307ac740545fe082b3de02bfa27708",
+    "src/ohscanner/detectors/ark_runtime/__init__.py": "3b3d8588d98a48ad44a9ef10cf66be74c927ed9b44c4b387b5ed3d9840db2636"
+  },
+  "original_tests": {
+    "run": 41,
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "command": "python -m unittest discover -s tests/detectors/ark_runtime -t . -q",
+    "exit_code": 0,
+    "elapsed_seconds": 9.96
+  },
+  "mechanism_count": 24,
+  "passed": 12,
+  "failed": 12,
+  "cases": [
+    {
+      "id": "G01",
+      "expected": "candidate",
+      "actual": "candidate",
+      "outcome": "PASS",
+      "reason": "Destination alias and two token copies preserve distinct origins.",
+      "source_sha256": "27e2f7b068fbac61e20bc76bb55dcd69a28d66b94e372aad6982570c4f8b0f4a",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 7,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              6,
+              6,
+              7
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 7,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0026264000007358845
+    },
+    {
+      "id": "G02",
+      "expected": "matched",
+      "actual": "matched",
+      "outcome": "PASS",
+      "reason": "Two copies of a fresh destination token retain the same origin.",
+      "source_sha256": "051fcf738efcd16106061ffc8b36125a619620cef5af558f5089d0385f82bf89",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 7,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.000899599999684142
+    },
+    {
+      "id": "G03",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Unknown effects inside declaration initializers invalidate stale tokens.",
+      "source_sha256": "943c0f3343f676be67b1832cf40509e4348dd87a280121225e3720bbd6ddde48",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0008162000012816861
+    },
+    {
+      "id": "G04",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Unknown effects in assignment RHS invalidate stale tokens.",
+      "source_sha256": "ed3dc949b74006a13712ac96d82304b8b9e87c01cf336eb301513a5f50e24ddc",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0007078999988152646
+    },
+    {
+      "id": "G05",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Unknown member-call arguments may escape the destination.",
+      "source_sha256": "8fc37b4a5d0a733b8dcd838c12570149bfe07e9ccb253df6955020cf5ead354a",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0007469999982276931
+    },
+    {
+      "id": "G06",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Nested calls cannot retain old type observations.",
+      "source_sha256": "bd84dbfc9645d1e308b144fa866175753228819a02c2c2866dca0dee4c155a6b",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0011259999992034864
+    },
+    {
+      "id": "G07",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Unmodelled global effects cannot prove type stability.",
+      "source_sha256": "1a12bdaeea1223e5b6001665de9845f9f6cd1098e024f6fe9a57a61c58db3fda",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0010962000014842488
+    },
+    {
+      "id": "G08",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Condition evaluation can have effects before either generated successor.",
+      "source_sha256": "d00cc7af0979f34dd9556be35453021904646972f9378c93fe582bbf24947dff",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 10,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "constraints": [
+              [
+                8,
+                "Mutate(output)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 8,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.00134529999922961
+    },
+    {
+      "id": "G09",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "Sink argument effects must be applied before checking type evidence.",
+      "source_sha256": "ec9253e0131f378f7064bb415fee27cb1b78dec0208db6e21410e937d6b90077",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 7,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0007353000000875909
+    },
+    {
+      "id": "G10",
+      "expected": "unknown",
+      "actual": "candidate",
+      "outcome": "FAIL",
+      "reason": "An invalidated destination cannot support an old mismatch candidate.",
+      "source_sha256": "15c62ad2af5380a9cefe88b19fd6f6ea10e1f829612d6ca27565524db1d55342",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 7,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0022949000012886245
+    },
+    {
+      "id": "G11",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "A successful type guard must not survive an unknown effect.",
+      "source_sha256": "1c4f1e8a7dd8ded071c7ddfe4123642102feedf596455b52d5d236096521b884",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 11,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "constraints": [
+              [
+                8,
+                "Int32Equal(inputTag, tag)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 9,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0013091000000713393
+    },
+    {
+      "id": "G12",
+      "expected": "candidate",
+      "actual": "candidate",
+      "outcome": "PASS",
+      "reason": "A guard comparing two source tokens says nothing about the destination.",
+      "source_sha256": "bb66d5da64386ee9d9c92afb5b2e0784df77284ce7b417520df9ca4097bc56d2",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 10,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "constraints": [
+              [
+                8,
+                "Int32Equal(inputTag, tag)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 8,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0011341999997966923
+    },
+    {
+      "id": "G13",
+      "expected": "unknown",
+      "actual": "matched",
+      "outcome": "FAIL",
+      "reason": "A shadowed equality operation cannot justify a same-type guarantee.",
+      "source_sha256": "cf90703717f49c2ce01387db36ea8ea77ca78ee05e85c38693138e6c6741e5db",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 11,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "constraints": [
+              [
+                9,
+                "Int32Equal(inputTag, tag)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 9,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0010017000022344291
+    },
+    {
+      "id": "G14",
+      "expected": "unknown",
+      "actual": "unknown",
+      "outcome": "PASS",
+      "reason": "A sink beyond unknown generated control is unknown, not proven unreachable.",
+      "source_sha256": "04bc96eab77a68c65a0f9603cb66a9c2cf75a6907c9d6af68fec7ebf727f030c",
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 6,
+            "column": 1,
+            "reason": "unmodeled_control:UNMODELED_IR",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "constraints": []
+          },
+          {
+            "kind": "unknown",
+            "line": 7,
+            "column": 1,
+            "reason": "generated_predecessor_unavailable",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unmodeled_control:UNMODELED_IR:6",
+          "unresolved_local_observations"
+        ],
+        "steps": 4,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0006136999982118141
+    },
+    {
+      "id": "G15",
+      "expected": "unknown",
+      "actual": "not_analyzed",
+      "outcome": "FAIL",
+      "reason": "Return expressions must not hide unanalysed effectful calls.",
+      "source_sha256": "0df5ba6d6f1543c9ea014f0730a5414da91b20e125bf944cfdcb195b497829ce",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [],
+        "limitations": [],
+        "steps": 4,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0005304999976942781
+    },
+    {
+      "id": "G16",
+      "expected": "not_analyzed",
+      "actual": "not_analyzed",
+      "outcome": "PASS",
+      "reason": "A detached generated block without a predecessor has no analysed sink path.",
+      "source_sha256": "c1ffd8a6b4206f6934da0c19d7a9da45153d8ba7795e654b4384809fb31acf21",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "unreachable",
+            "line": 7,
+            "column": 1,
+            "reason": "no_generated_predecessor_path",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0022734000012860633
+    },
+    {
+      "id": "G17",
+      "expected": "unknown",
+      "actual": "unknown",
+      "outcome": "PASS",
+      "reason": "An unresolved jump is an unknown edge, not proof of absence.",
+      "source_sha256": "1ab81f0f41ff486091a68b4845eaf81dcc5ee786515fb84025d6f8543b7524c8",
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 6,
+            "column": 1,
+            "reason": "unresolved_generated_edge",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "constraints": []
+          },
+          {
+            "kind": "unknown",
+            "line": 7,
+            "column": 1,
+            "reason": "generated_predecessor_unavailable",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unresolved_label_target:6",
+          "unresolved_local_observations"
+        ],
+        "steps": 4,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0006415000025299378
+    },
+    {
+      "id": "G18",
+      "expected": "unknown",
+      "actual": "unknown",
+      "outcome": "PASS",
+      "reason": "Rebinding alias to the source does not make the old destination token match.",
+      "source_sha256": "cc90de45e7c16b1f2ec8d59b7fe2ae16a50a93d8a110c770dc7c66ac213261b5",
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 8,
+            "column": 1,
+            "reason": "unproved_object_relationship",
+            "target_identity": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 0,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations"
+        ],
+        "steps": 7,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0007393999985652044
+    },
+    {
+      "id": "G19",
+      "expected": "candidate",
+      "actual": "candidate",
+      "outcome": "PASS",
+      "reason": "Token redefinition does not retroactively change a prior copied token.",
+      "source_sha256": "aa02a754734b3face03723f8171991dbec868b77e95aed31c8e4440648f806f5",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 7,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              6,
+              7
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0007088999991538003
+    },
+    {
+      "id": "G20",
+      "expected": "unknown",
+      "actual": "unknown",
+      "outcome": "PASS",
+      "reason": "Unmodelled host-C++ merge does not justify either origin.",
+      "source_sha256": "8bc17d702a77c0339e45f0b998496392a4fddbfc4f6ee7c0d71c9d139b48254f",
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 6,
+            "column": 1,
+            "reason": "unsupported_host_control_or_macro",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "constraints": []
+          },
+          {
+            "kind": "unknown",
+            "line": 7,
+            "column": 1,
+            "reason": "generated_predecessor_unavailable",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations",
+          "unsupported_host_control_or_macro:6"
+        ],
+        "steps": 4,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.001091500002075918
+    },
+    {
+      "id": "G21",
+      "expected": "unknown",
+      "actual": "unknown",
+      "outcome": "PASS",
+      "reason": "The same sink spelling on another receiver is not a model binding.",
+      "source_sha256": "5e26678e54d014b92e4454ea5a3ab03c52dde3b30b3b7ca58600e005756b4b26",
+      "result": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "observations": [
+          {
+            "kind": "unknown",
+            "line": 7,
+            "column": 1,
+            "reason": "unresolved_sink_receiver",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [
+          "unresolved_local_observations"
+        ],
+        "steps": 5,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0006749999993189704
+    },
+    {
+      "id": "G22",
+      "expected": "unknown",
+      "actual": "candidate",
+      "outcome": "FAIL",
+      "reason": "Repeated allocation sites require iteration-sensitive identity; retain unknown.",
+      "source_sha256": "ec2d458e574ab9e63bab790baedfff442f7652a1bfd943974bb1130c4bd2d112",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 8,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:407",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 7,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              6,
+              6,
+              7,
+              8
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 11,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0015587000016239472
+    },
+    {
+      "id": "G23",
+      "expected": "candidate",
+      "actual": "candidate",
+      "outcome": "PASS",
+      "reason": "Reassigning a token must use its new source origin.",
+      "source_sha256": "53c388f5e7e1787d10cde0cdc0880f06a455e88bdabdca36c1e762c2dde33fb0",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 9,
+            "column": 1,
+            "reason": "different_origin_with_species_creation",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 7,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "constraints": []
+          }
+        ],
+        "limitations": [],
+        "steps": 7,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.0007872999995015562
+    },
+    {
+      "id": "G24",
+      "expected": "matched",
+      "actual": "matched",
+      "outcome": "PASS",
+      "reason": "A bound, uninvalidated equality guard is a narrow same-type proof.",
+      "source_sha256": "5a247bc832360e60f15868934754a7929de4c6251da52de8fbf82ccd9966aa12",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:95:input",
+            "token_line": 3,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              7,
+              8,
+              9
+            ],
+            "constraints": [
+              [
+                7,
+                "Int32Equal(inputTag, tag)",
+                true
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 8,
+        "model_digest": "77ccf181c7117b1e73ebbe4ebeac69351a08afb603d24b8e3cdbf940057ca5e3"
+      },
+      "elapsed_seconds": 0.000913099996978417
+    }
+  ],
+  "dirty_before": [
+    "docs/project-status (local withdrawal/republication record)"
+  ],
+  "dirty_status_sha256": "ab8159344e757cb5cb4425eb925364f3ac47e2a6f2c32cdcbb03b909f5a4a3ca",
+  "remote_main": "e510c99c67f31ec6c73365f9ab749c79ca6ff0a1",
+  "remote_pr_16_head": "33242fbd2b58e2f510fa74f1521e247fea08db27",
+  "ci_run": 39015235642,
+  "ci_number": 180,
+  "ci_conclusion": "success",
+  "reviews": 0,
+  "review_threads": 0,
+  "shared_changes_since_c2": "none: remote main equals original C2 base",
+  "glossary": "not_present",
+  "adrs": "not_present",
+  "holdout": false
+}

@@ -1,0 +1,108 @@
+{
+  "experiment_kind": "syntax_feasibility_probe_not_detector",
+  "dependencies": {
+    "tree-sitter": "0.26.0",
+    "tree-sitter-c": "0.24.2",
+    "tree-sitter-cpp": "0.23.4"
+  },
+  "sources": [
+    {
+      "cache_file": "before_builtins_typedarray_stub_builder.cpp",
+      "blob_oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "bytes": 150433,
+      "parse_status": "partial",
+      "parse_issues": [
+        {
+          "kind": "missing",
+          "start_line": 3362,
+          "end_line": 3362
+        },
+        {
+          "kind": "missing",
+          "start_line": 3675,
+          "end_line": 3675
+        }
+      ],
+      "shared_summary_keys": [
+        "language",
+        "parse_status",
+        "parse_issues",
+        "functions",
+        "calls",
+        "variables"
+      ],
+      "ir_dsl_call_count": 1114,
+      "target_function_subtrees": [
+        {
+          "start_line": 1372,
+          "end_line": 1511,
+          "subtree_has_error": false,
+          "body_kind": "compound_statement",
+          "qualified_declarator": "BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef thisValue, GateRef numArgs,\r\n    Variable *result, Label *exit, Label *slowPath)"
+        }
+      ]
+    },
+    {
+      "cache_file": "fixed_builtins_typedarray_stub_builder.cpp",
+      "blob_oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "bytes": 150509,
+      "parse_status": "partial",
+      "parse_issues": [
+        {
+          "kind": "missing",
+          "start_line": 3363,
+          "end_line": 3363
+        },
+        {
+          "kind": "missing",
+          "start_line": 3676,
+          "end_line": 3676
+        }
+      ],
+      "shared_summary_keys": [
+        "language",
+        "parse_status",
+        "parse_issues",
+        "functions",
+        "calls",
+        "variables"
+      ],
+      "ir_dsl_call_count": 1114,
+      "target_function_subtrees": [
+        {
+          "start_line": 1372,
+          "end_line": 1512,
+          "subtree_has_error": false,
+          "body_kind": "compound_statement",
+          "qualified_declarator": "BuiltinsTypedArrayStubBuilder::Filter(GateRef glue, GateRef thisValue, GateRef numArgs,\r\n    Variable *result, Label *exit, Label *slowPath)"
+        }
+      ]
+    },
+    {
+      "cache_file": "fixed_new_object_stub_builder.cpp",
+      "blob_oid": "757b8d050d306d349822600deacb295c7a54245e",
+      "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+      "bytes": 126036,
+      "parse_status": "complete",
+      "parse_issues": [],
+      "shared_summary_keys": [
+        "language",
+        "parse_status",
+        "parse_issues",
+        "functions",
+        "calls",
+        "variables"
+      ],
+      "ir_dsl_call_count": 569,
+      "target_function_subtrees": []
+    }
+  ],
+  "limitations": [
+    "Parsing a source file is not executing a detector.",
+    "Error-free subtrees do not upgrade the file parse status.",
+    "No IR control-flow, dominance, object identity, or vulnerability proof is computed.",
+    "Cached remote blobs are not verified local Git commit/tree objects."
+  ]
+}

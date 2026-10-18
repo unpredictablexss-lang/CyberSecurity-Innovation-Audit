@@ -1,0 +1,28 @@
+{
+  "new_tests": {
+    "run": 41,
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "command": "python -m unittest discover -s tests/detectors/ark_runtime -t . -v",
+    "exit_code": 0,
+    "source_store": "explicit local pinned Git object store"
+  },
+  "contract_tests": {
+    "run": 45,
+    "passed": 44,
+    "failures": 0,
+    "errors": 1,
+    "command": "python -m unittest tests.test_ohscanner_contract tests.test_contract_v2_source_binding -q",
+    "exit_code": 1,
+    "error": "test_fixture_symlink_is_rejected: Windows WinError 1314"
+  },
+  "linux_local": {
+    "status": "blocked",
+    "reason": "No usable WSL distribution and no Docker/Podman command returned by environment inspection"
+  },
+  "linux_ci": {
+    "status": "pending_pr_creation"
+  },
+  "no_poc_or_target_code_executed": true
+}

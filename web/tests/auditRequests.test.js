@@ -1,19 +1,30 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { approvedDetectorIds, datePreviewPayload, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload } from "../src/features/audits/model.js";
+import { approvedDetectorIds, experimentalDetectorIds, datePreviewPayload, includePaths, operationPayload, recentRange, requestGate, snapshotPayload, planPayload } from "../src/features/audits/model.js";
 const detectors = [
   { id: "test.cpp", version: "2", kind: "research_candidate", supported_languages: ["cpp"] },
+  { id: "ohscanner.ark.runtime.type_safety", version: "0.6.0", kind: "research_candidate", default_enabled: false, supported_languages: ["cpp"] },
   { id: "test.example", version: "1", kind: "example", supported_languages: ["cpp"] },
   { id: "test.unapproved", version: "1", kind: "unreviewed", supported_languages: ["cpp"] },
 ];
 const values = { repository_id: "repo", revision: "refs/tags/a", include_text: "src\ninclude", timeout_seconds: 60, memory_mb: 512, approval: true, forged: "do not send" };
 test("automatic rule IDs come from approved service metadata and exclude examples", () => {
   assert.deepEqual(approvedDetectorIds(detectors), ["test.cpp"]);
+  assert.deepEqual(experimentalDetectorIds(detectors), ["ohscanner.ark.runtime.type_safety"]);
   assert.throws(() => approvedDetectorIds(detectors.slice(1)), /没有可用/);
   assert.throws(() => approvedDetectorIds([detectors[0], detectors[0]]), /重复/);
 });
 test("snapshot delegates automatic rule selection to the server and drops UI-only controls", () => {
   assert.deepEqual(snapshotPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], timeout_seconds: 60, memory_mb: 512 });
+});
+test("explicit C selection is opt-in, sent to the preview and task, and rejects forged IDs", () => {
+  const selected = { ...values, experimental_detector_ids: ["ohscanner.ark.runtime.type_safety"] };
+  const expectedIds = ["ohscanner.ark.runtime.type_safety", "test.cpp"];
+  assert.deepEqual(planPayload(selected, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: expectedIds });
+  assert.deepEqual(snapshotPayload(selected, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], timeout_seconds: 60, memory_mb: 512, detector_ids: expectedIds });
+  assert.deepEqual(operationPayload("branches", { ...values, experimental_detector_ids: ["ohscanner.ark.runtime.type_safety"], baseline_ref: "base", endpoint_ref: "head" }, detectors).detector_ids, expectedIds);
+  assert.throws(() => snapshotPayload({ ...selected, experimental_detector_ids: ["test.unapproved"] }, detectors), /不可用/);
+  assert.throws(() => snapshotPayload({ ...selected, experimental_detector_ids: ["ohscanner.ark.runtime.type_safety", "ohscanner.ark.runtime.type_safety"] }, detectors), /无效|重复/);
 });
 test("invalid include scopes and budgets fail before submission", () => {
   for (const value of ["../escape", "/absolute", "a/../b", "a\\b", "src,src", ""]) assert.throws(() => includePaths(value));
