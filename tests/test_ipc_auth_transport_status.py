@@ -3,9 +3,14 @@ import unittest
 from src.ohscanner.detectors.interface.auth_transport_status import (
     find_permission_denial_transport_success,
 )
+from src.ohscanner.detectors.interface.models import consequence_for
 
 
 class PermissionDenialTransportStatusTests(unittest.TestCase):
+    def test_transport_status_mismatch_has_no_assumed_security_consequence(self):
+        self.assertEqual(consequence_for("ipc.auth.denial-transport-success"),
+                         ("unknown", "", ""))
+
     def test_denial_reply_followed_by_success_transport_is_candidate(self):
         source = """int32_t Handle(MessageParcel &reply) {
             if (!NetManagerPermission::IsSystemCaller()) {

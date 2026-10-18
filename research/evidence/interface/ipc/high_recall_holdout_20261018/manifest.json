@@ -7,8 +7,8 @@
   "source_branch": "work/ipc-20261017",
   "source_commit": "04201e708538706a8bfb633ff5e22c50d643fb6a",
   "detector_id": "ohscanner.interface.ipc",
-  "detector_version": "0.12.0",
-  "model_version": "oh-ipc-2026.10-v20",
+  "detector_version": "0.12.1",
+  "model_version": "oh-ipc-2026.10-v21",
   "reason": "No independently adjudicated, source-bound real vulnerable examples have been curated and frozen for this lane. Synthetic controls, Harness results, and unadjudicated component candidates are not holdout labels. ArkTS/JS families also have no independent frozen holdout; their rule families are listed separately because the frontend does not yet declare a shared family registry.",
   "families": [
     {
@@ -162,8 +162,8 @@
   "detectors": {
     "ipc": {
       "detector_id": "ohscanner.interface.ipc",
-      "version": "0.12.0",
-      "model_version": "oh-ipc-2026.10-v20"
+      "version": "0.12.1",
+      "model_version": "oh-ipc-2026.10-v21"
     },
     "arkts_js": {
       "detector_id": "ohscanner.oh.arkts_js",

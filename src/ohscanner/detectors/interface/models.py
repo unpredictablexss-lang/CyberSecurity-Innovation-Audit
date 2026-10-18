@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v20"
+MODEL_VERSION = "oh-ipc-2026.10-v21"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -44,7 +44,9 @@ IMPACT_BY_RULE = {
     "ipc.auth.service-identity": "identity_confusion",
     "ipc.auth.object-owner": "cross_principal_effect",
     "ipc.network.auth-session-whitelist": "unauthorized_effect",
-    "ipc.auth.denial-transport-success": "unauthorized_effect",
+    # A transport/reply mismatch is only an observation until its pinned client
+    # consumption path is shown to weaken the denial.
+    "ipc.auth.denial-transport-success": "unknown",
     "ipc.parcel.copy-range": "out_of_bounds_read",
     "ipc.parcel.position-underflow": "out_of_bounds_read",
     "ipc.parcel.bounds": "out_of_bounds_read",

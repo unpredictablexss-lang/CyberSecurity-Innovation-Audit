@@ -33,6 +33,14 @@ def fixture_account_policy():
     ),))
 
 class IpcDetectorTests(unittest.TestCase):
+    def test_auth07_does_not_assume_unauthorized_effect(self):
+        text=(BASE / "auth07" / "denial_transport_success_positive.cpp").read_text()
+        run=IpcInterfaceDetector().detect(context(text),context(text).units)
+        finding=next(item for item in run.findings
+                     if item.rule_id == "ipc.auth.denial-transport-success")
+        self.assertIsNone(finding.consequence_impact)
+        self.assertIsNone(finding.consequence_cwe)
+
     def test_synthetic_semantic_matrix(self):
         for item in json.loads((BASE/'manifest.json').read_text()):
             with self.subTest(sample=item['sample_id']):

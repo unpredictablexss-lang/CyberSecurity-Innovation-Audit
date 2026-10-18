@@ -89,7 +89,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.0"
+    version = "0.12.1"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -270,7 +270,7 @@ class IpcInterfaceDetector:
                              "bypass; inspect the proxy, Binder wrapper and reply-consumption path."),
                     evidence_type="syntax",
                     candidate_cwe="CWE-863",
-                    consequence_impact="unauthorized_effect",
+                    consequence_impact=None,
                     evidence_obligations=(
                         EvidenceObligation("transport_reply_semantics",
                                            "Determine whether this Binder status is consumed separately from the reply payload and whether success changes caller behavior."),
