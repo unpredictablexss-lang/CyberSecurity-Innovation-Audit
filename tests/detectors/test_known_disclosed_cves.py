@@ -48,6 +48,14 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertIn("CVE-2026-46675", {f.symbol for f in self.run_source(bad, "decoder.c").findings})
         self.assertEqual((), self.run_source(safe, "decoder.c").findings)
 
+    def test_cjson_json_patch_unbounded_recursion_candidate(self):
+        vulnerable = """static int apply_patch(node *object,node *patch){ node *value=cJSON_Duplicate(patch,1); if(!value)return 0; cleanup: if(value)cJSON_Delete(value); return 0; }
+        int cJSONUtils_ApplyPatches(node *object,node *patches){ while(patches){ apply_patch(object,patches); patches=patches->next; } return 0; }"""
+        fixed = """static int apply_patch(node *object,node *patch,int depth){ if(depth >= MAX_PATCH_DEPTH)return 0; node *value=cJSON_Duplicate(patch,1); if(!value)return 0; cleanup: if(value)cJSON_Delete(value); return 0; }
+        int cJSONUtils_ApplyPatches(node *object,node *patches){ while(patches){ apply_patch(object,patches,0); patches=patches->next; } return 0; }"""
+        self.assertIn("CVE-2026-67215", {f.symbol for f in self.run_source(vulnerable, "cJSON_Utils.c").findings})
+        self.assertNotIn("CVE-2026-67215", {f.symbol for f in self.run_source(fixed, "cJSON_Utils.c").findings})
+
     def test_pasteboard_disclosed_cves_and_guarded_controls(self):
         vulnerable = """void AddPasteboardChangedObserver(Observer *observer){ if(!observer)return; observers->insert(observer); }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }

@@ -15,7 +15,7 @@ MIRROR = Path("/mnt/g/OpenHarmony-GitCode-Mirror")
 SPECS = (
     ("third_party_libtiff", MIRROR / "campaign-100-20261017/repos/third_party_libtiff", "d4a0516c477dfbaf1153ae295893ab75aadd63d4", ("libtiff/tif_getimage.c",)),
     ("third_party_curl", MIRROR / "campaign-100-20261017/repos/third_party_curl", "1386bb128bb060b284309397b97adcaaec21c003", ("lib/mime.c",)),
-    ("third_party_cJSON", MIRROR / "repos/third_party_cJSON", "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748", ("cJSON.c",)),
+    ("third_party_cJSON", MIRROR / "repos/third_party_cJSON", "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748", ("cJSON.c", "cJSON_Utils.c")),
     ("miscservices_pasteboard", MIRROR / "campaign-100-20261017/repos/miscservices_pasteboard", "dd22c7cb5e5f207a6c38c50f45b7369ee8575840", ("services/core/src/pasteboard_service.cpp", "services/zidl/src/pasteboard_service_stub.cpp")),
 )
 
@@ -34,7 +34,7 @@ def replay(spec):
     expected = {
         "third_party_libtiff": {"CVE-2025-9900"},
         "third_party_curl": {"CVE-2026-92391"},
-        "third_party_cJSON": {"CVE-2026-67216"},
+        "third_party_cJSON": {"CVE-2026-67215", "CVE-2026-67216"},
         "miscservices_pasteboard": {"CVE-2025-25212", "CVE-2025-27247"},
     }[name]
     observed = {finding["symbol"] for finding in run["diagnostics"]}

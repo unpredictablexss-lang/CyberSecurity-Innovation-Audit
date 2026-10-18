@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -91,6 +91,19 @@ def _scan(unit: SourceUnit):
         quota = re.search(r"(?:size\s*\(\)\s*(?:>=|>)|(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|\b(?:max|limit|quota)\w*\b)", b, re.I)
         if inserts and not process_key and not quota:
             out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212", "pasteboard observer registration inserts into a shared collection without a visible per-process quota.", "CWE-770"))
+    # CVE-2026-67215: untrusted JSON Patch can amplify nesting through deep
+    # add/copy operations, then hit recursive cJSON_Delete cleanup. A local
+    # shape match cannot prove that the file is built or fed untrusted input.
+    apply_one = _body(s, "apply_patch")
+    apply_many = _body(s, "cJSONUtils_ApplyPatches") or _body(s, "cJSONUtils_ApplyPatchesCaseSensitive")
+    if apply_one and apply_many:
+        pos, ab = apply_one
+        mb = apply_many[1]
+        bounded = bool(re.search(r"(?:depth|nest(?:ing)?_level)[^;{}]{0,120}(?:>|>=|MAX|LIMIT)", ab, re.I)
+                       or re.search(r"(?:MAX|LIMIT)[A-Z0-9_]*(?:JSON|PATCH|DEPTH|NEST)", ab, re.I))
+        if ("cJSON_Duplicate" in ab and re.search(r"cJSON_Duplicate\s*\([^;]*,\s*1\s*\)", ab)
+                and "cJSON_Delete" in ab and "apply_patch" in mb and "while" in mb and not bounded):
+            out.append(_finding(unit, pos, "ohknowncve-cjson-cve-2026-67215", "CVE-2026-67215", "JSON Patch deep-copy and cleanup path has no visible nesting bound before recursive cJSON deletion.", "CWE-674"))
     # CVE-2025-27247: the old pasteboard Binder dispatch exposed GetPasteData
     # without a service-side read permission check. A source-local match is
     # only a candidate because enforcement may live outside this file.
