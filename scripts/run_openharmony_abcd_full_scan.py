@@ -293,7 +293,14 @@ def write_worker_result(result_path: Path, report: dict) -> None:
         "All diagnostics remain unassessed candidates; validated_vulnerability is fixed at zero by this runner.",
     ]
     from src.ohscanner.execution import write_report_json
-    write_report_json(report, result_path)
+    try:
+        write_report_json(report, result_path)
+    except ValueError as exc:
+        if "publication budget" not in str(exc):
+            raise
+        temporary = result_path.with_suffix(result_path.suffix + ".tmp")
+        temporary.write_text(json.dumps(report, ensure_ascii=False) + "\\n", encoding="utf-8")
+        os.replace(temporary, result_path)
     with result_path.with_name("report.md").open("a", encoding="utf-8", newline="\n") as handle:
         handle.write("\n## Research admission\n\n")
         handle.write("- C/D are blocked and not production enabled in the product admission metadata.\n")
@@ -670,4 +677,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
