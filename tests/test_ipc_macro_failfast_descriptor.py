@@ -40,6 +40,34 @@ ENTRY = '''int Stub::OnRemoteRequest(uint32_t code, MessageParcel &data,
 '''
 
 
+SYMBOL_DESCRIPTOR_PREFIX = '''
+#define DECLARE_INTERFACE_DESCRIPTOR(value) static const char *GetDescriptor() { return value; }
+class IFixture : public IRemoteBroker {
+public:
+  DECLARE_INTERFACE_DESCRIPTOR(u"ohos.test.IFixture");
+};
+class Stub : public IRemoteStub<IFixture> {
+public:
+  static const std::string DESCRIPTOR;
+  std::map<int, Handler> handlers;
+  int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
+};
+const std::string Stub::DESCRIPTOR("ohos.test.IFixture");
+'''
+
+
+SYMBOL_DESCRIPTOR_ENTRY = '''int Stub::OnRemoteRequest(uint32_t code, MessageParcel &data,
+    MessageParcel &reply, MessageOption &option) {
+  std::u16string token = data.ReadInterfaceToken();
+  std::u16string descriptor = Str8ToStr16(DESCRIPTOR);
+  if (descriptor != token) return -1;
+  auto it = handlers.find(code);
+  if (it == handlers.end()) return -1;
+  return (this->*(it->second))(data, reply, option);
+}
+'''
+
+
 def relay_candidates(result):
     return [item for item in result.findings
             if item.rule_id == "ipc.relay.descriptor-boundary"]
@@ -95,6 +123,28 @@ class MacroFailFastDescriptorTests(unittest.TestCase):
             "  token.compare(IFixture::GetDescriptor());",
         )
         self.assertTrue(relay_candidates(run(body)))
+
+    def test_class_descriptor_string_matching_implemented_interface_guards_dispatch(self):
+        self.assertEqual(relay_candidates(run(SYMBOL_DESCRIPTOR_ENTRY, SYMBOL_DESCRIPTOR_PREFIX)), [])
+
+    def test_class_descriptor_string_for_different_interface_remains_candidate_with_reason(self):
+        macro = SYMBOL_DESCRIPTOR_PREFIX.replace(
+            'Stub::DESCRIPTOR("ohos.test.IFixture")',
+            'Stub::DESCRIPTOR("ohos.other.Interface")',
+        )
+        findings = relay_candidates(run(SYMBOL_DESCRIPTOR_ENTRY, macro))
+        self.assertEqual(len(findings), 1)
+        self.assertIn("mismatched", findings[0].message)
+        self.assertIn("ohos.other.Interface", findings[0].message)
+
+    def test_missing_source_binding_for_class_descriptor_stays_unresolved_candidate(self):
+        macro = SYMBOL_DESCRIPTOR_PREFIX.replace(
+            'const std::string Stub::DESCRIPTOR("ohos.test.IFixture");',
+            'const std::string Stub::DESCRIPTOR("ohos.test.IFixture\\\\n");',
+        )
+        findings = relay_candidates(run(SYMBOL_DESCRIPTOR_ENTRY, macro))
+        self.assertEqual(len(findings), 1)
+        self.assertIn("identity is not determined", findings[0].message)
 
 
 if __name__ == "__main__":

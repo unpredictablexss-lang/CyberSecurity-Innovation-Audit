@@ -420,6 +420,7 @@ def _top_level_arguments(source, open_index, close_index):
 
 class Interpreter:
     def __init__(self, units, policy: IpcPolicy, request=None):
+        self.units = tuple(units)
         # A harness may hand this walk a hand-built policy; the families' reviewed
         # additions are merged in either way, so a walk through the detector and a
         # walk through a script interpret the same sources under the same policy.
@@ -470,7 +471,7 @@ class Interpreter:
         self.macro_files_unexpanded = set()
         self.macro_refusal_reasons = {}
         self.macro_catalog = self._build_macro_catalog(units)
-        for unit in units:
+        for unit in self.units:
             grammar = tree_sitter_c.language() if unit.language == "c" else tree_sitter_cpp.language()
             raw=unit.text.encode("utf-8")
             source=raw
@@ -1381,6 +1382,70 @@ class Interpreter:
         return Value("descriptor_expected", name, subject="unresolved",
                      terms=(where, "no interface is stated for " + (owner_name or "this function")))
 
+    def descriptor_symbol_expectation(self, fn, symbol):
+        """Resolve a source-defined descriptor string against the stated stub interface.
+
+        Some stubs compare a parcel token with Str8ToStr16(DESCRIPTOR) rather
+        than calling GetDescriptor(). The symbol spelling alone is not enough:
+        only accept a unique class-owned string definition and compare its literal
+        with the interface literal declared in the source. A mismatch remains a
+        candidate; an absent or ambiguous binding stays unresolved.
+        """
+        interfaces = (self.index.implemented_interfaces(fn.owner)
+                      if self.index is not None and fn.owner else ())
+        if len(interfaces) != 1:
+            return Value("descriptor_expected", symbol, subject="unresolved",
+                         terms=(symbol, "the class's implemented interface is not unique in the analysed sources"))
+
+        owner = terminal(fn.owner)
+        actual_pattern = re.compile(
+            r"\b(?:const\s+)?(?:std::)?string\s+" + re.escape(owner)
+            + r"\s*::\s*" + re.escape(symbol)
+            + r"\s*(?:\(\s*(?:u8|u|U|L)?\"((?:[^\"\\]|\\.)*)\"\s*\)|"
+              r"=\s*(?:u8|u|U|L)?\"((?:[^\"\\]|\\.)*)\")\s*;"
+        )
+        actuals = []
+        for unit in self.units:
+            for match in actual_pattern.finditer(unit.text):
+                literal = match.group(1) if match.group(1) is not None else match.group(2)
+                # Escapes need C++ literal decoding. Refuse them rather than
+                # comparing their source spelling as though it were the value.
+                if "\\" in literal:
+                    continue
+                line = unit.text.count("\n", 0, match.start()) + 1
+                actuals.append((literal, unit.path, line))
+        if len(actuals) != 1:
+            return Value("descriptor_expected", symbol, subject="unresolved",
+                         terms=(symbol, "the class-owned " + symbol + " string definition is absent or ambiguous"))
+
+        interface = interfaces[0]
+        interface_pattern = re.compile(
+            r"\b(?:class|struct)\s+" + re.escape(interface.name)
+            + r"\b[^{};]*\{([\s\S]*?)\}\s*;"
+        )
+        declared = []
+        macro = re.compile(
+            r"\bDECLARE_INTERFACE_DESCRIPTOR\s*\(\s*(?:u8|u|U|L)?\"([^\"\\]*)\"\s*\)"
+        )
+        for unit in self.units:
+            for class_match in interface_pattern.finditer(unit.text):
+                body_start = class_match.start(1)
+                for value_match in macro.finditer(class_match.group(1)):
+                    line = unit.text.count("\n", 0, body_start + value_match.start()) + 1
+                    declared.append((value_match.group(1), unit.path, line))
+        if len(declared) != 1:
+            return Value("descriptor_expected", interface.name, subject="unresolved",
+                         terms=(interface.name, interface.name + " descriptor declaration is absent or ambiguous"))
+
+        actual, actual_file, actual_line = actuals[0]
+        expected, expected_file, expected_line = declared[0]
+        subject = "interface" if actual == expected else "mismatch"
+        terms = (
+            symbol + " is " + repr(actual) + " at " + actual_file + ":" + str(actual_line),
+            interface.name + " declares " + repr(expected) + " at " + expected_file + ":" + str(expected_line),
+        )
+        return Value("descriptor_expected", interface.name, subject=subject, terms=terms)
+
     def descriptor_note(self, issues):
         """Why a comparison that was read does not count as a guard.
 
@@ -1562,6 +1627,10 @@ class Interpreter:
                 return Value("descriptor_read", rv.key) if rv.kind == "parcel" else UNKNOWN
             if name == "GetDescriptor":
                 return self.descriptor_expectation(fn, callee, state)
+            if (name == "Str8ToStr16" and len(args) == 1
+                    and args[0] == Value("constant", "DESCRIPTOR")
+                    and "DESCRIPTOR" not in state.env):
+                return self.descriptor_symbol_expectation(fn, "DESCRIPTOR")
             if name == "compare" and receiver:
                 # `ReadInterfaceToken()` is commonly copied into a local
                 # std::u16string and checked with compare() instead of ==/!=.
