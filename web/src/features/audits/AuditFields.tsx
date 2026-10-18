@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Alert, AutoComplete, Button, Col, Collapse, Form, Input, InputNumber, Row, Select, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go } from "../../components";
-import { approvedDetectorIds, requestGate } from "./model";
+import { approvedDetectorIds, experimentalDetectorIds, requestGate } from "./model";
 const { Text } = Typography;
 export type AuditProps = { repos: any[]; detectors: any[]; refresh: () => Promise<void> };
 export function useRepositoryRefs(repositoryId?: string) {
@@ -42,9 +42,23 @@ export function ScopeBudget() {
 }
 export function RuleNotice({ detectors }: { detectors: any[] }) {
   let count = 0; try { count = approvedDetectorIds(detectors).length; } catch { /* visible blocking state below */ }
-  return <Alert className="section-gap" showIcon type={count ? "info" : "warning"}
-    message={count ? "使用平台当前已批准的研究规则，无需手动选择" : "没有可用的已批准规则"}
-    description={count ? "实际规则版本、解析覆盖和未分析范围会保存在任务与报告中。输出仍是待复核候选。" : "请刷新系统能力配置后再创建审计。"} />;
+  let experimental: string[] = []; try { experimental = experimentalDetectorIds(detectors); } catch { /* invalid identities remain unavailable */ }
+  return <>
+    <Alert className="section-gap" showIcon type={count ? "info" : "warning"}
+      message={count ? "使用平台当前已批准的研究规则" : "没有可用的已批准规则"}
+      description={count ? "实际规则版本、解析覆盖和未分析范围会保存在任务与报告中。输出仍是待复核候选。" : "请刷新系统能力配置后再创建审计。"} />
+    {experimental.length > 0 && <>
+      <Form.Item name="experimental_detector_ids" label="可选实验规则（明确选择，默认关闭）">
+        <Select mode="multiple" allowClear showSearch optionFilterProp="label" placeholder="不选则不执行实验规则"
+          options={experimental.map((id) => {
+            const detector = detectors.find((item) => item.id === id);
+            return { value: id, label: id + " · v" + detector.version };
+          })} />
+      </Form.Item>
+      <Alert className="section-gap" type="warning" showIcon message="实验规则输出仍是候选证据"
+        description="实验规则只在其声明的精确源码范围执行；选择不会把 partial、unknown 或候选提升为已确认漏洞。" />
+    </>}
+  </>;
 }
 export function ScopeAvailability() {
   return <div className="scope-note"><Space wrap><Text strong>审计范围</Text><Text>单个已登记仓库</Text>
@@ -52,4 +66,4 @@ export function ScopeAvailability() {
     <p>官方仓库目录、归档选择与多仓编排尚未接入；当前只读已登记的本地 Git 对象。</p>
     <Button type="link" onClick={() => go("/settings/sources")}>登记仓库或显式同步源码 →</Button></div>;
 }
-export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048 };
+export const auditDefaults = { include_text: ".", timeout_seconds: 600, memory_mb: 2048, experimental_detector_ids: [] };

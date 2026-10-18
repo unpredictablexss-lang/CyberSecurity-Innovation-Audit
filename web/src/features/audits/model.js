@@ -8,6 +8,20 @@ export function approvedDetectorIds(detectors) {
   if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
   return ids;
 }
+export function experimentalDetectorIds(detectors) {
+  const ids = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled === false &&
+    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
+    Array.isArray(d.supported_languages) && d.supported_languages.length).map((d) => d.id).sort();
+  if (new Set(ids).size !== ids.length) throw new Error("实验规则配置出现重复身份，请刷新能力配置。");
+  return ids;
+}
+function requestedDetectorIds(detectors, selected = []) {
+  if (!Array.isArray(selected) || new Set(selected).size !== selected.length)
+    throw new Error("实验规则选择无效或重复。");
+  const allowed = new Set(experimentalDetectorIds(detectors));
+  if (selected.some((id) => !allowed.has(id))) throw new Error("选择了当前不可用的实验规则，请刷新能力配置。");
+  return [...new Set([...approvedDetectorIds(detectors), ...selected])].sort();
+}
 export function includePaths(value = ".") {
   const paths = String(value).split(/[\n,]/).map((p) => p.trim()).filter(Boolean);
   if (!paths.length || paths.length > 100) throw new Error("请填写 1–100 个纳入路径。");
@@ -24,13 +38,14 @@ function common(values, detectors) {
   if (!Number.isInteger(timeout) || timeout < 1 || timeout > 3600 ||
       !Number.isInteger(memory) || memory < 256 || memory > 8192)
     throw new Error("执行预算超出允许范围。");
+  const selectedExperimental = values.experimental_detector_ids || [];
   return { repository_id: values.repository_id, include_paths: includePaths(values.include_text),
-    detector_ids: approvedDetectorIds(detectors), timeout_seconds: timeout, memory_mb: memory };
+    detector_ids: requestedDetectorIds(detectors, selectedExperimental), timeout_seconds: timeout, memory_mb: memory };
 }
 export function snapshotPayload(values, detectors) {
   if (!values.revision?.trim()) throw new Error("请选择或填写分支、Tag 或完整 Commit。");
   const { detector_ids, ...payload } = common(values, detectors);
-  return { ...payload, revision: values.revision.trim() };
+  return { ...payload, ...(values.experimental_detector_ids?.length ? { detector_ids } : {}), revision: values.revision.trim() };
 }
 export function planPayload(values, detectors) {
   const { timeout_seconds, memory_mb, ...payload } = snapshotPayload(values, detectors);
