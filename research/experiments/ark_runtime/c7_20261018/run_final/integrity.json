@@ -1,0 +1,66 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "path": "research\\experiments\\ark_runtime\\c7_20261018\\README.md",
+      "sha256": "e29dfb5fba858e2d8ecab425fc1bfb97915c1e819171eafbebd0b0cdb176be28",
+      "bytes": 6394
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c7_20261018\\replay.py",
+      "sha256": "ff61973ca41e51cac8491c7cb9779cb11c68589005621023987257e2a19baf17",
+      "bytes": 18946
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c7_20261018\\restore_object_subset.py",
+      "sha256": "6fe14f64ea2173c112af91f672eccbe388464918e7f43b7d2e191cb33dd14c36",
+      "bytes": 6741
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c7_20261018\\source_objects_manifest.json",
+      "sha256": "afc8df9b3decf13587b06a9563ac70bca70666ae15c28aa5df5a805c4dd20a8a",
+      "bytes": 4931
+    },
+    {
+      "path": "research\\experiments\\ark_runtime\\c7_20261018\\run_final\\manifest.json",
+      "sha256": "6228ca8cbca409f16bbfbcc9034b41d0e04fc33bef3f03f29950376033a06471",
+      "bytes": 59842
+    },
+    {
+      "path": "research\\evidence\\ark_runtime\\ark-runtime-c-independent-holdout-20261018-v3\\admin\\frozen_detector_0.7.0.json",
+      "sha256": "bf823d7281942a9b1b6b90ba2ecf0e66cd0dcdc06e6b145deed912787403a1ab",
+      "bytes": 4507
+    },
+    {
+      "path": "research\\evidence\\ark_runtime\\ark-runtime-c-independent-holdout-20261018-v3\\admin\\applicability_contract_0.7.0.json",
+      "sha256": "246c7126e112788dfa69a2eee226b1bf573e06aafcfe6c7a5cda5101c614441a",
+      "bytes": 3069
+    },
+    {
+      "path": "research\\evidence\\ark_runtime\\ark-runtime-c-independent-holdout-20261018-v3\\admin\\detector_dependencies_0.7.0.lock",
+      "sha256": "e7de5fd6ac25e23184bb41361f694a97dadec299a1b707191f01b8ec31aa2b47",
+      "bytes": 231
+    },
+    {
+      "path": "research\\evidence\\ark_runtime\\ark-runtime-c-independent-holdout-20261018-v3\\admin\\clean_archive_verification_0.7.0.json",
+      "sha256": "36a1e8cb26d08e227e993f61095046c9e4984ada046e2845e2a0e82e4808b5e6",
+      "bytes": 1225
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit-c4-selective\\research\\experiments\\ark_runtime\\c1_20261017\\C1_RESEARCH_PLAN.md",
+      "sha256": "2acf18a8232317a196e5a3c6add8f0059caa207042b08e0f60544d540875e15e",
+      "bytes": 13908
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit-c4-selective\\research\\experiments\\ark_runtime\\c2_20261017\\C2_REPORT.md",
+      "sha256": "9106911f183b56bde03e62d9dee17822a9d06b0830874054fa2f7e64f294f05a",
+      "bytes": 7272
+    },
+    {
+      "path": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit-c4-selective\\research\\experiments\\ark_runtime\\c2_20261017\\PARTIAL_ADMISSION_RFC.md",
+      "sha256": "9f138a19df7cf3ea4555ca686940fe1cf939145e2845031d282d071064ca7f9f",
+      "bytes": 4238
+    }
+  ],
+  "note": "Hashes cover saved replay output, scripts, freeze contracts/toolchain records, and C1/C2 review inputs; integrity index excludes itself."
+}
