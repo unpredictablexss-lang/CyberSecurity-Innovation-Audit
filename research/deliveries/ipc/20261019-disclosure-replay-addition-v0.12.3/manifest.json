@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "scanner_source_commit": "33bf87139071a5ce7912f478f954c6b6942ec2b0",
+  "detector": "ohscanner.interface.ipc",
+  "version": "0.12.3",
+  "pairs": [
+    {
+      "cve": "CVE-2024-39775",
+      "result": "static_source_regression_match",
+      "vulnerable_commit": "c172839fd6354d9bff189c8b1ade2cf621f4b24f",
+      "fixed_commit": "b99cb78281915a9a2587aca981fa69c969ba8f93",
+      "diagnostics": "2->0",
+      "rule": "ipc.auth.denial-transport-success",
+      "partial": true
+    },
+    {
+      "cve": "CVE-2023-25176",
+      "result": "static_source_regression_match",
+      "vulnerable_commit": "693a188bb719f547724638ac39888353aca7db81",
+      "fixed_commit": "9408af4fe6e85f70fc46427b7ba779e683a12ec3",
+      "diagnostics": "1->0",
+      "rule": "ipc.tlv.fixed-width-length",
+      "partial": true
+    }
+  ],
+  "reports": [
+    {
+      "file": "cve-2024-39775-vulnerable.json",
+      "sha256": "7c230d40af44a91ed66ee4974200b430c9e6f46e97bcd8d7d9cef57db7ac6f26",
+      "repository": "openharmony/communication_netmanager_base",
+      "commit": "c172839fd6354d9bff189c8b1ade2cf621f4b24f",
+      "git_tree": "76d5d5318db4086389360957bc635fc8a31ee259",
+      "snapshot_sha256": "e6a06b1b576d549c79b5296764bdac9551521ddd5486f197642a1abe28379639",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 2,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "partial": 1
+      },
+      "scope": [
+        "services/netstatsmanager/src/stub/net_stats_service_stub.cpp"
+      ],
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2024-39775-fixed.json",
+      "sha256": "064323d8dc6b0aece1e2d3d6c100268e573e117257f21a115da1ebeb4fe11d30",
+      "repository": "openharmony/communication_netmanager_base",
+      "commit": "b99cb78281915a9a2587aca981fa69c969ba8f93",
+      "git_tree": "3a2b88d5529fe3526e853dfc43aecd86b4d62857",
+      "snapshot_sha256": "7989e3b0c423c17dc2514e1b8df7e5ece917f929f8bc057426fd3d49b57102ea",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 0,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "partial": 1
+      },
+      "scope": [
+        "services/netstatsmanager/src/stub/net_stats_service_stub.cpp"
+      ],
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2023-25176-vulnerable.json",
+      "sha256": "9f8c5e1e69a29073c39a45b9fe98852774d7acd43be9a3d0bd40b303982bc251",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "693a188bb719f547724638ac39888353aca7db81",
+      "git_tree": "bf5bdeccc6d51972f102107c151b9fc4120d72d3",
+      "snapshot_sha256": "8a23c53bf8a1ce5466a1290a247cdfacd23271094a175304e103ab1ef2027296",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 1,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "partial": 1
+      },
+      "scope": [
+        "framework/tlv/tlv_object.h"
+      ],
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2023-25176-fixed.json",
+      "sha256": "039ae134ba485df7dd34c1c8dde4e6e35ac79dd18bc3de8b08d3e4114b1ece84",
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "9408af4fe6e85f70fc46427b7ba779e683a12ec3",
+      "git_tree": "9c14df1ffcf0b6f89e42eec24767ed7d5dc38f31",
+      "snapshot_sha256": "38cee68518d05214f65f5a26d06d8964ddea8680c3cd97bfed9da6c90b02e3a9",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 0,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "partial": 1
+      },
+      "scope": [
+        "framework/tlv/tlv_object.h"
+      ],
+      "detector_version": "0.12.3"
+    }
+  ]
+}
