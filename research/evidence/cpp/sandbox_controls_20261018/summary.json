@@ -3,7 +3,7 @@
   "experiment_kind": "a_line_sandbox_method_control_static_replay",
   "status": "passed",
   "detectors": {
-    "bounds": "0.2.9"
+    "bounds": "0.3.2"
   },
   "copy_range_controls": [
     {
@@ -13,7 +13,7 @@
       "runs": [
         {
           "detector": "ohscanner.cpp.bounds",
-          "version": "0.2.9",
+          "version": "0.3.2",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -24,7 +24,7 @@
         },
         {
           "detector": "ohscanner.cpp.integer_bounds",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -35,7 +35,7 @@
         },
         {
           "detector": "ohscanner.cpp.resource_lifetime",
-          "version": "0.1.3",
+          "version": "0.1.6",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -46,7 +46,7 @@
         },
         {
           "detector": "ohscanner.cpp.unsafe_memory_call",
-          "version": "0.1.2",
+          "version": "0.1.3",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -81,7 +81,7 @@
       "runs": [
         {
           "detector": "ohscanner.cpp.bounds",
-          "version": "0.2.9",
+          "version": "0.3.2",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -92,7 +92,7 @@
         },
         {
           "detector": "ohscanner.cpp.integer_bounds",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -103,7 +103,7 @@
         },
         {
           "detector": "ohscanner.cpp.resource_lifetime",
-          "version": "0.1.3",
+          "version": "0.1.6",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -114,7 +114,7 @@
         },
         {
           "detector": "ohscanner.cpp.unsafe_memory_call",
-          "version": "0.1.2",
+          "version": "0.1.3",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -149,7 +149,7 @@
       "runs": [
         {
           "detector": "ohscanner.cpp.bounds",
-          "version": "0.2.9",
+          "version": "0.3.2",
           "status": "completed",
           "findings": [
             {
@@ -169,7 +169,7 @@
         },
         {
           "detector": "ohscanner.cpp.integer_bounds",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -180,7 +180,7 @@
         },
         {
           "detector": "ohscanner.cpp.resource_lifetime",
-          "version": "0.1.3",
+          "version": "0.1.6",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -191,7 +191,7 @@
         },
         {
           "detector": "ohscanner.cpp.unsafe_memory_call",
-          "version": "0.1.2",
+          "version": "0.1.3",
           "status": "completed",
           "findings": [],
           "limitations": [
