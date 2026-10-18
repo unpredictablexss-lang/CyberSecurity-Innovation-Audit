@@ -1,0 +1,700 @@
+{
+  "schema": "ohscanner.ark-runtime-exact-snapshot-dependencies/v1",
+  "manifest_version": "1.0.0",
+  "declared_status": "blocked",
+  "subject": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+    "target_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "target_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+    "target_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+  },
+  "profile": {
+    "accepted_c1_profile": "ark-runtime-build-profile-v1 capture contract; observed product profile remains blocked",
+    "c1_profile_evidence": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.json",
+    "c1_profile_status": "capture contract available; product profile blocked (compile database absent)",
+    "replay_profile": "light-ast",
+    "replay_profile_source": "C3 current-run.json",
+    "build_profile": "none",
+    "product_manifest_locked": false,
+    "target_platform": "unknown",
+    "command_argv": [
+      "python",
+      "-m",
+      "src.cli",
+      "ohscan-run",
+      "--repo-dir",
+      "<pinned-local-git-object-store>",
+      "--repository",
+      "openharmony/arkcompiler_ets_runtime",
+      "--commit",
+      "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "--include",
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "--detector",
+      "ohscanner.ark.runtime.type_safety"
+    ],
+    "command_normalization": "argv is ordered UTF-8 strings; no shell expansion; placeholders are literal stable tokens",
+    "macros": {
+      "definitions": [],
+      "status": "unknown_not_collected_from_compile_database"
+    },
+    "include_search_paths": {
+      "ordered_paths": [],
+      "status": "unknown_no_accepted_compile_database"
+    },
+    "tools": {
+      "python": "3.12.3",
+      "git": "2.43.0",
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "preprocessor": "unknown",
+      "compiler": "unknown",
+      "tool_binary_hashes": "unavailable"
+    },
+    "parser_mode": "light-ast; no C/C++ preprocessing; syntax parse is partial",
+    "c1_profile_tool": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.py",
+    "c1_compile_database_status": "missing; profile digest null",
+    "c1_dependency_policy": "exact compile command required; preserve argv and target/sysroot/macros/includes; dependency-only compiler preprocessing; no GN/Ninja/build scripts executed",
+    "c2_semantic_review": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-review-20261018.md; 18 changed dependencies remain unknown/blocked",
+    "c3_replay_config": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-gated-run-20261018.json; exact snapshot and light-ast; blocked dependency gate",
+    "c1_build_profile_schema": "ark-runtime-build-profile-v1",
+    "provisional_include_candidates": "six literal quote-includes resolved using source-root heuristic; content hashes recorded but exact compiler resolution unverified",
+    "build_system_evidence_paths": [
+      "openharmony/arkcompiler/ets_runtime/BUILD.gn",
+      "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn"
+    ]
+  },
+  "serialization": {
+    "digest_algorithm": "sha256",
+    "canonicalization": "UTF-8 JSON; object keys sorted lexicographically; compact separators comma/colon; ensure_ascii=false; NaN/Infinity forbidden; no Unicode normalization; arrays retain declared order except inputs sorted by id",
+    "input_order": "inputs sorted by ASCII id; duplicate ids invalid",
+    "path_rule": "workspace_path is a POSIX relative path, no dot-dot, no backslash; path is locator only and never content evidence",
+    "file_hash": "SHA-256 over exact raw bytes before decoding or newline normalization",
+    "git_blob_verification": "SHA-1 over b\"blob \" + decimal byte length + NUL + raw bytes, compare recorded blob OID; also compare SHA-256"
+  },
+  "inputs": [
+    {
+      "id": "build-gn-compiler",
+      "kind": "build_system_configuration",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn",
+      "bytes": 23777,
+      "content_sha256": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/BUILD.gn",
+        "verification": "local_checkout_bytes_only",
+        "expected_sha256_from_profile": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
+        "profile_record": "c1-profile-spec"
+      }
+    },
+    {
+      "id": "build-gn-root",
+      "kind": "build_system_configuration",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/BUILD.gn",
+      "bytes": 82005,
+      "content_sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/BUILD.gn",
+        "verification": "local_checkout_bytes_only",
+        "expected_sha256_from_profile": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
+        "profile_record": "c1-profile-spec"
+      }
+    },
+    {
+      "id": "c1-profile-spec",
+      "kind": "C1 product build-profile capture specification",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.json",
+      "bytes": 3627,
+      "content_sha256": "6aea7ff0d37a726cf6d9e369316dac88f7645dd51de5189cf9aaac8c51525a98",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-profile-tool",
+      "kind": "C1 read-only profile capture/replay tool",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.py",
+      "bytes": 15475,
+      "content_sha256": "1c9ee1f52e6d5ec5527a4fecb0cfb883aba17c07d2e804749eebfd8800ff66a1",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/build_profile.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c1-source-evidence",
+      "kind": "C1 source/environment identity evidence",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/source_evidence.json",
+      "bytes": 3837,
+      "content_sha256": "57b1efbf52d643ed75028d34ff00f69231fc73547c7c08fc5580d48533f81e9a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c1_20261017/source_evidence.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-replay-script",
+      "kind": "C2 replay implementation/configuration",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_20261017/replay.py",
+      "bytes": 10667,
+      "content_sha256": "61833181322c684299969162778e15917bf800e2cff958e7a9a9eb1792da5b6a",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c2_20261017/replay.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c2-semantic-review",
+      "kind": "C2 model dependency semantic review",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-review-20261018.md",
+      "bytes": 19371,
+      "content_sha256": "4588bee86d4f146c9a6e02ef25c45cacb8650f1637235931baaf7736ad3e7dab",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-review-20261018.md",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c3-drift-review",
+      "kind": "C3 per-dependency source drift review",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/source_drift_review.json",
+      "bytes": 1290441,
+      "content_sha256": "3cb6cabaffe5640bb8a44e26e774ccbce0cd24ea6397bd28c9ea7ccfa8042a97",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/source_drift_review.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c3-gated-run",
+      "kind": "C3 dependency-gated replay report/config",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-gated-run-20261018.json",
+      "bytes": 16333,
+      "content_sha256": "621b79c95ea7cce456a3bc0223c1603c382fded48d9d362e663f76b345ca5450",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-gated-run-20261018.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c3-model-comparison",
+      "kind": "C3 model source identity comparison",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/model_dependency_comparison.json",
+      "bytes": 5293,
+      "content_sha256": "c920f31bc6fe4c05d0d64b210b26dacc8b01d277aeb86ca552ddf52ce83f8d2d",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/model_dependency_comparison.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c3-replay-record",
+      "kind": "C3 replay instructions and limitations",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/README.md",
+      "bytes": 10719,
+      "content_sha256": "9704f9ea68228fda9d9ecb0c9dbd49cf26ed325f3429926964961720210251ca",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/README.md",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c3-run-report",
+      "kind": "C3 exact replay report",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/current-run.json",
+      "bytes": 16082,
+      "content_sha256": "d66a52203e2de2359047dca7255d2aad29003f8c89df1894a2f8960033334182",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/current-run.json",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "c4-verifier-tool",
+      "kind": "manifest_verifier_implementation",
+      "workspace_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/dependency_manifest.py",
+      "bytes": 7193,
+      "content_sha256": "eabde91ad763ad96e72ac68b88a97a3aba7c757ffe377af93c12128c70c80c14",
+      "source": {
+        "kind": "workspace_evidence",
+        "uri": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/dependency_manifest.py",
+        "verification": "sha256_bound_local_evidence"
+      }
+    },
+    {
+      "id": "include-01",
+      "kind": "literal_include_candidate",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+      "bytes": 7999,
+      "content_sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+        "verification": "local_checkout_bytes_only",
+        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+      }
+    },
+    {
+      "id": "include-02",
+      "kind": "literal_include_candidate",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/base/typed_array_helper-inl.h",
+      "bytes": 22772,
+      "content_sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/base/typed_array_helper-inl.h",
+        "verification": "local_checkout_bytes_only",
+        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+      }
+    },
+    {
+      "id": "include-03",
+      "kind": "literal_include_candidate",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
+      "bytes": 2671,
+      "content_sha256": "85e68db5ae84bffba1247d8ce186edd7e562c6560a0b82cfe3422e7669d906aa",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
+        "verification": "local_checkout_bytes_only",
+        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+      }
+    },
+    {
+      "id": "include-04",
+      "kind": "literal_include_candidate",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "bytes": 12190,
+      "content_sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "verification": "local_checkout_bytes_only",
+        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+      }
+    },
+    {
+      "id": "include-05",
+      "kind": "literal_include_candidate",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/call_stub_builder.h",
+      "bytes": 9597,
+      "content_sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/call_stub_builder.h",
+        "verification": "local_checkout_bytes_only",
+        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+      }
+    },
+    {
+      "id": "include-06",
+      "kind": "literal_include_candidate",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h",
+      "bytes": 12540,
+      "content_sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+      "source": {
+        "kind": "workspace_source_candidate",
+        "uri": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h",
+        "verification": "local_checkout_bytes_only",
+        "resolution_basis": "quoted include resolved by source-repository-root candidate; not confirmed by compiler dependency output"
+      }
+    },
+    {
+      "id": "model-d01",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/stub_builder.h",
+      "bytes": 93596,
+      "content_sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "9e2fbd3ede1da91133dcd936018285e597944515",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d02",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/stub_builder-inl.h",
+      "bytes": 176499,
+      "content_sha256": "e3e840771be228a2c5e6c15576ecdf3f06175622b5840525520345f1d22d76be",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "c0521ab7a55cd63850736c2db8a290115965373c",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d03",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/stub_builder.cpp",
+      "bytes": 542236,
+      "content_sha256": "978f507daa99982b115f2db4e63ce629c653f011b4b998ac9e20255ab786b25a",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "c630a6200215705843d11c0dd86c565709e8c6c4",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d04",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/hcr_circuit_builder.h",
+      "bytes": 21419,
+      "content_sha256": "380940bddd7790a8c65e5297ed0646ff2dd5301b2a1197fa78b3766ab8653497",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "e66c414a7a739284b474c234e6f90bae0368cd11",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d05",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/mcr_circuit_builder.h",
+      "bytes": 36875,
+      "content_sha256": "15d10575db365d6f938b1af4832f1afc65ea7bedb52f5685f4e1c411a500ebe0",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "297a46c06349c0ed7e881ee4475291a41361f743",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d06",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/lcr_circuit_builder.cpp",
+      "bytes": 17240,
+      "content_sha256": "4575cf4b84cef1046cf617d5328bd1c2c61b5a29f4550b4cbfba5b8ba4d289db",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "a6df4cba87c9a49f09a292648e7ea7d7cad1b24c",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d07",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/circuit_builder.cpp",
+      "bytes": 73531,
+      "content_sha256": "33fac8872f897163ec8261674cad91e8722609e005732a30d675628145974a29",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "225f09385632bfc2a6ff20bbdf2bfd8694fcffb6",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d08",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.h",
+      "bytes": 12540,
+      "content_sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d09",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_stubs.cpp",
+      "bytes": 35101,
+      "content_sha256": "58f8c8b2183735dd41ef96ceb47d9cd7de0e9e13b76b4a4338f48493d9502e82",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "f9c026f6b732cf090aca9df620c4d79bf7597f3b",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d10",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "bytes": 12190,
+      "content_sha256": "1804426bca64803a2a7b70c63004eb5236718daa075c67d74c68fd5f21ef151c",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "c9b5a66c12c657533047286ec79406a639fb8232",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d11",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/call_stub_builder.h",
+      "bytes": 9597,
+      "content_sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d12",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/profiler_operation.h",
+      "bytes": 4176,
+      "content_sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "e68a2db48f222945629adb637cd50be8a0f93651",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d13",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/base/typed_array_helper-inl.h",
+      "bytes": 22772,
+      "content_sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d14",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/base/typed_array_helper.cpp",
+      "bytes": 65211,
+      "content_sha256": "3c42388b716e82601cee4e43aedddc8ac709fe1363b0753c7efa24745380110d",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "bcb422fe67f4e670adcca31fffd4da7e2b3b0b21",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d15",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/stubs/runtime_stubs.cpp",
+      "bytes": 243885,
+      "content_sha256": "0c390fb329387ff75943089da0e7eecab4bc1df21da1be4f33db969b2bf79a46",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "14dc06350881b1fa0fdabeeb8465ae9063224d6c",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d16",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/js_typed_array.cpp",
+      "bytes": 41859,
+      "content_sha256": "e67c0ce082885efb6fa5894f7a1998a41eb4cddfa2e381c8335497e10e2b9bbe",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "098c2a22cae3152af3a59063dda25e145f03bbd7",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d17",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.cpp",
+      "bytes": 151323,
+      "content_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d18",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.cpp",
+      "bytes": 151323,
+      "content_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "model-d19",
+      "kind": "model_source_dependency",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/new_object_stub_builder.cpp",
+      "bytes": 151323,
+      "content_sha256": "3159eee6989838659438af89353dfd37a890c259f60c3af0195110e016a411e0",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "991ac5ac034a1a027e3200787ec25c55b3f15b69",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    },
+    {
+      "id": "src-target",
+      "kind": "target_source",
+      "workspace_path": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "bytes": 150610,
+      "content_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "source": {
+        "kind": "git_blob",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+        "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+        "git_blob_oid": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+        "verification": "verified_at_pinned_commit_from_local_git_objects"
+      }
+    }
+  ],
+  "include_directives": [
+    {
+      "spelling": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+      "form": "quoted",
+      "resolution": "candidate_bytes_hashed_but_not_confirmed_by_compile_dependency_output",
+      "candidate_input_id": "include-01"
+    },
+    {
+      "spelling": "ecmascript/base/typed_array_helper-inl.h",
+      "form": "quoted",
+      "resolution": "candidate_bytes_hashed_but_not_confirmed_by_compile_dependency_output",
+      "candidate_input_id": "include-02"
+    },
+    {
+      "spelling": "ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
+      "form": "quoted",
+      "resolution": "candidate_bytes_hashed_but_not_confirmed_by_compile_dependency_output",
+      "candidate_input_id": "include-03"
+    },
+    {
+      "spelling": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "form": "quoted",
+      "resolution": "candidate_bytes_hashed_but_not_confirmed_by_compile_dependency_output",
+      "candidate_input_id": "include-04"
+    },
+    {
+      "spelling": "ecmascript/compiler/call_stub_builder.h",
+      "form": "quoted",
+      "resolution": "candidate_bytes_hashed_but_not_confirmed_by_compile_dependency_output",
+      "candidate_input_id": "include-05"
+    },
+    {
+      "spelling": "ecmascript/compiler/new_object_stub_builder.h",
+      "form": "quoted",
+      "resolution": "candidate_bytes_hashed_but_not_confirmed_by_compile_dependency_output",
+      "candidate_input_id": "include-06"
+    }
+  ],
+  "generated_dependencies": {
+    "status": "unknown_no_build_graph_or_generator_manifest",
+    "items": []
+  },
+  "unresolved": [
+    {
+      "id": "C1_PRODUCT_BUILD_PROFILE",
+      "reason": "The accepted ark-runtime-build-profile-v1 capture contract is bound, but its profile_status is blocked, compile database is null and digest is null; no product command can be trusted."
+    },
+    {
+      "id": "ACTUAL_INCLUDE_CLOSURE",
+      "reason": "Literal include directives are inventoried, but no trusted compile command/search order was supplied; active transitive includes and generated headers cannot be determined."
+    },
+    {
+      "id": "PREPROCESSOR_TOOLCHAIN",
+      "reason": "C3 explicitly records build_profile=none and macro_expansion=false; compiler/preprocessor identity and executable byte hashes are unavailable."
+    },
+    {
+      "id": "MACRO_CONFIGURATION",
+      "reason": "No compile database or product configuration binds command-line macros and conditional compilation state."
+    },
+    {
+      "id": "GENERATED_BUILD_INPUTS",
+      "reason": "No generated-header manifest or build target outputs are bound."
+    },
+    {
+      "id": "TARGET_PLATFORM",
+      "reason": "The replay target platform is not bound to a product platform."
+    },
+    {
+      "id": "PARSER_BINARY_IDENTITY",
+      "reason": "C3 records parser package versions but not parser distribution artifact hashes or loaded module bytes."
+    },
+    {
+      "id": "C2_CASE_MATRIX",
+      "reason": "The C2 replay script references c1_20261017/case_matrix.json, which is absent from this C-line worktree; it was not copied from another worktree."
+    },
+    {
+      "id": "DIRECT_INCLUDE_GIT_PROVENANCE",
+      "reason": "Six include candidate files are byte-hashed and linked to literal directives, but exact compiler resolution and Git blob identity are not verified."
+    }
+  ],
+  "known_scope_note": "Known model source dependencies and C3 replay identity are hashed. They do not form a complete preprocessor dependency closure and must not be used as a trusted cache key while status is blocked.",
+  "summary_sha256": "6aba13c03d071edb4e07076a5e1910d631903c95755691c4e068ed4d27a653a9"
+}
