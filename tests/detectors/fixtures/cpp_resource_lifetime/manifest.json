@@ -34,6 +34,20 @@
       "byte_length": 148
     },
     {
+      "fixture": "safe_member_buffer_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "5ab96a3bef505b28ff77f0289abf09e8f10b7505b87e56eba9d2eccc82453255",
+      "byte_length": 161
+    },
+    {
+      "fixture": "safe_early_return_member_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "f56c5e3e86135d3d4b3937dfbdae84c361145f5393803aec83d4b4c924e81bc1",
+      "byte_length": 260
+    },
+    {
       "fixture": "unrelated_release.cpp",
       "category": "unrelated",
       "expected_max": 0,

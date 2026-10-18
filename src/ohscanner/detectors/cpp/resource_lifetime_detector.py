@@ -25,7 +25,7 @@ from .memory_safety import (
 
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
-RULE_VERSION = "0.1.0"
+RULE_VERSION = "0.1.1"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -37,7 +37,7 @@ _DECL_ALLOC_RE = re.compile(
 )
 _FREE_RE = re.compile(
     r"\b(?:free\s*\(\s*(?P<free_name>[A-Za-z_]\w*)\s*\)"
-    r"|delete(?:\s*\[\s*\])?\s+(?P<delete_name>[A-Za-z_]\w*)\b)"
+    r"|delete(?:\s*\[\s*\])?\s+(?P<delete_name>[A-Za-z_]\w*)\s*;)"
 )
 _ALIAS_RE = re.compile(
     r"\b(?P<target>[A-Za-z_]\w*)\s*=\s*(?P<source>[A-Za-z_]\w*)\s*;"

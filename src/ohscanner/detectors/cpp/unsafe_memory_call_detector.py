@@ -24,12 +24,14 @@ from .memory_safety import (
 
 RULE_MEMORY = "ohcpp-unsafe-memory-call-candidate-001"
 RULE_FORMAT = "ohcpp-format-string-candidate-002"
-RULE_VERSION = "0.1.0"
+RULE_VERSION = "0.1.1"
 RULE_LINEAGE_ID = "A-UNSAFE-01:ohcpp-unsafe-call-candidate"
 
 _UNSAFE_MEMORY = {"gets", "strcpy", "strcat", "sprintf"}
 _FORMAT_CALLS = {"printf", "fprintf", "syslog", "vprintf", "vfprintf"}
 _SAFE_PREFIXES = ("strcpy_s", "strcat_s", "sprintf_s", "snprintf", "vsnprintf", "fgets")
+_MACRO_IDENTIFIER = re.compile(r"[A-Z_][A-Z0-9_]*")
+_STRING_LITERAL = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
 
 _OBLIGATIONS = (
     EvidenceObligation(
@@ -104,6 +106,13 @@ def _finding(
     )
 
 
+def _is_macro_concat_format(expression: str) -> bool:
+    """A macro-only format concatenation is unresolved, not attacker-controlled."""
+    without_literals = _STRING_LITERAL.sub(" ", expression)
+    identifiers = re.findall(r"[A-Za-z_]\w*", without_literals)
+    return bool(identifiers) and all(_MACRO_IDENTIFIER.fullmatch(name) for name in identifiers)
+
+
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     if unit.parse_status != "complete":
@@ -135,6 +144,8 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
             format_expression = args[-1].strip() if name in {"syslog"} else args[0].strip()
             if name == "syslog" and len(args) >= 2:
                 format_expression = args[1].strip()
+            if _is_macro_concat_format(format_expression):
+                continue
             if not (format_expression.startswith('"') or format_expression.startswith("'")):
                 findings.append(_finding(
                     unit,
@@ -159,6 +170,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
     return findings, [
         "Candidate only: lexical unsafe-call recognition does not prove exploitability.",
         "Wrappers, macros, varargs, destination aliases, compile context and attacker control remain unknown.",
+        "Macro-only format expressions are unresolved/unknown and are not emitted as format-string candidates.",
         "Absence of a finding is not a safe verdict.",
     ], True
 

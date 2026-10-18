@@ -1,6 +1,6 @@
 # A-UNSAFE-01 C/C++ unsafe memory/format call specification
 
-`ohscanner.cpp.unsafe_memory_call` 0.1.0 是 P2 研究 Detector，默认 `candidate/unassessed`。
+`ohscanner.cpp.unsafe_memory_call` 0.1.1 是 P2 研究 Detector，默认 `candidate/unassessed`。
 
 ## 触发
 
@@ -12,8 +12,8 @@
 
 - `strcpy_s`、`strcat_s`、`sprintf_s`、`snprintf`、`vsnprintf`、`fgets` 和带宽度的 `scanf("%15s", ...)` 作为安全对照。
 - 字面 format、宏/包装函数、varargs、destination alias、输入控制和产品入口仍按 EvidenceObligation 保持 unknown。
-- `LOG_TAG ": "...` 等宏拼接 format 在当前 lexical parser 中仍可能产生低价值候选，已列为已知 precision 缺口。
+- `LOG_TAG ": "...` 等仅由全大写宏标识符和字符串字面量组成的格式表达式按 `unknown_macro_format` 处理，不产生候选；这是 0.1.1 修复的已知误报形状。
 
 ## Controls
 
-`tests/detectors/fixtures/cpp_unsafe_calls/manifest.json` 绑定 positive/fixed/safe/unrelated/unknown controls；`tests/detectors/test_cpp_unsafe_memory_call_detector.py` 固定 source hash、determinism 和资源预算。没有独立产品 truth 前不计算 Precision/Recall。
+`tests/detectors/fixtures/cpp_unsafe_calls/manifest.json` 绑定 positive/fixed/safe/unrelated/unknown controls，包括宏格式 quiet 和真实非字面量 format 正例；`tests/detectors/test_cpp_unsafe_memory_call_detector.py` 固定 source hash、determinism 和资源预算。没有独立产品 truth 前不计算 Precision/Recall。

@@ -1,6 +1,6 @@
 # A-RES-01 C/C++ resource lifetime specification
 
-更新：2026-10-17。`ohscanner.cpp.resource_lifetime` 0.1.0 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
+更新：2026-10-18。`ohscanner.cpp.resource_lifetime` 0.1.1 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
 
 ## 触发
 
@@ -8,6 +8,7 @@
 - 释放后直接 `*p`、`p->`、`p[i]` 或 `memcpy/memmove/memset(p, ...)`：CWE-416 use-after-free candidate。
 - `p2=p` 的局部 alias 跟随同一资源状态。
 - `p=nullptr` 或重新分配使旧状态失效。
+- `delete[] p->member` / `delete p->member` 只释放成员，不把 owner `p` 标成已释放；这是 0.1.1 修复的已知误报形状。
 
 ## 排除和 unknown
 
@@ -17,7 +18,7 @@
 
 ## Controls
 
-`tests/detectors/fixtures/cpp_resource_lifetime/manifest.json` 绑定 positive double-free、alias UAF、fixed null/realloc、unrelated 和 unknown controls。`tests/detectors/test_cpp_resource_lifetime_detector.py` 固定 source hash、identity、determinism、budget 和四类控制。
+`tests/detectors/fixtures/cpp_resource_lifetime/manifest.json` 绑定 positive double-free、alias UAF、fixed null/realloc、safe member-release/early-return、unrelated 和 unknown controls。`tests/detectors/test_cpp_resource_lifetime_detector.py` 固定 source hash、identity、determinism、budget 和五类控制。
 
 ## PoC
 
