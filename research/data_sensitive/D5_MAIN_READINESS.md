@@ -2,14 +2,12 @@
 
 | Gate | Status | Evidence / remaining condition |
 |---|---|---|
-| M0: default-off isolated module | **Not met** | D suite 41/41, full Python suite 870 pass / 0 fail / 5 skip, and frontend tests 16/16 (frontend result is the prior D8 run). Fixed-source dual replay is blocked. Full dependency/license review and a clean latest-main CI result remain. Keep D unregistered. |
+| M0: default-off isolated module | **Not met** | D-specific suite 50/50 and full Python suite 879 passed / 0 failed / 5 skipped. D11 re-fetched and hash-verified 11 manifest source files per historical revision; static replay remains blocked (5 complete / 6 partial per revision), with 1 old-version candidate and 0 post-change candidates. Frontend 16/16 is still the prior D8 run; clean latest-main CI and full Git-object Runner replay remain outstanding. Full dependency/license review and a clean latest-main CI result remain. Keep D unregistered. |
 | M1: explicit experimental registration | **Not met** | Shared partial-AST admission and UI/report integration are owner work. Public Runner still withholds partial D files. No D registration or shared-path change was made. |
 | M2: default one-click scan | **Not met** | One exact historical API model, no two independent shapes, no independent labeled real-source holdout, no measured recall/precision or end-to-end runtime/resource benchmark. |
 | M3: confirmed product vulnerability | **Not met** | No product build identity, dynamic synthetic-trigger evidence, unauthorized reader proof, validated remediation build, or product impact/version map. `validated_vulnerability=0`. |
 
-Recommendation: preserve the module as research-only on this branch. Re-run
-the frontend build/test in a Node-enabled clean environment and restore the
-exact historical source Git objects before reconsidering M0. The shared
+Recommendation: preserve the module as research-only on this branch. Re-run the frontend build/test and latest-main CI in a clean environment, restore the exact historical Git object graph for public Runner validation, and obtain an approved isolated runtime before executing H01-H08. The shared
 platform owner must separately approve partial evidence admission and any
 experimental UI path. No automatic Catalog registration or confirmation is
 appropriate.
