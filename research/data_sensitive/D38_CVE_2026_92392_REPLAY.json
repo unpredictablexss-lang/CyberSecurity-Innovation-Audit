@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "experiment": "D38 CVE-2026-92392 pinned source replay",
+  "advisory": "https://curl.se/docs/CVE-2026-92392.html",
+  "fix_commit": "https://github.com/curl/curl/commit/8b0744af5b1b631da5b938ca31c3f9895ad5a321",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.14.0",
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "limitations": [
+    "This is a lexical source-signature replay over pinned Git objects; Tree-sitter parsing and full repository scanning were not run.",
+    "The OpenHarmony G-drive mirror was read only through committed Git objects because its worktree is dirty; the committed HEAD identifies curl 8.8.0.",
+    "The advisory's HTTP/2 upload reset preconditions, shipped product linkage, exploitability, and impact were not validated.",
+    "A candidate signature and an upstream fix comparison do not confirm a product vulnerability."
+  ],
+  "cases": [
+    {
+      "name": "official_8_22_0_vulnerable",
+      "repository": "curl/curl",
+      "commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
+      "tree": "6ae23d9333713707a02588b44ed238a50e8b3bde",
+      "source_paths": {
+        "include/curl/curlver.h": {
+          "blob": "98d10c4fc2b5067e99aa008a48cdd6b38f5370cd",
+          "sha256": "630a536557efa7d5b464a3610647b72f6e475f902b20b1f31eaec07a93f3cf18",
+          "size": 3058
+        },
+        "lib/multi.c": {
+          "blob": "fbefa6f30d91f8a6d39f3abd735b771e0c801365",
+          "sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+          "size": 132646
+        }
+      },
+      "source_declared_version": "8.22.0-DEV",
+      "detector_status": "blocked",
+      "parse_status": "not_run",
+      "findings": [
+        {
+          "line": 742,
+          "rule_id": "ohknowncve-curl-cve-2026-92392",
+          "cwe": "CWE-416",
+          "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+          "message": "Candidate component-code match for CVE-2026-92392: multi_done notifies connection filters and schedules pending handles before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; source-declared libcurl version is in the published affected range. Product reachability and vulnerability status remain unconfirmed."
+        }
+      ],
+      "candidate_count": 1
+    },
+    {
+      "name": "official_8_23_0_fixed",
+      "repository": "curl/curl",
+      "commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
+      "tree": "4e5e74de5a67ab3268dffc8999ba72b5ce41c0b8",
+      "source_paths": {
+        "include/curl/curlver.h": {
+          "blob": "c0370bd57515a136cb84a01b142e5b073fa29486",
+          "sha256": "a7e7e5fe951e245204e8f112ab9d454bfa7be7ffc96509a5a66ed6e7d301d4ec",
+          "size": 3058
+        },
+        "lib/multi.c": {
+          "blob": "8e2d1fd5cf42b7d283dd1c9c42e48ea8cc83eea8",
+          "sha256": "515ac0f1295a3c0c74d59e08059e7a6a4195bc1fe3fcbc5a7c58846149979a8a",
+          "size": 132654
+        }
+      },
+      "source_declared_version": "8.23.0-DEV",
+      "detector_status": "blocked",
+      "parse_status": "not_run",
+      "findings": [],
+      "candidate_count": 0
+    },
+    {
+      "name": "openharmony_mirror_head",
+      "repository": "OpenHarmony third_party_curl mirror",
+      "commit": "1386bb128bb060b284309397b97adcaaec21c003",
+      "tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2",
+      "source_paths": {
+        "include/curl/curlver.h": {
+          "blob": "3e8f2f8ffd467a89d4e069a2ea699276676f3c44",
+          "sha256": "66c6c01abae7abb2c4ce4c6d3594ca38cfde64ec4335ce6e859d1d1d27a126c4",
+          "size": 3044
+        },
+        "lib/multi.c": {
+          "blob": "05ca5f2ad12c652222c79f31cef8519bc5ed0280",
+          "sha256": "90bd9b3252594abe41358efc57cdea0068b63a578d456cd7aae896b8dbb6ebad",
+          "size": 127320
+        }
+      },
+      "source_declared_version": "8.8.0",
+      "detector_status": "blocked",
+      "parse_status": "not_run",
+      "findings": [],
+      "candidate_count": 0
+    }
+  ]
+}

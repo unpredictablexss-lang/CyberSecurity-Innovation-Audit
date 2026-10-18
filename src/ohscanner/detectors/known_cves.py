@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.13.0"
+VERSION = "0.14.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -37,7 +37,40 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
 
-def _scan(unit: SourceUnit):
+def _curl_version(units):
+    """Return one source-declared libcurl version; disagreement stays unknown."""
+    versions = set()
+    for unit in units:
+        path = unit.path.replace("\\", "/")
+        if not (path.endswith("include/curl/curlver.h") or path.endswith("/curlver.h")):
+            continue
+        match = re.search(
+            r'^\s*#\s*define\s+LIBCURL_VERSION\s+"(\d+)\.(\d+)\.(\d+)(?:[-+][^" ]*)?"',
+            unit.text, re.M,
+        )
+        if match:
+            versions.add(tuple(map(int, match.groups())))
+    if len(versions) == 1:
+        return next(iter(versions)), False
+    return None, len(versions) > 1
+
+
+def _curl_92392_affected(version):
+    if version is None:
+        return None
+    if version < (8, 12, 0) or version > (8, 22, 0):
+        return False
+    # curl publishes fixed backports on the 8.14.x, 8.16.x and 8.20.x lines.
+    if version[:2] == (8, 14) and version >= (8, 14, 3):
+        return False
+    if version[:2] == (8, 16) and version >= (8, 16, 2):
+        return False
+    if version[:2] == (8, 20) and version >= (8, 20, 2):
+        return False
+    return True
+
+
+def _scan(unit: SourceUnit, curl_version=None):
     t = unit.text; s = mask_comments_and_literals(t); out = []
     # CVE-2026-25850: external storage mounts must not recursively widen
     # permissions to 0777. The source identity and the affected mount methods
@@ -132,6 +165,33 @@ def _scan(unit: SourceUnit):
                     "ohknowncve-storage-cve-2026-28751", "CVE-2026-28751",
                     "NotifyMtpMounted allocates MTP_DEVICE_NAME_LEN bytes but a full-capacity getxattr result skips NUL termination; the value is later consumed as a C string, allowing an out-of-bounds read.",
                     "CWE-125", impact="availability_or_memory_safety",
+                ))
+    # CVE-2026-92392: request cleanup must finish before connection filters
+    # release their references to Curl_easy; queued handles must not run before
+    # the connection has returned to its pool.
+    if source_path.endswith("lib/multi.c"):
+        multi_done = _body(s, "multi_done")
+        affected = _curl_92392_affected(curl_version)
+        if multi_done and affected is not False:
+            multi_start, multi_body = multi_done
+            req_done = re.search(r"Curl_req_done\s*\(\s*&data->req\s*,\s*data\s*,\s*premature\s*\)", multi_body)
+            filter_done = re.search(r"Curl_conn_ev_data_done\s*\(\s*data\s*,\s*premature\s*\)", multi_body)
+            schedule = re.search(r"multi_schedule_pending\s*\(\s*data->multi\s*\)", multi_body)
+            pool_return = re.search(r"Curl_cpool_(?:return|do_locked)\s*\(", multi_body)
+            if (req_done and filter_done and schedule and pool_return
+                    and filter_done.start() < req_done.start()
+                    and schedule.start() < req_done.start()
+                    and pool_return.start() > req_done.start()):
+                version_note = (
+                    "source-declared libcurl version is in the published affected range"
+                    if affected is True else
+                    "no unique source-declared libcurl version was found; version applicability remains unknown"
+                )
+                out.append(_finding(
+                    unit, multi_start + 1 + filter_done.start(),
+                    "ohknowncve-curl-cve-2026-92392", "CVE-2026-92392",
+                    "multi_done notifies connection filters and schedules pending handles before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; " + version_note + ".",
+                    "CWE-416",
                 ))
     # CVE-2025-9900: only inspect the public wrapper body. The old expression
     # subtracts image height from raster height before passing a shifted raster
@@ -407,6 +467,7 @@ class KnownDisclosedCveDetector:
     def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
         del context
         selected = tuple(sorted((u for u in units if u.language in self.supported_languages), key=lambda u: u.path))
+        curl_version, _curl_version_ambiguous = _curl_version(selected)
         if not selected:
             return DetectorRun(self.detector_id, self.version, "blocked", limitations=("not_applicable: no C/C++ source supplied.",))
         if sum(len(u.text.encode("utf-8")) for u in selected) > MAX_TOTAL_BYTES:
@@ -418,7 +479,7 @@ class KnownDisclosedCveDetector:
             # Narrow lexical CVE signatures can still preserve evidence from a
             # partial AST. The run remains blocked and never turns the rest of
             # the unit into a negative/safe result.
-            findings.extend(_scan(u))
+            findings.extend(_scan(u, curl_version))
             analyzed.append(u.path)  # inspected; blocked run maps incomplete inputs to partial coverage
             if u.parse_status != "complete":
                 complete=False

@@ -14,6 +14,19 @@ class KnownDisclosedCveTests(unittest.TestCase):
         run=KnownDisclosedCveDetector().detect(ScanContext(request=request, units=(unit,)), (unit,))
         return run
 
+    def run_units(self, sources):
+        units = tuple(
+            SourceUnit(path=path, language="cpp" if path.endswith((".cpp", ".h")) else "c",
+                       text=text, sha256=hashlib.sha256(text.encode()).hexdigest(),
+                       parse_status="complete")
+            for path, text in sorted(sources.items())
+        )
+        request = ScanRequest(request_id="test:known-cves-multi", repository="fixture/known-cves",
+                              commit="b" * 40, snapshot_sha256=snapshot_digest(units),
+                              target_id="current-component:fixture/known-cves",
+                              profile_id="fixture-no-build", provenance="fixture")
+        return KnownDisclosedCveDetector().detect(ScanContext(request=request, units=units), units)
+
     def test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated(self):
         path = "services/storage_daemon/volume/src/external_volume_info.cpp"
         vulnerable = """int32_t ExternalVolumeInfo::DoMount4Ext(uint32_t flags) {
@@ -136,6 +149,65 @@ class KnownDisclosedCveTests(unittest.TestCase):
                               if f.symbol == "CVE-2026-28751"])
         self.assertEqual([], [f for f in self.run_source(vulnerable, "other.cpp").findings
                               if f.symbol == "CVE-2026-28751"])
+
+    def test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix(self):
+        path = "lib/multi.c"
+        vulnerable = """static CURLcode multi_done(struct Curl_easy *data, struct connectdata *conn, bool premature, CURLcode status) {
+            result = Curl_1st_fatal(result, Curl_xfer_write_done(data, premature));
+            if (conn) Curl_conn_ev_data_done(data, premature);
+            multi_schedule_pending(data->multi);
+            if (!result) result = Curl_req_done(&data->req, data, premature);
+            if (conn) {
+                Curl_cpool_do_locked(data, data->conn, multi_done_locked, &mdctx);
+            }
+            return result;
+        }"""
+        fixed = """static CURLcode multi_done(struct Curl_easy *data, struct connectdata *conn, bool premature, CURLcode status) {
+            result = Curl_1st_fatal(result, Curl_xfer_write_done(data, premature));
+            if (!result) result = Curl_req_done(&data->req, data, premature);
+            if (conn) {
+                Curl_conn_ev_data_done(data, premature);
+                Curl_detach_connection(data);
+                Curl_cpool_return(data, conn, multi_done_locked, &mdctx);
+                if (data->multi) multi_schedule_pending(data->multi);
+            }
+            return result;
+        }"""
+        version = '#define LIBCURL_VERSION "8.22.0"\n'
+        run = self.run_units({path: vulnerable, "include/curl/curlver.h": version})
+        findings = [f for f in run.findings if f.symbol == "CVE-2026-92392"]
+        self.assertEqual(1, len(findings))
+        self.assertGreater(findings[0].line, 0)
+        self.assertEqual("CWE-416", findings[0].candidate_cwe)
+        self.assertIn("affected range", findings[0].message)
+        self.assertEqual(hashlib.sha256(vulnerable.encode()).hexdigest(), findings[0].source_sha256)
+
+        def scan_with(version_text, code=vulnerable):
+            return [f for f in self.run_units({
+                path: code,
+                "include/curl/curlver.h": f'#define LIBCURL_VERSION "{version_text}"\n',
+            }).findings if f.symbol == "CVE-2026-92392"]
+
+        self.assertEqual([], scan_with("8.23.0", fixed))
+        self.assertEqual([], scan_with("8.22.0", fixed))
+        self.assertEqual([], scan_with("8.8.0"))
+        self.assertEqual([], scan_with("8.20.2"))
+        for affected_backport in ("8.12.0", "8.14.2", "8.16.1", "8.20.1", "8.21.0"):
+            self.assertEqual(1, len(scan_with(affected_backport)), affected_backport)
+        for fixed_backport in ("8.14.3", "8.16.2", "8.20.2"):
+            self.assertEqual([], scan_with(fixed_backport), fixed_backport)
+        conflicting_versions = [f for f in self.run_units({
+            path: vulnerable,
+            "include/curl/curlver.h": '#define LIBCURL_VERSION "8.22.0"',
+            "vendor/include/curl/curlver.h": '#define LIBCURL_VERSION "8.23.0"',
+        }).findings if f.symbol == "CVE-2026-92392"]
+        self.assertEqual(1, len(conflicting_versions))
+        self.assertIn("version applicability remains unknown", conflicting_versions[0].message)
+
+        unknown = [f for f in self.run_source(vulnerable, path).findings
+                   if f.symbol == "CVE-2026-92392"]
+        self.assertEqual(1, len(unknown))
+        self.assertIn("version applicability remains unknown", unknown[0].message)
 
     def test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed(self):
         vulnerable = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
