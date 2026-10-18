@@ -12,6 +12,7 @@
 - 全量回归：651 tests 通过，36 项按现有测试标记跳过。
 - 大组件全仓重扫：communication_netmanager_ext@8c35917b7e2f152813b13a20530a8452cf73d938。选入 654 个源文件，其中分析器执行覆盖 632 个；434 个完整解析、198 个 partial。入口修正前，11 条候选全部由 test/fuzz 入口路径带出；修正后产品候选 0，明确跳过 1 个 test/fuzz/mock 入口。partial 比例约 31.3%，所以 0 候选不是安全结论，运行覆盖为 completed_with_limitations。
 - 真实修复对：useriam_auth_executor_mgr 的官方历史修复明确在 QueryCallbackStub::OnRemoteRequest 中增加接口 token 检查。漏洞父提交固定为 48f3ba7c220f18244f908f0452527304349e850c，修复为其直接子提交 9f35fade871d3cf15acb6191e965a8582bea201e。相同检测器分别全仓扫描后，受影响文件 AUTH-01 候选从 2 条变为 0 条；全仓总数从 8 变 6，剩余 6 条没有由本实验判定。
+- 同一漏洞提交新增两个团队源码复核对照：受保护的 ExecutorCallbackStub 入站入口完整解析、无 AUTH-01 诊断；ExecutorMessengerProxy 出站客户端代理完整解析、无 AUTH-01 诊断。它们补充 guarded/unrelated 两类负对照，但标签来自团队复核，不是盲测或第三方裁定。
 - 这是一条公开、独立于算法实现的真实正例修复对回归，不是盲测，也没有运行设备 PoC。它支持“这条 AUTH-01 规则命中过已公开修复的代码区域并在修复后消失”，不支持全家族召回率、准确率或漏洞确认结论。
 
 ## 改动说明
@@ -31,7 +32,7 @@
 | 真实正例 | useriam_auth_executor_mgr @ 48f3ba7c220f18244f908f0452527304349e850c | 8 全仓候选；目标文件 2 条 AUTH-01 |
 | 修复反例 | 同仓 @ 9f35fade871d3cf15acb6191e965a8582bea201e | 6 全仓候选；目标文件 0 条 |
 
-复跑脚本：research/evidence/interface/ipc/real_positive_pairs_20261018/run_useriam_pair.sh。固定标签与 blob/hash：同目录 cases/useriam_query_callback.json。目标仓库在本地 WSL 临时目录 /home/audit/oh-audit-targets/useriam_auth_executor_mgr；netmanager 在只读 G 盘镜像副本和 WSL 本地副本都绑定相同 full SHA/tree，扫描在本地副本上完成。
+复跑脚本：research/evidence/interface/ipc/real_positive_pairs_20261018/run_useriam_pair.sh。固定标签、控制样本与 blob/hash：同目录 cases/useriam_query_callback.json。目标仓库在本地 WSL 临时目录 /home/audit/oh-audit-targets/useriam_auth_executor_mgr；netmanager 在只读 G 盘镜像副本和 WSL 本地副本都绑定相同 full SHA/tree，扫描在本地副本上完成。
 
 ## 下一步：只围绕仓库扫描质量推进
 

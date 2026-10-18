@@ -91,5 +91,41 @@
       "path": "/tmp/ohscanner-useriam-verified-final/useriam-auth-fixed.json",
       "sha256": "476d5e4ab139ba9570b37cf1a805837b0fdebcbfeccb62dc3083d90061e58a8d"
     }
-  }
+  },
+  "controls": [
+    {
+      "control_id": "useriam-executor-callback-token-guard-safe-control",
+      "label": "source_reviewed_safe_control",
+      "evaluation_role": "same_commit_guarded_entry_control",
+      "commit": "48f3ba7c220f18244f908f0452527304349e850c",
+      "tree": "3e96b5c3a2e8f3fc609bcb69ba4be247fd7779f0",
+      "path": "frameworks/kitsimpl/src/executor_callback_stub.cpp",
+      "symbol": "ExecutorCallbackStub::OnRemoteRequest",
+      "blob": "fff0882e2c8fe861fd0cb9a5a0eed95ec6219e72",
+      "source_sha256": "70cbf8b8019557c8b9ad977048fdadd62981d134e0f93ed993c2943b7544bbc9",
+      "scan_observation": {
+        "parse_status": "complete",
+        "analysis_status": "analyzed",
+        "target_file_diagnostics": 0
+      },
+      "review_basis": "Pinned source reads and compares the interface token, then returns before dispatch on mismatch (lines 30-41). No scanner diagnostic was emitted."
+    },
+    {
+      "control_id": "useriam-executor-messenger-proxy-unrelated-control",
+      "label": "source_reviewed_unrelated_control",
+      "evaluation_role": "same_commit_outbound_proxy_control",
+      "commit": "48f3ba7c220f18244f908f0452527304349e850c",
+      "tree": "3e96b5c3a2e8f3fc609bcb69ba4be247fd7779f0",
+      "path": "frameworks/kitsimpl/src/executor_messenger_proxy.cpp",
+      "symbol": "ExecutorMessengerProxy::SendData",
+      "blob": "4cc0149614e17267c046c6b8b869b37191a28f58",
+      "source_sha256": "2c61fc1fe9d7f59e6bb6c312290af935443d14d858ad1fbd1cd27540f279d191",
+      "scan_observation": {
+        "parse_status": "complete",
+        "analysis_status": "analyzed",
+        "target_file_diagnostics": 0
+      },
+      "review_basis": "Pinned source writes an interface token and calls SendRequest; it is an outbound client proxy, not an inbound dispatcher (lines 22-50). No scanner diagnostic was emitted."
+    }
+  ]
 }
