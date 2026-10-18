@@ -1,6 +1,8 @@
 # C4 handoff
 
-C4 is an experimental, explicitly selectable detector integrated into Catalog and Runner on this isolated branch. It is excluded from default scans. The adapter only selects the exact ArkRuntime repository and target path, then checks exact commit, Git blob, SHA-256, Git-object provenance, parser profile, and shared AST status. A partial source can preserve a local candidate and its parse-contamination obligation, while the run remains blocked/partial. This is a narrow experimental admission path, not general partial-AST approval or product readiness.
+C4 is an experimental, explicitly selectable detector integrated into Catalog and Runner on this isolated branch.
+
+For a short receiving checklist, safe branch checkout, and replay instructions against a teammate local Ark Git object database, see [TEAMMATE_HANDOFF.md](TEAMMATE_HANDOFF.md). It is excluded from default scans. The adapter only selects the exact ArkRuntime repository and target path, then checks exact commit, Git blob, SHA-256, Git-object provenance, parser profile, and shared AST status. A partial source can preserve a local candidate and its parse-contamination obligation, while the run remains blocked/partial. This is a narrow experimental admission path, not general partial-AST approval or product readiness.
 
 Base: `1c21ac60890fca0ce6be5d50d82e4757dd5e4623`. Worktree: `/home/audit/ohscanner/worktrees/c4-ark-runtime-20261018`, branch `work/c4-ark-runtime-20261018`. The owner checkout, A/B worktrees, and teammate PR branch were not changed. Remote PR #16 is still Draft at C3 head `76f20af9e372189627f5117ed9a30815d1f49747`; the C4 checkpoint is pushed to `origin/work/c4-ark-runtime-20261018` (no PR was created).
 
