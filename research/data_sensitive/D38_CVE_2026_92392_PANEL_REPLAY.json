@@ -1,0 +1,252 @@
+{
+  "schema": 1,
+  "experiment": "D38 Workbench API to Worker to report and hash-checked source viewer replay",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.14.0",
+  "upstream_repository": "curl/curl",
+  "source_profile": "two pinned source files per case, materialized in isolated temporary Git repositories",
+  "validated_vulnerability": 0,
+  "product_status": "unknown",
+  "limitations": [
+    "This verifies explicit Catalog selection, API planning, Worker execution, report persistence, and source hash binding; it is not a browser automation run.",
+    "The temporary repositories contain only lib/multi.c and curlver.h from pinned upstream revisions, not a complete curl build or OpenHarmony product.",
+    "Tree-sitter or full repository coverage may remain partial/blocked; a candidate does not confirm product impact or exploitability."
+  ],
+  "repeat_run_count": 2,
+  "repeat_runs_semantically_identical": true,
+  "repeat_run_signatures": [
+    [
+      {
+        "case": "curl-vulnerable",
+        "upstream_commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
+        "local_scan_commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.14.0",
+        "detector_status": "blocked",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+        "candidate_file": "lib/multi.c",
+        "candidate_line": 742,
+        "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+        "source_viewer_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "curl-fixed",
+        "upstream_commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
+        "local_scan_commit": "b5d6101e5a531aa7905bf3af674fe71a79348f69",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.14.0",
+        "detector_status": "blocked",
+        "candidate_count": 0,
+        "candidate_id": null,
+        "candidate_file": null,
+        "candidate_line": null,
+        "source_sha256": null,
+        "source_viewer_sha256": null,
+        "validated_vulnerability": 0
+      }
+    ],
+    [
+      {
+        "case": "curl-vulnerable",
+        "upstream_commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
+        "local_scan_commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.14.0",
+        "detector_status": "blocked",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+        "candidate_file": "lib/multi.c",
+        "candidate_line": 742,
+        "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+        "source_viewer_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "curl-fixed",
+        "upstream_commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
+        "local_scan_commit": "b5d6101e5a531aa7905bf3af674fe71a79348f69",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.14.0",
+        "detector_status": "blocked",
+        "candidate_count": 0,
+        "candidate_id": null,
+        "candidate_file": null,
+        "candidate_line": null,
+        "source_sha256": null,
+        "source_viewer_sha256": null,
+        "validated_vulnerability": 0
+      }
+    ]
+  ],
+  "cases": [
+    {
+      "case": "curl-vulnerable",
+      "upstream_commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
+      "local_scan_commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.14.0",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "source_sha256": {
+          "include/curl/curlver.h": "630a536557efa7d5b464a3610647b72f6e475f902b20b1f31eaec07a93f3cf18",
+          "lib/multi.c": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97"
+        },
+        "unexamined": [
+          {
+            "file": "include/curl/curlver.h",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "lib/multi.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+            "file": "lib/multi.c",
+            "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/curl-vulnerable",
+              "commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
+              "snapshot_sha256": "8360f1af2e59598e63ec1706ee6dbfd1a59af6f8f63fa20a7c75e53f9524df7a",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.14.0",
+              "rule_id": "ohknowncve-curl-cve-2026-92392",
+              "file": "lib/multi.c",
+              "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-416",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "candidate_count": 1,
+      "candidate_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+      "candidate_file": "lib/multi.c",
+      "candidate_line": 742,
+      "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+      "source_viewer_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    },
+    {
+      "case": "curl-fixed",
+      "upstream_commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
+      "local_scan_commit": "b5d6101e5a531aa7905bf3af674fe71a79348f69",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.14.0",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "source_sha256": {
+          "include/curl/curlver.h": "a7e7e5fe951e245204e8f112ab9d454bfa7be7ffc96509a5a66ed6e7d301d4ec",
+          "lib/multi.c": "515ac0f1295a3c0c74d59e08059e7a6a4195bc1fe3fcbc5a7c58846149979a8a"
+        },
+        "unexamined": [
+          {
+            "file": "include/curl/curlver.h",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "lib/multi.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": []
+      },
+      "candidate_count": 0,
+      "candidate_id": null,
+      "candidate_file": null,
+      "candidate_line": null,
+      "source_sha256": null,
+      "source_viewer_sha256": null,
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    }
+  ]
+}
