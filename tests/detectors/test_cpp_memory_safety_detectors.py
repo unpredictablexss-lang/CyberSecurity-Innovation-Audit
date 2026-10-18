@@ -50,7 +50,7 @@ void positive(char *src, unsigned int n) {
 """)
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.bounds")
-        self.assertEqual(self.detector.version, "0.2.2")
+        self.assertEqual(self.detector.version, "0.2.3")
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
         self.assertEqual({item.rule_id for item in run.findings}, {
@@ -59,7 +59,7 @@ void positive(char *src, unsigned int n) {
         })
         for finding in run.findings:
             self.assertEqual(finding.source_sha256, source.sha256)
-            self.assertEqual(finding.rule_version, "0.2.2")
+            self.assertEqual(finding.rule_version, "0.2.3")
             self.assertEqual(finding.rule_lineage_id, "A-BOF-01:ohcpp-memory-bounds-candidate")
             self.assertEqual(finding.identity_quality, "partial")
             self.assertGreaterEqual(len(finding.evidence_obligations), 7)

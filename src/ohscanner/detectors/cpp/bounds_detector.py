@@ -42,7 +42,7 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.2"
+RULE_VERSION = "0.2.3"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 
@@ -316,9 +316,14 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "CWE-120", "CWE-787",
             ))
             continue
-        if call_name in {"memcpy", "memmove"} and len(args) < 3:
-            continue
-        length_expression = args[2] if call_name in {"memcpy", "memmove"} else args[-1]
+        if call_name == "snprintf":
+            if len(args) < 2:
+                continue
+            length_expression = args[1]
+        else:
+            if call_name in {"memcpy", "memmove", "strncpy"} and len(args) < 3:
+                continue
+            length_expression = args[2]
         if destination_shape is not None and _safe_copy_length(length_expression, destination, arrays):
             continue
         if capacity_bytes is None:

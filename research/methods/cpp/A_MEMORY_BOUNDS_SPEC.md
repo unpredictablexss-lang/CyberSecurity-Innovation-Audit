@@ -6,7 +6,7 @@
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.2.2` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
+| `ohscanner.cpp.bounds` | `0.2.3` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
 | `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
@@ -26,6 +26,7 @@
 3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。`SortElements*` 中未被 stable-array/index guard 保护的直接 `ElementAccessor::Get/Set` 作为历史 OOB 候选。
 4. 识别简单的 `malloc/calloc/new[]` 指针目的地容量；复制长度与分配表达式相同时 quiet，确定超界或不同符号长度时产生候选；`new[]` 的已知元素容量也用于索引上界，动态/包装分配保持 unknown。
 5. 识别一阶直接 copy wrapper：函数体内只有一个 `memcpy/memmove/strncpy/strcpy/strcat/sprintf`，目的地为函数参数；调用点代入调用者数组/分配容量。更深 wrapper、函数指针和重载保持 unknown。
+6. `snprintf` 使用第 1 个实参作为字节上限；`snprintf(dst, sizeof(dst), ...)` quiet，`snprintf(dst, 8, ...)` 对 4 字节数组产生候选。
 
 候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
 
@@ -58,13 +59,14 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 17 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 19 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
 - `malloc` 已知容量、`malloc(n)` 与 `memcpy(..., n)` 的精确匹配为 quiet；不同符号长度产生 unknown candidate；
 - `new char[4]` 的越界索引产生候选，`new char[8]` 的最后一个合法索引 quiet；
 - 一阶 `CopyInto(dst, src, n)` wrapper 的 4→8 越界调用产生候选，8→8 和 `sizeof(dst)` 调用 quiet；
+- `snprintf` 的 8→4 长度产生候选，`sizeof(dst)` 安全控制 quiet；
 - 动态目的地和宏-only 分配为 unknown/quiet；
 - partial、failed、1MiB/unit、32MiB/run fail-closed；
 - 输出和 source binding 稳定；
@@ -118,4 +120,8 @@ groups also remain 33/22, with no new real-source hit in this corpus.
 
 The one-hop wrapper rerun with `bounds` 0.2.2 is compared in
 `research/evidence/cpp/a_line_scan_20261018_v5_comparison.json`: candidates and
+groups remain 33/22, with no new real-source hit in this corpus.
+
+The `snprintf` 0.2.3 rerun is compared in
+`research/evidence/cpp/a_line_scan_20261018_v7_comparison.json`: candidates and
 groups remain 33/22, with no new real-source hit in this corpus.

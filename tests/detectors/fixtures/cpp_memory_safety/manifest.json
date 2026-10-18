@@ -39,6 +39,14 @@
       "byte_length": 189
     },
     {
+      "category": "positive",
+      "expected_min": 1,
+      "fixture": "bounds_snprintf_positive.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "c0f144b131d643378a039ff50858cd4c4929bf6804e30eafe10071609c474960",
+      "byte_length": 113
+    },
+    {
       "category": "fixed",
       "expected_max": 0,
       "fixture": "bounds_fixed.cpp",
@@ -93,6 +101,14 @@
       "detector": "ohscanner.cpp.bounds",
       "sha256": "27f8fde9e1ab5b4f167d4f9d0c9c1a56484a60dd65ee96f395b427de281682fe",
       "byte_length": 195
+    },
+    {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "bounds_snprintf_safe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "b0da07e15c5d3359779736b6b0bcf1419177264a6ebb4b66292b9af20976de5e",
+      "byte_length": 119
     },
     {
       "category": "unrelated",
