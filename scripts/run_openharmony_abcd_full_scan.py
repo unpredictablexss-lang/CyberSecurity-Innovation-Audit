@@ -310,7 +310,7 @@ def run_worker(args) -> int:
         repo_dir=Path(args.repo_dir),
         repository=args.repository,
         commit=args.commit,
-        includes=(".",),
+        includes=tuple(args.include) if args.include else (".",),
         registry=registry,
     )
     write_worker_result(result_path, report)
@@ -647,6 +647,7 @@ def main() -> int:
     parser.add_argument("--commit")
     parser.add_argument("--result-json")
     parser.add_argument("--report-md")
+    parser.add_argument("--include", action="append", default=[])
     parser.add_argument("--manifest")
     parser.add_argument("--repo-root")
     parser.add_argument("--output-dir")
@@ -669,3 +670,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
