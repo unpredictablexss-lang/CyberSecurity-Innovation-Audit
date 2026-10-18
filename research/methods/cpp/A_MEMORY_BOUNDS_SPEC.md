@@ -6,7 +6,7 @@
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.2.6` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
+| `ohscanner.cpp.bounds` | `0.2.7` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
 | `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
@@ -27,7 +27,7 @@
 4. 识别简单的 `malloc/calloc/new[]` 指针目的地容量；复制长度与分配表达式相同时 quiet，确定超界或不同符号长度时产生候选；`new[]` 的已知元素容量也用于索引上界，动态/包装分配保持 unknown。
 5. 识别一阶直接 copy wrapper：函数体内只有一个 `memcpy/memmove/strncpy/strcpy/strcat/sprintf`，目的地为函数参数；调用点代入调用者数组/分配容量。更深 wrapper、函数指针和重载保持 unknown。
 6. `snprintf` 使用第 1 个实参作为字节上限；`snprintf(dst, sizeof(dst), ...)` quiet，`snprintf(dst, 8, ...)` 对 4 字节数组产生候选。
-7. `<= 0`、`< 0`、`>= MAX`、`> MAX` 和 `nullptr` 早退 guard 收窄区间；例如 `if (n <= 0) return; if (n > 4) return; dst[n-1]` 保持 quiet。
+7. `<= 0`、`< 0`、`>= MAX`、`> MAX` 和 `nullptr` 早退 guard 收窄区间；例如 `if (n <= 0) return; if (n > 4) return; dst[n-1]` 保持 quiet。`if (x != 0) return;` 只生产 `GuardFact.kind=zero_check`（区间 `[0,0]`），不注入 bounds 区间推断：`dst[n - 1]` 在 `n==0` 时仍是越界/回绕，必须保留候选。
 8. `memcpy_s/memmove_s(dst, dstsz, src, count)`：分别检查 `dstsz` 与 `count` 对目的地容量的上界；WiFi Parcel 的 `new char[cfgLen] + memcpy_s(..., cfgLen, ..., cfgLen)` 保持 quiet。
 9. `strcpy_s/strcat_s/strncpy_s/sprintf_s/snprintf_s` 检查 destination size；`strncpy_s/snprintf_s` 额外检查 count。
 
@@ -62,7 +62,7 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 26 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 30 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
@@ -144,3 +144,11 @@ candidates and groups remain 33/22 and every component keeps its baseline count
 (7/4, 11/8, 4/2, 7/6, 4/2). Wall time was 163.19s with 372,036 KiB peak RSS.
 The absence of new hits is a coverage result for this corpus, not evidence that
 the new rules are accurate or complete.
+
+The inclusive `>=` guard and the non-injected `zero_check` fact with `bounds`
+0.2.7 are compared in
+`research/evidence/cpp/a_line_scan_20261018_v13_comparison.json`: candidates and
+groups remain 33/22 with every component unchanged. Wall time was 166.90s with
+371,860 KiB peak RSS. The added guard facts change no candidate on this corpus;
+they add explicit controls for `>= MAX`, zero-exit and null-check shapes, not
+new conclusions.

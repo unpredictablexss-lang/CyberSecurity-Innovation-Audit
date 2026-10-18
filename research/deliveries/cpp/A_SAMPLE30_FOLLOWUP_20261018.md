@@ -26,8 +26,10 @@ The sandbox delivery reports:
 - `shared_ptr_race 0.5.3`: constructor-body writes are initialization; function
   parameters shadow same-named members; stable-owner and parameter-shadow
   controls added.
-- `bounds 0.2.6`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
-  guards narrow intervals; constant offsets such as `n - 1` are evaluated;
+- `bounds 0.2.7`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
+  guards narrow intervals; `if (x != 0) return;` emits a `zero_check` guard fact
+  that is not injected into bounds intervals, so `dst[n - 1]` stays a candidate;
+  constant offsets such as `n - 1` are evaluated;
   `memcpy_s/memmove_s(dst, dstsz, src, count)` checks both size arguments; the
   secure string-copy family (`strcpy_s`, `strcat_s`, `strncpy_s`, `sprintf_s`,
   `snprintf_s`) checks the destination size and, where applicable, the count.

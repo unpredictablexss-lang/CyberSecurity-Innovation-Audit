@@ -22,7 +22,7 @@ allocation/copy.
 - `file`, `function`, `line`, `column`, `source_sha256`
 - `symbol`
 - `condition`
-- `guard_kind`: `lower_bound`, `upper_bound`, `null_check`,
+- `guard_kind`: `lower_bound`, `upper_bound`, `zero_check`, `null_check`,
   `return_code`, `permission_predicate`, `unknown`
 - `lower`, `upper`: optional integer bounds
 - `dominance`: `dominating`, `not_dominating`, `unknown`
@@ -33,6 +33,16 @@ The A-line producer is implemented as
 `src/ohscanner/detectors/cpp/memory_safety.build_guard_facts`; it returns
 in-memory `GuardFact` objects and does not serialize or change the public
 contract.
+
+`if (x != 0) return;` currently produces `guard_kind=zero_check` with
+`[0, 0]`; A line does not claim that `x` is a return code. Whether a
+`zero_check` symbol is a return code, error status or an ordinary integer is a
+consumer decision (B/platform) and stays outside the producer.
+
+The C/C++ bounds detector deliberately does not consume `zero_check` as a range
+constraint: `if (n != 0) return; dst[n - 1]` still underflows when `n == 0`, so
+the index candidate must remain. Consumers may use the fact for control-flow
+understanding, but must apply their own underflow rules.
 
 ## Ownership
 

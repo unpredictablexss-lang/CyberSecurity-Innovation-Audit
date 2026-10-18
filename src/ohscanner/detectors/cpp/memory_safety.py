@@ -551,10 +551,28 @@ def build_guard_facts(
             error_path = "false_return"
         else:
             error_path = "unknown"
+        zero_exit = (
+            guard.true_returns
+            and re.fullmatch(
+                r"\s*(?P<name>[A-Za-z_]\w*)\s*!=\s*0\s*", guard.condition
+            )
+        )
+        if zero_exit:
+            facts.append(GuardFact(
+                symbol=zero_exit.group("name"),
+                condition=guard.condition,
+                lower=0,
+                upper=0,
+                kind="zero_check",
+                error_path=error_path,
+                position=guard.start,
+            ))
         for symbol, (lower, upper) in sorted(after.items()):
             if before.get(symbol) == (lower, upper):
                 continue
-            if lower is not None and upper is not None:
+            if lower == 0 and upper == 0:
+                kind = "zero_check"
+            elif lower is not None and upper is not None:
                 kind = "range"
             elif lower is not None:
                 kind = "lower_bound"

@@ -39,6 +39,57 @@ void nullable(int *value) {
         self.assertTrue(value_facts)
         self.assertEqual(value_facts[-1].kind, "null_check")
 
+    def test_inclusive_upper_guard_produces_an_upper_bound(self) -> None:
+        text = """
+void bounded(unsigned int n) {
+    if (n >= 4) return;
+    char dst[4];
+    dst[n] = 0;
+}
+"""
+        masked = mask_comments_and_literals(text)
+        facts = build_guard_facts(masked, function_shapes(masked))
+        bounded = [item for item in facts if item.symbol == "n"]
+        self.assertTrue(bounded)
+        self.assertEqual(bounded[-1].upper, 3)
+        self.assertEqual(bounded[-1].kind, "upper_bound")
+
+    def test_zero_exit_produces_an_exact_zero_fact(self) -> None:
+        text = """
+int Prepare();
+void checked() {
+    int ret = Prepare();
+    if (ret != 0) return;
+    char dst[4];
+    dst[0] = 0;
+}
+"""
+        masked = mask_comments_and_literals(text)
+        facts = build_guard_facts(masked, function_shapes(masked))
+        ret_facts = [item for item in facts if item.symbol == "ret"]
+        self.assertTrue(ret_facts)
+        self.assertEqual(ret_facts[-1].lower, 0)
+        self.assertEqual(ret_facts[-1].upper, 0)
+        self.assertEqual(ret_facts[-1].kind, "zero_check")
+        self.assertEqual(ret_facts[-1].error_path, "return")
+
+    def test_zero_guard_is_recorded_without_overriding_a_range(self) -> None:
+        text = """
+void checked(unsigned int n) {
+    if (n <= 0) return;
+    if (n != 0) return;
+    char dst[8];
+    dst[n] = 0;
+}
+"""
+        masked = mask_comments_and_literals(text)
+        facts = build_guard_facts(masked, function_shapes(masked))
+        n_facts = [item for item in facts if item.symbol == "n"]
+        self.assertEqual(len(n_facts), 2)
+        self.assertEqual(n_facts[0].lower, 1)
+        self.assertEqual(n_facts[1].kind, "zero_check")
+        self.assertEqual((n_facts[1].lower, n_facts[1].upper), (0, 0))
+
 
 if __name__ == "__main__":
     unittest.main()
