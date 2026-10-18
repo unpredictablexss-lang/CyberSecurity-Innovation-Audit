@@ -37,6 +37,8 @@ _APPROVED = {
     "ohscanner.known_disclosed_cves": {
         "factory": KnownDisclosedCveDetector,
         "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: public-CVE rule development corpus is not an independent holdout; product reachability and impact remain unverified",
         "summary": "Narrow source signatures for selected public CVEs; product reachability remains unverified",
     },
     CppCopyCallExampleDetector.detector_id: {

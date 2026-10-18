@@ -2,7 +2,7 @@ from __future__ import annotations
 import hashlib
 import unittest
 from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
-from src.ohscanner.detectors.catalog import build_registry, default_detector_ids
+from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
 from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector
 from src.ohscanner.fixture import snapshot_digest
 
@@ -141,7 +141,8 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertEqual("blocked", run.status)
         self.assertIn("CVE-2026-46675", {f.symbol for f in run.findings})
         self.assertTrue(any("remaining coverage is unknown" in item for item in run.limitations))
-        self.assertIn("ohscanner.known_disclosed_cves", default_detector_ids())
+        self.assertNotIn("ohscanner.known_disclosed_cves", default_detector_ids())
+        self.assertFalse(catalog_metadata()["ohscanner.known_disclosed_cves"]["default_enabled"])
         self.assertEqual("ohscanner.known_disclosed_cves", build_registry(("ohscanner.known_disclosed_cves",)).detectors()[0].detector_id)
 
     def test_all_matches_remain_candidate_obligated(self):
