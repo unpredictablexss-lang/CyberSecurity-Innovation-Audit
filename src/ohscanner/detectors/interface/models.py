@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v24"
+MODEL_VERSION = "oh-ipc-2026.10-v25"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -166,6 +166,10 @@ class IpcPolicy:
         "GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords",
         "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy",
         "StartRtt", "StopRtt", "GetImsConfig", "SetImsConfig", "GetImsFeatureValue", "SetImsFeatureValue", "SetCameraZoom",
+        # Exposes whether a named app is running; model the IPC API as a
+        # sensitive read so its implementation is not invisible behind the
+        # AppMgrService -> AppMgrServiceInner delegation.
+        "GetAppRunningStateByBundleName",
     })
     capability_calls: FrozenSet[str] = frozenset({"WriteRemoteObject", "WriteFileDescriptor"})
     boolean_permissions: FrozenSet[str] = frozenset({"CheckPermission", "VerifyPermission", "CheckCallerPermission"})
@@ -214,6 +218,7 @@ class IpcPolicy:
     caller_role_guards: Tuple[Tuple[str, str, str], ...] = (
         ("IsSystemCalling", "caller_class", "<system-caller>"),
         ("IsSACalling", "caller_class", "<sa-caller>"),
+        ("IsSACall", "caller_class", "<sa-caller>"),
         ("IsShellCall", "caller_class", "<shell-caller>"),
         ("IsSystemAppCalling", "caller_class", "system_app"),
         ("CheckCallerIsSystemApp", "caller_class", "system_app"),

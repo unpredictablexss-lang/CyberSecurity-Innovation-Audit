@@ -852,8 +852,8 @@ class Interpreter:
                      if f.owner in (prefix, short)]
         return qualified[0] if len(qualified) == 1 else None
 
-    def delegated(self, callee):
-        """One hop from a handler into the service singleton it delegates to.
+    def delegated(self, fn, callee):
+        """Resolve a source-backed singleton or typed-member receiver.
 
         OpenHarmony stubs hand the request to the service implementation, which
         lives in another file: `DelayedSingleton<XxxService>::GetInstance()->Method()`
@@ -864,7 +864,7 @@ class Interpreter:
         """
         if self.index is None:
             return None
-        target = self.index.resolve_receiver(callee)
+        target = self.index.resolve_receiver(callee, fn.owner)
         if not target or "::" not in target:
             return None
         owner, name = target.rsplit("::", 1)
@@ -932,13 +932,16 @@ class Interpreter:
                          Value("call_result", implementation.qualified,
                                "guarded" if gate else "unguarded"))
         if gate is not None:
+            gate_function, gate_node, gate_roles = gate
             self.hop_notes.add(
                 "Cross-TU one-hop guard credited: " + fn.qualified + " at "
                 + self._where(fn.file, fn, node) + " dispatches to "
                 + implementation.qualified + " at " + implementation.file + ":"
-                + str(implementation.line) + ", whose caller-role gate at "
-                + self._where(implementation.file, implementation, gate[0])
-                + " admits " + ", ".join(gate[1]) + ".")
+                + str(implementation.line) + ", whose source-derived delegation chain "
+                + "reaches caller-role gate at "
+                + self._where(gate_function.file, gate_function, gate_node)
+                + " in " + gate_function.qualified + ", whose caller-role gate admits "
+                + ", ".join(gate_roles) + ".")
         return implementation, gate
 
     def _where(self, file, fn, node):
@@ -998,7 +1001,8 @@ class Interpreter:
         """
         modelled = (self.policy.sensitive_calls | self.policy.object_sensitive_calls
                     | self.policy.capability_calls | self.policy.copy_calls
-                    | self.policy.boolean_permissions | self.policy.result_permissions)
+                    | self.policy.boolean_permissions | self.policy.result_permissions
+                    | frozenset({"ResetCallingIdentity", "SetCallingIdentity"}))
         outputs = set(implementation.ref_params)
         for statement in statements:
             for item in walk(statement):
@@ -1019,7 +1023,7 @@ class Interpreter:
                     return True
         return False
 
-    def dispatch_guard(self, implementation, bindings=None):
+    def dispatch_guard(self, implementation, bindings=None, seen=None):
         """What a cross-TU one-hop dispatch lands on, when the callee gates on role.
 
         Returns ``(gate_node, roles)`` when the implementer's own body rejects
@@ -1047,8 +1051,11 @@ class Interpreter:
         are declined, so an unread or partial guard leaves the call a candidate
         rather than being read as one.
         """
-        if implementation.body is None:
+        seen = set() if seen is None else set(seen)
+        key = (implementation.file, implementation.qualified, implementation.line)
+        if implementation.body is None or key in seen or len(seen) >= 3:
             return None
+        seen.add(key)
         frame = State(env={name: Value("request", name)
                            for name in implementation.params if name})
         # What the call site proves about the parameters. `&& errorCode` is true
@@ -1082,7 +1089,33 @@ class Interpreter:
                 continue
             roles = sorted(set().union(*(s.auth | s.caller_class for s in no)))
             if roles:
-                return item, roles
+                return implementation, item, roles
+
+        # Follow only a unique terminal return through a source-typed member
+        # receiver. This is deliberately narrower than general interprocedural
+        # flow: no modeled operation may occur before the delegation.
+        returns = [(i, item) for i, item in enumerate(statements)
+                   if item.type == "return_statement"]
+        if len(returns) == 1:
+            position, returned = returns[0]
+            expression = returned.named_children[0] if returned.named_children else None
+            if (position == len(statements) - 1 and expression is not None
+                    and expression.type == "call_expression"
+                    and not self._modelled_before(implementation, statements[:position])):
+                callee = implementation.text(expression.child_by_field_name("function"))
+                helper = self.delegated(implementation, callee)
+                if helper is not None:
+                    arguments = expression.child_by_field_name("arguments")
+                    supplied = list(arguments.named_children) if arguments is not None else []
+                    nested_bindings = {}
+                    for index, name in enumerate(helper.params):
+                        if index < len(supplied) and name:
+                            decided = self._decisive(implementation, supplied[index])
+                            if decided is not None:
+                                nested_bindings[name] = decided
+                    nested_gate = self.dispatch_guard(helper, nested_bindings, seen)
+                    if nested_gate is not None:
+                        return nested_gate
         return None
 
     @staticmethod
@@ -1715,7 +1748,7 @@ class Interpreter:
                           "Unresolved member-pointer IPC dispatch lacks interface-descriptor validation; callee remains unknown.")
             helper = self.resolve(fn, callee)
             if helper is None:
-                helper = self.delegated(callee)
+                helper = self.delegated(fn, callee)
             if helper is not None:
                 self.note_shadowed_role_predicate(helper)
             implementation = guard = None

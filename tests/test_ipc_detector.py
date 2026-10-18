@@ -25,6 +25,19 @@ def parses_raw(text, grammar):
     from tree_sitter import Language, Parser
     return not Parser(Language(grammar)).parse(text).root_node.has_error
 
+def context_sources(items):
+    units=[]
+    ast={}
+    for path,text in sorted(items):
+        parsed=parse_source(text,language='cpp')
+        unit=SourceUnit(path,'cpp',text,hashlib.sha256(text.encode()).hexdigest(),
+                        parsed.parse_status)
+        units.append(unit)
+        ast[path]=parsed.to_dict()
+    request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-multifile-v1',
+                        snapshot_digest(tuple(units)),'current-component:fixture/ipc')
+    return ScanContext(request,tuple(units),{'ast':ast})
+
 def fixture_account_policy():
     return IpcPolicy(service_account_roles=(ServiceAccountRole(
         "ACCESSTOKEN_UID", "3020", "<caller-account:access-token-service>",
@@ -461,5 +474,41 @@ public:
         self.assertIn('<caller-account:access-token-service> is accepted for '
                       'GetRemoteHapTokenInfo, DeleteRemoteHapTokenInfo, '
                       'UpdateRemoteHapTokenInfo and for nothing else',credited[0])
+
+    def test_member_delegation_chain_credits_only_source_bound_terminal_guard(self):
+        header=(BASE/'member_delegation'/'service.h').read_text()
+        fixed=(BASE/'member_delegation'/'service.cpp').read_text()
+        guard_start=fixed.index('    if (!PermissionVerification::GetInstance()->IsSACall()) {')
+        guard_end=fixed.index('    }',guard_start)+len('    }')
+        guard_end=fixed.index(chr(10),guard_end)+1
+        vulnerable=fixed[:guard_start]+fixed[guard_end:]
+        delegated='    return appMgrServiceInner_->GetAppRunningStateByBundleName(bundleName);'
+        unrelated=fixed.replace(delegated,'    StartAbility();'+chr(10)+delegated)
+        reset=fixed.replace('    if (!IsReady()) {',
+                            '    IPCSkeleton::ResetCallingIdentity();'+chr(10)
+                            +'    if (!IsReady()) {')
+        self.assertNotEqual(vulnerable,fixed)
+        for name,source,expected in (
+            ('vulnerable',vulnerable,True),
+            ('fixed',fixed,False),
+            ('unrelated-effect-before-delegate',unrelated,True),
+            ('caller-identity-reset-before-delegate',reset,True),
+        ):
+            with self.subTest(case=name):
+                ctx=context_sources((('service.h',header),('service.cpp',source)))
+                run=IpcInterfaceDetector().detect(ctx,ctx.units)
+                auth02={f.rule_id for f in run.findings if f.rule_id=='ipc.auth.missing'}
+                self.assertEqual(bool(auth02),expected)
+                if not expected:
+                    note=next((item for item in run.limitations
+                               if item.startswith('Cross-TU one-hop guard credited:')), '')
+                    self.assertIn('AppMgrServiceInner::GetAppRunningStateByBundleName',note)
+                    self.assertIn('in AppMgrServiceInner::GetAppRunningStateByBundleName',note)
+                    self.assertIn('admits <sa-caller>',note)
+        # Without the class field declaration in the scanned units, the same
+        # spelling is insufficient to resolve the delegate or inherit its guard.
+        ctx=context_sources((('service.cpp',fixed),))
+        run=IpcInterfaceDetector().detect(ctx,ctx.units)
+        self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
 
 if __name__=='__main__':unittest.main()
