@@ -60,7 +60,8 @@ Two systemic false-positive shapes were fixed after the first corrected run:
 capacity expressions are normalized for identity factors (`x + 1` vs
 `x + 1 * 1`, `N` vs `sizeof(char) * N`), symbolic `length + constant`
 capacities are recognized, and implicit `calloc`/`new[]` element products are
-treated as allocator-checked instead of candidates. The follow-up runs were
-45/29 and 44/28, and the final run is 39 candidates / 27 groups (bounds 9,
-integer 16, resource 7, unsafe 7); `communication_dsoftbus` drops from 36/23 to
-16/11. `a_line_scan_20261018_selfcontained_v4` is the authoritative A-line scan.
+treated as allocator-checked instead of candidates. Further precision fixes
+remove unconditional-exit/lambda fall-throughs and preprocessor macro bodies.
+The final run is 30 candidates / 20 groups (bounds 9, integer 16, resource 2,
+unsafe 3); `communication_dsoftbus` drops from 36/23 to 13/9.
+`a_line_scan_20261018_selfcontained_v7` is the authoritative A-line scan.

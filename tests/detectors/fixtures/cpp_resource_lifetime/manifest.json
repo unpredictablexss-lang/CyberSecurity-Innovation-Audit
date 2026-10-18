@@ -87,6 +87,27 @@
       "byte_length": 163
     },
     {
+      "fixture": "safe_conditional_free_then_label.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "6380372d45409c745f166f9d486137ac44f72125b3d062f2ac458f9743be3867",
+      "byte_length": 217
+    },
+    {
+      "fixture": "safe_lambda_shadow_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "b0283ef6875e408e14373b91e8cead86cd5ee49b5c45eb57e079c63a5f491f82",
+      "byte_length": 289
+    },
+    {
+      "fixture": "safe_lambda_deferred_delete.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "4a5e36fb14933370b54dc318fc70b3da164cc2b1ffaa9c90e1f8fa2ef5b08d81",
+      "byte_length": 176
+    },
+    {
       "fixture": "safe_conditional_null.cpp",
       "category": "safe",
       "expected_max": 0,

@@ -62,7 +62,7 @@ class UnsafeMemoryCallDetectorTests(unittest.TestCase):
     def test_positive_and_source_binding(self) -> None:
         run, source = self.run_case("positive_unsafe.cpp")
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.unsafe_memory_call")
-        self.assertEqual(self.detector.version, "0.1.2")
+        self.assertEqual(self.detector.version, "0.1.3")
         self.assertGreaterEqual(len(run.findings), 5)
         self.assertIn("ohcpp-unsafe-memory-call-candidate-001", {item.rule_id for item in run.findings})
         self.assertIn("ohcpp-format-string-candidate-002", {item.rule_id for item in run.findings})
@@ -75,6 +75,7 @@ class UnsafeMemoryCallDetectorTests(unittest.TestCase):
             "fixed_bounded.cpp",
             "safe_literal.cpp",
             "safe_macro_format.cpp",
+            "unsafe_macro_define_safe.cpp",
             "safe_fprintf_literal.cpp",
             "unrelated.cpp",
         ):

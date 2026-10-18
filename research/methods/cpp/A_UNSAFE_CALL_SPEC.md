@@ -1,6 +1,6 @@
 # A-UNSAFE-01 C/C++ unsafe memory/format call specification
 
-`ohscanner.cpp.unsafe_memory_call` 0.1.2 是 P2 研究 Detector，默认 `candidate/unassessed`。
+`ohscanner.cpp.unsafe_memory_call` 0.1.3 是 P2 研究 Detector，默认 `candidate/unassessed`。
 
 ## 触发
 

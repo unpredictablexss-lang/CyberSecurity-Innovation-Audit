@@ -38,8 +38,11 @@ The sandbox delivery reports:
 - `integer_bounds 0.2.3`: implicit `calloc`/`new[]` element products are
   allocator-checked and no longer reported; user-written `count * size` and
   `len + 1` stay candidates unless an upper guard proves the type bound.
-- `resource_lifetime 0.1.3`: conditional release paths and one-hop release wrappers.
-- `unsafe_memory_call 0.1.2`: correct `fprintf/vfprintf/syslog` format argument.
+- `resource_lifetime 0.1.6`: conditional release paths, one-hop release
+  wrappers, no fall-through across an unconditional `return`/`goto`, and no
+  pairing across lambda scopes.
+- `unsafe_memory_call 0.1.3`: correct `fprintf/vfprintf/syslog` format argument;
+  calls inside `#define` bodies are not analyzed as executed code.
 
 ## Triage before/after
 
@@ -104,11 +107,12 @@ runner, which imported mainline detectors `0.2.0`/`0.1.0` through its own
 `sys.path` insert; their repeated 33/22 result is a mainline baseline, not an
 A-line result. The corrected self-contained runner
 (`research/evidence/cpp/mvp_20261018/run_scan.py`) first reported 60 candidates
-/ 39 groups, then 39 / 27 after capacity-expression normalization, symbolic
-`length + constant` coverage and suppressing allocator-checked implicit
-`calloc`/`new[]` products: bounds 9, integer 16, resource lifetime 7, unsafe
-call 7. The per-rule and per-component comparison is in
-`research/evidence/cpp/a_line_scan_20261018_selfcontained_v4/comparison.json`.
+/ 39 groups, then 30 / 20 after capacity-expression normalization, symbolic
+`length + constant` coverage, allocator-checked implicit `calloc`/`new[]`
+suppression, unconditional-exit/lambda handling and preprocessor-body
+exclusion: bounds 9, integer 16, resource lifetime 2, unsafe call 3. The
+per-rule and per-component comparison is in
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v7/comparison.json`.
 This is a coverage difference plus a precision change, not an accuracy claim;
 `validated_vulnerability=0`.
 

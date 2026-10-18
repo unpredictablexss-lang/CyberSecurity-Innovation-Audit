@@ -28,7 +28,7 @@ from .memory_safety import (
 
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
-RULE_VERSION = "0.1.3"
+RULE_VERSION = "0.1.6"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -251,6 +251,32 @@ def _conditional_release_names(then_text: str) -> Set[str]:
     return names
 
 
+def _has_unconditional_exit(text: str) -> bool:
+    """True when a top-level return/goto leaves the current fall-through path."""
+
+    depth = 0
+    index = 0
+    while index < len(text):
+        char = text[index]
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth = max(0, depth - 1)
+        elif depth == 0 and re.match(r"\b(?:return|goto)\b", text[index:]):
+            return True
+        index += 1
+    return False
+
+
+def _lambda_spans(masked: str) -> Tuple[Tuple[int, int], ...]:
+    spans: List[Tuple[int, int]] = []
+    for match in re.finditer(r"\[[^\]]*\]\s*\([^)]*\)\s*(?:mutable\s*)?\{", masked):
+        end = balanced_end(masked, match.end() - 1, "{", "}")
+        if end is not None:
+            spans.append((match.start(), end))
+    return tuple(spans)
+
+
 def _conditional_release_findings(
     unit: SourceUnit,
     masked: str,
@@ -260,7 +286,11 @@ def _conditional_release_findings(
     """Find a release on one falling-through if-path followed by use/release."""
     findings: List[DetectorFinding] = []
     region_start, region_end = function.body_start, function.body_end
+    lambdas = _lambda_spans(masked)
     for match in re.finditer(r"\bif\s*\(", masked[region_start:region_end]):
+        position = region_start + match.start()
+        if any(start <= position < end for start, end in lambdas):
+            continue
         open_paren = region_start + match.end() - 1
         close_paren = balanced_end(masked, open_paren, "(", ")")
         if close_paren is None:
@@ -300,6 +330,10 @@ def _conditional_release_findings(
             for event in tail_events:
                 if event.name != name:
                     continue
+                if any(start <= event.position < end for start, end in lambdas):
+                    continue
+                if _has_unconditional_exit(masked[tail_start:event.position]):
+                    break
                 if event.kind in ("release", "use"):
                     rule = RULE_DOUBLE_FREE if event.kind == "release" else RULE_USE_AFTER_FREE
                     findings.append(_finding(
@@ -326,6 +360,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
     release_wrappers = _release_wrappers(masked, functions)
+    lambdas = _lambda_spans(masked)
     for function in functions:
         states: Dict[str, str] = {}
         aliases: Dict[str, str] = {}
@@ -337,6 +372,8 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
             states: Dict[str, str] = {}
             aliases: Dict[str, str] = {}
             for event in _events(masked, segment_start, segment_end, release_wrappers, function.name):
+                if any(start <= event.position < end for start, end in lambdas):
+                    continue
                 canonical = aliases.get(event.name, event.name)
                 if event.kind == "alloc":
                     states[event.name] = "allocated"

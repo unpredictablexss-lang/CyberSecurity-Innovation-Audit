@@ -28,8 +28,8 @@ which are method controls rather than product builds.
 | `ohscanner.cpp.shared_ptr_race` | `0.5.3` | constructor-body initialization, parameter shadowing, method-level triage `504` candidates / `212` groups | DelayedSingleton and JSProxy cases above |
 | `ohscanner.cpp.bounds` | `0.3.2` | guard/loop fixtures, self-contained five-component scan, sandbox copy-range replay `3/3` | none |
 | `ohscanner.cpp.integer_bounds` | `0.2.3` | explicit size-arithmetic fixtures, self-contained five-component scan | historical narrow-index case only |
-| `ohscanner.cpp.resource_lifetime` | `0.1.3` | conditional release and one-hop wrapper fixtures | none for this rule ID |
-| `ohscanner.cpp.unsafe_memory_call` | `0.1.2` | macro-format quiet control, `fprintf/vfprintf/syslog` format position | none |
+| `ohscanner.cpp.resource_lifetime` | `0.1.6` | conditional release, unconditional-exit, lambda-scope and one-hop wrapper fixtures | none for this rule ID |
+| `ohscanner.cpp.unsafe_memory_call` | `0.1.3` | macro-format quiet control, preprocessor-body exclusion, `fprintf/vfprintf/syslog` format position | none |
 
 All rows remain `candidate/unassessed`; `validated_vulnerability=0`.
 ## Four-class control matrix (2026-10-15)

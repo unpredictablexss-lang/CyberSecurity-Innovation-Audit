@@ -24,7 +24,7 @@ from .memory_safety import (
 
 RULE_MEMORY = "ohcpp-unsafe-memory-call-candidate-001"
 RULE_FORMAT = "ohcpp-format-string-candidate-002"
-RULE_VERSION = "0.1.2"
+RULE_VERSION = "0.1.3"
 RULE_LINEAGE_ID = "A-UNSAFE-01:ohcpp-unsafe-call-candidate"
 
 _UNSAFE_MEMORY = {"gets", "strcpy", "strcat", "sprintf"}
@@ -113,6 +113,13 @@ def _is_macro_concat_format(expression: str) -> bool:
     return bool(identifiers) and all(_MACRO_IDENTIFIER.fullmatch(name) for name in identifiers)
 
 
+def _preprocessor_spans(masked: str) -> Tuple[Tuple[int, int], ...]:
+    return tuple(
+        (match.start(), match.end())
+        for match in re.finditer(r"(?m)^[ \t]*#[^\n]*(?:\\\n[^\n]*)*", masked)
+    )
+
+
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     if unit.parse_status != "complete":
@@ -120,7 +127,10 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
     if len(unit.text.encode("utf-8")) > MAX_UNIT_BYTES:
         return findings, [f"{unit.path}: source exceeds the 1MiB per-unit fail-closed budget."], False
     masked = mask_comments_and_literals(unit.text)
+    preprocessor = _preprocessor_spans(masked)
     for match in re.finditer(r"\b(?P<name>[A-Za-z_]\w*)\s*\(", masked):
+        if any(start <= match.start() < end for start, end in preprocessor):
+            continue
         name = match.group("name")
         if name in _SAFE_PREFIXES:
             continue

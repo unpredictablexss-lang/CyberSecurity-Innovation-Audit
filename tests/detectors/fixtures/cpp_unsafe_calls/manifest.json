@@ -54,6 +54,13 @@
     },
     {
       "expected_max": 0,
+      "category": "safe",
+      "fixture": "unsafe_macro_define_safe.cpp",
+      "sha256": "c507af8dd156cb18108665bf23faea6ecdfebc8118bb7b350782d3914b2bbe3e",
+      "byte_length": 153
+    },
+    {
+      "expected_max": 0,
       "category": "unrelated",
       "fixture": "unrelated.cpp",
       "sha256": "39e59fa96bdb33e88caf713ef9d4e455d55624d65c83d694ec2f3bba63f5dec2",

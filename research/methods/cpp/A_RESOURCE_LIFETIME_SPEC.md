@@ -1,6 +1,6 @@
 # A-RES-01 C/C++ resource lifetime specification
 
-更新：2026-10-18。`ohscanner.cpp.resource_lifetime` 0.1.3 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
+更新：2026-10-18。`ohscanner.cpp.resource_lifetime` 0.1.6 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
 
 ## 触发
 
