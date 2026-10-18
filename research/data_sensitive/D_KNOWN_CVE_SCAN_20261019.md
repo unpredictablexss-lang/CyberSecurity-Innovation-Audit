@@ -48,3 +48,8 @@ D22 的可重复面板/候选回归脚本与结果分别见 `d22_archive_runner_
 审查记录余下 10 项未被本轮检测器覆盖：CVE-2026-27648 本地镜像缺 web_webview 源码；CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2025-57052 当前 cJSON 有修复迹象；CVE-2026-33636 当前 libpng 补丁清单包含修复；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；CVE-2026-9079 的公告根因仍未映射。未扫描、不命中和有修复线索都不自动代表安全。
 
 没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 7 个规则结果不代表对 17 项清单或整个项目达到完整覆盖。
+
+
+## 2026-10-19 D23 calibration
+
+The historical D20/D22 results remain bound to detector 0.3.0. Current 0.4.0 binds CVE-2025-9900 to the TIFFReadRGBAImageOriented body so unrelated comparisons in preceding functions cannot suppress it. A pinned Git replay hit line 621 twice with stable identity; coverage remains blocked/partial. Targeted regression is 10/10. See [D23 rule calibration and fix review](D23_LIBTIFF_CVE_2025_9900_RULE_CALIBRATION.md) and the reproduction script.

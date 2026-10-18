@@ -13,11 +13,22 @@ class KnownDisclosedCveTests(unittest.TestCase):
         run=KnownDisclosedCveDetector().detect(ScanContext(request=request, units=(unit,)), (unit,))
         return run
 
-    def test_libtiff_vulnerable_and_fixed_shapes(self):
-        bad="int f(TIFFRGBAImage *img,uint32_t *raster,uint32_t rwidth,uint32_t rheight){ return TIFFRGBAImageGet(&img,raster + (rheight - img->height) * rwidth,rwidth,img->height); }".replace("img->height", "img.height")
-        fixed="int f(TIFFRGBAImage *img,uint32_t *raster,uint32_t rwidth,uint32_t rheight){ if (rwidth < img.width || rheight < img.height) return 0; return TIFFRGBAImageGet(&img,raster,rwidth,rheight); }"
-        self.assertIn("CVE-2025-9900", {f.symbol for f in self.run_source(bad).findings})
-        self.assertEqual((), self.run_source(fixed).findings)
+    def test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes(self):
+        vulnerable = """int TIFFReadRGBAImageOriented(TIFF *tif, uint32_t rwidth, uint32_t rheight, uint32_t *raster, int orientation, int stop) {
+            ok = TIFFRGBAImageGet(&img, raster + (rheight - img.height) * rwidth, rwidth, img.height);
+            return ok;
+        }"""
+        fixed = """int TIFFReadRGBAImageOriented(TIFF *tif, uint32_t rwidth, uint32_t rheight, uint32_t *raster, int orientation, int stop) {
+            ok = TIFFRGBAImageGet(&img, raster, rwidth, rheight);
+            return ok;
+        }"""
+        previous_guard = """void unrelated(void) {
+            if (rwidth < img.width || rheight < img.height) return;
+        }
+        """ + vulnerable
+        self.assertIn("CVE-2025-9900", {f.symbol for f in self.run_source(vulnerable, "tif_getimage.c").findings})
+        self.assertEqual((), self.run_source(fixed, "tif_getimage.c").findings)
+        self.assertIn("CVE-2025-9900", {f.symbol for f in self.run_source(previous_guard, "tif_getimage.c").findings})
 
     def test_cjson_recursive_bidirectional_linear_matching(self):
         source="""int cJSON_Compare(node *a,node *b){ node *x; for_each(x,a){ y=get_object_item(b,x->string); if(!cJSON_Compare(x,y)) return 0; } for_each(y,b){ x=get_object_item(a,y->string); if(!cJSON_Compare(y,x)) return 0; } return 1; }""".replace("for_each", "cJSON_ArrayForEach")

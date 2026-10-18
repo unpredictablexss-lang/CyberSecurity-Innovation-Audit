@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -39,12 +39,29 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
 
 def _scan(unit: SourceUnit):
     t = unit.text; s = mask_comments_and_literals(t); out = []
-    # CVE-2025-9900: vulnerable libtiff offset is computed before dimension validation.
-    pat = re.compile(r"TIFFRGBAImageGet\s*\(\s*&img\s*,\s*raster\s*\+\s*\(\s*rheight\s*-\s*img\.height\s*\)\s*\*\s*rwidth", re.S)
-    for m in pat.finditer(s):
-        prefix = s[max(0, m.start()-1500):m.start()]
-        if not (re.search(r"rwidth\s*[<>=!]+\s*img\.width", prefix) and re.search(r"rheight\s*[<>=!]+\s*img\.height", prefix)):
-            out.append(_finding(unit, m.start(), "ohknowncve-libtiff-cve-2025-9900", "CVE-2025-9900", "TIFFRGBAImageOriented offsets raster using unchecked image dimensions.", "CWE-787"))
+    # CVE-2025-9900: only inspect the public wrapper body. The old expression
+    # subtracts image height from raster height before passing a shifted raster
+    # pointer to TIFFRGBAImageGet; another function's nearby bounds checks must
+    # not suppress this candidate. Keep old-shape matches even when local guards
+    # are present: guard/path reasoning is outside this lexical rule and belongs
+    # in review.
+    oriented = _body(s, "TIFFReadRGBAImageOriented")
+    if oriented:
+        oriented_start, oriented_body = oriented
+        offset = re.search(
+            r"TIFFRGBAImageGet\s*\(\s*&img\s*,\s*raster\s*\+\s*"
+            r"\(\s*rheight\s*-\s*img\.height\s*\)\s*\*\s*rwidth\s*,\s*"
+            r"rwidth\s*,\s*img\.height\s*\)",
+            oriented_body,
+            re.S,
+        )
+        if offset:
+            out.append(_finding(
+                unit, oriented_start + 1 + offset.start(),
+                "ohknowncve-libtiff-cve-2025-9900", "CVE-2025-9900",
+                "TIFFReadRGBAImageOriented shifts raster by (rheight - img.height) before decoding; when caller raster height is smaller than image height, this can underflow the destination pointer. Product reachability and exploitability remain unverified.",
+                "CWE-787",
+            ))
     # CVE-2026-67216: recursive object comparison plus repeated linear matching.
     body = _body(s, "cJSON_Compare")
     if body:
