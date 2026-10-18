@@ -20,6 +20,22 @@
       "byte_length": 134
     },
     {
+      "fixture": "conditional_double_free.cpp",
+      "category": "positive",
+      "expected_rule": "double_free",
+      "expected_min": 1,
+      "sha256": "37333d34f529da8b09116ab429ea50e45393cc6ea5867cade594532217c3cf85",
+      "byte_length": 141
+    },
+    {
+      "fixture": "conditional_uaf.cpp",
+      "category": "positive",
+      "expected_rule": "use_after_free",
+      "expected_min": 1,
+      "sha256": "94c4937ea0baaa57813bd3d23c9a5f5897bc0bdd0cd89554ff66faad6f547fac",
+      "byte_length": 142
+    },
+    {
       "fixture": "fixed_null_after_free.cpp",
       "category": "fixed",
       "expected_max": 0,
@@ -46,6 +62,20 @@
       "expected_max": 0,
       "sha256": "f56c5e3e86135d3d4b3937dfbdae84c361145f5393803aec83d4b4c924e81bc1",
       "byte_length": 260
+    },
+    {
+      "fixture": "safe_conditional_early_return.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "26d92480d660919ad8d621138b76abc22c54cf54257b7049bb464bbd834d5259",
+      "byte_length": 163
+    },
+    {
+      "fixture": "safe_conditional_null.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "cb6a6e9e1467566bb482cd7cda3bbe28013962b628da2963fd0e66a9197ae83c",
+      "byte_length": 160
     },
     {
       "fixture": "unrelated_release.cpp",

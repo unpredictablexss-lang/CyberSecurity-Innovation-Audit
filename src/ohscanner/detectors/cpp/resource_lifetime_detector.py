@@ -25,7 +25,7 @@ from .memory_safety import (
 
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
-RULE_VERSION = "0.1.1"
+RULE_VERSION = "0.1.2"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -49,6 +49,7 @@ _USE_PATTERNS = (
     re.compile(r"\b(?P<name>[A-Za-z_]\w*)\s*\["),
     re.compile(r"\b(?:memcpy|memmove|memset)\s*\([^;]*?\b(?P<name>[A-Za-z_]\w*)\b"),
 )
+_EXIT_RE = re.compile(r"\b(?:return|break|continue|goto)\b")
 
 _OBLIGATIONS = (
     EvidenceObligation(
@@ -191,6 +192,81 @@ def _events(masked: str, start: int, end: int) -> Tuple[_Event, ...]:
     return tuple(sorted(set(events), key=lambda item: (item.position, item.kind, item.name)))
 
 
+def _conditional_release_names(then_text: str) -> Set[str]:
+    names: Set[str] = set()
+    for match in _FREE_RE.finditer(then_text):
+        name = match.group("free_name") or match.group("delete_name")
+        tail = then_text[match.end():]
+        escaped = re.escape(name)
+        if re.search(r"\b" + escaped + r"\s*=\s*(?:nullptr|NULL|0)\s*;", tail):
+            continue
+        if re.search(r"\b" + escaped + r"\s*=\s*[A-Za-z_]\w*\s*;", tail):
+            continue
+        if re.search(r"\b" + escaped + r"\s*=\s*(?:malloc|calloc|realloc|new)\b", tail):
+            continue
+        names.add(name)
+    return names
+
+
+def _conditional_release_findings(unit: SourceUnit, masked: str, function) -> List[DetectorFinding]:
+    """Find a release on one falling-through if-path followed by use/release."""
+    findings: List[DetectorFinding] = []
+    region_start, region_end = function.body_start, function.body_end
+    for match in re.finditer(r"\bif\s*\(", masked[region_start:region_end]):
+        open_paren = region_start + match.end() - 1
+        close_paren = balanced_end(masked, open_paren, "(", ")")
+        if close_paren is None:
+            continue
+        then_start = close_paren
+        while then_start < region_end and masked[then_start].isspace():
+            then_start += 1
+        if then_start >= region_end or masked[then_start] != "{":
+            continue
+        then_end = balanced_end(masked, then_start, "{", "}")
+        if then_end is None:
+            continue
+        then_text = masked[then_start:then_end]
+        if _EXIT_RE.search(then_text):
+            continue
+        names = _conditional_release_names(then_text)
+        if not names:
+            continue
+
+        tail_start = then_end
+        cursor = then_end
+        while cursor < region_end and masked[cursor].isspace():
+            cursor += 1
+        if masked.startswith("else", cursor):
+            cursor += len("else")
+            while cursor < region_end and masked[cursor].isspace():
+                cursor += 1
+            if cursor >= region_end or masked[cursor] != "{":
+                continue
+            else_end = balanced_end(masked, cursor, "{", "}")
+            if else_end is None:
+                continue
+            tail_start = else_end
+
+        tail_events = _events(masked, tail_start, region_end)
+        for name in sorted(names):
+            for event in tail_events:
+                if event.name != name:
+                    continue
+                if event.kind in ("release", "use"):
+                    rule = RULE_DOUBLE_FREE if event.kind == "release" else RULE_USE_AFTER_FREE
+                    findings.append(_finding(
+                        unit,
+                        event.position,
+                        rule,
+                        name,
+                        f"Candidate only: conditional path releases `{name}`, then `{event.detail}` "
+                        "uses or releases it on a falling-through path. Path feasibility, aliases, "
+                        "ownership transfer and guard dominance remain unknown.",
+                    ))
+                break
+    return findings
+
+
 def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
@@ -251,6 +327,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
             limitations.append(
                 f"{unit.path}:{function.name}: unresolved allocation/release alias state remains unknown."
             )
+        findings.extend(_conditional_release_findings(unit, masked, function))
     limitations.extend((
         "Candidate only: local lexical resource state does not prove UAF/double-free exploitability.",
         "Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.",
