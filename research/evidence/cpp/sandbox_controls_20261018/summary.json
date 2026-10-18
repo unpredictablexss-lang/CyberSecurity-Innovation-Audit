@@ -3,7 +3,7 @@
   "experiment_kind": "a_line_sandbox_method_control_static_replay",
   "status": "passed",
   "detectors": {
-    "bounds": "0.2.8"
+    "bounds": "0.2.9"
   },
   "copy_range_controls": [
     {
@@ -13,7 +13,7 @@
       "runs": [
         {
           "detector": "ohscanner.cpp.bounds",
-          "version": "0.2.8",
+          "version": "0.2.9",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -81,7 +81,7 @@
       "runs": [
         {
           "detector": "ohscanner.cpp.bounds",
-          "version": "0.2.8",
+          "version": "0.2.9",
           "status": "completed",
           "findings": [],
           "limitations": [
@@ -149,7 +149,7 @@
       "runs": [
         {
           "detector": "ohscanner.cpp.bounds",
-          "version": "0.2.8",
+          "version": "0.2.9",
           "status": "completed",
           "findings": [
             {

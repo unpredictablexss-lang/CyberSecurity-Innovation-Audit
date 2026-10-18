@@ -430,6 +430,10 @@ def loop_constraints(
         if not condition:
             continue
         name = condition.group("name")
+        if re.search(
+            r"\b" + re.escape(name) + r"\s*=(?!=)", body_match.group("body")
+        ):
+            continue
         bound = _comparison_value(
             condition.group("bound"), constants, sizeof_values
         )

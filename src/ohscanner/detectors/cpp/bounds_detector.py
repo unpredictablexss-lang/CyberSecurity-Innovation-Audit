@@ -44,7 +44,7 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.8"
+RULE_VERSION = "0.2.9"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 _SECURE_COPY_ARGS = {

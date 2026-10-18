@@ -87,6 +87,14 @@
       "byte_length": 135
     },
     {
+      "category": "positive",
+      "expected_min": 1,
+      "fixture": "bounds_loop_mutation_positive.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "1f2b8edaaa57812144e02543d1762c8be682606d29e3a52f4dd73cb6ef8a954d",
+      "byte_length": 162
+    },
+    {
       "category": "fixed",
       "expected_max": 0,
       "fixture": "bounds_fixed.cpp",

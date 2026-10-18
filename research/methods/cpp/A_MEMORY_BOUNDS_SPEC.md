@@ -6,7 +6,7 @@
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.2.8` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
+| `ohscanner.cpp.bounds` | `0.2.9` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
 | `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
@@ -28,7 +28,7 @@
 5. 识别一阶直接 copy wrapper：函数体内只有一个 `memcpy/memmove/strncpy/strcpy/strcat/sprintf`，目的地为函数参数；调用点代入调用者数组/分配容量。更深 wrapper、函数指针和重载保持 unknown。
 6. `snprintf` 使用第 1 个实参作为字节上限；`snprintf(dst, sizeof(dst), ...)` quiet，`snprintf(dst, 8, ...)` 对 4 字节数组产生候选。
 7. `<= 0`、`< 0`、`>= MAX`、`> MAX` 和 `nullptr` 早退 guard 收窄区间；例如 `if (n <= 0) return; if (n > 4) return; dst[n-1]` 保持 quiet。`if (x != 0) return;` 只生产 `GuardFact.kind=zero_check`（区间 `[0,0]`），不注入 bounds 区间推断：`dst[n - 1]` 在 `n==0` 时仍是越界/回绕，必须保留候选。
-8. 简单计数循环 `for (init; i < N; ++i)` / `i <= N` 为循环体内的索引和复制长度提供 `[init, N-1]` / `[init, N]` 区间；只接受编译期常量或具名常量上界，`break`/`continue`、非常量步长和循环内改写仍是 unknown。`for (size_t i = 0; ...)` 不再被误记为常量 `i=0`。
+8. 简单计数循环 `for (init; i < N; ++i)` / `i <= N` 为循环体内的索引和复制长度提供 `[init, N-1]` / `[init, N]` 区间；只接受编译期常量或具名常量上界，循环体内对计数变量赋值时丢弃该区间；`break`/`continue` 和非常量步长仍记为 unknown。`for (size_t i = 0; ...)` 不再被误记为常量 `i=0`。
 9. `memcpy_s/memmove_s(dst, dstsz, src, count)`：分别检查 `dstsz` 与 `count` 对目的地容量的上界；WiFi Parcel 的 `new char[cfgLen] + memcpy_s(..., cfgLen, ..., cfgLen)` 保持 quiet。
 10. `strcpy_s/strcat_s/strncpy_s/sprintf_s/snprintf_s` 检查 destination size；`strncpy_s/snprintf_s` 额外检查 count。
 
@@ -63,7 +63,7 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 32 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 33 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
@@ -161,3 +161,9 @@ groups remain 33/22 with every component unchanged. Wall time was 166.28s with
 (`research/evidence/cpp/sandbox_controls_20261018/summary.json`) is the targeted
 check: the Parcel-derived model and safe control stay quiet, the deliberately
 unsafe control reports one index candidate.
+
+The loop-variable mutation guard with `bounds` 0.2.9 is compared in
+`research/evidence/cpp/a_line_scan_20261018_v15_comparison.json`: candidates and
+groups remain 33/22. Wall time was 161.31s with 372,176 KiB peak RSS. A body
+assignment to the counting variable now discards the loop bound; the synthetic
+`bounds_loop_mutation_positive.cpp` control keeps the candidate.

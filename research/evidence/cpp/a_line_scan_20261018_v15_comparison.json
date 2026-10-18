@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/a_line_scan_20261018",
+  "candidate": "research/evidence/cpp/a_line_scan_20261018_v15",
+  "detector": "ohscanner.cpp.bounds",
+  "candidate_detector_version": "0.2.9",
+  "baseline_candidates": 33,
+  "candidate_candidates": 33,
+  "baseline_groups": 22,
+  "candidate_groups": 22,
+  "delta": 0,
+  "per_component": [
+    {
+      "component": "communication_dsoftbus",
+      "baseline_candidates": 7,
+      "candidate_candidates": 7,
+      "baseline_groups": 4,
+      "candidate_groups": 4
+    },
+    {
+      "component": "distributeddatamgr_kv_store",
+      "baseline_candidates": 11,
+      "candidate_candidates": 11,
+      "baseline_groups": 8,
+      "candidate_groups": 8
+    },
+    {
+      "component": "security_access_token",
+      "baseline_candidates": 4,
+      "candidate_candidates": 4,
+      "baseline_groups": 2,
+      "candidate_groups": 2
+    },
+    {
+      "component": "update_updateservice",
+      "baseline_candidates": 7,
+      "candidate_candidates": 7,
+      "baseline_groups": 6,
+      "candidate_groups": 6
+    },
+    {
+      "component": "window_window_manager",
+      "baseline_candidates": 4,
+      "candidate_candidates": 4,
+      "baseline_groups": 2,
+      "candidate_groups": 2
+    }
+  ],
+  "baseline_wall_seconds": 170.938481054,
+  "candidate_wall_seconds": 161.307038765,
+  "baseline_peak_rss_kib": 371736,
+  "candidate_peak_rss_kib": 372176,
+  "note": "Discarding counting-loop bounds when the body assigns the index variable changes no candidate on this fixed five-component corpus. The mutation control is covered by a synthetic fixture; candidate counts are not vulnerability counts."
+}

@@ -26,7 +26,7 @@ The sandbox delivery reports:
 - `shared_ptr_race 0.5.3`: constructor-body writes are initialization; function
   parameters shadow same-named members; stable-owner and parameter-shadow
   controls added.
-- `bounds 0.2.8`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
+- `bounds 0.2.9`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
   guards narrow intervals; `if (x != 0) return;` emits a `zero_check` guard fact
   that is not injected into bounds intervals, so `dst[n - 1]` stays a candidate;
   constant offsets such as `n - 1` are evaluated;
