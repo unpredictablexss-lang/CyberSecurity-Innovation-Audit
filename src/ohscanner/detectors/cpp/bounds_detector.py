@@ -286,24 +286,34 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         before = masked[:match.start()]
         if re.search(r"(?:char|short|int|long|u?int(?:8|16|32|64)_t)\s+$", before):
             continue
-        shape = arrays.get(match.group("name"))
-        if shape is None or shape.capacity is None:
+        name = match.group("name")
+        shape = arrays.get(name)
+        capacity: Optional[int] = shape.capacity if shape is not None else None
+        if capacity is None:
+            pointer_shape = pointers.get(name)
+            if (
+                pointer_shape is not None
+                and pointer_shape.capacity_bytes is not None
+                and pointer_shape.element_size is not None
+            ):
+                capacity = pointer_shape.capacity_bytes // pointer_shape.element_size
+        if capacity is None:
             continue
         index_expression = match.group("index").strip()
         constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
         interval = expression_interval(index_expression, constants, constraints)
-        safe_upper = interval.maximum is not None and interval.maximum < shape.capacity
+        safe_upper = interval.maximum is not None and interval.maximum < capacity
         safe_lower = interval.is_nonnegative() or index_expression in nonnegative
-        definite = interval.definitely_at_least(shape.capacity) or (
+        definite = interval.definitely_at_least(capacity) or (
             interval.maximum is not None and interval.maximum < 0
         )
         unbounded_index = _contains_symbol(index_expression) and not (safe_upper and safe_lower)
         if definite or unbounded_index:
             qualifier = "demonstrated out-of-range index" if definite else "unproven in-range index"
             findings.append(_finding(
-                unit, unit.text, match.start(), RULE_INDEX, shape.name,
+                unit, unit.text, match.start(), RULE_INDEX, name,
                 f"Candidate only: index `{index_expression}` has an {qualifier} for fixed array "
-                f"`{shape.name}` with capacity {shape.capacity}. Complete CFG, signedness and "
+                f"`{name}` with capacity {capacity}. Complete CFG, signedness and "
                 "alias facts remain unknown.",
                 "CWE-125" if not definite or interval.maximum is not None and interval.maximum < 0 else "CWE-787",
                 "CWE-125" if interval.maximum is not None and interval.maximum < 0 else "CWE-787",

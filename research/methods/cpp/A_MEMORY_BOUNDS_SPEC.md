@@ -24,7 +24,7 @@
 1. 固定 C 数组或 `std::array<T,N>` 的 `memcpy`、`memmove`、`strncpy`、`snprintf`、`strcpy`、`strcat`。
 2. 固定数组索引，包含常量越界和未证明上界的符号索引。
 3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。`SortElements*` 中未被 stable-array/index guard 保护的直接 `ElementAccessor::Get/Set` 作为历史 OOB 候选。
-4. 识别简单的 `malloc/calloc/new[]` 指针目的地容量；复制长度与分配表达式相同时 quiet，确定超界或不同符号长度时产生候选，动态/包装分配保持 unknown。
+4. 识别简单的 `malloc/calloc/new[]` 指针目的地容量；复制长度与分配表达式相同时 quiet，确定超界或不同符号长度时产生候选；`new[]` 的已知元素容量也用于索引上界，动态/包装分配保持 unknown。
 
 候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
 
@@ -56,11 +56,12 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 12 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 14 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
 - `malloc` 已知容量、`malloc(n)` 与 `memcpy(..., n)` 的精确匹配为 quiet；不同符号长度产生 unknown candidate；
+- `new char[4]` 的越界索引产生候选，`new char[8]` 的最后一个合法索引 quiet；
 - 动态目的地和宏-only 分配为 unknown/quiet；
 - partial、failed、1MiB/unit、32MiB/run fail-closed；
 - 输出和 source binding 稳定；
@@ -103,3 +104,7 @@ this corpus. This is a coverage regression check, not an accuracy claim.
   existing mainline script with `PYTHONPATH` pointing at this branch; no shared
   script was modified.
 - Evidence: `research/evidence/cpp/a_line_scan_20261018/summary.json`.
+
+The follow-up `new[]` index-capacity rerun is compared in
+`research/evidence/cpp/a_line_scan_20261018_v2_comparison.json`: candidates and
+groups remain 33/22, with no new real-source hit in this corpus.
