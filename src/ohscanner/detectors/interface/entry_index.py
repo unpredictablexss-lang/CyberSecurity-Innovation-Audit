@@ -421,6 +421,23 @@ class EntryIndex:
         """
         if not _CONST_QUALIFIER.search(_text(source, node)):
             return
+        # A class-scoped static const UID is represented by tree-sitter-cpp as
+        # a field_declaration with direct declarator/default_value fields,
+        # unlike a namespace-scope declaration's init_declarator. Account-role
+        # evidence often uses exactly this form.
+        if node.type == "field_declaration":
+            declarator = node.child_by_field_name("declarator")
+            raw = (node.child_by_field_name("default_value")
+                   or node.child_by_field_name("value"))
+            if declarator is not None and raw is not None:
+                name = _last_identifier(source, declarator)
+                value = _literal_value(source, raw)
+                if name and value is not None:
+                    self._constants.setdefault(name, []).append(
+                        ConstantDefinition(name, value, path, node.start_point[0] + 1,
+                                           _scope_prefix(source, node, name),
+                                           _text(source, node).strip()))
+            return
         for item in node.named_children:
             if item.type != "init_declarator":
                 continue

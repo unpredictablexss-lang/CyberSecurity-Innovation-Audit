@@ -445,10 +445,17 @@ class Interpreter:
         # Reviewed service-account roles by the constant a guard names, and the
         # operations each role authorizes. An account role is not a permission, so
         # it travels on its own channel and is consumed only by `authorized`.
-        self.account_roles = {entry.constant: entry
-                              for entry in self.policy.service_account_roles}
+        repository = request.repository if request is not None else None
+        account_models = tuple(
+            entry for entry in self.policy.service_account_roles
+            if not entry.repository or entry.repository == repository
+        ) + tuple(
+            entry for entry in self.policy.repository_service_account_roles
+            if entry.repository and entry.repository == repository
+        )
+        self.account_roles = {entry.constant: entry for entry in account_models}
         self.account_accepts = {entry.role: frozenset(entry.accepted_operations)
-                               for entry in self.policy.service_account_roles}
+                                for entry in account_models}
         self.account_notes = set()
         self.functions = []
         self.observations = []

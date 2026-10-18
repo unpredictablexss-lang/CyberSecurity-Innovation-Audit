@@ -165,6 +165,10 @@ class PolicyCompositionTests(unittest.TestCase):
         self.assertEqual(IpcPolicy().service_account_roles, ())
         merged = families.default_policy()
         self.assertEqual(merged.service_account_roles, ())
+        self.assertEqual(len(merged.repository_service_account_roles), 1)
+        role, = merged.repository_service_account_roles
+        self.assertEqual(role.repository, 'openharmony/security_access_token')
+        self.assertEqual(role.accepted_operations, ('RemovePermissionUsedRecords',))
         self.assertEqual(merged.trusted_uids, IpcPolicy().trusted_uids)
         self.assertEqual(families.family_of_rule('ipc.auth.missing').family_id, 'AUTH-02')
 
@@ -181,6 +185,8 @@ class PolicyCompositionTests(unittest.TestCase):
         ctx = context((BASE / 'auth_positive.cpp').read_text())
         mine = IpcInterfaceDetector(IpcPolicy(max_paths=8)).policy
         self.assertEqual(mine.service_account_roles, families.default_policy().service_account_roles)
+        self.assertEqual(mine.repository_service_account_roles,
+                         families.default_policy().repository_service_account_roles)
         self.assertEqual(mine.max_paths, 8)
         for policy in (IpcPolicy(), IpcPolicy(max_paths=8)):
             with self.subTest(policy=policy.max_paths):
@@ -188,6 +194,8 @@ class PolicyCompositionTests(unittest.TestCase):
                 index = EntryIndex(ctx.units, policy)
                 self.assertEqual(walk.policy.service_account_roles,
                                  families.default_policy().service_account_roles)
+                self.assertEqual(walk.policy.repository_service_account_roles,
+                                 families.default_policy().repository_service_account_roles)
                 self.assertEqual(index.policy.service_account_roles, ())
 
 

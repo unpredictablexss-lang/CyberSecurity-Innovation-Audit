@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v30"
+MODEL_VERSION = "oh-ipc-2026.10-v31"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -149,6 +149,7 @@ class ServiceAccountRole:
     role: str                            # the fact derived, e.g. "<caller-account:...>"
     accepted_operations: Tuple[str, ...]  # operations this role authorizes, and no others
     origin: str                          # the reviewed source of the account assignment
+    repository: str = ""                 # optional exact repository scope; empty means caller-supplied policy
 
 
 @dataclass(frozen=True)
@@ -235,6 +236,10 @@ class IpcPolicy:
     # Explicit caller-supplied reviewed account models only. The default remains
     # empty: a named constant/value alone is not an approved account assignment.
     service_account_roles: Tuple[ServiceAccountRole, ...] = ()
+    # Product account models are always repository-scoped. The repository name
+    # is caller-declared (not origin authentication); these records are narrow
+    # reviewed facts for operations with source-bound external identity evidence.
+    repository_service_account_roles: Tuple[ServiceAccountRole, ...] = ()
     service_entries: FrozenSet[str] = frozenset({"HCameraService::CreateCameraDevice", "BgContinuousTaskMgr::RequestBackgroundRunningForInner",
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",
