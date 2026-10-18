@@ -41,8 +41,11 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
         {detectors.some((d) => d.id === sensitiveExposureId) && <Form.Item label="实验研究规则">
           <Checkbox checked={includeSensitiveExposure} onChange={(event) => {
             setIncludeSensitiveExposure(event.target.checked); invalidate();
-          }}>D 敏感数据到日志（固定版本候选；partial / blocked 表示未知）</Checkbox>
+          }}>D 敏感数据进入日志（实验候选规则；partial / blocked 表示未知）</Checkbox>
         </Form.Item>}
+        {includeSensitiveExposure && <Alert className="section-gap" type="info" showIcon
+          message="D 规则会随本次固定版本扫描运行"
+          description="候选和源码证据会出现在任务详情与 report.json / report.md 中。报告可给出源码级复现步骤和修复建议；静态命中不等于产品漏洞确认，也不会生成可利用产品 PoC。" />}
         <RuleNotice detectors={detectors} />
         <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览适用规则</Button>
         <AuditPlanView plan={plan} />
