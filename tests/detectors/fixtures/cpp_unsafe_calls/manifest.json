@@ -18,6 +18,13 @@
       "byte_length": 93
     },
     {
+      "expected_min": 1,
+      "category": "positive",
+      "fixture": "positive_fprintf_format.cpp",
+      "sha256": "96eb44be0b1c7f946b4e6e718810b5be17fab693dbe750f5fdaa99ea51422705",
+      "byte_length": 117
+    },
+    {
       "expected_max": 0,
       "category": "fixed",
       "fixture": "fixed_bounded.cpp",
@@ -37,6 +44,13 @@
       "fixture": "safe_macro_format.cpp",
       "sha256": "473451b3ad3dbe7e72c5fb0bd5f83a7f3e2230e7f93842f653ef9daba56e7593",
       "byte_length": 124
+    },
+    {
+      "expected_max": 0,
+      "category": "safe",
+      "fixture": "safe_fprintf_literal.cpp",
+      "sha256": "9b5f89ae5819bd159a45a08f6eb6d2f3169873c034957e494a1cfac85ed11671",
+      "byte_length": 107
     },
     {
       "expected_max": 0,

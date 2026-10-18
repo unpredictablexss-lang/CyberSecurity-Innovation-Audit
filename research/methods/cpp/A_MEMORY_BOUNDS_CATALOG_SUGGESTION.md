@@ -10,4 +10,4 @@
 
 - `ohscanner.cpp.resource_lifetime` -> `src.ohscanner.detectors.cpp.resource_lifetime_detector.CppResourceLifetimeDetector`, version `0.1.2`, kind `research_candidate`; keep branch/label transitions unknown and require the A-RES-01 controls before owner review.
 
-- `ohscanner.cpp.unsafe_memory_call` -> `src.ohscanner.detectors.cpp.unsafe_memory_call_detector.CppUnsafeMemoryCallDetector`, version `0.1.1`, kind `research_candidate`; macro-only format expressions remain unknown rather than candidates.
+- `ohscanner.cpp.unsafe_memory_call` -> `src.ohscanner.detectors.cpp.unsafe_memory_call_detector.CppUnsafeMemoryCallDetector`, version `0.1.2`, kind `research_candidate`; macro-only format expressions remain unknown rather than candidates.

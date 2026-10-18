@@ -1,11 +1,12 @@
 # A-UNSAFE-01 C/C++ unsafe memory/format call specification
 
-`ohscanner.cpp.unsafe_memory_call` 0.1.1 是 P2 研究 Detector，默认 `candidate/unassessed`。
+`ohscanner.cpp.unsafe_memory_call` 0.1.2 是 P2 研究 Detector，默认 `candidate/unassessed`。
 
 ## 触发
 
 - `gets`、`strcpy`、`strcat`、`sprintf`：unbounded memory call candidate，CWE-242/120。
 - `printf/fprintf/syslog/vprintf/vfprintf` 的非字面 format expression：format-string candidate，CWE-134。
+- `fprintf/vfprintf/syslog` 的 format 参数是第 1 个实参，流/优先级是第 0 个；0.1.2 修复了把 stream 当 format 的误报。
 - `scanf("%s", dst)`：unbounded input candidate，CWE-120。
 
 ## 排除和 unknown
@@ -17,3 +18,7 @@
 ## Controls
 
 `tests/detectors/fixtures/cpp_unsafe_calls/manifest.json` 绑定 positive/fixed/safe/unrelated/unknown controls，包括宏格式 quiet 和真实非字面量 format 正例；`tests/detectors/test_cpp_unsafe_memory_call_detector.py` 固定 source hash、determinism 和资源预算。没有独立产品 truth 前不计算 Precision/Recall。
+
+The 0.1.2 fixed-corpus replay is recorded in
+`research/evidence/cpp/a_line_scan_20261018_v6_comparison.json`; candidate and
+group totals remain 33/22 with no new real-source hit.

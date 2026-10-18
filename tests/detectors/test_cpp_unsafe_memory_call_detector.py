@@ -62,7 +62,7 @@ class UnsafeMemoryCallDetectorTests(unittest.TestCase):
     def test_positive_and_source_binding(self) -> None:
         run, source = self.run_case("positive_unsafe.cpp")
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.unsafe_memory_call")
-        self.assertEqual(self.detector.version, "0.1.1")
+        self.assertEqual(self.detector.version, "0.1.2")
         self.assertGreaterEqual(len(run.findings), 5)
         self.assertIn("ohcpp-unsafe-memory-call-candidate-001", {item.rule_id for item in run.findings})
         self.assertIn("ohcpp-format-string-candidate-002", {item.rule_id for item in run.findings})
@@ -71,7 +71,13 @@ class UnsafeMemoryCallDetectorTests(unittest.TestCase):
             self.assertEqual(finding.rule_lineage_id, "A-UNSAFE-01:ohcpp-unsafe-call-candidate")
 
     def test_fixed_safe_unrelated_and_unknown(self) -> None:
-        for name in ("fixed_bounded.cpp", "safe_literal.cpp", "safe_macro_format.cpp", "unrelated.cpp"):
+        for name in (
+            "fixed_bounded.cpp",
+            "safe_literal.cpp",
+            "safe_macro_format.cpp",
+            "safe_fprintf_literal.cpp",
+            "unrelated.cpp",
+        ):
             run, _ = self.run_case(name)
             self.assertEqual(run.findings, ())
         unknown, _ = self.run_case("unknown_partial.cpp", "partial")
@@ -97,6 +103,17 @@ class UnsafeMemoryCallDetectorTests(unittest.TestCase):
         self.assertEqual(macro_run.findings, ())
 
         real_run, _ = self.run_case("positive_nonliteral_format.cpp")
+        self.assertEqual(
+            {item.rule_id for item in real_run.findings},
+            {"ohcpp-format-string-candidate-002"},
+        )
+        self.assertEqual(real_run.findings[0].symbol, "user_format")
+
+    def test_fprintf_uses_the_format_argument_not_the_stream(self) -> None:
+        safe_run, _ = self.run_case("safe_fprintf_literal.cpp")
+        self.assertEqual(safe_run.findings, ())
+
+        real_run, _ = self.run_case("positive_fprintf_format.cpp")
         self.assertEqual(
             {item.rule_id for item in real_run.findings},
             {"ohcpp-format-string-candidate-002"},

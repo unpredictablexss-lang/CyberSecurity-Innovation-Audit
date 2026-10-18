@@ -24,7 +24,7 @@ from .memory_safety import (
 
 RULE_MEMORY = "ohcpp-unsafe-memory-call-candidate-001"
 RULE_FORMAT = "ohcpp-format-string-candidate-002"
-RULE_VERSION = "0.1.1"
+RULE_VERSION = "0.1.2"
 RULE_LINEAGE_ID = "A-UNSAFE-01:ohcpp-unsafe-call-candidate"
 
 _UNSAFE_MEMORY = {"gets", "strcpy", "strcat", "sprintf"}
@@ -141,9 +141,12 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "CWE-120" if name != "gets" else "CWE-242",
             ))
         elif name in _FORMAT_CALLS and args:
-            format_expression = args[-1].strip() if name in {"syslog"} else args[0].strip()
-            if name == "syslog" and len(args) >= 2:
+            if name in {"fprintf", "vfprintf", "syslog"}:
+                if len(args) < 2:
+                    continue
                 format_expression = args[1].strip()
+            else:
+                format_expression = args[0].strip()
             if _is_macro_concat_format(format_expression):
                 continue
             if not (format_expression.startswith('"') or format_expression.startswith("'")):
