@@ -73,6 +73,14 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
             any("completed covers only" in item for item in run.limitations)
         )
 
+    def test_jsproxy_instance_set_get_pair_is_candidate(self) -> None:
+        unit = unit_by_path(self.units, "jsproxy_instance_positive.cpp")
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertGreater(len(run.findings), 0)
+        self.assertTrue(all(item.symbol == "instance_" for item in run.findings))
+        self.assertTrue(all(item.rule_id == "ohcpp-shared-ptr-race-candidate-001" for item in run.findings))
+
     def test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe(self) -> None:
         fixed = unit_by_path(self.units, "fixed_atomic_shared_ptr.cpp")
         safe = unit_by_path(self.units, "safe_atomic_only.cpp")

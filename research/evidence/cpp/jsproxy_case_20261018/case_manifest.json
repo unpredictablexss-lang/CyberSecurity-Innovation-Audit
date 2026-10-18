@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "case_id": "A-JSPROXY-01",
+  "status": "candidate/unassessed",
+  "component_reproduction": "passed",
+  "product_gate": "not_met",
+  "validated_vulnerability": 0,
+  "repository": "openharmony/distributeddatamgr_kv_store",
+  "commit": "acfb22aac16161d8fb0cefb6cc9b92f04f489a80",
+  "source_files": [
+    {
+      "path": "frameworks/common/js_proxy.h",
+      "git_blob_oid": "19b5dccedc3a9471dcd1ca3b6c32f5e4d5a5fd46",
+      "sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "bytes": 1879
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_kv_store_resultset.cpp",
+      "git_blob_oid": "97986ef7d4c1e73ddc0c5d8326db693e565c9914",
+      "sha256": "3bf08751cc58a142674b17e2d80d23c936193ab61fa9ffde300ede6039bae65f",
+      "bytes": 12620
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/js_single_kv_store.cpp",
+      "git_blob_oid": "303443958e5fb9c4406e2e8dc6ab5894f7ff94bb",
+      "sha256": "40d13acacbb7cedc7516c967990892f9999bee6a3ec2b5dbf3c7e2478740d7d7",
+      "bytes": 66169
+    },
+    {
+      "path": "frameworks/jskitsimpl/distributedkvstore/src/napi_queue.cpp",
+      "git_blob_oid": "a52a814a3570b7e274c9cd8d1a74f7d56f024f1c",
+      "sha256": "b93054a1d7ab7e97b1c381029bdeb5101bd1feba77a77aa203245f2488de9ca9",
+      "bytes": 6742
+    }
+  ],
+  "detector": {
+    "id": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "findings": [
+      {
+        "file": "frameworks/common/js_proxy.h",
+        "line": 37,
+        "symbol": "instance_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      },
+      {
+        "file": "frameworks/common/js_proxy.h",
+        "line": 42,
+        "symbol": "instance_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001"
+      }
+    ]
+  },
+  "harness": {
+    "vulnerable_header": "harness/vulnerable/js_proxy.h",
+    "vulnerable_header_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+    "fixed_header": "harness/fixed/js_proxy.h",
+    "fixed_header_sha256": "b17c381a154d6920d41958b78605a400ec98ce2f0eecaac448a30c54aa62fc7f",
+    "results": "results.json",
+    "results_sha256": "3bff5be4a5c6b4512e96964584041eb11c707d9311ed8baa355bf3fbd6bdafef",
+    "compiler": "Ubuntu clang 14.0.0",
+    "sanitizer": "thread",
+    "repeats": 3
+  },
+  "patch": {
+    "path": "patch/js_proxy_mutex.patch",
+    "sha256": "06023870374f4b726a79072a37d2b9f119fe67511481f4edddabb02daaf9a73e",
+    "apply_check": "git apply --cached --check patch/js_proxy_mutex.patch",
+    "apply_check_result": "passed"
+  },
+  "limitations": [
+    "The harness copies the pinned header bytes; it does not build or execute a full OpenHarmony product image.",
+    "The harness proves an unsynchronized SetInstance/GetInstance access pair under TSan, not a product-reachable exploit or CIA impact.",
+    "The patch is a minimal component-level mutex fix; it has not been validated against the full product build or release branches.",
+    "No confirmed/reportable vulnerability is claimed; validated_vulnerability remains 0."
+  ]
+}

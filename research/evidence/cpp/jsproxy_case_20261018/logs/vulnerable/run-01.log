@@ -1,0 +1,46 @@
+LLVMSymbolizer: error reading file: No such file or directory
+==================
+WARNING: ThreadSanitizer: data race (pid=907)
+  Read of size 8 at 0x7fffffffe020 by thread T2:
+    #0 std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:709:19 (jsproxy_vulnerable+0xd0b77) (BuildId: 1e178015e841238fc3e17c02cef71ee976cdfb25)
+    #1 std::__shared_ptr<int, (__gnu_cxx::_Lock_policy)2>::__shared_ptr(std::__shared_ptr<int, (__gnu_cxx::_Lock_policy)2> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1152:7 (jsproxy_vulnerable+0xd0b77)
+    #2 std::shared_ptr<int>::shared_ptr(std::shared_ptr<int> const&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:150:7 (jsproxy_vulnerable+0xd0b77)
+    #3 OHOS::JSProxy::JSProxy<int>::GetInstance() const /mnt/e/网安/CyberSecurity-Innovation-Audit-a-line-20261018/research/evidence/cpp/jsproxy_case_20261018/harness/vulnerable/js_proxy.h:42:16 (jsproxy_vulnerable+0xd0b77)
+    #4 main::$_1::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit-a-line-20261018/research/evidence/cpp/jsproxy_case_20261018/harness/harness.cpp:32:35 (jsproxy_vulnerable+0xd0b77)
+    #5 void std::__invoke_impl<void, main::$_1>(std::__invoke_other, main::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (jsproxy_vulnerable+0xd0b77)
+    #6 std::__invoke_result<main::$_1>::type std::__invoke<main::$_1>(main::$_1&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (jsproxy_vulnerable+0xd0b77)
+    #7 void std::thread::_Invoker<std::tuple<main::$_1> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (jsproxy_vulnerable+0xd0b77)
+    #8 std::thread::_Invoker<std::tuple<main::$_1> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (jsproxy_vulnerable+0xd0b77)
+    #9 std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_1> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (jsproxy_vulnerable+0xd0b77)
+    #10 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+
+  Previous write of size 8 at 0x7fffffffe020 by thread T1:
+    #0 std::__shared_count<(__gnu_cxx::_Lock_policy)2>::_M_swap(std::__shared_count<(__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:734:12 (jsproxy_vulnerable+0xd097f) (BuildId: 1e178015e841238fc3e17c02cef71ee976cdfb25)
+    #1 std::__shared_ptr<int, (__gnu_cxx::_Lock_policy)2>::swap(std::__shared_ptr<int, (__gnu_cxx::_Lock_policy)2>&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1317:14 (jsproxy_vulnerable+0xd097f)
+    #2 std::__shared_ptr<int, (__gnu_cxx::_Lock_policy)2>::operator=(std::__shared_ptr<int, (__gnu_cxx::_Lock_policy)2>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1250:31 (jsproxy_vulnerable+0xd097f)
+    #3 std::shared_ptr<int>::operator=(std::shared_ptr<int>&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:385:27 (jsproxy_vulnerable+0xd097f)
+    #4 OHOS::JSProxy::JSProxy<int>::SetInstance(std::shared_ptr<int>) /mnt/e/网安/CyberSecurity-Innovation-Audit-a-line-20261018/research/evidence/cpp/jsproxy_case_20261018/harness/vulnerable/js_proxy.h:37:19 (jsproxy_vulnerable+0xd097f)
+    #5 main::$_0::operator()() const /mnt/e/网安/CyberSecurity-Innovation-Audit-a-line-20261018/research/evidence/cpp/jsproxy_case_20261018/harness/harness.cpp:25:19 (jsproxy_vulnerable+0xd097f)
+    #6 void std::__invoke_impl<void, main::$_0>(std::__invoke_other, main::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:61:14 (jsproxy_vulnerable+0xd097f)
+    #7 std::__invoke_result<main::$_0>::type std::__invoke<main::$_0>(main::$_0&&) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/invoke.h:96:14 (jsproxy_vulnerable+0xd097f)
+    #8 void std::thread::_Invoker<std::tuple<main::$_0> >::_M_invoke<0ul>(std::_Index_tuple<0ul>) /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:259:13 (jsproxy_vulnerable+0xd097f)
+    #9 std::thread::_Invoker<std::tuple<main::$_0> >::operator()() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:266:11 (jsproxy_vulnerable+0xd097f)
+    #10 std::thread::_State_impl<std::thread::_Invoker<std::tuple<main::$_0> > >::_M_run() /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_thread.h:211:13 (jsproxy_vulnerable+0xd097f)
+    #11 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+
+  Location is stack of main thread.
+
+  Location is global '??' at 0x7ffffffde000 ([stack]+0x20020)
+
+  Thread T2 (tid=910, running) created by main thread at:
+    #0 pthread_create <null> (jsproxy_vulnerable+0x4f3fd) (BuildId: 1e178015e841238fc3e17c02cef71ee976cdfb25)
+    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)
+
+  Thread T1 (tid=909, running) created by main thread at:
+    #0 pthread_create <null> (jsproxy_vulnerable+0x4f3fd) (BuildId: 1e178015e841238fc3e17c02cef71ee976cdfb25)
+    #1 std::thread::_M_start_thread(std::unique_ptr<std::thread::_State, std::default_delete<std::thread::_State> >, void (*)()) <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)
+
+SUMMARY: ThreadSanitizer: data race /usr/bin/../lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:709:19 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::__shared_count(std::__shared_count<(__gnu_cxx::_Lock_policy)2> const&)
+==================

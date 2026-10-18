@@ -1,0 +1,65 @@
+{
+  "case": "JSProxy::instance_",
+  "repeats": 3,
+  "schema_version": 1,
+  "variants": {
+    "fixed": {
+      "binary": "build/fixed/jsproxy_fixed",
+      "binary_sha256": "ce540d53f51925ab9352de876ad18ea3e3443c706f4fd3a0330c0b6a0c05288d",
+      "header": "harness/fixed/js_proxy.h",
+      "header_sha256": "b17c381a154d6920d41958b78605a400ec98ce2f0eecaac448a30c54aa62fc7f",
+      "runs": [
+        {
+          "exit_code": 0,
+          "log": "logs/fixed/run-01.log",
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "run": 1,
+          "tsan_race": false
+        },
+        {
+          "exit_code": 0,
+          "log": "logs/fixed/run-02.log",
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "run": 2,
+          "tsan_race": false
+        },
+        {
+          "exit_code": 0,
+          "log": "logs/fixed/run-03.log",
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "run": 3,
+          "tsan_race": false
+        }
+      ]
+    },
+    "vulnerable": {
+      "binary": "build/vulnerable/jsproxy_vulnerable",
+      "binary_sha256": "3334a9168ac64e3ec955ffa2bd2d9a864dce17007d9db397363ce7b7e9a0a6c9",
+      "header": "harness/vulnerable/js_proxy.h",
+      "header_sha256": "38d4f1735a6b7295e0093d8df9bcc525a73b01aa178fd06086de2f2df707066f",
+      "runs": [
+        {
+          "exit_code": 66,
+          "log": "logs/vulnerable/run-01.log",
+          "log_sha256": "2e0b6b5001986518e37f88012a400129e5c0ce869abc3280c3ea0a2617e477df",
+          "run": 1,
+          "tsan_race": true
+        },
+        {
+          "exit_code": 66,
+          "log": "logs/vulnerable/run-02.log",
+          "log_sha256": "8db0c23ac5051241b4705de528708c5b94f61ee4e646ef5ba22443615fefbc5a",
+          "run": 2,
+          "tsan_race": true
+        },
+        {
+          "exit_code": 66,
+          "log": "logs/vulnerable/run-03.log",
+          "log_sha256": "fd37dd4a9f3294a4e67518de7ddc48832172670a7a3f8745ace17b10c5b18b7f",
+          "run": 3,
+          "tsan_race": true
+        }
+      ]
+    }
+  }
+}

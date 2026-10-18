@@ -4,7 +4,7 @@
     "kind": "self_authored_synthetic_fixture",
     "repository": "synthetic/fixture",
     "commit": "2222222222222222222222222222222222222222",
-    "snapshot_sha256": "a30276427ea23ffc4dcaf357a1ae3b926c341296be303fcf141637f9f16f13f6",
+    "snapshot_sha256": "7e513ab7ba5bb737b4cd4d2fbc4ff045258810bd9cce0992fed2a576964be6ad",
     "profile_id": "fixture-no-build",
     "note": "Fixture metadata only; not a public vulnerability benchmark."
   },
@@ -16,6 +16,15 @@
       "parse_issues": [],
       "fixture_category": "fixed",
       "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/jsproxy_instance_positive.cpp",
+      "sha256": "6e13d13de6d0461f6c44294df23d94bcffdf4b5cce255c4a4b66041fb7734f51",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
       "language": "cpp"
     },
     {

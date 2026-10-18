@@ -209,3 +209,27 @@ evidence checklist is `research/evidence/cpp/implementation_bound_controls_20261
 These remain synthetic development controls and controlled local dynamic evidence. Zero
 findings are narrow negative controls only; no Precision/Recall, zero-FP/FN, product
 reachability, attacker control, CIA impact or global safety claim is made.
+
+## Real-source component case: JSProxy::instance_ (2026-10-18)
+
+The first pinned real-source component case is
+`openharmony/distributeddatamgr_kv_store@acfb22aac16161d8fb0cefb6cc9b92f04f489a80`.
+The detector reports two `instance_` candidates in
+`frameworks/common/js_proxy.h`: the `SetInstance` write at line 37 and the
+`GetInstance` read at line 42.
+
+A self-authored TSan harness uses the exact pinned header bytes for the
+vulnerable variant and a mutex-protected copy for the fixed variant. With
+Ubuntu clang 14.0.0, `-fsanitize=thread`, `setarch x86_64 -R` and three repeats:
+
+- vulnerable: exit `66/66/66`, data race reported in all three runs;
+- fixed: exit `0/0/0`, no data race reported in all three runs.
+
+`patch/js_proxy_mutex.patch` is the minimal component fix and passes
+`git apply --cached --check` against the pinned Git blob. Evidence, source/blob
+hashes, logs and limitations are under
+`research/evidence/cpp/jsproxy_case_20261018/`.
+
+This is component-level evidence only. It does not establish a product entry,
+permission boundary, attacker control, CIA impact or product build; the case
+remains `candidate/unassessed` with `validated_vulnerability=0`.
