@@ -41,6 +41,15 @@ def _git(repo: Path, *args: str, timeout: int = 30) -> bytes:
         if args and args[0] == "cat-file" and args[1] == "blob":
             raise ValueError("missing_local_git_object_or_unreadable_blob: "
                              + args[2] + "; offline-only read (no fetch). " + message)
+        if args[:2] == ("ls-tree", "-r") and (
+            "lazy fetching disabled" in message or "could not fetch" in message
+        ):
+            # Newer Git versions fail ls-tree metadata enumeration outright
+            # instead of returning '-' for an unfetched promisor blob.
+            raise ValueError(
+                "missing_local_git_object: offline-only tree metadata read; "
+                + message
+            )
         raise ValueError(
             "Git object operation failed (" + " ".join(args[:2]) + "): " + message
         )
