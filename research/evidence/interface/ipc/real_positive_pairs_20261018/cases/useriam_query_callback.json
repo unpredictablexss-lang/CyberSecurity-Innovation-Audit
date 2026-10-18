@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "case_id": "openharmony-useriam-query-callback-interface-token-2022",
+  "family_id": "AUTH-01",
+  "label": "independently_reported_real_positive_fix_pair",
+  "evaluation_role": "post_development_regression_smoke",
+  "frozen": false,
+  "repository": "openharmony/useriam_auth_executor_mgr",
+  "clone_url": "https://gitee.com/openharmony/useriam_auth_executor_mgr.git",
+  "external_adjudication": {
+    "source": "Gitee issue I4WQO1",
+    "url": "https://gitee.com/openharmony/useriam_auth_executor_mgr/issues/I4WQO1",
+    "status": "Done",
+    "opened_at": "2022-03-07",
+    "label_basis": "Public security issue and direct fix commit adding ReadInterfaceToken comparison and early rejection before dispatch."
+  },
+  "vulnerable": {
+    "commit": "48f3ba7c220f18244f908f0452527304349e850c",
+    "tree": "3e96b5c3a2e8f3fc609bcb69ba4be247fd7779f0",
+    "path": "frameworks/kitsimpl/src/query_callback_stub.cpp",
+    "blob": "fa8bb3d25276e451329ead16c435134eba48d6ea",
+    "source_sha256": "29a4dbccf5bc2d8f628c782f8e7ed7311cea51f02d4444a0f7e5997a6156ec0f",
+    "scan": {
+      "selected_source_files": 124,
+      "detector_scope_files": 124,
+      "parse_complete": 108,
+      "parse_partial": 16,
+      "run_status": "completed_with_limitations",
+      "total_candidates": 8,
+      "target_file_candidates": 2,
+      "target_rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "target_lines": [
+        33,
+        42
+      ]
+    }
+  },
+  "fixed": {
+    "commit": "9f35fade871d3cf15acb6191e965a8582bea201e",
+    "tree": "0c8cc0ef3116a7490dac55917d17ee9fa419cda0",
+    "fix_parent": "48f3ba7c220f18244f908f0452527304349e850c",
+    "path": "frameworks/kitsimpl/src/query_callback_stub.cpp",
+    "blob": "9108ab592c5be6ccdc0bb9238498f83f7fb2ce05",
+    "source_sha256": "0713525b115af7b1cd31ec644d5a5e57af36f7e7a32111a4a7282429424e1328",
+    "scan": {
+      "selected_source_files": 124,
+      "detector_scope_files": 124,
+      "parse_complete": 108,
+      "parse_partial": 16,
+      "run_status": "completed_with_limitations",
+      "total_candidates": 6,
+      "target_file_candidates": 0
+    }
+  },
+  "detector": {
+    "id": "ohscanner.interface.ipc",
+    "version": "0.9.2",
+    "model_version": "oh-ipc-2026.10-v11",
+    "source_commit_before_change": "5254e1b28e804a344394b897d3456ff0801d50e5",
+    "change_during_scan": "entry-origin filtering; no AUTH-01 rule change",
+    "working_tree_change_during_scan": "committed entry-origin filtering; AUTH-01 rule unchanged",
+    "source_blobs": {
+      "src/ohscanner/detectors/interface/analysis.py": "a611ce12c963f5b88648d86c636e743881a09e83",
+      "src/ohscanner/detectors/interface/detector.py": "47bc7dc3a26ae7eedd9000f602f1edbc81670410",
+      "tests/test_ipc_detector.py": "6d30da40d2ec79b7e54c752c807d81fccc404145"
+    }
+  },
+  "interpretation": {
+    "result": "targeted_candidate_delta_matches_published_fix",
+    "candidate_delta_on_affected_file": "2 -> 0",
+    "confirmed_vulnerability": false,
+    "dynamic_validation": false,
+    "limitations": [
+      "Visible regression sample, not a blind test.",
+      "One pair is insufficient for family-wide metrics.",
+      "Six findings remain elsewhere in the fixed repository and were not adjudicated by this case."
+    ]
+  },
+  "reports": {
+    "netmanager_full": {
+      "path": "/tmp/ohscanner-b-ipc-provenance-20261018/netmanager-verified-final.json",
+      "sha256": "e38732d967e11e3b3a4bbf2077859d97e626b37509f52e542884f0fda8f95085"
+    },
+    "vulnerable": {
+      "path": "/tmp/ohscanner-useriam-verified-final/useriam-auth-vuln.json",
+      "sha256": "eaf174f913931cd27d12f8bfe6bed57dcc64619db51d0b31434789f18f6622a2"
+    },
+    "fixed": {
+      "path": "/tmp/ohscanner-useriam-verified-final/useriam-auth-fixed.json",
+      "sha256": "476d5e4ab139ba9570b37cf1a805837b0fdebcbfeccb62dc3083d90061e58a8d"
+    }
+  }
+}

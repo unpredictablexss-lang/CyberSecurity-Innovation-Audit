@@ -21,6 +21,16 @@ from .entry_index import EntryIndex
 from .families import merge_policy
 from .models import DISCLOSURE_CALLS, IpcPolicy, consequence_for
 
+_TEST_ONLY_PATH_SEGMENTS = frozenset({
+    "test", "tests", "unittest", "unittests", "fuzz", "fuzztest",
+    "fuzztests", "fuzzer", "fuzzers", "mock", "mocks", "rdbmock",
+})
+
+
+def _test_only_source(path):
+    segments = path.replace(chr(92), "/").lower().split("/")
+    return bool(_TEST_ONLY_PATH_SEGMENTS.intersection(segments))
+
 
 def parses_clean(source, grammar):
     """Whether the private pipeline -- normalization included -- parses this cleanly.
@@ -429,6 +439,7 @@ class Interpreter:
         self.functions = []
         self.observations = []
         self.limitations = set()
+        self.test_only_roots_skipped = set()
         self.seen_permissions = set()
         # Provenance for every cross-TU one-hop guard this run credited, one line
         # each. Kept separately from `limitations` while the walk is in progress so
@@ -516,6 +527,7 @@ class Interpreter:
                 if body and not node.has_error:
                     self.functions.append(Function(unit.path, terminal(q), q, owner, node, body,
                                                    source, tuple(params), tuple(parcels[:1]),
+                                                   line=node.start_point[0] + 1,
                                                    reply_params=tuple(parcels[1:])))
         self._build_index(units)
 
@@ -2033,15 +2045,30 @@ class Interpreter:
         return self.bounded(done+active)
 
     def _entry_roots(self):
-        """Entry roots: the legacy name allowlist, then source-derived dispatch handlers.
+        """Build roots from source-confirmed IPC dispatchers and explicit service entries.
 
-        The allowlist is kept as the lower-grade fallback, so nothing that was
-        analysed before stops being analysed. Dispatch-derived handlers are added
-        only when the index bound them to exactly one definition.
+        A method name plus one Parcel parameter is insufficient: fuzz wrappers and
+        test helpers commonly use the same names without implementing the IPC
+        dispatch signature. IPC roots therefore require a class method admitted by
+        EntryIndex's code/Parcel/Parcel signature check. Service and transport
+        roots remain explicit policy entries. Handler roots still require a unique
+        source-derived dispatch binding below.
         """
         roots, seen = [], set()
+        dispatcher_keys = ({(item.file, item.name, item.line)
+                            for item in self.index.dispatchers if item.owner}
+                           if self.index is not None else set())
         for fn in self.functions:
-            if not ((fn.name in self.policy.entry_names or fn.name in self.policy.transport_entries or (fn.name.endswith("Inner") and "Stub" in fn.owner)) and fn.parcel_params or fn.qualified in self.policy.service_entries):
+            is_ipc_dispatcher = (fn.name in self.policy.entry_names
+                                 and fn.owner and fn.parcel_params and fn.reply_params and len(fn.params) >= 3
+                                 and (fn.file, fn.name, fn.line) in dispatcher_keys)
+            is_inner_helper = (fn.name.endswith("Inner") and "Stub" in fn.owner and fn.parcel_params)
+            is_explicit_entry = (fn.name in self.policy.transport_entries and fn.parcel_params)
+            is_service_entry = fn.qualified in self.policy.service_entries
+            if not (is_ipc_dispatcher or is_inner_helper or is_explicit_entry or is_service_entry):
+                continue
+            if _test_only_source(fn.file):
+                self.test_only_roots_skipped.add((fn.file, fn.qualified))
                 continue
             roots.append((fn, "allowlist", ""))
             seen.add((fn.file, fn.qualified))
@@ -2054,6 +2081,9 @@ class Interpreter:
                                      + "::" + name + "; not used as an entry")
                 continue
             fn = matches[0]
+            if _test_only_source(fn.file):
+                self.test_only_roots_skipped.add((fn.file, fn.qualified))
+                continue
             if (fn.file, fn.qualified) in seen:
                 continue
             seen.add((fn.file, fn.qualified))
@@ -2080,6 +2110,9 @@ class Interpreter:
         summary=self._macro_summary()
         if summary is not None:
             self.limitations.add(summary)
+        if self.test_only_roots_skipped:
+            self.limitations.add("Excluded " + str(len(self.test_only_roots_skipped))
+                                 + " test/fuzz/mock entry root(s) from product candidate analysis; the source paths are retained in scope, but test-target findings are not mixed into product candidates.")
         if self.index is not None:
             # A refused hop is the whole reason a one-hop call site keeps its
             # candidate, and the reason is recorded on the index rather than in

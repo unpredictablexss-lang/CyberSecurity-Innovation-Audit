@@ -45,7 +45,31 @@ class IpcDetectorTests(unittest.TestCase):
                 else:
                     self.assertEqual(rules,set())
 
+    def test_fuzz_wrapper_name_alone_is_not_an_ipc_entry(self):
+        # Fuzz drivers often expose a free OnRemoteRequest with only the input
+        # parcel. Name plus Parcel must not create an IPC root.
+        text = """
+#include "common_types.h"
+int OnRemoteRequest(uint32_t code, MessageParcel &data) {
+    StartAbility();
+    return 0;
+}
+"""
+        text += """
+class FuzzWrapper {
+public:
+    int OnRemoteRequest(uint32_t code, MessageParcel &data) {
+        StartAbility();
+        return 0;
+    }
+};
+"""
+        ctx = context(text, "services/ability/test/fuzztest/ability_fuzzer.cpp")
+        run = IpcInterfaceDetector().detect(ctx, ctx.units)
+        self.assertEqual(run.findings, ())
+
     def test_findings_bind_entry_source_and_test_build_membership(self):
+
         text=(BASE/'auth_positive.cpp').read_text()
         product=context(text,'services/ability/ability_stub.cpp')
         product_findings=IpcInterfaceDetector().detect(product,product.units).findings
@@ -56,13 +80,10 @@ class IpcDetectorTests(unittest.TestCase):
                              for f in product_findings for o in f.evidence_obligations))
 
         harness=context(text,'services/ability/test/fuzztest/ability_stub_fuzzer.cpp')
-        harness_findings=IpcInterfaceDetector().detect(harness,harness.units).findings
-        self.assertTrue(harness_findings)
-        self.assertTrue(all('entry-source-review-cue=test/fuzz/mock path' in f.message
-                            for f in harness_findings))
-        self.assertTrue(all(any(o.kind=='entry_build_membership'
-                                for o in f.evidence_obligations)
-                            for f in harness_findings))
+        harness_run=IpcInterfaceDetector().detect(harness,harness.units)
+        self.assertFalse(harness_run.findings)
+        self.assertTrue(any('Excluded 1 test/fuzz/mock entry root' in note
+                            for note in harness_run.limitations))
 
         # Exact path components prevent incidental names from being mistaken
         # for test-only build evidence.

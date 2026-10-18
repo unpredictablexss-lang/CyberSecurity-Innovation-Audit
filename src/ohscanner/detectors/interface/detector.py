@@ -151,9 +151,11 @@ class IpcInterfaceDetector:
              "comparison against another interface, or one whose identity the analysed sources do not state, "
              "is reported with that reason instead of counting as a guard or as a proven mismatch.",
              "Descriptor consistency is separate from caller authorization; relay candidates are not exploit proofs.",
-             "Entry roots come from the name allowlist plus source-derived dispatch bindings (function-pointer tables, "
-             "switch/if code dispatch, and source-declared virtual overrides). Entry discovery is not reachability: "
-             "dispatcher-level guards and macro-conditional reachability remain obligations, not conclusions.",
+             "IPC roots require a source-indexed class dispatcher with code, request Parcel and reply Parcel; "
+             "explicit service/transport roots and Stub inner helpers are separate allowlisted entry kinds. "
+             "Test/fuzz/mock path roots are excluded from product candidate analysis and counted in limitations. "
+             "Entry discovery is not reachability: dispatcher-level guards and macro-conditional reachability "
+             "remain obligations, not conclusions.",
              "Entry-coverage measurements are published in the interface research report, not in this result.")+extra)
 
 
