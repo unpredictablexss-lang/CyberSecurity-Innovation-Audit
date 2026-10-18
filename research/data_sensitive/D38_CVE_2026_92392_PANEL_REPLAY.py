@@ -17,11 +17,15 @@ from src.workbench.worker import Worker
 from src.workbench import service
 
 CURL_REPO = "/tmp/d-curl-92392"
+DETECTOR_FREEZE_SHA256 = "8a0cd0fb02a5b24f8e0030059a51708987f4bbedecab74c88d80d407c4923632"
+PREREGISTRATION = "D38_CVE_2026_92392_HOLDOUT_PREREGISTRATION.json"
 CASES = (
-    ("curl-vulnerable-8.12.0", "1d6e08ca3268a1f61bd4e56d6348fe304428ead7", 1),
-    ("curl-vulnerable-8.21.0", "3f00a2f6fa97f7721b65606954aac979dcb6caac", 1),
-    ("curl-vulnerable-8.22.0", "d0386aa3e805543ce464c993e1eb31b4d92c6356", 1),
-    ("curl-fixed-8.23.0", "4c24dd7ba7244e0206d91a72fe414823add8a034", 0),
+    ("curl-vulnerable-8.12.0", "1d6e08ca3268a1f61bd4e56d6348fe304428ead7", 1, False),
+    ("curl-vulnerable-8.21.0", "3f00a2f6fa97f7721b65606954aac979dcb6caac", 1, False),
+    ("curl-vulnerable-8.22.0", "d0386aa3e805543ce464c993e1eb31b4d92c6356", 1, False),
+    ("curl-fixed-8.23.0", "4c24dd7ba7244e0206d91a72fe414823add8a034", 0, False),
+    ("curl-holdout-affected-8.20.0", "curl-8_20_0", 1, True),
+    ("curl-holdout-unaffected-8.11.1", "curl-8_11_1", 0, True),
 )
 PATHS = ("lib/multi.c", "include/curl/curlver.h")
 HEADERS = {"x-ohscanner-client": "workbench-v1"}
@@ -115,13 +119,20 @@ def scan_case(root: Path, name: str, upstream_repo: Path, revision: str, expecte
 
 
 def main() -> None:
+    detector_source = Path(__file__).parents[2] / "src/ohscanner/detectors/known_cves.py"
+    detector_sha256 = hashlib.sha256(detector_source.read_bytes()).hexdigest()
+    if detector_sha256 != DETECTOR_FREEZE_SHA256:
+        raise AssertionError(f"detector changed after preregistration: {detector_sha256}")
+    preregistration = json.loads((Path(__file__).with_name(PREREGISTRATION)).read_text(encoding="utf-8"))
+    if preregistration["detector_source_sha256"] != detector_sha256:
+        raise AssertionError("preregistration detector hash does not match checked source")
     root = Path(tempfile.mkdtemp(prefix="ohscanner-d38-panel-"))
     upstream_repo = Path(CURL_REPO)
     rounds = []
     for round_number in (1, 2):
         round_root = root / f"round-{round_number}"
         round_root.mkdir(parents=True)
-        cases = [scan_case(round_root, name, upstream_repo, revision, expected) for name, revision, expected in CASES]
+        cases = [scan_case(round_root, name, upstream_repo, revision, expected) for name, revision, expected, _holdout in CASES]
         rounds.append(cases)
 
     stable_fields = ("case", "upstream_commit", "local_scan_commit", "job_status", "detector_version",
@@ -136,6 +147,11 @@ def main() -> None:
         "experiment": "D38 Workbench API to Worker to report and hash-checked source viewer replay",
         "detector": DETECTOR,
         "detector_version": KnownDisclosedCveDetector.version,
+        "detector_source_sha256": detector_sha256,
+        "detector_freeze_commit": preregistration["detector_freeze_commit"],
+        "preregistration": PREREGISTRATION,
+        "holdout_cases": [case[0] for case in CASES if case[3]],
+        "independent_human_review": "pending",
         "upstream_repository": "curl/curl",
         "source_profile": "two pinned source files per case, materialized in isolated temporary Git repositories",
         "validated_vulnerability": 0,
@@ -150,7 +166,7 @@ def main() -> None:
         "repeat_run_signatures": signatures,
         "cases": cases,
     }
-    output_path = Path(__file__).with_name("D38_CVE_2026_92392_PANEL_REPLAY.json")
+    output_path = Path(__file__).with_name("D38_CVE_2026_92392_HOLDOUT_REPLAY.json")
     output_path.write_text(json.dumps(output, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(json.dumps({"output": str(output_path), "cases": [{"case": item["case"], "status": item["job_status"], "detector_status": item["detector_status"], "candidates": item["candidate_count"]} for item in cases]}, ensure_ascii=False))
 
