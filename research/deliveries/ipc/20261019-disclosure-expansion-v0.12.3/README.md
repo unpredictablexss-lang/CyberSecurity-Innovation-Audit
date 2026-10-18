@@ -60,3 +60,26 @@
 - `0` 候选不证明安全；partial/跨文件路径继续为 unknown。
 
 下一步优先把 CVE-2024-39612 固定为 AUTH-03 owner-binding 回归，再为跨文件委托/守卫开发正例、修复例、安全例和无关例，以解决 CVE-2024-38382 这类漏检，不继续扩充函数名列表。
+
+## 当前版本复验：四组既有披露修复对
+
+为对齐 G 盘 ABCD 实测建议中的 B 线回归项，本节用同一检测器 ohscanner.interface.ipc 0.12.3 对前期资料中的四组公开修复对重跑。结果均为只读固定 Git 对象、有限 include 范围；所有报告 validated_vulnerability=0。
+
+| CVE | 当前版修复前 → 修复后 | 命中解释 | 覆盖状态 |
+|---|---:|---|---|
+| CVE-2023-0035 | **1 → 0** | AUTH-01 描述符边界候选随 SoftBusClientStub token 校验补丁消失 | 两侧 partial |
+| CVE-2023-0036 | **1 → 0** | AUTH-01 描述符边界候选随 PlatformCallbackStub token 校验补丁消失 | 两侧 complete |
+| CVE-2025-25212 | **3 → 2** | observer-growth 候选随每 (userId, PID) 聚合上限/清理补丁消失 | 两侧 partial |
+| CVE-2025-27247 | **4 → 3** | AUTH-02 privileged-app-bypass 候选随默认输入法授权移除而消失 | 两侧 partial |
+
+这四项与公开修复机制对应的候选均在固定易受影响版本出现、在修复版消失。CVE-2025-25212 与 CVE-2025-27247 的总候选仍有 2/3 条：它们属于独立的 AUTH-02、DATA-04 或 observer-growth 观察，不能因修复根因候选消失而一并判作误报，也不能把候选总数下降包装成整仓安全结论。
+
+CVE-2025-25212 的有效 scope 必须同时包含 services/core/src/pasteboard_service.cpp 和 services/zidl/src/pasteboard_service_stub.cpp，让检测器看到 OnSubscribeObserver 入口与服务端 AddObserver；仅扫描 service 文件得到 0→0，是 scope 不足导致的无效回归。CVE-2025-27247 也使用这两个文件，以同时绑定 IPC 入口和 VerifyPermission 策略实现。
+
+两个 2023 年 AUTH-01 样本中，CVE-2023-0035 来自 communication_dsoftbus 的 sdk/frame/standard/src/softbus_client_stub.cpp，状态 partial；CVE-2023-0036 来自 inputmethod_imf 的 services/src/platform_callback_stub.cpp，状态 complete。前者虽然目标方法被分析，文件级 parse 仍是 partial，不能把它作为完整覆盖证明。
+
+## 累计回归口径与下一步
+
+当前包共 **9 组 CVE 修复对**：6 组静态修复对匹配（CVE-2024-39612、CVE-2025-26691、CVE-2023-0035、CVE-2023-0036、CVE-2025-25212、CVE-2025-27247）、2 组部分匹配（CVE-2025-26693、CVE-2025-27563）、1 组明确漏检（CVE-2024-38382）。这里的匹配数是披露回归台账，不是 Precision/Recall。各报告保留其 status、解析完整性、固定 commit/tree/blob 和原始 finding；不通过标注把 detector 的 validated_vulnerability 改成 1。
+
+下一步应从八仓固定集 30 条候选中完成逐条人工分层复核，优先覆盖 21 条候选路径为 partial 的记录；同时把本包 9 组披露样本冻结为开发回归，另建按根因隔离的独立 holdout。对 CVE-2022-42463 网络回调、CVE-2023-25176 TLV 长度和 CVE-2024-39775 拒绝返回码分别维持未覆盖/unknown，不为提高披露命中数而把不同入口或效果语义塞进现有规则。
