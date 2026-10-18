@@ -92,7 +92,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.5"
+    version = "0.12.6"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -184,24 +184,29 @@ class IpcInterfaceDetector:
                 ),
             ))
         permission_findings = []
-        for fn, line, grant_name in analysis.privileged_permission_grants():
+        for fn, line, grant_name, path_note in analysis.privileged_permission_grants():
             permission_findings.append(DetectorFinding(
                 file=fn.file,
                 line=line,
                 symbol=fn.qualified,
                 rule_id="ipc.auth.privileged-app-bypass",
-                message=("Authorization-policy candidate: the component contains an "
-                         "OnGetPasteData IPC entry and a GetPasteData/VerifyPermission implementation "
-                         "where default-app/IME predicate " + grant_name + " contributes to the grant. "
-                         "This lightweight rule does not fully resolve the cross-class call edge; review "
-                         "whether this alternate grant exceeds the documented permission policy."),
+                message=("Authorization-policy candidate: default-app/IME predicate " + grant_name
+                         + " contributes to the VerifyPermission grant. "
+                         + (("Source-derived path within the scanned scope: " + path_note + ". "
+                             "Product build reachability and other overrides remain unverified. ")
+                            if path_note else
+                            "No unique source-derived entry-to-implementation path was established. ")
+                         + "Review whether this alternate grant exceeds the documented permission policy."),
                 evidence_type="syntax",
                 candidate_cwe="CWE-862",
                 evidence_obligations=(
                     EvidenceObligation(
                         "call_path_binding",
-                        "Bind the OnGetPasteData entry to this GetPasteData/VerifyPermission implementation "
-                        "through the pinned interface and virtual-dispatch hierarchy.",
+                        (("The pinned scan resolves this entry through one source-derived implementation "
+                          "to this verifier; verify product registration, dispatch and any overrides "
+                          "outside the scanned scope.") if path_note else
+                         "Bind the OnGetPasteData entry to this GetPasteData/VerifyPermission implementation "
+                         "through the pinned interface and virtual-dispatch hierarchy."),
                     ),
                     EvidenceObligation(
                         "grant_policy",

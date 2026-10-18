@@ -21,7 +21,7 @@ class PasteStub {
 };
 """
 SERVICE = """
-class PasteService {
+class PasteService : public PasteStub {
   void SubscribeObserver(Observer *observer) {
     AddObserver(observer);
   }
@@ -143,13 +143,36 @@ class UnboundedObserverTests(unittest.TestCase):
         self.assertEqual(len(finding_rule(run_service(decoy),
                                           "ipc.resource.unbounded-observer-registration")), 1)
 
-    def test_default_ime_grant_on_sensitive_ipc_path_is_candidate(self):
+    def test_default_ime_grant_on_sensitive_ipc_path_is_source_bound_candidate(self):
         findings = finding_rule(run_service(SERVICE), "ipc.auth.privileged-app-bypass")
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0].candidate_cwe, "CWE-862")
         self.assertEqual(findings[0].symbol, "VerifyPermission")
+        self.assertIn("Source-derived path within the scanned scope", findings[0].message)
+        self.assertIn("PasteStub::OnGetPasteData", findings[0].message)
+        self.assertIn("PasteService::GetPasteData", findings[0].message)
+        self.assertIn("product registration, dispatch and any overrides", " ".join(
+            item.description for item in findings[0].evidence_obligations
+            if item.kind == "call_path_binding"))
         self.assertEqual({item.kind for item in findings[0].evidence_obligations},
                          {"call_path_binding", "grant_policy", "entry_reachability", "disclosure_impact"})
+
+    def test_missing_hierarchy_keeps_candidate_without_claiming_a_call_path(self):
+        unlinked = SERVICE.replace("class PasteService : public PasteStub {", "class PasteService {")
+        findings = finding_rule(run_service(unlinked), "ipc.auth.privileged-app-bypass")
+        self.assertEqual(len(findings), 1)
+        self.assertIn("No unique source-derived entry-to-implementation path was established",
+                      findings[0].message)
+        self.assertNotIn("Source-derived path within the scanned scope", findings[0].message)
+
+    def test_ambiguous_implementers_keep_candidate_without_path_credit(self):
+        alternate = SERVICE.replace("class PasteService : public PasteStub {",
+                                    "class AlternatePasteService : public PasteStub {")
+        findings = finding_rule(run_service(SERVICE + "\n" + alternate),
+                                "ipc.auth.privileged-app-bypass")
+        self.assertEqual(len(findings), 2)
+        self.assertTrue(all("No unique source-derived entry-to-implementation path was established"
+                            in finding.message for finding in findings))
 
     def test_removing_default_ime_grant_suppresses_candidate(self):
         fixed = SERVICE.replace(

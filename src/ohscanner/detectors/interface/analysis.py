@@ -620,11 +620,51 @@ class Interpreter:
         return tuple(sinks)
 
     def privileged_permission_grants(self):
-        """Find a default-app exemption that directly grants pasteboard reads."""
-        if not any(fn.name == "OnGetPasteData"
-                   and re.search(r"\bGetPasteData\s*\(", fn.text(fn.body))
-                   for fn in self.functions):
+        """Find a default-app exemption and bind it to the scanned IPC path.
+
+        Keep conservative candidate discovery when a unique source hierarchy is
+        unavailable, but attach a concrete path only when the source index resolves
+        the stub virtual call to one implementation and that implementation calls
+        the verifier. A missing or partial class graph is not proof that no path
+        exists.
+        """
+        roots = [fn for fn in self.functions
+                 if fn.name == "OnGetPasteData"
+                 and re.search(r"\bGetPasteData\s*\(", fn.text(fn.body))]
+        if not roots:
             return ()
+
+        paths_by_owner = {}
+        if self.index is not None:
+            for root in roots:
+                entry = self.index.one_hop_definition(root.owner, "GetPasteData")
+                if entry is None:
+                    continue
+                implementations = [
+                    fn for fn in self.functions_by_owner_name.get(
+                        (entry.owner.rsplit("::", 1)[-1], entry.name), ())
+                    if fn.file == entry.file and fn.qualified == entry.qualified
+                ]
+                if len(implementations) != 1:
+                    continue
+                implementation = implementations[0]
+                if not re.search(r"\bVerifyPermission\s*\(",
+                                 implementation.text(implementation.body)):
+                    continue
+                root_line = root.body.start_point[0] + 1
+                implementation_line = implementation.body.start_point[0] + 1
+                root_name = (root.qualified if "::" in root.qualified or not root.owner
+                             else root.owner + "::" + root.name)
+                implementation_name = (
+                    implementation.qualified if "::" in implementation.qualified
+                    or not implementation.owner else implementation.owner + "::" + implementation.name)
+                paths_by_owner.setdefault(implementation.owner, []).append(
+                    "source-indexed within this scope: " + root_name + " at "
+                    + root.file + ":" + str(root_line) + " -> "
+                    + implementation_name + " at " + implementation.file + ":"
+                    + str(implementation_line) + " -> VerifyPermission"
+                )
+
         results = []
         for verifier in self.functions:
             if verifier.name != "VerifyPermission" or not verifier.owner:
@@ -646,7 +686,9 @@ class Interpreter:
             if not callers:
                 continue
             line = verifier.body.start_point[0] + 1 + body[:grant.start()].count("\n")
-            results.append((verifier, line, privilege.group(1)))
+            path_notes = paths_by_owner.get(verifier.owner, ())
+            path_note = path_notes[0] if len(set(path_notes)) == 1 else None
+            results.append((verifier, line, privilege.group(1), path_note))
         return tuple(results)
     def _build_macro_catalog(self, units):
         """Catalogue the scan's own `#define`s, headers first.
