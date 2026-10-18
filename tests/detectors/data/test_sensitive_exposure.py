@@ -101,6 +101,36 @@ class SensitiveTests(unittest.TestCase):
                             for item in finding.evidence_obligations))
         self.assertIn('heuristic candidates are incomplete', ' '.join(run.limitations))
 
+    def test_wifi_log_macro_detects_preshared_key_candidate(self):
+        source = 'void dump(const char *preSharedKey) { WIFI_LOGI("%{public}s", preSharedKey); }'
+        c = self.context(source)
+        run = SensitiveExposureDetector().detect(c, c.units)
+        findings = [item for item in run.findings if item.rule_id == 'data.log.sensitive-value']
+        self.assertEqual(1, len(findings))
+        self.assertIn('WIFI_LOGI public operand', findings[0].message)
+        self.assertEqual('CWE-532', findings[0].candidate_cwe)
+        self.assertEqual(run.status, 'blocked')
+
+    def test_switch_subtree_preserves_sensitive_wifi_log_candidate(self):
+        source = '''void parse(int mode, const char *preSharedKey) {
+            switch (mode) {
+                case 1:
+                    WIFI_LOGI("PreSharedKey is %{public}s", preSharedKey);
+                    break;
+                default:
+                    break;
+            }
+        }'''
+        c = self.context(source)
+        run = SensitiveExposureDetector().detect(c, c.units)
+        findings = [item for item in run.findings if item.rule_id == 'data.log.sensitive-value']
+        self.assertEqual(1, len(findings))
+        self.assertEqual(4, findings[0].line)
+        self.assertEqual('CWE-532', findings[0].candidate_cwe)
+        self.assertEqual(run.status, 'blocked')
+        self.assertTrue(any('switch_statement' in gap and 'may-flow' in gap
+                            for gap in run.limitations))
+
     def test_unknown_revision_heuristic_fixed_safe_and_identifier_controls(self):
         cases = (
             ('positive', 'void f(const char *password) { HILOG_ERROR(1,"%{public}s",password); }', 1),
@@ -137,6 +167,28 @@ class SensitiveTests(unittest.TestCase):
                       'HTTP_API_KEY_FETCH', 'WSI_TOKEN_HTTP', 'token'):
             with self.subTest(value=value):
                 self.assertFalse(looks_sensitive_name(value))
+        for value in ('passwordId', 'encryptedPassword.length', 'PASSWORD_NO_HIDDEN_LEN',
+                      'PASSWORD_ALLOWED_SPECIAL', 'SEC_ASSET_TAG_SECRET', 'keyBytes.size',
+                      'passwordCount', 'passwordType'):
+            with self.subTest(value=value):
+                self.assertFalse(looks_sensitive_name(value))
+        for value in ('PreSharedKey', 'pre_shared_key', 'PassWordAnonymize', 'PSK'):
+            with self.subTest(value=value):
+                self.assertTrue(looks_sensitive_name(value))
+
+    def test_unknown_profile_recognizes_preshared_key_with_password_casing(self):
+        source = '\n'.join((
+            'std::string PassWordAnonymize(const std::string value) { return value; }',
+            'void dump(Config config) {',
+            '    HILOG_INFO(1, "%{public}s", PassWordAnonymize(config.preSharedKey).c_str());',
+            '}',
+        ))
+        c = self.context(source)
+        run = SensitiveExposureDetector().detect(c, c.units)
+        findings = [item for item in run.findings if item.rule_id == 'data.log.sensitive-value']
+        self.assertEqual(1, len(findings))
+        self.assertIn('PassWordAnonymize', findings[0].message)
+        self.assertEqual(run.status, 'blocked')
 
     def test_partial_unknown_revision_retains_heuristic_candidate_as_blocked(self):
         source = 'void f(const char *secret) { HILOG_INFO(1,"%{public}s",secret); }'
