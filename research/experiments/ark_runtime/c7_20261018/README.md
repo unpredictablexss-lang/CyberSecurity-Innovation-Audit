@@ -9,7 +9,7 @@ Recorded 2026-10-18 (Asia/Shanghai). This is a development replay of the already
 - Parser/toolchain: CPython 3.13.9, Git for Windows 2.46.2, Tree-sitter 0.26.0, tree-sitter-c 0.24.2, tree-sitter-cpp 0.23.4.
 - Profile/scope: `light-ast`, one path: `ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp`.
 - Preprocessing: none; macro expansion disabled. Build profile remains the unverified assumption `NDEBUG=1;ENABLE_ASM_ASSERT=0`.
-- The final scoped replay is [run_final/manifest.json](run_final/manifest.json); verified recovered commit/tree/blob identities are in [source_objects_manifest.json](source_objects_manifest.json). It records exact target commit/tree/path/blob/source bindings, parse status, candidate counts, coverage and obligations. A non-target subtree object is still missing, so full-tree inventory remains blocked; the run makes no whole-repository completeness claim.
+- The final scoped replay is [run_final/manifest.json](run_final/manifest.json); verified recovered commit/tree/blob identities are in [source_objects_manifest.json](source_objects_manifest.json). It records exact target commit/tree/path/blob/source bindings, parse status, candidate counts, coverage and obligations. A non-target subtree object is still missing, so full-tree inventory remains blocked; the run makes no whole-repository completeness claim. The SHA-256 index for the result, scripts, freeze records and C1/C2 review inputs is [run_final/integrity.json](run_final/integrity.json).
 
 ## Reproduce on this workstation
 
@@ -60,3 +60,6 @@ No separately sourced, independently reviewed safe historical version was found 
 All five target files parse as `partial`; all runs are `blocked`. The incomplete recovered tree set prevents the normal full-repository inventory loader from completing: a non-target tree object is absent. Because the requested scope is exactly the one bound file, the replay verifies the exact commit/tree/path/blob/source SHA, then runs the frozen shared indexer and Runner on that exact Git blob as a one-file `git_object` context. The manifest records this input mode and the inventory blocker. It makes no whole-repository completeness claim. The scoped C7 replay is complete; the full C3 evidence gate remains blocked on product build/preprocessing context, dependency semantics and full-tree provenance.
 
 The 0.7.0 applicability contract freezes source-identity-independent selection. Its own limitations say the operation semantics originated in development work and were not independently checked against changed helper implementations; no preprocessing, complete header/type context, or verified product build profile is available. Those obligations remain unknown. Zero findings do not establish safe or miss.
+
+
+`run_001/manifest.json` is the preliminary attempt and is superseded by `run_final/manifest.json`; use only the latter for this recorded result.
