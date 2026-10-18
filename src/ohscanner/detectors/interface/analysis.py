@@ -116,6 +116,19 @@ def _returned_fact(value):
     return frozenset()
 
 
+def _returned_caller_class(value):
+    """The caller class established by a true-valued helper return, if any.
+
+    Unlike a permission fact, a caller-role predicate must remain on the
+    caller-class channel when summarized through a local boolean helper.
+    """
+    if (value.kind == "predicate" and len(value.predicate) >= 3
+            and value.predicate[0] == "caller_class"
+            and value.predicate[2] is True):
+        return frozenset({value.predicate[1]})
+    return frozenset()
+
+
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
@@ -1175,7 +1188,7 @@ class Interpreter:
                      if side.kind == "constant" else None)
             if entry is None:
                 continue
-            if other.kind == "caller" and other.subject == "token":
+            if other.kind == "caller" and other.subject in ("token", "full_token"):
                 because = "a caller TokenID, which is a different identity domain from a UID"
             elif other.kind == "request":
                 because = "a request-derived value, which is not the caller"
@@ -1606,7 +1619,9 @@ class Interpreter:
                 if held is not None and held.kind == "proxy":
                     self.boundary(fn, node, name, state)
             if name in self.policy.caller_token_calls | self.policy.caller_uid_calls:
-                return Value("self" if state.reset else "caller", text, "uid" if name in self.policy.caller_uid_calls else "token")
+                subject = ("uid" if name in self.policy.caller_uid_calls else
+                           "full_token" if name == "GetCallingFullTokenID" else "token")
+                return Value("self" if state.reset else "caller", text, subject)
             if name in self.policy.self_calls:
                 return Value("self", text, "uid" if name in ("getuid","geteuid") else "token")
             if name == "ResetCallingIdentity":
@@ -1620,7 +1635,7 @@ class Interpreter:
                 # Only a token read as the calling token is the original caller.
                 # The service's own saved identity is a different principal.
                 state.forwarded = bool(args and args[0].kind == "caller"
-                                       and args[0].subject == "token")
+                                       and args[0].subject in ("token", "full_token"))
                 return UNKNOWN
             if name == "ReadInterfaceToken":
                 rv = state.env.get(receiver, UNKNOWN)
@@ -1660,6 +1675,9 @@ class Interpreter:
                     return held
             if name in ("GetTokenTypeFlag", "GetTokenType") and args and args[0].kind=="caller" and args[0].subject=="token":
                 return Value("caller_type",args[0].key)
+            if (callee == "TokenIdKit::IsSystemAppByFullTokenID" and len(args) == 1
+                    and args[0].kind == "caller" and args[0].subject == "full_token"):
+                return Value("predicate", predicate=("caller_class", "system_app", True))
             if name=="GetNativeTokenInfo" and len(args)>1 and args[0].kind=="caller" and args[0].subject=="token":
                 state.env[args[1].key]=Value("caller_info",args[1].key)
             if name=="compare" and args:
@@ -1772,6 +1790,10 @@ class Interpreter:
                         *(s.auth | _returned_fact(s.returned) for s in good)) - state.auth
                     if common:
                         return Value("predicate", predicate=("auth", sorted(common)[0], True))
+                    common_class = frozenset.intersection(
+                        *(s.caller_class | _returned_caller_class(s.returned) for s in good)) - state.caller_class
+                    if common_class:
+                        return Value("predicate", predicate=("caller_class", sorted(common_class)[0], True))
                 self.limitations.add("Unresolved multi-outcome helper return: " + helper.qualified)
                 return UNKNOWN
             if name in self.policy.boolean_permissions | self.policy.result_permissions:
