@@ -1,0 +1,82 @@
+{
+  "schema": "ohscanner.hash-manifest.v1",
+  "algorithm": "SHA-256",
+  "scope": "research-only Ark Runtime exception propagation replay and implementation inputs",
+  "files": [
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/README.md",
+      "size_bytes": 2102,
+      "sha256": "b6ee1b0b9a52e0ba2a7177a8f9d3b3e7116805d0dd848c8f6c4efc3af89652b3"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/commands.txt",
+      "size_bytes": 518,
+      "sha256": "5b42f8faf20be5016c5fedd420c8862c126d673b2d829f2f0a7a24a28eb61ac5"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/build_hash_manifest.py",
+      "size_bytes": 1896,
+      "sha256": "95b4dd9cc0f9e3ad9a86966ab272804bcf89d7ead34f8f15d1a9affa91a7c6b4"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/replay_exception_rule.py",
+      "size_bytes": 8234,
+      "sha256": "59073fae8e4ef46850b81e40bfced03f5a6a1f2f6561897976dc36939c56b32f"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/raw-results.json",
+      "size_bytes": 17323,
+      "sha256": "2821ac104723a157234ed463238fd9d476d7a6ecb4b8ee6b73d0375e3fafa36e"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/run-summary.json",
+      "size_bytes": 962,
+      "sha256": "61d8ce6ba9eb9537df936c3eed95ff7178258c217a8ddc417e7193e80db25b1f"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exception-rule-20261018/test-results.txt",
+      "size_bytes": 929,
+      "sha256": "a4d642a80b1d8d2545e6f7bac5cc34ba094a7bd5588dadd0b972fc7c58b23c07"
+    },
+    {
+      "path": "research/full_scan_20261018/lanes/c/exception_protection.py",
+      "size_bytes": 9464,
+      "sha256": "07676e040393af365d1cf936f538239af5f1398de4613d702a8b42c5db319026"
+    },
+    {
+      "path": "research/full_scan_20261018/lanes/c/analysis.py",
+      "size_bytes": 15081,
+      "sha256": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee"
+    },
+    {
+      "path": "research/full_scan_20261018/lanes/c/model.py",
+      "size_bytes": 5341,
+      "sha256": "ff23773b1c06a8d2f19bf60892ea246b55650e9f2d198f5b578293cc3248e402"
+    },
+    {
+      "path": "research/full_scan_20261018/lanes/c/type_origin.py",
+      "size_bytes": 21903,
+      "sha256": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795"
+    },
+    {
+      "path": "research/tests/test_ark_runtime_exception_protection_detector.py",
+      "size_bytes": 4230,
+      "sha256": "3b281321dddb6fbd4c6ce88ae3aea2f884e67f29940e074eb3dfc73f8cb163d7"
+    },
+    {
+      "path": "research/tests/test_ark_runtime_exception_guard.py",
+      "size_bytes": 5139,
+      "sha256": "038012260587630e6a53eab1c3dfd162f1e4799b05b8a0c08bb22d8fcdd86347"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exact-source-20261018/sources/exception-parent.cpp",
+      "size_bytes": 170756,
+      "sha256": "472c9b11722ef5df40bcd6a3e743a5a209bce66b6d3e0f41351da97c6de04a0c"
+    },
+    {
+      "path": "research/experiments/ark-runtime-exact-source-20261018/sources/exception-fix.cpp",
+      "size_bytes": 170810,
+      "sha256": "cd4614fa6a4920d7e2ab850ce027d555421d49f40d99c509b0cab980abb342dc"
+    }
+  ]
+}

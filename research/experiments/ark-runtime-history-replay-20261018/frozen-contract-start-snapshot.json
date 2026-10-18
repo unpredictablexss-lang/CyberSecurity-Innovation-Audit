@@ -1,0 +1,23 @@
+{
+  "schema": "c-line-algorithm-freeze-v1",
+  "reconstruction_note": "Metadata captured from the freeze file at task start before the live worktree version changed. This is not a byte-for-byte copy of the original JSON; its original file digest was not captured.",
+  "detector": "ohscanner.ark.runtime.type_safety",
+  "version": "0.3.1",
+  "rule_id": "ark.runtime.typedarray-store-type-origin",
+  "model_sha256": "ec13c5edf488ade409fd6f13709193879a3bbc2a58f3129017786c7559ccc575",
+  "implementation_sha256": {
+    "research/full_scan_20261018/lanes/c/analysis.py": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee",
+    "research/full_scan_20261018/lanes/c/detector.py": "d18b7bee15cb778efa00963c19293e7c69f3195e8827ea6075a4ffe5eb28e5bc",
+    "research/full_scan_20261018/lanes/c/model.py": "299b493a9bf5ae3d7fb1a8b15f352dbabb0adcc852c3803202b29d4ef363f3f3",
+    "research/full_scan_20261018/lanes/c/runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "research/full_scan_20261018/lanes/c/syntax.py": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+    "research/full_scan_20261018/lanes/c/type_origin.py": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795"
+  },
+  "source_profiles": [
+    {"repository": "openharmony/arkcompiler_ets_runtime", "commit": "830e85b40240677039719fcbf14f721ad3b19050", "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4", "target_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018", "creator_blob": "757b8d050d306d349822600deacb295c7a54245e"},
+    {"repository": "openharmony/arkcompiler_ets_runtime", "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9", "tree": "82af11ced4297818410ccf61906b703d25b69165", "target_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c", "creator_blob": "757b8d050d306d349822600deacb295c7a54245e"}
+  ],
+  "verification": {"binding_and_historical_control_tests": 11, "result": "passed", "fixtures_are_partial_source_replays": true, "public_runner_registered": false, "admission_status": "blocked", "execution_enabled": false},
+  "freeze_scope": "Research holdout only. Any implementation/model change requires a new detector version and invalidates this holdout packet for evaluation.",
+  "limitations": ["Historical Ark Runtime target AST remains partial; research analysis preserves parse_dependency_contamination_unknown.", "No product GN compile profile, complete preprocessing, compiler type resolution, or runtime species execution is included.", "Independent reviewer labels are not present; do not calculate precision, recall, or root-cause rates from developer controls."]
+}

@@ -1,0 +1,119 @@
+{
+  "schema": "ohscanner.ark-runtime-build-profile.v1",
+  "profile_id": "C1-ark-runtime-hihope-rk3568-20261018",
+  "status": "blocked",
+  "scope": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+    "target_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "target_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+    "target_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+    "product_candidate": "hihope/rk3568"
+  },
+  "pinned_inputs": [
+    {
+      "repository": "openharmony/vendor/hihope",
+      "commit": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+      "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+      "path": "rk3568/config.json",
+      "blob": "fc7fed801d07f19f05a752878e738d8d40f1bc01",
+      "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408"
+    },
+    {
+      "repository": "openharmony/device/board/hihope",
+      "commit": "5d368fb765920c2b1cad41eb86164563461a7074",
+      "tree": "992544086dffa1a73ea444f7a22eeed25b149107",
+      "path": "rk3568/config.gni",
+      "blob": "12776e4d60dea146dd31c91ca93f84b3e41f6920",
+      "sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4"
+    }
+  ],
+  "product_facts": {
+    "product_name": "rk3568",
+    "board": "rk3568",
+    "device_build_path": "device/board/hihope/rk3568",
+    "type": "standard",
+    "target_cpu": "arm",
+    "board_arch": "armv8-a",
+    "board_cpu": "cortex-a55",
+    "board_toolchain_type": "clang",
+    "evidence_class": "directly observed from manifest-pinned input blobs",
+    "runtime_snapshot_consistency": "commit, tree, target blob and target SHA-256 verified from the three local Git object databases"
+  },
+  "translation_unit_profile": {
+    "compiler_path": null,
+    "compiler_version": null,
+    "target_triple": null,
+    "working_directory": null,
+    "command_argv": null,
+    "defines": null,
+    "include_search_order": null,
+    "generated_inputs": null,
+    "dependency_closure": null,
+    "compile_database": null,
+    "gn_args": null,
+    "status": "unknown: no matching product build record found"
+  },
+  "evidence_index": [
+    {
+      "id": "manifest-current",
+      "path": "D:/openHarmonyScanner/openharmony-manifest-current-20261018.xml",
+      "bytes": 117629,
+      "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
+      "source": "local current manifest snapshot; read-only file hash",
+      "claims": ["runtime revision", "vendor revision", "board revision"]
+    },
+    {
+      "id": "target-build-gn",
+      "path": "openharmony/arkcompiler/ets_runtime/BUILD.gn",
+      "bytes": 82005,
+      "sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89",
+      "source": "local checkout; not accepted as exact-commit content without its verified blob id",
+      "claims": ["GN source contains libark_jsruntime build declarations; not sufficient to resolve product compile command"]
+    },
+    {
+      "id": "product-config",
+      "path": "vendor/hihope/rk3568/config.json",
+      "bytes": 10569,
+      "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408",
+      "source": "blob fc7fed801d07f19f05a752878e738d8d40f1bc01 in pinned vendor commit",
+      "claims": ["rk3568 product identity and selected product properties"]
+    },
+    {
+      "id": "board-config",
+      "path": "device/board/hihope/rk3568/config.gni",
+      "bytes": 812,
+      "sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4",
+      "source": "blob 12776e4d60dea146dd31c91ca93f84b3e41f6920 in pinned board commit",
+      "claims": ["armv8-a, cortex-a55 and clang board declarations"]
+    },
+    {
+      "id": "target-source",
+      "path": "arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "bytes": 150610,
+      "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "source": "git show from exact Ark Runtime commit; blob 68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "claims": ["source content identity"]
+    }
+  ],
+  "input_file_checks": [
+    {"path_from_workspace_parent": "openharmony-manifest-current-20261018.xml", "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55"},
+    {"path_from_workspace_parent": "openharmony/vendor/hihope/rk3568/config.json", "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408"},
+    {"path_from_workspace_parent": "openharmony/device/board/hihope/rk3568/config.gni", "sha256": "ca368f4a9db0302b4cd6c656c30e0c196070591251ac8777079861c0fd7d45b4"},
+    {"path_from_workspace_parent": "openharmony/arkcompiler/ets_runtime/ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp", "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"},
+    {"path_from_workspace_parent": "openharmony/arkcompiler/ets_runtime/BUILD.gn", "sha256": "8e5f0d4d829578200b75175ea81e8ef2c8370fe4c331ab6a3b255cad95988a89"}
+  ],
+  "missing_evidence": [
+    "matching product out/<product>/compile_commands.json entry or equivalent Ninja command record",
+    "the matching args.gn and GN-generated build graph for the same product build",
+    "compiler binary identity, version output, target triple and toolchain package/hash",
+    "generated headers and complete depfile/dependency closure with content hashes",
+    "provenance linking those build outputs to the manifest and all pinned project revisions"
+  ],
+  "fail_closed": {
+    "profile_usable": false,
+    "rule": "Do not synthesize macros, include flags, compiler identity, or generated inputs from product JSON or source BUILD.gn alone. Missing or mismatched evidence keeps status blocked and replay exits nonzero.",
+    "digest_changes_on": ["compiler identity/version", "target triple", "ordered argv", "defines", "ordered include paths", "generated input hashes", "dependency closure hashes", "pinned source identities"]
+  }
+}

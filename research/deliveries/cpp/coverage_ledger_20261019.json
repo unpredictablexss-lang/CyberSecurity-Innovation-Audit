@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-19",
+  "lane": "A_CPP",
+  "status_dimensions": ["public_disclosure_fact", "source_root_cause_match", "static_detection", "component_dynamic_reproduction", "product_vulnerability_confirmation"],
+  "cases": [
+    {
+      "case_id": "libtiff-cve-2025-9900",
+      "cve_advisory": "CVE-2025-9900",
+      "sources_verification_date": {"date": "2026-10-19", "links": ["https://access.redhat.com/security/cve/cve-2025-9900", "https://gitlab.com/libtiff/libtiff/-/issues/704", "https://gitlab.com/libtiff/libtiff/-/merge_requests/732", "https://libtiff.gitlab.io/libtiff/releases/v4.7.1.html", "https://www.openwall.com/lists/oss-security/2025/09/26/3"]},
+      "component": "libtiff",
+      "root_cause": "Unsigned output-row subtraction (rheight - img.height) feeds scaled pointer offset raster + delta*rwidth; when caller's crop/output height is less than image height, the underflow can point before raster.",
+      "lane": "A_CPP",
+      "affected_versions_basis": "Upstream issue/MR and v4.7.1 release note identify issue #704 and fix; exact affected product versions are not established.",
+      "source_identities": {
+        "vulnerable": {"commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e", "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a", "file": "libtiff/tif_getimage.c", "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e"},
+        "fixed": {"commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99", "parent": "14da830be4bf4d6d3daafcbd892426aa6c164242", "tree": "77361ef7262189e16a2010b5c333f6b275d17f09", "file": "libtiff/tif_getimage.c", "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db"},
+        "openharmony": {"commit": "d4a0516c477dfbaf1153ae295893ab75aadd63d4", "tree": "33beab3b3b50fe6678b1a74ed48ac3b69084c6ec", "file": "libtiff/tif_getimage.c", "blob": "5121e85b9eb2bc734b557892c0968f629d370b82", "sha256": "4b664c80e2e208c2a9cd33042419f69e590ff088c1a3befe99581d1b1df5471a"}
+      },
+      "product_build_association": "BUILD.gn includes tif_getimage.c; actual product build/profile and shipped binary association unknown.",
+      "existing_detector_rule": "ohcpp-integer-bounds-pointer-offset-underflow-candidate-004; detector version 0.2.4",
+      "baseline_scan": {"result": "partial_no_diagnostic", "scope": ["libtiff/tif_getimage.c", "libtiff/tiffio.h"], "note": "M2 production CLI; both files parser-partial/blocked, so this is not a complete negative."},
+      "miss_reason": "Baseline rule lacked modeling for unsigned dimension subtraction feeding a scaled pointer offset; parser partial limited whole-file proof.",
+      "implementation_status": "implemented_and_registered_in_existing_integer_bounds_detector",
+      "controls": {"positive": "v4.7.0 and OpenHarmony d4 source each produce candidate at source line 621", "fixed": "exact fix commit 3e0dcf0 produces no same-rule diagnostic", "safe": "lower-bound early-return / positive guard fixture quiet", "unrelated": "signed/scalar lookalikes quiet", "variant": "renamed pointer/member same-mechanism holdout fixture post-freeze detects; synthetic only", "incomplete": "parser partial is explicitly blocked/limited"},
+      "real_source_rescan": "Vulnerable upstream v4.7.0: 1 candidate; fixed patch commit: 0 same-rule candidates; OpenHarmony d4a0516: 1 candidate at line 621. All M2 runs report partial parser limitations; candidate evidence only.",
+      "status": {"public_disclosure_fact": "verified", "source_root_cause_match": "verified_by_patch_and_source", "static_detection": "candidate_partial_parse", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"},
+      "evidence_path": "research/evidence/cpp/libtiff_cve_2025_9900_20261018/",
+      "remaining_blockers": ["parser is partial on source scope: tif_getimage.c errors at 1383, 1393, 1687, 1707, missing at 1831/error 1833 around UNROLL8 macro syntax; tiffio.h missing nodes at 483, 485, 487, 489, 496, 498 and 650 around compiler attributes/configuration", "no component build/runtime reproduction", "actual product build profile and reachable call context unknown"],
+      "next_step": "Submit the saved shared-parser prerequisite request for explicit pinned preprocessing/compile configuration; replay the exact two-file vulnerable/fixed scope and require complete parse or retain partial/blocked. Separately build isolated v4.7.0/fixed controls once a usable build profile/toolchain is available."
+    },
+    {
+      "case_id": "libpng-ghsa-qvg3-h654-xq3j",
+      "cve_advisory": "GHSA-qvg3-h654-xq3j",
+      "sources_verification_date": {"date": "2026-10-19", "links": ["https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j"]},
+      "component": "libpng", "root_cause": "Use-after-free / stale pointer lifecycle during zlib input handling (advisory-level description; exact source path not established in this round).", "lane": "A_CPP",
+      "affected_versions_basis": "Advisory says affected through 1.6.58 and fixed 1.6.59; local archive is 1.6.55.",
+      "source_identities": {"openharmony": {"commit": "e57b1079564a02a50321ec528aa6e41884979d32", "tree": "02b17492f4490ff2e4d17ba74e2080358a500059", "archive_blob": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094", "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6"}},
+      "product_build_association": "GN builds extracted archive; product profile unverified.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not analyzed beyond advisory/source inventory.", "implementation_status": "unanalysed",
+      "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run",
+      "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "unverified", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"},
+      "evidence_path": "research/evidence/cpp/ (archive/source hash notes from 2026-10-19 work session)", "remaining_blockers": ["precise upstream fix commit and reproducible vulnerable/fixed source pair not yet established", "product build identity unknown"], "next_step": "Pin exact advisory fix commit and source path; scan local extracted 1.6.55 before selecting this family."
+    },
+    {
+      "case_id": "libpng-ghsa-m4pc-p4q3-4c7j",
+      "cve_advisory": "GHSA-m4pc-p4q3-4c7j",
+      "sources_verification_date": {"date": "2026-10-19", "links": ["https://github.com/pnggroup/libpng/security/advisories/GHSA-m4pc-p4q3-4c7j"]},
+      "component": "libpng", "root_cause": "Cross-struct aliased palette/transparency allocations create a stale pointer/UAF when one owner frees storage still consumed by row transforms; patch intends independent buffers.", "lane": "A_CPP",
+      "affected_versions_basis": "Local archive 1.6.55 is within advisory affected range. Install script lists CVE-2026-33416.patch, but dry-run reported pngset.c hunk failure and truncated patch; script catches patch failure and continues, so backport application is unconfirmed.",
+      "source_identities": {"openharmony": {"commit": "e57b1079564a02a50321ec528aa6e41884979d32", "tree": "02b17492f4490ff2e4d17ba74e2080358a500059", "archive_blob": "975cee2aca0eda6bfa3e9b7a1336c956fcf1b094", "archive_sha256": "71a2c5b1218f60c4c6d2f1954c7eb20132156cae90bdb90b566c24db002782a6", "source_files_sha256": {"pngread.c": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6", "pngrutil.c": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e", "pngset.c": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"}}, "upstream_fix_reference": "aa77ef3 (short reference only; full identity not yet verified)"},
+      "product_build_association": "GN compiles 1.6.55 extracted source; exact applied patch set/build output unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle; patch application ambiguity blocks fixed-source baseline pairing.", "implementation_status": "unanalysed; patch dry-run discrepancy recorded",
+      "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run",
+      "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "source_and_patch_partially_inspected", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"},
+      "evidence_path": "openharmony/third_party/libpng/CVE-2026-33416.patch (source tree; dry-run only; no package modifications)", "remaining_blockers": ["patch is malformed/truncated or incompatible at pngset.c hunk #2", "actual build install.py catches failure and continues; compiled patch state unknown", "no dynamic reproduction"], "next_step": "Investigate the failed pngset.c hunk against pristine 1.6.55 and verify actual build patch output before any root-cause detector work."
+    },
+    {
+      "case_id": "curl-cve-2026-92391",
+      "cve_advisory": "CVE-2026-92391",
+      "sources_verification_date": {"date": "2026-10-19", "links": ["https://curl.se/docs/CVE-2026-92391.html"]},
+      "component": "curl", "root_cause": "Recursive MIME cleanup through nested parts can exhaust stack; official advisory says affected 7.56.0–8.22.0 and fix reference d7546809d5bd548b69ec49fca2 (short hash).", "lane": "A_CPP",
+      "affected_versions_basis": "Local source 8.8.0 within advisory range; GN includes lib/mime.c.", "source_identities": {"openharmony": {"commit": "1386bb128bb060b284309397b97adcaaec21c003", "tree": "b96addd5821a610eb0ceacc7e7a83deda64690c2", "file": "lib/mime.c", "blob": "1f94afee2c93300a4bf70e743dbd552075cb8b1c", "sha256": "e3a41025c00fa47b1b23bff6d28ac66119b7d5bd13035e3436c817a6ca53327b"}},
+      "product_build_association": "Build file includes mime.c; actual profile/reachability unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle.", "implementation_status": "source inventory only", "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run", "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "likely_recursive_cleanup_chain_source_inspected", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"}, "evidence_path": "source inventory notes (2026-10-19)", "remaining_blockers": ["full fix commit identity and upstream before/after source pair not pinned", "no runtime trigger proof"], "next_step": "Resolve full upstream patch identity, enumerate recursive cleanup call graph and inspect depth controls before implementing." 
+    },
+    {
+      "case_id": "cjson-cve-2026-67216",
+      "cve_advisory": "CVE-2026-67216", "sources_verification_date": {"date": "2026-10-19", "links": ["https://access.redhat.com/security/cve/cve-2026-67216"]},
+      "component": "cJSON", "root_cause": "Potential exponential comparison complexity in recursive cJSON_Compare on attacker-shaped matching documents; application invocation is a required condition per advisory.", "lane": "A_CPP", "affected_versions_basis": "Local cJSON source 1.7.19; exact affected/fixed boundary not established.", "source_identities": {"openharmony": {"commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748", "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856", "file": "cJSON.c", "blob": "152b2caa479c9f448001652913c980a6dafb82e0", "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"}},
+      "product_build_association": "Component source identified; product use of cJSON_Compare unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle.", "implementation_status": "source inventory only", "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run", "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "not_proven", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"}, "evidence_path": "source inventory notes (2026-10-19)", "remaining_blockers": ["no upstream fix identified", "no component/application invocation evidence"], "next_step": "Find an upstream mitigation and independent complexity regression before assessing detector feasibility." 
+    },
+    {
+      "case_id": "cjson-cve-2026-67215",
+      "cve_advisory": "CVE-2026-67215", "sources_verification_date": {"date": "2026-10-19", "links": ["https://access.redhat.com/security/cve/cve-2026-67215"]},
+      "component": "cJSON", "root_cause": "Advisory describes recursive delete stack exhaustion after JSON Patch add/copy can graft duplicated trees; standard versus ohos_lite build controls whether cJSON_Utils.c is compiled.", "lane": "A_CPP", "affected_versions_basis": "Local source 1.7.19; fixed boundary/upstream remediation not identified.", "source_identities": {"openharmony": {"commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748", "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856", "file": "cJSON_Utils.c", "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74", "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"}},
+      "product_build_association": "GN includes cJSON_Utils.c only under ohos_lite; actual profile unknown.", "existing_detector_rule": "none selected", "baseline_scan": "not_run", "miss_reason": "Not selected this cycle.", "implementation_status": "source inventory only", "controls": {"positive": "not_run", "fixed": "not_run", "safe": "not_run", "unrelated": "not_run", "variant": "not_run", "incomplete": "not_run"}, "real_source_rescan": "not_run", "status": {"public_disclosure_fact": "verified_advisory", "source_root_cause_match": "advisory_and_source_structure_only", "static_detection": "not_run", "component_dynamic_reproduction": "not_run", "product_vulnerability_confirmation": "unknown"}, "evidence_path": "source inventory notes (2026-10-19)", "remaining_blockers": ["actual build profile unknown", "no upstream fix and no runtime reproduction"], "next_step": "Resolve profile/build inclusion, trace patch add/copy object graph and identify upstream mitigation before rule work." 
+    }
+  ]
+}

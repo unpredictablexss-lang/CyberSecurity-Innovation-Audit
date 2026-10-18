@@ -1,0 +1,7 @@
+# From repository root (PowerShell)
+python -m unittest research.tests.test_ark_runtime_exception_protection_detector -v *> research/experiments/ark-runtime-exception-rule-20261018/test-results.txt
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+python research/experiments/ark-runtime-exception-rule-20261018/replay_exception_rule.py
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+python research/experiments/ark-runtime-exception-rule-20261018/build_hash_manifest.py
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

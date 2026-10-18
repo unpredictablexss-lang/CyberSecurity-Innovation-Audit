@@ -1,0 +1,14 @@
+{
+  "dependency_snapshot_sha256": "238ecaa18f68067a18434078d02a9ec07d51851b9b2b2b3ade54eb0c3d39b60e",
+  "historical_replay": {
+    "path": "raw-results.json",
+    "sha256": "169f313cfa0107ce5b79006e23af7a8d9570953aa7ef3214568ac283d10d8efd"
+  },
+  "run_summary": {
+    "path": "run-summary.json",
+    "sha256": "9bf4b56beee26aae25683a67e79a0332703390960d3b1a49a588d8293230fc70"
+  },
+  "schema": "c-line-report-dependency-reference-v1",
+  "usage": "Attach this reference by identity in downstream history/review; do not claim complete dependency identity while blocked.",
+  "verification_status": "blocked"
+}
