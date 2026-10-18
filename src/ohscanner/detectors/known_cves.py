@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.10.0"
+VERSION = "0.11.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -39,6 +39,26 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
 
 def _scan(unit: SourceUnit):
     t = unit.text; s = mask_comments_and_literals(t); out = []
+    # CVE-2026-25850: external storage mounts must not recursively widen
+    # permissions to 0777. The source identity and the affected mount methods
+    # keep this rule tied to the reviewed component behavior; product build,
+    # filesystem selection, and attacker reachability remain obligations.
+    source_path = unit.path.replace("\\", "/")
+    if source_path.endswith("services/storage_daemon/volume/src/external_volume_info.cpp"):
+        for method in ("DoMount4Ext", "DoMount4Hmfs"):
+            mount = _body(s, method)
+            if not mount:
+                continue
+            start, body = mount
+            mode = re.search(r"\bmode_t\s+mode\s*=\s*0777\b", body)
+            chmod = re.search(r"\bTravelChmod\s*\(\s*mountPath_\s*,\s*mode\s*\)", body)
+            if mode and chmod:
+                out.append(_finding(
+                    unit, start + 1 + chmod.start(),
+                    "ohknowncve-storage-cve-2026-25850", "CVE-2026-25850",
+                    f"{method} recursively assigns mode 0777 to the mounted external-volume tree; the upstream fix removes this permission widening.",
+                    "CWE-732", impact="confidentiality",
+                ))
     # CVE-2025-9900: only inspect the public wrapper body. The old expression
     # subtracts image height from raster height before passing a shifted raster
     # pointer to TIFFRGBAImageGet; another function's nearby bounds checks must

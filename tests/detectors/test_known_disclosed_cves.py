@@ -14,6 +14,41 @@ class KnownDisclosedCveTests(unittest.TestCase):
         run=KnownDisclosedCveDetector().detect(ScanContext(request=request, units=(unit,)), (unit,))
         return run
 
+    def test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated(self):
+        path = "services/storage_daemon/volume/src/external_volume_info.cpp"
+        vulnerable = """int32_t ExternalVolumeInfo::DoMount4Ext(uint32_t flags) {
+            mode_t mode = 0777;
+            int32_t ret = mount(devPath_.c_str(), mountPath_.c_str(), fsType_.c_str(), flags, "");
+            if (ret) return E_EXT_MOUNT;
+            TravelChmod(mountPath_, mode);
+            return ret;
+        }
+        int32_t ExternalVolumeInfo::DoMount4Hmfs(uint32_t flags) {
+            mode_t mode = 0777;
+            int32_t ret = mount(devPath_.c_str(), mountPath_.c_str(), "hmfs", flags, "");
+            if (!ret) TravelChmod(mountPath_, mode);
+            return ret;
+        }"""
+        fixed = vulnerable.replace("            mode_t mode = 0777;\n", "").replace(
+            "            TravelChmod(mountPath_, mode);\n", "").replace(
+            "            if (!ret) TravelChmod(mountPath_, mode);\n", "")
+        unrelated = vulnerable.replace("DoMount4Ext", "MountUnrelated").replace(
+            "DoMount4Hmfs", "MountOtherFilesystem")
+
+        findings = [f for f in self.run_source(vulnerable, path).findings
+                    if f.symbol == "CVE-2026-25850"]
+        self.assertEqual(2, len(findings))
+        self.assertEqual({"CWE-732"}, {f.candidate_cwe for f in findings})
+        self.assertEqual({"confidentiality"}, {f.consequence_impact for f in findings})
+        self.assertTrue(all(f.source_sha256 == hashlib.sha256(vulnerable.encode()).hexdigest()
+                            for f in findings))
+        self.assertEqual([], [f for f in self.run_source(fixed, path).findings
+                              if f.symbol == "CVE-2026-25850"])
+        self.assertEqual([], [f for f in self.run_source(vulnerable, "other.cpp").findings
+                              if f.symbol == "CVE-2026-25850"])
+        self.assertEqual([], [f for f in self.run_source(unrelated, path).findings
+                              if f.symbol == "CVE-2026-25850"])
+
     def test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed(self):
         vulnerable = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
             int32_t pinCode = GeneratePincode();
