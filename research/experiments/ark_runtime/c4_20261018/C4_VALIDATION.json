@@ -1,0 +1,324 @@
+{
+  "base_commit": "1c21ac60890fca0ce6be5d50d82e4757dd5e4623",
+  "branch": "work/c4-ark-runtime-20261018",
+  "model_version": "0.6.1",
+  "model_digest": "3069f778c0869e00b8a8a67429811c62444aa5e5025a3ffe41e792280072147c",
+  "catalog": {
+    "kind": "research_candidate",
+    "default_enabled": false,
+    "explicit_selection": true,
+    "scope": "exact upstream repository and target file path; detector checks commit, Git blob, SHA-256, provenance, profile and AST status"
+  },
+  "partial_result_semantics": "candidate and parse-completeness obligation preserved; per-file partial and aggregate blocked",
+  "runner_source_replay": {
+    "parent_commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "parent_candidates": 1,
+    "parent_coverage": {
+      "complete": 0,
+      "partial": 1,
+      "not_analyzed": 0,
+      "failed": 0
+    },
+    "fixed_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "fixed_candidates": 0,
+    "fixed_coverage": {
+      "complete": 0,
+      "partial": 1,
+      "not_analyzed": 0,
+      "failed": 0
+    },
+    "validated_vulnerability": 0,
+    "dynamic_validation": false
+  },
+  "worker_scope_control": {
+    "selection": "explicit",
+    "target_repository": "unrelated fixture repository",
+    "worker_completed": true,
+    "C_status": "blocked",
+    "C_diagnostics": 0,
+    "validated_vulnerability": 0
+  },
+  "tests": {
+    "focused_c4_current_rerun": "87 tests run; 84 passed, 3 skipped because the two exception-path Git commits are absent from the shared local bare store; the exact exception-path source was independently replayed from commit-pinned GitHub raw bytes.",
+    "exception_guard_pinned": "Synthetic exception-guard tests passed; exact source replay was separately run from fixed GitHub raw commit URLs after local Git objects were found unavailable: parent 2 findings, fixed 0, both blocked with one partial file.",
+    "detector_suite_current_turn": "unittest discover -s tests/detectors: 215 tests run; 212 passed, 3 skipped, 0 failed.",
+    "full_python_current_rerun": "unittest discover -s tests: 922 tests run; 914 passed, 8 skipped, 0 failed in 47.668s. Skips: 3 pinned Ark source replays (local Git objects absent; no implicit fetch), 1 rescan artifact absent, 2 AUTH-01 Docker runtime harness unavailable in this execution, 2 optional historical C source artifacts absent.",
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "frontend": "Linux Node v22.23.3: npm test 17/17 passed; npm run build passed (tsc --noEmit + esbuild)."
+  },
+  "known_unknowns": [
+    "partial translation-unit dependency contamination",
+    "product build flags and exact deployed source revision",
+    "dynamic runtime behavior, reachability, exploitability and concrete CIA impact",
+    "independent fresh holdout labels and Precision/Recall",
+    "complete runtime detector coverage and performance at product scale"
+  ],
+  "adversarial_review": {
+    "finding": "Nested call expressions inside declaration/expression instructions were missed by the shallow side-effect scan and could leave a candidate complete.",
+    "reproduction": "GateRef side = MaybeRaise(glue); between allocation and LoadHClass produced a complete candidate before the fix.",
+    "fix": "Recursively enumerate nested call expressions and allow only the exact reviewed result->WriteVariable(Exception()) form.",
+    "regressions": [
+      "nested call in declaration becomes unknown/partial",
+      "nested call in expression becomes unknown/partial",
+      "reviewed exception result write still suppresses the candidate",
+      "unreviewed outer wrapper around the sink becomes unknown/partial",
+      "unreviewed nested call inside the sink expression becomes unknown/partial"
+    ],
+    "focused_tests": "12 exception-guard synthetic tests passed; exact exception-path source replay separately verified parent 2 findings and fixed 0 using source bytes with matching Git blob and SHA-256.",
+    "finding_2": "Sensitive LoadHClass use was accepted when nested inside an unreviewed wrapper or expression that contained another call in the same instruction.",
+    "reproduction_2": "Wrap(GetObjectType(LoadHClass(glue, output))) and GetObjectType(LoadHClass(glue, output) + MaybeRaise(glue)) both produced complete candidates before the fix.",
+    "fix_2": "Require the exact GetObjectType(LoadHClass(glue, output)) chain and reject any additional call expression in the instruction."
+  },
+  "delivery": {
+    "local_integration_branch_only": true,
+    "pushed": true,
+    "draft_pr_16_unchanged": true,
+    "ready": false,
+    "merged": false
+  },
+  "exception_guard_runner_replay": {
+    "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+    "parent_commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+    "parent_candidate_count": 2,
+    "parent_functions": [
+      "Filter",
+      "Map"
+    ],
+    "parent_coverage": {
+      "complete": 0,
+      "partial": 1,
+      "not_analyzed": 0,
+      "failed": 0
+    },
+    "fixed_commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+    "fixed_candidate_count": 0,
+    "fixed_coverage": {
+      "complete": 0,
+      "partial": 1,
+      "not_analyzed": 0,
+      "failed": 0
+    },
+    "validated_vulnerability": 0,
+    "dynamic_validation": false,
+    "source_replay_method": "Exact raw source files fetched from the upstream GitHub raw URLs at the bound commit SHAs; Git blob and SHA-256 recomputed locally, then passed through the registered Runner adapter. This supplements the git-object integration test, whose source commits are absent from the shared local bare store.",
+    "parent_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+    "fixed_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0",
+    "parent_blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+    "fixed_blob": "3b9de9d915d767d7a67316145451da2446162884"
+  },
+  "review_followup": "Exact Filter/Map caller names and signatures, LoadHClass arity and parameter identities are enforced. Nested calls in declarations and expressions are now recursively detected; unmodeled effects, missing callers, signature drift and GateRef reassignment remain partial/unknown. Regression tests cover nested calls and retain the reviewed Exception() write path.",
+  "panel_ui_e2e": {
+    "service": "isolated C4 worktree service at localhost:18827; isolated data and target roots",
+    "task_id": "1474b642f5c94a0391dfa1e8184fb0e5",
+    "report_sha256": "2d43777ed59cf6fd7ca0c90e70ac366412f20c0007e8d3059974d6417caffb44",
+    "selection_mode": "explicit",
+    "requested_c_detector": "ohscanner.ark.runtime.type_safety",
+    "detector_version": "0.6.1",
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "scope": [
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+    ],
+    "task_status": "completed_with_limitations",
+    "detector_status": "blocked",
+    "diagnostics": 1,
+    "partial_files": 1,
+    "validated_vulnerability": 0,
+    "ui_observation": "candidate row displayed partial coverage and pending review; confirmed vulnerability count 0"
+  },
+  "frontend_integration": {
+    "experimental_rule_selection": "visible only for explicitly selectable default-off research candidates",
+    "normal_scans": "do not include experimental detector IDs unless selected",
+    "request_validation": "unknown and duplicate explicit IDs rejected; preview and task requests include user selection"
+  },
+  "real_source_profile_sweep": {
+    "source_repository": "openharmony/arkcompiler_ets_runtime",
+    "parent_commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "parent_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+    "parent_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+    "parent_parse": "partial",
+    "parent_observations": [
+      [
+        "CopyWithin",
+        "matched",
+        964
+      ],
+      [
+        "Filter",
+        "candidate",
+        1498
+      ],
+      [
+        "Set",
+        "matched",
+        2234
+      ],
+      [
+        "With",
+        "matched",
+        1762
+      ]
+    ],
+    "fixed_commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+    "fixed_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+    "fixed_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74",
+    "fixed_parse": "partial",
+    "fixed_observations": [
+      [
+        "CopyWithin",
+        "matched",
+        964
+      ],
+      [
+        "Filter",
+        "matched",
+        1499
+      ],
+      [
+        "Set",
+        "matched",
+        2235
+      ],
+      [
+        "With",
+        "matched",
+        1763
+      ]
+    ],
+    "coverage_boundary": "Both local research runs retain parse_dependency_contamination_unknown and partial file outcome; registered Runner remains blocked/partial.",
+    "model_version": "0.6.1"
+  },
+  "source_binding_audit": {
+    "model_dependency_rows": 23,
+    "fixed_revision_local_git_blob_checks": 19,
+    "exception_pair_external_checks": 4,
+    "external_method": "GitHub commit tree path-to-blob checks plus raw source bytes from exact commit URLs; both target file Git blob and SHA-256 matched the model. The helper dependency blob matched both commit trees.",
+    "result": "all declared target/dependency/effect-summary blobs checked against their bound source revisions",
+    "model_version": "0.6.1"
+  },
+  "panel_ui_e2e_current": {
+    "service": "isolated C4 worktree at localhost:18827, data=/tmp/ohscanner-c4-ui-data-20261018, target_root=/tmp/ohscanner-c4-targets",
+    "task_id": "1474b642f5c94a0391dfa1e8184fb0e5",
+    "selection_mode": "explicit",
+    "requested_c_detector": "ohscanner.ark.runtime.type_safety",
+    "detector_version": "0.6.1",
+    "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+    "scope": [
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+    ],
+    "task_status": "completed_with_limitations",
+    "elapsed_seconds": 4.067690374009544,
+    "report_sha256": "2d43777ed59cf6fd7ca0c90e70ac366412f20c0007e8d3059974d6417caffb44",
+    "detector_status": "blocked",
+    "diagnostics": 1,
+    "candidate_line": 1498,
+    "partial_files": 1,
+    "validated_vulnerability": 0,
+    "ui_observation": "task page displayed the C candidate as partial coverage and pending review, with confirmed vulnerability count 0"
+  },
+  "performance_single_translation_unit": {
+    "artifact": "C4_PERFORMANCE.json",
+    "scope": "Direct parse_source + analyze_exception_guard for one exact parent/fix translation unit",
+    "repetitions_per_revision": 2,
+    "observed_wall_seconds": "0.162-0.185",
+    "stable_observations": true,
+    "parse_status": "partial for both revisions",
+    "repo_scale_capacity_established": false
+  },
+  "upstream_regression_test_status": {
+    "test": "test/moduletest/typedarraymapoverflow/typedarraymapoverflow.js",
+    "source_in_fix_commit": true,
+    "commit_checks": [],
+    "workflow_runs": [],
+    "execution_status": "unknown"
+  },
+  "to_reversed_scope_review": {
+    "source_commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+    "classification": "unknown",
+    "facts": [
+      "fix adds HasPendingException branch after NewTypedArraySameType",
+      "parent visible order reads the input before a pending-exception branch and destination FastSet",
+      "zero-length parent path may return newArray without the explicit branch"
+    ],
+    "unresolved": [
+      "FastGetPropertyByIndex behavior with an already pending exception",
+      "caller behavior when result is written while exception remains pending"
+    ],
+    "detector_scope": "excluded pending source-bound semantics and controls"
+  },
+  "exception_allocation_callsite_census": {
+    "source_parent": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+    "source_fixed": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+    "source_functions": 6,
+    "detector_analyzed": [
+      "Filter",
+      "Map"
+    ],
+    "manual_review": [
+      {
+        "parent_alloc_line": 1592,
+        "guard_line": 1593,
+        "status": "source_order_observed",
+        "function": "Slice",
+        "sequence": "guard before CopyTypedArrayBuffer"
+      },
+      {
+        "parent_alloc_line": 1728,
+        "guard_line": 1731,
+        "status": "source_order_observed",
+        "function": "With",
+        "sequence": "guard before copy/store"
+      },
+      {
+        "parent_alloc_line": 2477,
+        "guard_line": 2480,
+        "status": "source_order_observed",
+        "function": "ToSorted",
+        "sequence": "guard before CopyTypedArrayBuffer"
+      },
+      {
+        "status": "unknown_pending_effect_and_empty_loop_result",
+        "sequence": "parent guard follows input read; fixed guard immediately follows allocation",
+        "fixed_guard_line": 2725,
+        "function": "ToReversed",
+        "parent_later_guard_line": 2731,
+        "fixed_alloc_line": 2722,
+        "parent_alloc_line": 2713
+      }
+    ]
+  },
+  "default_branch_spot_check": {
+    "repository": "openharmony/arkcompiler_ets_runtime",
+    "branch": "master",
+    "commit": "edc5231fdbc81d0d7477d03347c0ea44408f6726",
+    "path": "ecmascript/builtins/builtins_typedarray_stub_builder.cpp",
+    "git_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+    "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+    "parse_status": "partial",
+    "parsed_functions": 72,
+    "registered_runner": "not_run_exact_owner_binding_unresolved",
+    "exploratory_direct_analysis": [
+      {
+        "function": "BuiltinsTypedArrayStubBuilder::Filter",
+        "line": 1550,
+        "observation": "matched"
+      },
+      {
+        "function": "BuiltinsTypedArrayStubBuilder::Map",
+        "line": 2721,
+        "observation": "matched"
+      }
+    ],
+    "to_reversed": "unknown_creator_NewTypedArraySameType_outside_rule_scope",
+    "classification": "research_observation_only_not_product_vulnerability_confirmation"
+  },
+  "independent_holdout_packet": {
+    "artifact": "research/experiments/ark_runtime/c4_20261018/independent_review_packet.zip",
+    "sha256": "5f433a2dddded9d63083c384336b86048d1ffe3374d1b11304afd674c1774410",
+    "sample_count": 16,
+    "source_hashes_verified": true,
+    "predictions_included": false,
+    "status": "prepared_not_independently_reviewed",
+    "evaluation_boundary": "synthetic_control_semantics_only_not_real_world_precision_recall"
+  }
+}
