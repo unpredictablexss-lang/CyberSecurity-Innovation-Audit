@@ -54,6 +54,25 @@ class SensitiveTests(unittest.TestCase):
         run=self.analyze('void f(SessionKey *x){ AUTH_LOGE(0,"%{public}s",x->value); }',partial='partial')
         self.assertEqual(len(run.findings),1);self.assertEqual(run.status,'blocked')
         self.assertEqual(run.file_outcomes,(('service.cpp','partial'),))
+    def test_modeled_sensitive_record_parameters_seed_flow_outside_callback_names(self):
+        public = self.analyze('void UnreviewedName(SessionKey *secret){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",secret->value); }')
+        self.assertEqual(len(public.findings), 1)
+        self.assertIn('SessionKey.value', public.findings[0].message)
+        self.assertTrue(any(item.kind == 'source_semantics' for item in public.findings[0].evidence_obligations))
+
+        private = self.analyze('void UnreviewedName(SessionKey *secret){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{private}s",secret->value); }')
+        self.assertEqual(private.findings, ())
+        unrelated = self.analyze('void UnreviewedName(const char *ordinary){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",ordinary); }')
+        self.assertEqual(unrelated.findings, ())
+
+    def test_same_named_sensitive_type_conflict_keeps_only_a_candidate(self):
+        source = '''typedef struct SessionKey { char value[64]; } SessionKey;
+void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",maybe->value); }'''
+        run = self.analyze(source)
+        self.assertEqual(len(run.findings), 1)
+        self.assertTrue(any(item.kind == 'source_semantics' for item in run.findings[0].evidence_obligations))
+        self.assertTrue(any(item.kind == 'type_identity' for item in run.findings[0].evidence_obligations))
+        self.assertIn('shadowed sensitive record type identity unresolved', ' '.join(run.limitations))
     def test_real_runner_v2_and_obligations(self):
         c=self.context('void f(SessionKey *x){ const char *alias = (const char*)x->value; AUTH_LOGE(0,"%{public}s",alias); }')
         registry=DetectorRegistry();registry.register(SensitiveExposureDetector(MODEL))
@@ -174,4 +193,10 @@ class SensitiveTests(unittest.TestCase):
         self.assertEqual(run.findings[0].rule_id,'data.sensitive.unresolved-escape')
         self.assertIn('destination whose identity is unresolved',run.findings[0].message)
 
+    def test_same_named_sensitive_type_known_length_metadata_is_not_secret_material(self):
+        source = '''typedef struct SessionKey { char value[64]; unsigned int len; } SessionKey;
+void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}u",maybe->len); }'''
+        run = self.analyze(source)
+        self.assertEqual(run.findings, ())
+        self.assertIn('shadowed sensitive record type identity unresolved', ' '.join(run.limitations))
 if __name__=='__main__':unittest.main()

@@ -118,5 +118,13 @@
     "split": "d5_unresolved_boundary",
     "partial": true,
     "reason": "Sensitive data reaches a qualified call whose implementation is not bound in the file; preserve an unresolved escape candidate."
+  },
+  {
+    "id": "shadow_type_partial",
+    "file": "shadow_type_partial.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "A same-name local declaration makes the modeled type identity ambiguous; preserve a candidate with a type_identity obligation instead of silently suppressing the possible sensitive flow."
   }
 ]

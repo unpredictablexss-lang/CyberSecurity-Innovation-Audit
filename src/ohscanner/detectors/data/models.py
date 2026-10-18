@@ -1,7 +1,7 @@
 """Explicit source/sink models; no sensitive-name heuristics or catalog registration."""
 from dataclasses import dataclass
 
-SOURCE_MODEL_VERSION = '0.1.0'  # Historical source semantics remain unchanged.
+SOURCE_MODEL_VERSION = '0.2.0'  # Sensitive and non-sensitive record fields are versioned explicitly.
 SINK_MODEL_VERSION = '0.2.0'  # Adds the public OpenHarmony HiLog macro surface.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
@@ -13,6 +13,8 @@ class SensitiveSourceModel:
     # Exact record type -> sensitive material field, never len/index/iv.
     fields: tuple = (('SessionKey', 'value'), ('AesGcmCipherKey', 'key'),
                      ('AesGcm128CipherKey', 'key'), ('AesCtrCipherKey', 'key'))
+    # Explicit metadata fields that do not carry key material in the reviewed record.
+    non_sensitive_fields: tuple = (('SessionKey', ('len',)),)
     output_calls: tuple = (('SoftBusGenerateSessionKey', 0),)
     # File/function/parameter-index, bound to reviewed callback semantics.
     parameters: tuple = (('core/authentication/src/auth_hichain.c', 'OnSessionKeyReturned', 1),)

@@ -74,7 +74,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.7.0'
+    version = '0.8.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -130,6 +130,7 @@ class LocalFlow:
         self.tree = Parser(Language(lang.language())).parse(self.b)
         self.sinks = {s.name:s for s in SINKS}
         self.fields = dict(model.fields)
+        self.non_sensitive_fields = dict(model.non_sensitive_fields)
         self.shadows = set()
         self.function_definitions = set()
         self.function_bodies = {}
@@ -177,7 +178,15 @@ class LocalFlow:
             obj=n.child_by_field_name('argument'); field=self.text(n.child_by_field_name('field'))
             root=self.text(obj)
             if root in types and types[root] in self.type_conflicts:
-                self.gaps.add('shadowed sensitive record type withheld');return ()
+                type_name=types[root]
+                self.gaps.add('shadowed sensitive record type identity unresolved; candidate retained')
+                if self.fields.get(type_name)==field:
+                    return (self.source(type_name+'.'+field+' with unresolved same-name type identity',n),)
+                if field in self.non_sensitive_fields.get(type_name,()):
+                    return ()
+                if root in env:
+                    return env[root]
+                return ()
             member=self.lvalue(n,types)
             if member and member in env:
                 return env[member]
@@ -367,6 +376,7 @@ class LocalFlow:
             evidence_obligations=(
                 EvidenceObligation('local_flow',' | '.join(traces)),
                 EvidenceObligation('source_semantics',self.model.provenance),
+                EvidenceObligation('type_identity','Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.'),
                 extra_obligation,
                 EvidenceObligation('runtime_log_visibility','Verify production level, privacy switches, build branch and unauthorized readers.'),
                 EvidenceObligation('security_impact','Prove recoverable secret material and concrete impact; no automatic confirmation.'),
@@ -516,6 +526,7 @@ class LocalFlow:
                     evidence_obligations=(
                         EvidenceObligation('local_flow', ' | '.join(steps)),
                         EvidenceObligation('source_semantics',self.model.provenance),
+                        EvidenceObligation('type_identity','Resolve the compiler-bound identity of the modeled sensitive record and field; same-name declarations remain candidate-only.'),
                         EvidenceObligation('runtime_log_visibility','Verify production level, privacy switches, build branch and unauthorized readers.'),
                         EvidenceObligation('execution_and_identity','Verify initialization, API binding, return status, branch feasibility and pointer aliases.'),
                         EvidenceObligation('security_impact','Prove recoverable secret material and concrete impact; no automatic confirmation.'),

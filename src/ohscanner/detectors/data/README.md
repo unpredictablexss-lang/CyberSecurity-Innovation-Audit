@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.6.0 (D9 HiLog sink expansion)
+# D: sensitive-material log exposure, v0.8.0 (D12 type-identity candidate retention)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
@@ -59,3 +59,5 @@ default. Unsupported/dynamic formats keep an unresolved candidate. See
 `research/data_sensitive/D8_IMPLEMENTATION.md`, `D9_IMPLEMENTATION.md`, and the
 matching validation records. Neither regression fixtures nor macro mapping alone
 confirm a product vulnerability.
+
+D12 retains a candidate when a modeled sensitive field is used through a same-name local type whose compiler identity is unresolved; the finding carries a `type_identity` obligation and remains candidate-only. The source model explicitly treats `SessionKey.len` as non-sensitive metadata. See `research/data_sensitive/D12_IMPLEMENTATION.md` and the pinned real-source replay; no new candidate was added to that profile.
