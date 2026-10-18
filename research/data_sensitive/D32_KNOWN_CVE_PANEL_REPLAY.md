@@ -1,6 +1,6 @@
 # D32: multi-repository known-CVE Workbench replay
 
-Date: 2026-10-19  
+Date: 2026-10-19
 Detector: `ohscanner.known_disclosed_cves` 0.9.0  
 Purpose: verify the explicit opt-in detector path through the real Workbench API, Worker, report serializer, and hash-checked source viewer on fixed G-mirror Git objects.
 
