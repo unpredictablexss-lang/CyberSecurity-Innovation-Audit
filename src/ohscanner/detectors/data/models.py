@@ -1,7 +1,8 @@
 """Explicit source/sink models; no sensitive-name heuristics or catalog registration."""
 from dataclasses import dataclass
 
-SOURCE_MODEL_VERSION = '0.4.0'  # Adds default dispatch across exact-revision DSoftBus and AccessToken profiles.
+SOURCE_MODEL_VERSION = '0.4.0'  # Frozen D3/D4 source semantics; new profiles are append-only.
+SOURCE_PROFILE_CATALOG_VERSION = '0.1.0'
 SINK_MODEL_VERSION = '0.6.0'  # Adds public OH_LOG macros and direct message output APIs.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
@@ -16,6 +17,8 @@ class SensitiveSourceModel:
     # Explicit metadata fields that do not carry key material in the reviewed record.
     non_sensitive_fields: tuple = (('SessionKey', ('len',)),)
     output_calls: tuple = (('SoftBusGenerateSessionKey', 0),)
+    # (function, source_arg, destination_arg, arity) for reviewed encoders.
+    copy_calls: tuple = ()
     # File/function/parameter-index, bound to reviewed callback semantics.
     parameters: tuple = (('core/authentication/src/auth_hichain.c', 'OnSessionKeyReturned', 1),)
     provenance: str = 'Reviewed pinned dsoftbus key declarations; research model, not product policy'
@@ -88,4 +91,24 @@ ACCESS_TOKEN_SOURCE = SensitiveSourceModel(
 )
 
 # Default detector dispatch is limited to reviewed exact repository/commit profiles.
-SUPPORTED_SOURCE_MODELS = (DEFAULT_SOURCE, ACCESS_TOKEN_SOURCE)
+IOTC_COMMIT = 'd8c0aef305601770c912dbdedc58a3f1e6efd30c'
+_IOTC_LOCAL_CTL_FILE = 'core/wifi/application/local_control/local_ctl_coap_api.c'
+IOTC_LOCAL_CONTROL_SOURCE = SensitiveSourceModel(
+    'openharmony/communication_iot_connect', IOTC_COMMIT,
+    fields=(), non_sensitive_fields=(), output_calls=(
+        ('IotcPkcs5Pbkdf2Hmac', 1, 3),
+    ),
+    copy_calls=(('UtilsHexify', 0, 2, 4),),
+    provenance=(
+        'Pinned communication_iot_connect source at d8c0aef3: the reviewed PBKDF2 API '
+        'writes derived key bytes to argument 1, UtilsHexify copies those bytes as hex '
+        'to argument 2, and IOTC_LOGI routes its format to a public HiLog string sink. '
+        'The component authCode identity and product log visibility/impact remain unknown.'
+    ),
+    additional_sinks=(
+        ExposureSinkModel(
+            'IOTC_LOGI', 0, default_private=False, files=(_IOTC_LOCAL_CTL_FILE,)
+        ),
+    ),
+)
+SUPPORTED_SOURCE_MODELS = (DEFAULT_SOURCE, ACCESS_TOKEN_SOURCE, IOTC_LOCAL_CONTROL_SOURCE)

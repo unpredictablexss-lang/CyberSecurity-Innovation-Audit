@@ -104,7 +104,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.14.0'
+    version = '0.15.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -173,6 +173,14 @@ class LocalFlow:
         self.tree = Parser(Language(lang.language())).parse(self.b)
         self.sinks = {s.name:s for s in SINKS if not s.files or unit.path in s.files}
         self.sinks.update({s.name:s for s in model.additional_sinks if not s.files or unit.path in s.files})
+        self.output_calls = {
+            item[0]: (item[1], item[2] if len(item) > 2 else 2)
+            for item in model.output_calls
+        }
+        self.copy_calls = {
+            item[0]: (item[1], item[2], item[3])
+            for item in model.copy_calls
+        }
         self.fields = dict(model.fields)
         self.non_sensitive_fields = dict(model.non_sensitive_fields)
         self.shadows = set()
@@ -275,7 +283,7 @@ class LocalFlow:
             if fn in ('strlen','strnlen','strnlen_s','wcslen') and fn not in self.function_definitions and fn not in self.shadows:
                 return () # A scalar length is not the sensitive material itself.
             args=n.child_by_field_name('arguments')
-            if fn not in self.shadows and fn not in self.function_definitions and (fn in dict(self.model.output_calls) or fn in ('memcpy_s','strcpy_s','snprintf','snprintf_s')):
+            if fn not in self.shadows and fn not in self.function_definitions and (fn in self.output_calls or fn in self.copy_calls or fn in ('memcpy_s','strcpy_s','snprintf','snprintf_s')):
                 return () # modeled return is a status/count, not the output buffer
             vals=tuple(v for a in (args.named_children if args else []) for v in self.expr(a,env,types))
             # Unknown transform is not a sanitizer. Retain a tentative dependency and gap.
@@ -448,8 +456,8 @@ class LocalFlow:
         locally_defined=fn in self.function_definitions
         if fn in ('strlen','strnlen','strnlen_s','wcslen') and not locally_defined:
             return
-        if locally_defined and fn in dict(self.model.output_calls):
-            self.gaps.add('modeled source name has a same-file definition; source identity unresolved: '+fn)
+        if locally_defined and (fn in self.output_calls or fn in self.copy_calls):
+            self.gaps.add('modeled source/transform name has a same-file definition; API identity unresolved: '+fn)
             return
         if locally_defined and fn in ('memcpy_s','strcpy_s'):
             self.gaps.add('same-file copy-like definition has unresolved write semantics: '+fn)
@@ -483,10 +491,10 @@ class LocalFlow:
         if locally_defined and self.expand_tainted_call(
                 fn,args,env,types,n.start_point[0]+1,n,fnname):
             return
-        if fn in dict(self.model.output_calls):
-            if len(args)!=2:
+        if fn in self.output_calls:
+            index, arity = self.output_calls[fn]
+            if len(args) != arity:
                 self.gaps.add('source API argument count unresolved');return
-            index=dict(self.model.output_calls)[fn]
             if index<len(args):
                 dst=self.lvalue(args[index],types)
                 if dst:env[dst]=(self.source(fn+' output argument '+str(index),n),)
@@ -536,6 +544,23 @@ class LocalFlow:
                 self.emit_unresolved_flows(fn,n,fnname,flows,
                                            'sensitive formatting input has unresolved format-to-destination flow',
                                            'format_resolution')
+            return
+        if fn in self.copy_calls:
+            source_index, destination_index, arity = self.copy_calls[fn]
+            if len(args) != arity:
+                self.gaps.add('modeled copy API argument count unresolved: '+fn)
+                return
+            destination = self.lvalue(args[destination_index], types)
+            flows = self.expr(args[source_index], env, types)
+            if destination:
+                env[destination] = self.addstep(
+                    flows, f'{n.start_point[0]+1} {fn} -> {destination}')
+            elif flows:
+                self.gaps.add('modeled copy destination identity unresolved: '+fn)
+                self.emit_unresolved_flows(
+                    fn, n, fnname, flows,
+                    'sensitive bytes pass through a modeled encoder but its output destination is unresolved',
+                    'destination_binding')
             return
         if fn not in self.sinks:
             flows=tuple(flow for arg in args for flow in self.expr(arg,env,types))
@@ -820,5 +845,10 @@ class LocalFlow:
             else:
                 from dataclasses import replace
                 old=merged[key]
-                merged[key]=replace(old,message=old.message+' | '+f.message,evidence_obligations=old.evidence_obligations+f.evidence_obligations)
+                merged[key]=replace(
+                    old,
+                    message=old.message if f.message in old.message else old.message+' | '+f.message,
+                    evidence_obligations=tuple(dict.fromkeys(
+                        old.evidence_obligations+f.evidence_obligations)))
+
         return list(merged.values())

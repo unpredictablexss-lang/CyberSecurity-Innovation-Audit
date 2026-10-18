@@ -9,7 +9,7 @@ from src.ohscanner.git_source import GitSource
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.data.models import (
-    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
+    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, IOTC_LOCAL_CONTROL_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
 from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats, looks_sensitive_name
 
 MODEL=SensitiveSourceModel('fixture/d-sensitive','d'*40,parameters=(('service.cpp','Callback',0),),provenance='Synthetic model for regression only; no real vulnerability')
@@ -415,4 +415,60 @@ void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{publi
         run = self.analyze(source)
         self.assertEqual(run.findings, ())
         self.assertIn('shadowed sensitive record type identity unresolved', ' '.join(run.limitations))
+    def test_iotc_pinned_derived_key_to_public_log_and_controls(self):
+        path = 'core/wifi/application/local_control/local_ctl_coap_api.c'
+        repository = IOTC_LOCAL_CONTROL_SOURCE.repository
+        commit = IOTC_LOCAL_CONTROL_SOURCE.commit
+        vulnerable = '''
+int32_t localCtlSessKeyGen(void *param) {
+    IotcPkcs5Pbkdf2Hmac(param, localCtlKey, 16);
+    UtilsHexify(localCtlKey, sizeof(localCtlKey), localCtlKeyStr, sizeof(localCtlKeyStr));
+    IOTC_LOGI("%s localCtlKey:[%s]", __func__, localCtlKeyStr);
+    return 0;
+}
+'''
+        def run(source, revision=commit):
+            data = source.encode()
+            units, ast, _ = index_sources((GitSource(
+                path, 'c',
+                hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest(),
+                data),))
+            request = ScanRequest(repository, repository, revision,
+                                  snapshot_digest(units), 'current-component:' + repository)
+            return SensitiveExposureDetector().detect(
+                ScanContext(request, units, {'ast': ast}), units)
+
+        finding_run = run(vulnerable)
+        self.assertEqual(len(finding_run.findings), 1)
+        finding = finding_run.findings[0]
+        self.assertEqual(finding.rule_id, 'data.log.sensitive-value')
+        self.assertEqual(finding.symbol, 'localCtlSessKeyGen')
+        self.assertIn('IotcPkcs5Pbkdf2Hmac output argument 1', finding.message)
+        self.assertIn('UtilsHexify -> localCtlKeyStr', finding.message)
+        self.assertIn('IOTC_LOGI', finding.message)
+        self.assertEqual(finding.message.count('Candidate local sensitive-material dependency:'), 1)
+        self.assertTrue(any(item.kind == 'security_impact'
+                            for item in finding.evidence_obligations))
+
+        fixed = vulnerable.replace(
+            '    IOTC_LOGI("%s localCtlKey:[%s]", __func__, localCtlKeyStr);\n',
+            '')
+        self.assertEqual(run(fixed).findings, ())
+        unrelated = '''
+int32_t localCtlSessKeyGen(void *param) {
+    IotcPkcs5Pbkdf2Hmac(param, localCtlKey, 16);
+    UtilsHexify(publicIdentifier, sizeof(publicIdentifier), publicHex, sizeof(publicHex));
+    IOTC_LOGI("%s id:[%s]", __func__, publicHex);
+    return 0;
+}
+'''
+        self.assertEqual(run(unrelated).findings, ())
+        self.assertEqual(run(vulnerable, revision='f' * 40).findings, ())
+        mismatch = run(vulnerable.replace(
+            'IotcPkcs5Pbkdf2Hmac(param, localCtlKey, 16);',
+            'IotcPkcs5Pbkdf2Hmac(param, localCtlKey);'))
+        self.assertEqual(mismatch.findings, ())
+        self.assertTrue(any('source API argument count unresolved' in item
+                            for item in mismatch.limitations))
+
 if __name__=='__main__':unittest.main()
