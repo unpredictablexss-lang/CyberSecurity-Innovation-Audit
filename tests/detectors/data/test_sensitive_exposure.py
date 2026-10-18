@@ -144,4 +144,34 @@ class SensitiveTests(unittest.TestCase):
         text='void Callback(const char *x){ const char *b=x; AUTH_LOGI(0,"%{public}s",b); }'
         self.assertEqual(self.analyze(text),self.analyze(text))
 
+    def test_sensitive_copy_into_modeled_local_member_reaches_public_log(self):
+        text='''void Callback(SessionKey *secret) {
+            AesGcmCipherKey cipher = {0};
+            memcpy_s(cipher.key, sizeof(cipher.key), secret->value, 32);
+            HILOG_INFO(HILOG_MODULE_SOFTBUS, "key=%{public}s", cipher.key);
+        }'''
+        run=self.analyze(text)
+        self.assertEqual(len(run.findings),1)
+        finding=run.findings[0]
+        self.assertEqual(finding.rule_id,'data.log.sensitive-value')
+        self.assertIn('memcpy_s -> cipher.key',finding.message)
+        self.assertIn('HILOG_INFO public operand 0',finding.message)
+
+    def test_sensitive_copy_to_modeled_local_member_without_log_stays_safe(self):
+        text='''void Callback(SessionKey *secret) {
+            AesGcmCipherKey cipher = {0};
+            memcpy_s(cipher.key, sizeof(cipher.key), secret->value, 32);
+            return;
+        }'''
+        self.assertEqual(self.analyze(text).findings,())
+
+    def test_aliased_pointer_member_copy_retains_unresolved_candidate(self):
+        text='''void Callback(SessionKey *secret, AesGcmCipherKey *out) {
+            memcpy_s(out->key, sizeof(out->key), secret->value, 32);
+        }'''
+        run=self.analyze(text)
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].rule_id,'data.sensitive.unresolved-escape')
+        self.assertIn('destination whose identity is unresolved',run.findings[0].message)
+
 if __name__=='__main__':unittest.main()

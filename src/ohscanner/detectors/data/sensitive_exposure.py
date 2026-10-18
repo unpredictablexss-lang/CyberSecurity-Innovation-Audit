@@ -74,7 +74,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.6.0'
+    version = '0.7.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -178,6 +178,9 @@ class LocalFlow:
             root=self.text(obj)
             if root in types and types[root] in self.type_conflicts:
                 self.gaps.add('shadowed sensitive record type withheld');return ()
+            member=self.lvalue(n,types)
+            if member and member in env:
+                return env[member]
             if root in types and self.fields.get(types[root]) == field:
                 self.gaps.add('record binding and initialization require compiler facts')
                 return (self.source(types[root]+'.'+field,n),)
@@ -317,7 +320,7 @@ class LocalFlow:
             for index,(param,ident) in enumerate(zip(parameters,bound)):
                 if not ident or not re.search(r'[&*]',self.text(param)):
                     continue
-                actual=self.lvalue(args[index])
+                actual=self.lvalue(args[index],types)
                 if not actual:continue
                 writes=tuple(dict.fromkeys(flow for state in states
                                            for flow in state.values.get(ident,())))
@@ -332,15 +335,25 @@ class LocalFlow:
             self.call_results[call_node.id]=call_flows
         return True
 
-    def lvalue(self,node):
+    def lvalue(self,node,types=None):
         if node is None:return ''
         if node.type=='identifier':return self.text(node)
         if node.type=='parenthesized_expression' and len(node.named_children)==1:
-            return self.lvalue(node.named_children[0])
+            return self.lvalue(node.named_children[0],types)
+        if node.type=='field_expression':
+            base=node.child_by_field_name('argument')
+            field=self.text(node.child_by_field_name('field'))
+            operator=self.text(node.child_by_field_name('operator'))
+            if (operator=='.' and base is not None and base.type=='identifier'
+                    and types and types.get(self.text(base)) in self.fields
+                    and self.fields.get(types[self.text(base)])==field
+                    and types[self.text(base)] not in self.type_conflicts):
+                return self.text(base)+'.'+field
+            return ''
         if node.type in ('pointer_expression','unary_expression'):
             op=self.text(node.child_by_field_name('operator'))
             if op=='&':
-                return self.lvalue(node.child_by_field_name('argument'))
+                return self.lvalue(node.child_by_field_name('argument'),types)
         return ''
 
     def emit_log_candidate(self,fn,fnname,node,flows,message,extra_obligation):
@@ -374,7 +387,7 @@ class LocalFlow:
         if locally_defined and fn in ('memcpy_s','strcpy_s'):
             self.gaps.add('same-file copy-like definition has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.lvalue(args[0])
+                dst=self.lvalue(args[0],types)
                 if dst:
                     source=args[2] if len(args)>2 else args[-1]
                     env[dst]=self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
@@ -385,7 +398,7 @@ class LocalFlow:
         if locally_defined and fn in ('snprintf','snprintf_s'):
             self.gaps.add('same-file formatting name has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.lvalue(args[0])
+                dst=self.lvalue(args[0],types)
                 if dst:
                     flows=tuple(flow for arg in args[1:] for flow in self.expr(arg,env,types))
                     env[dst]=self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
@@ -408,7 +421,7 @@ class LocalFlow:
                 self.gaps.add('source API argument count unresolved');return
             index=dict(self.model.output_calls)[fn]
             if index<len(args):
-                dst=self.lvalue(args[index])
+                dst=self.lvalue(args[index],types)
                 if dst:env[dst]=(self.source(fn+' output argument '+str(index),n),)
                 else:
                     self.gaps.add('complex source output destination')
@@ -420,7 +433,7 @@ class LocalFlow:
         if fn in ('memcpy_s','strcpy_s'):
             if len(args)!=(4 if fn=='memcpy_s' else 3):
                 self.gaps.add('copy API argument count unresolved');return
-            dst=self.lvalue(args[0])
+            dst=self.lvalue(args[0],types)
             if dst:
                 env[dst]=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
             else:
@@ -439,7 +452,7 @@ class LocalFlow:
                 operands=args[fi+1:]
                 if count!=len(operands):raise ValueError('format arity')
                 vals=tuple(v for _,ids,_ in slots for i in ids for v in self.expr(operands[i],env,types))
-                dst=self.lvalue(args[0])
+                dst=self.lvalue(args[0],types)
                 if dst:
                     env[dst]=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
                 elif vals:
@@ -554,10 +567,11 @@ class LocalFlow:
         if node.type=='assignment_expression':
             right=node.child_by_field_name('right');left=node.child_by_field_name('left')
             self.effects(right,state,fnname)
-            if left is not None and left.type=='identifier':
+            destination=self.lvalue(left,state.types)
+            if destination:
                 op=self.text(node.child_by_field_name('operator'))
                 if op!='=':self.gaps.add('compound assignment semantics incomplete')
-                state.values[self.text(left)]=self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {self.text(left)}')
+                state.values[destination]=self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}')
             else:self.gaps.add('pointer/member assignment requires alias proof')
             return
         if node.type=='binary_expression' and self.text(node.child_by_field_name('operator')) in ('&&','||'):

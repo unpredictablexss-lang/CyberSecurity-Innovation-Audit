@@ -37,20 +37,24 @@ def fetch(repository: str, commit: str, path: str) -> bytes:
         return response.read()
 
 
-def fetch_cached(repository: str, commit: str, path: str, cache_dir: Path) -> bytes:
+def fetch_cached(repository: str, commit: str, path: str, cache_dir: Path, *, allow_network: bool = False) -> bytes:
     cached = cache_dir / repository.replace("/", "__") / commit / path
     if cached.is_file():
         return cached.read_bytes()
+    if not allow_network:
+        raise FileNotFoundError(f"Pinned source cache is missing: {repository}@{commit}:{path}; use the explicit --fetch-upstream option to retrieve it")
     data = fetch(repository, commit, path)
     cached.parent.mkdir(parents=True, exist_ok=True)
     cached.write_bytes(data)
     return data
 
 
-def github_json(url: str, cache_dir: Path) -> dict:
+def github_json(url: str, cache_dir: Path, *, allow_network: bool = False) -> dict:
     cache_file = cache_dir / ".github-api" / (hashlib.sha256(url.encode()).hexdigest() + ".json")
     if cache_file.is_file():
         return json.loads(cache_file.read_text(encoding="utf-8"))
+    if not allow_network:
+        raise FileNotFoundError(f"Pinned GitHub API cache is missing: {url}; use the explicit --fetch-upstream option to retrieve it")
     request = Request(url, headers={"Accept": "application/vnd.github+json",
                                     "User-Agent": "OHScanner-D10-research-replay"})
     with urlopen(request, timeout=30) as response:
@@ -60,12 +64,12 @@ def github_json(url: str, cache_dir: Path) -> dict:
     return result
 
 
-def commit_tree(repository: str, commit: str, cache_dir: Path) -> tuple[str, dict[str, dict]]:
+def commit_tree(repository: str, commit: str, cache_dir: Path, *, allow_network: bool = False) -> tuple[str, dict[str, dict]]:
     commit_data = github_json(
-        f"https://api.github.com/repos/{repository}/git/commits/{commit}", cache_dir)
+        f"https://api.github.com/repos/{repository}/git/commits/{commit}", cache_dir, allow_network=allow_network)
     tree_sha = commit_data["tree"]["sha"]
     tree_data = github_json(
-        f"https://api.github.com/repos/{repository}/git/trees/{tree_sha}?recursive=1", cache_dir)
+        f"https://api.github.com/repos/{repository}/git/trees/{tree_sha}?recursive=1", cache_dir, allow_network=allow_network)
     if tree_data["sha"] != tree_sha or tree_data.get("truncated"):
         raise ValueError(f"incomplete or mismatched upstream tree response for {repository}@{commit}")
     return tree_sha, {entry["path"]: entry for entry in tree_data["tree"]}
@@ -76,6 +80,8 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--cache-dir", type=Path,
                         default=Path("/home/audit/openharmony-targets/pinned-manifest-cache"))
+    parser.add_argument("--fetch-upstream", action="store_true",
+                        help="explicitly retrieve missing pinned files/API metadata from GitHub")
     args = parser.parse_args()
     rows = json.loads(MANIFEST.read_text(encoding="utf-8"))
     d9 = json.loads(VALIDATION.read_text(encoding="utf-8"))
@@ -83,7 +89,8 @@ def main() -> int:
 
     dsoftbus = [row for row in rows if row["repository"] == DEFAULT_SOURCE.repository]
     dsoftbus_tree_sha, dsoftbus_tree = commit_tree(
-        DEFAULT_SOURCE.repository, DEFAULT_SOURCE.commit, args.cache_dir)
+        DEFAULT_SOURCE.repository, DEFAULT_SOURCE.commit, args.cache_dir,
+        allow_network=args.fetch_upstream)
     for row in dsoftbus:
         entry = dsoftbus_tree.get(row["file"])
         if not entry or entry.get("sha") != row["blob"] or entry.get("size") != row["size"]:
@@ -91,7 +98,8 @@ def main() -> int:
     sources = []
     source_evidence = []
     for row in dsoftbus:
-        data = fetch_cached(row["repository"], row["commit"], row["file"], args.cache_dir)
+        data = fetch_cached(row["repository"], row["commit"], row["file"], args.cache_dir,
+                            allow_network=args.fetch_upstream)
         checks = {
             "size_matches": len(data) == row["size"],
             "sha256_matches": hashlib.sha256(data).hexdigest() == row["sha256"],
@@ -126,7 +134,8 @@ def main() -> int:
     hilog_tree_sha = hilog["tree"]
     api_headers = []
     for row in hilog["files"]:
-        data = fetch_cached(hilog["repository"], hilog["commit"], row["path"], args.cache_dir)
+        data = fetch_cached(hilog["repository"], hilog["commit"], row["path"], args.cache_dir,
+                            allow_network=args.fetch_upstream)
         checks = {"git_blob_matches": git_blob_sha(data) == row["git_blob"]}
         if not all(checks.values()):
             raise ValueError(f"HiLog API source verification failed: {row['path']} {checks}")
@@ -139,7 +148,7 @@ def main() -> int:
 
     triage_path = "core/authentication/src/auth_session_fsm.c"
     triage_data = fetch_cached(DEFAULT_SOURCE.repository, DEFAULT_SOURCE.commit, triage_path,
-                               args.cache_dir)
+                               args.cache_dir, allow_network=args.fetch_upstream)
     triage_entry = dsoftbus_tree.get(triage_path)
     triage_blob = git_blob_sha(triage_data)
     if not triage_entry or triage_entry.get("sha") != triage_blob:
@@ -171,7 +180,7 @@ def main() -> int:
             "source_review": [
                 "OnSessionKeyReturned validates null/length, logs authSeq and key length, then calls AuthSessionSaveSessionKey with key bytes; the reviewed callee forwards the bytes through NewMessagePara into an internal FSM message, with no key argument to a public logging macro at that call site.",
                 "EncryptData and DecryptData copy sessionKey.value into a local cipherKey.key and pass it to the corresponding crypto routine; the reviewed call sites log status values, not key bytes.",
-                "These observations weaken the public-log exposure hypothesis for the three candidates, but do not establish whole-component absence of exposure; retain candidate/unknown pending complete downstream and product-bound review.",
+                "The local cipherKey.key copies in EncryptData and DecryptData are now modeled as intra-function sensitive-member copies and do not reach a public-log sink in the reviewed functions. Only the AuthSessionSaveSessionKey call remains an unresolved cross-file candidate; this does not establish whole-component absence of exposure.",
             ],
         },
         "detector": asdict(run),
@@ -183,7 +192,7 @@ def main() -> int:
             "Local Git commit/tree objects and a complete checkout were unavailable; GitHub API commit/tree metadata and raw files were verified, but this is not public Git Runner replay.",
             "The DSoftBus scope is the frozen selected-file manifest, not whole-component coverage.",
             "HiLog macro definitions are pinned, but their dependency/build binding to the DSoftBus product revision remains unknown.",
-            "Static findings are candidates; selected call-site triage found no public-log sink for the three unresolved-escape sites, while production log enablement, reader access, impact, and runtime validation remain unestablished.",
+            "Static findings are candidates; the two local crypto-copy findings were removed after member-flow modeling because no public-log sink is reached in those functions. One unresolved cross-file call candidate remains; production log enablement, reader access, impact, and runtime validation remain unestablished.",
             "This is not an independent labeled holdout and supports no precision or recall claim.",
             "Zero candidates would not establish absence of sensitive-data exposure.",
         ],

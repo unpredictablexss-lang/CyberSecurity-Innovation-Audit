@@ -183,12 +183,12 @@
     "source_review": [
       "OnSessionKeyReturned validates null/length, logs authSeq and key length, then calls AuthSessionSaveSessionKey with key bytes; the reviewed callee forwards the bytes through NewMessagePara into an internal FSM message, with no key argument to a public logging macro at that call site.",
       "EncryptData and DecryptData copy sessionKey.value into a local cipherKey.key and pass it to the corresponding crypto routine; the reviewed call sites log status values, not key bytes.",
-      "These observations weaken the public-log exposure hypothesis for the three candidates, but do not establish whole-component absence of exposure; retain candidate/unknown pending complete downstream and product-bound review."
+      "The local cipherKey.key copies in EncryptData and DecryptData are now modeled as intra-function sensitive-member copies and do not reach a public-log sink in the reviewed functions. Only the AuthSessionSaveSessionKey call remains an unresolved cross-file candidate; this does not establish whole-component absence of exposure."
     ]
   },
   "detector": {
     "detector_id": "ohscanner.data.sensitive_exposure",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "status": "blocked",
     "analyzed_files": [
       "adapter/common/include/softbus_adapter_crypto.h",
@@ -241,126 +241,6 @@
         "symbol_identity": null,
         "ast_fingerprint": null,
         "identity_quality": "unknown"
-      },
-      {
-        "file": "core/authentication/src/auth_session_key.c",
-        "line": 436,
-        "rule_id": "data.sensitive.unresolved-escape",
-        "message": "Candidate sensitive-data escape with unresolved binding: sensitive input is copied to a destination whose identity is unresolved; path=core/authentication/src/auth_session_key.c:436 source AesGcmCipherKey.key -> 436 unresolved call memcpy_s | Candidate sensitive-data escape with unresolved binding: sensitive input is copied to a destination whose identity is unresolved; path=core/authentication/src/auth_session_key.c:436 source AesGcmCipherKey.key -> 436 unresolved call memcpy_s",
-        "evidence_type": "syntax",
-        "column": null,
-        "candidate_cwe": null,
-        "symbol": "EncryptData",
-        "evidence_obligations": [
-          {
-            "kind": "destination_binding",
-            "description": "Resolve pointer/member aliases and the exact destination object written by memcpy_s.",
-            "status": "unknown"
-          },
-          {
-            "kind": "sink_behavior",
-            "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
-            "status": "unknown"
-          },
-          {
-            "kind": "runtime_log_visibility",
-            "description": "No log exposure or reader reachability is established by this call alone.",
-            "status": "unknown"
-          },
-          {
-            "kind": "security_impact",
-            "description": "Establish recoverable sensitive material and concrete impact independently.",
-            "status": "unknown"
-          },
-          {
-            "kind": "destination_binding",
-            "description": "Resolve pointer/member aliases and the exact destination object written by memcpy_s.",
-            "status": "unknown"
-          },
-          {
-            "kind": "sink_behavior",
-            "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
-            "status": "unknown"
-          },
-          {
-            "kind": "runtime_log_visibility",
-            "description": "No log exposure or reader reachability is established by this call alone.",
-            "status": "unknown"
-          },
-          {
-            "kind": "security_impact",
-            "description": "Establish recoverable sensitive material and concrete impact independently.",
-            "status": "unknown"
-          }
-        ],
-        "consequence_impact": null,
-        "consequence_cwe": null,
-        "source_sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
-        "rule_version": null,
-        "rule_lineage_id": null,
-        "symbol_identity": null,
-        "ast_fingerprint": null,
-        "identity_quality": "unknown"
-      },
-      {
-        "file": "core/authentication/src/auth_session_key.c",
-        "line": 469,
-        "rule_id": "data.sensitive.unresolved-escape",
-        "message": "Candidate sensitive-data escape with unresolved binding: sensitive input is copied to a destination whose identity is unresolved; path=core/authentication/src/auth_session_key.c:469 source AesGcmCipherKey.key -> 469 unresolved call memcpy_s | Candidate sensitive-data escape with unresolved binding: sensitive input is copied to a destination whose identity is unresolved; path=core/authentication/src/auth_session_key.c:469 source AesGcmCipherKey.key -> 469 unresolved call memcpy_s",
-        "evidence_type": "syntax",
-        "column": null,
-        "candidate_cwe": null,
-        "symbol": "DecryptData",
-        "evidence_obligations": [
-          {
-            "kind": "destination_binding",
-            "description": "Resolve pointer/member aliases and the exact destination object written by memcpy_s.",
-            "status": "unknown"
-          },
-          {
-            "kind": "sink_behavior",
-            "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
-            "status": "unknown"
-          },
-          {
-            "kind": "runtime_log_visibility",
-            "description": "No log exposure or reader reachability is established by this call alone.",
-            "status": "unknown"
-          },
-          {
-            "kind": "security_impact",
-            "description": "Establish recoverable sensitive material and concrete impact independently.",
-            "status": "unknown"
-          },
-          {
-            "kind": "destination_binding",
-            "description": "Resolve pointer/member aliases and the exact destination object written by memcpy_s.",
-            "status": "unknown"
-          },
-          {
-            "kind": "sink_behavior",
-            "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
-            "status": "unknown"
-          },
-          {
-            "kind": "runtime_log_visibility",
-            "description": "No log exposure or reader reachability is established by this call alone.",
-            "status": "unknown"
-          },
-          {
-            "kind": "security_impact",
-            "description": "Establish recoverable sensitive material and concrete impact independently.",
-            "status": "unknown"
-          }
-        ],
-        "consequence_impact": null,
-        "consequence_cwe": null,
-        "source_sha256": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
-        "rule_version": null,
-        "rule_lineage_id": null,
-        "symbol_identity": null,
-        "ast_fingerprint": null,
-        "identity_quality": "unknown"
       }
     ],
     "limitations": [
@@ -408,7 +288,6 @@
       "core/authentication/src/auth_session_key.c: nonliteral/unsupported log format: AUTH_LOGI",
       "core/authentication/src/auth_session_key.c: pointer/member assignment requires alias proof",
       "core/authentication/src/auth_session_key.c: preprocessor/build context not expanded",
-      "core/authentication/src/auth_session_key.c: record binding and initialization require compiler facts",
       "core/authentication/src/auth_session_key.c: shadowed sensitive record type withheld",
       "core/authentication/src/auth_session_key.c: short-circuit effects are may-flow; no path feasibility proof",
       "core/authentication/src/auth_session_key.c: unknown field/alias propagation",
@@ -477,7 +356,7 @@
     "Local Git commit/tree objects and a complete checkout were unavailable; GitHub API commit/tree metadata and raw files were verified, but this is not public Git Runner replay.",
     "The DSoftBus scope is the frozen selected-file manifest, not whole-component coverage.",
     "HiLog macro definitions are pinned, but their dependency/build binding to the DSoftBus product revision remains unknown.",
-    "Static findings are candidates; selected call-site triage found no public-log sink for the three unresolved-escape sites, while production log enablement, reader access, impact, and runtime validation remain unestablished.",
+    "Static findings are candidates; the two local crypto-copy findings were removed after member-flow modeling because no public-log sink is reached in those functions. One unresolved cross-file call candidate remains; production log enablement, reader access, impact, and runtime validation remain unestablished.",
     "This is not an independent labeled holdout and supports no precision or recall claim.",
     "Zero candidates would not establish absence of sensitive-data exposure."
   ]
