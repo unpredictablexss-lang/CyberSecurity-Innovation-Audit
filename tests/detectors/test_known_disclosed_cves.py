@@ -1,0 +1,156 @@
+from __future__ import annotations
+import hashlib
+import unittest
+from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
+from src.ohscanner.detectors.catalog import build_registry, default_detector_ids
+from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector
+from src.ohscanner.fixture import snapshot_digest
+
+class KnownDisclosedCveTests(unittest.TestCase):
+    def run_source(self, source, path="sample.c", parse_status="complete"):
+        unit=SourceUnit(path=path, language="c", text=source, sha256=hashlib.sha256(source.encode()).hexdigest(), parse_status=parse_status)
+        request=ScanRequest(request_id="test:known-cves", repository="fixture/known-cves", commit="a"*40, snapshot_sha256=snapshot_digest((unit,)), target_id="current-component:fixture/known-cves", profile_id="fixture-no-build", provenance="fixture")
+        run=KnownDisclosedCveDetector().detect(ScanContext(request=request, units=(unit,)), (unit,))
+        return run
+
+    def test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes(self):
+        vulnerable = """int TIFFReadRGBAImageOriented(TIFF *tif, uint32_t rwidth, uint32_t rheight, uint32_t *raster, int orientation, int stop) {
+            ok = TIFFRGBAImageGet(&img, raster + (rheight - img.height) * rwidth, rwidth, img.height);
+            return ok;
+        }"""
+        fixed = """int TIFFReadRGBAImageOriented(TIFF *tif, uint32_t rwidth, uint32_t rheight, uint32_t *raster, int orientation, int stop) {
+            ok = TIFFRGBAImageGet(&img, raster, rwidth, rheight);
+            return ok;
+        }"""
+        previous_guard = """void unrelated(void) {
+            if (rwidth < img.width || rheight < img.height) return;
+        }
+        """ + vulnerable
+        self.assertIn("CVE-2025-9900", {f.symbol for f in self.run_source(vulnerable, "tif_getimage.c").findings})
+        self.assertEqual((), self.run_source(fixed, "tif_getimage.c").findings)
+        self.assertIn("CVE-2025-9900", {f.symbol for f in self.run_source(previous_guard, "tif_getimage.c").findings})
+
+    def test_cjson_recursive_bidirectional_linear_matching(self):
+        source="""int cJSON_Compare(node *a,node *b){ node *x; for_each(x,a){ y=get_object_item(b,x->string); if(!cJSON_Compare(x,y)) return 0; } for_each(y,b){ x=get_object_item(a,y->string); if(!cJSON_Compare(y,x)) return 0; } return 1; }""".replace("for_each", "cJSON_ArrayForEach")
+        run=self.run_source(source, "cJSON.c")
+        self.assertIn("CVE-2026-67216", {f.symbol for f in run.findings})
+
+    def test_cjson_non_recursive_or_parse_only_controls(self):
+        safe="""int cJSON_Compare(node *a,node *b){ return a->type == b->type; }"""
+        unrelated="""node *parse(const char *s){ return cJSON_Parse(s); }"""
+        self.assertEqual((), self.run_source(safe, "cJSON.c").findings)
+        self.assertEqual((), self.run_source(unrelated, "cJSON.c").findings)
+
+    def test_curl_recursive_owned_mime_cleanup(self):
+        source="""void cleanup_part_content(part *p){ p->freefunc(p->arg); } void mime_subparts_free(void *p){ curl_mime_free(p); } void curl_mime_free(mime *m){ while(m->firstpart){ part=m->firstpart; Curl_mime_cleanpart(part); } } void Curl_mime_set_subparts(part *p,mime *m,int take_ownership){ p->freefunc=take_ownership?mime_subparts_free:other; }"""
+        self.assertIn("CVE-2026-92391", {f.symbol for f in self.run_source(source, "mime.c").findings})
+        bounded=source.replace("void mime_subparts_free(void *p){ curl_mime_free(p); }", "void mime_subparts_free(void *p,int depth){ if(depth > MAX_MIME_DEPTH) return; curl_mime_free(p); }")
+        self.assertNotIn("CVE-2026-92391", {f.symbol for f in self.run_source(bounded, "mime.c").findings})
+
+    def test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes(self):
+        vulnerable = """static cJSON_bool decode_array_index_from_pointer(const unsigned char * const pointer, size_t * const index) {
+            size_t parsed_index = 0;
+            size_t position = 0;
+            for (position = 0; (pointer[position] >= '0') && (pointer[0] <= '9'); position++) {
+                parsed_index = (10 * parsed_index) + (size_t)(pointer[position] - '0');
+            }
+            if ((pointer[position] != '\0') && (pointer[position] != '/')) return 0;
+            *index = parsed_index;
+            return 1;
+        }"""
+        fixed = vulnerable.replace("pointer[0] <= '9'", "pointer[position] <= '9'")
+        unrelated = """static void other(const unsigned char *pointer) {
+            if (pointer[0] <= '9') consume(pointer);
+        }"""
+        vulnerable_findings = {f.symbol for f in self.run_source(vulnerable, "cJSON_Utils.c").findings}
+        self.assertIn("CVE-2025-57052", vulnerable_findings)
+        self.assertNotIn("CVE-2025-57052", {f.symbol for f in self.run_source(fixed, "cJSON_Utils.c").findings})
+        self.assertNotIn("CVE-2025-57052", {f.symbol for f in self.run_source(unrelated, "cJSON_Utils.c").findings})
+
+    def test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes(self):
+        vulnerable = """CURLcode setopt_cptr_proxy(Curl_easy *data, CURLoption option, va_list param) {
+            case CURLOPT_PROXYUSERPWD: {
+                if (!result && u) {
+                    Curl_safefree(data->set.str[STRING_PROXYUSERNAME]);
+                    result = Curl_urldecode(u, 0, &data->set.str[STRING_PROXYUSERNAME], NULL, REJECT_ZERO);
+                }
+                if (!result && p) {
+                    Curl_safefree(data->set.str[STRING_PROXYPASSWORD]);
+                    result = Curl_urldecode(p, 0, &data->set.str[STRING_PROXYPASSWORD], NULL, REJECT_ZERO);
+                }
+                break;
+            }
+            case CURLOPT_PROXYUSERNAME:
+                break;
+        }"""
+        fixed = """CURLcode setopt_cptr_proxy(Curl_easy *data, CURLoption option, va_list param) {
+            case CURLOPT_PROXYUSERPWD: {
+                if (!result) {
+                    Curl_safefree(data->set.str[STRING_PROXYUSERNAME]);
+                    Curl_safefree(data->set.str[STRING_PROXYPASSWORD]);
+                    if (u)
+                        result = Curl_urldecode(u, 0, &data->set.str[STRING_PROXYUSERNAME], NULL, REJECT_ZERO);
+                }
+                if (!result && p)
+                    result = Curl_urldecode(p, 0, &data->set.str[STRING_PROXYPASSWORD], NULL, REJECT_ZERO);
+                break;
+            }
+            case CURLOPT_PROXYUSERNAME:
+                break;
+        }"""
+        self.assertIn("CVE-2026-9079", {f.symbol for f in self.run_source(vulnerable, "setopt.c").findings})
+        self.assertNotIn("CVE-2026-9079", {f.symbol for f in self.run_source(fixed, "setopt.c").findings})
+
+    def test_libpng_affected_and_fixed_version_markers(self):
+        affected='#define PNG_LIBPNG_VER_STRING "1.6.55"\n'
+        fixed='#define PNG_LIBPNG_VER_STRING "1.6.59"\n'
+        self.assertIn("CVE-2026-46675", {f.symbol for f in self.run_source(affected, "pnglibconf.h").findings})
+        self.assertEqual((), self.run_source(fixed, "pnglibconf.h").findings)
+
+    def test_libpng_sequence_requires_end_without_row_read(self):
+        bad="void decode(png_structp p,png_infop i){ png_read_info(p,i); png_read_end(p,i); }"
+        safe="void decode(png_structp p,png_infop i){ png_read_info(p,i); png_read_row(p,row,0); png_read_end(p,i); }"
+        self.assertIn("CVE-2026-46675", {f.symbol for f in self.run_source(bad, "decoder.c").findings})
+        self.assertEqual((), self.run_source(safe, "decoder.c").findings)
+
+    def test_cjson_json_patch_unbounded_recursion_candidate(self):
+        vulnerable = """static int apply_patch(node *object,node *patch){ node *value=cJSON_Duplicate(patch,1); if(!value)return 0; cleanup: if(value)cJSON_Delete(value); return 0; }
+        int cJSONUtils_ApplyPatches(node *object,node *patches){ while(patches){ apply_patch(object,patches); patches=patches->next; } return 0; }"""
+        fixed = """static int apply_patch(node *object,node *patch,int depth){ if(depth >= MAX_PATCH_DEPTH)return 0; node *value=cJSON_Duplicate(patch,1); if(!value)return 0; cleanup: if(value)cJSON_Delete(value); return 0; }
+        int cJSONUtils_ApplyPatches(node *object,node *patches){ while(patches){ apply_patch(object,patches,0); patches=patches->next; } return 0; }"""
+        self.assertIn("CVE-2026-67215", {f.symbol for f in self.run_source(vulnerable, "cJSON_Utils.c").findings})
+        self.assertNotIn("CVE-2026-67215", {f.symbol for f in self.run_source(fixed, "cJSON_Utils.c").findings})
+
+    def test_pasteboard_disclosed_cves_and_guarded_controls(self):
+        vulnerable = """void AddPasteboardChangedObserver(Observer *observer){ if(!observer)return; observers->insert(observer); }
+        PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
+        int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
+        int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        fixed = """void AddPasteboardChangedObserver(Observer *observer){ int pid=GetCallingPid(); if(observers->size() >= MAX_OBSERVERS_PER_PID)return; observers->insert(observer); }
+        PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
+        int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
+        int OnGetPasteData(){ CheckPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        findings = {f.symbol for f in self.run_source(vulnerable, "pasteboard_service.cpp").findings}
+        self.assertIn("CVE-2025-25212", findings)
+        self.assertIn("CVE-2025-27247", findings)
+        self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
+
+    def test_partial_parse_retains_lexical_candidate_but_blocks_coverage(self):
+        source="void f(png_structp p,png_infop i){png_read_info(p,i);png_read_end(p,i);}"
+        run=self.run_source(source, parse_status="partial")
+        self.assertEqual("blocked", run.status)
+        self.assertIn("CVE-2026-46675", {f.symbol for f in run.findings})
+        self.assertTrue(any("remaining coverage is unknown" in item for item in run.limitations))
+        self.assertIn("ohscanner.known_disclosed_cves", default_detector_ids())
+        self.assertEqual("ohscanner.known_disclosed_cves", build_registry(("ohscanner.known_disclosed_cves",)).detectors()[0].detector_id)
+
+    def test_all_matches_remain_candidate_obligated(self):
+        source="void f(png_structp p,png_infop i){png_read_info(p,i);png_read_end(p,i);}"
+        run=self.run_source(source)
+        self.assertTrue(run.findings)
+        for finding in run.findings:
+            self.assertEqual("partial", finding.identity_quality)
+            self.assertIn("reachability", finding.message.lower())
+            self.assertTrue(finding.evidence_obligations)
+
+if __name__ == "__main__": unittest.main()

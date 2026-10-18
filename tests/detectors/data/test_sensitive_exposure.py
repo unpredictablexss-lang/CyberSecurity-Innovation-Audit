@@ -10,7 +10,7 @@ from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.data.models import (
     ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
-from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats
+from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats, looks_sensitive_name
 
 MODEL=SensitiveSourceModel('fixture/d-sensitive','d'*40,parameters=(('service.cpp','Callback',0),),provenance='Synthetic model for regression only; no real vulnerability')
 ROOT=Path(__file__).resolve().parents[2]
@@ -79,7 +79,72 @@ class SensitiveTests(unittest.TestCase):
                           'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t len) { '
                           'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",sessionKey); }')
         self.assertEqual(unknown.status, 'blocked')
-        self.assertEqual(unknown.findings, ())
+        self.assertEqual(len(unknown.findings), 1)
+        self.assertIn('heuristic suspected sensitive identifier sessionKey', unknown.findings[0].message)
+        self.assertIn('No reviewed sensitive-source model', ' '.join(unknown.limitations))
+
+    def test_unknown_revision_keeps_name_based_sensitive_log_candidate_without_confirmation(self):
+        source = '''void dump(const char *sessionKey) {
+            HILOG_INFO(HILOG_MODULE_SOFTBUS, "%{public}s", sessionKey);
+        }'''
+        c = self.context(source)
+        run = SensitiveExposureDetector().detect(c, c.units)
+        self.assertEqual(run.status, 'blocked')
+        self.assertEqual(dict(run.file_outcomes)['service.cpp'], 'partial')
+        self.assertEqual(len(run.findings), 1)
+        finding = run.findings[0]
+        self.assertEqual(finding.rule_id, 'data.log.sensitive-value')
+        self.assertEqual(finding.candidate_cwe, 'CWE-532')
+        self.assertEqual(finding.source_sha256, c.units[0].sha256)
+        self.assertIn('heuristic suspected sensitive identifier sessionKey', finding.message)
+        self.assertTrue(any(item.kind == 'source_semantics' and 'Unreviewed' in item.description
+                            for item in finding.evidence_obligations))
+        self.assertIn('heuristic candidates are incomplete', ' '.join(run.limitations))
+
+    def test_unknown_revision_heuristic_fixed_safe_and_identifier_controls(self):
+        cases = (
+            ('positive', 'void f(const char *password) { HILOG_ERROR(1,"%{public}s",password); }', 1),
+            ('removed_log', 'void f(const char *password) { (void)password; }', 0),
+            ('ordinary', 'void f(unsigned keyCount) { HILOG_INFO(1,"%{public}u",keyCount); }', 0),
+            ('principal_id', 'void f(unsigned accessTokenID) { HILOG_INFO(1,"%{public}u",accessTokenID); }', 0),
+        )
+        for label, source, expected in cases:
+            with self.subTest(label=label):
+                c = self.context(source)
+                run = SensitiveExposureDetector().detect(c, c.units)
+                self.assertEqual(run.status, 'blocked')
+                self.assertEqual(len(run.findings), expected)
+                self.assertEqual(dict(run.file_outcomes)['service.cpp'], 'partial')
+
+    def test_unknown_revision_heuristic_tracks_secret_field_and_api_return(self):
+        cases = (
+            'void f(User *user) { HILOG_INFO(1,"%{public}s",user->password); }',
+            'void f() { const char *credential = getCredential(); HILOG_INFO(1,"%{public}s",credential); }',
+        )
+        for source in cases:
+            with self.subTest(source=source):
+                c = self.context(source)
+                run = SensitiveExposureDetector().detect(c, c.units)
+                self.assertEqual(run.status, 'blocked')
+                self.assertEqual(len(run.findings), 1)
+                self.assertEqual(dict(run.file_outcomes)['service.cpp'], 'partial')
+
+    def test_heuristic_name_classifier_avoids_token_id_but_keeps_secret_shapes(self):
+        for value in ('sessionKey', 'private_key', 'password', 'clientSecret', 'accessToken', 'API_KEY'):
+            with self.subTest(value=value):
+                self.assertTrue(looks_sensitive_name(value))
+        for value in ('accessTokenID', 'FullTokenIdentifier', 'keyCount', 'keyboard', 'ordinary',
+                      'HTTP_API_KEY_FETCH', 'WSI_TOKEN_HTTP', 'token'):
+            with self.subTest(value=value):
+                self.assertFalse(looks_sensitive_name(value))
+
+    def test_partial_unknown_revision_retains_heuristic_candidate_as_blocked(self):
+        source = 'void f(const char *secret) { HILOG_INFO(1,"%{public}s",secret); }'
+        c = self.context(source, partial='partial')
+        run = SensitiveExposureDetector().detect(c, c.units)
+        self.assertEqual(run.status, 'blocked')
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(dict(run.file_outcomes)['service.cpp'], 'partial')
 
     def test_model_binding_rejects_other_commit(self):
         c=self.context('void f() {}')

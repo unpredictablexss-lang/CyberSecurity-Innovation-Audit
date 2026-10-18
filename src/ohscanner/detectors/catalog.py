@@ -14,6 +14,7 @@ from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
 from .interface.arkts_js import ArkTsJsInterfaceDetector
 from .data.sensitive_exposure import SensitiveExposureDetector
+from .known_cves import KnownDisclosedCveDetector
 
 _APPROVED = {
     "ohscanner.oh.arkts_js": {
@@ -30,8 +31,13 @@ _APPROVED = {
         "factory": SensitiveExposureDetector,
         "kind": "research_candidate",
         "default_enabled": False,
-        "admission_reason": "explicit_selection_required: exact-revision sensitive-source research model; partial coverage remains unknown",
-        "summary": "D: exact-revision sensitive-data-to-log candidates; not a vulnerability verdict",
+        "admission_reason": "explicit_selection_required: reviewed source profiles plus blocked candidate-only fallback for unknown revisions; partial coverage remains unknown",
+        "summary": "D: sensitive-data exposure candidates; unknown revisions remain blocked/partial, not a vulnerability verdict",
+    },
+    "ohscanner.known_disclosed_cves": {
+        "factory": KnownDisclosedCveDetector,
+        "kind": "research_candidate",
+        "summary": "Narrow source signatures for selected public CVEs; product reachability remains unverified",
     },
     CppCopyCallExampleDetector.detector_id: {
         "factory": CppCopyCallExampleDetector,

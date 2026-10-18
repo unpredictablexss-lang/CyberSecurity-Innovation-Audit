@@ -148,7 +148,7 @@ def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
         review.append({"reason": "skipped_source_inventory_entries", "count": source.skipped_entries})
     if not rows:
         review.append({"reason": "empty_detector_catalog"})
-    missing_blobs = sum(f.blob_oid is None for f in files)
+    missing_blobs = sum(f.blob_oid is None and f.archive_binding is None for f in files)
     if missing_blobs:
         review.append({"reason": "missing_blob_identities", "count": missing_blobs})
     if source.provenance == "caller_supplied":

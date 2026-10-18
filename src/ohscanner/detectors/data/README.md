@@ -1,22 +1,17 @@
-# D: sensitive-material log exposure, v0.11.0 (retain privacy-masked sensitive flows as conditional candidates)
+# D: sensitive-material log exposure, v0.14.0 (reviewed profiles plus blocked heuristic fallback)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
-`data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
-registration are pending. Nothing is registered in the panel or global catalog.
+`data.log.sensitive-value` (provisional CWE-532). The detector is registered in main as an explicitly selected research candidate; automatic plans keep it off. The panel labels D as experimental. This development branch adds a blocked name-heuristic fallback for unreviewed repositories and revisions.
 
 Entry: `SensitiveExposureDetector().detect(context, units)` or inject one exact source model for isolated research fixtures.
 Requires the existing `ast` fact. Existing Runner/ToolRunResult v2 and obligations
 carry source SHA and trace; no new global schema/CLI/network/scanner invocation.
 
-The default detector dispatches only to exact reviewed repository/commit profiles in
-models.py: DSoftBus session-key material and AccessToken authorization identities.
-Other repositories and revisions are blocked until reviewed models are supplied.
-AccessToken IDs are principals, not bearer secrets; their findings remain conditional
-privacy candidates. Fixtures explicitly inject a synthetic model.
+The default detector dispatches exact reviewed repository/commit profiles in models.py for DSoftBus session-key material and AccessToken authorization identities. Unreviewed repositories/revisions use only the D19 lexical fallback: output from recognized log APIs can retain candidates when a variable, field, or return API has a strong sensitive-name shape. This fallback always reports blocked and per-file partial, even when it finds no candidate; it cannot be read as a clean scan. AccessToken IDs are principals, not bearer secrets; their findings remain conditional privacy candidates. Fixtures explicitly inject a synthetic reviewed model.
 
 Algorithm: detailed Tree-sitter statement walk -> typed material fields or reviewed
 callback/output argument -> local assignments/copies/formatting -> modeled HiLog operand. Public operands are direct candidates; private/default-private operands remain conditional candidates with a sink_privacy obligation. Per-operand format mapping handles %% and * width/precision;
-unsupported formats become partial. No keyword password/token matching. Buffer
+unsupported formats become partial. The unreviewed fallback uses a narrow sensitive-name vocabulary (password, secret, credential, named key families, and non-ID token shapes); names do not establish contents or secret semantics. Buffer
 contents are not written to diagnostics; only symbol/location dependency steps.
 Unknown wrappers retain tentative dependencies and are not assumed sanitizers.
 Branch joins are may-flow, never path proof. Type binding, initialization, API
@@ -66,3 +61,5 @@ D17 expands the default detector from one exact DSoftBus profile to the exact DS
 
 D12 retains a candidate when a modeled sensitive field is used through a same-name local type whose compiler identity is unresolved; the finding carries a `type_identity` obligation and remains candidate-only. The source model explicitly treats `SessionKey.len` as non-sensitive metadata. See `research/data_sensitive/D12_IMPLEMENTATION.md` and the pinned real-source replay; no new candidate was added to that profile.
 D14 adds DSoftBus LNN/CONN/DISC, DFILE/DFINDER and FILLP wrappers plus HiLog base APIs; signatures and format operand positions were checked against pinned upstream headers and covered by regressions. D18 adds the public HiLog `OH_LOG_*` macros and direct message APIs after checking the `hiviewdfx_hilog` header at the recorded snapshot. The regression validates sink recognition only and does not claim a product exposure. D15 adds an exact-commit, exact-file AccessToken identity profile for source experiments; its one-file replay is partial/blocked and retains candidates only. AccessToken IDs are authorization identities, not bearer secrets. See `research/data_sensitive/D15_ACCESS_TOKEN_REPLAY.md` and its JSON evidence. This profile is not catalog-registered, is not a full component scan, and does not establish a vulnerability or impact.
+
+D19 (development branch, detector 0.14.0) adds a candidate-only fallback for unreviewed repository/commit pairs. It uses semantic sensitive-name shapes and preserves tentative flows through unresolved calls; every scanned file remains partial and the aggregate run blocked, including zero-finding files. It can therefore retain credential/configuration values passed to ordinary APIs as candidates. A fixed Netstack replay reduced 76 heuristic candidates to 59 after excluding protocol/API names such as `WSI_TOKEN_HTTP` and `HTTP_API_KEY_FETCH`; the remaining candidates still require review and do not establish logging, exposure, or impact. Same-scope replay proves output stability only. This is not a reviewed source model, a clean-scan claim, or a precision/recall result. See `research/data_sensitive/D19_HIGH_RECALL_FALLBACK.md`.
