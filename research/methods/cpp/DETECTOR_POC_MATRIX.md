@@ -6,7 +6,7 @@ the candidate to confirmed/reportable.
 
 | Detector family | Detector version | PoC | Dynamic result | Remaining gate |
 |---|---|---|---|---|
-| `ohscanner.cpp.shared_ptr_race` | `0.5.0` | `src/ohscanner/poc/cpp_shared_ptr_race.py` | v0.5 rerun: vulnerable/upstream-fix TSan `3/3`; fully-atomic patch clean `3/3` | Git-object provenance and product reachability unknown |
+| `ohscanner.cpp.shared_ptr_race` | `0.5.3` | `src/ohscanner/poc/cpp_shared_ptr_race.py` | v0.5 rerun: vulnerable/upstream-fix TSan `3/3`; fully-atomic patch clean `3/3` | Git-object provenance and product reachability unknown |
 | `ohscanner.cpp.lifetime` | `0.4.0` | `src/ohscanner/poc/cpp_lifetime_uaf.py` | v0.4 rerun: four ASan invalidation variants `3/3`; two controls clean `3/3` | self-authored workload; product reachability unknown |
 | `ohscanner.interface.ipc` | family-specific | `src/ohscanner/poc/harnesses/auth01_descriptor_bypass/` + `outputs/poc-loop/auth01-20261014/run-003/` (local evidence; harness source is committed) | AUTH-01 vulnerable attack `3/3`, fixed rejection and patch revalidation; reachability remains partial | unprivileged handle acquisition, identity and CIA impact unknown |
 
@@ -16,6 +16,22 @@ Rules for this matrix:
 - A clean control or patch revalidation is not a global safety claim.
 - Missing PoC, partial reachability or unresolved provenance stays explicit.
 - Historical reports, candidate IDs and review records are not rewritten.
+
+## A-line detector status (2026-10-18)
+
+Current A-line versions and their static controls. No row claims a dynamic PoC
+unless one is named; the bounds row uses the delivered sandbox reduced models,
+which are method controls rather than product builds.
+
+| Detector | Version | Latest controls | Dynamic PoC |
+|---|---|---|---|
+| `ohscanner.cpp.shared_ptr_race` | `0.5.3` | constructor-body initialization, parameter shadowing, method-level triage `504` candidates / `212` groups | DelayedSingleton and JSProxy cases above |
+| `ohscanner.cpp.bounds` | `0.2.9` | guard/loop fixtures, fixed five-component scan `33/22`, sandbox copy-range replay `3/3` | none |
+| `ohscanner.cpp.integer_bounds` | `0.2.1` | `calloc`/`new[]` multiplication fixtures, fixed scan `33/22` | historical narrow-index case only |
+| `ohscanner.cpp.resource_lifetime` | `0.1.3` | conditional release and one-hop wrapper fixtures | none for this rule ID |
+| `ohscanner.cpp.unsafe_memory_call` | `0.1.2` | macro-format quiet control, `fprintf/vfprintf/syslog` format position | none |
+
+All rows remain `candidate/unassessed`; `validated_vulnerability=0`.
 ## Four-class control matrix (2026-10-15)
 
 `research/tests/cpp_detector_controls/` is the repeatable A-line development
