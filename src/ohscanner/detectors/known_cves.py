@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.9.0"
+VERSION = "0.10.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -28,12 +28,12 @@ def _body(text: str, name: str):
                 if depth == 0: return opening, text[opening + 1:i]
     return None
 
-def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: str):
+def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: str, impact: str = "availability_or_memory_safety"):
     line, col = line_column(unit.text, pos)
     return DetectorFinding(file=unit.path, line=line, column=col, rule_id=rule,
         message=f"Candidate component-code match for {cve}: {detail} Product reachability and vulnerability status remain unconfirmed.",
         evidence_type="syntax", candidate_cwe=cwe, symbol=cve, evidence_obligations=OBLIGATIONS,
-        consequence_impact="availability_or_memory_safety", consequence_cwe=cwe,
+        consequence_impact=impact, consequence_cwe=cwe,
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
 
@@ -267,6 +267,41 @@ def _scan(unit: SourceUnit):
                 "ohknowncve-webview-cve-2026-27648", "CVE-2026-27648",
                 detail,
                 "CWE-787",
+            ))
+    # CVE-2022-45877: the affected device-manager flow put the PIN in the
+    # auth response token that is serialized and sent through SoftBus. Require
+    # the same function body and the complete serialization/send sequence;
+    # mere PIN key or transport references are insufficient.
+    group_created = _body(s, "OnGroupCreated")
+    if group_created:
+        group_start, group_body = group_created
+        pin_in_token = bool(re.search(
+            r"jsonObj\s*\[\s*PIN_CODE_KEY\s*\]\s*=\s*pinCode\s*;",
+            group_body,
+        ))
+        token_marker = bool(re.search(
+            r"jsonObj\s*\[\s*PIN_TOKEN\s*\]\s*=\s*authResponseContext_->token\s*;",
+            group_body,
+        ))
+        serialized_auth_token = bool(re.search(
+            r"authResponseContext_->authToken\s*=\s*jsonObj\.dump\s*\(\s*\)\s*;",
+            group_body,
+        ))
+        sent_auth_response = bool(re.search(
+            r"SetResponseContext\s*\(\s*authResponseContext_\s*\)\s*;[\s\S]{0,500}?"
+            r"CreateSimpleMessage\s*\(\s*MSG_TYPE_RESP_AUTH\s*\)[\s\S]{0,400}?"
+            r"SendData\s*\(\s*authResponseContext_->sessionId\s*,\s*message\s*\)",
+            group_body,
+        ))
+        if pin_in_token and token_marker and serialized_auth_token and sent_auth_response:
+            pos = group_start + 1 + re.search(
+                r"jsonObj\s*\[\s*PIN_CODE_KEY\s*\]\s*=\s*pinCode\s*;", group_body
+            ).start()
+            out.append(_finding(
+                unit, pos,
+                "ohknowncve-device-manager-cve-2022-45877", "CVE-2022-45877",
+                "DmAuthManager::OnGroupCreated serializes PIN_CODE_KEY into authToken and sends the authentication response through SoftBus. This is a component-source candidate; product version, build inclusion, peer visibility, and impact are not established.",
+                "CWE-319", impact="sensitive_data_exposure",
             ))
     return tuple(out)
 
