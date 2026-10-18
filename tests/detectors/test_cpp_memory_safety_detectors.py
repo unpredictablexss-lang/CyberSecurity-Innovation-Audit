@@ -50,7 +50,7 @@ void positive(char *src, unsigned int n) {
 """)
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.bounds")
-        self.assertEqual(self.detector.version, "0.2.0")
+        self.assertEqual(self.detector.version, "0.2.1")
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
         self.assertEqual({item.rule_id for item in run.findings}, {
@@ -59,7 +59,7 @@ void positive(char *src, unsigned int n) {
         })
         for finding in run.findings:
             self.assertEqual(finding.source_sha256, source.sha256)
-            self.assertEqual(finding.rule_version, "0.2.0")
+            self.assertEqual(finding.rule_version, "0.2.1")
             self.assertEqual(finding.rule_lineage_id, "A-BOF-01:ohcpp-memory-bounds-candidate")
             self.assertEqual(finding.identity_quality, "partial")
             self.assertGreaterEqual(len(finding.evidence_obligations), 7)
@@ -316,6 +316,18 @@ class MemorySafetyControlManifestTests(unittest.TestCase):
                 self.assertGreaterEqual(len(run.findings), item["expected_min"])
             if "expected_max" in item:
                 self.assertLessEqual(len(run.findings), item["expected_max"])
+
+    def test_malloc_symbolic_capacity_is_candidate_unknown(self) -> None:
+        path = self.root / "bounds_malloc_symbolic.cpp"
+        source = unit(
+            "fixtures/cpp_memory_safety/bounds_malloc_symbolic.cpp",
+            path.read_text(encoding="utf-8"),
+        )
+        run = CppBoundsDetector().detect(context_for(source), (source,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("allocation capacity", run.findings[0].message)
+        self.assertIn("CWE-119", run.findings[0].candidate_cwe)
 
 if __name__ == "__main__":
     unittest.main()

@@ -15,6 +15,14 @@
       "byte_length": 111
     },
     {
+      "category": "positive",
+      "expected_min": 1,
+      "fixture": "bounds_malloc_positive.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "4aeb5c291908e97380ccdd0c4e4ce34f16bcdee7d2c8a924cc1d65138eb96d79",
+      "byte_length": 135
+    },
+    {
       "category": "fixed",
       "expected_max": 0,
       "fixture": "bounds_fixed.cpp",
@@ -23,12 +31,28 @@
       "byte_length": 154
     },
     {
+      "category": "fixed",
+      "expected_max": 0,
+      "fixture": "bounds_malloc_fixed.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "8b80346a83fcb92af08f6fd18469dff17bfe4ad8cdc3fb1af3c9a7fc2b9799e6",
+      "byte_length": 132
+    },
+    {
       "category": "safe",
       "expected_max": 0,
       "fixture": "bounds_safe.cpp",
       "detector": "ohscanner.cpp.bounds",
       "sha256": "1ba17501f075c4b6a3c87e9b39f91bef33897bb2f1b37b166564964b4e2f7694",
       "byte_length": 100
+    },
+    {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "bounds_malloc_safe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "15247fa4075bb3f60368d03b5d74ec221e3334c8b8464d9031914ed4bcf74c4d",
+      "byte_length": 141
     },
     {
       "category": "unrelated",

@@ -36,6 +36,13 @@ _ALLOC_CALL_RE = re.compile(
     r"\b(?P<name>[A-Za-z_]\w*)\s*=\s*(?:(?:std\s*::\s*)?malloc|calloc|new)\s*\(",
     re.MULTILINE,
 )
+_MALLOC_ASSIGN_RE = re.compile(
+    r"\b(?P<name>[A-Za-z_]\w*)\s*=\s*(?:\([^;=]*?\)\s*)?(?P<alloc>malloc|calloc)\s*\("
+)
+_NEW_ARRAY_ASSIGN_RE = re.compile(
+    r"\b(?P<name>[A-Za-z_]\w*)\s*=\s*new\s+(?:\([^)]*\)\s*)?"
+    r"(?P<type>[A-Za-z_][A-Za-z0-9_:<>]*)\s*\[\s*(?P<count>[^]]+)\s*\]"
+)
 _DANGEROUS_COPY_RE = re.compile(
     r"\b(?P<name>memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\("
 )
@@ -77,6 +84,16 @@ class ArrayShape:
     element_size: Optional[int]
     start: int
     kind: str
+
+
+@dataclass(frozen=True)
+class PointerShape:
+    name: str
+    capacity_bytes: Optional[int]
+    capacity_expression: Optional[str]
+    element_size: Optional[int]
+    kind: str
+    start: int
 
 
 @dataclass(frozen=True)
@@ -495,4 +512,58 @@ def call_argument_span(masked: str, call_start: int) -> Optional[Tuple[int, int,
             if depth == 0:
                 return open_paren + 1, index, masked[open_paren + 1:index]
     return None
+
+
+def pointer_declarations(masked: str, constants: Mapping[str, int]) -> Dict[str, PointerShape]:
+    """Collect simple malloc/calloc/new[] capacity facts for pointer destinations."""
+    result: Dict[str, PointerShape] = {}
+    for match in _MALLOC_ASSIGN_RE.finditer(masked):
+        span = call_argument_span(masked, match.start("alloc"))
+        if span is None:
+            continue
+        args = split_call_arguments(span[2])
+        if not args:
+            continue
+        name = match.group("name")
+        alloc = match.group("alloc")
+        if alloc == "malloc":
+            expression = args[0].strip()
+            capacity = _constant_value(expression, constants)
+            result[name] = PointerShape(
+                name, capacity, expression, None, "malloc", match.start()
+            )
+        elif len(args) >= 2:
+            count, element = args[0].strip(), args[1].strip()
+            count_value = _constant_value(count, constants)
+            element_value = _constant_value(element, constants)
+            capacity = (
+                count_value * element_value
+                if count_value is not None and element_value is not None
+                else None
+            )
+            expression = f"{count} * {element}"
+            result[name] = PointerShape(
+                name, capacity, expression, None, "calloc", match.start()
+            )
+    for match in _NEW_ARRAY_ASSIGN_RE.finditer(masked):
+        count = match.group("count").strip()
+        bits, _signed = type_shape(match.group("type"))
+        element_size = None if bits is None else max(1, bits // 8)
+        count_value = _constant_value(count, constants)
+        capacity = (
+            count_value * element_size
+            if count_value is not None and element_size is not None
+            else None
+        )
+        if element_size is None:
+            expression = None
+        elif element_size == 1:
+            expression = count
+        else:
+            expression = f"{count} * {element_size}"
+        name = match.group("name")
+        result[name] = PointerShape(
+            name, capacity, expression, element_size, "new_array", match.start()
+        )
+    return result
 

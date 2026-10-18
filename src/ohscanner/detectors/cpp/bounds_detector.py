@@ -33,6 +33,7 @@ from .memory_safety import (
     guard_shapes,
     line_column,
     mask_comments_and_literals,
+    pointer_declarations,
     split_call_arguments,
 )
 
@@ -40,7 +41,7 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.0"
+RULE_VERSION = "0.2.1"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -167,6 +168,10 @@ def _contains_symbol(expression: str) -> bool:
     return bool(re.search(r"[A-Za-z_]\w*", re.sub(r"\bsizeof\b", "", expression)))
 
 
+def _normalized_expression(expression: str) -> str:
+    return re.sub(r"\s+", "", expression)
+
+
 def _nonnegative_symbols(masked: str) -> Set[str]:
     symbols: Set[str] = set()
     for match in re.finditer(
@@ -190,6 +195,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
     arrays, _integers, constants = declarations(masked)
+    pointers = pointer_declarations(masked, constants)
     guards = guard_shapes(masked, functions)
     nonnegative = _nonnegative_symbols(masked)
     sizeof_values = {
@@ -209,15 +215,30 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
             continue
         destination = args[0].strip()
         destination_shape = arrays.get(destination)
-        if destination_shape is None or destination_shape.capacity is None or destination_shape.element_size is None:
+        pointer_shape = pointers.get(destination)
+        capacity_bytes: Optional[int] = None
+        capacity_expression: Optional[str] = None
+        if (
+            destination_shape is not None
+            and destination_shape.capacity is not None
+            and destination_shape.element_size is not None
+        ):
+            capacity_bytes = destination_shape.capacity * destination_shape.element_size
+        elif pointer_shape is not None:
+            capacity_bytes = pointer_shape.capacity_bytes
+            capacity_expression = pointer_shape.capacity_expression
+            if capacity_bytes is None and not capacity_expression:
+                continue
+        else:
             continue
-        capacity_bytes = destination_shape.capacity * destination_shape.element_size
         call_name = match.group("name")
         if call_name in {"strcpy", "strcat", "sprintf"}:
             findings.append(_finding(
                 unit, unit.text, match.start(), RULE_COPY, destination,
-                f"Candidate only: `{call_name}` writes to fixed array `{destination}` "
-                f"({capacity_bytes} bytes) without a modeled destination upper bound; "
+                f"Candidate only: `{call_name}` writes to "
+                f"{'fixed array' if destination_shape is not None else 'allocation'} `{destination}` "
+                f"({capacity_bytes if capacity_bytes is not None else capacity_expression} bytes) "
+                "without a modeled destination upper bound; "
                 "alias, format and source length semantics remain unknown.",
                 "CWE-120", "CWE-787",
             ))
@@ -225,7 +246,19 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if call_name in {"memcpy", "memmove"} and len(args) < 3:
             continue
         length_expression = args[2] if call_name in {"memcpy", "memmove"} else args[-1]
-        if _safe_copy_length(length_expression, destination, arrays):
+        if destination_shape is not None and _safe_copy_length(length_expression, destination, arrays):
+            continue
+        if capacity_bytes is None:
+            if _normalized_expression(length_expression) == _normalized_expression(capacity_expression or ""):
+                continue
+            if _contains_symbol(length_expression) and _contains_symbol(capacity_expression or ""):
+                findings.append(_finding(
+                    unit, unit.text, match.start(), RULE_COPY, destination,
+                    f"Candidate only: `{call_name}` length `{length_expression.strip()}` is not proven "
+                    f"<= allocation capacity `{capacity_expression}` for `{destination}`. Allocation "
+                    "source, aliases, guard dominance and reachability remain unknown.",
+                    "CWE-119", "CWE-787" if call_name != "strncpy" else "CWE-120",
+                ))
             continue
         explicit_size = _size_of_value(length_expression, arrays)
         constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
