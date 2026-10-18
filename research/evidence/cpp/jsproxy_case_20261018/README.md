@@ -17,6 +17,10 @@ The current detector (`ohscanner.cpp.shared_ptr_race` 0.5.1) reports two
 `instance_` candidates in the pinned header: the `SetInstance` write at line 37
 and the `GetInstance` read at line 42.
 
+The same detector reports zero findings on the mutex-protected fixed header
+(`harness/fixed/js_proxy.h`), so the fix control is quiet at the detector layer
+as well as under TSan.
+
 ## Harness and result
 
 - Vulnerable header: exact pinned header bytes; `results.json` records its SHA.

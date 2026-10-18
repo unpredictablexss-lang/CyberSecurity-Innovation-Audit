@@ -50,7 +50,12 @@
         "symbol": "instance_",
         "rule_id": "ohcpp-shared-ptr-race-candidate-001"
       }
-    ]
+    ],
+    "fixed_control": {
+      "header": "harness/fixed/js_proxy.h",
+      "status": "completed",
+      "findings": 0
+    }
   },
   "harness": {
     "vulnerable_header": "harness/vulnerable/js_proxy.h",

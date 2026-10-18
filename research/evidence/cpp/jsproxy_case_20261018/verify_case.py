@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -76,6 +77,38 @@ def main() -> int:
         )
         if check.returncode != 0:
             errors.append("patch does not apply to pinned index: " + check.stdout.strip())
+
+    sys.path.insert(0, str(ROOT.parents[3]))
+    try:
+        from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
+        from src.ohscanner.detectors.cpp.shared_ptr_race_detector import SharedPtrRaceDetector
+        from src.ohscanner.fixture import snapshot_digest
+
+        fixed_path = ROOT / manifest["harness"]["fixed_header"]
+        fixed_text = fixed_path.read_text(encoding="utf-8")
+        fixed_unit = SourceUnit(
+            path=fixed_path.relative_to(ROOT.parents[3]).as_posix(),
+            language="cpp",
+            text=fixed_text,
+            sha256=hashlib.sha256(fixed_text.encode("utf-8")).hexdigest(),
+            parse_status="complete",
+        )
+        request = ScanRequest(
+            request_id="verify:a-jsproxy-fixed",
+            repository="fixture/a-jsproxy-fixed",
+            commit="1" * 40,
+            snapshot_sha256=snapshot_digest((fixed_unit,)),
+            target_id="current-component:fixture/a-jsproxy-fixed",
+            profile_id="fixture",
+            provenance="fixture",
+        )
+        fixed_run = SharedPtrRaceDetector().detect(
+            ScanContext(request=request, units=(fixed_unit,)), (fixed_unit,)
+        )
+        if fixed_run.status != "completed" or fixed_run.findings:
+            errors.append("fixed header still has detector findings")
+    except (ImportError, OSError, ValueError) as exc:
+        errors.append("fixed control detector check failed: " + str(exc))
 
     if errors:
         for error in errors:
