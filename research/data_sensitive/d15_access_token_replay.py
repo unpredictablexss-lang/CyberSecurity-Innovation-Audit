@@ -62,7 +62,7 @@ def replay(store: Path, commit: str) -> dict:
         target_id="current-component:" + ACCESS_TOKEN_SOURCE.repository,
         provenance="fixture",
     )
-    run = SensitiveExposureDetector(ACCESS_TOKEN_SOURCE).detect(
+    run = SensitiveExposureDetector().detect(
         ScanContext(request, units, {"ast": ast}), units)
     return {
         "schema": 1,

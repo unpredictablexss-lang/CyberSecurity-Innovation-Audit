@@ -8,7 +8,8 @@ from src.ohscanner.frontend import index_sources
 from src.ohscanner.git_source import GitSource
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
-from src.ohscanner.detectors.data.models import ACCESS_TOKEN_SOURCE, SensitiveSourceModel
+from src.ohscanner.detectors.data.models import (
+    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
 from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats
 
 MODEL=SensitiveSourceModel('fixture/d-sensitive','d'*40,parameters=(('service.cpp','Callback',0),),provenance='Synthetic model for regression only; no real vulnerability')
@@ -43,6 +44,43 @@ class SensitiveTests(unittest.TestCase):
                 run=self.analyze((ROOT/'fixtures/data_sensitive'/case['file']).read_text())
                 self.assertEqual(len(run.findings),case['expected_candidates'])
                 if run.findings:self.assertTrue(run.findings[0].evidence_obligations)
+    def test_default_detector_dispatches_only_exact_reviewed_profiles(self):
+        def analyze(repository, commit, path, source):
+            data = source.encode()
+            units, ast, _ = index_sources((GitSource(
+                path, 'cpp',
+                hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(), data),))
+            request = ScanRequest(repository, repository, commit, snapshot_digest(units),
+                                  'current-component:'+repository)
+            context = ScanContext(request, units, {'ast': ast})
+            return SensitiveExposureDetector().detect(context, units)
+
+        dsoftbus = analyze(
+            DEFAULT_SOURCE.repository, DEFAULT_SOURCE.commit,
+            'core/authentication/src/auth_hichain.c',
+            'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t len) { '
+            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",sessionKey); }')
+        access_token = analyze(
+            ACCESS_TOKEN_SOURCE.repository, ACCESS_TOKEN_SOURCE.commit,
+            'interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp',
+            'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) { '
+            'LOGI(ATM_DOMAIN, ATM_TAG, "TokenID=%{public}u", tokenID); }')
+        self.assertEqual(len(dsoftbus.findings), 1)
+        self.assertEqual(len(access_token.findings), 1)
+        self.assertEqual(len(dsoftbus.findings[0].source_sha256), 64)
+        self.assertEqual(len(access_token.findings[0].source_sha256), 64)
+        self.assertNotEqual(dsoftbus.findings[0].source_sha256,
+                            access_token.findings[0].source_sha256)
+        self.assertTrue(any(model.repository == DEFAULT_SOURCE.repository for model in SUPPORTED_SOURCE_MODELS))
+        self.assertTrue(any(model.repository == ACCESS_TOKEN_SOURCE.repository for model in SUPPORTED_SOURCE_MODELS))
+
+        unknown = analyze(DEFAULT_SOURCE.repository, 'f'*40,
+                          'core/authentication/src/auth_hichain.c',
+                          'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t len) { '
+                          'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",sessionKey); }')
+        self.assertEqual(unknown.status, 'blocked')
+        self.assertEqual(unknown.findings, ())
+
     def test_model_binding_rejects_other_commit(self):
         c=self.context('void f() {}')
         c=replace(c,request=replace(c.request,commit='e'*40))
@@ -75,6 +113,31 @@ void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{publi
         self.assertTrue(any(item.kind == 'source_semantics' for item in run.findings[0].evidence_obligations))
         self.assertTrue(any(item.kind == 'type_identity' for item in run.findings[0].evidence_obligations))
         self.assertIn('shadowed sensitive record type identity unresolved', ' '.join(run.limitations))
+
+    def test_hilog_public_c_macros_and_message_apis_are_modeled_sinks(self):
+        for level in ('DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'):
+            with self.subTest(sink='OH_LOG_' + level):
+                run = self.analyze(
+                    'void f(SessionKey *secret) { '
+                    'OH_LOG_' + level + '(LOG_APP, "%{public}s", secret->value); }')
+                self.assertEqual(len(run.findings), 1)
+                self.assertEqual(run.findings[0].rule_id, 'data.log.sensitive-value')
+
+        message = self.analyze(
+            'void f(SessionKey *secret) { '
+            'OH_LOG_PrintMsg(LOG_APP, LOG_INFO, 1, "tag", secret->value); }')
+        self.assertEqual(len(message.findings), 1)
+
+        message_by_len = self.analyze(
+            'void f(SessionKey *secret, size_t n) { '
+            'OH_LOG_PrintMsgByLen(LOG_APP, LOG_INFO, 1, "tag", 3, secret->value, n); }')
+        self.assertEqual(len(message_by_len.findings), 1)
+
+        unrelated = self.analyze(
+            'void f(const char *ordinary) { '
+            'OH_LOG_DEBUG(LOG_APP, "%{public}s", ordinary); '
+            'OH_LOG_PrintMsg(LOG_APP, LOG_INFO, 1, "tag", ordinary); }')
+        self.assertEqual(unrelated.findings, ())
     def test_real_runner_v2_and_obligations(self):
         c=self.context('void f(SessionKey *x){ const char *alias = (const char*)x->value; AUTH_LOGE(0,"%{public}s",alias); }')
         registry=DetectorRegistry();registry.register(SensitiveExposureDetector(MODEL))

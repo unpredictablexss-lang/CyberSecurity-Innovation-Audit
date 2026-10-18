@@ -59,8 +59,8 @@ class HistoricalSensitiveExposureDetector(SensitiveExposureDetector):
                 'Historical model evidence missing or mismatched: '+', '.join(mismatches),))
         return super().detect(context, units)
 
-    def make_flow(self, unit):
-        return HistoricalLocalFlow(unit, self.model)
+    def make_flow(self, unit, model=None):
+        return HistoricalLocalFlow(unit, model if model is not None else self.model)
 
 
 class HistoricalLocalFlow(LocalFlow):

@@ -1,8 +1,8 @@
 """Explicit source/sink models; no sensitive-name heuristics or catalog registration."""
 from dataclasses import dataclass
 
-SOURCE_MODEL_VERSION = '0.3.0'  # Adds an exact-revision OpenHarmony authorization-identity profile.
-SINK_MODEL_VERSION = '0.5.0'  # Adds reviewed DSoftBus families, HiLog base and scoped AccessToken sinks.
+SOURCE_MODEL_VERSION = '0.4.0'  # Adds default dispatch across exact-revision DSoftBus and AccessToken profiles.
+SINK_MODEL_VERSION = '0.6.0'  # Adds public OH_LOG macros and direct message output APIs.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
 
@@ -48,7 +48,11 @@ SINKS = (
           for level in ('ERR', 'WAR', 'INF', 'DTL', 'DBG', 'BUTT')) +
     (ExposureSinkModel('HiLogPrint', 4), ExposureSinkModel('HiLogBasePrint', 4),
      ExposureSinkModel('OH_LOG_Print', 4),
+     ExposureSinkModel('OH_LOG_PrintMsg', 4),
+     ExposureSinkModel('OH_LOG_PrintMsgByLen', 5),
      ExposureSinkModel('HILOG_IMPL', 4)) +
+    tuple(ExposureSinkModel('OH_LOG_' + level, 1) for level in
+          ('DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')) +
     tuple(ExposureSinkModel('HILOG_' + level, 1) for level in
           ('DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')) +
     tuple(ExposureSinkModel('HILOG_BASE_' + level, 1) for level in
@@ -82,3 +86,6 @@ ACCESS_TOKEN_SOURCE = SensitiveSourceModel(
         for level in 'FEWID'
     ),
 )
+
+# Default detector dispatch is limited to reviewed exact repository/commit profiles.
+SUPPORTED_SOURCE_MODELS = (DEFAULT_SOURCE, ACCESS_TOKEN_SOURCE)

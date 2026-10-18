@@ -10,7 +10,7 @@ import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
-from .models import DEFAULT_SOURCE, SINKS
+from .models import DEFAULT_SOURCE, SINKS, SUPPORTED_SOURCE_MODELS
 
 @dataclass(frozen=True)
 class Flow:
@@ -74,18 +74,25 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.11.0'
+    version = '0.13.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
-    def __init__(self, model=DEFAULT_SOURCE):
-        self.model = model
+    def __init__(self, model=None):
+        # Explicit models keep research fixtures isolated. The default instance
+        # dispatches only among source profiles whose exact repository and commit
+        # have been reviewed; an unknown revision remains blocked.
+        self.model = model if model is not None else DEFAULT_SOURCE
+        self.models = (model,) if model is not None else SUPPORTED_SOURCE_MODELS
 
-    def make_flow(self, unit):
-        return LocalFlow(unit, self.model)
+    def make_flow(self, unit, model=None):
+        return LocalFlow(unit, model if model is not None else self.model)
 
     def detect(self, context, units):
-        if (context.request.repository, context.request.commit) != (self.model.repository, self.model.commit):
+        model = next((candidate for candidate in self.models
+                      if (context.request.repository, context.request.commit) ==
+                      (candidate.repository, candidate.commit)), None)
+        if model is None:
             return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
                 'No reviewed sensitive-source model for this repository/commit; not a clean scan.',))
         findings, outcomes, limits = [], [], set()
@@ -100,7 +107,7 @@ class SensitiveExposureDetector:
                 outcomes.append((u.path, 'failed')); continue
             if u.parse_status == 'not_run' or not outline:
                 outcomes.append((u.path, 'not_analyzed')); continue
-            analysis = self.make_flow(u)
+            analysis = self.make_flow(u, model)
             rows = analysis.run()
             findings.extend(rows)
             partial = analysis.gaps or u.parse_status != 'complete' or outline.get('parse_status') != 'complete'
