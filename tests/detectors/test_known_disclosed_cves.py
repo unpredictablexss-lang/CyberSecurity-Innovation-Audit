@@ -47,6 +47,40 @@ class KnownDisclosedCveTests(unittest.TestCase):
         bounded=source.replace("void mime_subparts_free(void *p){ curl_mime_free(p); }", "void mime_subparts_free(void *p,int depth){ if(depth > MAX_MIME_DEPTH) return; curl_mime_free(p); }")
         self.assertNotIn("CVE-2026-92391", {f.symbol for f in self.run_source(bounded, "mime.c").findings})
 
+    def test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes(self):
+        vulnerable = """CURLcode setopt_cptr_proxy(Curl_easy *data, CURLoption option, va_list param) {
+            case CURLOPT_PROXYUSERPWD: {
+                if (!result && u) {
+                    Curl_safefree(data->set.str[STRING_PROXYUSERNAME]);
+                    result = Curl_urldecode(u, 0, &data->set.str[STRING_PROXYUSERNAME], NULL, REJECT_ZERO);
+                }
+                if (!result && p) {
+                    Curl_safefree(data->set.str[STRING_PROXYPASSWORD]);
+                    result = Curl_urldecode(p, 0, &data->set.str[STRING_PROXYPASSWORD], NULL, REJECT_ZERO);
+                }
+                break;
+            }
+            case CURLOPT_PROXYUSERNAME:
+                break;
+        }"""
+        fixed = """CURLcode setopt_cptr_proxy(Curl_easy *data, CURLoption option, va_list param) {
+            case CURLOPT_PROXYUSERPWD: {
+                if (!result) {
+                    Curl_safefree(data->set.str[STRING_PROXYUSERNAME]);
+                    Curl_safefree(data->set.str[STRING_PROXYPASSWORD]);
+                    if (u)
+                        result = Curl_urldecode(u, 0, &data->set.str[STRING_PROXYUSERNAME], NULL, REJECT_ZERO);
+                }
+                if (!result && p)
+                    result = Curl_urldecode(p, 0, &data->set.str[STRING_PROXYPASSWORD], NULL, REJECT_ZERO);
+                break;
+            }
+            case CURLOPT_PROXYUSERNAME:
+                break;
+        }"""
+        self.assertIn("CVE-2026-9079", {f.symbol for f in self.run_source(vulnerable, "setopt.c").findings})
+        self.assertNotIn("CVE-2026-9079", {f.symbol for f in self.run_source(fixed, "setopt.c").findings})
+
     def test_libpng_affected_and_fixed_version_markers(self):
         affected='#define PNG_LIBPNG_VER_STRING "1.6.55"\n'
         fixed='#define PNG_LIBPNG_VER_STRING "1.6.59"\n'

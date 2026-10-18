@@ -2,9 +2,9 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.3.0，支持 7 项有具体本地源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.5.0，支持 8 项有具体本地源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
-17 项公开 CVE 审查清单中，本轮固定源码回放命中 7 项候选，另 10 项没有声称检出：有的缺少对应源码，有的缺精确根因映射，有的当前快照有修复线索或版本不在受影响范围。不是“17 项都扫描通过”，也不是 Recall 结果。
+17 项公开 CVE 审查清单中，当前规则覆盖 8 个 CVE 形态：7 个固定源码候选命中，1 个固定源码形态显示已有修复迹象；审查清单仍有 9 项没有正向可检出形态：有的缺少对应源码，有的缺精确根因映射，有的当前快照有修复线索或版本不在受影响范围。不是“17 项都扫描通过”，也不是 Recall 结果。
 
 ## 固定源码回放
 
@@ -30,7 +30,7 @@ libpng 归档成员同时记录上游归档 Git blob、归档 SHA-256 和 `png.h
 - CVE-2026-67216：`cJSON_Compare` 对对象递归比较并重复线性 key lookup；普通解析、非递归比较为负例。
 - CVE-2026-92391：拥有子 MIME 的释放回调重入 `curl_mime_free`，且相关路径无可见深度上限；有限深度控制为负例。
 
-`tests.detectors.test_known_disclosed_cves` 当前 10 项测试通过，包含 vulnerable/fixed、安全、无关、partial 候选保留及上述剪贴板两项控制；另有归档索引、限制/损坏处理、source manifest 与面板源码查看回归。最终全量 Python 回归 914 项通过（909 passed / 5 skipped / 0 failed），前端 Node 测试 17/17、TypeScript 检查、`compileall`、D22 JSON 解析与 `git diff --check` 通过。生产 Web bundle 构建未通过，原因是 WSL 的 `node_modules` 带 Linux esbuild，而唯一可用 Node 是 Windows 运行时；Web 源码未修改。用于构造规则的已披露样本是调参/回归集，不能作为独立 holdout。
+`tests.detectors.test_known_disclosed_cves` 当前 11 项测试通过，包含 vulnerable/fixed、安全、无关、partial 候选保留及上述剪贴板两项控制；另有归档索引、限制/损坏处理、source manifest 与面板源码查看回归。最终全量 Python 回归 915 项通过（910 passed / 5 skipped / 0 failed），前端 Node 测试 17/17、TypeScript 检查、`compileall`、D22 JSON 解析与 `git diff --check` 通过。生产 Web bundle 构建未通过，原因是 WSL 的 `node_modules` 带 Linux esbuild，而唯一可用 Node 是 Windows 运行时；Web 源码未修改。用于构造规则的已披露样本是调参/回归集，不能作为独立 holdout。
 
 ## 已证实的上游修复信息与 PoC 边界
 
@@ -45,11 +45,16 @@ D22 的可重复面板/候选回归脚本与结果分别见 `d22_archive_runner_
 
 ## 未覆盖项及不可推断事项
 
-审查记录余下 10 项未被本轮检测器覆盖：CVE-2026-27648 本地镜像缺 web_webview 源码；CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2025-57052 当前 cJSON 有修复迹象；CVE-2026-33636 当前 libpng 补丁清单包含修复；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；CVE-2026-9079 的公告根因仍未映射。未扫描、不命中和有修复线索都不自动代表安全。
+审查记录余下 9 项尚未获得正向可检出形态：CVE-2026-27648 本地镜像缺 web_webview 源码；CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2025-57052 当前 cJSON 有修复迹象；CVE-2026-33636 当前 libpng 补丁清单包含修复；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。
 
-没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 7 个规则结果不代表对 17 项清单或整个项目达到完整覆盖。
+没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 8 个规则家族结果（7 个候选命中、1 个修复形态控制） 不代表对 17 项清单或整个项目达到完整覆盖。
 
 
 ## 2026-10-19 D23 calibration
 
-The historical D20/D22 results remain bound to detector 0.3.0. Current 0.4.0 binds CVE-2025-9900 to the TIFFReadRGBAImageOriented body so unrelated comparisons in preceding functions cannot suppress it. A pinned Git replay hit line 621 twice with stable identity; coverage remains blocked/partial. Targeted regression is 10/10. See [D23 rule calibration and fix review](D23_LIBTIFF_CVE_2025_9900_RULE_CALIBRATION.md) and the reproduction script.
+D20/D22 remain bound to 0.3.0 and D23 to 0.4.0. Current 0.5.0 binds CVE-2025-9900 to the TIFFReadRGBAImageOriented body so unrelated comparisons in preceding functions cannot suppress it. A pinned Git replay hit line 621 twice with stable identity; coverage remains blocked/partial. D23 targeted regression was 10/10; current 0.5.0 detector regression is 11/11. See [D23 rule calibration and fix review](D23_LIBTIFF_CVE_2025_9900_RULE_CALIBRATION.md) and the reproduction script.
+
+
+## 2026-10-19 D24 curl credential-clear rule
+
+Detector 0.5.0 adds a positive vulnerable-shape rule for CVE-2026-9079 and a negative fixed-shape control. The official curl advisory covers libcurl 8.8.0-8.20.0 and identifies fix commit 88c7e16cceec816a2df45c89. The pinned G-drive 8.8.0 source contains fix-equivalent unconditional credential clearing, so the Runner produces no candidate for this CVE on that snapshot. The two-file scan is blocked/partial; no finding is not a safe verdict. No product caller, handle reuse, credential disclosure, or product impact is established. Details: D24_CURL_CVE_2026_9079_REPLAY_REPORT.md and d24_curl_cve_2026_9079_replay.py.

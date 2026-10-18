@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -68,6 +68,36 @@ def _scan(unit: SourceUnit):
         start, b = body
         if len(re.findall(r"\bcJSON_Compare\s*\(", b)) >= 2 and "get_object_item" in b and "cJSON_ArrayForEach" in b:
             out.append(_finding(unit, start, "ohknowncve-cjson-cve-2026-67216", "CVE-2026-67216", "cJSON_Compare recursively compares object pairs and repeats linear key lookups.", "CWE-407"))
+    # CVE-2026-9079: clearing CURLOPT_PROXYUSERPWD with NULL must clear
+    # both stored credential fields even though the parsed u/p values are NULL.
+    # Old code freed each field only inside its matching non-NULL component branch.
+    setopt = _body(s, "setopt_cptr_proxy")
+    if setopt:
+        setopt_start, setopt_body = setopt
+        proxy_case = re.search(
+            r"case\s+CURLOPT_PROXYUSERPWD\s*:\s*\{?(.*?)(?=case\s+CURLOPT_PROXYUSERNAME\s*:)",
+            setopt_body,
+            re.S,
+        )
+        if proxy_case:
+            block = proxy_case.group(1)
+            stale_user = re.search(
+                r"if\s*\(\s*!result\s*&&\s*u\s*\)\s*\{\s*"
+                r"(?:Curl|curlx)_safefree\s*\(\s*data->set\.str\[STRING_PROXYUSERNAME\]\s*\)",
+                block,
+            )
+            stale_password = re.search(
+                r"if\s*\(\s*!result\s*&&\s*p\s*\)\s*\{\s*"
+                r"(?:Curl|curlx)_safefree\s*\(\s*data->set\.str\[STRING_PROXYPASSWORD\]\s*\)",
+                block,
+            )
+            if stale_user or stale_password:
+                out.append(_finding(
+                    unit, setopt_start + 1 + proxy_case.start(),
+                    "ohknowncve-curl-cve-2026-9079", "CVE-2026-9079",
+                    "CURLOPT_PROXYUSERPWD credential replacement clears a stored field only when its new parsed component is non-NULL; setting the option to NULL can leave a previous proxy credential available to a later transfer.",
+                    "CWE-522",
+                ))
     # CVE-2026-92391: owned subpart cleanup re-enters recursive mime free.
     cleaner = _body(s, "cleanup_part_content"); recursive = _body(s, "mime_subparts_free")
     freer = _body(s, "curl_mime_free"); setter = _body(s, "Curl_mime_set_subparts")
