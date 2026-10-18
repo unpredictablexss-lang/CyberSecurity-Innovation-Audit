@@ -1,7 +1,7 @@
 # Ark Runtime independent holdout — v3 restart status
 
-Assessment ID: `ark-runtime-c-independent-holdout-20261018-v3`  
-Recorded: 2026-10-18 (Asia/Shanghai)  
+Assessment ID: `ark-runtime-c-independent-holdout-20261018-v3`
+Recorded: 2026-10-18 (Asia/Shanghai)
 Status: **Detector frozen; stopped before sample selection; no predictions or scoring**
 
 This is a new assessment directory, separate from `research/evidence/ark_runtime/independent-holdout/`. The v0.6.2 assessment and package files remain unchanged; its 26 indexed file hashes were rechecked with zero mismatches.

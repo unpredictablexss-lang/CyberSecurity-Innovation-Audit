@@ -1,6 +1,6 @@
 {
   "artifacts": {
-    "README.md": "98b47e1dab147e9267f48d28e5cf7726b790e22f60174efc14a45762ab00bf39",
+    "README.md": "8415d479dae43f978c8d2516d3177b97daee675e5a04361a1b1fc0f22e401c22",
     "admin/assessment_status.json": "dbcbad03e6b5b82dd597069b5ea07ec5036e01cea0f9b8b8a3e49dd7abd5caab",
     "admin/frozen_detector_0.7.0.json": "bf823d7281942a9b1b6b90ba2ecf0e66cd0dcdc06e6b145deed912787403a1ab",
     "admin/applicability_contract_0.7.0.json": "246c7126e112788dfa69a2eee226b1bf573e06aafcfe6c7a5cda5101c614441a",
