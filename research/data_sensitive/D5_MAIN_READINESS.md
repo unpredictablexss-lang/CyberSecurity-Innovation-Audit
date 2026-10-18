@@ -35,3 +35,12 @@ D26 scanned pinned G-drive third_party_cJSON@0c2c9dff82cc85539c8362132d7a5f6bf7d
 ## D27 IoT Connect source-to-log replay (2026-10-19)
 
 An exact-revision source model now recognizes PBKDF2 output -> UtilsHexify -> IOTC_LOGI for the pinned communication_iot_connect source. The repeated Workbench API/Worker/report/source-view replay retains one candidate at line 602 with stable source binding; scan remains blocked/partial and validated_vulnerability=0. The pinned G-drive working file is dirty, so only the Git object at d8c0aef305601770c912dbdedc58a3f1e6efd30c was read. The audit's separate authCode source, product inclusion, INFO logging, reader access, and impact remain unknown. Component-source relation is confirmed; product vulnerability is not. See D27_IOTC_KEY_LOG_REPLAY.md and D27_IOTC_PANEL_REPLAY.json.
+
+
+## D30：libpng CVE-2026-46675 ASan 组件对照（2026-10-19）
+
+在固定 G 镜像构建输入 libpng 1.6.55 归档上新增并运行了真实 C PoC。归档 SHA-256 `71a2c5b1…002782a6` 与 G repo HEAD `e57b1079564a02a50321ec528aa6e41884979d32` 内 Git blob `975cee2aca0eda6bfa3e9b7a1336c956fcf1b094` 一致。3 轮 ASan 重放稳定复现 `png_zlib_inflate` heap-use-after-free；修复对照是在同一归档副本应用上游 `aa77ef38c17ab2fc1b41bec09fb973c6a386641d` 提交，3 轮无 UAF。读图像行再调用 `png_read_end` 与短 tEXt 无重新分配控制各 3 轮无 UAF。此为组件构建证据；不是完整 1.6.59 发布树，也未证明产品应用使用罕见调用顺序。报告为“组件根因 confirmed；产品适用性/入口/影响 unknown”，`validated_vulnerability=0`。
+
+复现入口：`.venv-web/bin/python research/data_sensitive/d30_libpng_cve_2026_46675_replay.py --source-tar <pinned-libpng-1.6.55.tar.gz>`。脚本校验哈希，将归档解压到临时目录，在独立副本中构建 ASan vulnerable/fix 两端，不联网、不改输入归档。静态规则此前已通过 D22 的真实归档 Runner/面板路径在 `png.h:277` 产生候选；D30 将该候选与可执行组件证据对应起来，但不升级产品结论。
+
+当前 D 功能面：known-CVE 规则仍默认关闭、页面显式选用；D29 提交 `2dcc06062d0c9dce95b7a2d4330caf7843815d3f` 的 GitHub CI run `39159928045` 已通过 Python 与 Web 构建两项。D30 本轮本地完整 Python 为 923 项、918 passed/5 skipped；审计请求 UI 测试 12/12；三轮 ASan 组件重放稳定。M0/M1 仅按已有 opt-in 模块窄范围评估；主线兼容、安全审查和负责人签署仍需逐项完成。M2 因无独立冻结标签、TP/FP/FN/unknown 和完整性能/RSS 基准仍未达到；M3 产品构建、可达入口、影响与产品修复复验仍未达到。PR #20 保持 Draft，未经下一轮完整准入复核不作 Ready/merge 结论。

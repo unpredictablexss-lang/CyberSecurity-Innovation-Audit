@@ -40,11 +40,16 @@ libpng 归档成员同时记录上游归档 Git blob、归档 SHA-256 和 `png.h
 CVE-2026-46675 的上游维护者公告确认 libpng 1.6.0–1.6.58 受影响、1.6.59 修复：压缩 zTXt/iTXt/iCCP 块异常退出解压后，zlib 输入指针可能仍指向已释放内存；若调用方在读取图像行前执行 `png_read_end`，可能触发 use-after-free，最坏结果为进程崩溃。可核对 [libpng 维护者公告与修复提交](https://www.openwall.com/lists/oss-security/2026/09/29/4) 和 [libpng 官方主页](https://libpng.org/pub/png/libpng.html)。
 
 - 已确定的修复建议：升级 vendored libpng 到 1.6.59 或更高版本，或应用维护者修复 [aa77ef38c17ab2fc1b41bec09fb973c6a386641d](https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d)。临时规避：未读图像行时不要调用 `png_read_end`；若确需读尾部块，先按公告要求启动图像行读取。
-- 已复现的是静态候选检测：固定 Git commit `e57b1079564a02a50321ec528aa6e41884979d32` 中有 libpng 1.6.55 源码归档；D22 经面板重复得到同一候选，源码查看 SHA 与候选一致。它不是触发 use-after-free 的运行时 PoC。
+- D22 的固定 Git commit `e57b1079564a02a50321ec528aa6e41884979d32` 面板回放最初只验证了静态候选和源码绑定；D30 随后在该提交中的 libpng 1.6.55 构建归档上用 ASan 复现了组件 UAF，并对上游修复做同输入重测。D30 仍不证明具体 OpenHarmony 产品构建和调用路径。
 - 没有 OpenHarmony 产品镜像/构建清单来确认这个 tarball 最终被编入具体产品，也未确认外部输入能到达相应调用序列。因此 OpenHarmony 产品状态仍为 `candidate/unknown`，`validated_vulnerability=0`；不能提交一个声称验证了产品影响的 exploit PoC。
 - 其余 6 项组件候选目前仅有静态规则和正反控制，没有在本轮取得完整受影响产品构建、可执行漏洞 PoC 和修复后组件重验的证据；不填造 PoC 或影响版本。
 
 D22 的可重复面板/候选回归脚本与结果分别见 `d22_archive_runner_panel.py` 和 `D22_ARCHIVE_RUNNER_PANEL.json`。测试 fixture 是扫描器规则回归，不作为漏洞利用 PoC。
+
+## D30：CVE-2026-46675 运行时组件复现
+
+D30 在 G 镜像中实际跟踪的 libpng 1.6.55 构建归档上补齐了独立的组件级 ASan PoC：构造 CRC 正确的 PNG，异常 zTXt 后接触发 chunk buffer 重分配的长 tEXt，再按 `png_read_info` → `png_read_end` 顺序处理。3/3 在旧源码报 heap-use-after-free；对解压副本应用精确上游修复提交 `aa77ef38c17ab2fc1b41bec09fb973c6a386641d` 后，同一输入 3/3 不再触发。先读图像行和不触发 buffer 重分配两个控制各 3/3 无 UAF。归档 SHA-256 与 G 仓库 HEAD blob 一致；固定修复对照是把官方修复提交应用到 1.6.55 副本，不是完整构建 1.6.59。详见 [D30 PoC/修复报告](D30_LIBPNG_CVE_2026_46675_REPORT.md)、C PoC、重放脚本和 JSON。组件 UAF confirmed；OpenHarmony 产品构建、调用顺序和影响仍 unknown，`validated_vulnerability=0`。
+
 
 ## 未覆盖项及不可推断事项
 
