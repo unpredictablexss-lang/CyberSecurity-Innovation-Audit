@@ -13,10 +13,10 @@ from src.ohscanner.detectors.interface.models import IpcPolicy, ServiceAccountRo
 
 BASE=Path(__file__).parent/'fixtures/ipc'
 
-def context(text, path='sample.cpp'):
+def context(text, path='sample.cpp', repository='fixture/ipc'):
     index=parse_source(text,language='cpp')
     unit=SourceUnit(path,'cpp',text,hashlib.sha256(text.encode()).hexdigest(),index.parse_status)
-    request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:fixture/ipc')
+    request=ScanRequest('ipc-test',repository,'synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:'+repository)
     return ScanContext(request,(unit,),{'ast':{path:index.to_dict()}})
 
 def parses_raw(text, grammar):
@@ -154,12 +154,29 @@ public:
         self.assertNotIn('ipc.auth.missing',{f.rule_id for f in run.findings})
 
     def test_reviewed_telephony_permission_contract_is_component_qualified(self):
-        expected = dict(IpcPolicy().expected_permissions)
-        self.assertEqual(expected['CallManagerService::SetCameraZoom'],
+        expected = {(repo, method): permission
+                    for repo, method, permission in IpcPolicy().repository_expected_permissions}
+        self.assertEqual(expected[('openharmony/telephony_call_manager',
+                                   'CallManagerService::SetCameraZoom')],
                          'OHOS_PERMISSION_SET_TELEPHONY_STATE')
-        self.assertEqual(expected['CallManagerService::GetImsConfig'],
+        self.assertEqual(expected[('openharmony/telephony_call_manager',
+                                   'CallManagerService::GetImsConfig')],
                          'OHOS_PERMISSION_GET_TELEPHONY_STATE')
-        self.assertNotIn('SetCameraZoom', expected)
+        self.assertFalse(IpcPolicy().expected_permissions)
+
+    def test_disclosed_permission_contract_is_repository_scoped(self):
+        from src.ohscanner.detectors.interface.analysis import Interpreter
+        source = "class CallManagerService {};"
+
+        same = context(source, repository='openharmony/telephony_call_manager')
+        foreign = context(source, repository='example/forked_component')
+        method = 'CallManagerService::GetImsConfig'
+        expected = 'OHOS_PERMISSION_GET_TELEPHONY_STATE'
+        same_interpreter = Interpreter(same.units, IpcPolicy(), same.request)
+        foreign_interpreter = Interpreter(foreign.units, IpcPolicy(), foreign.request)
+        self.assertEqual(same_interpreter.expected_permission('GetImsConfig', method),
+                         expected)
+        self.assertIsNone(foreign_interpreter.expected_permission('GetImsConfig', method))
 
     def test_format_models_preserve_original_offsets(self):
         from src.ohscanner.detectors.interface.analysis import normalize_syntax

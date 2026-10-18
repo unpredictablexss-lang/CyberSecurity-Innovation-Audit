@@ -1259,6 +1259,10 @@ class Interpreter:
         return None
 
     def expected_permission(self, name, qualified=""):
+        repository = self.request.repository if self.request is not None else None
+        for owner, method, expected in self.policy.repository_expected_permissions:
+            if owner == repository and method == qualified:
+                return expected
         contracts = dict(self.policy.expected_permissions)
         return contracts.get(qualified) or contracts.get(name)
 

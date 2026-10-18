@@ -247,21 +247,25 @@ class IpcPolicy:
     transport_entries: FrozenSet[str] = frozenset({"TraceServerReceieve"})
     max_call_depth: int = 2
     max_paths: int = 96
-    # Reviewed API contracts from the upstream telephony permission correction
-    # 911c6c9 -> 6018446d (CVE-2025-26691 regression input). Qualified keys
-    # scope these expectations to the owning service class; they are policy data,
-    # not name-derived rules.
-    expected_permissions: Tuple[Tuple[str, str], ...] = (
-        ("CallManagerService::RegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
-        ("CallManagerService::UnRegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
-        ("CallManagerService::SetCameraZoom", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
-        ("CallManagerService::GetImsConfig", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
-        ("CallManagerService::SetImsConfig", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
-        ("CallManagerService::GetImsFeatureValue", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
-        ("CallManagerService::SetImsFeatureValue", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
-        ("CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
-        ("CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+    # Repository-bound API contracts from the upstream telephony permission
+    # correction 911c6c9 -> 6018446d (CVE-2025-26691 regression input).
+    # Repository + fully-qualified method prevents a same-named C++ class in an
+    # unrelated project from inheriting this product-specific expectation.
+    repository_expected_permissions: Tuple[Tuple[str, str, str], ...] = (
+        ("openharmony/telephony_call_manager", "CallManagerService::RegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::UnRegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetCameraZoom", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::GetImsConfig", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetImsConfig", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::GetImsFeatureValue", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetImsFeatureValue", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
     )
+    # Generic, locally supplied policy overrides used by test harnesses or a
+    # future reviewed profile. Empty by default; disclosed API facts above use
+    # repository_expected_permissions instead.
+    expected_permissions: Tuple[Tuple[str, str], ...] = ()
     object_sensitive_calls: FrozenSet[str] = frozenset({"OpenUserFile", "GetUserData", "DeleteUserData", "ReadUserData"})
     # Bounded macro expansion (cpp_macros). It is a coverage/accuracy switch, not a
     # verdict switch: every finding it changes is still a candidate, and what it

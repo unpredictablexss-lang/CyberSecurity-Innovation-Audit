@@ -90,9 +90,9 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    # 0.9.3 was used by the archived campaign implementation; skip it here so
-    # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.9"
+    # Incremented when detector logic or its repository-bound policy changes;
+    # report identities must distinguish the resulting interpretation.
+    version = "0.12.10"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
