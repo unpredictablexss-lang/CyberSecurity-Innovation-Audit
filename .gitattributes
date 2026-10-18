@@ -4,3 +4,6 @@
 
 # Vendored third-party rules are kept byte-identical to their upstream (LF).
 rules/cpp/vendor/** text eol=lf
+
+# Byte-preserved audit evidence may use CRLF; do not flag CR at end-of-line.
+research/deliveries/a-line-sample30/20261018/** whitespace=cr-at-eol,-blank-at-eol,-blank-at-eof

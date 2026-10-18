@@ -1,0 +1,19 @@
+{
+  "schema_version": "remote-package-v1",
+  "source_output_root": "D:\\openHarmonyScanner\\outputs\\01a14d00-bc78-7ac2-9520-210d4b92b1ac",
+  "package_path": "research/deliveries/a-line-sample30/20261018",
+  "git_excluded": [
+    "evidence/sandbox/scratch/bin/**"
+  ],
+  "exclusion_reason": "Locally compiled sanitizer binaries are rebuildable build products; their hashes remain in evidence/hashes.json and evidence/sandbox/sandbox_file_hashes.json.",
+  "canonical_counts": {
+    "sample_reports": 30,
+    "candidate_bearing_reports": 20,
+    "zero_candidate_reports": 10,
+    "candidates": 345,
+    "high_priority_candidates": 283,
+    "normal_priority_candidates": 62,
+    "confirmed_vulnerabilities": 0,
+    "dedicated_pocs": 0
+  }
+}

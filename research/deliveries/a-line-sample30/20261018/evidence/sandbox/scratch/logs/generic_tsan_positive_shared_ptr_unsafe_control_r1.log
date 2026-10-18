@@ -1,0 +1,32 @@
+ARGV: /sandbox/out/bin/shared_ptr_unsafe_control
+ASAN_OPTIONS=detect_leaks=0:halt_on_error=1:abort_on_error=0
+UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+TSAN_OPTIONS=halt_on_error=1:exitcode=66:second_deadlock_stack=1
+==45==WARNING: invalid path to external symbolizer!
+==45==WARNING: Failed to use and restart external symbolizer!
+==================
+WARNING: ThreadSanitizer: data race (pid=45)
+  Read of size 8 at 0x7fffffffe648 by thread T2:
+    #0 <null> <null> (shared_ptr_unsafe_control+0xd0b60) (BuildId: c380234fda4e306e7b808461e094119f8fa83533)
+    #1 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+
+  Previous write of size 8 at 0x7fffffffe648 by thread T1:
+    #0 <null> <null> (shared_ptr_unsafe_control+0xd0882) (BuildId: c380234fda4e306e7b808461e094119f8fa83533)
+    #1 <null> <null> (libstdc++.so.6+0xdc252) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+
+  Location is stack of main thread.
+
+  Location is global '<null>' at 0x000000000000 ([stack]+0x20648)
+
+  Thread T2 (tid=48, running) created by main thread at:
+    #0 <null> <null> (shared_ptr_unsafe_control+0x4f48d) (BuildId: c380234fda4e306e7b808461e094119f8fa83533)
+    #1 <null> <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)
+
+  Thread T1 (tid=47, running) created by main thread at:
+    #0 <null> <null> (shared_ptr_unsafe_control+0x4f48d) (BuildId: c380234fda4e306e7b808461e094119f8fa83533)
+    #1 <null> <null> (libstdc++.so.6+0xdc328) (BuildId: eb0991e99bf8c31e942757ab71a6266bffb30e1f)
+    #2 <null> <null> (libc.so.6+0x29d8f) (BuildId: 6a6cb5a80fd5e5bb5bf3aeaa111add98e88843a5)
+
+SUMMARY: ThreadSanitizer: data race (/sandbox/out/bin/shared_ptr_unsafe_control+0xd0b60) (BuildId: c380234fda4e306e7b808461e094119f8fa83533) 
+==================

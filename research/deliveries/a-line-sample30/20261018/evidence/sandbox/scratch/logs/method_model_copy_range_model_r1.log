@@ -1,0 +1,12 @@
+ARGV: /sandbox/out/bin/copy_range_model
+ASAN_OPTIONS=detect_leaks=0:halt_on_error=1:abort_on_error=0
+UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+TSAN_OPTIONS=halt_on_error=1:exitcode=66:second_deadlock_stack=1
+case=-2147483648 outcome=rejected
+case=-1 outcome=rejected
+case=0 outcome=rejected
+case=1 outcome=copied
+case=1024 outcome=copied
+case=1025 outcome=rejected
+case=2147483647 outcome=rejected
+result=source_model_bounded_no_asan_ubsan_finding

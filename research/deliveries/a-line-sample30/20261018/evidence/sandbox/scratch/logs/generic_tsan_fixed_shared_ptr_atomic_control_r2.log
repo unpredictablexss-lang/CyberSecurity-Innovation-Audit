@@ -1,0 +1,6 @@
+ARGV: /sandbox/out/bin/shared_ptr_atomic_control
+ASAN_OPTIONS=detect_leaks=0:halt_on_error=1:abort_on_error=0
+UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+TSAN_OPTIONS=halt_on_error=1:exitcode=66:second_deadlock_stack=1
+reader_sum=9582045447
+atomic_shared_ptr_control_complete
