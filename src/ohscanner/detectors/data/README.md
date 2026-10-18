@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.2.0 (D2 review prototype)
+# D: sensitive-material log exposure, v0.3.0 (D6 review prototype)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog

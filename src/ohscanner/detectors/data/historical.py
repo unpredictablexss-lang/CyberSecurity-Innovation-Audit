@@ -172,6 +172,12 @@ class HistoricalLocalFlow(LocalFlow):
         if fn in ('memcpy_s', 'strcpy_s', 'snprintf', 'snprintf_s'):
             self.gaps.add('historical buffer copy/format output status not summarized; output withheld')
             return
+        if fn != self.p['sink']:
+            if any(self.expr(arg,env,types) for arg in
+                   (node.child_by_field_name('arguments').named_children
+                    if node.child_by_field_name('arguments') else [])):
+                self.gaps.add('historical call outside the frozen source/sink model; not credited as a log sink')
+            return
         if fn == self.p['sink']:
             if not self.target or fnname != self.p['source_function']:
                 return
@@ -188,7 +194,10 @@ class HistoricalLocalFlow(LocalFlow):
                     fmt = self.literal(args[self.p['format_index']])
                 except (ValueError, SyntaxError):
                     fmt = None
-                if (fmt is not None and syntax == 'secure_c'
+                if fmt is None:
+                    self.gaps.add('historical runtime format unresolved; candidate withheld by frozen model')
+                    return
+                if (syntax == 'secure_c'
                         and re.search(r'%\{(?:public|private)\}', fmt)):
                     self.gaps.add('HiLog privacy syntax is not a reviewed secure-C SoftBusLog format')
                     return

@@ -46,5 +46,77 @@
     "split": "d5_semantics_regression",
     "partial": true,
     "reason": "An unresolved same-name formatting function may write a sensitive argument to its destination buffer."
+  },
+  {
+    "id": "unknown_mutation",
+    "file": "d2_unknown_mutation.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "A sensitive value crosses a call boundary through a mutable alias; the callee is unresolved, so retain a review candidate instead of treating the call as a mere limitation."
+  },
+  {
+    "id": "dynamic_unknown",
+    "file": "d2_dynamic_unknown.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "A modeled logger receives sensitive data but its runtime format is unresolved; preserve a candidate with a format-resolution obligation."
+  },
+  {
+    "id": "return_expression_unknown",
+    "file": "d2_return_expression_unknown.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "A sensitive value is passed to an unresolved call in a return expression; the callee may expose it and cannot be silently treated as safe."
+  },
+  {
+    "id": "positional_unknown",
+    "file": "d2_positional_unknown.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "A positional format directive is outside the parser model; sensitive values passed to the logger remain candidates for format review."
+  },
+  {
+    "id": "pri_unknown",
+    "file": "d2_pri_unknown.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "A width macro/concatenated format prevents slot resolution; a sensitive operand at the modeled logger is retained as a candidate."
+  },
+  {
+    "id": "nonliteral_partial",
+    "file": "nonliteral_partial.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "The logger call is visible but its runtime format is not; a sensitive operand cannot be silently cleared."
+  },
+  {
+    "id": "format_arity_partial",
+    "file": "format_arity_partial.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "The supplied format and operands disagree; preserve the sensitive logger candidate with an arity-resolution obligation."
+  },
+  {
+    "id": "positional_partial",
+    "file": "positional_partial.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "Positional argument syntax is unsupported; preserve the sensitive logger candidate for Agent review."
+  },
+  {
+    "id": "qualified_call_partial",
+    "file": "qualified_call_partial.cpp",
+    "expected_candidates": 1,
+    "split": "d5_unresolved_boundary",
+    "partial": true,
+    "reason": "Sensitive data reaches a qualified call whose implementation is not bound in the file; preserve an unresolved escape candidate."
   }
 ]

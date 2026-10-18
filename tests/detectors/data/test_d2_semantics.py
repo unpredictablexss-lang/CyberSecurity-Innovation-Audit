@@ -23,6 +23,77 @@ class D2SemanticsTests(unittest.TestCase):
                 self.assertEqual(len(run.findings),overrides.get(case['id'],case)['expected_candidates'])
                 if case['requires_partial']:
                     self.assertNotEqual(dict(run.file_outcomes)['service.cpp'],'complete')
+    def test_same_file_helper_expansion_preserves_argument_return_and_out_flows(self):
+        cases=(
+            ('argument to helper sink',
+             'void emit(const char *v){AUTH_LOGI(0,"%{public}s",v);} '
+             'void Callback(const char *s){emit(s);}',1),
+            ('returned sensitive argument',
+             'const char *identity(const char *v){return v;} '
+             'void Callback(const char *s){AUTH_LOGI(0,"%{public}s",identity(s));}',1),
+            ('pointer output from sensitive argument',
+             'void format(char *out,const char *v){snprintf(out,64,"%{public}s",v);} '
+             'void Callback(const char *s){char out[64];format(out,s);AUTH_LOGI(0,"%{public}s",out);}',1),
+            ('modeled source through pointer output',
+             'void create(char *out){SoftBusGenerateSessionKey(out,32);} '
+             'void Callback(const char *unused){char out[64];create(out);AUTH_LOGI(0,"%{public}s",out);}',1),
+            ('constant helper argument remains safe',
+             'void emit(const char *v){AUTH_LOGI(0,"%{public}s",v);} '
+             'void Callback(const char *s){emit("literal");}',0),
+        )
+        for label,source,expected in cases:
+            with self.subTest(case=label):
+                run=support.SensitiveTests().analyze(source)
+                self.assertEqual(len(run.findings),expected)
+                if expected:
+                    self.assertTrue(any('return from' in finding.message
+                                        or 'may write through argument' in finding.message
+                                        or 'call emit argument' in finding.message
+                                        for finding in run.findings))
+
+    def test_unresolved_sensitive_boundaries_remain_candidates_for_agent_review(self):
+        cases=(
+            ('external helper escape',
+             'void Callback(const char *secret){ForwardToLog(secret);}',
+             'data.sensitive.unresolved-escape','callee_binding'),
+            ('dynamic logging format',
+             'void Callback(const char *secret){AUTH_LOGI(0,GetFormat(),secret);}',
+             'data.log.sensitive-value','format_resolution'),
+            ('ambiguous same-file overload',
+             'void emit(const char *v){AUTH_LOGI(0,"%{public}s",v);} '
+             'void emit(char *v){} '
+             'void Callback(const char *secret){emit(secret);}',
+             'data.log.sensitive-value',None),
+            ('recursive same-file helper',
+             'void relay(const char *v){relay(v);} '
+             'void Callback(const char *secret){relay(secret);}',
+             'data.sensitive.unresolved-escape','callee_binding'),
+        )
+        for label,source,rule,obligation in cases:
+            with self.subTest(case=label):
+                run=support.SensitiveTests().analyze(source)
+                matches=[finding for finding in run.findings if finding.rule_id==rule]
+                self.assertTrue(matches)
+                if obligation:
+                    self.assertTrue(any(any(item.kind==obligation
+                                            for item in finding.evidence_obligations)
+                                        for finding in matches))
+                if rule=='data.sensitive.unresolved-escape':
+                    self.assertTrue(all(finding.candidate_cwe is None for finding in matches))
+                    from src.ohscanner.runner import DetectorRegistry,run_all_with_coverage
+                    context=support.SensitiveTests().context(source)
+                    registry=DetectorRegistry()
+                    registry.register(SensitiveExposureDetector(support.MODEL))
+                    reports,sidecar=run_all_with_coverage(context,registry)
+                    public=[item for item in reports[0].diagnostics
+                            if item.rule_id==rule]
+                    self.assertTrue(public)
+                    self.assertTrue(all(item.confidence=='unassessed'
+                                        and item.source_sha256==context.units[0].sha256
+                                        for item in public))
+                    self.assertTrue(sidecar['detectors'][SensitiveExposureDetector.detector_id]
+                                    ['evidence_obligations'])
+
     def test_d1_fixtures_and_expectations_unchanged(self):
         record=json.loads((ROOT/'research/data_sensitive/D2_BASELINE.json').read_text())
         for path,digest in record['d1_fixture_sha256'].items():

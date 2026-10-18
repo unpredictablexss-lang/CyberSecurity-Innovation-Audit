@@ -32,6 +32,7 @@ class ExitState:
     kind: str
     line: int
     state: LocalState
+    returned: tuple = ()
 
 
 @dataclass(frozen=True)
@@ -73,7 +74,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.2.0'
+    version = '0.3.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -132,6 +133,9 @@ class LocalFlow:
         self.shadows = set()
         self.function_definitions = set()
         self.function_bodies = {}
+        self.function_nodes = {}
+        self.call_stack = []
+        self.call_results = {}
         self.type_conflicts = set()
         for n in walk(self.tree.root_node):
             if n.type == 'function_definition':
@@ -142,6 +146,7 @@ class LocalFlow:
                         fname=self.text(fd.child_by_field_name('declarator'))
                         self.function_definitions.add(fname)
                         self.function_bodies.setdefault(fname, []).append(n.child_by_field_name('body'))
+                        self.function_nodes.setdefault(fname, []).append(n)
             if n.type in ('struct_specifier','class_specifier','type_definition'):
                 if any(t in self.text(n) for t in self.fields):
                     self.type_conflicts.update(t for t in self.fields if re.search(r'\b'+re.escape(t)+r'\b',self.text(n)))
@@ -195,7 +200,11 @@ class LocalFlow:
             if op in ('==','!=','<','>','<=','>=','&&','||'):return ()
         if n.type=='unary_expression' and self.text(n).lstrip().startswith('!'):return ()
         if n.type=='call_expression':
+            if n.id in self.call_results:
+                return self.call_results[n.id]
             fn=self.text(n.child_by_field_name('function'))
+            if fn in ('strlen','strnlen','strnlen_s','wcslen') and fn not in self.function_definitions and fn not in self.shadows:
+                return () # A scalar length is not the sensitive material itself.
             args=n.child_by_field_name('arguments')
             if fn not in self.shadows and fn not in self.function_definitions and (fn in dict(self.model.output_calls) or fn in ('memcpy_s','strcpy_s','snprintf','snprintf_s')):
                 return () # modeled return is a status/count, not the output buffer
@@ -216,6 +225,128 @@ class LocalFlow:
         if not isinstance(value,str):raise ValueError('nonstring format')
         return value
 
+    def emit_unresolved_escape(self,fn,args,env,types,node,fnname,reason):
+        flows=tuple(dict.fromkeys(flow for arg in args
+                                  for flow in self.expr(arg,env,types)))
+        if not flows:return
+        line=node.start_point[0]+1
+        traces=sorted(set(' -> '.join(flow.steps+(f'{line} unresolved call {fn}',))
+                          for flow in flows))
+        self.findings.append(DetectorFinding(
+            file=self.u.path,line=line,symbol=fnname,
+            rule_id='data.sensitive.unresolved-escape',candidate_cwe=None,
+            evidence_type='syntax',source_sha256=self.u.sha256,
+            message='Candidate sensitive-data escape with unresolved callee: '
+                    +reason+'; path='+' | '.join(traces),
+            evidence_obligations=(
+                EvidenceObligation('callee_binding','Resolve the exact overload, receiver, and implementation for '+fn+'.'),
+                EvidenceObligation('sink_behavior','Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.'),
+                EvidenceObligation('runtime_log_visibility','No log exposure or reader reachability is established by this call alone.'),
+                EvidenceObligation('security_impact','Establish recoverable sensitive material and concrete impact independently.'),
+            )))
+
+    def expand_tainted_call(self,fn,args,env,types,call_line,call_node=None,fnname=''):
+        """Analyze one bounded same-file helper call and summarize return/out flows."""
+        definitions=self.function_nodes.get(fn,())
+        if not definitions or fn in self.sinks:
+            return False
+        if fn in self.call_stack or len(self.call_stack)>=3:
+            self.gaps.add('same-file call expansion stopped by recursion/depth bound: '+fn)
+            if call_node is not None:
+                self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                            'recursion/depth limit stopped body analysis')
+            return True
+        arg_flows=[self.expr(arg,env,types) for arg in args]
+        matching=[]
+        for definition in definitions:
+            d=definition.child_by_field_name('declarator')
+            fd=next((x for x in walk(d) if x.type=='function_declarator'),None) if d else None
+            params=fd.child_by_field_name('parameters') if fd else None
+            parameters=[p for p in params.named_children if p.type!='variadic_parameter'] if params else []
+            if len(parameters)==len(args):matching.append((definition,parameters))
+        if not matching:
+            self.gaps.add('same-file helper call has unresolved overload/arity: '+fn)
+            if call_node is not None:
+                self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                            'same-file overload/arity binding failed')
+            return True
+        if len(matching)>1:
+            self.gaps.add('same-file helper call has ambiguous definitions: '+fn)
+        returned=[]
+        outputs={}
+        for definition,parameters in matching:
+            d=definition.child_by_field_name('declarator')
+            fd=next((x for x in walk(d) if x.type=='function_declarator'),None) if d else None
+            body=definition.child_by_field_name('body')
+            if not fd or not body:
+                self.gaps.add('same-file helper definition lacks a supported body: '+fn)
+                if call_node is not None:
+                    self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                                'same-file helper body is unsupported')
+                continue
+            local_values={};local_types={};local_shadows=set();bound=[]
+            for index,param in enumerate(parameters):
+                ident=self.name(param.child_by_field_name('declarator'))
+                bound.append(ident)
+                if not ident:continue
+                local_shadows.add(ident)
+                local_values[ident]=self.addstep(arg_flows[index],
+                    f'{call_line} call {fn} argument {index}')
+                typ=self.text(param.child_by_field_name('type'))
+                if typ in self.fields:local_types[ident]=typ
+            self.call_stack.append(fn)
+            try:
+                self.gaps.add('bounded same-file helper expansion; cross-file and deeper call flows remain unknown')
+                result=self.block(body,LocalState(local_values,local_types,local_shadows),fn)
+            finally:
+                self.call_stack.pop()
+            returned.extend(flow for exit in result.exit_states
+                            if exit.kind=='return_statement' for flow in exit.returned)
+            states=([result.fallthrough_state] if result.fallthrough_state is not None else [])
+            states.extend(exit.state for exit in result.exit_states)
+            for index,(param,ident) in enumerate(zip(parameters,bound)):
+                if not ident or not re.search(r'[&*]',self.text(param)):
+                    continue
+                actual=self.lvalue(args[index])
+                if not actual:continue
+                writes=tuple(dict.fromkeys(flow for state in states
+                                           for flow in state.values.get(ident,())))
+                if writes:
+                    outputs.setdefault(actual,[]).extend(
+                        self.addstep(writes,f'{call_line} {fn} may write through argument {index}'))
+        for actual,flows in outputs.items():
+            env[actual]=tuple(dict.fromkeys(tuple(env.get(actual,()))+tuple(flows)))
+        call_flows=self.addstep(tuple(dict.fromkeys(returned)),
+                                f'{call_line} return from {fn}')
+        if call_node is not None:
+            self.call_results[call_node.id]=call_flows
+        return True
+
+    def lvalue(self,node):
+        if node is None:return ''
+        if node.type=='identifier':return self.text(node)
+        if node.type in ('pointer_expression','unary_expression'):
+            op=self.text(node.child_by_field_name('operator'))
+            if op=='&':
+                return self.lvalue(node.child_by_field_name('argument'))
+        return ''
+
+    def emit_log_candidate(self,fn,fnname,node,flows,message,extra_obligation):
+        line=node.start_point[0]+1
+        traces=sorted(set(' -> '.join(flow.steps+(f'{line} {fn} unresolved public-operand status',))
+                          for flow in flows))
+        self.findings.append(DetectorFinding(
+            file=self.u.path,line=line,symbol=fnname,rule_id='data.log.sensitive-value',
+            candidate_cwe='CWE-532',evidence_type='syntax',source_sha256=self.u.sha256,
+            message='Candidate local sensitive-material dependency: '+message+' path='+' | '.join(traces),
+            evidence_obligations=(
+                EvidenceObligation('local_flow',' | '.join(traces)),
+                EvidenceObligation('source_semantics',self.model.provenance),
+                extra_obligation,
+                EvidenceObligation('runtime_log_visibility','Verify production level, privacy switches, build branch and unauthorized readers.'),
+                EvidenceObligation('security_impact','Prove recoverable secret material and concrete impact; no automatic confirmation.'),
+            )))
+
     def call(self,n,env,types,fnname):
         fn=self.text(n.child_by_field_name('function')); a=n.child_by_field_name('arguments')
         args=list(a.named_children) if a else []
@@ -223,6 +354,8 @@ class LocalFlow:
             self.gaps.add('call target is shadowed by a local value: '+fn)
             return
         locally_defined=fn in self.function_definitions
+        if fn in ('strlen','strnlen','strnlen_s','wcslen') and not locally_defined:
+            return
         if locally_defined and fn in dict(self.model.output_calls):
             self.gaps.add('modeled source name has a same-file definition; source identity unresolved: '+fn)
             return
@@ -249,6 +382,9 @@ class LocalFlow:
                 self.gaps.add('same-file modeled sink resolves to a visible empty body: '+fn)
                 return
             self.gaps.add('same-file modeled sink has unresolved implementation identity: '+fn)
+        if locally_defined and self.expand_tainted_call(
+                fn,args,env,types,n.start_point[0]+1,n,fnname):
+            return
         if fn in dict(self.model.output_calls):
             if len(args)!=2:
                 self.gaps.add('source API argument count unresolved');return
@@ -278,7 +414,11 @@ class LocalFlow:
             except (ValueError,SyntaxError):self.gaps.add('unsupported formatting propagation')
             return
         if fn not in self.sinks:
-            if any(self.expr(x,env,types) for x in args):self.gaps.add('unmodeled call may mutate/escape sensitive value: '+fn)
+            flows=tuple(flow for arg in args for flow in self.expr(arg,env,types))
+            if flows:
+                self.gaps.add('unmodeled call may mutate/escape sensitive value: '+fn)
+                self.emit_unresolved_escape(fn,args,env,types,n,fnname,
+                                            'the call is outside the same-file reviewed model')
             return
         sink=self.sinks[fn]
         self.sink_sites.append({'symbol':fn,'line':n.start_point[0]+1,'format_index':sink.format_index})
@@ -289,7 +429,14 @@ class LocalFlow:
             operands=args[sink.format_index+1:]
             if count!=len(operands):raise ValueError('format/argument mismatch')
         except (ValueError,SyntaxError):
-            self.gaps.add('nonliteral/unsupported log format: '+fn);return
+            self.gaps.add('nonliteral/unsupported log format: '+fn)
+            flows=tuple(flow for arg in args[sink.format_index:]
+                        for flow in self.expr(arg,env,types))
+            if flows:
+                self.emit_log_candidate(fn,fnname,n,flows,
+                    'Sensitive data reaches a modeled logging call, but dynamic/unsupported formatting prevents privacy-slot resolution.',
+                    EvidenceObligation('format_resolution','Resolve the runtime format and whether sensitive operands are public or private.'))
+            return
         for privacy,ids,conversion in slots:
             if privacy!='public':
                 if any(self.expr(operands[i],env,types) for i in ids):
@@ -432,11 +579,14 @@ class LocalFlow:
             if len(children)==1:return self.statement(children[0],state,fnname)
             self.gaps.add('unsupported else-clause shape');return BlockResult(state)
         if kind in ('return_statement','break_statement','continue_statement','throw_statement'):
-            if kind=='return_statement' and any(x.type=='call_expression' for x in walk(node)):
-                self.gaps.add('calls in return expression not analyzed')
+            returned=()
+            if kind=='return_statement' and node.named_children:
+                expression=node.named_children[0]
+                self.effects(expression,state,fnname)
+                returned=self.value(expression,state)
             if kind in ('break_statement','continue_statement'):
                 self.gaps.add('break/continue exits need enclosing-loop proof; loops not analyzed')
-            return BlockResult(None,(ExitState(kind,node.start_point[0]+1,state.clone()),))
+            return BlockResult(None,(ExitState(kind,node.start_point[0]+1,state.clone(),returned),))
         if kind=='expression_statement':
             if any(x.type=='throw_expression' for x in node.named_children):
                 self.gaps.add('throw/destructor effects not analyzed')
