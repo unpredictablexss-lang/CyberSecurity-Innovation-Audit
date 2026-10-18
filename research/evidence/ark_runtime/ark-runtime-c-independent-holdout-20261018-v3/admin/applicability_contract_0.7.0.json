@@ -1,0 +1,59 @@
+{
+  "contract_id": "ark-runtime-semantic-applicability-v1",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.7.0",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "source_provenance": "git_object",
+  "profile_id": "light-ast",
+  "language": "cpp",
+  "identity_policy": {
+    "commit": "any reproducible full commit in declared repository; no allowlist",
+    "path": "any canonical relative path; no allowlist",
+    "git_blob_oid": "recomputed against exact supplied source bytes for integrity, not allowlist applicability",
+    "source_sha256": "recomputed against exact supplied source bytes for integrity, not allowlist applicability"
+  },
+  "semantic_scope": {
+    "owner": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder",
+    "accepted_methods": {
+      "type_origin": [
+        "Filter",
+        "CopyWithin",
+        "Set",
+        "With"
+      ],
+      "allocation_exception_guard": [
+        "Filter",
+        "Map"
+      ]
+    },
+    "method_signature": [
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "Variable*",
+      "Label*",
+      "Label*"
+    ],
+    "selection": "Tree-sitter C++ function definitions must resolve to an exact qualified owner+method name; no filename or revision is required. A missing/ambiguous owner, signature mismatch, parser error, unsupported effect, or unknown edge remains not_analyzed/partial/unknown."
+  },
+  "rules": [
+    {
+      "id": "ark.runtime.typedarray-store-type-origin",
+      "version": "0.7.0",
+      "contract": "Track the declared type-token origin and allocation target through bounded generated IR for StoreTypedArrayElement; compare argument 1 target against argument 4 token origin. Candidate evidence only."
+    },
+    {
+      "id": "ark.runtime.typedarray-allocation-exception-guard",
+      "version": "0.7.0",
+      "contract": "Trace NewTypedArray(glue, input, type, count) result to LoadHClass(glue, object) and check whether its use can precede pending-exception handling; candidate evidence only."
+    }
+  ],
+  "model_input_policy": "Only source bytes and parsed local syntax/IR facts are run-time inputs. Model contains declared method/signature and operation semantics; no exact target-source revisions, paths, Git blobs, source hashes, or dependency-source hashes.",
+  "partial_policy": "A parser-incomplete source can be selected when the target method remains resolvable. Preserve partial/unknown observations and obligations; never infer safe/miss.",
+  "limitations": [
+    "Tree-sitter syntax only; no preprocessing, compiler configuration, type system, whole-program data flow, runtime reachability, shipped product binding, or CIA impact proof.",
+    "Build profile assumption NDEBUG=1 and ENABLE_ASM_ASSERT=0 remains unverified.",
+    "The operation semantics originated in development material and have not been independently revalidated against changed helper implementations.",
+    "The selector may not find a target whose syntax is too damaged to resolve; such an input is not evidence of non-applicability or safety."
+  ]
+}

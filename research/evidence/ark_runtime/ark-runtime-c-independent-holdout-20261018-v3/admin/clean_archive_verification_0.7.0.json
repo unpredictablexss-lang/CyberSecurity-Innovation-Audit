@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "scanner_commit": "ff03077fd1bd963e51f22f43e4cb25f3669a0f0e",
+  "scanner_tree": "e76488731ff3410eb26bdb9b2bc3d95abbd1e467",
+  "archive_command": "git archive --format=tar ff03077fd1bd963e51f22f43e4cb25f3669a0f0e; extract to a new temporary directory",
+  "test_command": "python -m pytest tests/detectors/ark_runtime/test_unseen_detector.py -q",
+  "test_exit_code": 0,
+  "test_output": "6 passed, 2 skipped in 0.71s (external Ark repository tests skipped in clean archive)",
+  "local_upstream_object_controls": {
+    "command": "python -m unittest tests.detectors.ark_runtime.test_unseen_detector -v with OHSCANNER_ARK_REPO set to local Ark Runtime Git store",
+    "result": "8 passed in 4.404s",
+    "covers": [
+      "unseen fixed upstream revision",
+      "exception-guard parent and fix revisions"
+    ]
+  },
+  "model_digest": "548996ced072b847e2a01d17c4f56de11b6fe4e42e3657f1434c7b8fbc9f3aca",
+  "exact_source_bindings_empty": true,
+  "source_file_hashes_match": 14,
+  "config_sha256_matches": true,
+  "verification_environment": {
+    "python": "3.13.9",
+    "tree-sitter": "0.26.0",
+    "tree-sitter-c": "0.24.2",
+    "tree-sitter-cpp": "0.23.4",
+    "pytest_verification_only": "8.4.2"
+  }
+}

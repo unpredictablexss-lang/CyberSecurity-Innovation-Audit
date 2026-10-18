@@ -1,0 +1,78 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v3",
+  "status": "frozen_before_new_sample_roster_review",
+  "frozen_utc": "2026-10-18T13:50:08Z",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.7.0",
+  "rules": [
+    {
+      "id": "ark.runtime.typedarray-store-type-origin",
+      "version": "0.7.0"
+    },
+    {
+      "id": "ark.runtime.typedarray-allocation-exception-guard",
+      "version": "0.7.0"
+    }
+  ],
+  "model_digest_sha256": "548996ced072b847e2a01d17c4f56de11b6fe4e42e3657f1434c7b8fbc9f3aca",
+  "config": {
+    "analysis_budget": {
+      "max_source_bytes": 1048576,
+      "max_instructions": 4096,
+      "max_scope_depth": 128,
+      "max_states": 2048,
+      "max_steps": 8192,
+      "max_seconds": 5.0
+    },
+    "ast_scope": "per_file",
+    "supported_languages": [
+      "cpp"
+    ],
+    "required_facts": [],
+    "default_enabled": false,
+    "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+    "profile_id": "light-ast"
+  },
+  "config_sha256": "12dd6b35156f64bcf5a6ca58d8d2e82b89b87bcde7382589006b5bb41d9e5b67",
+  "scanner_repository": "D:/openHarmonyScanner/CyberSecurity-Innovation-Audit-c4",
+  "scanner_commit": "ff03077fd1bd963e51f22f43e4cb25f3669a0f0e",
+  "scanner_tree": "e76488731ff3410eb26bdb9b2bc3d95abbd1e467",
+  "implementation_file_sha256": {
+    "src/ohscanner/detectors/catalog.py": "ed718983a54a2ecebc2ed30725e134f9bc34abb38f34bf3f078ce542705584e5",
+    "src/ohscanner/detectors/ark_runtime/unseen_detector.py": "50dfc9979daf244c3e8d66c6ad3ee405b75e36e2ef2195ae9f551bf06de13fd0",
+    "src/ohscanner/detectors/ark_runtime/unseen_model.py": "32c603b18f71a31f7c845145456f9182ba9d0872afa61b0a446d6cbf22f75495",
+    "src/ohscanner/detectors/ark_runtime/model.py": "1c2fa93762f19a9ceb6f17999ba74c447203367d6cb107e130d846b81cd7404e",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "4fd9f375725ca7039beb2fe428f176ebe360299ce1f9e105ab4235e80875853d",
+    "src/ohscanner/detectors/ark_runtime/exception_guard.py": "3bb959a1164d43b44bbe0e20a79193d55907278ea83da8b85490bbf2c409437c",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "c3616ad6404967927d1a4a98c46257f8df19c3c36990efbae82c859f5108bcf9",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "5ff1ffacbf80f175b75979e6a49cdba4ba70e34bc4736e5d4c48402fb67a3073",
+    "src/parser/ast.py": "eabb4aff1b613661cb37f9f8d7bb50c6c2b5a4fb28cb55fbd452aa5179ec5eb0",
+    "src/ohscanner/contracts.py": "18b2fe2a2a3da5e5e7d31381ff45c84be28469e2f88bb8aae03f5e77883bd494",
+    "src/ohscanner/runner.py": "372967bfdb266b057ba8e797602cebdd25beeaee750a860a25f8cb510f6c9dac",
+    "requirements.txt": "d640566eb055a3844d62caa6314a0900f94e7766e5a619c364e4dca6aa69bb2f",
+    "tests/detectors/ark_runtime/test_unseen_detector.py": "11da55c46d4e878bdd8168231ac7d7a266cb69e57618c320257a6ef55614810d"
+  },
+  "dependency_lock": "admin/detector_dependencies_0.7.0.lock",
+  "dependency_lock_sha256": "f0702fcfea4950211e74ebc1b15ca747e0ede5806014e00d5026a2ac56a87b1d",
+  "dependency_versions": {
+    "python": "3.13.9",
+    "tree-sitter": "0.26.0",
+    "tree-sitter-c": "0.24.2",
+    "tree-sitter-cpp": "0.23.4",
+    "pytest_verification_only": "8.4.2"
+  },
+  "applicability_contract": "admin/applicability_contract_0.7.0.json",
+  "applicability_contract_sha256": "4e98f891a71534d4554cfff5c2b1d72dfa28d126602340acf7afc8f5603abfa7",
+  "clean_archive_verification": {
+    "status": "passed",
+    "archive_source_commit": "ff03077fd1bd963e51f22f43e4cb25f3669a0f0e",
+    "archive_source_tree": "e76488731ff3410eb26bdb9b2bc3d95abbd1e467",
+    "command": "git archive --format=tar ff03077fd1bd963e51f22f43e4cb25f3669a0f0e; extract to a new temporary directory; python -m pytest tests/detectors/ark_runtime/test_unseen_detector.py -q",
+    "result": "6 passed, 2 skipped; separate local upstream-object run: 8 passed",
+    "model_digest_match": true,
+    "source_identity_bindings_empty": true,
+    "unseen_identity_test_scope": "Synthetic Git-provenance context plus pinned local upstream object controls; establishes semantic eligibility and behavior for tested source revisions only, not production sample provenance."
+  },
+  "freeze_boundary": "This detector build and contract are frozen before inspecting or selecting any new holdout source roster. Development fixtures used by the test are excluded from any future holdout."
+}
