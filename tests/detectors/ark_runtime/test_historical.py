@@ -91,10 +91,12 @@ class CurrentComponentRunnerBindingTests(unittest.TestCase):
         entry = coverage['detectors']['ohscanner.ark.runtime.type_safety']
         self.assertEqual(reports[0].status, 'blocked')
         self.assertFalse(reports[0].diagnostics)
-        self.assertEqual(entry['coverage_counts']['not_analyzed'], 1)
+        self.assertEqual(entry['coverage_counts']['not_analyzed'], 0)
         self.assertEqual(entry['coverage_counts']['complete'], 0)
-        self.assertEqual(entry['coverage_counts']['partial'], 0)
-        self.assertEqual(entry['not_analyzed_files'], [path])
+        self.assertEqual(entry['coverage_counts']['partial'], 1)
+        self.assertEqual(entry['partially_inspected_files'], [path])
+        self.assertTrue(any('parse_dependency_contamination_unknown' in item
+                            for item in reports[0].limitations))
 
     def test_current_component_rules_remain_default_off_and_require_explicit_selection(self):
         from src.ohscanner.detectors.catalog import default_detector_ids, build_registry
@@ -113,6 +115,10 @@ class CurrentComponentWrongVersionTests(unittest.TestCase):
 
         repo = Path(os.environ['OHSCANNER_ARK_REPO'])
         path = 'ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp'
+        if subprocess.run(
+                ['git', '-C', str(repo), 'cat-file', '-e', 'a65a2853ccae13da167d9aa4720ab8b11ec16656^'],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode:
+            self.skipTest('Bound commit parent is absent from supplied component Git store')
         commit = subprocess.check_output(
             ['git', '-C', str(repo), 'rev-parse', 'a65a2853ccae13da167d9aa4720ab8b11ec16656^'],
             text=True).strip()

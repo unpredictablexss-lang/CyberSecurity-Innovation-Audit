@@ -28,6 +28,59 @@ def name_node(node):
         node = child
 
 
+_CPP_NON_CODE = re.compile(
+    rb'R"([^\s()\\]{0,16})\(.*?\)\1"'
+    rb'|"(?:\\.|[^"\\])*"'
+    rb"|'(?:\\.|[^'\\])*'"
+    rb'|//[^\n]*'
+    rb'|/\*.*?\*/'
+    rb'|^[ \t]*\#(?:[^\n]|\\\n)*',
+    re.MULTILINE | re.DOTALL,
+)
+_NAMESPACE_PREFIX = re.compile(rb'\bnamespace\s+([A-Za-z_]\w*(?:::\s*[A-Za-z_]\w*)*)\s*$')
+_CONDITIONAL_DIRECTIVE = re.compile(rb'^[ \t]*\#[ \t]*(?:if|ifdef|ifndef|elif|else|endif)\b', re.MULTILINE)
+
+
+def _lexical_namespace_ranges(data):
+    """Return namespace byte ranges only when lexical scope is unambiguous.
+
+    This deliberately recovers declaration ownership only. It does not expand
+    macros or resolve declarations, and refuses conditional-compilation input.
+    """
+    if _CONDITIONAL_DIRECTIVE.search(data):
+        return None
+
+    def blank(match):
+        return re.sub(rb'[^\r\n]', b' ', match.group(0))
+
+    masked = _CPP_NON_CODE.sub(blank, data)
+    braces = []
+    ranges = []
+    for index, char in enumerate(masked):
+        if char == ord('{'):
+            line_start = masked.rfind(b'\n', 0, index) + 1
+            prefix = masked[line_start:index]
+            found = _NAMESPACE_PREFIX.search(prefix)
+            namespace = re.sub(rb'\s+', b'', found.group(1)).decode('ascii') if found else ''
+            braces.append((namespace, index))
+        elif char == ord('}'):
+            if not braces:
+                return None
+            namespace, start = braces.pop()
+            if namespace:
+                ranges.append((start, index + 1, namespace))
+    if braces:
+        return None
+    return tuple(ranges)
+
+
+def _lexical_namespace_at(ranges, position):
+    matches = [(start, end, name) for start, end, name in ranges
+               if start < position < end]
+    matches.sort()
+    return '::'.join(name for _, _, name in matches)
+
+
 @dataclass(frozen=True)
 class Binding:
     name: str
@@ -39,19 +92,33 @@ class Binding:
 
 
 class FunctionSyntax:
-    def __init__(self, data, node):
+    def __init__(self, data, node, lexical_namespace=None, partial=False):
         self.data, self.node = data, node
         self.body = node.child_by_field_name('body')
         declarator = node.child_by_field_name('declarator')
         self.declarator = declarator
         written_name = self.text(name_node(declarator))
-        ancestors, parent = [], node.parent
+        ancestors, class_ancestors, parent = [], [], node.parent
         while parent is not None:
             if parent.type in ('namespace_definition', 'class_specifier', 'struct_specifier'):
-                ancestors.append(self.text(parent.child_by_field_name('name')))
+                name = self.text(parent.child_by_field_name('name'))
+                ancestors.append(name)
+                if parent.type in ('class_specifier', 'struct_specifier'):
+                    class_ancestors.append(name)
             parent = parent.parent
-        prefix = '::'.join(reversed([a for a in ancestors if a]))
+        if partial:
+            prefix_parts = [part for part in (lexical_namespace or '').split('::') if part]
+            prefix_parts.extend(reversed([a for a in class_ancestors if a]))
+            prefix = '::'.join(prefix_parts)
+            owner_source = 'lexical_scope' if prefix else 'unknown'
+        else:
+            prefix = '::'.join(reversed([a for a in ancestors if a]))
+            owner_source = 'ast' if ancestors else 'unknown'
         self.qualified_name = compact((prefix + '::' if prefix else '') + written_name).lstrip(':')
+        self.owner_source = owner_source
+        # Tree-sitter parses syntax only; external macro/type declarations and
+        # compiler flags are never inferred from this local owner recovery.
+        self.external_context_status = 'unknown'
         self.bindings = []
         parameters = declarator.child_by_field_name('parameters')
         self.parameter_types = []
@@ -113,9 +180,16 @@ class FunctionSyntax:
 
 def parse_functions(data):
     tree = Parser(Language(tree_sitter_cpp.language())).parse(data)
+    namespace_ranges = _lexical_namespace_ranges(data)
     # Tree-sitter also calls defaulted/deleted special members function_definition;
     # they have no emitted body to analyse and must not crash an unrelated caller.
-    functions = [FunctionSyntax(data, n) for n in walk(tree.root_node)
+    partial = tree.root_node.has_error
+    functions = [FunctionSyntax(data, n,
+                                _lexical_namespace_at(namespace_ranges, n.start_byte)
+                                if namespace_ranges is not None else None,
+                                partial=partial) for n in walk(tree.root_node)
                  if n.type == 'function_definition' and n.child_by_field_name('body') is not None
                  and n.child_by_field_name('declarator') is not None]
+    for function in functions:
+        function.translation_unit_status = 'partial' if tree.root_node.has_error else 'complete'
     return tree, functions
