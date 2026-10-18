@@ -50,5 +50,6 @@
   "candidate_wall_seconds": 161.307038765,
   "baseline_peak_rss_kib": 371736,
   "candidate_peak_rss_kib": 372176,
-  "note": "Discarding counting-loop bounds when the body assigns the index variable changes no candidate on this fixed five-component corpus. The mutation control is covered by a synthetic fixture; candidate counts are not vulnerability counts."
+  "note": "Discarding counting-loop bounds when the body assigns the index variable changes no candidate on this fixed five-component corpus. The mutation control is covered by a synthetic fixture; candidate counts are not vulnerability counts.",
+  "runner_binding": "superseded: produced with the shared mainline runner, which imported mainline detectors 0.2.0/0.1.0; not A-line evidence. See a_line_scan_20261018_selfcontained_v1/CORRECTION.md."
 }

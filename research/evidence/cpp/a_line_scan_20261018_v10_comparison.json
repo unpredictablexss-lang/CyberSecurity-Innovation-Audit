@@ -13,5 +13,6 @@
   "candidate_wall_seconds": 163.639071301,
   "baseline_peak_rss_kib": 371736,
   "candidate_peak_rss_kib": 371884,
-  "note": "The one-hop release-wrapper extension produced no additional candidates on this fixed five-component corpus. Candidate counts are not vulnerability counts or accuracy metrics."
+  "note": "The one-hop release-wrapper extension produced no additional candidates on this fixed five-component corpus. Candidate counts are not vulnerability counts or accuracy metrics.",
+  "runner_binding": "superseded: produced with the shared mainline runner, which imported mainline detectors 0.2.0/0.1.0; not A-line evidence. See a_line_scan_20261018_selfcontained_v1/CORRECTION.md."
 }

@@ -50,5 +50,6 @@
   "candidate_wall_seconds": 164.439,
   "baseline_peak_rss_kib": 371736,
   "candidate_peak_rss_kib": 372076,
-  "note": "Upper guards can now prove len + 1 for typed parameters, but no such guarded shape exists in this fixed five-component corpus, so candidates are unchanged. The unbounded len + 1 cases stay candidates."
+  "note": "Upper guards can now prove len + 1 for typed parameters, but no such guarded shape exists in this fixed five-component corpus, so candidates are unchanged. The unbounded len + 1 cases stay candidates.",
+  "runner_binding": "superseded: produced with the shared mainline runner, which imported mainline detectors 0.2.0/0.1.0; not A-line evidence. See a_line_scan_20261018_selfcontained_v1/CORRECTION.md."
 }

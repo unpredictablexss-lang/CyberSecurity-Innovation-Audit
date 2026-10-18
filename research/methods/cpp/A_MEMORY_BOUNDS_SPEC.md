@@ -103,6 +103,17 @@ CVE-2025-0587 / `arkcompiler_ets_runtime-atomic-index-overflow-2025-03` 在 vuln
 
 ## Real-source scan (2026-10-18)
 
+> **Runner correction:** the `v1`–`v16` comparisons below were produced by the
+> shared mainline runner, which inserts its own repository root at `sys.path[0]`
+> and therefore imported mainline detectors (`0.2.0`/`0.1.0`), not this A-line
+> worktree. They remain valid mainline baseline records but are not A-line
+> before/after evidence. The authoritative A-line run is
+> `research/evidence/cpp/a_line_scan_20261018_selfcontained_v1` using
+> `research/evidence/cpp/mvp_20261018/run_scan.py`: 60 candidates / 39 groups,
+> of which `bounds 0.2.9` contributes 21, `integer_bounds 0.2.2` 25,
+> `resource_lifetime 0.1.3` 7 and `unsafe_memory_call 0.1.2` 7. See
+> `CORRECTION.md` and `rule_comparison.json` in that directory.
+
 `ohscanner.cpp.bounds` 0.2.1 was scanned over the same five pinned components as
 the 2026-10-17 baseline. The result remains 33 candidates / 22 lexical groups;
 no new real-source candidate was emitted by the added heap-capacity fact on

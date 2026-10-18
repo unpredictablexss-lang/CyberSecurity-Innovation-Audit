@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/a_line_scan_20261018_v16",
+  "baseline_note": "shared mainline runner; imports mainline detectors 0.2.0/0.1.0",
+  "candidate_run": "research/evidence/cpp/a_line_scan_20261018_selfcontained_v1",
+  "candidate_runner": "research/evidence/cpp/mvp_20261018/run_scan.py",
+  "candidate_detector_versions": {
+    "ohscanner.cpp.bounds": "0.2.9",
+    "ohscanner.cpp.integer_bounds": "0.2.2",
+    "ohscanner.cpp.resource_lifetime": "0.1.3",
+    "ohscanner.cpp.unsafe_memory_call": "0.1.2"
+  },
+  "baseline_candidates": 33,
+  "candidate_candidates": 60,
+  "baseline_groups": 22,
+  "candidate_groups": 39,
+  "per_rule": [
+    {"rule_id": "ohcpp-format-string-candidate-002", "baseline": 7, "candidate": 7},
+    {"rule_id": "ohcpp-integer-bounds-arithmetic-candidate-001", "baseline": 16, "candidate": 25},
+    {"rule_id": "ohcpp-memory-bounds-copy-candidate-001", "baseline": 0, "candidate": 21},
+    {"rule_id": "ohcpp-resource-lifetime-double-free-candidate-001", "baseline": 2, "candidate": 3},
+    {"rule_id": "ohcpp-resource-lifetime-use-after-free-candidate-002", "baseline": 8, "candidate": 4}
+  ],
+  "per_component": [
+    {"component": "communication_dsoftbus", "baseline_candidates": 7, "baseline_groups": 4, "candidate_candidates": 36, "candidate_groups": 23},
+    {"component": "distributeddatamgr_kv_store", "baseline_candidates": 11, "baseline_groups": 8, "candidate_candidates": 10, "candidate_groups": 7},
+    {"component": "security_access_token", "baseline_candidates": 4, "baseline_groups": 2, "candidate_candidates": 6, "candidate_groups": 3},
+    {"component": "update_updateservice", "baseline_candidates": 7, "baseline_groups": 6, "candidate_candidates": 6, "candidate_groups": 5},
+    {"component": "window_window_manager", "baseline_candidates": 4, "baseline_groups": 2, "candidate_candidates": 2, "candidate_groups": 1}
+  ],
+  "note": "The baseline rows were produced by the shared mainline runner and describe mainline detector versions, not A-line code. Candidate counts are not vulnerability counts and no Precision/Recall is computed."
+}

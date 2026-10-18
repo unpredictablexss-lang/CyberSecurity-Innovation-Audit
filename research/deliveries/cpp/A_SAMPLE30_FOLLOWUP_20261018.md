@@ -96,6 +96,19 @@ The largest groups are fuzz targets in `distributeddatamgr_preferences`
 repository/file/symbol because the delivered diagnostics do not carry qualified
 class identity; it is an audit view, not a root-cause or verdict change.
 
+## Runner correction
+
+The earlier `a_line_scan_20261018_v1`–`v16` runs used the shared mainline
+runner, which imported mainline detectors `0.2.0`/`0.1.0` through its own
+`sys.path` insert; their repeated 33/22 result is a mainline baseline, not an
+A-line result. The corrected self-contained runner
+(`research/evidence/cpp/mvp_20261018/run_scan.py`) reports 60 candidates /
+39 groups over the same five components: bounds 21, integer 25, resource
+lifetime 7, unsafe call 7. The per-rule and per-component comparison is in
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v1/rule_comparison.json`.
+This is a coverage difference plus a UAF-count reduction (8→4), not an accuracy
+claim; `validated_vulnerability=0`.
+
 ## Pending
 
 The 30 sample source repositories are not present locally, so the sample30

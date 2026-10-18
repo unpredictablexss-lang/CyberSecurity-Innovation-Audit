@@ -50,5 +50,6 @@
   "candidate_wall_seconds": 163.187087526,
   "baseline_peak_rss_kib": 371736,
   "candidate_peak_rss_kib": 372036,
-  "note": "The secure string-copy extension (strcpy_s/strcat_s/strncpy_s/sprintf_s/snprintf_s) produced no additional or removed candidates on this fixed five-component corpus; every component keeps its baseline count. Candidate counts are not vulnerability counts or accuracy metrics."
+  "note": "The secure string-copy extension (strcpy_s/strcat_s/strncpy_s/sprintf_s/snprintf_s) produced no additional or removed candidates on this fixed five-component corpus; every component keeps its baseline count. Candidate counts are not vulnerability counts or accuracy metrics.",
+  "runner_binding": "superseded: produced with the shared mainline runner, which imported mainline detectors 0.2.0/0.1.0; not A-line evidence. See a_line_scan_20261018_selfcontained_v1/CORRECTION.md."
 }

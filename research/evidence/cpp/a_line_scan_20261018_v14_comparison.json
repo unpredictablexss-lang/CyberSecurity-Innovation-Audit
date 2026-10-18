@@ -50,5 +50,6 @@
   "candidate_wall_seconds": 166.280804567,
   "baseline_peak_rss_kib": 371736,
   "candidate_peak_rss_kib": 372332,
-  "note": "Simple counting-loop bounds change no candidate on this fixed five-component corpus; the sandbox copy-range controls are the targeted check (model/safe quiet, unsafe hits). Candidate counts are not vulnerability counts or accuracy metrics."
+  "note": "Simple counting-loop bounds change no candidate on this fixed five-component corpus; the sandbox copy-range controls are the targeted check (model/safe quiet, unsafe hits). Candidate counts are not vulnerability counts or accuracy metrics.",
+  "runner_binding": "superseded: produced with the shared mainline runner, which imported mainline detectors 0.2.0/0.1.0; not A-line evidence. See a_line_scan_20261018_selfcontained_v1/CORRECTION.md."
 }
