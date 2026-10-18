@@ -74,8 +74,29 @@ class UnboundedObserverTests(unittest.TestCase):
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0].candidate_cwe, "CWE-400")
         self.assertEqual(findings[0].symbol, "AddObserver")
+        self.assertIn("Source-derived path within the scanned scope", findings[0].message)
+        self.assertIn("PasteStub::OnSubscribeObserver", findings[0].message)
+        self.assertIn("PasteService::SubscribeObserver", findings[0].message)
+        self.assertIn("PasteService::AddObserver", findings[0].message)
         self.assertEqual({item.kind for item in findings[0].evidence_obligations},
                          {"call_path_binding", "entry_reachability", "resource_bound", "product_impact"})
+
+    def test_observer_candidate_kept_without_hierarchy_but_path_stays_unknown(self):
+        unlinked = SERVICE.replace("class PasteService : public PasteStub {", "class PasteService {")
+        findings = finding_rule(run_service(unlinked),
+                                "ipc.resource.unbounded-observer-registration")
+        self.assertEqual(len(findings), 1)
+        self.assertIn("No unique direct-argument path", findings[0].message)
+        self.assertNotIn("Source-derived path within the scanned scope", findings[0].message)
+
+    def test_ambiguous_observer_implementations_receive_no_path_credit(self):
+        alternate = SERVICE.replace("class PasteService : public PasteStub {",
+                                    "class AlternatePasteService : public PasteStub {")
+        findings = finding_rule(run_service(SERVICE + "\n" + alternate),
+                                "ipc.resource.unbounded-observer-registration")
+        self.assertEqual(len(findings), 2)
+        self.assertTrue(all("No unique direct-argument path" in finding.message
+                            for finding in findings))
 
     def test_per_process_cap_before_insert_suppresses_candidate(self):
         bounded = SERVICE.replace(

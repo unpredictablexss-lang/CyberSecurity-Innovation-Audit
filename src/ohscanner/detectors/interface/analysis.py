@@ -546,16 +546,25 @@ class Interpreter:
         self._build_index(units)
 
     def unbounded_observer_registrations(self):
-        """Find source-linked IPC observer registration paths with no local cap.
+        """Find unbounded observer sinks and bind direct source paths when possible.
 
-        This narrow structural rule requires an On*Observer entry to call
-        SubscribeObserver, an implementation to call AddObserver, and AddObserver
-        to insert an observer-like value into a collection. A recognizable limit
-        comparison followed by an early exit before insertion suppresses the
-        candidate. It does not prove caller reachability or product impact.
+        Candidate discovery remains conservative when the hierarchy is missing or
+        ambiguous. A path note is attached only when one scanned stub implementation
+        is unique and the observer argument is forwarded unchanged through the
+        implementation to the collection insertion.
         """
         def body_text(fn):
             return fn.text(fn.body)
+
+        def named_calls(fn, name):
+            for node in walk(fn.body, "call_expression"):
+                callee_node = node.child_by_field_name("function")
+                if callee_node is None or terminal(fn.text(callee_node)) != name:
+                    continue
+                arguments_node = node.child_by_field_name("arguments")
+                arguments = tuple(fn.text(arg).strip() for arg in
+                                  (arguments_node.named_children if arguments_node else ()))
+                yield node, arguments
 
         roots = [fn for fn in self.functions
                  if fn.name.startswith("On") and "Observer" in fn.name
@@ -566,9 +575,6 @@ class Interpreter:
                            and re.search(r"\bAddObserver\s*\(", body_text(fn))]
         if not subscribe_impls:
             return ()
-        # Bind the sink to the implementation that actually invokes it.
-        # Name-only joins across a repository can otherwise combine an IPC entry
-        # in one subsystem with an unrelated AddObserver in another.
         sink_owners = {fn.owner for fn in subscribe_impls if fn.owner}
         if not sink_owners:
             return ()
@@ -583,16 +589,10 @@ class Interpreter:
             )
             if insert is None:
                 continue
-            # Suppress only the reviewed aggregate observer-cap shape. A random
-            # limit/return earlier in AddObserver is not evidence that this
-            # collection is bounded.
             aggregate_count = re.search(
                 r"\b(?:auto|uint(?:32_t)?|size_t)\s+(\w+)\s*=\s*GetAllObserversSize\s*\(", body
             )
-            if aggregate_count is None or "MAX_OBSERVER_COUNT" not in body:
-                aggregate_name = None
-            else:
-                aggregate_name = aggregate_count.group(1)
+            aggregate_name = aggregate_count.group(1) if aggregate_count and "MAX_OBSERVER_COUNT" in body else None
             insertion_byte = fn.body.start_byte + len(body[:insert.start()].encode("utf-8"))
             bounded = False
             for branch in walk(fn.body, "if_statement"):
@@ -600,7 +600,6 @@ class Interpreter:
                     continue
                 condition = fn.text(branch.child_by_field_name("condition"))
                 consequence_node = branch.child_by_field_name("consequence")
-                consequence = fn.text(consequence_node)
                 direct_exit = consequence_node is not None and (
                     consequence_node.type in ("return_statement", "throw_statement")
                     or any(child.type in ("return_statement", "throw_statement")
@@ -616,7 +615,62 @@ class Interpreter:
             if bounded:
                 continue
             line = fn.body.start_point[0] + 1 + body[:insert.start()].count("\n")
-            sinks.append((fn, line, insert.group(1)))
+            path_notes = []
+            if self.index is not None:
+                sink_param_name = insert.group(1)
+                sink_positions = [i for i, name in enumerate(fn.params) if name == sink_param_name]
+                if len(sink_positions) == 1:
+                    sink_observer_pos = sink_positions[0]
+                    for root in roots:
+                        entry = self.index.one_hop_definition(root.owner, "SubscribeObserver")
+                        if entry is None:
+                            continue
+                        implementations = [candidate for candidate in self.functions_by_owner_name.get(
+                            (entry.owner.rsplit("::", 1)[-1], entry.name), ())
+                            if candidate.file == entry.file and candidate.qualified == entry.qualified]
+                        if len(implementations) != 1:
+                            continue
+                        implementation = implementations[0]
+                        observer_positions = [i for i, name in enumerate(implementation.params)
+                                              if name in ("observer", "callback")]
+                        if len(observer_positions) != 1:
+                            continue
+                        observer_pos = observer_positions[0]
+                        root_calls = list(named_calls(root, "SubscribeObserver"))
+                        if len(root_calls) != 1:
+                            continue
+                        root_node, root_args = root_calls[0]
+                        if observer_pos >= len(root_args):
+                            continue
+                        root_value = root_args[observer_pos]
+                        if not re.fullmatch(r"[A-Za-z_]\w*", root_value):
+                            continue
+                        add_calls = [(node, args) for node, args in named_calls(implementation, "AddObserver")
+                                     if sink_observer_pos < len(args)
+                                     and args[sink_observer_pos] == implementation.params[observer_pos]]
+                        if not add_calls:
+                            continue
+                        root_name = (root.qualified if "::" in root.qualified or not root.owner
+                                     else root.owner + "::" + root.name)
+                        implementation_name = (
+                            implementation.qualified if "::" in implementation.qualified
+                            or not implementation.owner else implementation.owner + "::" + implementation.name)
+                        sink_name = (fn.qualified if "::" in fn.qualified or not fn.owner
+                                     else fn.owner + "::" + fn.name)
+                        add_lines = ",".join(str(node.start_point[0] + 1) for node, _ in add_calls)
+                        path_notes.append(
+                            "source-indexed direct-argument path: " + root_name + " at "
+                            + root.file + ":" + str(root_node.start_point[0] + 1) + " forwards "
+                            + root_value + " to " + implementation_name + " at "
+                            + implementation.file + ":" + str(implementation.line or
+                                implementation.body.start_point[0] + 1) + "; AddObserver call site(s) "
+                            + implementation.file + ":" + add_lines + " forward its "
+                            + implementation.params[observer_pos] + " parameter unchanged to "
+                            + sink_name + " at " + fn.file + ":" + str(line)
+                            + ", where that parameter is inserted. This is source-path evidence only."
+                        )
+            path_note = path_notes[0] if len(set(path_notes)) == 1 else None
+            sinks.append((fn, line, insert.group(1), path_note))
         return tuple(sinks)
 
     def privileged_permission_grants(self):

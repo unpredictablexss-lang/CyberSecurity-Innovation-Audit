@@ -92,7 +92,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.6"
+    version = "0.12.7"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -146,25 +146,29 @@ class IpcInterfaceDetector:
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
             ) for o in observations)
         resource_findings = []
-        for fn, line, container in analysis.unbounded_observer_registrations():
+        for fn, line, container, path_note in analysis.unbounded_observer_registrations():
             resource_findings.append(DetectorFinding(
                 file=fn.file,
                 line=line,
                 symbol=fn.qualified,
                 rule_id="ipc.resource.unbounded-observer-registration",
-                message=("Observer-growth candidate: the component contains an IPC On*Observer "
-                         "entry calling SubscribeObserver and a same-owner AddObserver helper "
-                         "inserting " + container + " without the reviewed aggregate observer-cap "
-                         "shape. This lightweight rule does not prove the cross-class/virtual call "
-                         "edge, complete insertion accounting, caller reachability, or product-level "
-                         "denial of service."),
+                message=("Observer-growth candidate: AddObserver inserts " + container
+                         + " without the reviewed aggregate observer-cap shape. "
+                         + (("Source-derived path within the scanned scope: " + path_note + " ")
+                            if path_note else
+                            "No unique direct-argument path from the IPC observer entry was established. ")
+                         + "Complete insertion accounting, caller reachability, and product-level denial "
+                         "of service remain unverified."),
                 evidence_type="syntax",
                 candidate_cwe="CWE-400",
                 evidence_obligations=(
                     EvidenceObligation(
                         "call_path_binding",
-                        "Bind the On*Observer entry, SubscribeObserver implementation and AddObserver "
-                        "sink through interface/virtual dispatch in the pinned component.",
+                        (("The pinned scan follows one source-derived implementation and unchanged observer "
+                          "argument to this insertion; verify product registration, runtime dispatch and "
+                          "overrides outside the scanned scope.") if path_note else
+                         "Bind the On*Observer entry, SubscribeObserver implementation and AddObserver "
+                         "sink through interface/virtual dispatch in the pinned component."),
                     ),
                     EvidenceObligation(
                         "entry_reachability",
