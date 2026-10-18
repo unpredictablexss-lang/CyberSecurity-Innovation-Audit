@@ -84,6 +84,15 @@ class NetworkAuthSessionAllowlistTests(unittest.TestCase):
         self.assertEqual(len(findings), 1)
         self.assertEqual(findings[0][2], "prefix")
 
+    def test_arbitrary_strncmp_length_is_not_misreported_as_allowlist_length_prefix(self):
+        source = FIXED.replace(
+            "if (strcmp(appInfo->myData.sessionName, g_sessionWhiteList[index]) == 0)",
+            "if (strncmp(appInfo->myData.sessionName, g_sessionWhiteList[index], 1) == 0)",
+        )
+        findings = find_auth_session_allowlist_candidates(source)
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0][2], "missing")
+
     def test_exact_rejecting_whitelist_is_not_a_candidate(self):
         self.assertEqual(find_auth_session_allowlist_candidates(FIXED), ())
 

@@ -87,11 +87,34 @@ def _validated_prefix_session_name_helpers(root):
         for branch in _walk(body, "if_statement"):
             condition = branch.child_by_field_name("condition")
             consequence = branch.child_by_field_name("consequence")
-            if (condition is not None and consequence is not None
-                    and "strncmp" in _compact(condition)
-                    and "==0" in _compact(condition)
-                    and "returntrue" in _compact(consequence)):
-                positive_match = True
+            if (condition is None or consequence is None
+                    or "==0" not in _compact(condition)
+                    or "returntrue" not in _compact(consequence)):
+                continue
+            for call, call_name, _ in _calls(condition):
+                if call_name != "strncmp":
+                    continue
+                arguments = call.child_by_field_name("arguments")
+                args = [_compact(arg) for arg in arguments.named_children] if arguments else []
+                if (len(args) < 3 or "sessionName" not in args[0]
+                        or "WhiteList" not in args[1]):
+                    continue
+                length_arg = args[2]
+                direct_white_list_length = (
+                    ("strlen" in length_arg or "strnlen" in length_arg)
+                    and "WhiteList" in length_arg
+                )
+                assigned_white_list_length = bool(
+                    re.fullmatch(r"[A-Za-z_]\w*", length_arg)
+                    and re.search(
+                        re.escape(length_arg) + r"=strnlen\([^;]*WhiteList",
+                        compact,
+                    )
+                )
+                if direct_white_list_length or assigned_white_list_length:
+                    positive_match = True
+                    break
+            if positive_match:
                 break
         statements = body.named_children
         rejecting_fallback = bool(statements and statements[-1].type == "return_statement"
