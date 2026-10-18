@@ -4,6 +4,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
+from .tlv_fixed_width import find_fixed_width_tlv_overreads
 
 
 # Exact path components are review cues, not proof that a file is excluded from
@@ -26,7 +27,7 @@ def _test_source_path(path):
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
 assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05",
-                     "DATA-01", "DATA-02", "DATA-03", "DATA-04", "CAP-01"}, sorted(_CWE)
+                     "DATA-01", "DATA-02", "DATA-03", "DATA-04", "DATA-05", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -86,7 +87,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.9.9"
+    version = "0.10.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -215,6 +216,38 @@ class IpcInterfaceDetector:
                 ),
             ))
         findings = findings + tuple(resource_findings) + tuple(permission_findings)
+        # TLV fixed-width serializers are reusable parser helpers, not IPC roots.
+        # Keep this exact non-entry pass separate; do not imply IPC reachability.
+        tlv_findings = []
+        for unit in applicable:
+            if unit.language != "cpp" or unit.parse_status in ("failed", "not_run"):
+                continue
+            for line, symbol in find_fixed_width_tlv_overreads(unit.text):
+                tlv_findings.append(DetectorFinding(
+                    file=unit.path,
+                    line=line,
+                    symbol=symbol,
+                    rule_id="ipc.tlv.fixed-width-length",
+                    message=("DATA-05 candidate: a TLV header length bounds available bytes, "
+                             "but a fixed-width memcpy_s still reads sizeof(T) without first "
+                             "requiring head.len == sizeof(T). Entry reachability, the exact "
+                             "serialized input source, and product impact are not established."),
+                    evidence_type="syntax",
+                    candidate_cwe="CWE-125",
+                    consequence_impact="out_of_bounds_read",
+                    consequence_cwe="CWE-125",
+                    evidence_obligations=(
+                        EvidenceObligation("serialized_input_binding",
+                                           "Verify the TLV header and backing byte vector derive from the same untrusted serialized input."),
+                        EvidenceObligation("source_extent",
+                                           "Confirm a short declared value can leave fewer than sizeof(T) physical bytes at cursor_ on the reached path."),
+                        EvidenceObligation("entry_reachability",
+                                           "Bind this reusable parser helper to a product IPC/service entry and attacker-controlled data."),
+                        EvidenceObligation("security_impact",
+                                           "Determine whether adjacent bytes are disclosed, only misparsed, or safely rejected by surrounding code."),
+                    ),
+                ))
+        findings = findings + tuple(tlv_findings)
         status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"
         return DetectorRun(self.detector_id,self.version,status,tuple(u.path for u in applicable),findings,
             ("Model="+MODEL_VERSION+"; first-party bounded structured syntax interpretation, no external scanner execution.",

@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v17"
+MODEL_VERSION = "oh-ipc-2026.10-v18"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -47,6 +47,7 @@ IMPACT_BY_RULE = {
     "ipc.parcel.position-underflow": "out_of_bounds_read",
     "ipc.parcel.bounds": "out_of_bounds_read",
     "ipc.parcel.write-bounds": "out_of_bounds_write",
+    "ipc.tlv.fixed-width-length": "out_of_bounds_read",
     "ipc.parcel.lifecycle": "use_after_release",
     "ipc.auth.flow": "identity_confusion",
     "ipc.data.sensitive-flow": "information_disclosure",

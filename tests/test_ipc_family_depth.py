@@ -52,6 +52,8 @@ BASE = Path(__file__).parent / 'fixtures/ipc'
 # from a preprocessed text rather than the file would satisfy the number and fail
 # the token.
 PINNED_POSITIVES = {
+    ('data05', 'tlv_fixed_width_positive.cpp'): (
+        ('ipc.tlv.fixed-width-length', 5, 'memcpy_s'),),
     ('auth03', 'caller_class_positive.cpp'): (
         ('ipc.auth.caller-class', 7, 'GetPermissionUsedRecordsAsync'),),
     # A check submitted in the wrong identity domain is not credited as caller
