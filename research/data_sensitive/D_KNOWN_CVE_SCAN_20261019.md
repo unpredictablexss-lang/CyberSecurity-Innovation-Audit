@@ -2,9 +2,9 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.15.0，支持 16 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-25850、CVE-2026-28733、CVE-2026-28751、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079、CVE-2026-92392。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.16.0，支持 17 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-25850、CVE-2026-28733、CVE-2026-28751、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079、CVE-2026-92392、CVE-2026-58313。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
-17 项独立公开 CVE 审查清单中，当前规则覆盖 16 个 CVE 条目；剩余 CVE-2026-58313 仍没有可靠的正向规则映射。D20-D24 固定 G 盘快照记录的结果保持不变；D25 对 cJSON 上游漏洞父提交/修复提交进行精确源码对照；D35 新增 filemanagement_storage_service 两条官方分支固定源码正反对照；D36 新增 CVE-2026-28733 的跨函数 map-iterator 生命周期候选，并发现官方 mutex 补丁与当前 5.1 源码仍保留该结构；D37 用 CVE-2026-28751 的 MTP 满长度 xattr 源码修复对照新增边界读取候选；D38 对 CVE-2026-92392 完成 curl 8.22.0/8.23.0 固定源码正反回放。所有规则样本仍是开发/回归材料，不是独立 holdout，也不能据此声称 17 项或全项目的 Recall。
+17 项独立公开 CVE 审查清单现均有窄范围源码形态映射；D39 为 CVE-2026-58313 的 App Domain Verify LRU 并发内存错误添加了真实固定旧/修复头文件对照、组件级 ASan Harness，并通过两轮稳定的 Workbench API→Worker→报告→源码查看回放（旧版 1 条候选、修复版 0 条，源码哈希匹配；`validated_vulnerability=0`）。所有这些规则仍是候选检测，不代表独立召回评估。D20-D24 固定 G 盘快照记录的结果保持不变；D25 对 cJSON 上游漏洞父提交/修复提交进行精确源码对照；D35 新增 filemanagement_storage_service 两条官方分支固定源码正反对照；D36 新增 CVE-2026-28733 的跨函数 map-iterator 生命周期候选，并发现官方 mutex 补丁与当前 5.1 源码仍保留该结构；D37 用 CVE-2026-28751 的 MTP 满长度 xattr 源码修复对照新增边界读取候选；D38 对 CVE-2026-92392 完成 curl 8.22.0/8.23.0 固定源码正反回放。所有规则样本仍是开发/回归材料，不是独立 holdout，也不能据此声称 17 项或全项目的 Recall。
 
 ## 固定源码回放
 
@@ -53,9 +53,9 @@ D30 在 G 镜像中实际跟踪的 libpng 1.6.55 构建归档上补齐了独立�
 
 ## 未覆盖项及不可推断事项
 
-审查清单中剩余 1 项目前没有可靠的正向规则映射：CVE-2026-58313 仍缺少从公告根因到可审源码形态的闭环（master 有修复迹象）。CVE-2026-92392 已由 D38 建立窄源码形态候选；G 盘镜像提交 HEAD 的 curl 8.8.0 低于其受影响版本。未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
+审查清单中的 17 项现均有至少一个已披露源码形态映射；CVE-2026-58313 的 D39 证据绑定到官方未加锁与加锁头文件 blob。CVE-2026-92392 已由 D38 建立窄源码形态候选；G 盘镜像提交 HEAD 的 curl 8.8.0 低于其受影响版本。未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
 
-没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有扫描结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。当前已覆盖 17 项独立审查条目中的 16 个窄源码形态，CVE-2026-58313 尚未覆盖；规则开发样本不能替代冻结且独立标注的数据，也不代表对整个项目达到完整覆盖。D25/D29/D35/D36/D37 上游旧/新源码对照不能替代冻结 holdout。
+没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有扫描结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。当前已覆盖 17 项独立审查条目中的 17 个窄源码形态；规则开发样本不能替代冻结且独立标注的数据，也不代表对整个项目达到完整覆盖。D25/D29/D35/D36/D37 上游旧/新源码对照不能替代冻结 holdout。
 
 
 ## 2026-10-19 D23 calibration
@@ -104,3 +104,6 @@ D31 在固定 `third_party_libtiff@d4a0516c477dfbaf1153ae295893ab75aadd63d4` 上
 0.15.0 的 `lib/multi.c::multi_done` 窄序列规则覆盖连接过滤器清理早于 `Curl_req_done` 的根因，不再依赖某个 pending 调度函数名。0.14.0 首版在 8.12.0/8.21.0 漏报，原因是这两版使用 `process_pending_handles`，而 8.22.0 才出现 `multi_schedule_pending`；移除无关条件后，8.12.0-DEV、8.21.0-DEV、8.22.0-DEV 各命中 1 条 CWE-416 candidate，8.23.0-DEV 修复源命中 0 条。8.12/8.21 是开发修复集，不是 holdout。G 盘 `third_party_curl` 的固定提交 `1386bb128bb060b284309397b97adcaaec21c003` 声明版本 8.8.0，版本不在公告受影响范围，命中 0 条。版本缺失或冲突时保留源码形态候选并标注适用性 unknown。
 
 回放只读 pinned Git objects；G 盘镜像工作树有大量未提交删除状态，因此不读工作树内容。研究直接回放的 `parse_status=not_run` 使 DetectorRun 保持 `blocked`，候选仍保留。另经两轮隔离 Workbench API→Worker→报告→源码查看回放，修复前 1 条、修复后 0 条，候选 SHA 与源码查看器一致；两个 API run 的覆盖为 `partial/blocked`。未跑完整产品构建或 HTTP/2 reset runtime PoC。上游修复建议为升级 curl 8.23.0 或应用官方修复提交；产品版本、入口与影响仍 unknown，`validated_vulnerability=0`。详情见 [D38 报告](D38_CVE_2026_92392_REPORT.md)、固定源 [JSON](D38_CVE_2026_92392_REPLAY.json)、面板链路 [JSON](D38_CVE_2026_92392_PANEL_REPLAY.json) 与两份回放脚本。
+## D39 CVE-2026-58313 App Domain Verify LRU iterator race
+
+The official pre-fix LruCacheUtil header stores std::list iterators in an unordered_map while Get, Put and Clear mutate the shared containers without synchronization. The linked upstream change adds mutex_ and guards Get, Put, Clear and IsEmpty. The exact pre-fix Git blob 7ce4262e3f1d2c0173d929318a4795ff1573c721 produces one CWE-416 candidate; the exact lock-protected blob 68114f10d83c8f0bdc46679c7efa35ed286bef8a produces none. A component-only ASan harness with synthetic keys reports double-free in 3/3 pre-fix runs and completes 3/3 fixed runs. This is component-level memory-error evidence, not proof of the advertised UAF in an OpenHarmony product: product build, caller reachability and impact remain unknown, scanner finding stays candidate, validated_vulnerability=0. See D39_CVE_2026_58313_REPORT.md, D39_CVE_2026_58313_ASAN.cpp, replay script and JSON.

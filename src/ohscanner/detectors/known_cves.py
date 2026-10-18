@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.15.0"
+VERSION = "0.16.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -166,6 +166,56 @@ def _scan(unit: SourceUnit, curl_version=None):
                     "NotifyMtpMounted allocates MTP_DEVICE_NAME_LEN bytes but a full-capacity getxattr result skips NUL termination; the value is later consumed as a C string, allowing an out-of-bounds read.",
                     "CWE-125", impact="availability_or_memory_safety",
                 ))
+    # CVE-2026-58313: the reviewed LRU stores std::list iterators in a
+    # shared unordered_map. Get itself erases/reinserts list nodes; concurrent
+    # Get/Put/Clear without the same mutex can invalidate/use freed iterators.
+    # Require the reviewed container pair and concrete operations, not just a
+    # class or method name. The upstream fix guards each operation with mutex_.
+    if source_path.endswith("frameworks/common/include/utils/lru_cache_util.h"):
+        cache_class = re.search(r"\bclass\s+LruCacheUtil\s*\{(?P<body>.*?)\n\};", s, re.S)
+        if cache_class:
+            class_body = cache_class.group("body")
+            has_list = bool(re.search(
+                r"std::list\s*<\s*std::pair\s*<\s*K\s*,\s*V\s*>\s*>\s*cache_\s*;",
+                class_body,
+            ))
+            has_iterator_map = bool(re.search(
+                r"std::unordered_map\s*<[\s\S]*?::\s*iterator[\s\S]*?lruMap_\s*;",
+                class_body,
+            ))
+            get = _body(s, "LruCacheUtil<K, V>::Get")
+            put = _body(s, "LruCacheUtil<K, V>::Put")
+            clear = _body(s, "LruCacheUtil<K, V>::Clear")
+            if has_list and has_iterator_map and get and (put or clear):
+                operations = [("Get", get), ("Put", put), ("Clear", clear)]
+                relevant = [(name, item) for name, item in operations if item]
+                unlocked = [
+                    (name, item) for name, item in relevant
+                    if not re.search(
+                        r"std::lock_guard\s*<\s*std::mutex\s*>\s+\w+\s*\(\s*mutex_\s*\)",
+                        item[1],
+                    )
+                ]
+                get_uses_iterator = (
+                    "lruMap_.find" in get[1]
+                    and "lruMap_[key]" in get[1]
+                    and "cache_.erase" in get[1]
+                    and "cache_.push_front" in get[1]
+                )
+                concurrent_mutator = bool(
+                    (put and ("cache_.erase" in put[1] or "cache_.pop_back" in put[1]))
+                    or (clear and "cache_.clear" in clear[1] and "lruMap_.clear" in clear[1])
+                )
+                if get_uses_iterator and concurrent_mutator and unlocked:
+                    erase = re.search(r"cache_\.erase\s*\(", get[1])
+                    if erase:
+                        out.append(_finding(
+                            unit, get[0] + 1 + erase.start(),
+                            "ohknowncve-appdomainverify-cve-2026-58313",
+                            "CVE-2026-58313",
+                            "LruCacheUtil stores std::list iterators in lruMap_; Get erases/reinserts their nodes while Get/Put/Clear lack a common mutex, so concurrent cache operations can use invalidated iterators and cause use-after-free.",
+                            "CWE-416",
+                        ))
     # CVE-2026-92392: request cleanup must finish before connection filters
     # release their references to Curl_easy.
     if source_path.endswith("lib/multi.c"):

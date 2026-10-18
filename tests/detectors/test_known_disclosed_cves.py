@@ -27,6 +27,33 @@ class KnownDisclosedCveTests(unittest.TestCase):
                               profile_id="fixture-no-build", provenance="fixture")
         return KnownDisclosedCveDetector().detect(ScanContext(request=request, units=units), units)
 
+    def test_appdomainverify_cve_2026_58313_real_lru_fix_pair(self):
+        fixture_dir = Path(__file__).resolve().parents[1] / "fixtures" / "data_sensitive"
+        vulnerable = (fixture_dir / "d39_cve_2026_58313_lru_vulnerable.h").read_bytes()
+        fixed = (fixture_dir / "d39_cve_2026_58313_lru_fixed.h").read_bytes()
+        path = "frameworks/common/include/utils/lru_cache_util.h"
+
+        def git_blob_sha1(data):
+            return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+
+        self.assertEqual(git_blob_sha1(vulnerable), "7ce4262e3f1d2c0173d929318a4795ff1573c721")
+        self.assertEqual(git_blob_sha1(fixed), "68114f10d83c8f0bdc46679c7efa35ed286bef8a")
+        vulnerable_text = vulnerable.decode("utf-8")
+        fixed_text = fixed.decode("utf-8")
+        run = self.run_source(vulnerable_text, path)
+        findings = [finding for finding in run.findings if finding.symbol == "CVE-2026-58313"]
+        self.assertEqual(1, len(findings))
+        self.assertEqual("CWE-416", findings[0].candidate_cwe)
+        self.assertEqual(hashlib.sha256(vulnerable).hexdigest(), findings[0].source_sha256)
+        self.assertIn("invalidated iterators", findings[0].message)
+        self.assertEqual([], [finding for finding in self.run_source(fixed_text, path).findings
+                              if finding.symbol == "CVE-2026-58313"])
+        partial = self.run_source(vulnerable_text, path, parse_status="partial")
+        self.assertEqual("blocked", partial.status)
+        self.assertEqual(1, len([finding for finding in partial.findings
+                                 if finding.symbol == "CVE-2026-58313"]))
+        self.assertEqual([], [finding for finding in self.run_source(vulnerable_text, "other/lru_cache_util.h").findings
+                              if finding.symbol == "CVE-2026-58313"])
     def test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated(self):
         path = "services/storage_daemon/volume/src/external_volume_info.cpp"
         vulnerable = """int32_t ExternalVolumeInfo::DoMount4Ext(uint32_t flags) {
