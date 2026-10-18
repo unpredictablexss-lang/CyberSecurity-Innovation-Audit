@@ -60,7 +60,7 @@ test("explicit-only research rules are not silently requested by normal UI flows
 
 test("D sensitive exposure rule stays off by default and is sent only after explicit selection", () => {
   const id = "ohscanner.data.sensitive_exposure";
-  const d = { id, version: "0.14.0", kind: "research_candidate", default_enabled: false,
+  const d = { id, version: "0.15.0", kind: "research_candidate", default_enabled: false,
     supported_languages: ["c", "cpp"] };
   assert.deepEqual(approvedDetectorIds([...detectors, d]), ["test.cpp"]);
   assert.deepEqual(approvedDetectorIds([...detectors, d], [id]), [id, "test.cpp"]);
@@ -69,4 +69,17 @@ test("D sensitive exposure rule stays off by default and is sent only after expl
     repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: [id, "test.cpp"]
   });
   assert.throws(() => approvedDetectorIds([...detectors, d], ["test.example"]), /实验规则/);
+});
+
+test("D disclosed-CVE source rule is sent to preview and scan only after explicit selection", () => {
+  const id = "ohscanner.known_disclosed_cves";
+  const d = { id, version: "0.9.0", kind: "research_candidate", default_enabled: false,
+    supported_languages: ["c", "cpp"] };
+  const catalog = [...detectors, d];
+  assert.deepEqual(approvedDetectorIds(catalog), ["test.cpp"]);
+  assert.deepEqual(approvedDetectorIds(catalog, [id]), [id, "test.cpp"]);
+  assert.deepEqual(snapshotPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
+  assert.deepEqual(planPayload(values, catalog, [id]), {
+    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: [id, "test.cpp"]
+  });
 });

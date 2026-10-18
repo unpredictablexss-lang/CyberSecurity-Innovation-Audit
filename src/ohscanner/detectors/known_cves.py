@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.6.0"
+VERSION = "0.9.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -142,6 +142,45 @@ def _scan(unit: SourceUnit):
         version = tuple(int(part) for part in vm.groups())
         if (1, 6, 0) <= version <= (1, 6, 58):
             out.append(_finding(unit, vm.start(), "ohknowncve-libpng-cve-2026-46675", "CVE-2026-46675", f"vendored libpng version {'.'.join(vm.groups())} is within the disclosed affected range.", "CWE-416"))
+    # CVE-2026-33636: ARM NEON palette expansion must only process full
+    # vector chunks and must restore the pre-adjusted destination pointer
+    # before handing the unprocessed tail to the scalar caller.
+    for name, chunk, load_shape, store_shape in (
+        ("png_do_expand_palette_rgba8_neon", 4, r"sp\s*-\s*3", r"vst1q_u32\s*\("),
+        ("png_do_expand_palette_rgb8_neon", 8, r"sp\s*-\s*7", r"vst3_u8\s*\("),
+    ):
+        neon = _body(s, name)
+        if not neon:
+            continue
+        neon_start, neon_body = neon
+        chunk_size = re.search(
+            rf"pixels_per_chunk\s*=\s*{chunk}\s*;", neon_body)
+        tail_loop = re.search(
+            r"for\s*\(\s*i\s*=\s*0\s*;\s*i\s*<\s*row_width\s*;"
+            r"\s*i\s*\+=\s*pixels_per_chunk\s*\)", neon_body)
+        vector_read = bool(re.search(load_shape, neon_body)
+                           and re.search(r"vld[13][A-Za-z0-9_]*\s*\(", neon_body))
+        vector_write = bool(re.search(store_shape, neon_body))
+        preadjust = bool(re.search(
+            r"\*ddp\s*=\s*\*ddp\s*-\s*\([^;]*pixels_per_chunk[^;]*\)", neon_body))
+        pointer_restore = bool(re.search(
+            r"\*ddp\s*=\s*\*ddp\s*\+\s*\([^;]*pixels_per_chunk[^;]*\)", neon_body))
+        unsafe_tail = bool(chunk_size and tail_loop and vector_read and vector_write)
+        unsafe_handoff = preadjust and not pointer_restore and vector_write
+        if unsafe_tail or unsafe_handoff:
+            if unsafe_tail and unsafe_handoff:
+                detail = (f"{name} processes a partial {chunk}-pixel NEON chunk and fails to restore its "
+                          "pre-adjusted destination pointer before scalar tail handling.")
+            elif unsafe_tail:
+                detail = f"{name} processes a partial {chunk}-pixel NEON chunk at the row tail."
+            else:
+                detail = f"{name} does not restore its pre-adjusted destination pointer before scalar tail handling."
+            out.append(_finding(
+                unit, neon_start,
+                "ohknowncve-libpng-cve-2026-33636", "CVE-2026-33636",
+                detail + " On affected ARM/AArch64 builds this can cause out-of-bounds reads/writes; product build and input reachability remain unverified.",
+                "CWE-119",
+            ))
     # CVE-2026-46675: per-function consumer sequence required by the advisory.
     for m in re.finditer(r"\b[A-Za-z_]\w*\s*\([^;{}]*\)\s*\{", s):
         start = s.find("{", m.start()); depth = 1; end = start + 1
@@ -192,6 +231,43 @@ def _scan(unit: SourceUnit):
         guarded = bool(re.search(r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)", db + hb, re.I))
         if mapped and routed and reads_and_returns and not guarded:
             out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch returns paste data without a visible permission check in the dispatch or handler.", "CWE-862"))
+    # CVE-2026-27648: Flowbuffer decoding must bound both the byte range in
+    # shared memory and the destination vector index. A local match remains
+    # candidate-only; build/version and remote input reachability are external.
+    flowbuf = _body(s, "FlowbufStrAtIndex")
+    result_flowbuf = _body(s, "ProcessNativeProxyResultNewFlowbuf")
+    if flowbuf and result_flowbuf:
+        flow_pos, flow_body = flowbuf
+        result_pos, result_body = result_flowbuf
+        reads_entry = ("*strLen" in flow_body and "header" in flow_body
+                       and "INDEX_SIZE" in flow_body and "offset" in flow_body)
+        byte_range_bounded = bool(re.search(
+            r"(?:offset\s*\+\s*\*strLen|\*strLen\s*\+\s*offset)"
+            r"\)?\s*>\s*MAX_FLOWBUF_DATA_SIZE", flow_body))
+        sized_destination = bool(re.search(
+            r"dataList\s*\([^;]*argsSize\s*\+\s*"
+            r"static_cast\s*<\s*size_t\s*>\s*\(\s*flowbufSize\s*\)", result_body))
+        writes_destination = bool(re.search(r"dataList\s*\[\s*curIndex\s*\]\s*=", result_body))
+        unbounded_loops = list(re.finditer(
+            r"while\s*\(\s*argIndex\s*==\s*curIndex\s*\)", result_body))
+        unsafe_byte_range = reads_entry and not byte_range_bounded
+        unsafe_destination_index = sized_destination and writes_destination and bool(unbounded_loops)
+        if unsafe_byte_range or unsafe_destination_index:
+            if unsafe_byte_range and unsafe_destination_index:
+                detail = ("Flowbuffer decoding has an unchecked shared-memory offset/length, and result reconstruction "
+                          "writes dataList[curIndex] without a destination-size loop bound.")
+            elif unsafe_byte_range:
+                detail = "Flowbuffer decoding has an unchecked shared-memory offset/length."
+            else:
+                detail = "Flowbuffer result reconstruction writes dataList[curIndex] without a destination-size loop bound."
+            finding_pos = (result_pos + 1 + unbounded_loops[0].start()
+                           if unsafe_destination_index else flow_pos)
+            out.append(_finding(
+                unit, finding_pos,
+                "ohknowncve-webview-cve-2026-27648", "CVE-2026-27648",
+                detail,
+                "CWE-787",
+            ))
     return tuple(out)
 
 class KnownDisclosedCveDetector:

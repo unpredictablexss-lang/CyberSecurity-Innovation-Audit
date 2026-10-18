@@ -33,7 +33,7 @@ class OwnerIntegrationTests(unittest.TestCase):
     def test_automatic_plan_is_frozen_and_worker_matches_cli(self):
         plan = self.plan()
         self.assertEqual(plan['selection_mode'], 'automatic')
-        self.assertEqual(len(plan['suggested_detector_ids']), 9)
+        self.assertEqual(len(plan['suggested_detector_ids']), 8)
         self.assertEqual(plan['execution_status'], 'not_run')
         null = next(d for d in plan['detectors'] if d['id']=='ohscanner.cpp.null_dereference')
         self.assertEqual(null['reason_codes'], ['explicit_selection_required'])
@@ -127,7 +127,7 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertIn('No reviewed sensitive-source model', ' '.join(run['limitations']))
         self.assertTrue(any(item['rule_id'] == 'data.log.sensitive-value'
                             for item in run['diagnostics']))
-        self.assertEqual(run['tool_version'], '0.14.0')
+        self.assertEqual(run['tool_version'], '0.15.0')
         self.assertEqual(report['validated_vulnerability'], 0)
 
     def test_changed_branch_after_preview_requires_new_plan(self):
