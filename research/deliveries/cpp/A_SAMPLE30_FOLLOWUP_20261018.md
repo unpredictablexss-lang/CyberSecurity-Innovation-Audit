@@ -124,6 +124,14 @@ are available, replay the same 30 commits/trees/snapshots and compare the 345
 diagnostics, 263 shared_ptr candidates and 9 `not_reproduced` records. Until
 then, no sample30 before/after or Precision/Recall claim is made.
 
+The replay machinery is ready:
+`research/evidence/cpp/a_line_sample30_replay_20261018/run_replay.py` verifies
+commit/tree identity, recomputes the snapshot, runs the current A-line
+detectors and compares per-rule diagnostics with the delivered manifest. Its
+`--self-check` passes on a synthetic Git repository, and the current run
+records all 30 samples as `source_missing` in
+`research/evidence/cpp/a_line_sample30_replay_20261018/summary.json`.
+
 ## Boundary
 
 The sandbox method controls remain method evidence only: copy-range model 3/3
