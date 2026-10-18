@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import re
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import Dict, List, Optional, Sequence, Set, Tuple
 
 from src.ohscanner.contracts import (
@@ -33,6 +33,7 @@ from .memory_safety import (
     guard_shapes,
     line_column,
     mask_comments_and_literals,
+    parameter_names,
     pointer_declarations,
     split_call_arguments,
 )
@@ -41,8 +42,17 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.1"
+RULE_VERSION = "0.2.2"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
+
+
+@dataclass(frozen=True)
+class CopyWrapper:
+    function: str
+    dest_index: int
+    length_index: Optional[int]
+    fixed_length: Optional[str]
+    call_name: str
 
 _OBLIGATIONS = (
     EvidenceObligation(
@@ -183,6 +193,66 @@ def _nonnegative_symbols(masked: str) -> Set[str]:
     return symbols
 
 
+def _destination_capacity(
+    destination: str,
+    arrays: Dict[str, object],
+    pointers: Dict[str, object],
+) -> Tuple[Optional[int], Optional[str], bool]:
+    shape = arrays.get(destination)
+    if (
+        shape is not None
+        and getattr(shape, "capacity", None) is not None
+        and getattr(shape, "element_size", None) is not None
+    ):
+        return shape.capacity * shape.element_size, None, True
+    pointer = pointers.get(destination)
+    if pointer is not None:
+        return pointer.capacity_bytes, pointer.capacity_expression, False
+    return None, None, False
+
+
+def _copy_wrappers(
+    masked: str,
+    functions: Sequence[object],
+) -> Tuple[CopyWrapper, ...]:
+    wrappers: List[CopyWrapper] = []
+    for function in functions:
+        params = {name: index for index, name in enumerate(parameter_names(function.params))}
+        if not params:
+            continue
+        candidates: List[CopyWrapper] = []
+        region = masked[function.body_start:function.body_end]
+        for match in re.finditer(
+            r"\b(?P<name>memcpy|memmove|strncpy|strcpy|strcat|sprintf)\s*\(", region
+        ):
+            position = function.body_start + match.start()
+            span = call_argument_span(masked, position)
+            if span is None:
+                continue
+            args = split_call_arguments(span[2])
+            if not args or args[0].strip() not in params:
+                continue
+            name = match.group("name")
+            length_index: Optional[int] = None
+            fixed_length: Optional[str] = None
+            if name in {"memcpy", "memmove", "strncpy"}:
+                if len(args) < 3:
+                    continue
+                length_expression = args[2].strip()
+                if length_expression in params:
+                    length_index = params[length_expression]
+                elif re.fullmatch(r"\d+(?:[uUlL]*)", length_expression):
+                    fixed_length = length_expression
+                else:
+                    continue
+            candidates.append(CopyWrapper(
+                function.name, params[args[0].strip()], length_index, fixed_length, name
+            ))
+        if len(candidates) == 1:
+            wrappers.append(candidates[0])
+    return tuple(wrappers)
+
+
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
@@ -196,6 +266,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
     functions = function_shapes(masked)
     arrays, _integers, constants = declarations(masked)
     pointers = pointer_declarations(masked, constants)
+    wrappers = _copy_wrappers(masked, functions)
     guards = guard_shapes(masked, functions)
     nonnegative = _nonnegative_symbols(masked)
     sizeof_values = {
@@ -214,8 +285,10 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if len(args) < 2:
             continue
         destination = args[0].strip()
-        destination_shape = arrays.get(destination)
-        pointer_shape = pointers.get(destination)
+        enclosing = function_at(functions, match.start())
+        parameter_set = set(parameter_names(enclosing.params)) if enclosing is not None else set()
+        destination_shape = arrays.get(destination) if destination not in parameter_set else None
+        pointer_shape = pointers.get(destination) if destination not in parameter_set else None
         capacity_bytes: Optional[int] = None
         capacity_expression: Optional[str] = None
         if (
@@ -282,11 +355,89 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "CWE-119", "CWE-787" if call_name != "strncpy" else "CWE-120",
             ))
 
+    for wrapper in wrappers:
+        for match in re.finditer(r"\b" + re.escape(wrapper.function) + r"\s*\(", masked):
+            caller = function_at(functions, match.start())
+            if caller is not None and caller.name == wrapper.function:
+                continue
+            span = call_argument_span(masked, match.start())
+            if span is None:
+                continue
+            args = split_call_arguments(span[2])
+            if len(args) <= wrapper.dest_index:
+                continue
+            destination = args[wrapper.dest_index].strip()
+            capacity_bytes, capacity_expression, is_array = _destination_capacity(
+                destination, arrays, pointers
+            )
+            if capacity_bytes is None and not capacity_expression:
+                continue
+            if wrapper.length_index is not None:
+                if len(args) <= wrapper.length_index:
+                    continue
+                length_expression = args[wrapper.length_index].strip()
+            elif wrapper.fixed_length is not None:
+                length_expression = wrapper.fixed_length
+            else:
+                length_expression = None
+            capacity_kind = "fixed array" if is_array else "allocation"
+            if length_expression is None:
+                findings.append(_finding(
+                    unit, unit.text, match.start(), RULE_COPY, destination,
+                    f"Candidate only: wrapper `{wrapper.function}` calls `{wrapper.call_name}` "
+                    f"into {capacity_kind} `{destination}` "
+                    f"({capacity_bytes if capacity_bytes is not None else capacity_expression} bytes) "
+                    "without a modeled destination upper bound; interprocedural alias and guard "
+                    "context remain unknown.",
+                    "CWE-120", "CWE-787",
+                ))
+                continue
+            if is_array and _safe_copy_length(length_expression, destination, arrays):
+                continue
+            if capacity_bytes is None:
+                if _normalized_expression(length_expression) == _normalized_expression(
+                    capacity_expression or ""
+                ):
+                    continue
+                if _contains_symbol(length_expression) and _contains_symbol(capacity_expression or ""):
+                    findings.append(_finding(
+                        unit, unit.text, match.start(), RULE_COPY, destination,
+                        f"Candidate only: wrapper `{wrapper.function}` length `{length_expression}` "
+                        f"is not proven <= allocation capacity `{capacity_expression}` for "
+                        f"`{destination}`; interprocedural alias and guard context remain unknown.",
+                        "CWE-119", "CWE-787",
+                    ))
+                continue
+            explicit_size = _size_of_value(length_expression, arrays)
+            constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
+            interval = expression_interval(length_expression, constants, constraints)
+            if explicit_size is not None and explicit_size <= capacity_bytes:
+                continue
+            definite = (
+                interval.definitely_greater_than(capacity_bytes)
+                or (explicit_size is not None and explicit_size > capacity_bytes)
+            )
+            unbounded = _contains_symbol(length_expression) and not _effective_upper_guard(
+                length_expression, capacity_bytes, constraints
+            )
+            if definite or unbounded:
+                qualifier = "demonstrated upper-bound violation" if definite else "unproven upper bound"
+                findings.append(_finding(
+                    unit, unit.text, match.start(), RULE_COPY, destination,
+                    f"Candidate only: wrapper `{wrapper.function}` length `{length_expression}` has "
+                    f"an {qualifier} against {capacity_kind} `{destination}` "
+                    f"({capacity_bytes} bytes); one-hop summary excludes deeper aliases and guards.",
+                    "CWE-119", "CWE-787",
+                ))
+
     for match in re.finditer(r"\b(?P<name>[A-Za-z_]\w*)\s*\[\s*(?P<index>[^]\[]+)\s*\]", masked):
         before = masked[:match.start()]
         if re.search(r"(?:char|short|int|long|u?int(?:8|16|32|64)_t)\s+$", before):
             continue
         name = match.group("name")
+        enclosing = function_at(functions, match.start())
+        if enclosing is not None and name in parameter_names(enclosing.params):
+            continue
         shape = arrays.get(name)
         capacity: Optional[int] = shape.capacity if shape is not None else None
         if capacity is None:
@@ -387,7 +538,7 @@ class CppBoundsDetector:
                 complete = False
         limitations.extend((
             "Candidate only: lexical array/copy facts do not prove exploitability or a product vulnerability.",
-            "Pointer capacities, aliases, wrappers, interprocedural lengths, macros, template instantiation and full C++ CFG semantics remain unknown unless explicitly modeled.",
+            "Only direct one-hop copy wrappers are summarized; deeper wrappers, function pointers, aliases, macros, templates and full C++ CFG semantics remain unknown.",
             "Absence of a finding is not a safe verdict; partial/failed source is unknown, not a miss.",
         ))
         status = "completed" if complete else "blocked"

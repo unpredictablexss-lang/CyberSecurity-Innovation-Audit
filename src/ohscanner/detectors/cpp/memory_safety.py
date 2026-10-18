@@ -63,6 +63,7 @@ class FunctionShape:
     body_start: int
     body_end: int
     text: str
+    params: str = ""
 
 
 @dataclass(frozen=True)
@@ -240,6 +241,7 @@ def function_shapes(masked: str) -> Tuple[FunctionShape, ...]:
         result.append(FunctionShape(
             match.group("name"), start, body_end, body_start, body_end,
             masked[start:body_end],
+            params=match.group("params"),
         ))
     return tuple(result)
 
@@ -498,6 +500,21 @@ def split_call_arguments(text: str) -> Tuple[str, ...]:
     if tail:
         args.append(tail)
     return tuple(args)
+
+
+def parameter_names(params: str) -> Tuple[str, ...]:
+    names: List[str] = []
+    for item in split_call_arguments(params):
+        declaration = item.split("=", 1)[0].strip()
+        identifiers = re.findall(r"[A-Za-z_]\w*", declaration)
+        if identifiers:
+            candidate = identifiers[-1]
+            if candidate not in {
+                "void", "const", "unsigned", "signed", "char", "short",
+                "int", "long", "float", "double", "bool", "size_t",
+            }:
+                names.append(candidate)
+    return tuple(names)
 
 
 def call_argument_span(masked: str, call_start: int) -> Optional[Tuple[int, int, str]]:
