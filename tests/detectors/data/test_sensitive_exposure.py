@@ -77,6 +77,22 @@ class SensitiveTests(unittest.TestCase):
         with self.assertRaises(ValueError):formats('%2$s')
     def test_default_private(self):
         self.assertEqual(formats('%s')[0][0][0],'private')
+    def test_dsoftbus_trans_and_comm_log_macros_are_modeled_sinks(self):
+        cases=(
+            ('TRANS_LOGE(TRANS_CTRL,"%{public}s",secret->value);',1),
+            ('COMM_LOGW(COMM_ADAPTER,"%{public}s",secret->value);',1),
+            ('TRANS_CHECK_AND_RETURN_RET_LOGE(false,0,TRANS_CTRL,"%{public}s",secret->value);',1),
+            ('COMM_CHECK_AND_RETURN_LOGE(false,COMM_ADAPTER,"%{public}s",secret->value);',1),
+            ('TRANS_LOGI(TRANS_CTRL,"%{private}s",secret->value);',0),
+        )
+        for call,expected in cases:
+            with self.subTest(call=call):
+                run=self.analyze('void Callback(SessionKey *secret){'+call+'}')
+                self.assertEqual(len(run.findings),expected)
+                if expected:
+                    self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
+                    self.assertEqual(run.findings[0].candidate_cwe,'CWE-532')
+                    self.assertTrue(run.findings[0].evidence_obligations)
     def test_repeat_stable(self):
         text='void Callback(const char *x){ const char *b=x; AUTH_LOGI(0,"%{public}s",b); }'
         self.assertEqual(self.analyze(text),self.analyze(text))

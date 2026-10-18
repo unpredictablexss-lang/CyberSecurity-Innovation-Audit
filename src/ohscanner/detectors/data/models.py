@@ -23,9 +23,17 @@ class ExposureSinkModel:
     format_index: int
     default_private: bool = True
 
-SINKS = tuple(ExposureSinkModel('AUTH_LOG'+level, 1) for level in 'FEWID') + (
-    ExposureSinkModel('HiLogPrint', 4), ExposureSinkModel('OH_LOG_Print', 4),
-    ExposureSinkModel('HILOG_IMPL', 4),
-)
+SINKS = (tuple(ExposureSinkModel('AUTH_LOG'+level, 1) for level in 'FEWID') +
+    tuple(ExposureSinkModel('TRANS_LOG'+level, 1) for level in 'FEWID') +
+    tuple(ExposureSinkModel('COMM_LOG'+level, 1) for level in 'FEWID') +
+    tuple(ExposureSinkModel(name, 3) for name in (
+        'TRANS_CHECK_AND_RETURN_RET_LOGW', 'TRANS_CHECK_AND_RETURN_RET_LOGE',
+        'COMM_CHECK_AND_RETURN_RET_LOGW', 'COMM_CHECK_AND_RETURN_RET_LOGE')) +
+    tuple(ExposureSinkModel(name, 2) for name in (
+        'TRANS_CHECK_AND_RETURN_LOGW', 'TRANS_CHECK_AND_RETURN_LOGE',
+        'TRANS_CHECK_AND_RETURN_LOGD', 'COMM_CHECK_AND_RETURN_LOGW',
+        'COMM_CHECK_AND_RETURN_LOGE')) +
+    (ExposureSinkModel('HiLogPrint', 4), ExposureSinkModel('OH_LOG_Print', 4),
+     ExposureSinkModel('HILOG_IMPL', 4)))
 
 DEFAULT_SOURCE = SensitiveSourceModel('openharmony/communication_dsoftbus', DSOFTBUS_COMMIT)

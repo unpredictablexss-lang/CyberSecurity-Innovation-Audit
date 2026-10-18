@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.4.0 (D7 review prototype)
+# D: sensitive-material log exposure, v0.5.0 (D8 review prototype)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
@@ -51,3 +51,9 @@ escape candidate when a modeled sensitive copy/format/source writes through a
 member or otherwise unsupported destination. The change is still syntax-bounded;
 it does not establish alias identity, product impact, or a confirmed vulnerability.
 See research/data_sensitive/D7_IMPLEMENTATION.md and D7_VALIDATION.json.
+
+D8 adds the fixed-source `TRANS_LOG*` and `COMM_LOG*` families plus their
+conditional check-and-return wrappers. Their public/private format slots follow
+the reviewed `softbus_log.h` privacy format, and unsupported/dynamic formats keep
+an unresolved candidate. See research/data_sensitive/D8_IMPLEMENTATION.md and
+D8_VALIDATION.json.
