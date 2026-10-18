@@ -22,13 +22,14 @@
 
 `tests/detectors/fixtures/cpp_resource_lifetime/manifest.json` 绑定 positive double-free、alias UAF、conditional double-free/UAF、fixed null/realloc、safe member-release/early-return/conditional-null、unrelated 和 unknown controls。`tests/detectors/test_cpp_resource_lifetime_detector.py` 固定 source hash、identity、determinism、budget 和五类控制。
 
-The same five-component fixed corpus was replayed with 0.1.2: candidate and
-group totals remain 33/22, with no additional real-source hit. The comparison
-is `research/evidence/cpp/a_line_scan_20261018_v4_comparison.json`.
-
-The one-hop release-wrapper 0.1.3 rerun is compared in
-`research/evidence/cpp/a_line_scan_20261018_v10_comparison.json`: candidates and
-groups remain 33/22, with no new real-source hit in this corpus.
+The `v1`–`v16` reruns were produced by the shared mainline runner, which
+imported mainline detector `0.1.0`; their `33/22` totals are not A-line
+evidence. In the authoritative self-contained run
+(`a_line_scan_20261018_selfcontained_v8`, `resource_lifetime 0.1.7`) the fixed
+five-component corpus reports **0** resource-lifetime candidates after removing
+cross-branch, unconditional-exit and lambda-scope false positives. See
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v1/CORRECTION.md` and
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v8/comparison.json`.
 
 ## PoC
 

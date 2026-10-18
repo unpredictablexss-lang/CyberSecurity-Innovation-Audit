@@ -19,6 +19,12 @@
 
 `tests/detectors/fixtures/cpp_unsafe_calls/manifest.json` 绑定 positive/fixed/safe/unrelated/unknown controls，包括宏格式 quiet 和真实非字面量 format 正例；`tests/detectors/test_cpp_unsafe_memory_call_detector.py` 固定 source hash、determinism 和资源预算。没有独立产品 truth 前不计算 Precision/Recall。
 
-The 0.1.2 fixed-corpus replay is recorded in
-`research/evidence/cpp/a_line_scan_20261018_v6_comparison.json`; candidate and
-group totals remain 33/22 with no new real-source hit.
+The `0.1.2` fixed-corpus replay was produced by the shared mainline runner and
+imported mainline detector `0.1.0`; its `33/22` total is not A-line evidence.
+In the authoritative self-contained run
+(`a_line_scan_20261018_selfcontained_v8`, `unsafe_memory_call 0.1.3`) the fixed
+five-component corpus reports **3** candidates, all genuine non-literal
+`vprintf(format)` calls in `communication_dsoftbus`. Calls inside `#define`
+bodies are excluded from analysis in 0.1.3. See
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v1/CORRECTION.md` and
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v8/comparison.json`.
