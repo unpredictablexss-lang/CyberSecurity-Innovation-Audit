@@ -5,8 +5,254 @@
   "version": "0.12.3",
   "files": [
     {
+      "file": "cve-2024-38382-fixed.json",
+      "sha256": "d407a0288b87c92bb240a913d0fb8db687410b45b2a70d9cb3accbb82fb4862b",
+      "repository": "openharmony/ability_ability_runtime",
+      "commit": "f2898e72966a8fcc59ecebc3cdea8d9aab063b1d",
+      "git_tree": "0497a1b5bd4c915128e8a12e54fea06109a00fb7",
+      "snapshot_sha256": "c480a3612ce5fc79a188279bded9ee830573f9910ac42d59c664f89ffa2d3e15",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 2,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "complete": 1,
+          "partial": 2
+        },
+        "languages": {
+          "cpp": 3
+        }
+      },
+      "scope": [
+        "interfaces/inner_api/app_manager/src/appmgr/app_mgr_stub.cpp",
+        "services/appmgr/src/app_mgr_service.cpp",
+        "services/appmgr/src/app_mgr_service_inner.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2024-38382-vulnerable.json",
+      "sha256": "7bc4ca74d455fb1b485d46e395cd3d7225b416365be4cf8ee5be00bcad5b73f7",
+      "repository": "openharmony/ability_ability_runtime",
+      "commit": "fd8cd59c2f98c9b5365ee422f58bd82064fe2359",
+      "git_tree": "340654d856a4520bf8140f73f85c96084e5ff16c",
+      "snapshot_sha256": "f08d7c5d3d928c949aec15915e44884de39e0e290cf40a9865136029be40a5a2",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 2,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "complete": 1,
+          "partial": 2
+        },
+        "languages": {
+          "cpp": 3
+        }
+      },
+      "scope": [
+        "interfaces/inner_api/app_manager/src/appmgr/app_mgr_stub.cpp",
+        "services/appmgr/src/app_mgr_service.cpp",
+        "services/appmgr/src/app_mgr_service_inner.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2024-39612-fixed.json",
+      "sha256": "9570a1a72ffe3ada88ce7cfeb9c198c2ee7494ef40d670e15253197a6a0244e3",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "commit": "0a6e90e327d1f0d22addd1dad468125edec7c830",
+      "git_tree": "aae4cf509b10315c90c593f3d24e335f6cc0bf0e",
+      "snapshot_sha256": "f689c1e545b6c6173465292d69b080ebbf11b2008b12eadc4c6c10742962e27f",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 0,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/continuous_task/src/bg_continuous_task_mgr.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2024-39612-vulnerable.json",
+      "sha256": "4875be914b1952639e9563c65d0f09d99ff9bfb5770ce38929fa46a87ff3eea2",
+      "repository": "openharmony/resourceschedule_background_task_mgr",
+      "commit": "4a0b86b5506c103406cad2d81aefad634dbdcdeb",
+      "git_tree": "1dba2f8c644f83cd56cb142c16eecfe700f53e96",
+      "snapshot_sha256": "21a1e832107e1f6f0aeecccc0e43fe026afa0989be635fc0be178536e0276aac",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 2,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/continuous_task/src/bg_continuous_task_mgr.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2025-26691-fixed.json",
+      "sha256": "01a18eb97ba350569f7222a12f5d04bfab887ec8546fb00f3d3d9c018548b42f",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "911c6c99872e3a6a421747815bc8c1f6b201db26",
+      "git_tree": "5e3d643965a72fbf30f50e6da37936f71c9ab292",
+      "snapshot_sha256": "013d2abe0a6efa3a539cb60bad54dd1aef8fd95b36d35c72fbb5441353c2e9f4",
+      "status": "completed",
+      "diagnostic_count": 0,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "complete": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/call_manager_service/src/call_manager_service.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2025-26691-vulnerable.json",
+      "sha256": "72d1499afde64ceb29c9dcc2c5d4ce9f26a25497b61f112a0cb552fe4a7e93b2",
+      "repository": "openharmony/telephony_call_manager",
+      "commit": "c751a0dc4c67b40430291d983df60efbb68b5caa",
+      "git_tree": "b0f0e9b6def185b526217777ee9666fee25e111d",
+      "snapshot_sha256": "ea0bf2c11db7a487570eb5e59adf8593ac614dbac365d79401586115de8f227e",
+      "status": "completed",
+      "diagnostic_count": 7,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "complete": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/call_manager_service/src/call_manager_service.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2025-26693-fixed.json",
+      "sha256": "22749ee21059c6123e9ea499b6712bf31afbc59a80bc6106a60a1d83248eb116",
+      "repository": "openharmony/security_access_token",
+      "commit": "31ed3b9f31b029b0ae4dec48a9f95b6356f924c0",
+      "git_tree": "370f0dee1292da0d600814f228e30e95e8154068",
+      "snapshot_sha256": "41bbb443eb159fdb33af778aa7e513b6891ff836e0a6a83445c7df2fb8415cd8",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 1,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2025-26693-vulnerable.json",
+      "sha256": "cf88cae1231622e5c4713e4322374c975d1a2160559743732269274319104da9",
+      "repository": "openharmony/security_access_token",
+      "commit": "89953b22ba58654beda0ff3154125d6779550e2b",
+      "git_tree": "587259e8d5fca314e4ecc5fc461a9dbabef61a8e",
+      "snapshot_sha256": "08df62bd3b197a063055d0aa1b5eb650488ade3a15557f76cd8660cc5c602ea9",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 4,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/accesstokenmanager/main/cpp/src/service/accesstoken_manager_stub.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2025-27563-fixed.json",
+      "sha256": "4f77a49595bc0decd8b6cd197d7b02f64842c2830ebb15739aaf2367b648c517",
+      "repository": "openharmony/security_access_token",
+      "commit": "e232d8ed63b53ba883265972872695bb5aab756a",
+      "git_tree": "a737217e2472ad655ee1e6e2272ad75bfa14121f",
+      "snapshot_sha256": "33edff9ef39a3880b8f1bd518fcb27b797a758ea2ef6a20062f49258faca312f",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 3,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/privacymanager/src/service/privacy_manager_stub.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
+      "file": "cve-2025-27563-vulnerable.json",
+      "sha256": "afa3cffbb748fb5f97d9336fd4f1765a27a44880009d21e2976b3693ecc975f3",
+      "repository": "openharmony/security_access_token",
+      "commit": "85ead8f16d070dd66e4ea906b1246018d747ec7b",
+      "git_tree": "10a6185050ce6c8615bc941f8f31f38837ddc43e",
+      "snapshot_sha256": "6062d022857fd9081d3191ce5f609ec0eebc5d2b62ee68aee6226d132b257814",
+      "status": "completed_with_limitations",
+      "diagnostic_count": 6,
+      "validated_vulnerability": 0,
+      "parsing": {
+        "parsing_status": {
+          "partial": 1
+        },
+        "languages": {
+          "cpp": 1
+        }
+      },
+      "scope": [
+        "services/privacymanager/src/service/privacy_manager_stub.cpp"
+      ],
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.3"
+    },
+    {
       "file": "README.md",
-      "sha256": "7c0830f267b0da13a98ce7253911a8a1aa4cebe9ed06608488bef36b201cdb4e"
+      "sha256": "2720256fd396368fe2bc9293da25622b7f6b9f950a67af8934b6a7cc6aa0ed47"
     },
     {
       "file": "cve-2024-38382-fixed.md",
@@ -23,6 +269,22 @@
     {
       "file": "cve-2024-39612-vulnerable.md",
       "sha256": "cfacc49b882eb5ac67bcf38a9b251225a21c9d4d01cd457bc3c23435ab6e9b93"
+    },
+    {
+      "file": "cve-2025-26691-fixed.md",
+      "sha256": "16336d721568ac61b3da1c9eda460f166513905e28d465bb39575011d5cc9ffd"
+    },
+    {
+      "file": "cve-2025-26691-vulnerable.md",
+      "sha256": "483c35e3d7ee3038bce32a32e208b94ef72f5017bd560a02fcd1d2fa1bd38172"
+    },
+    {
+      "file": "cve-2025-26693-fixed.md",
+      "sha256": "73115e17c6dfd7e8cb08dfee52c27a33855022970d30b0ebb72f70155e3e729c"
+    },
+    {
+      "file": "cve-2025-26693-vulnerable.md",
+      "sha256": "1591cda0729f321c56ae06a4c673dc58dbe2d8b9299e06ff974279b9bca66c28"
     },
     {
       "file": "cve-2025-27563-fixed.md",
