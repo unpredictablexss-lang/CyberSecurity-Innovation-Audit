@@ -44,3 +44,10 @@ An exact-revision source model now recognizes PBKDF2 output -> UtilsHexify -> IO
 复现入口：`.venv-web/bin/python research/data_sensitive/d30_libpng_cve_2026_46675_replay.py --source-tar <pinned-libpng-1.6.55.tar.gz>`。脚本校验哈希，将归档解压到临时目录，在独立副本中构建 ASan vulnerable/fix 两端，不联网、不改输入归档。静态规则此前已通过 D22 的真实归档 Runner/面板路径在 `png.h:277` 产生候选；D30 将该候选与可执行组件证据对应起来，但不升级产品结论。
 
 当前 D 功能面：known-CVE 规则仍默认关闭、页面显式选用；D29 提交 `2dcc06062d0c9dce95b7a2d4330caf7843815d3f` 的 GitHub CI run `39159928045` 已通过 Python 与 Web 构建两项。D30 本轮本地完整 Python 为 923 项、918 passed/5 skipped；审计请求 UI 测试 12/12；三轮 ASan 组件重放稳定。M0/M1 仅按已有 opt-in 模块窄范围评估；主线兼容、安全审查和负责人签署仍需逐项完成。M2 因无独立冻结标签、TP/FP/FN/unknown 和完整性能/RSS 基准仍未达到；M3 产品构建、可达入口、影响与产品修复复验仍未达到。PR #20 保持 Draft，未经下一轮完整准入复核不作 Ready/merge 结论。
+
+## D31：libtiff CVE-2025-9900 组件 PoC（2026-10-19）
+
+固定 G 镜像 Git 对象扫描器两次稳定产生 CVE-2025-9900 candidate；通过 ASan 在旧版 libtiff 4.7.0 组件中 3/3 复现 `put8bitcmaptile` 越界写访问，上游 MR !732 修复对照和正确 raster 尺寸控制均为 0/3 ASan 报告。脚本只用固定 commit 的 `git archive`，不读入 G 盘 dirty 文件、不联网、不写回源仓库。复现入口与限制见 `D31_LIBTIFF_CVE_2025_9900_REPORT.md`；scanner 仍报 candidate，产品状态 unknown，`validated_vulnerability=0`。
+
+D30 的 GitHub CI run `39161430278` 的 Workbench TypeScript/production build 与 Python unit tests 均通过。D31 新增脚本、夹具和报告仍须在本提交本地回归及推送后 CI 验证。页面集成仍为显式 default-off 研究规则；M2 独立 holdout 与 M3 产品构建/入口/影响/修复后复验仍未满足，不据此宣称商业就绪或产品漏洞 confirmed。
+D31 提交前本地完整回归：`.venv-web/bin/python -m unittest discover -s tests -q` 为 923 项，918 passed、5 skipped；D31 脚本已完成三轮旧版/修复版/安全控制 ASan 验证并写出 JSON，`py_compile` 和 `git diff --check` 通过。D30 GitHub CI `39161430278` 的 UI/build 与 Python jobs 均 success；D31 提交自身的 GitHub CI 需在推送后确认。

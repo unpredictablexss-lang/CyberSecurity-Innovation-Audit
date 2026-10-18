@@ -76,3 +76,9 @@ Detector 0.6.0 adds the one-character `pointer[0]` versus `pointer[position]` ro
 ## D28 WebView CVE-2026-27648
 
 新增规则经官方 6.0 发布线固定快照 6539ea501a7a 中的真实修复前提交 a2de9fed 命中 1 条 candidate（nweb_handler_delegate.cc:4510），修复提交 18c5ba4d 无命中；二者均在该发布线历史内。Tree-sitter 未运行，两个 run 均 blocked。另有 Workbench API 到 Worker、报告和源码查看的回归，确保候选携带固定源码 SHA 并保持 validated_vulnerability=0。复现细节和边界见 D28 WebView 报告与 JSON 回放结果。
+
+## D31 libtiff CVE-2025-9900 动态组件对照
+
+D31 在固定 `third_party_libtiff@d4a0516c477dfbaf1153ae295893ab75aadd63d4` 上重复得到 `tif_getimage.c:621` 候选，source SHA-256 与 Git 对象相同。CMake 构建的 ASan 组件 PoC 以合法 16×16 调色板 TIFF 请求写入 16×1 栅格，旧版 3/3 在 `put8bitcmaptile` 报 WRITE 访问；应用上游 MR !732 的完整尺寸处理改动后 0/3 报告，16×16 安全控制 0/3。代码、回放脚本与机器结果见 `D31_LIBTIFF_CVE_2025_9900_REPORT.md`、`d31_libtiff_cve_2025_9900_replay.py` 和 `D31_LIBTIFF_CVE_2025_9900_REPLAY.json`。
+
+此处 confirmed 只表示固定 libtiff 4.7.0 组件路径出现 ASan 越界写；漏洞公告描述更强的 write-what-where 风险，但本 Harness 未证明任意地址可控或代码执行。OpenHarmony 产品构建、攻击者可控调用入口及影响仍 unknown，扫描命中仍为 candidate，`validated_vulnerability=0`。此处是固定源码 Runner 回放，不是本轮 UI API 回归；扫描页集成与其他面板路径验证见 D22/D30。
