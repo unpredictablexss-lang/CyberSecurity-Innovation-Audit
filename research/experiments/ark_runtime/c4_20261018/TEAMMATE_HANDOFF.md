@@ -4,7 +4,7 @@ This note is the short transfer checklist for the C Ark Runtime research lane. T
 
 ## What to take
 
-- OHScanner branch: work/c4-ark-runtime-20261018, pushed to origin at e48151a8d527872deb79415d3512acfdfbbdce1e when this handoff was written. It contains the C4 detector, default-off catalog integration, explicit panel selection, exact-source applicability checks in Runner, regression tests, and C1–C4 experiment records.
+- OHScanner branch: work/c4-ark-runtime-20261018. The initial C4 code checkpoint was e48151a8d527872deb79415d3512acfdfbbdce1e; this guide is a later documentation commit on the same branch. It contains the C4 detector, default-off catalog integration, explicit panel selection, exact-source applicability checks in Runner, regression tests, and C1–C4 experiment records.
 - The Ark source repository is separate. Do not copy OHScanner code into it. Point OHSCANNER_ARK_REPO at the teammate's local openharmony/arkcompiler_ets_runtime Git checkout/object database; the tests read pinned objects with git show and do not change the source checkout.
 - independent_review_packet.zip is a separate packet of synthetic control cases with blank labels. It is for independent semantic review, not upstream code or a vulnerability PoC.
 
@@ -37,7 +37,7 @@ python -m unittest discover -s tests/detectors/ark_runtime -t . -v
 python -m unittest discover -s tests -q
 ```
 
-On PowerShell, set the variable with $env:OHSCANNER_ARK_REPO = 'C:\path\to\arkcompiler_ets_runtime' before the commands. The full-suite result recorded for this checkpoint is 922 tests, 914 passed, 8 skipped, 0 failed; the focused detector result is 215 tests, 212 passed, 3 skipped, 0 failed. Missing local commits explain three historical replay skips in the recorded environment.
+On Linux, set the variable with export OHSCANNER_ARK_REPO=/path/to/arkcompiler_ets_runtime. On PowerShell, set it with $env:OHSCANNER_ARK_REPO = 'C:\path\to\arkcompiler_ets_runtime' before the commands. The full-suite result recorded for this checkpoint is 922 tests, 914 passed, 8 skipped, 0 failed; the focused detector result is 215 tests, 212 passed, 3 skipped, 0 failed. Missing local commits explain three historical replay skips in the recorded environment.
 
 ## Findings and decision boundary
 
