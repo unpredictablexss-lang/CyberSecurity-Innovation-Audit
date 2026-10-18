@@ -1,0 +1,63 @@
+# A line: sample30 sandbox follow-up
+
+Status: `0 confirmed / 0 dedicated PoC`; no product vulnerability claim.
+
+## Imported sandbox evidence
+
+- Remote branch: `codex/a-line-scanner-regression-20261018`
+- Imported commit: `3278a884a13a15c0fe67f3ad2364837411c57cbe`
+- Imported path: `research/deliveries/a-line-sample30/20261018/**`
+- Not imported: parent `0d9357e` C/D full-scan runner, shared scripts, or status docs.
+
+The sandbox delivery reports:
+
+- 30 deterministic sample reports from 378 valid reports.
+- 345 diagnostics: 283 high-priority, 62 normal-priority.
+- `confirmed=0`, `dedicated_pocs=0`.
+- `not_reproduced=9`, `not_testable=336`.
+- 263 `ohcpp-shared-ptr-race-candidate-001` candidates, all `not_testable`.
+- 1 `ipc.parcel.copy-range` `not_reproduced`; the visible `cfgLen <= 0` and
+  `cfgLen > MAX_LEN` guards were not normalized.
+- 8 SAMGR capability candidates `not_reproduced` against visible permission
+  predicates; this is B/platform guard modeling, not an A-line trusted-name fix.
+
+## A-line changes since the sandbox baseline
+
+- `shared_ptr_race 0.5.3`: constructor-body writes are initialization; function
+  parameters shadow same-named members; stable-owner and parameter-shadow
+  controls added.
+- `bounds 0.2.4`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
+  guards narrow intervals; constant offsets such as `n - 1` are evaluated.
+- `integer_bounds 0.2.1`: `calloc`/`new[]` element multiplication.
+- `resource_lifetime 0.1.2`: conditional release paths.
+- `unsafe_memory_call 0.1.2`: correct `fprintf/vfprintf/syslog` format argument.
+
+## Triage before/after
+
+The fixed five-component triage is not the sample30 corpus, but gives a
+controlled precision regression:
+
+| Detector version | Candidates | File/symbol groups |
+|---|---:|---:|
+| 0.5.1 | 778 | 137 |
+| 0.5.2 | 534 | 110 |
+| 0.5.3 | 504 | 108 |
+
+The reduction is explained by constructor-body initialization and parameter
+shadowing, not by a coverage drop. Evidence:
+`research/evidence/cpp/shared_ptr_triage_20261018/comparison.json`.
+
+## Pending
+
+The 30 sample source repositories are not present locally, so the sample30
+candidate counts were not rerun on this checkout. When the pinned source roots
+are available, replay the same 30 commits/trees/snapshots and compare the 345
+diagnostics, 263 shared_ptr candidates and 9 `not_reproduced` records. Until
+then, no sample30 before/after or Precision/Recall claim is made.
+
+## Boundary
+
+The sandbox method controls remain method evidence only: copy-range model 3/3
+clean, unsafe control 3/3 ASan, safe control 3/3 clean, TSan unsafe 3/3 race,
+TSan atomic 3/3 clean. None is a product PoC. All findings remain
+`candidate/unassessed`; `validated_vulnerability=0`.

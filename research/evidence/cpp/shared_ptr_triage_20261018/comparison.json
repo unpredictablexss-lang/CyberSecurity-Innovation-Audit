@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "detector": "ohscanner.cpp.shared_ptr_race",
+  "corpus": "five fixed pinned components",
+  "versions": [
+    {
+      "version": "0.5.1",
+      "path": "research/evidence/cpp/shared_ptr_triage_20261018",
+      "candidates": 778,
+      "groups": 137
+    },
+    {
+      "version": "0.5.2",
+      "path": "research/evidence/cpp/shared_ptr_triage_20261018_v2",
+      "candidates": 534,
+      "groups": 110,
+      "change": "constructor-body writes classified as initialization"
+    },
+    {
+      "version": "0.5.3",
+      "path": "research/evidence/cpp/shared_ptr_triage_20261018_v3",
+      "candidates": 504,
+      "groups": 108,
+      "change": "function parameters shadow same-named members"
+    }
+  ],
+  "note": "These counts are access-point diagnostics on a fixed five-component corpus, not the sample30 sandbox corpus and not vulnerability or Precision/Recall measurements."
+}

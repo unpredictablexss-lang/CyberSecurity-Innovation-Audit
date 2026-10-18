@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/a_line_scan_20261018",
+  "candidate": "research/evidence/cpp/a_line_scan_20261018_v8",
+  "detector": "ohscanner.cpp.bounds",
+  "candidate_detector_version": "0.2.4",
+  "baseline_candidates": 33,
+  "candidate_candidates": 33,
+  "baseline_groups": 22,
+  "candidate_groups": 22,
+  "delta": 0,
+  "baseline_wall_seconds": 170.938481054,
+  "candidate_wall_seconds": 164.661528698,
+  "baseline_peak_rss_kib": 371736,
+  "candidate_peak_rss_kib": 371864,
+  "note": "The <=0/offset guard normalization and shared_ptr 0.5.3 precision changes produced no additional candidates on this fixed five-component corpus. Candidate counts are not vulnerability counts or accuracy metrics."
+}
