@@ -73,7 +73,10 @@ def run_reviewed_detectors(
     raw_diagnostics = sum(result.diagnostic_count for result in reports)
     coverage_has_gaps = (
         bool(inventory["oversize"] or inventory["binary_or_non_utf8"]
-             or inventory["symlinks"] or inventory["submodules"])
+             or inventory["symlinks"] or inventory["submodules"]
+             or any(item.get("skipped") or item.get("limitations")
+                    or item.get("status") != "indexed"
+                    for item in inventory.get("source_archives", [])))
         or any(data["status"] != "complete"
                for data in sidecar["detectors"].values())
     )
@@ -116,6 +119,11 @@ def run_reviewed_detectors(
             "detectors": [{"id": result.tool, "version": result.tool_version,
                            "status": result.status} for result in reports],
         }
+    for archive in inventory.get("source_archives", []):
+        if archive.get("status") != "indexed" or archive.get("skipped"):
+            report["limitations"].append(
+                f"Source archive {archive['archive']} has partial/unsupported member coverage; inspect scope.source_archives."
+            )
     if report["files_in_scope_without_a_claiming_detector"]:
         report["status"] = "completed_with_limitations"
         report["limitations"].append(

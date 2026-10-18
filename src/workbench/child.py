@@ -80,6 +80,7 @@ def main():
                 "file": s.path,
                 "blob": s.oid,
                 "sha256": hashlib.sha256(s.data).hexdigest(),
+                "archive_binding": s.archive_binding,
             }
             for s in sources
         ],

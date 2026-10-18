@@ -1,10 +1,14 @@
 """Read *pinned Git objects* from a local repository; no checkout, fetch or execution."""
 
 from dataclasses import dataclass
+import hashlib
+import io
 import os
 from pathlib import Path
 import re
 import subprocess
+import tarfile
+import zlib
 
 from .contracts import safe_relative_path
 
@@ -16,6 +20,10 @@ SOURCE_LANGUAGES = {
 MAX_BLOB_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
 MAX_SOURCE_FILES = 2000
+MAX_ARCHIVE_BYTES = 8 * 1024 * 1024
+MAX_ARCHIVE_EXPANDED_BYTES = 16 * 1024 * 1024
+MAX_ARCHIVE_MEMBERS = 2000
+ARCHIVE_SUFFIXES = (".tar.gz", ".tgz")
 
 
 @dataclass(frozen=True)
@@ -24,6 +32,72 @@ class GitSource:
     language: str
     oid: str
     data: bytes
+    archive_binding: dict | None = None
+
+
+def _archive_member_sources(path: str, archive_oid: str, archive_data: bytes):
+    """Read bounded regular C/C++ members without extracting files to disk."""
+    sources, skipped = [], []
+    expanded = members = 0
+    problem = None
+    try:
+        archive = tarfile.open(fileobj=io.BytesIO(archive_data), mode="r|gz")
+        with archive:
+            for member in archive:
+                members += 1
+                if members > MAX_ARCHIVE_MEMBERS:
+                    problem = "archive member count exceeds bounded scope"
+                    break
+                if member.size < 0:
+                    problem = "archive member has invalid size"
+                    break
+                expanded += member.size
+                if expanded > MAX_ARCHIVE_EXPANDED_BYTES:
+                    problem = "archive expanded size exceeds bounded scope"
+                    break
+                if not member.isfile():
+                    if member.issym() or member.islnk():
+                        skipped.append({"member": member.name[:240], "reason": "link_member"})
+                    continue
+                try:
+                    member_path = safe_relative_path(member.name)
+                except ValueError:
+                    skipped.append({"member": member.name[:240], "reason": "unsafe_path"})
+                    continue
+                language = SOURCE_LANGUAGES.get(Path(member_path).suffix.lower())
+                if language is None:
+                    continue
+                if member.size > MAX_BLOB_BYTES:
+                    skipped.append({"member": member_path, "reason": "oversize"})
+                    continue
+                try:
+                    stream = archive.extractfile(member)
+                    if stream is None:
+                        raise ValueError("archive source member could not be read")
+                    data = stream.read(MAX_BLOB_BYTES + 1)
+                    if len(data) != member.size:
+                        raise ValueError("archive source member size mismatch")
+                    data.decode("utf-8")
+                    virtual_path = safe_relative_path(path + ".members/" + member_path)
+                except (ValueError, UnicodeDecodeError, OSError) as error:
+                    skipped.append({"member": member_path, "reason": "invalid_member"})
+                    problem = str(error)[:200]
+                    break
+                binding = {"archive_path": path, "archive_blob_oid": archive_oid,
+                           "archive_sha256": hashlib.sha256(archive_data).hexdigest(),
+                           "member_path": member_path,
+                           "member_sha256": hashlib.sha256(data).hexdigest()}
+                # Internal content identity only; this is not a tracked Git blob.
+                member_oid = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+                sources.append(GitSource(virtual_path, language, member_oid, data, binding))
+    except (tarfile.TarError, EOFError, OSError, ValueError, zlib.error) as error:
+        problem = str(error)[:200] or "tracked source archive is invalid or truncated"
+    return tuple(sources), {"members_seen": members, "expanded_bytes": expanded,
+                            "selected_sources": len(sources), "skipped": skipped,
+                            "oversize": sum(item["reason"] == "oversize" for item in skipped),
+                            "binary_or_non_utf8": sum(item["reason"] == "non_utf8" for item in skipped),
+                            "status": "partial" if problem else "indexed",
+                            "limitations": [problem] if problem else []}
 
 
 def _git(repo: Path, *args: str, timeout: int = 30) -> bytes:
@@ -144,7 +218,7 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
         "symlinks": 0, "submodules": 0, "oversize": 0,
         "binary_or_non_utf8": 0, "selected_source_files": 0,
         "selected_source_bytes": 0, "skipped": [],
-        "git_tree": tree, "declared_scope": list(includes),
+        "git_tree": tree, "declared_scope": list(includes), "source_archives": [],
     }
     source_entries = []
     seen_paths = set()
@@ -170,7 +244,23 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
         if mode == "120000":
             inventory["symlinks"] += 1
             continue
+        is_archive = path.lower().endswith(ARCHIVE_SUFFIXES)
         language = SOURCE_LANGUAGES.get(Path(path).suffix.lower())
+        if is_archive:
+            if not re.fullmatch(r"(?:[a-f0-9]{40}|[a-f0-9]{64})", oid):
+                raise ValueError("invalid object ID in Git tree")
+            if size in ("-", "BAD"):
+                raise ValueError("missing_local_git_object: archive unavailable locally " + oid)
+            if not size.isdecimal():
+                raise ValueError("invalid archive size in Git tree")
+            size_bytes = int(size)
+            if size_bytes > MAX_ARCHIVE_BYTES:
+                inventory["oversize"] += 1
+                inventory["skipped"].append({"file": path, "reason": "oversize_archive"})
+                inventory["source_archives"].append({"archive": path, "status": "skipped_oversize"})
+                continue
+            source_entries.append((path, "__archive__", oid, size_bytes))
+            continue
         if language is None or kind != "blob":
             inventory["non_source"] += 1
             continue
@@ -208,6 +298,27 @@ def load_git_sources(repo: Path, commit: str, includes: tuple[str, ...] = (".",)
                          for path, _, oid, size_bytes in batch)
         data_items = _git_batch_blobs(repo, requests)
         for (path, language, oid, size_bytes), data in zip(batch, data_items):
+            if language == "__archive__":
+                extracted, archive_info = _archive_member_sources(path, oid, data)
+                inventory["source_archives"].append({
+                    "archive": path, "archive_blob_oid": oid,
+                    "archive_sha256": hashlib.sha256(data).hexdigest(),
+                    **archive_info,
+                })
+                inventory["oversize"] += archive_info["oversize"]
+                inventory["binary_or_non_utf8"] += archive_info["binary_or_non_utf8"]
+                inventory["skipped"].extend(
+                    {"file": path + ".members/" + item["member"], "reason": item["reason"]}
+                    for item in archive_info["skipped"] if item["reason"] in ("oversize", "non_utf8")
+                )
+                for source in extracted:
+                    if len(sources) >= MAX_SOURCE_FILES:
+                        raise ValueError("source file count exceeds M1 bounded scope")
+                    if inventory["selected_source_bytes"] + len(source.data) > MAX_TOTAL_BYTES:
+                        raise ValueError("total source size exceeds M1 bounded scope")
+                    sources.append(source)
+                    inventory["selected_source_bytes"] += len(source.data)
+                continue
             if len(sources) >= MAX_SOURCE_FILES:
                 raise ValueError("source file count exceeds M1 bounded scope")
             if inventory["selected_source_bytes"] + size_bytes > MAX_TOTAL_BYTES:

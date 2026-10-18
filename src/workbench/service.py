@@ -283,6 +283,24 @@ def source(settings, store, job, file):
     repo = store.repository(job["repository_id"])
     root = check_repository(settings, repo["path"])
     commit = job["spec"]["commit"]
+    if inventory[file].get("archive_binding") is not None:
+        from src.ohscanner.git_source import load_git_sources
+        binding = inventory[file]["archive_binding"]
+        _, tree, archive_sources, archive_inventory = load_git_sources(
+            root, commit, (binding["archive_path"],)
+        )
+        if tree != job["spec"]["git_tree"]:
+            raise ValueError("source archive tree binding mismatch")
+        selected = next((item for item in archive_sources if item.path == file), None)
+        if selected is None or selected.archive_binding != binding:
+            raise ValueError("source archive member differs from committed scan inventory")
+        if sha(selected.data) != inventory[file]["sha256"]:
+            raise ValueError("source archive member hash mismatch")
+        return {
+            "file": file, "commit": commit, "blob": None,
+            "sha256": sha(selected.data), "text": selected.data.decode("utf-8"),
+            "archive_binding": binding,
+        }
     entry = _git(root, "ls-tree", "-z", commit, "--", file).split(b"\0")[0]
     if not entry:
         raise KeyError("source object missing")

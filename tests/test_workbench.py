@@ -2,6 +2,8 @@
 
 import copy
 import json
+import io
+import tarfile
 from pathlib import Path
 import subprocess
 import tempfile
@@ -347,6 +349,34 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(
             service.read_report(self.settings, job)["validated_vulnerability"], 0
         )
+
+
+    def test_archived_candidate_runs_through_api_worker_and_source_viewer(self):
+        archive_path = self.repo / "vendor" / "sample.tar.gz"
+        archive_path.parent.mkdir()
+        payload = b'#define PNG_LIBPNG_VER_STRING "1.6.55"\n'
+        with tarfile.open(archive_path, "w:gz") as archive:
+            member = tarfile.TarInfo("libpng/png.h")
+            member.size = len(payload)
+            archive.addfile(member, io.BytesIO(payload))
+        git(self.repo, "add", "vendor/sample.tar.gz")
+        git(self.repo, "commit", "-qm", "add pinned source archive")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        job_request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job_request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = report["detector_runs"][0]["diagnostics"]
+        self.assertTrue(any(item["symbol"] == "CVE-2026-46675" for item in diagnostics))
+        candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2026-46675")
+        self.assertEqual(candidate["source_archive_binding"]["archive_path"], "vendor/sample.tar.gz")
+        self.assertEqual(report["validated_vulnerability"], 0)
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], payload.decode())
+        self.assertIsNone(viewed["blob"])
+        self.assertEqual(viewed["archive_binding"]["archive_path"], "vendor/sample.tar.gz")
+        self.assertEqual(viewed["archive_binding"]["member_sha256"], candidate["source_sha256"])
 
     def test_review_cannot_self_promote(self):
         job = self.completed()
