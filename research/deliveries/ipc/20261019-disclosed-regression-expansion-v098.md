@@ -19,3 +19,6 @@ CVE-2024-39775（netmanager 权限拦截返回码）：eb00c2b458c26c10ab4e7ea5f
 4. 回归样本不冒充盲测；检测逻辑冻结后另建独立 holdout。
 
 验证：674 tests passed, 36 skipped。扫描 JSON/Markdown 和哈希见同目录 manifest.json。
+
+
+负责人确认口径：CVE-2025-26691 与 CVE-2025-26693 可在“披露漏洞回归台账”中标为 confirmed（公开披露根因与固定源码补丁的静态回归匹配已完成）；后续 Agent/运行时验证仍待执行。此 confirmed 不改写扫描器原始 finding 的 severity，也不把运行器 validated_vulnerability 从 0 改成 1。
