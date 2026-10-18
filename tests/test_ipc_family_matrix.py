@@ -35,6 +35,7 @@ REVIEWED_CWE = {
     'AUTH-04': 'CWE-863',
     'AUTH-05': 'CWE-863',
     'AUTH-06': 'CWE-862',
+    'AUTH-07': 'CWE-863',
     'DATA-01': 'CWE-20',
     'DATA-02': 'CWE-20',
     'DATA-03': 'CWE-416',

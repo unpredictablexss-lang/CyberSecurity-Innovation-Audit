@@ -1,4 +1,4 @@
-"""Contract-compatible first-party IPC candidate detector (six families)."""
+"""Contract-compatible first-party IPC candidate detector."""
 from typing import Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
 from .analysis import Interpreter
@@ -6,6 +6,7 @@ from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 from .tlv_fixed_width import find_fixed_width_tlv_overreads
 from .network_session_allowlist import find_missing_auth_session_allowlist
+from .auth_transport_status import find_permission_denial_transport_success
 
 
 # Exact path components are review cues, not proof that a file is excluded from
@@ -27,7 +28,7 @@ def _test_source_path(path):
 # than repeated here, so a family's id, its rules and its CWE land together and a
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
-assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05", "AUTH-06",
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05", "AUTH-06", "AUTH-07",
                      "DATA-01", "DATA-02", "DATA-03", "DATA-04", "DATA-05", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
@@ -88,7 +89,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.11.0"
+    version = "0.12.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -250,6 +251,38 @@ class IpcInterfaceDetector:
                     ),
                 ))
         findings = findings + tuple(network_auth_findings)
+        # Separate transaction status from reply-payload status. A successful
+        # transport return after an authorization rejection is a candidate only;
+        # client-side consumption determines whether it weakens the denial.
+        transport_status_findings = []
+        for unit in applicable:
+            if unit.language != "cpp" or unit.parse_status in ("failed", "not_run"):
+                continue
+            for line, symbol, predicate, status in find_permission_denial_transport_success(unit.text):
+                transport_status_findings.append(DetectorFinding(
+                    file=unit.path,
+                    line=line,
+                    symbol=symbol,
+                    rule_id="ipc.auth.denial-transport-success",
+                    message=("AUTH-07 candidate: a failed " + predicate
+                             + " guard writes an error to the reply but returns transport success "
+                             + status + ". This status mismatch does not by itself prove authorization "
+                             "bypass; inspect the proxy, Binder wrapper and reply-consumption path."),
+                    evidence_type="syntax",
+                    candidate_cwe="CWE-863",
+                    consequence_impact="unauthorized_effect",
+                    evidence_obligations=(
+                        EvidenceObligation("transport_reply_semantics",
+                                           "Determine whether this Binder status is consumed separately from the reply payload and whether success changes caller behavior."),
+                        EvidenceObligation("permission_failure_path",
+                                           "Verify the predicate's authorization policy and that the branch is the actual denial path."),
+                        EvidenceObligation("client_binding",
+                                           "Bind the transaction to the pinned proxy or caller that consumes the transport result and reply."),
+                        EvidenceObligation("security_impact",
+                                           "Establish whether the mismatch permits protected data or effects despite denial."),
+                    ),
+                ))
+        findings = findings + tuple(transport_status_findings)
         # TLV fixed-width serializers are reusable parser helpers, not IPC roots.
         # Keep this exact non-entry pass separate; do not imply IPC reachability.
         tlv_findings = []

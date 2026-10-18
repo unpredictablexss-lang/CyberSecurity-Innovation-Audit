@@ -52,6 +52,8 @@ BASE = Path(__file__).parent / 'fixtures/ipc'
 # from a preprocessed text rather than the file would satisfy the number and fail
 # the token.
 PINNED_POSITIVES = {
+    ('auth07', 'denial_transport_success_positive.cpp'): (
+        ('ipc.auth.denial-transport-success', 7, 'return NETMANAGER_SUCCESS'),),
     ('auth06', 'peer_session_positive.cpp'): (
         ('ipc.network.auth-session-whitelist', 8, 'OnRequsetUpdateAuthChannel'),),
     ('data05', 'tlv_fixed_width_positive.cpp'): (
