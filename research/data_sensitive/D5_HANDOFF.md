@@ -27,3 +27,11 @@ Exact commands and results are in `D12_VALIDATION.json`. The D data suite passed
 - M3: not met. No product build/output/reader evidence or validated product patch. Candidate only.
 
 Do not mark PR #17 Ready or merge it without the separately required authorization and gates.
+
+## D13 source Git object verification
+
+D13 independently verified the D4 source manifest against the exact upstream Git commit/tree and file blob objects. The manifest has 22 files per revision (44 total), not 11; this corrected an earlier validation count assumption. Both commit SHAs, both tree SHAs, and every commit:path blob match SHA-1, SHA-256, and byte size. Verification ran with lazy fetch disabled after the explicitly authorized retrieval of only the manifest-pinned raw files into an isolated partial clone.
+
+The later commit subject is "Remove unused sensitive prints", with the before commit as its parent. This is provenance/history evidence only: it is not a security advisory, product release/deployment proof, or exploitability proof. D13 does not change validated_vulnerability=0; D4 historical replay remains blocked and product H01-H08 remain not_run.
+
+D13 implementation and reproducible commands are in D13_IMPLEMENTATION.md; machine-readable per-file evidence is in D13_SOURCE_GIT_OBJECT_VERIFICATION.json. The D13 unit tests cover both matching local commit objects and manifest-digest rejection. This does not meet M0-M3 or authorize panel registration, PR Ready, merge, or product confirmation.
