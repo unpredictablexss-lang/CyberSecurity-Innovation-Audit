@@ -46,24 +46,30 @@ _ASSIGNMENT = re.compile(
 _IDENT = re.compile(r"\b[A-Za-z_]\w*\b")
 _RETURN = re.compile(r"\breturn\s+(?P<expr>[^;]+);?")
 _CALL = re.compile(r"(?<![.>\w])(?P<name>[A-Za-z_]\w*)\s*\(")
+_ANY_CALL = re.compile(r"\b(?P<name>[A-Za-z_]\w*)\s*\(")
 _SAFE_FILENAME = re.compile(
     r"(?:std\s*::\s*filesystem\s*::\s*path\s*\([^;]*?\)|\b[A-Za-z_]\w*)"
     r"\s*\.\s*filename\s*\(\s*\)"
 )
 _CANONICAL = re.compile(r"(?:weakly_)?canonical\s*\(")
 _SINK_CALLS = {
-    "open": 0,
-    "openat": 1,
-    "creat": 0,
-    "fopen": 0,
-    "freopen": 0,
-    "unlink": 0,
-    "unlinkat": 1,
-    "remove": 0,
-    "rename": 0,
-    "mkdir": 0,
-    "rmdir": 0,
+    "open": (0,),
+    "openat": (1,),
+    "creat": (0,),
+    "fopen": (0,),
+    "freopen": (0,),
+    "unlink": (0,),
+    "unlinkat": (1,),
+    "remove": (0,),
+    "rename": (0, 1),
+    "mkdir": (0,),
+    "rmdir": (0,),
 }
+_KNOWN_PATH_TRANSFORMS = {
+    "path", "canonical", "weakly_canonical", "lexically_relative",
+    "filename", "string", "c_str", "GetString", "GetStringValue", "get_if",
+}
+_NON_PATH_CALLS = {"if", "for", "while", "switch", "catch", "sizeof", "close"}
 _OBLIGATIONS = (
     EvidenceObligation(
         "source_model",
@@ -237,7 +243,7 @@ def _safe_path_value(
     seen.add(variable)
     if _allowlisted(variable, original_body, sink_offset):
         return True
-    if _canonical_containment(function, variable, original_body):
+    if _canonical_containment(function, variable, original_body[:sink_offset]):
         return True
     assignments = [match for match in _ASSIGNMENT.finditer(function.body[:sink_offset]) if match.group("name") == variable]
     if not assignments:
@@ -247,22 +253,51 @@ def _safe_path_value(
     if _SAFE_FILENAME.search(expression):
         return True
     sources = _identifiers(expression) & flow
-    if sources and all(_safe_path_value(function, source, flow, original_body, sink_offset, seen) for source in sources):
+    if sources and all(_safe_path_value(function, source, flow, original_body, sink_offset, set(seen)) for source in sources):
         return True
     return False
 
 
 def _canonical_containment(function: _Function, variable: str, body: str) -> bool:
     """Accept only an explicit component-aware lexical-relative escape guard."""
-    if not _CANONICAL.search(body) or not re.search(r"\.lexically_relative\s*\(", body):
+    if not _CANONICAL.search(body):
         return False
-    if not re.search(r"(?:relative|rel)\s*\.\s*empty\s*\(\s*\)", body):
+    candidate = re.search(
+        r"\b" + re.escape(variable) + r"\s*=\s*(?:std\s*::\s*filesystem\s*::\s*)?"
+        r"(?:weakly_)?canonical\s*\(\s*(?P<root>[A-Za-z_]\w*)\s*/",
+        body,
+    )
+    if not candidate:
         return False
-    if not re.search(r"(?:relative|rel)\s*\.\s*begin\s*\(\s*\)[^;\n]*==\s*\"\.\.\"", body):
+    root = candidate.group("root")
+    canonical_root = re.search(
+        r"(?P<name>[A-Za-z_]\w*)\s*=\s*(?:std\s*::\s*filesystem\s*::\s*)?"
+        r"(?:weakly_)?canonical\s*\(\s*" + re.escape(root) + r"\s*\)",
+        body,
+    )
+    if not canonical_root:
         return False
-    if variable not in body:
+    root_name = canonical_root.group("name")
+    relative = re.search(
+        r"(?P<name>[A-Za-z_]\w*)\s*=\s*" + re.escape(variable)
+        + r"\s*\.\s*lexically_relative\s*\(\s*" + re.escape(root_name) + r"\s*\)",
+        body,
+    )
+    if not relative:
         return False
-    guard = re.search(r"if\s*\([^{}]{0,240}(?:relative|rel)[^{}]{0,240}\)\s*\{?\s*(?:return|throw)\b", body)
+    rel_name = relative.group("name")
+    rejects_empty = re.search(r"\b" + re.escape(rel_name) + r"\s*\.\s*empty\s*\(\s*\)", body)
+    rejects_parent = re.search(
+        r"\*\s*" + re.escape(rel_name) + r"\s*\.\s*begin\s*\(\s*\)\s*==\s*\"\.\.\"",
+        body,
+    )
+    guard = re.search(
+        r"if\s*\([^{}]{0,240}" + re.escape(rel_name)
+        + r"[^{}]{0,240}\)\s*\{?\s*(?:return|throw)\b",
+        body,
+    )
+    if not (rejects_empty and rejects_parent):
+        return False
     return bool(guard)
 
 
@@ -277,7 +312,7 @@ def _stable_findings(findings: Iterable[DetectorFinding]) -> Tuple[DetectorFindi
     return tuple(sorted(output, key=lambda item: (item.file, item.line, item.column or 0, item.symbol or "")))
 
 
-def _finding(unit: SourceUnit, position: int, symbol: str, source_function: str) -> DetectorFinding:
+def _finding(unit: SourceUnit, position: int, symbol: str) -> DetectorFinding:
     line, column = line_column(unit.text, position)
     return DetectorFinding(
         file=unit.path,
@@ -310,23 +345,28 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
         return [], [f"{unit.path}: source exceeds the 1MiB unit budget; path-flow remains unknown."], False
 
     masked = mask_comments_and_literals(unit.text)
-    functions = _functions(masked)
-    if len(functions) > MAX_FUNCTIONS:
+    all_functions = _functions(masked)
+    if len(all_functions) > MAX_FUNCTIONS:
         return [], [f"{unit.path}: function budget exceeded; path-flow remains unknown."], False
     # An unmatched brace or unterminated lexical construct invalidates lexical
     # offsets and prevents emitting a candidate from this unit.
     if masked.count("{") != masked.count("}"):
         return [], [f"{unit.path}: unbalanced function/body delimiters; path-flow remains unknown."], False
-    by_name: Dict[str, List[_Function]] = {}
-    for function in functions:
-        by_name.setdefault(function.name, []).append(function)
-    if any(len(items) > 1 for items in by_name.values()):
-        return [], [f"{unit.path}: overloaded/duplicate function names prevent unambiguous bounded call resolution."], False
+    names: Dict[str, List[_Function]] = {}
+    for function in all_functions:
+        names.setdefault(function.name, []).append(function)
+    ambiguous_names = {name for name, items in names.items() if len(items) > 1}
+    # Unrelated overloads must not erase a local flow through unambiguous
+    # helpers. Skip only overloaded definitions and calls to their names.
+    functions = tuple(function for function in all_functions if function.name not in ambiguous_names)
+    by_name: Dict[str, List[_Function]] = {function.name: [function] for function in functions}
     sources = {function.name for function in functions if _direct_source(function)}
     # Also accept a typed bucket accessor as source even when its string
     # conversion is spread across local variables; the bucket itself is not
     # tainted until a string accessor is evaluated.
     receivers = {function.name: _source_receiver_names(function) for function in functions}
+    if sources and re.search(r"^\s*#\s*(?:define|if|ifdef|ifndef|elif)", unit.text, re.MULTILINE):
+        return [], [f"{unit.path}: preprocessor macros/configuration intersect a modeled source; path-flow remains unknown."], False
     try:
         calls = _call_sites(functions, masked)
     except OverflowError as exc:
@@ -405,9 +445,32 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
 
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
+    unresolved_path_calls: Set[str] = set()
+    if ambiguous_names:
+        limitations.append(
+            f"{unit.path}: overloaded functions {', '.join(sorted(ambiguous_names)[:8])} were excluded from call summaries; their flows remain unknown."
+        )
     modeled_source_functions = set(sources) | source_sites
     for function in functions:
         flow = tainted[function.name]
+        for call in _ANY_CALL.finditer(function.body):
+            name = call.group("name")
+            if name in by_name or name in _SINK_CALLS or name in _KNOWN_PATH_TRANSFORMS or name in _NON_PATH_CALLS:
+                continue
+            open_pos = function.body_start + 1 + call.end() - 1
+            depth = 1
+            cursor = open_pos + 1
+            while cursor < function.body_end - 1 and depth:
+                if masked[cursor] == "(":
+                    depth += 1
+                elif masked[cursor] == ")":
+                    depth -= 1
+                cursor += 1
+            if depth:
+                continue
+            args = _split_args(masked[open_pos + 1:cursor - 1])
+            if any(_identifiers(arg) & flow for arg in args):
+                unresolved_path_calls.add(name)
         # Member calls are excluded: project methods named open/remove/unlink
         # are not silently treated as libc sinks.
         for match in _CALL.finditer(function.body):
@@ -429,24 +492,28 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
             if depth:
                 continue
             args = _split_args(masked[open_pos + 1:cursor - 1])
-            sink_index = _SINK_CALLS[name]
-            if len(args) <= sink_index:
-                continue
-            path_arg = args[sink_index]
-            path_vars = _identifiers(path_arg) & flow
-            if not path_vars:
-                continue
-            safe = False
-            for variable in path_vars:
+            for sink_index in _SINK_CALLS[name]:
+                if len(args) <= sink_index:
+                    continue
+                path_arg = args[sink_index]
+                path_vars = _identifiers(path_arg) & flow
+                if not path_vars:
+                    continue
                 original_body = unit.text[function.body_start + 1:function.body_end - 1]
                 sink_offset = absolute - function.body_start - 1
-                if _safe_path_value(function, variable, flow, original_body, sink_offset):
-                    safe = True
-            if not safe:
-                findings.append(_finding(unit, absolute, name, ",".join(sorted(path_vars))))
-            sinks.append((function, absolute, name, ",".join(sorted(path_vars))))
+                safe = all(
+                    _safe_path_value(function, variable, flow, original_body, sink_offset)
+                    for variable in path_vars
+                )
+                if not safe:
+                    findings.append(_finding(unit, absolute, name))
+                sinks.append((function, absolute, name, ",".join(sorted(path_vars))))
 
     has_source = bool(sources or any(receivers.values()))
+    if unresolved_path_calls:
+        limitations.append(
+            f"{unit.path}: tainted path reaches unresolved external call(s) {', '.join(sorted(unresolved_path_calls)[:8])}; sink semantics remain unknown."
+        )
     if has_source and not findings:
         limitations.append(
             f"{unit.path}: DataShare string source modeled, but no same-file bounded uncontained source-to-direct-file-sink flow was proven; wrappers/cross-file calls remain unknown."
@@ -463,7 +530,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
         ))
     else:
         limitations.append("No candidate is not a safe verdict; unmodeled or unresolved source-to-sink paths remain unknown.")
-    return findings, limitations, True
+    return findings, limitations, not ambiguous_names and not unresolved_path_calls
 
 
 class CppPathTraversalDetector:
@@ -487,7 +554,7 @@ class CppPathTraversalDetector:
         for unit in ordered:
             try:
                 unit_findings, unit_limitations, unit_complete = _analyze_unit(unit)
-            except (RecursionError, MemoryError, OverflowError) as exc:
+            except Exception as exc:
                 unit_findings, unit_limitations, unit_complete = [], [f"{unit.path}: {type(exc).__name__}; path-flow remains unknown."], False
             findings.extend(unit_findings)
             limitations.extend(unit_limitations)
