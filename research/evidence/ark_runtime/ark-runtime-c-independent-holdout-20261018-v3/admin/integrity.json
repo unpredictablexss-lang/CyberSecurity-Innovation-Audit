@@ -1,0 +1,17 @@
+{
+  "artifacts": {
+    "README.md": "8a8da01bfd45d1ad2e5573336b6ed48108438be4015be7f123c1ae1b0de1443f",
+    "admin/assessment_status.json": "ed6b45fb95804e38c3182f738fccfca9cb78e33a4e99797ccebc1b7619c752fe",
+    "admin/frozen_detector_0.7.0.json": "e5d80460e66362c70ef63be8eae00fb5fa3d5e8d70056e758bc84649cde835a4",
+    "admin/applicability_contract_0.7.0.json": "4e98f891a71534d4554cfff5c2b1d72dfa28d126602340acf7afc8f5603abfa7",
+    "admin/detector_dependencies_0.7.0.lock": "f0702fcfea4950211e74ebc1b15ca747e0ede5806014e00d5026a2ac56a87b1d",
+    "admin/clean_archive_verification_0.7.0.json": "b75d7bd2104cc15dccf4d642392220674f0297a36fab528970fff7d216b132e8",
+    "admin/final_gate_audit.json": "198391a74cb1f2d5360652d00d08406e677c6a1555e64b83757bcdc0824e5e01",
+    "admin/development_exclusion_inventory.csv": "be57ec005f206f97eeba558cd11ae3323960b0ea1e45285d7c01d3142f7d4082",
+    "admin/development_exclusion_inventory_summary.json": "c3f24d07f6cc1f83444d5a29ec1144c3941eabc36ebf514894c3466f1bf80540",
+    "admin/development_artifacts_manifest.csv": "a381a0e676cb9545a27b5c47697bc7bb9b7569633265b7e3af62a89af1f2c708"
+  },
+  "v2_package_hashes_checked": 26,
+  "v2_package_hashes_matched": 26,
+  "v2_files_modified_by_this_run": false
+}

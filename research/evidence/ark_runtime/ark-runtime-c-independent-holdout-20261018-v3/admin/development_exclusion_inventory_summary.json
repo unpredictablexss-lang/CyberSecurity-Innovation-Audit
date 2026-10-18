@@ -1,0 +1,47 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v3",
+  "source_identity_inventory": {
+    "path": "admin/development_exclusion_inventory.csv",
+    "rows": 78,
+    "sha256": "be57ec005f206f97eeba558cd11ae3323960b0ea1e45285d7c01d3142f7d4082",
+    "unique_upstream_source_identities": 46,
+    "counts_by_origin_kind": {
+      "upstream_source_used_in_development": 3,
+      "model_dependency_source": 38,
+      "previously_exposed_assessment_case": 9,
+      "synthetic_development_control": 10,
+      "developer_generated_review_control": 16,
+      "deterministic_synthetic_mutation": 1,
+      "unavailable_history": 1
+    }
+  },
+  "artifact_inventory": {
+    "path": "admin/development_artifacts_manifest.csv",
+    "rows": 232,
+    "sha256": "a381a0e676cb9545a27b5c47697bc7bb9b7569633265b7e3af62a89af1f2c708",
+    "checkouts": [
+      "unpredictablexss-lang/CyberSecurity-Innovation-Audit-c3-review",
+      "unpredictablexss-lang/CyberSecurity-Innovation-Audit-c4",
+      "unpredictablexss-lang/CyberSecurity-Innovation-Audit-c4-selective"
+    ],
+    "counts_by_state": {
+      "tracked_clean": 187,
+      "tracked_modified_worktree": 6,
+      "untracked_worktree_only": 9,
+      "untracked_or_ignored_worktree_only": 30
+    },
+    "scope_roots": [
+      "research/experiments/ark_runtime",
+      "research/evidence/ark_runtime/independent-holdout",
+      "tests/detectors/ark_runtime",
+      "src/ohscanner/detectors/ark_runtime"
+    ],
+    "new_v3_directory_excluded_from_self_inventory": true
+  },
+  "family_audit_disposition": "incomplete; new sample selection prohibited by restart plan",
+  "remaining_scope_gap": "External/untracked development, tuning, demos, prior exposure and reviewer-contact history outside the enumerated checkouts remains unavailable. Root-cause family mapping is not defensible across this unknown history.",
+  "reviewer_evidence": "No signed reviewer declaration or completed label snapshot was found in the assessed packages; available files are protocol/templates only.",
+  "prior_assessment_handling": "All nine v2 identities were added as conservative exclusions. No v2 prediction values were examined or reused.",
+  "sample_selection": "not_started; no new candidate roster inspected or hashed.",
+  "metrics": "not computed; not estimable."
+}

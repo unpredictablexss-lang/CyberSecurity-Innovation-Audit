@@ -1,0 +1,113 @@
+{
+  "assessment_id": "ark-runtime-c-independent-holdout-20261018-v3",
+  "created_local_date": "2026-10-18",
+  "timezone": "Asia/Shanghai",
+  "status": "blocked_before_sample_selection",
+  "purpose": "New assessment attempt; does not modify or reinterpret v0.6.2 assessment v2.",
+  "detector_freeze": {
+    "status": "frozen_and_clean_archive_verified",
+    "candidate_identity_only": false,
+    "detector_id": "ohscanner.ark.runtime.type_safety",
+    "detector_version": "0.7.0",
+    "scanner_commit": "ff03077fd1bd963e51f22f43e4cb25f3669a0f0e",
+    "scanner_tree": "e76488731ff3410eb26bdb9b2bc3d95abbd1e467",
+    "model_digest_sha256": "548996ced072b847e2a01d17c4f56de11b6fe4e42e3657f1434c7b8fbc9f3aca",
+    "freeze_record": "admin/frozen_detector_0.7.0.json",
+    "applicability_contract": "admin/applicability_contract_0.7.0.json",
+    "dependency_lock": "admin/detector_dependencies_0.7.0.lock",
+    "clean_archive_test": "6 passed, 2 skipped; upstream-object controls 8 passed",
+    "unseen_source_support": "verified for new commit/path/content identity matching declared owner/method semantics; development control only",
+    "limitations": [
+      "Tree-sitter syntax only; no preprocessing, compiler configuration, type system, whole-program data flow, runtime reachability, shipped product binding, or CIA impact proof.",
+      "Build profile assumption NDEBUG=1 and ENABLE_ASM_ASSERT=0 remains unverified.",
+      "The operation semantics originated in development material and have not been independently revalidated against changed helper implementations.",
+      "The selector may not find a target whose syntax is too damaged to resolve; such an input is not evidence of non-applicability or safety."
+    ],
+    "clean_archive_test_scope": "Synthetic Git-provenance controls and two pinned local Ark revisions; no independent holdout sample provenance established.",
+    "clean_archive_verification": "admin/clean_archive_verification_0.7.0.json"
+  },
+  "sample_selection": {
+    "status": "stopped_before_selection",
+    "manifest_sha256": null,
+    "sample_count": 0,
+    "eligible_applicable_sample_count": null,
+    "reason": "The local development inventory contains known C1/C2 upstream inputs, 19 model dependencies in old/current revisions, nine v2 prior cases, 10 synthetic fixtures, 16 synthetic review controls, and generated test input; however the external/untracked history and cross-family exposure map remain incomplete. The restart plan requires stopping before selecting any new source."
+  },
+  "reviewers": {
+    "status": "not_obtained",
+    "qualified_count": 0,
+    "declarations_received": 0,
+    "evidence_search": "Only declaration/annotation templates and a blank synthetic-packet label template were found in assessed packages.",
+    "reason": "No two named independent reviewers or pre-access declarations were supplied."
+  },
+  "labels": {
+    "status": "pending_not_created",
+    "prediction_revealed": false,
+    "label_freeze_utc": null
+  },
+  "class_coverage": {
+    "vulnerable": "not_assessed",
+    "fixed": "not_assessed",
+    "safe": "not_assessed",
+    "unrelated": "not_assessed",
+    "partial_or_unknown": "not_assessed"
+  },
+  "metrics": {
+    "TP": null,
+    "FP": null,
+    "FN": null,
+    "precision": null,
+    "recall": null,
+    "status": "not_estimable_not_computed"
+  },
+  "stop_conditions": [
+    "Development/tuning family inventory cannot establish complete family-level exclusions; external/untracked history is unavailable.",
+    "No two qualified reviewers with pre-access independence declarations.",
+    "No sample roster selected or hashed; no labels or predictions exist."
+  ],
+  "historical_v0_6_2_preservation": "Existing assessment directory and all v0.6.2 files were left unchanged.",
+  "preservation": "v0.6.2 assessment directory untouched; all original v2 package hashes verified.",
+  "root_cause_exclusion_inventory": {
+    "source_identity_inventory": {
+      "path": "admin/development_exclusion_inventory.csv",
+      "rows": 78,
+      "sha256": "be57ec005f206f97eeba558cd11ae3323960b0ea1e45285d7c01d3142f7d4082",
+      "unique_upstream_source_identities": 46,
+      "counts_by_origin_kind": {
+        "upstream_source_used_in_development": 3,
+        "model_dependency_source": 38,
+        "previously_exposed_assessment_case": 9,
+        "synthetic_development_control": 10,
+        "developer_generated_review_control": 16,
+        "deterministic_synthetic_mutation": 1,
+        "unavailable_history": 1
+      }
+    },
+    "development_artifact_inventory": {
+      "path": "admin/development_artifacts_manifest.csv",
+      "rows": 232,
+      "sha256": "a381a0e676cb9545a27b5c47697bc7bb9b7569633265b7e3af62a89af1f2c708",
+      "checkouts": [
+        "unpredictablexss-lang/CyberSecurity-Innovation-Audit-c3-review",
+        "unpredictablexss-lang/CyberSecurity-Innovation-Audit-c4",
+        "unpredictablexss-lang/CyberSecurity-Innovation-Audit-c4-selective"
+      ],
+      "counts_by_state": {
+        "tracked_clean": 187,
+        "tracked_modified_worktree": 6,
+        "untracked_worktree_only": 9,
+        "untracked_or_ignored_worktree_only": 30
+      },
+      "scope_roots": [
+        "research/experiments/ark_runtime",
+        "research/evidence/ark_runtime/independent-holdout",
+        "tests/detectors/ark_runtime",
+        "src/ohscanner/detectors/ark_runtime"
+      ],
+      "new_v3_directory_excluded_from_self_inventory": true
+    },
+    "status": "incomplete_due_unavailable_external_or_untracked_history",
+    "stop_reason": "External/untracked development, tuning, demos, prior exposure and reviewer-contact history outside the enumerated checkouts remains unavailable. Root-cause family mapping is not defensible across this unknown history."
+  },
+  "final_gate_audit": "admin/final_gate_audit.json"
+}
