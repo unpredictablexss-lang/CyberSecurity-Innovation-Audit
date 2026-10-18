@@ -1,0 +1,148 @@
+{
+  "schema": "ark-runtime-c-line-current-freeze-replay-review-v1",
+  "created_at": "2026-10-19 Asia/Shanghai",
+  "kind": "review_manifest_no_detector_execution",
+  "overall_status": "blocked",
+  "freeze": {
+    "path": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+    "observed_snapshot_path": "research/deliveries/cpp/C_LINE_FREEZE_OBSERVED_20261019.json",
+    "observed_at": "2026-10-19T00:00:36+08:00",
+    "sha256": "852d403e158816ee2a9f29ac00e925f53c3d33064f929dd56ec4259c5d205cae",
+    "detector": "ohscanner.ark.runtime.type_safety",
+    "version": "0.3.2",
+    "model_sha256": "6f26027b58baed730d5b8287c77f4c5f763873ab5f78416c8484f6a712f212df",
+    "scope": "Research holdout only; only the two source profiles listed below. No product admission or runtime claim."
+  },
+  "execution": {
+    "detector_invoked": false,
+    "reason": "The current freeze and Detector implementation hashes match, and exact model source bindings are verified. The required BUILD.gn input cannot be represented by the public C++-only SourceUnit contract; a complete product compiler/preprocessor profile is also absent. Same-config inputs are therefore not constructible without changing the source contract or guessing build inputs.",
+    "same_config_replay": false,
+    "command_for_prior_0_3_1_recovery_only": "$env:GIT_NO_LAZY_FETCH = '1'; python research/experiments/ark-runtime-history-replay-20261018/replay.py"
+  },
+  "samples": [
+    {
+      "id": "typedarray_filter_parent",
+      "role": "vulnerable_parent",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "source_bytes": 150433,
+      "source_blob_sha_verified_from_preserved_bytes": true,
+      "commit_tree_verified_in_local_cache": true,
+      "required_creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "creator_source_bytes_restored": true,
+      "status": "blocked",
+      "finding": null,
+      "expected_semantic_difference": "Parent store reads the receiver type token; modeled as candidate intent only, with no current 0.3.2 observation."
+    },
+    {
+      "id": "typedarray_filter_fix",
+      "role": "fix_revision",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "source_bytes": 150509,
+      "source_blob_sha_verified_from_preserved_bytes": true,
+      "commit_tree_verified_in_local_cache": true,
+      "required_creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "creator_source_bytes_restored": true,
+      "status": "blocked",
+      "finding": null,
+      "expected_semantic_difference": "Patch reads the result array type token before pending-exception handling; expected state remains unknown, not safe, without a valid replay."
+    },
+    {
+      "id": "typedarray_set_control",
+      "role": "safe_control_in_fix_source",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "status": "blocked",
+      "finding": null,
+      "reason": "In-scope control was not analyzed because the same-config source/dependency/parser input could not be constructed. Zero findings are not labeled safe or miss."
+    },
+    {
+      "id": "typedarray_map_control",
+      "role": "unrelated_control",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "status": "not_analyzed",
+      "finding": null,
+      "reason": "Outside the frozen caller profiles; no profile override was used."
+    },
+    {
+      "id": "slowpath_exception_parent_fix",
+      "role": "separate_research_probe",
+      "source_records": "research/experiments/ark-runtime-history-replay-20261018/replay-manifest.json:other_historical_source_integrity",
+      "status": "not_analyzed",
+      "finding": null,
+      "reason": "Different file family and separate probe/config; excluded from the TypeSafety replay."
+    }
+  ],
+  "source_object_verification": {
+    "artifact": "research/deliveries/cpp/C_LINE_SOURCE_BINDING_VERIFICATION_20261018.json",
+    "artifact_sha256": "46da2ec5aadcb4795f544dc9285bed31213d979ba4c4dd5efcaaa8e2d4dcd6ab",
+    "detached_sha256_file": "research/deliveries/cpp/C_LINE_SOURCE_BINDING_VERIFICATION_20261018.sha256",
+    "result": "passed",
+    "profiles": 2,
+    "exact_model_bindings_per_profile": 30,
+    "commit_tree_target_creator_verified": true,
+    "git_lazy_fetch_disabled": true,
+    "note": "Supersedes older Windows-side cache-unavailable observations."
+  },
+  "current_blockers": [
+    {
+      "id": "legacy_dependency_snapshot_not_current_closure",
+      "detail": "dependency-manifest-v1.json digest 238ecaa18f68067a18434078d02a9ec07d51851b9b2b2b3ade54eb0c3d39b60e is a legacy 21-input manifest with 33 unresolved build/include/parser/toolchain obligations. Its detector/model hashes predate the final 0.3.2 freeze; the final freeze itself passes implementation/model digest checks, but no complete product depfile closure exists."
+    },
+    {
+      "id": "gn_input_language_contract",
+      "detail": "Required ecmascript/compiler/BUILD.gn is bound by model.py, while detector.py requires dependency SourceUnit.language == cpp and SourceUnit's allowed languages omit GN."
+    },
+    {
+      "id": "build_parser_and_preprocessing_profile",
+      "detail": "C1 lacks compile_commands, args.gn, compiler identity, argv, defines, include order, generated inputs and dependency closure. C2 reports 13 parser error/missing nodes; macros and type resolution remain incomplete."
+    }
+  ],
+  "excluded_historical_runs": [
+    {"version": "0.2.0", "reason": "Different detector/model/config; not combined."},
+    {"version": "0.3.0", "reason": "Separate exception-guard follow-up; not combined."},
+    {"version": "0.3.1", "artifact": "research/experiments/ark-runtime-history-replay-20261018/replay-manifest.json", "reason": "Task-start frozen 0.3.1 recovery record only; no same-config Detector run and not a result for live 0.3.2."},
+    {"version": "exception-protection 0.1.0", "reason": "Separate rule/config; not combined."}
+  ],
+  "validation": {
+    "source_binding_command": "python research/deliveries/cpp/verify_ark_runtime_source_bindings.py",
+    "source_binding_result": "exit 0: both commit/tree identities and 60/60 commit/path/blob/content-SHA bindings match",
+    "dependency_manifest_command": "python research/experiments/ark-runtime-exact-source-20261018/verify_dependency_manifest.py --json",
+    "dependency_manifest_result": "exit 2: dependency_hash_mismatch for detector.py and model.py",
+    "profile_check_command": "python research/experiments/ark_runtime/c1_profile_20261018/profile_check.py",
+    "profile_check_result": "exit 2: required build profile fields missing",
+    "c2_reproduction_command": "wsl.exe env GIT_NO_LAZY_FETCH=1 PYTHONPATH=/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit python3 /mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/deliveries/cpp/typedarray-parser-gap-20261018/reproduce.py /mnt/d/openHarmonyScanner/openharmony/arkcompiler/ets_runtime",
+    "c2_reproduction_status": "failed_before_analysis",
+    "c2_reproduction_error": "ModuleNotFoundError: No module named tree_sitter_c in current WSL Python environment",
+    "focused_regression_command": "python -m unittest research.tests.test_ark_runtime_type_safety_freeze research.tests.test_ark_runtime_type_safety_binding research.tests.test_ark_runtime_exception_guard research.tests.test_ark_runtime_exception_protection_detector -v",
+    "focused_regression_result": "32 passed of 32; final captured live freeze implementation/model digest checks pass. Project-authored tests, not independent truth labels or product validation.",
+    "freeze_observation": "Freeze verification count and bytes changed during review (self-reported binding/history count observed as 22, 23, 24, 26, then 27). Final captured bytes are in C_LINE_FREEZE_OBSERVED_20261019.json; detector.py/model.py hashes match the snapshot."
+  },
+  "status_semantics": {
+    "candidate": "Not emitted by this review; no detector execution.",
+    "partial": "A parse/replay result with incomplete evidence; not safe.",
+    "blocked": "Required object/config/dependency prevented valid analysis.",
+    "not_analyzed": "Outside scope or intentionally not run under the frozen profile.",
+    "failed": "Reserved for an attempted analysis that errors; none in this current review."
+  },
+  "no_accuracy_claim": true,
+  "no_admission_change": true
+}

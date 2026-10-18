@@ -1,0 +1,12 @@
+PowerShell (run from the CyberSecurity-Innovation-Audit repository root):
+
+$env:GIT_NO_LAZY_FETCH = '1'
+python research/experiments/ark-runtime-history-replay-20261018/replay.py
+
+The replay script only reproduces the blocked disposition. It verifies the retained source byte bindings and local history object availability; it does not run the detector because the frozen 0.3.1 model source is missing.
+
+JSON syntax verification:
+python -c "import json,pathlib; d=pathlib.Path('research/experiments/ark-runtime-history-replay-20261018'); [json.loads(p.read_text(encoding='utf-8')) for p in d.glob('*.json')]; print('JSON manifests valid')"
+
+Diff whitespace verification:
+git diff --check
