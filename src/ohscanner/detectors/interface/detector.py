@@ -5,7 +5,10 @@ from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 from .tlv_fixed_width import find_fixed_width_tlv_overreads
-from .network_session_allowlist import find_auth_session_allowlist_candidates
+from .network_session_allowlist import (
+    find_auth_session_allowlist_candidates,
+    has_exact_registered_session_resolution,
+)
 from .auth_transport_status import find_permission_denial_transport_success
 
 
@@ -89,7 +92,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.2"
+    version = "0.12.3"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -222,10 +225,16 @@ class IpcInterfaceDetector:
         # OnRemoteRequest root. Keep this source-only check separate and attach
         # explicit reachability/policy obligations to its candidate.
         network_auth_findings = []
+        exact_registered_session_resolution = has_exact_registered_session_resolution(
+            unit.text for unit in applicable
+            if unit.parse_status not in ("failed", "not_run")
+        )
         for unit in applicable:
             if unit.parse_status in ("failed", "not_run"):
                 continue
             for line, symbol, check_kind in find_auth_session_allowlist_candidates(unit.text):
+                if check_kind == "prefix" and exact_registered_session_resolution:
+                    continue
                 message = ("AUTH-06 candidate: a decoded peer AppInfo reaches auth-channel state "
                            "update and success notification without a source-recognized exact "
                            "sessionName whitelist rejection. Network reachability and policy effect "

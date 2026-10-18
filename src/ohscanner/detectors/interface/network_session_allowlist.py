@@ -147,6 +147,101 @@ def _rejects_before_effect(function, helpers, effect_start):
     return False
 
 
+def has_exact_registered_session_resolution(sources):
+    """Recognize the reviewed fail-closed exact-name lookup chain.
+
+    This requires all relevant function bodies in the indexed sources. Missing
+    cross-file context deliberately leaves a prefix-only candidate unresolved.
+    """
+    functions = {}
+    parser = Parser(Language(tree_sitter_c.language()))
+    for source in sources:
+        root = parser.parse(source.encode("utf-8")).root_node
+        for function in _walk(root, "function_definition"):
+            name = _function_name(function)
+            if name:
+                functions.setdefault(name, []).append(function)
+
+    def bodies(name):
+        definitions = functions.get(name, ())
+        # Ambiguous definitions cannot be joined into one proof chain.
+        if len(definitions) != 1:
+            return []
+        body = definitions[0].child_by_field_name("body")
+        return [body] if body is not None else []
+
+    def exact_lookup(name):
+        for body in bodies(name):
+            compact_body = _compact(body)
+            if not compact_body.endswith("returnSOFTBUS_ERR;}"):
+                continue
+            for branch in _walk(body, "if_statement"):
+                condition = branch.child_by_field_name("condition")
+                consequence = branch.child_by_field_name("consequence")
+                if condition is None or consequence is None:
+                    continue
+                exact_compare = False
+                for call, call_name, _ in _calls(condition):
+                    if call_name != "strcmp":
+                        continue
+                    args = call.child_by_field_name("arguments")
+                    values = [_compact(arg) for arg in args.named_children] if args else []
+                    if (len(values) == 2 and "sessionName" in values[0]
+                            and "sessionName" in values[1]
+                            and "==0" in _compact(condition)):
+                        exact_compare = True
+                        break
+                if exact_compare and "returnSOFTBUS_OK;" in _compact(consequence):
+                    return True
+        return False
+
+    if not (exact_lookup("TransGetUidAndPid")
+            and exact_lookup("TransGetPkgNameBySessionName")):
+        return False
+    def errors_on_failure(body, callee):
+        for branch in _walk(body, "if_statement"):
+            condition = branch.child_by_field_name("condition")
+            consequence = branch.child_by_field_name("consequence")
+            if condition is None or consequence is None:
+                continue
+            if (any(call_name == callee for _, call_name, _ in _calls(condition))
+                    and "!=SOFTBUS_OK" in _compact(condition)
+                    and "returnSOFTBUS_ERR;" in _compact(consequence)):
+                return True
+        return False
+
+    get_app_info = any(
+        "sessionName" in _compact(body)
+        and errors_on_failure(body, "TransGetUidAndPid")
+        and errors_on_failure(body, "TransGetPkgNameBySessionName")
+        for body in bodies("GetAppInfo")
+    )
+    create_auth_info = any(
+        "GetAppInfo(" in _compact(body) and "sessionName" in _compact(body)
+        and "!=SOFTBUS_OK" in _compact(body) and "gotoEXIT_ERR;" in _compact(body)
+        and "EXIT_ERR:" in _compact(body) and "SoftBusFree(info);" in _compact(body)
+        and "returnNULL;" in _compact(body)
+        for body in bodies("CreateAuthChannelInfo")
+    )
+    if not (get_app_info and create_auth_info):
+        return False
+    for body in bodies("OnRequsetUpdateAuthChannel"):
+        compact = _compact(body)
+        create_at = compact.find("CreateAuthChannelInfo(")
+        null_at = compact.find("item==NULL", create_at + 1)
+        return_at = max(compact.find("returnSOFTBUS_TRANS_AUTH_CREATE_CHANINFO_FAIL;", null_at + 1),
+                        compact.find("returnSOFTBUS_ERR;", null_at + 1))
+        effect_positions = [
+            position for position in (
+                compact.find("AddAuthChannelInfo(", return_at + 1),
+                compact.find("CopyPeerAppInfo(", return_at + 1),
+            ) if position >= 0
+        ]
+        if create_at >= 0 and null_at > create_at and return_at > null_at and effect_positions:
+            return True
+    return False
+
+
 def find_auth_session_allowlist_candidates(source):
     """Return `(line, callback, check_kind)` for weakly guarded peer identity.
 

@@ -3,6 +3,7 @@ import unittest
 from src.ohscanner.detectors.interface.network_session_allowlist import (
     find_auth_session_allowlist_candidates,
     find_missing_auth_session_allowlist,
+    has_exact_registered_session_resolution,
 )
 from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
 from tests.test_ipc_detector import context
@@ -57,6 +58,54 @@ EXIT_ERR:
 """
 
 
+EXACT_REGISTERED_SESSION_CONTEXT = r"""
+int32_t TransGetUidAndPid(const char *sessionName, int32_t *uid, int32_t *pid)
+{
+    for (SessionServer *pos = list; pos != NULL; pos = pos->next) {
+        if (strcmp(pos->sessionName, sessionName) == 0) {
+            *uid = pos->uid;
+            *pid = pos->pid;
+            return SOFTBUS_OK;
+        }
+    }
+    return SOFTBUS_ERR;
+}
+int32_t TransGetPkgNameBySessionName(const char *sessionName, char *pkgName, uint16_t len)
+{
+    for (SessionServer *pos = list; pos != NULL; pos = pos->next) {
+        if (strcmp(pos->sessionName, sessionName) == 0) {
+            copy(pkgName, len, pos->pkgName);
+            return SOFTBUS_OK;
+        }
+    }
+    return SOFTBUS_ERR;
+}
+int32_t GetAppInfo(const char *sessionName, AppInfo *info)
+{
+    if (TransGetUidAndPid(sessionName, &info->uid, &info->pid) != SOFTBUS_OK) return SOFTBUS_ERR;
+    if (TransGetPkgNameBySessionName(sessionName, info->pkgName, sizeof(info->pkgName)) != SOFTBUS_OK) {
+        return SOFTBUS_ERR;
+    }
+    return SOFTBUS_OK;
+}
+AuthChannelInfo *CreateAuthChannelInfo(const char *sessionName)
+{
+    AuthChannelInfo *info = allocate();
+    if (GetAppInfo(sessionName, info) != SOFTBUS_OK) goto EXIT_ERR;
+    return info;
+EXIT_ERR:
+    SoftBusFree(info);
+    return NULL;
+}
+int32_t OnRequsetUpdateAuthChannel(int64_t authId, AppInfo *appInfo)
+{
+    AuthChannelInfo *item = CreateAuthChannelInfo(appInfo->myData.sessionName);
+    if (item == NULL) return SOFTBUS_ERR;
+    AddAuthChannelInfo(item);
+    return SOFTBUS_OK;
+}
+"""
+
 class NetworkAuthSessionAllowlistTests(unittest.TestCase):
     def test_unvalidated_peer_identity_before_state_update_is_candidate(self):
         findings = find_missing_auth_session_allowlist(VULNERABLE)
@@ -108,6 +157,53 @@ class NetworkAuthSessionAllowlistTests(unittest.TestCase):
                        if item.rule_id == "ipc.network.auth-session-whitelist")
         self.assertEqual(finding.consequence_impact, "unknown")
         self.assertIn("allowlist-length prefix", finding.message)
+
+    def test_prefix_candidate_is_suppressed_with_exact_fail_closed_registry_chain(self):
+        prefix = FIXED.replace(
+            "if (strcmp(appInfo->myData.sessionName, g_sessionWhiteList[index]) == 0)",
+            "if (strncmp(appInfo->myData.sessionName, g_sessionWhiteList[index], "
+            "strnlen(g_sessionWhiteList[index], SESSION_NAME_SIZE_MAX)) == 0)",
+        )
+        self.assertTrue(has_exact_registered_session_resolution(
+            (prefix, EXACT_REGISTERED_SESSION_CONTEXT)))
+        ctx = context(prefix + EXACT_REGISTERED_SESSION_CONTEXT)
+        self.assertFalse(any(item.rule_id == "ipc.network.auth-session-whitelist"
+                             for item in IpcInterfaceDetector().detect(ctx, ctx.units).findings))
+
+    def test_prefix_candidate_remains_when_registered_session_context_is_missing(self):
+        prefix = FIXED.replace(
+            "if (strcmp(appInfo->myData.sessionName, g_sessionWhiteList[index]) == 0)",
+            "if (strncmp(appInfo->myData.sessionName, g_sessionWhiteList[index], "
+            "strnlen(g_sessionWhiteList[index], SESSION_NAME_SIZE_MAX)) == 0)",
+        )
+        self.assertFalse(has_exact_registered_session_resolution((prefix,)))
+        self.assertEqual(find_auth_session_allowlist_candidates(prefix)[0][2], "prefix")
+
+    def test_exact_name_lookups_do_not_suppress_without_fail_closed_update_chain(self):
+        weakened = EXACT_REGISTERED_SESSION_CONTEXT.replace(
+            "if (item == NULL) return SOFTBUS_ERR;", "if (item == NULL) publish(item);")
+        self.assertFalse(has_exact_registered_session_resolution((weakened,)))
+
+    def test_ignored_registry_lookup_failure_does_not_suppress_prefix_candidate(self):
+        weakened = EXACT_REGISTERED_SESSION_CONTEXT.replace(
+            "if (TransGetUidAndPid(sessionName, &info->uid, &info->pid) != SOFTBUS_OK) return SOFTBUS_ERR;",
+            "TransGetUidAndPid(sessionName, &info->uid, &info->pid);",
+        )
+        self.assertFalse(has_exact_registered_session_resolution((weakened,)))
+
+    def test_open_default_for_registry_lookup_does_not_suppress_prefix_candidate(self):
+        needle = "    return SOFTBUS_ERR;" + chr(10) + "}" + chr(10)
+        needle += "int32_t TransGetPkgNameBySessionName"
+        replacement = "    return SOFTBUS_OK;" + chr(10) + "}" + chr(10)
+        replacement += "int32_t TransGetPkgNameBySessionName"
+        weakened = EXACT_REGISTERED_SESSION_CONTEXT.replace(needle, replacement, 1)
+        self.assertFalse(has_exact_registered_session_resolution((weakened,)))
+
+    def test_ambiguous_registered_session_resolver_keeps_prefix_candidate(self):
+        duplicate = "\nint32_t TransGetUidAndPid(const char *sessionName, int *uid, int *pid) "
+        duplicate += "{ (void)sessionName; return SOFTBUS_OK; }\n"
+        self.assertFalse(has_exact_registered_session_resolution(
+            (EXACT_REGISTERED_SESSION_CONTEXT + duplicate,)))
 
     def test_guard_after_state_update_does_not_suppress_candidate(self):
         source = FIXED.replace(
