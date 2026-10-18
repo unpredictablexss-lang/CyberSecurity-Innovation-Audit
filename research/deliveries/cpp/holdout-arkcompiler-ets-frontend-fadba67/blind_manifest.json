@@ -1,0 +1,250 @@
+{
+  "schema": "c-line-same-name-holdout-v2",
+  "algorithm_freeze": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+  "source": {
+    "repository": "openharmony/arkcompiler_ets_frontend",
+    "remote": "https://gitcode.com/openharmony/arkcompiler_ets_frontend",
+    "commit": "fadba67b0bdf625d30d69e0940e26c52992669df",
+    "tree": "cae995ac693e849ac9d71bb38ec961da58aaeadb",
+    "path": "ets2panda/lsp/src/symbol_reference_index.cpp",
+    "blob_oid": "39bec9bd9abd6e5d570bbbce21e34afba6c5f916",
+    "sha256": "b9809fd39fe3f3b058e19008f51968b3d6f5ba56a0ed3203d4f08e7104f36847",
+    "lines": 1318,
+    "translation_unit_parse": "complete"
+  },
+  "selection": {
+    "rule": "fixed official component from the manifest; one non-test production C++ Filter-suffixed function selected as a same-name near-miss; no C-line output existed for this commit and none was consulted",
+    "sample_id": "F001",
+    "source_lines": [
+      81,
+      87
+    ],
+    "lexical_census": {
+      "Filter_open_paren_occurrences": 2,
+      "CopyWithin_open_paren_occurrences": 0,
+      "NewTypedArray_occurrences": 0,
+      "StoreTypedArrayElement_occurrences": 0
+    },
+    "detector_invoked": false,
+    "selected_after_matcher_freeze": true,
+    "matcher_version_at_selection": "0.3.1",
+    "current_binding_version": "0.3.2",
+    "matcher_code_changed_after_selection": false,
+    "previous_full_scan_c_status": "missing",
+    "previous_full_scan_candidate_count": 0,
+    "additional_frame_rule": "from the same pinned production translation unit, select 20 function definitions at evenly spaced interior declaration-order indexes using floor((i+1)*N/21), i=0..19; no detector output consulted",
+    "frame_kind": "clustered_applicability_false_match_only",
+    "translation_unit_function_count": 57,
+    "additional_samples": [
+      {
+        "sample_id": "F002",
+        "function_index_zero_based": 2,
+        "symbol": "ark::es2panda::lsp::ShouldCollectExportInfo",
+        "source_lines": [
+          89,
+          93
+        ],
+        "excerpt_sha256": "bc26e28a7b5b0fbb6e712f2b4361d0c712bbefed98262c845125a7161659089a"
+      },
+      {
+        "sample_id": "F003",
+        "function_index_zero_based": 5,
+        "symbol": "ark::es2panda::lsp::NormalizeTypeText",
+        "source_lines": [
+          139,
+          156
+        ],
+        "excerpt_sha256": "39f3c1ea60bccca6f79f394f6349e842302df123754ee15150ff7b788092a98b"
+      },
+      {
+        "sample_id": "F004",
+        "function_index_zero_based": 8,
+        "symbol": "ark::es2panda::lsp::BuildDisplayNameForExport",
+        "source_lines": [
+          202,
+          212
+        ],
+        "excerpt_sha256": "35336d07b32dead23466ab1d2336180f9d3ef9ab115db42415dae8b54d0f02f4"
+      },
+      {
+        "sample_id": "F005",
+        "function_index_zero_based": 10,
+        "symbol": "ark::es2panda::lsp::IsImportOwnerIdentifier",
+        "source_lines": [
+          228,
+          243
+        ],
+        "excerpt_sha256": "6fe40c1fe8c143078597e13de9250e1d801656c8da759cfd4f5459521023cb78"
+      },
+      {
+        "sample_id": "F006",
+        "function_index_zero_based": 13,
+        "symbol": "ark::es2panda::lsp::BuildSymbolId",
+        "source_lines": [
+          317,
+          340
+        ],
+        "excerpt_sha256": "ac072ca0bacd681750b3e9894b47fe9ace745d39b82ab572a3e72ee45f158b58"
+      },
+      {
+        "sample_id": "F007",
+        "function_index_zero_based": 16,
+        "symbol": "ark::es2panda::lsp::HasBuiltinTypeVariable",
+        "source_lines": [
+          352,
+          356
+        ],
+        "excerpt_sha256": "063a3a354b64261ca770258b640f75a570fe0992650a549824488905ddf6ae5d"
+      },
+      {
+        "sample_id": "F008",
+        "function_index_zero_based": 19,
+        "symbol": "ark::es2panda::lsp::IsDefinitionNode",
+        "source_lines": [
+          380,
+          386
+        ],
+        "excerpt_sha256": "fa477e150391a258646ba8763e7770c7a5f166041012927fe7c9394507906cb3"
+      },
+      {
+        "sample_id": "F009",
+        "function_index_zero_based": 21,
+        "symbol": "ark::es2panda::lsp::DeduplicateAndSortReferences",
+        "source_lines": [
+          432,
+          450
+        ],
+        "excerpt_sha256": "24e2bea6af6c15b52fd5a304e9258cc03ef3fe9fc5cbd6400e4e01f673928198"
+      },
+      {
+        "sample_id": "F010",
+        "function_index_zero_based": 24,
+        "symbol": "ark::es2panda::lsp::ResolveSymbolId",
+        "source_lines": [
+          482,
+          495
+        ],
+        "excerpt_sha256": "bc5af3b3fb957ee51a2b10103652f36bd2f899a1544c4e3057a9f985c41a5a15"
+      },
+      {
+        "sample_id": "F011",
+        "function_index_zero_based": 27,
+        "symbol": "ark::es2panda::lsp::GetReferenceIdentifierAndOwner",
+        "source_lines": [
+          542,
+          555
+        ],
+        "excerpt_sha256": "5367b5a96697637968a44e2cbc5cb34de1a76c61b5a7ca58c271318d8531ac28"
+      },
+      {
+        "sample_id": "F012",
+        "function_index_zero_based": 29,
+        "symbol": "ark::es2panda::lsp::AddReferenceFromNode",
+        "source_lines": [
+          585,
+          615
+        ],
+        "excerpt_sha256": "1e8a687bc0f3a4a45a82341bf5218214c27b2eb35b0a0b84e6780e827beb51e7"
+      },
+      {
+        "sample_id": "F013",
+        "function_index_zero_based": 32,
+        "symbol": "ark::es2panda::lsp::BuildImportFileReferencesForProgram",
+        "source_lines": [
+          679,
+          691
+        ],
+        "excerpt_sha256": "422082f905fcaec0c9abe93f59d7038bce86be911334343a8d6d4669ac027e1b"
+      },
+      {
+        "sample_id": "F014",
+        "function_index_zero_based": 35,
+        "symbol": "ark::es2panda::lsp::AddReExportReference",
+        "source_lines": [
+          745,
+          756
+        ],
+        "excerpt_sha256": "68ff16403cc2209f634db3cc167a674991e439a7e4165f9849e76846a3209632"
+      },
+      {
+        "sample_id": "F015",
+        "function_index_zero_based": 38,
+        "symbol": "ark::es2panda::lsp::BuildReExportReferenceForSpecifier",
+        "source_lines": [
+          789,
+          818
+        ],
+        "excerpt_sha256": "6c75e4614ffb44e70fa665d0af5f49f060d1ccf8889e0d7d08932da247e6639c"
+      },
+      {
+        "sample_id": "F016",
+        "function_index_zero_based": 40,
+        "symbol": "ark::es2panda::lsp::BuildSymbolReferenceIndexForProgram",
+        "source_lines": [
+          839,
+          872
+        ],
+        "excerpt_sha256": "f2becd99ac8802249c537cc363f84d6b8a514308dbf6d3fd4386b361540d459a"
+      },
+      {
+        "sample_id": "F017",
+        "function_index_zero_based": 43,
+        "symbol": "ark::es2panda::lsp::BuildSymbolReferenceIndexForContext",
+        "source_lines": [
+          889,
+          897
+        ],
+        "excerpt_sha256": "2a12e43e3a408bdb806cb89edd8a980c5043f4bb8ca38e7b42be6768b0f8fb99"
+      },
+      {
+        "sample_id": "F018",
+        "function_index_zero_based": 46,
+        "symbol": "ark::es2panda::lsp::GetReferencesAtPositionFromIndex",
+        "source_lines": [
+          940,
+          993
+        ],
+        "excerpt_sha256": "435f5964dc30833d1d0e68eea1ea39b3d5b71ae3343441094a3878af747b227e"
+      },
+      {
+        "sample_id": "F019",
+        "function_index_zero_based": 48,
+        "symbol": "ark::es2panda::lsp::GetIndexedFileSource",
+        "source_lines": [
+          1024,
+          1031
+        ],
+        "excerpt_sha256": "280c80fbdc261bb63461169eea21a7e9693b81ac3fffe0813c76c6f39bec3afc"
+      },
+      {
+        "sample_id": "F020",
+        "function_index_zero_based": 51,
+        "symbol": "ark::es2panda::lsp::LevenshteinDistance",
+        "source_lines": [
+          1079,
+          1127
+        ],
+        "excerpt_sha256": "2fbd2e16a7606462b122954c9a1ca9f1c42dec35bb24e837554ef50e05d9f674"
+      },
+      {
+        "sample_id": "F021",
+        "function_index_zero_based": 54,
+        "symbol": "ark::es2panda::lsp::FindSimilarSymbolNames",
+        "source_lines": [
+          1188,
+          1228
+        ],
+        "excerpt_sha256": "65dacf3a36337e01977099645191c8e9805931bb8aa96cbc0488edea927a82ae"
+      }
+    ],
+    "sample_count_total": 21,
+    "additional_frame_matcher_version": "0.3.2"
+  },
+  "review": {
+    "sample_count": 21,
+    "reviewed": 0,
+    "unknown": null,
+    "root_cause_results": null,
+    "labels_present": false
+  }
+}

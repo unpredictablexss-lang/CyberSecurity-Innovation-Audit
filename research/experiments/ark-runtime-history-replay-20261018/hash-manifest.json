@@ -1,0 +1,12 @@
+{
+  "schema": "ark-runtime-history-replay-hash-manifest-v1",
+  "files": {
+    "research/experiments/ark-runtime-history-replay-20261018/README.md": "02ede663f879b3c620baa06cbc56c0d2d6e4332ad82d72d8ee22b1bf573d8d8d",
+    "research/experiments/ark-runtime-history-replay-20261018/commands.txt": "bee8dc1bcc773bb2d2cbe1d94347defdb1ced3f767ac2037c291c9450d1dcab9",
+    "research/experiments/ark-runtime-history-replay-20261018/replay.py": "a192c3962002912ac7c92b59d783d837fe7b6e7b9b66ef1e23483faf4692310a",
+    "research/experiments/ark-runtime-history-replay-20261018/frozen-contract-start-snapshot.json": "c6224e6286b347364a1240efda6804c1b9af3e6c3a5c83c3d1e490548b8dca4b",
+    "research/experiments/ark-runtime-history-replay-20261018/replay-manifest.json": "3e4d001433af6731066eb86e528810d9c93844c2aaba2923c9cab6ea3038424e",
+    "research/experiments/ark-runtime-history-replay-20261018/run-summary.json": "814583bcb8dfe89e1ce1a1d45753009d8e15e01f90f00b131e0ab07e5dc06ae3",
+    "docs/项目现状与下一步.md": "e358abe6ebe252d6a40b7a37ec165e6c77f313022fe6fae6307ba99ddc0522df"
+  }
+}

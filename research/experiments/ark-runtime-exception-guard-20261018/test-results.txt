@@ -1,0 +1,10 @@
+test_fixed_source_with_pre_guard_type_read_is_unknown (research.tests.test_ark_runtime_exception_guard.ExceptionSensitiveOriginTests.test_fixed_source_with_pre_guard_type_read_is_unknown) ... ok
+test_parent_preserves_type_origin_candidate (research.tests.test_ark_runtime_exception_guard.ExceptionSensitiveOriginTests.test_parent_preserves_type_origin_candidate) ... ok
+test_post_guard_type_read_can_match (research.tests.test_ark_runtime_exception_guard.ExceptionSensitiveOriginTests.test_post_guard_type_read_can_match) ... ok
+test_safe_and_unrelated_caller_controls_remain_stable (research.tests.test_ark_runtime_exception_guard.ExceptionSensitiveOriginTests.test_safe_and_unrelated_caller_controls_remain_stable) ... ok
+test_unmodeled_call_after_guard_invalidates_exception_fact (research.tests.test_ark_runtime_exception_guard.ExceptionSensitiveOriginTests.test_unmodeled_call_after_guard_invalidates_exception_fact) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.706s
+
+OK

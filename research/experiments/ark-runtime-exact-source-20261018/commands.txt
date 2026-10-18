@@ -1,0 +1,16 @@
+# Exact-source Ark Runtime comparison commands
+# Run from D:\openHarmonyScanner\CyberSecurity-Innovation-Audit in PowerShell.
+# All git operations below are local-only reads from the existing WSL repository object database.
+
+# Export exact C-line type-origin source blobs, identified by their Git blob OIDs.
+wsl.exe -e bash -lc 'g=/mnt/d/openHarmonyScanner/openharmony/arkcompiler/ets_runtime; o=/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/experiments/ark-runtime-exact-source-20261018/sources; git -C "$g" cat-file blob 054451b1be4f39254d56a1683cc9d1c1b5e55018 > "$o/type-origin-parent.cpp"; git -C "$g" cat-file blob 95f54f2875f401afe3167c62f8c1e7799782be8c > "$o/type-origin-fix.cpp"'
+
+# Export exact exception-protection source blobs and the fixed regression input.
+wsl.exe -e bash -lc 'g=/mnt/d/openHarmonyScanner/openharmony/arkcompiler/ets_runtime; o=/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/experiments/ark-runtime-exact-source-20261018/sources; git -C "$g" cat-file blob 00003d3b0a5b2863d9c9677c423d96a72f4c6ae6 > "$o/exception-parent.cpp"; git -C "$g" cat-file blob 5c290f71cae4220b9f1fc93fd18803a8ee995c98 > "$o/exception-fix.cpp"; git -C "$g" cat-file blob 5908e384c00382cd0ec1f7ed92c52e39b84c2e40 > "$o/exception-fix-regression.js"'
+
+# Re-run every exact-source input/control. Script verifies Git blob OID, SHA-256,
+# frozen model digest, and detector implementation source hashes before analysis.
+python research\experiments\ark-runtime-exact-source-20261018\replay_exact_sources.py
+
+# Recreate raw parent/fix diffs for review.
+wsl.exe -e bash -lc 'g=/mnt/d/openHarmonyScanner/openharmony/arkcompiler/ets_runtime; o=/mnt/d/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/experiments/ark-runtime-exact-source-20261018/sources; git -C "$g" diff --unified=8 830e85b40240677039719fcbf14f721ad3b19050 a0e30483ab3e4aead67ecfb5c708489915e447f9 -- ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp > "$o/type-origin-parent-fix.patch"; git -C "$g" diff --unified=8 2e2cebedf5a96fb798144c82296b8b55e2eb60c6 c80d853d1b3be23ca999618a199183bc854eaa6a -- ecmascript/compiler/slowpath_lowering.cpp > "$o/exception-parent-fix.patch"'

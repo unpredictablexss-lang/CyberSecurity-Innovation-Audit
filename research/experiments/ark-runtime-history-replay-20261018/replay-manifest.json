@@ -1,0 +1,220 @@
+{
+  "schema": "ark-runtime-frozen-history-replay-v1",
+  "overall_status": "blocked",
+  "freeze_manifest": "research/experiments/ark-runtime-history-replay-20261018/frozen-contract-start-snapshot.json",
+  "freeze_manifest_sha256": "c6224e6286b347364a1240efda6804c1b9af3e6c3a5c83c3d1e490548b8dca4b",
+  "freeze_snapshot_is_byte_exact": false,
+  "live_freeze_at_manifest_generation": {
+    "version": "0.3.2",
+    "model_sha256": "6f26027b58baed730d5b8287c77f4c5f763873ab5f78416c8484f6a712f212df",
+    "manifest_sha256": "0b8b08a443e3578136c9f4610b3b83474d5cb39a4d0dee7f9360ce0147ad8291"
+  },
+  "frozen_contract": {
+    "detector": "ohscanner.ark.runtime.type_safety",
+    "version": "0.3.1",
+    "rule_id": "ark.runtime.typedarray-store-type-origin",
+    "model_sha256": "ec13c5edf488ade409fd6f13709193879a3bbc2a58f3129017786c7559ccc575",
+    "freeze_scope": "Research holdout only. Any implementation/model change requires a new detector version and invalidates this holdout packet for evaluation."
+  },
+  "source_integrity": {
+    "parent": {
+      "role": "vulnerable_parent",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "bytes": 150433,
+      "recomputed_git_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "recomputed_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "preserved_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "blob_bytes_match": true,
+      "commit_tree_object_status": "not_confirmed_local_cache",
+      "raw_bytes_source": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-parent.cpp",
+      "commit_tree_object_check": {
+        "commit_object": "unavailable_local_no_fetch",
+        "tree_object": "not_checked",
+        "matches_recorded_tree": false
+      }
+    },
+    "fix": {
+      "role": "fix_revision",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "bytes": 150509,
+      "recomputed_git_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "recomputed_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "preserved_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "blob_bytes_match": true,
+      "commit_tree_object_status": "not_confirmed_local_cache",
+      "raw_bytes_source": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-fix.cpp",
+      "commit_tree_object_check": {
+        "commit_object": "unavailable_local_no_fetch",
+        "tree_object": "not_checked",
+        "matches_recorded_tree": false
+      }
+    }
+  },
+  "other_historical_source_integrity": [
+    {
+      "id": "exception_parent",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "2e2cebedf5a96fb798144c82296b8b55e2eb60c6",
+      "tree": "b3489e3b4202da7fe180e8d6c292d544f5973874",
+      "path": "ecmascript/compiler/slowpath_lowering.cpp",
+      "blob": "00003d3b0a5b2863d9c9677c423d96a72f4c6ae6",
+      "recomputed_git_blob": "00003d3b0a5b2863d9c9677c423d96a72f4c6ae6",
+      "source_sha256": "472c9b11722ef5df40bcd6a3e743a5a209bce66b6d3e0f41351da97c6de04a0c",
+      "expected_source_sha256": "472c9b11722ef5df40bcd6a3e743a5a209bce66b6d3e0f41351da97c6de04a0c",
+      "bytes": 170756,
+      "blob_bytes_match": true,
+      "local_commit_tree_check": {
+        "commit_object": "present_local",
+        "commit_tree": "b3489e3b4202da7fe180e8d6c292d544f5973874",
+        "tree_object": "present_local"
+      },
+      "frozen_0_3_1_disposition": "not_analyzed_out_of_scope_separate_probe"
+    },
+    {
+      "id": "exception_fix",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "c80d853d1b3be23ca999618a199183bc854eaa6a",
+      "tree": "c57ae1249050c8e2b9f0046ca630f45e08645cf9",
+      "path": "ecmascript/compiler/slowpath_lowering.cpp",
+      "blob": "5c290f71cae4220b9f1fc93fd18803a8ee995c98",
+      "recomputed_git_blob": "5c290f71cae4220b9f1fc93fd18803a8ee995c98",
+      "source_sha256": "cd4614fa6a4920d7e2ab850ce027d555421d49f40d99c509b0cab980abb342dc",
+      "expected_source_sha256": "cd4614fa6a4920d7e2ab850ce027d555421d49f40d99c509b0cab980abb342dc",
+      "bytes": 170810,
+      "blob_bytes_match": true,
+      "local_commit_tree_check": {
+        "commit_object": "present_local",
+        "commit_tree": "c57ae1249050c8e2b9f0046ca630f45e08645cf9",
+        "tree_object": "present_local"
+      },
+      "frozen_0_3_1_disposition": "not_analyzed_out_of_scope_separate_probe"
+    },
+    {
+      "id": "exception_fix_regression",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "c80d853d1b3be23ca999618a199183bc854eaa6a",
+      "tree": "c57ae1249050c8e2b9f0046ca630f45e08645cf9",
+      "path": "test/aottest/unhandle_pending_exception/unhandle_pending_exception.js",
+      "blob": "5908e384c00382cd0ec1f7ed92c52e39b84c2e40",
+      "recomputed_git_blob": "5908e384c00382cd0ec1f7ed92c52e39b84c2e40",
+      "source_sha256": "de603593f0f5723f5e0f15ff2735619024bf2ae8248a930418c5720c1aa5620b",
+      "expected_source_sha256": "de603593f0f5723f5e0f15ff2735619024bf2ae8248a930418c5720c1aa5620b",
+      "bytes": 1538,
+      "blob_bytes_match": true,
+      "local_commit_tree_check": {
+        "commit_object": "present_local",
+        "commit_tree": "c57ae1249050c8e2b9f0046ca630f45e08645cf9",
+        "tree_object": "present_local"
+      },
+      "frozen_0_3_1_disposition": "not_analyzed_out_of_scope_separate_probe"
+    }
+  ],
+  "frozen_implementation_integrity": {
+    "research/full_scan_20261018/lanes/c/analysis.py": {
+      "freeze_sha256": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee",
+      "working_tree_sha256": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee",
+      "executed_workspace_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+      "executed_commit_file_sha256": "5e1b818981930d34c0f686172b0f2bbf71fa13ae6f4c7819d9cc3bd34c030f80",
+      "frozen_source_restored": true
+    },
+    "research/full_scan_20261018/lanes/c/detector.py": {
+      "freeze_sha256": "d18b7bee15cb778efa00963c19293e7c69f3195e8827ea6075a4ffe5eb28e5bc",
+      "working_tree_sha256": "d18b7bee15cb778efa00963c19293e7c69f3195e8827ea6075a4ffe5eb28e5bc",
+      "executed_workspace_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+      "executed_commit_file_sha256": "5dd3dfd92c57abe999cf6ce4828f6ce8c40843ef18a718822ce167432aee7d32",
+      "frozen_source_restored": true
+    },
+    "research/full_scan_20261018/lanes/c/model.py": {
+      "freeze_sha256": "299b493a9bf5ae3d7fb1a8b15f352dbabb0adcc852c3803202b29d4ef363f3f3",
+      "working_tree_sha256": "c19f9f3744faf059c546a1d4ff01d47ee5e6885fa21e27fbce2e21b0504d1b60",
+      "executed_workspace_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+      "executed_commit_file_sha256": "e37e42d282426243d4f66b3a0c6c3f9f393c9f1629c755e2b26b6a253c86768d",
+      "frozen_source_restored": false
+    },
+    "research/full_scan_20261018/lanes/c/runtime_ir.py": {
+      "freeze_sha256": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+      "working_tree_sha256": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+      "executed_workspace_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+      "executed_commit_file_sha256": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+      "frozen_source_restored": true
+    },
+    "research/full_scan_20261018/lanes/c/syntax.py": {
+      "freeze_sha256": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+      "working_tree_sha256": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+      "executed_workspace_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+      "executed_commit_file_sha256": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+      "frozen_source_restored": true
+    },
+    "research/full_scan_20261018/lanes/c/type_origin.py": {
+      "freeze_sha256": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795",
+      "working_tree_sha256": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795",
+      "executed_workspace_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+      "executed_commit_file_sha256": "3ba6af5739953f8a74634df8b2e350542adff9e00db6a7e4e27e353a06aede3a",
+      "frozen_source_restored": true
+    }
+  },
+  "replay_command": "python research/experiments/ark-runtime-history-replay-20261018/replay.py",
+  "replay_blockers": [
+    "One or more 0.3.1 implementation files whose SHA-256 values are in the task-start freeze snapshot are absent from the working tree and do not match the recorded executed-workspace commit; the live freeze and model have since moved to 0.3.2.",
+    "The typedarray parent and fix commit/tree objects are unavailable in the local history cache. The original source checkout has an empty .git/config; no fetch was performed.",
+    "The frozen NewObjectStubBuilder creator dependency bytes are not present in the preserved source bundle."
+  ],
+  "sample_dispositions": {
+    "typedarray_parent": {
+      "status": "blocked",
+      "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+    },
+    "typedarray_fix": {
+      "status": "blocked",
+      "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+    },
+    "safe_Set_control": {
+      "status": "blocked",
+      "reason": "In-scope control in fix blob; not run because frozen implementation cannot be restored."
+    },
+    "unrelated_Map_control": {
+      "status": "not_analyzed",
+      "reason": "Map is outside the frozen caller profiles; no caller override or custom config was used."
+    },
+    "exception_propagation_parent_fix": {
+      "status": "not_analyzed",
+      "reason": "Different file family and separate research-only detector/probe; previous outputs are quarantined and not combined."
+    }
+  },
+  "expected_parent_fix_difference": "The parent samples the receiver type token before storing into a species-created result; the fix samples the result array type. Under the frozen 0.3.1 semantics the parent is expected to remain a partial candidate, while the fixed source is unknown because the type read occurs before pending-exception handling. That expected difference is not a replay result or safety label.",
+  "historical_runs_excluded": [
+    {
+      "detector_version": "0.2.0",
+      "model_sha256": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe",
+      "reason": "Different model and implementation; excluded from current freeze replay."
+    },
+    {
+      "detector_version": "0.3.0",
+      "artifact": "research/experiments/ark-runtime-exception-guard-20261018/raw-results.json",
+      "reason": "Earlier exception-guard follow-up; not the frozen 0.3.1 run and not a component-wide label."
+    },
+    {
+      "detector": "research.ark.runtime.exception_propagation_probe",
+      "artifact": "research/experiments/ark-runtime-exact-source-20261018/reproduction-record.json",
+      "reason": "Independent lexical probe; not combined with C type-origin results."
+    }
+  ],
+  "status_semantics": {
+    "candidate": "not emitted in this blocked replay",
+    "partial": "no new detector result",
+    "blocked": "required frozen code or provenance unavailable",
+    "not_analyzed": "out of frozen scope or no valid execution",
+    "failed": "reserved for an attempted analysis that errors; none attempted"
+  },
+  "no_accuracy_claim": true
+}

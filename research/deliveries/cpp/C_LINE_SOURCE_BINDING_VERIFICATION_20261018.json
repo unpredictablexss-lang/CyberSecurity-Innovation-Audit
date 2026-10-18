@@ -1,0 +1,578 @@
+{
+  "schema": "ark-runtime-source-binding-verification-v1",
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "source_object_store": "/mnt/d/openHarmonyScanner/openharmony/.repo/projects/arkcompiler/ets_runtime.git",
+  "git_lazy_fetch_disabled": true,
+  "method": "WSL git rev-parse/show; recompute Git blob SHA-1 and content SHA-256",
+  "profiles": [
+    {
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "expected_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "resolved_tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "tree_matches": true,
+      "expected_target_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "target_matches": true,
+      "expected_creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "creator_matches": true,
+      "model_binding_count": 30,
+      "all_bindings_match": true,
+      "bindings": [
+        {
+          "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+          "expected_blob": "757b8d050d306d349822600deacb295c7a54245e",
+          "resolved_blob": "757b8d050d306d349822600deacb295c7a54245e",
+          "recomputed_blob": "757b8d050d306d349822600deacb295c7a54245e",
+          "bytes": 126036,
+          "sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "expected_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+          "resolved_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+          "recomputed_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+          "bytes": 150433,
+          "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.h",
+          "expected_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+          "resolved_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+          "recomputed_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+          "bytes": 65907,
+          "sha256": "37757e96a98a20c3598af837d27003912d0f41a6a633e5ec99c04078ef2c8c1d",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder-inl.h",
+          "expected_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+          "resolved_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+          "recomputed_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+          "bytes": 140690,
+          "sha256": "a41ac4bc896fc56c93176b80590620976f0fedd8105bff61f30d9548b0da2520",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.cpp",
+          "expected_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+          "resolved_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+          "recomputed_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+          "bytes": 436814,
+          "sha256": "6a58a43a3bc1dd018acb57bf54b8c85bda5bbf197eedf7f4fd41dd63941799b8",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/hcr_circuit_builder.h",
+          "expected_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+          "resolved_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+          "recomputed_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+          "bytes": 16622,
+          "sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/mcr_circuit_builder.h",
+          "expected_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+          "resolved_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+          "recomputed_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+          "bytes": 26077,
+          "sha256": "a92932e25ab94f020403bdfd30a5848076bcd444e587461b61d3630805de5ba9",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+          "expected_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+          "resolved_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+          "recomputed_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+          "bytes": 12359,
+          "sha256": "838a127ac98866a44f73ff71b574820b7175b8424a0fbb1fda0dfb3cedfd1739",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/circuit_builder.cpp",
+          "expected_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+          "resolved_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+          "recomputed_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+          "bytes": 59182,
+          "sha256": "beb2668526a760d30c2fe8ae181a1cd5544a45d4b6bf888d92f96fb10452077c",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/new_object_stub_builder.h",
+          "expected_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+          "resolved_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+          "recomputed_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+          "bytes": 10540,
+          "sha256": "4b2d3586c0df13bdc25a2b029cc6a445c6f6bc1b95349968ca2b221df6779bb4",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+          "expected_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+          "resolved_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+          "recomputed_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+          "bytes": 33980,
+          "sha256": "64263f8d75dae7f7f924d9e34fb7a41e2180ae4e6f73e16f1c139e79987e4e76",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "expected_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+          "resolved_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+          "recomputed_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+          "bytes": 11828,
+          "sha256": "c665d4e13208dc00e809331e13a0135b5ae4c63f9c47f4e99e85dc51eb491ee2",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/call_stub_builder.h",
+          "expected_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+          "resolved_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+          "recomputed_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+          "bytes": 8168,
+          "sha256": "3bcb06509efea7261bdaef4c108e31281275c8eff4cbbda24632d710edc98d21",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/profiler_operation.h",
+          "expected_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+          "resolved_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+          "recomputed_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+          "bytes": 4176,
+          "sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+          "expected_blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+          "resolved_blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+          "recomputed_blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+          "bytes": 7645,
+          "sha256": "972251b5e2ce005a2b143720faa1abeddbc7dce7dcc434af6b1ad041f078cf89",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_call_signature_list.h",
+          "expected_blob": "86eedb54583556006e755325e8ae1e5653bd9785",
+          "resolved_blob": "86eedb54583556006e755325e8ae1e5653bd9785",
+          "recomputed_blob": "86eedb54583556006e755325e8ae1e5653bd9785",
+          "bytes": 24299,
+          "sha256": "6efa0afac37caadf1808cfd264198b154ba158c8e48a9305e97f5e9e11510303",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/BUILD.gn",
+          "expected_blob": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "resolved_blob": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "recomputed_blob": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "bytes": 16890,
+          "sha256": "45f89ba6ad648be7b5f002f754d8ff6729f103e45a1aff6f517b87eb7737fe28",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+          "expected_blob": "a7c8afb9523efdd39837f2eb405f1e5cf3ea7563",
+          "resolved_blob": "a7c8afb9523efdd39837f2eb405f1e5cf3ea7563",
+          "recomputed_blob": "a7c8afb9523efdd39837f2eb405f1e5cf3ea7563",
+          "bytes": 6339,
+          "sha256": "1a612768896f44898aae6222f06ac2e23cd5f1425919ed3e6b8029247c2d86c6",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_typed_array.h",
+          "expected_blob": "245a848947dd3f11be2488b64602c7c4d16ebcbf",
+          "resolved_blob": "245a848947dd3f11be2488b64602c7c4d16ebcbf",
+          "recomputed_blob": "245a848947dd3f11be2488b64602c7c4d16ebcbf",
+          "bytes": 7429,
+          "sha256": "ab33033decabeaf6b773ba50a076f01faf9d72e32049e1586706640b765f274c",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_arraybuffer.h",
+          "expected_blob": "126259c9b6a51599751bcee384a44bd636ec6770",
+          "resolved_blob": "126259c9b6a51599751bcee384a44bd636ec6770",
+          "recomputed_blob": "126259c9b6a51599751bcee384a44bd636ec6770",
+          "bytes": 2258,
+          "sha256": "69151aef3cb634ef443bae44f7c4334d993ccfa71d6ef1c0d338d699365c6100",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_dataview.h",
+          "expected_blob": "c93f078ecd4ef400ba035b996e776c3759f6e56e",
+          "resolved_blob": "c93f078ecd4ef400ba035b996e776c3759f6e56e",
+          "recomputed_blob": "c93f078ecd4ef400ba035b996e776c3759f6e56e",
+          "bytes": 1707,
+          "sha256": "e743389708ba597f23a8a4d1337aea07590376307d919b0656c8322b9b5bd989",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/base/typed_array_helper-inl.h",
+          "expected_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+          "resolved_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+          "recomputed_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+          "bytes": 22732,
+          "sha256": "ed9bc1df7a3c1a4c30046710a9a28c5d74e2fc0e56e21da1de1d752006635fc4",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/gate.h",
+          "expected_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+          "resolved_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+          "recomputed_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+          "bytes": 11348,
+          "sha256": "85330dc30f41373d97864afe5289990f14c56198b07cec6c1fac7ce50e8f09f5",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/share_gate_meta_data.h",
+          "expected_blob": "acba13274a3485fea764aa9e2be575bb58a0c4e6",
+          "resolved_blob": "acba13274a3485fea764aa9e2be575bb58a0c4e6",
+          "recomputed_blob": "acba13274a3485fea764aa9e2be575bb58a0c4e6",
+          "bytes": 21144,
+          "sha256": "236115fee0631f2412bcd18a9c217161091c71611a6ad7b21689825a3e9a8e7d",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/circuit_builder_helper.h",
+          "expected_blob": "543c442ac4cabcde84ff82abc3d8ca267d2c0a6b",
+          "resolved_blob": "543c442ac4cabcde84ff82abc3d8ca267d2c0a6b",
+          "recomputed_blob": "543c442ac4cabcde84ff82abc3d8ca267d2c0a6b",
+          "bytes": 12067,
+          "sha256": "48ab6d939c8555372a54a17722c1244e1f2b6e759d10c5f4ae031b4f6732b743",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/circuit_builder.h",
+          "expected_blob": "c4ac896e9bb6798762b1be8d889ad87f80e63180",
+          "resolved_blob": "c4ac896e9bb6798762b1be8d889ad87f80e63180",
+          "recomputed_blob": "c4ac896e9bb6798762b1be8d889ad87f80e63180",
+          "bytes": 61669,
+          "sha256": "a054795b90739166f734e22f9961abef6d7384f918fb1bea0d9fb5cc75661f61",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/rt_call_signature.h",
+          "expected_blob": "41628e7484312d79ce41f25e167428b6ae9166b7",
+          "resolved_blob": "41628e7484312d79ce41f25e167428b6ae9166b7",
+          "recomputed_blob": "41628e7484312d79ce41f25e167428b6ae9166b7",
+          "bytes": 3334,
+          "sha256": "e87b610565cc441bfbefb9bcd81f94f6cb91c9b6a92b348ffd00c7bf913648af",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/variable_type.h",
+          "expected_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+          "resolved_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+          "recomputed_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+          "bytes": 3822,
+          "sha256": "7269b2111d2be7464b38ccf7029786e83a34b4159a16fa1d1759f18c7a5aca55",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_hclass.h",
+          "expected_blob": "c16dcd8a88ba22f935b2b7543b8d05a20cbcb978",
+          "resolved_blob": "c16dcd8a88ba22f935b2b7543b8d05a20cbcb978",
+          "recomputed_blob": "c16dcd8a88ba22f935b2b7543b8d05a20cbcb978",
+          "bytes": 97487,
+          "sha256": "3c810eae9facd44c8ab994758af29f38e35c99b219095350d247fc2da3193f14",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/ecma_runtime_call_info.h",
+          "expected_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
+          "resolved_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
+          "recomputed_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
+          "bytes": 8374,
+          "sha256": "30803ab68a3089dc502626cfa810193ab76312f328fc551596b5da67b65025cb",
+          "matches": true
+        }
+      ]
+    },
+    {
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "expected_tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "resolved_tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "tree_matches": true,
+      "expected_target_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "target_matches": true,
+      "expected_creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "creator_matches": true,
+      "model_binding_count": 30,
+      "all_bindings_match": true,
+      "bindings": [
+        {
+          "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+          "expected_blob": "757b8d050d306d349822600deacb295c7a54245e",
+          "resolved_blob": "757b8d050d306d349822600deacb295c7a54245e",
+          "recomputed_blob": "757b8d050d306d349822600deacb295c7a54245e",
+          "bytes": 126036,
+          "sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+          "expected_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+          "resolved_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+          "recomputed_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+          "bytes": 150509,
+          "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.h",
+          "expected_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+          "resolved_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+          "recomputed_blob": "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd",
+          "bytes": 65907,
+          "sha256": "37757e96a98a20c3598af837d27003912d0f41a6a633e5ec99c04078ef2c8c1d",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder-inl.h",
+          "expected_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+          "resolved_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+          "recomputed_blob": "8658e6ee729c3b171639772ad3a1ada06442abd0",
+          "bytes": 140690,
+          "sha256": "a41ac4bc896fc56c93176b80590620976f0fedd8105bff61f30d9548b0da2520",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/stub_builder.cpp",
+          "expected_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+          "resolved_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+          "recomputed_blob": "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2",
+          "bytes": 436814,
+          "sha256": "6a58a43a3bc1dd018acb57bf54b8c85bda5bbf197eedf7f4fd41dd63941799b8",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/hcr_circuit_builder.h",
+          "expected_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+          "resolved_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+          "recomputed_blob": "176dd0a5ee320f814049c2b671119515c746380d",
+          "bytes": 16622,
+          "sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/mcr_circuit_builder.h",
+          "expected_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+          "resolved_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+          "recomputed_blob": "631911dec663addd62533d6a6808ffe699a6f884",
+          "bytes": 26077,
+          "sha256": "a92932e25ab94f020403bdfd30a5848076bcd444e587461b61d3630805de5ba9",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/lcr_circuit_builder.cpp",
+          "expected_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+          "resolved_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+          "recomputed_blob": "af4d27bcd46ea0a4a2980a805dd7de77970ffb56",
+          "bytes": 12359,
+          "sha256": "838a127ac98866a44f73ff71b574820b7175b8424a0fbb1fda0dfb3cedfd1739",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/circuit_builder.cpp",
+          "expected_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+          "resolved_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+          "recomputed_blob": "b4bf452cac6bdeb820b78334be98cb3dc11330cb",
+          "bytes": 59182,
+          "sha256": "beb2668526a760d30c2fe8ae181a1cd5544a45d4b6bf888d92f96fb10452077c",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/new_object_stub_builder.h",
+          "expected_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+          "resolved_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+          "recomputed_blob": "f411d72cbca7915e56b9d851beeb57b788e438ac",
+          "bytes": 10540,
+          "sha256": "4b2d3586c0df13bdc25a2b029cc6a445c6f6bc1b95349968ca2b221df6779bb4",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.cpp",
+          "expected_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+          "resolved_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+          "recomputed_blob": "715c5d65164369bc93a82aa4a6cc1d19b7970143",
+          "bytes": 33980,
+          "sha256": "64263f8d75dae7f7f924d9e34fb7a41e2180ae4e6f73e16f1c139e79987e4e76",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+          "expected_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+          "resolved_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+          "recomputed_blob": "88e131561f756db9bd9e57b3078df22ac3c34c6a",
+          "bytes": 11828,
+          "sha256": "c665d4e13208dc00e809331e13a0135b5ae4c63f9c47f4e99e85dc51eb491ee2",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/call_stub_builder.h",
+          "expected_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+          "resolved_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+          "recomputed_blob": "f1f44f44679a9a6d648c8dd0182864d4af7c24f7",
+          "bytes": 8168,
+          "sha256": "3bcb06509efea7261bdaef4c108e31281275c8eff4cbbda24632d710edc98d21",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/profiler_operation.h",
+          "expected_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+          "resolved_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+          "recomputed_blob": "e68a2db48f222945629adb637cd50be8a0f93651",
+          "bytes": 4176,
+          "sha256": "ae79f4a797260bcc5f0be6a89737c17321b8e9f0c656c4859416619331e13398",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+          "expected_blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+          "resolved_blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+          "recomputed_blob": "dec0677003a9209cb61e2a692a0995201aca7428",
+          "bytes": 7645,
+          "sha256": "972251b5e2ce005a2b143720faa1abeddbc7dce7dcc434af6b1ad041f078cf89",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_call_signature_list.h",
+          "expected_blob": "86eedb54583556006e755325e8ae1e5653bd9785",
+          "resolved_blob": "86eedb54583556006e755325e8ae1e5653bd9785",
+          "recomputed_blob": "86eedb54583556006e755325e8ae1e5653bd9785",
+          "bytes": 24299,
+          "sha256": "6efa0afac37caadf1808cfd264198b154ba158c8e48a9305e97f5e9e11510303",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/BUILD.gn",
+          "expected_blob": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "resolved_blob": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "recomputed_blob": "bff0145a50065bad462beb5a1feb567ae1aea517",
+          "bytes": 16890,
+          "sha256": "45f89ba6ad648be7b5f002f754d8ff6729f103e45a1aff6f517b87eb7737fe28",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+          "expected_blob": "a7c8afb9523efdd39837f2eb405f1e5cf3ea7563",
+          "resolved_blob": "a7c8afb9523efdd39837f2eb405f1e5cf3ea7563",
+          "recomputed_blob": "a7c8afb9523efdd39837f2eb405f1e5cf3ea7563",
+          "bytes": 6339,
+          "sha256": "1a612768896f44898aae6222f06ac2e23cd5f1425919ed3e6b8029247c2d86c6",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_typed_array.h",
+          "expected_blob": "245a848947dd3f11be2488b64602c7c4d16ebcbf",
+          "resolved_blob": "245a848947dd3f11be2488b64602c7c4d16ebcbf",
+          "recomputed_blob": "245a848947dd3f11be2488b64602c7c4d16ebcbf",
+          "bytes": 7429,
+          "sha256": "ab33033decabeaf6b773ba50a076f01faf9d72e32049e1586706640b765f274c",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_arraybuffer.h",
+          "expected_blob": "126259c9b6a51599751bcee384a44bd636ec6770",
+          "resolved_blob": "126259c9b6a51599751bcee384a44bd636ec6770",
+          "recomputed_blob": "126259c9b6a51599751bcee384a44bd636ec6770",
+          "bytes": 2258,
+          "sha256": "69151aef3cb634ef443bae44f7c4334d993ccfa71d6ef1c0d338d699365c6100",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_dataview.h",
+          "expected_blob": "c93f078ecd4ef400ba035b996e776c3759f6e56e",
+          "resolved_blob": "c93f078ecd4ef400ba035b996e776c3759f6e56e",
+          "recomputed_blob": "c93f078ecd4ef400ba035b996e776c3759f6e56e",
+          "bytes": 1707,
+          "sha256": "e743389708ba597f23a8a4d1337aea07590376307d919b0656c8322b9b5bd989",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/base/typed_array_helper-inl.h",
+          "expected_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+          "resolved_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+          "recomputed_blob": "3adadba4324927a18ff715efa99b2aa9cd15bc41",
+          "bytes": 22732,
+          "sha256": "ed9bc1df7a3c1a4c30046710a9a28c5d74e2fc0e56e21da1de1d752006635fc4",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/gate.h",
+          "expected_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+          "resolved_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+          "recomputed_blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+          "bytes": 11348,
+          "sha256": "85330dc30f41373d97864afe5289990f14c56198b07cec6c1fac7ce50e8f09f5",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/share_gate_meta_data.h",
+          "expected_blob": "acba13274a3485fea764aa9e2be575bb58a0c4e6",
+          "resolved_blob": "acba13274a3485fea764aa9e2be575bb58a0c4e6",
+          "recomputed_blob": "acba13274a3485fea764aa9e2be575bb58a0c4e6",
+          "bytes": 21144,
+          "sha256": "236115fee0631f2412bcd18a9c217161091c71611a6ad7b21689825a3e9a8e7d",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/circuit_builder_helper.h",
+          "expected_blob": "543c442ac4cabcde84ff82abc3d8ca267d2c0a6b",
+          "resolved_blob": "543c442ac4cabcde84ff82abc3d8ca267d2c0a6b",
+          "recomputed_blob": "543c442ac4cabcde84ff82abc3d8ca267d2c0a6b",
+          "bytes": 12067,
+          "sha256": "48ab6d939c8555372a54a17722c1244e1f2b6e759d10c5f4ae031b4f6732b743",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/circuit_builder.h",
+          "expected_blob": "c4ac896e9bb6798762b1be8d889ad87f80e63180",
+          "resolved_blob": "c4ac896e9bb6798762b1be8d889ad87f80e63180",
+          "recomputed_blob": "c4ac896e9bb6798762b1be8d889ad87f80e63180",
+          "bytes": 61669,
+          "sha256": "a054795b90739166f734e22f9961abef6d7384f918fb1bea0d9fb5cc75661f61",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/rt_call_signature.h",
+          "expected_blob": "41628e7484312d79ce41f25e167428b6ae9166b7",
+          "resolved_blob": "41628e7484312d79ce41f25e167428b6ae9166b7",
+          "recomputed_blob": "41628e7484312d79ce41f25e167428b6ae9166b7",
+          "bytes": 3334,
+          "sha256": "e87b610565cc441bfbefb9bcd81f94f6cb91c9b6a92b348ffd00c7bf913648af",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/compiler/variable_type.h",
+          "expected_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+          "resolved_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+          "recomputed_blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+          "bytes": 3822,
+          "sha256": "7269b2111d2be7464b38ccf7029786e83a34b4159a16fa1d1759f18c7a5aca55",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/js_hclass.h",
+          "expected_blob": "c16dcd8a88ba22f935b2b7543b8d05a20cbcb978",
+          "resolved_blob": "c16dcd8a88ba22f935b2b7543b8d05a20cbcb978",
+          "recomputed_blob": "c16dcd8a88ba22f935b2b7543b8d05a20cbcb978",
+          "bytes": 97487,
+          "sha256": "3c810eae9facd44c8ab994758af29f38e35c99b219095350d247fc2da3193f14",
+          "matches": true
+        },
+        {
+          "path": "ecmascript/ecma_runtime_call_info.h",
+          "expected_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
+          "resolved_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
+          "recomputed_blob": "f3c6fcb23559fcb00b0f7954ddba2024e1afc878",
+          "bytes": 8374,
+          "sha256": "30803ab68a3089dc502626cfa810193ab76312f328fc551596b5da67b65025cb",
+          "matches": true
+        }
+      ]
+    }
+  ],
+  "all_profiles_match": true
+}

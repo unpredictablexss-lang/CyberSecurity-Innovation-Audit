@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "repository": "openharmony/arkcompiler/ets_runtime",
+  "local_path": "openharmony/arkcompiler/ets_runtime",
+  "configured_remote": {
+    "name": "gitcode",
+    "url": "https://gitcode.com/openharmony/arkcompiler_ets_runtime"
+  },
+  "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+  "parents": [
+    "6518536b40ae58ef959a0572d82ddfece862eda0",
+    "aa537287fed6fbf34676d4e5435cd8bd1904012d"
+  ],
+  "tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+  "snapshot_source": "local Git objects; no checkout/fetch performed by reproduction",
+  "target": {
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+    "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+  },
+  "direct_include_spellings": {
+    "target_cpp": [
+      "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+      "ecmascript/base/typed_array_helper-inl.h",
+      "ecmascript/compiler/builtins/builtins_arraybuffer_stub_builder.h",
+      "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+      "ecmascript/compiler/call_stub_builder.h",
+      "ecmascript/compiler/new_object_stub_builder.h"
+    ],
+    "builder_header": [
+      "ecmascript/compiler/builtins/builtins_stubs.h",
+      "ecmascript/compiler/stub_builder-inl.h",
+      "ecmascript/js_arraybuffer.h",
+      "ecmascript/js_typed_array.h"
+    ]
+  },
+  "method_registration": {
+    "macro": "BUILTINS_WITH_TYPEDARRAY_STUB_BUILDER",
+    "definition_file": "ecmascript/compiler/builtins/builtins_call_signature_list.h",
+    "entries": {
+      "Filter": "TYPED_ARRAY_FILTER",
+      "Map": "TYPED_ARRAY_MAP"
+    },
+    "declaration_expander": "DECLARE_BUILTINS_TYPEDARRAY_STUB_BUILDER",
+    "declaration_signature": "void method(GateRef glue, GateRef numArgs, GateRef end, Variable *result, Label *exit, Label *slowPath);",
+    "method_definition_signature_parameters": "GateRef glue, GateRef thisValue, GateRef numArgs, Variable *result, Label *exit, Label *slowPath",
+    "interpretation": "Parameter names differ; both declarations/definitions have the same C++ parameter types and order, but this observation is source-level, not compiler verification."
+  },
+  "other_macro_definition_locations": {
+    "BUILTIN_COMPILER_TYPED_ARRAY_TYPES": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+    "BRANCH": "ecmascript/compiler/circuit_builder.h",
+    "DEFVARIABLE": "ecmascript/compiler/stub_builder.h",
+    "IR_IF and IR_ELSE": "ecmascript/compiler/stub_builder.h",
+    "RTSTUB_ID": "ecmascript/compiler/rt_call_signature.h",
+    "NO_MOVE_SEMANTIC and NO_COPY_SEMANTIC": "openharmony/arkcompiler/runtime_core@a053abc44c608b11d9f9dd10bd681dc222b9d4a9:libpandabase/include/libpandabase/macros.h"
+  },
+  "same_repository_dependencies": [
+    {
+      "path": "ecmascript/compiler/BUILD.gn",
+      "blob": "e6f28ab0562deea4a0ece18851e1ea927b806c1d",
+      "sha256": "34f23416b2983f5635c00f881b444c4b15975e7ff8d9657b03ae65847ada103a",
+      "role": "libark_jsoptimizer_sources target membership"
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.h",
+      "blob": "017286724e4cd6df1a369589293efe920660c4c6",
+      "sha256": "f5b25eed46bfe6e951c6ad8b79ff76bfee8d402868839d21e6d41cd84ef3f8e3",
+      "role": "class, method declarations, typed-array type macro"
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_call_signature_list.h",
+      "blob": "694d77ca7f92656b13650c4b115b3cbeee5917f0",
+      "sha256": "d54119de6af7ccf12268409af9ec053ebbf44f404956e216394da1499e197958",
+      "role": "BUILTINS_WITH_TYPEDARRAY_STUB_BUILDER maps Filter/Map to TYPED_ARRAY_FILTER/MAP"
+    },
+    {
+      "path": "ecmascript/compiler/builtins/builtins_stubs.h",
+      "blob": "5edb8446151cb3b21f43bcbaceeb9d777dd89801",
+      "sha256": "6dfb74b71c999d063a4391ebd5f848769b11df518c7b8fd88cc794a70e92e4a7",
+      "role": "base class and transitive circuit/runtime declarations"
+    },
+    {
+      "path": "ecmascript/compiler/stub_builder-inl.h",
+      "blob": "c0521ab7a55cd63850736c2db8a290115965373c",
+      "sha256": "e3e840771be228a2c5e6c15576ecdf3f06175622b5840525520345f1d22d76be",
+      "role": "inline stub builder API"
+    },
+    {
+      "path": "ecmascript/js_typed_array.h",
+      "blob": "d59bc3138542afa22bfe2a2f42f5fa756a6dae1a",
+      "sha256": "a22084f1746bbfe86656a92d4847bebfab3057e667b25bcb0853cc648c29e669",
+      "role": "JSTypedArray and includes js_dataview.h"
+    },
+    {
+      "path": "ecmascript/js_arraybuffer.h",
+      "blob": "a6da193e8a91fe42706aab71ce71d92c00bb8adf",
+      "sha256": "fe09165a245f519938012ad9deab67635cc0d52953fb26151771504fb23fe863",
+      "role": "JSArrayBuffer declarations"
+    },
+    {
+      "path": "ecmascript/js_dataview.h",
+      "blob": "070c89334ccfd102f02153863176e05295113bfd",
+      "sha256": "4ad3254492a91ee9f22e61eefa1fd98932fdeea5becdb29b79339306d79da802",
+      "role": "DataViewType enum"
+    },
+    {
+      "path": "ecmascript/base/typed_array_helper-inl.h",
+      "blob": "172fa188b64ed23d0714c4f4cd0ef66bcbb8e1cf",
+      "sha256": "ecad66a6acb1a19f4eed9b84ce9f86f565348ad0be8c3411643ebace7a8ee559",
+      "role": "typed-array helper implementation"
+    },
+    {
+      "path": "ecmascript/compiler/call_stub_builder.h",
+      "blob": "d1fb1b9ef28ff8c928a6e8dfdd9aed67e42ef6aa",
+      "sha256": "18af6653e22c36dc1fce30d9b7b7eda9d616084add2b1c6d1faa6d89c6c895ae",
+      "role": "call builder declaration"
+    },
+    {
+      "path": "ecmascript/compiler/new_object_stub_builder.h",
+      "blob": "ecdf871b20e884e013ce0f26877ef404e4950cb0",
+      "sha256": "d84a72bb1a252fb9ea2b8ff01e702c3a0c952681e211d8f1a850f1880217778b",
+      "role": "object builder declaration"
+    },
+    {
+      "path": "ecmascript/compiler/gate.h",
+      "blob": "e1f47a40708012e5d42995fe82e4be097cc2cd19",
+      "sha256": "85330dc30f41373d97864afe5289990f14c56198b07cec6c1fac7ce50e8f09f5",
+      "role": "GateRef definition location"
+    },
+    {
+      "path": "ecmascript/compiler/share_gate_meta_data.h",
+      "blob": "f64148d632d04cd194b92bc8837647f27fe9fe10",
+      "sha256": "f3b080f46744bd3af66fc1bff3720a5fab2b30437ac978d535a21444f6d3bc20",
+      "role": "GateRef shared definition location"
+    },
+    {
+      "path": "ecmascript/compiler/circuit_builder_helper.h",
+      "blob": "d990380aff718b31de4cafa35663cb2d70f10300",
+      "sha256": "7b3c9dd0934e9edbed1d4774e0bb92ef01ed32fbf05f8138cefcaa4e49ce0f18",
+      "role": "Variable and Label definitions"
+    },
+    {
+      "path": "ecmascript/compiler/circuit_builder.h",
+      "blob": "df296de399f31a97417ed124f4ed8f8e4fd608b7",
+      "sha256": "41ce63da35d4f9abf5e32bcd417384fadcb018718d002b798e339da11a1a7d70",
+      "role": "BRANCH macro definition and circuit builder declarations"
+    },
+    {
+      "path": "ecmascript/compiler/stub_builder.h",
+      "blob": "9e2fbd3ede1da91133dcd936018285e597944515",
+      "sha256": "a11ca83c0a8bbe16ea4ce9dabb2ab3aca2ee9c680a95433371e79494e2a92cb0",
+      "role": "DEFVARIABLE macro definition and stub builder API"
+    },
+    {
+      "path": "ecmascript/compiler/rt_call_signature.h",
+      "blob": "fc778d25c2fd5266ecb756a820544c2b01bb0f1f",
+      "sha256": "74c0769d7d1d26e112351656e872318e49372f817118715368c13e837af80435",
+      "role": "RTSTUB_ID macro definition"
+    },
+    {
+      "path": "ecmascript/compiler/variable_type.h",
+      "blob": "72008694c6a16f6532b261d0d9d2493273e383ce",
+      "sha256": "7269b2111d2be7464b38ccf7029786e83a34b4159a16fa1d1759f18c7a5aca55",
+      "role": "VariableType definition"
+    },
+    {
+      "path": "ecmascript/js_hclass.h",
+      "blob": "fca61941b181d1796d485e387054221d6f136337",
+      "sha256": "36d38fd0d12b05c21069a663418b569063e96912f6758b9611b832a78477d4e3",
+      "role": "JSType enum definition"
+    },
+    {
+      "path": "ecmascript/ecma_runtime_call_info.h",
+      "blob": "5021ce2bd40215c17006b4d106a028ce7da24862",
+      "sha256": "301d9c768610d53451bcf84a038fd828b524924ca08cf4582fd05b3a57365e21",
+      "role": "runtime call argument declarations used by inherited helpers"
+    }
+  ],
+  "external_repository_dependencies": [
+    {
+      "repository": "openharmony/arkcompiler/runtime_core",
+      "remote": "https://gitcode.com/openharmony/arkcompiler_runtime_core",
+      "commit": "a053abc44c608b11d9f9dd10bd681dc222b9d4a9",
+      "tree": "96c955e45cae52cd03fe9b5c33407ef119047aef",
+      "path": "libpandabase/include/libpandabase/macros.h",
+      "blob": "d7de3cae189a4e91780030b0d0061096a1a02137",
+      "sha256": "e01a9a32a7e0f2f46363e6fa194556e1708d592c3cc7bccfba5811804de1f402",
+      "role": "NO_MOVE_SEMANTIC and NO_COPY_SEMANTIC definitions"
+    }
+  ],
+  "key_types": {
+    "GateRef": "ecmascript/compiler/gate.h and share_gate_meta_data.h",
+    "Variable": "ecmascript/compiler/circuit_builder_helper.h",
+    "Label": "ecmascript/compiler/circuit_builder_helper.h",
+    "DataViewType": "ecmascript/js_dataview.h",
+    "JSTypedArray": "ecmascript/js_typed_array.h",
+    "JSType": "ecmascript/js_hclass.h"
+  },
+  "build_evidence": {
+    "source_membership": "Verified in ecmascript/compiler/BUILD.gn as libark_jsoptimizer_sources member.",
+    "compile_commands_json": "not present in this checkout",
+    "args_gn": "not present under openharmony/out",
+    "build_ninja": "not present under openharmony/out",
+    "preprocessed_translation_unit": "not present",
+    "compiler_command_and_flags": "unknown",
+    "defines_and_conditional_branches": "unknown",
+    "gn_generated_include_paths": "unknown",
+    "full_transitive_dependency_closure": "unknown",
+    "macro_expansion_observed_from_compiler_output": false,
+    "overall_completeness": "partial/unknown"
+  },
+  "analysis_environment": {
+    "scanner_repository_commit": "f8e3a0ad7463f216db4be7502bd8a19eec545908",
+    "scanner_parser_source_sha256": "52d15fad1f8d528743ccf3c791b01587349c0923bdf56ded6e2e760c96339e21",
+    "scanner_facts_source_sha256": "1c3c13ed47529339954b113ddd6826ecdd59d81c2818c808e16289a3ddef405e",
+    "tree_sitter": "0.26.0",
+    "tree_sitter_cpp": "0.23.4",
+    "frontend_profile": "OHScanner tree-sitter light AST; preprocessing disabled",
+    "parser_fix": "FunctionDef now preserves qualified_name, syntactic owner, and owner_resolution while retaining the legacy leaf name; OHScanner syntax facts carry these additive fields.",
+    "parser_fix_source_changes": [
+      "src/parser/ast.py",
+      "src/ohscanner/facts.py"
+    ]
+  }
+}
