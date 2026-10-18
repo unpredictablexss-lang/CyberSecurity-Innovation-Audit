@@ -455,6 +455,7 @@ class Interpreter:
         self.limitations = set()
         self.test_only_roots_skipped = set()
         self.seen_permissions = set()
+        self.permission_mismatch_roots = set()
         # Provenance for every cross-TU one-hop guard this run credited, one line
         # each. Kept separately from `limitations` while the walk is in progress so
         # a hop note is never mistaken for a refusal, and merged in `run()`.
@@ -1257,9 +1258,14 @@ class Interpreter:
                 return Value("constant", "1")
         return None
 
-    def authorized(self, state, name):
-        expected = dict(self.policy.expected_permissions).get(name)
-        if expected:return expected in state.auth
+    def expected_permission(self, name, qualified=""):
+        contracts = dict(self.policy.expected_permissions)
+        return contracts.get(qualified) or contracts.get(name)
+
+    def authorized(self, state, name, qualified=""):
+        expected = self.expected_permission(name, qualified)
+        if expected:
+            return expected in state.auth
         # A service-account role is accepted only for the operations the reviewed
         # record names. Recognizing the account that guards an interface is not a
         # statement that the account may do anything else, so this set is computed
@@ -1406,10 +1412,35 @@ class Interpreter:
             return
         root_key = (self.root.file, self.root.qualified)
         sensitive = name in self.policy.sensitive_calls or name in self.policy.object_sensitive_calls
+        expected_contract = (self.expected_permission(fn.name, fn.qualified)
+                             or self.expected_permission(self.root.name, self.root.qualified))
+        if name in self.policy.boolean_permissions | self.policy.result_permissions and expected_contract:
+            observed_permissions = {arg.key for arg in args
+                                    if arg.kind == "constant" and arg.key}
+            if observed_permissions and expected_contract not in observed_permissions:
+                root_key = (self.root.file, self.root.qualified)
+                self.permission_mismatch_roots.add(root_key)
+                operation = fn.name if self.expected_permission(fn.name, fn.qualified) else self.root.name
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Service operation " + operation + " checks permission "
+                          + ", ".join(sorted(observed_permissions)) + " but its reviewed "
+                          "contract requires " + expected_contract + ".",
+                          call=operation)
         if sensitive:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
-        if sensitive and not self.authorized(state, name) and guard is None:
+        expected_permission = self.expected_permission(name, fn.qualified)
+        permission_mismatch = (expected_permission and state.auth
+                               and expected_permission not in state.auth)
+        if sensitive and permission_mismatch and guard is None:
+            if (self.root.file, self.root.qualified) not in self.permission_mismatch_roots:
+                observed = ", ".join(sorted(state.auth))
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Sensitive modeled call " + name + " has a permission mismatch: "
+                          "reviewed contract requires " + expected_permission + ", but this "
+                          "path checks " + observed + "."
+                          + self.auth_note(state), call=name)
+        elif sensitive and not self.authorized(state, name, fn.qualified) and guard is None:
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
                 # (does it dominate this transaction?), not an absent-authorization
@@ -1967,7 +1998,7 @@ class Interpreter:
                 # A disclosure-class call's product is the sensitive value. The
                 # value is only a candidate *source*: whether it reaches a caller
                 # is decided by what the path does with it, not by the call.
-                return Value("sensitive_result", text, name)
+                return Value("sensitive_result_guarded" if guard is not None else "sensitive_result", text, name)
             return Value("unknown", text)
         if node.type == "binary_expression":
             left = self.value(fn,node.child_by_field_name("left"),state,depth)
@@ -2199,6 +2230,8 @@ class Interpreter:
         missing guard on a path whose product is handed back, not the read alone.
         """
         for value in args:
+            if value.kind == "sensitive_result_guarded":
+                continue
             if value.kind != "sensitive_result":
                 continue
             source = value.subject
@@ -2527,7 +2560,8 @@ class Interpreter:
             if obs.rule=="ipc.auth.missing":
                 # Permission call somewhere is not coverage. Keep the primary
                 # finding and add the explicit coverage subtype for these roots.
-                if obs.root_key in self.seen_permissions:
+                if (obs.root_key in self.seen_permissions
+                        and "checks permission " not in obs.message):
                     revised.append(replace(obs,family="AUTH-04",rule="ipc.auth.guard-coverage",
                         message="Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. "+obs.message))
             revised.append(obs)

@@ -142,7 +142,24 @@ public:
         ctx=context((BASE/'auth_fixed.cpp').read_text())
         policy=IpcPolicy(expected_permissions=(('StartAbility','"ohos.permission.OTHER"'),))
         run=IpcInterfaceDetector(policy).detect(ctx,ctx.units)
-        self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
+        mismatch = next(f for f in run.findings if f.rule_id == 'ipc.auth.missing')
+        self.assertIn('permission mismatch', mismatch.message)
+        self.assertIn('ohos.permission.OTHER', mismatch.message)
+        self.assertEqual(sum(f.rule_id == 'ipc.auth.missing' for f in run.findings), 1)
+
+    def test_a_correct_expected_permission_is_a_safe_control(self):
+        ctx=context((BASE/'auth_fixed.cpp').read_text())
+        policy=IpcPolicy(expected_permissions=(('StartAbility','"ohos.permission.TEST"'),))
+        run=IpcInterfaceDetector(policy).detect(ctx,ctx.units)
+        self.assertNotIn('ipc.auth.missing',{f.rule_id for f in run.findings})
+
+    def test_reviewed_telephony_permission_contract_is_component_qualified(self):
+        expected = dict(IpcPolicy().expected_permissions)
+        self.assertEqual(expected['CallManagerService::SetCameraZoom'],
+                         'OHOS_PERMISSION_SET_TELEPHONY_STATE')
+        self.assertEqual(expected['CallManagerService::GetImsConfig'],
+                         'OHOS_PERMISSION_GET_TELEPHONY_STATE')
+        self.assertNotIn('SetCameraZoom', expected)
 
     def test_format_models_preserve_original_offsets(self):
         from src.ohscanner.detectors.interface.analysis import normalize_syntax
@@ -499,6 +516,8 @@ public:
                 run=IpcInterfaceDetector().detect(ctx,ctx.units)
                 auth02={f.rule_id for f in run.findings if f.rule_id=='ipc.auth.missing'}
                 self.assertEqual(bool(auth02),expected)
+                data04 = {f.rule_id for f in run.findings if f.rule_id == 'ipc.data.sensitive-flow'}
+                self.assertEqual(bool(data04), expected)
                 if not expected:
                     note=next((item for item in run.limitations
                                if item.startswith('Cross-TU one-hop guard credited:')), '')

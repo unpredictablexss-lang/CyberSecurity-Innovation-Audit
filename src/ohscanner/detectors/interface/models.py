@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v28"
+MODEL_VERSION = "oh-ipc-2026.10-v30"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -29,7 +29,7 @@ DISCLOSURE_CALLS = frozenset({
     "GetPasteData", "GetAllCallList", "GetCallState", "GetTokenInfo",
     "GetRemoteHapTokenInfo", "GetReqPermissions", "GetPermissionUsedRecordsAsync",
     "IsAllowedUsingPermission", "Dump", "ReadFile", "GetDisplaySnapshot",
-    "Capture", "GetImsConfig", "GetImsFeatureValue",
+    "Capture", "GetImsConfig", "GetImsFeatureValue", "GetAppRunningStateByBundleName",
     "GetUserData", "ReadUserData", "OpenUserFile",
 })
 
@@ -166,6 +166,8 @@ class IpcPolicy:
         "GetReqPermissions", "StartUsingPermissionCallback", "RemovePermissionUsedRecords",
         "GetPermissionUsedRecordsAsync", "IsAllowedUsingPermission", "SetMutePolicy",
         "StartRtt", "StopRtt", "GetImsConfig", "SetImsConfig", "GetImsFeatureValue", "SetImsFeatureValue", "SetCameraZoom",
+        "RegisterVoipCallManagerCallback", "UnRegisterVoipCallManagerCallback",
+        "ReportOttCallDetailsInfo", "ReportOttCallEventInfo",
         # Exposes whether a named app is running; model the IPC API as a
         # sensitive read so its implementation is not invisible behind the
         # AppMgrService -> AppMgrServiceInner delegation.
@@ -237,11 +239,29 @@ class IpcPolicy:
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",
         "CallManagerService::GetImsFeatureValue", "CallManagerService::SetImsFeatureValue",
-        "CallManagerService::SetCameraZoom"})
+        "CallManagerService::SetCameraZoom",
+        "CallManagerService::RegisterVoipCallManagerCallback",
+        "CallManagerService::UnRegisterVoipCallManagerCallback",
+        "CallManagerService::ReportOttCallDetailsInfo",
+        "CallManagerService::ReportOttCallEventInfo"})
     transport_entries: FrozenSet[str] = frozenset({"TraceServerReceieve"})
     max_call_depth: int = 2
     max_paths: int = 96
-    expected_permissions: Tuple[Tuple[str, str], ...] = ()
+    # Reviewed API contracts from the upstream telephony permission correction
+    # 911c6c9 -> 6018446d (CVE-2025-26691 regression input). Qualified keys
+    # scope these expectations to the owning service class; they are policy data,
+    # not name-derived rules.
+    expected_permissions: Tuple[Tuple[str, str], ...] = (
+        ("CallManagerService::RegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("CallManagerService::UnRegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("CallManagerService::SetCameraZoom", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("CallManagerService::GetImsConfig", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("CallManagerService::SetImsConfig", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("CallManagerService::GetImsFeatureValue", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("CallManagerService::SetImsFeatureValue", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+    )
     object_sensitive_calls: FrozenSet[str] = frozenset({"OpenUserFile", "GetUserData", "DeleteUserData", "ReadUserData"})
     # Bounded macro expansion (cpp_macros). It is a coverage/accuracy switch, not a
     # verdict switch: every finding it changes is still a candidate, and what it
