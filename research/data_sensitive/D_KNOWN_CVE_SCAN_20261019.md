@@ -83,6 +83,6 @@ D31 在固定 `third_party_libtiff@d4a0516c477dfbaf1153ae295893ab75aadd63d4` 上
 
 此处 confirmed 只表示固定 libtiff 4.7.0 组件路径出现 ASan 越界写；漏洞公告描述更强的 write-what-where 风险，但本 Harness 未证明任意地址可控或代码执行。OpenHarmony 产品构建、攻击者可控调用入口及影响仍 unknown，扫描命中仍为 candidate，`validated_vulnerability=0`。此处是固定源码 Runner 回放，不是本轮 UI API 回归；扫描页集成与其他面板路径验证见 D22/D30。
 
-## D32 CVE-2022-45877 device-manager PIN 传输
+## D33 CVE-2022-45877 device-manager PIN 传输
 
-0.10.0 增加 OnGroupCreated 同函数内 PIN→authToken→认证响应 SoftBus 发送链规则。对官方固定旧源码 97c3d5c7b07a0ab599afcc1464143b255e7dbb68 命中 1 条 candidate（dm_auth_manager.cpp:348）；修复提交 8bea775dc169bca2d9a1ce57ada2d86cbd179163 不命中。两份 Git 源文件 SHA 固定在 JSON 结果。旧/新 detector run 均 blocked（partial AST），结果只验证组件规则对已知根因的正反识别。NVD 将 OpenHarmony 3.1 至 3.1.4（含）列为受影响；目标产品实际版本、构建纳入、SoftBus 通道可观察性及产品影响 unknown。组件历史根因 confirmed，不升级产品 finding 或 validated_vulnerability。详见 [D32 组件 PoC 与修复复审](D32_CVE_2022_45877_REPORT.md)、回放脚本和 JSON。
+0.10.0 增加 OnGroupCreated 同函数内 PIN→authToken→认证响应 SoftBus 发送链规则。对官方固定旧源码 97c3d5c7b07a0ab599afcc1464143b255e7dbb68 命中 1 条 candidate（dm_auth_manager.cpp:348）；修复提交 8bea775dc169bca2d9a1ce57ada2d86cbd179163 不命中。两份 Git 源文件 SHA 固定在 JSON 结果。旧/新 detector run 均 blocked（partial AST），结果只验证组件规则对已知根因的正反识别。NVD 将 OpenHarmony 3.1 至 3.1.4（含）列为受影响；目标产品实际版本、构建纳入、SoftBus 通道可观察性及产品影响 unknown。组件历史根因 confirmed，不升级产品 finding 或 validated_vulnerability。详见 [D33 组件 PoC 与修复复审](D33_CVE_2022_45877_REPORT.md)、回放脚本和 JSON。
