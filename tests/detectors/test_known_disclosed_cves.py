@@ -14,6 +14,230 @@ class KnownDisclosedCveTests(unittest.TestCase):
         run=KnownDisclosedCveDetector().detect(ScanContext(request=request, units=(unit,)), (unit,))
         return run
 
+    def run_units(self, sources):
+        units = tuple(
+            SourceUnit(path=path, language="cpp" if path.endswith((".cpp", ".h")) else "c",
+                       text=text, sha256=hashlib.sha256(text.encode()).hexdigest(),
+                       parse_status="complete")
+            for path, text in sorted(sources.items())
+        )
+        request = ScanRequest(request_id="test:known-cves-multi", repository="fixture/known-cves",
+                              commit="b" * 40, snapshot_sha256=snapshot_digest(units),
+                              target_id="current-component:fixture/known-cves",
+                              profile_id="fixture-no-build", provenance="fixture")
+        return KnownDisclosedCveDetector().detect(ScanContext(request=request, units=units), units)
+
+    def test_appdomainverify_cve_2026_58313_real_lru_fix_pair(self):
+        fixture_dir = Path(__file__).resolve().parents[1] / "fixtures" / "data_sensitive"
+        vulnerable = (fixture_dir / "d39_cve_2026_58313_lru_vulnerable.h").read_bytes()
+        fixed = (fixture_dir / "d39_cve_2026_58313_lru_fixed.h").read_bytes()
+        path = "frameworks/common/include/utils/lru_cache_util.h"
+
+        def git_blob_sha1(data):
+            return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+
+        self.assertEqual(git_blob_sha1(vulnerable), "7ce4262e3f1d2c0173d929318a4795ff1573c721")
+        self.assertEqual(git_blob_sha1(fixed), "68114f10d83c8f0bdc46679c7efa35ed286bef8a")
+        vulnerable_text = vulnerable.decode("utf-8")
+        fixed_text = fixed.decode("utf-8")
+        run = self.run_source(vulnerable_text, path)
+        findings = [finding for finding in run.findings if finding.symbol == "CVE-2026-58313"]
+        self.assertEqual(1, len(findings))
+        self.assertEqual("CWE-416", findings[0].candidate_cwe)
+        self.assertEqual(hashlib.sha256(vulnerable).hexdigest(), findings[0].source_sha256)
+        self.assertIn("invalidated iterators", findings[0].message)
+        self.assertEqual([], [finding for finding in self.run_source(fixed_text, path).findings
+                              if finding.symbol == "CVE-2026-58313"])
+        partial = self.run_source(vulnerable_text, path, parse_status="partial")
+        self.assertEqual("blocked", partial.status)
+        self.assertEqual(1, len([finding for finding in partial.findings
+                                 if finding.symbol == "CVE-2026-58313"]))
+        self.assertEqual([], [finding for finding in self.run_source(vulnerable_text, "other/lru_cache_util.h").findings
+                              if finding.symbol == "CVE-2026-58313"])
+    def test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated(self):
+        path = "services/storage_daemon/volume/src/external_volume_info.cpp"
+        vulnerable = """int32_t ExternalVolumeInfo::DoMount4Ext(uint32_t flags) {
+            mode_t mode = 0777;
+            int32_t ret = mount(devPath_.c_str(), mountPath_.c_str(), fsType_.c_str(), flags, "");
+            if (ret) return E_EXT_MOUNT;
+            TravelChmod(mountPath_, mode);
+            return ret;
+        }
+        int32_t ExternalVolumeInfo::DoMount4Hmfs(uint32_t flags) {
+            mode_t mode = 0777;
+            int32_t ret = mount(devPath_.c_str(), mountPath_.c_str(), "hmfs", flags, "");
+            if (!ret) TravelChmod(mountPath_, mode);
+            return ret;
+        }"""
+        fixed = vulnerable.replace("            mode_t mode = 0777;\n", "").replace(
+            "            TravelChmod(mountPath_, mode);\n", "").replace(
+            "            if (!ret) TravelChmod(mountPath_, mode);\n", "")
+        unrelated = vulnerable.replace("DoMount4Ext", "MountUnrelated").replace(
+            "DoMount4Hmfs", "MountOtherFilesystem")
+
+        findings = [f for f in self.run_source(vulnerable, path).findings
+                    if f.symbol == "CVE-2026-25850"]
+        self.assertEqual(2, len(findings))
+        self.assertEqual({"CWE-732"}, {f.candidate_cwe for f in findings})
+        self.assertEqual({"confidentiality"}, {f.consequence_impact for f in findings})
+        self.assertTrue(all(f.source_sha256 == hashlib.sha256(vulnerable.encode()).hexdigest()
+                            for f in findings))
+        self.assertEqual([], [f for f in self.run_source(fixed, path).findings
+                              if f.symbol == "CVE-2026-25850"])
+        self.assertEqual([], [f for f in self.run_source(vulnerable, "other.cpp").findings
+                              if f.symbol == "CVE-2026-25850"])
+        self.assertEqual([], [f for f in self.run_source(unrelated, path).findings
+                              if f.symbol == "CVE-2026-25850"])
+
+    def test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch(self):
+        path = "services/storage_daemon/ipc/src/storage_daemon_stub.cpp"
+        shared = """std::map<uint32_t, RadarStatisticInfo>::iterator
+        StorageDaemonStub::GetUserStatistics(const uint32_t userId) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            auto it = opStatistics_.find(userId);
+            if (it != opStatistics_.end()) return it;
+            RadarStatisticInfo radarInfo = { 0 };
+            return opStatistics_.insert(make_pair(userId, radarInfo)).first;
+        }
+        void StorageDaemonStub::GetTempStatistics(std::map<uint32_t, RadarStatisticInfo> &statistics) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            statistics.insert(opStatistics_.begin(), opStatistics_.end());
+            opStatistics_.clear();
+        }
+        int StorageDaemonStub::HandleStartUser(uint32_t userId) {
+            auto it = GetUserStatistics(userId);
+            int err = StartUser(userId);
+            if (err != E_OK) it->second.userStartFailCount++;
+            return err;
+        }"""
+        findings = [f for f in self.run_source(shared, path).findings
+                    if f.symbol == "CVE-2026-28733"]
+        self.assertEqual(1, len(findings))
+        self.assertGreater(findings[0].line, 0)
+        self.assertEqual("CWE-416", findings[0].candidate_cwe)
+        self.assertEqual(hashlib.sha256(shared.encode()).hexdigest(), findings[0].source_sha256)
+        self.assertIn("iterator-lifetime gap", findings[0].message)
+
+        fixed = """void StorageDaemonStub::UpdateUserStatistics(uint32_t userId) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            auto it = opStatistics_.find(userId);
+            if (it == opStatistics_.end()) {
+                it = opStatistics_.insert(make_pair(userId, RadarStatisticInfo{0})).first;
+            }
+            it->second.userStartFailCount++;
+        }
+        void StorageDaemonStub::GetTempStatistics(std::map<uint32_t, RadarStatisticInfo> &statistics) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            statistics.insert(opStatistics_.begin(), opStatistics_.end());
+            opStatistics_.clear();
+        }
+        int StorageDaemonStub::HandleStartUser(uint32_t userId) {
+            int err = StartUser(userId);
+            if (err != E_OK) UpdateUserStatistics(userId);
+            return err;
+        }"""
+        self.assertEqual([], [f for f in self.run_source(fixed, path).findings
+                              if f.symbol == "CVE-2026-28733"])
+        self.assertEqual([], [f for f in self.run_source(shared, "other.cpp").findings
+                              if f.symbol == "CVE-2026-28733"])
+
+    def test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape(self):
+        path = "services/storage_manager/volume/src/volume_manager_service.cpp"
+        vulnerable = """void VolumeManagerService::NotifyMtpMounted(const std::string &id, const std::string &path) {
+            std::string key = "user.getfriendlyname";
+            char *value = (char *)malloc(sizeof(char) * MTP_DEVICE_NAME_LEN);
+            int32_t len = getxattr(path.c_str(), key.c_str(), value, MTP_DEVICE_NAME_LEN);
+            if (len >= 0 && len < MTP_DEVICE_NAME_LEN) {
+                value[len] = '\\0';
+            }
+            if (len > 0) {
+                volumePtr->SetDescription(std::string(value));
+            }
+        }"""
+        fixed = vulnerable.replace(
+            "malloc(sizeof(char) * MTP_DEVICE_NAME_LEN)",
+            "malloc(sizeof(char) * (MTP_DEVICE_NAME_LEN + 1))",
+        ).replace(
+            "len < MTP_DEVICE_NAME_LEN", "len <= MTP_DEVICE_NAME_LEN"
+        )
+        unrelated = vulnerable.replace(
+            "std::string(value)", "std::string(\"constant\")"
+        )
+        findings = [f for f in self.run_source(vulnerable, path).findings
+                    if f.symbol == "CVE-2026-28751"]
+        self.assertEqual(1, len(findings))
+        self.assertGreater(findings[0].line, 0)
+        self.assertEqual("CWE-125", findings[0].candidate_cwe)
+        self.assertEqual(hashlib.sha256(vulnerable.encode()).hexdigest(),
+                         findings[0].source_sha256)
+        self.assertEqual([], [f for f in self.run_source(fixed, path).findings
+                              if f.symbol == "CVE-2026-28751"])
+        self.assertEqual([], [f for f in self.run_source(unrelated, path).findings
+                              if f.symbol == "CVE-2026-28751"])
+        self.assertEqual([], [f for f in self.run_source(vulnerable, "other.cpp").findings
+                              if f.symbol == "CVE-2026-28751"])
+
+    def test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix(self):
+        path = "lib/multi.c"
+        vulnerable = """static CURLcode multi_done(struct Curl_easy *data, struct connectdata *conn, bool premature, CURLcode status) {
+            result = Curl_1st_fatal(result, Curl_xfer_write_done(data, premature));
+            if (conn) Curl_conn_ev_data_done(data, premature);
+            multi_schedule_pending(data->multi);
+            if (!result) result = Curl_req_done(&data->req, data, premature);
+            if (conn) {
+                Curl_cpool_do_locked(data, data->conn, multi_done_locked, &mdctx);
+            }
+            return result;
+        }"""
+        fixed = """static CURLcode multi_done(struct Curl_easy *data, struct connectdata *conn, bool premature, CURLcode status) {
+            result = Curl_1st_fatal(result, Curl_xfer_write_done(data, premature));
+            if (!result) result = Curl_req_done(&data->req, data, premature);
+            if (conn) {
+                Curl_conn_ev_data_done(data, premature);
+                Curl_detach_connection(data);
+                Curl_cpool_return(data, conn, multi_done_locked, &mdctx);
+                if (data->multi) multi_schedule_pending(data->multi);
+            }
+            return result;
+        }"""
+        version = '#define LIBCURL_VERSION "8.22.0"\n'
+        run = self.run_units({path: vulnerable, "include/curl/curlver.h": version})
+        findings = [f for f in run.findings if f.symbol == "CVE-2026-92392"]
+        self.assertEqual(1, len(findings))
+        self.assertGreater(findings[0].line, 0)
+        self.assertEqual("CWE-416", findings[0].candidate_cwe)
+        self.assertIn("affected range", findings[0].message)
+        self.assertEqual(hashlib.sha256(vulnerable.encode()).hexdigest(), findings[0].source_sha256)
+
+        def scan_with(version_text, code=vulnerable):
+            return [f for f in self.run_units({
+                path: code,
+                "include/curl/curlver.h": f'#define LIBCURL_VERSION "{version_text}"\n',
+            }).findings if f.symbol == "CVE-2026-92392"]
+        without_pending_reschedule = vulnerable.replace("multi_schedule_pending(data->multi);", "")
+        self.assertEqual(1, len(scan_with("8.12.0", without_pending_reschedule)))
+
+        self.assertEqual([], scan_with("8.23.0", fixed))
+        self.assertEqual([], scan_with("8.22.0", fixed))
+        self.assertEqual([], scan_with("8.8.0"))
+        self.assertEqual([], scan_with("8.20.2"))
+        for affected_backport in ("8.12.0", "8.14.2", "8.16.1", "8.20.1", "8.21.0"):
+            self.assertEqual(1, len(scan_with(affected_backport)), affected_backport)
+        for fixed_backport in ("8.14.3", "8.16.2", "8.20.2"):
+            self.assertEqual([], scan_with(fixed_backport), fixed_backport)
+        conflicting_versions = [f for f in self.run_units({
+            path: vulnerable,
+            "include/curl/curlver.h": '#define LIBCURL_VERSION "8.22.0"',
+            "vendor/include/curl/curlver.h": '#define LIBCURL_VERSION "8.23.0"',
+        }).findings if f.symbol == "CVE-2026-92392"]
+        self.assertEqual(1, len(conflicting_versions))
+        self.assertIn("version applicability remains unknown", conflicting_versions[0].message)
+
+        unknown = [f for f in self.run_source(vulnerable, path).findings
+                   if f.symbol == "CVE-2026-92392"]
+        self.assertEqual(1, len(unknown))
+        self.assertIn("version applicability remains unknown", unknown[0].message)
+
     def test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed(self):
         vulnerable = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
             int32_t pinCode = GeneratePincode();

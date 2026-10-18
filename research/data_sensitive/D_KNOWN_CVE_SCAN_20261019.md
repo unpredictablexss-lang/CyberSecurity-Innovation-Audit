@@ -2,9 +2,9 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.10.0，支持 12 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.16.0，支持 17 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-25850、CVE-2026-28733、CVE-2026-28751、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079、CVE-2026-92392、CVE-2026-58313。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
-17 项公开 CVE 审查清单中，当前规则覆盖 12 个 CVE 条目。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 5 项没有当前快照正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
+17 项独立公开 CVE 审查清单现均有窄范围源码形态映射；D39 为 CVE-2026-58313 的 App Domain Verify LRU 并发内存错误添加了真实固定旧/修复头文件对照、组件级 ASan Harness，并通过两轮稳定的 Workbench API→Worker→报告→源码查看回放（旧版 1 条候选、修复版 0 条，源码哈希匹配；`validated_vulnerability=0`）。所有这些规则仍是候选检测，不代表独立召回评估。D20-D24 固定 G 盘快照记录的结果保持不变；D25 对 cJSON 上游漏洞父提交/修复提交进行精确源码对照；D35 新增 filemanagement_storage_service 两条官方分支固定源码正反对照；D36 新增 CVE-2026-28733 的跨函数 map-iterator 生命周期候选，并发现官方 mutex 补丁与当前 5.1 源码仍保留该结构；D37 用 CVE-2026-28751 的 MTP 满长度 xattr 源码修复对照新增边界读取候选；D38 对 CVE-2026-92392 完成 curl 8.22.0/8.23.0 固定源码正反回放。所有规则样本仍是开发/回归材料，不是独立 holdout，也不能据此声称 17 项或全项目的 Recall。
 
 ## 固定源码回放
 
@@ -53,9 +53,9 @@ D30 在 G 镜像中实际跟踪的 libpng 1.6.55 构建归档上补齐了独立�
 
 ## 未覆盖项及不可推断事项
 
-审查清单中其余 5 项目前没有当前快照的正向检测形态：CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增了历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
+审查清单中的 17 项现均有至少一个已披露源码形态映射；CVE-2026-58313 的 D39 证据绑定到官方未加锁与加锁头文件 blob。CVE-2026-92392 已由 D38 建立窄源码形态候选；G 盘镜像提交 HEAD 的 curl 8.8.0 低于其受影响版本。未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
 
-没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 11 个规则家族不代表对审查清单或整个项目达到完整覆盖；D25/D29 上游旧/新源码对照不能替代冻结 holdout。
+没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有扫描结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。当前已覆盖 17 项独立审查条目中的 17 个窄源码形态；规则开发样本不能替代冻结且独立标注的数据，也不代表对整个项目达到完整覆盖。D25/D29/D35/D36/D37 上游旧/新源码对照不能替代冻结 holdout。
 
 
 ## 2026-10-19 D23 calibration
@@ -86,3 +86,24 @@ D31 在固定 `third_party_libtiff@d4a0516c477dfbaf1153ae295893ab75aadd63d4` 上
 ## D33 CVE-2022-45877 device-manager PIN 传输
 
 0.10.0 增加 OnGroupCreated 同函数内 PIN→authToken→认证响应 SoftBus 发送链规则。对官方固定旧源码 97c3d5c7b07a0ab599afcc1464143b255e7dbb68 命中 1 条 candidate（dm_auth_manager.cpp:348）；修复提交 8bea775dc169bca2d9a1ce57ada2d86cbd179163 不命中。两份 Git 源文件 SHA 固定在 JSON 结果。旧/新 detector run 均 blocked（partial AST），结果只验证组件规则对已知根因的正反识别。NVD 将 OpenHarmony 3.1 至 3.1.4（含）列为受影响；目标产品实际版本、构建纳入、SoftBus 通道可观察性及产品影响 unknown。组件历史根因 confirmed，不升级产品 finding 或 validated_vulnerability。详见 [D33 组件 PoC 与修复复审](D33_CVE_2022_45877_REPORT.md)、回放脚本和 JSON。
+
+## D35 CVE-2026-25850 external-volume 权限扩大
+
+`known_disclosed_cves` 0.11.0 新增 filemanagement_storage_service 的精确路径/方法形态。官方 5.1 与 6.0 MR 分支中，`DoMount4Ext` / `DoMount4Hmfs` 在挂载成功后对挂载树递归调用 `TravelChmod(..., 0777)`；固定修复分支删除这两处调用。D35 直接读取四个 pinned commit 的 Git 对象，校验 tree/blob/SHA-256，并校验 helper 的递归实现。两条 release pair 均为旧源 2 candidate、修复源 0；direct replay 设 parse `not_run`，所以两端覆盖为 blocked，candidate 保留。组件问题与官方公告相符；不证明产品镜像采用受影响提交或未授权主体能读到具体数据。详见 [D35 报告](D35_FILEMANAGEMENT_CVE_2026_25850_REPORT.md)、脚本和 JSON。D35 是源码扫描复现，不是 runtime permission PoC。
+
+## D36 CVE-2026-28733 storage statistics iterator lifetime
+
+0.12.0 增加同文件跨函数候选：GetUserStatistics 返回共享 opStatistics_ map iterator，多个 handler 在 helper 返回、内部锁已释放后写 it->second；GetTempStatistics 在另一调用路径复制并清空同一 map。官方 5.1 修复 MR !2114 确实给两个 helper 加了 mutexStats_，但当前 5.1 头与补丁 blob 完全相同，迭代器仍逃逸锁作用域。固定父提交、补丁提交和当前 release head 的源文件 SHA 均由 D36 replay 校验，三者各报告 1 条 candidate。因因果调度和完整服务动态复现尚未验证，该项是并发/UAF 候选，不断言官方补丁无效，也不升级产品确认；修复建议是把读取/更新放在统一锁保护的 API 内并让快照清空与更新互斥，避免向调用者返回容器迭代器。详见 D36_CVE_2026_28733_REPORT.md、脚本和 JSON。
+
+## D37 CVE-2026-28751 MTP xattr 长度边界
+
+0.13.0 新增 NotifyMtpMounted 窄形态：同函数内按 MTP_DEVICE_NAME_LEN 分配缓冲区、以同一上限调用 getxattr、仅在 len < 上限时写 NUL，随后将 value 当 C 字符串消费。官方 6.0 父提交命中 1 条 candidate；官方 MTP 修复提交和当前 6.0 head 为 0。当前 5.1 文件不含此函数/调用签名，零命中仅表示这条规则未匹配，不是安全结论。固定 Git tree/blob/SHA 校验见 D37 replay JSON。源代码形态 ASan harness 对满长非 NUL 输入 3/3 报 heap-buffer-overflow；预留一字节并在 <= 边界写终止符的控制 0/3 报错。该 harness 不是完整服务构建或产品利用；产品版本、外部 xattr 来源、MTP 攻击路径和影响仍 unknown。详见 D37_CVE_2026_28751_REPORT.md、回放脚本和 JSON。
+
+## D38 CVE-2026-92392 libcurl HTTP/2 upload UAF
+
+0.15.0 的 `lib/multi.c::multi_done` 窄序列规则覆盖连接过滤器清理早于 `Curl_req_done` 的根因，不再依赖某个 pending 调度函数名。0.14.0 首版在 8.12.0/8.21.0 漏报，原因是这两版使用 `process_pending_handles`，而 8.22.0 才出现 `multi_schedule_pending`；移除无关条件后，8.12.0-DEV、8.21.0-DEV、8.22.0-DEV 各命中 1 条 CWE-416 candidate，8.23.0-DEV 修复源命中 0 条。8.12/8.21 是开发修复集，不是 holdout。G 盘 `third_party_curl` 的固定提交 `1386bb128bb060b284309397b97adcaaec21c003` 声明版本 8.8.0，版本不在公告受影响范围，命中 0 条。版本缺失或冲突时保留源码形态候选并标注适用性 unknown。
+
+回放只读 pinned Git objects；G 盘镜像工作树有大量未提交删除状态，因此不读工作树内容。研究直接回放的 `parse_status=not_run` 使 DetectorRun 保持 `blocked`，候选仍保留。另经两轮隔离 Workbench API→Worker→报告→源码查看回放，修复前 1 条、修复后 0 条，候选 SHA 与源码查看器一致；两个 API run 的覆盖为 `partial/blocked`。未跑完整产品构建或 HTTP/2 reset runtime PoC。上游修复建议为升级 curl 8.23.0 或应用官方修复提交；产品版本、入口与影响仍 unknown，`validated_vulnerability=0`。详情见 [D38 报告](D38_CVE_2026_92392_REPORT.md)、固定源 [JSON](D38_CVE_2026_92392_REPLAY.json)、面板链路 [JSON](D38_CVE_2026_92392_PANEL_REPLAY.json) 与两份回放脚本。
+## D39 CVE-2026-58313 App Domain Verify LRU iterator race
+
+The official pre-fix LruCacheUtil header stores std::list iterators in an unordered_map while Get, Put and Clear mutate the shared containers without synchronization. The linked upstream change adds mutex_ and guards Get, Put, Clear and IsEmpty. The exact pre-fix Git blob 7ce4262e3f1d2c0173d929318a4795ff1573c721 produces one CWE-416 candidate; the exact lock-protected blob 68114f10d83c8f0bdc46679c7efa35ed286bef8a produces none. A component-only ASan harness with synthetic keys reports double-free in 3/3 pre-fix runs and completes 3/3 fixed runs. This is component-level memory-error evidence, not proof of the advertised UAF in an OpenHarmony product: product build, caller reachability and impact remain unknown, scanner finding stays candidate, validated_vulnerability=0. See D39_CVE_2026_58313_REPORT.md, D39_CVE_2026_58313_ASAN.cpp, replay script and JSON.

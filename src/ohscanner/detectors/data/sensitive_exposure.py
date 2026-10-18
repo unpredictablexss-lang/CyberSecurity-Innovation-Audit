@@ -49,14 +49,33 @@ def walk(n):
 
 
 def looks_sensitive_name(value):
-    # Match semantic words, not arbitrary substrings. In Netstack, for example,
-    # HTTP_API_KEY_FETCH is an API method name and WSI_TOKEN_HTTP is a protocol
-    # constant; neither is a secret value merely because the spelling contains
-    # "key" or "token".
+    # Match material names, not metadata or token-like substrings. OpenHarmony
+    # uses spellings such as PassWordAnonymize and PreSharedKey; normalize the
+    # former before looking for semantic phrases.
     words = [word.lower() for word in re.findall(
         r'[A-Z]+(?=[A-Z][a-z]|[^A-Za-z]|$)|[A-Z]?[a-z]+|[0-9]+', value)]
     if not words:
         return False
+    normalized = []
+    index = 0
+    while index < len(words):
+        if words[index:index + 2] == ['pass', 'word']:
+            normalized.append('password')
+            index += 2
+        else:
+            normalized.append(words[index])
+            index += 1
+    words = normalized
+
+    # These suffixes identify scalar/label metadata, not the material itself.
+    # This avoids treating WPS password IDs, byte lengths and asset tags as
+    # passwords while preserving names such as passwordBytes/privateKeyData.
+    if any(word in {
+        'id', 'identifier', 'name', 'type', 'count', 'len', 'length', 'size',
+        'status', 'code', 'tag', 'allowed',
+    } for word in words):
+        return False
+
     if any(word in {'password', 'passwd', 'secret', 'credential'} for word in words):
         return True
     if any(words[i:i + 2] in (
@@ -65,17 +84,20 @@ def looks_sensitive_name(value):
             ['key', 'material'], ['key', 'bytes'], ['auth', 'header'],
             ['authorization', 'header']) for i in range(len(words) - 1)):
         return True
+    if any(words[i:i + 3] == ['pre', 'shared', 'key']
+           for i in range(len(words) - 2)):
+        return True
     # API_KEY is a plausible secret field, while names such as
     # HTTP_API_KEY_FETCH describe an API entry point, not key material.
-    if words == ['api', 'key']:
+    if words == ['api', 'key'] or words == ['psk']:
         return True
     # A bare "token" is commonly an ID or protocol token in this codebase.
     # Retain explicit bearer/auth/access/refresh/session token names only.
     return any(words[i:i + 2] in (
         ['bearer', 'token'], ['auth', 'token'], ['access', 'token'],
         ['refresh', 'token'], ['session', 'token'], ['security', 'token'])
-        for i in range(len(words) - 1)) and not any(
-            word in {'id', 'identifier', 'name', 'type', 'count'} for word in words)
+        for i in range(len(words) - 1))
+
 
 
 def formats(value, default_privacy='private'):
@@ -104,7 +126,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.15.0'
+    version = '0.17.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -151,6 +173,7 @@ class SensitiveExposureDetector:
         limits.update((
             'Candidate only: runtime log readers, production enablement and impact require independent review.',
             'Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.',
+            'Unsupported control-flow subtrees are scanned for may-flow call effects; branch feasibility remains unresolved.',
             'Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.',
             'Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.',
             'Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.',
@@ -794,9 +817,14 @@ class LocalFlow:
             result=self.statement(body,branch,fnname)
             return BlockResult(self.merge([state,result.fallthrough_state,
                                            *(e.state for e in result.exit_states)]))
-        # Switch/try effects are not interpreted or claimed safe.
-        self.gaps.add(f'unsupported statement {kind} at line {node.start_point[0]+1}')
-        return BlockResult(state)
+        # Preserve direct source/sink and unresolved-call candidates nested in
+        # unsupported constructs such as switch/try. Scan on a clone so this
+        # bounded may-flow pass cannot erase facts from the surrounding block.
+        # Branch feasibility, ordering and case-specific state remain unknown.
+        self.gaps.add(f'unsupported statement {kind} at line {node.start_point[0]+1}; nested call effects inspected as may-flow')
+        probe = state.clone()
+        self.effects(node, probe, fnname)
+        return BlockResult(self.merge([state, probe]))
 
     def block(self,node,state,fnname):
         entry=state.clone();declared=set();exits=[];live=state

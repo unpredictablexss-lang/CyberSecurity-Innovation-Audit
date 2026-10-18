@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.10.0"
+VERSION = "0.16.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -37,8 +37,210 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
 
-def _scan(unit: SourceUnit):
+def _curl_version(units):
+    """Return one source-declared libcurl version; disagreement stays unknown."""
+    versions = set()
+    for unit in units:
+        path = unit.path.replace("\\", "/")
+        if not (path.endswith("include/curl/curlver.h") or path.endswith("/curlver.h")):
+            continue
+        match = re.search(
+            r'^\s*#\s*define\s+LIBCURL_VERSION\s+"(\d+)\.(\d+)\.(\d+)(?:[-+][^" ]*)?"',
+            unit.text, re.M,
+        )
+        if match:
+            versions.add(tuple(map(int, match.groups())))
+    if len(versions) == 1:
+        return next(iter(versions)), False
+    return None, len(versions) > 1
+
+
+def _curl_92392_affected(version):
+    if version is None:
+        return None
+    if version < (8, 12, 0) or version > (8, 22, 0):
+        return False
+    # curl publishes fixed backports on the 8.14.x, 8.16.x and 8.20.x lines.
+    if version[:2] == (8, 14) and version >= (8, 14, 3):
+        return False
+    if version[:2] == (8, 16) and version >= (8, 16, 2):
+        return False
+    if version[:2] == (8, 20) and version >= (8, 20, 2):
+        return False
+    return True
+
+
+def _scan(unit: SourceUnit, curl_version=None):
     t = unit.text; s = mask_comments_and_literals(t); out = []
+    # CVE-2026-25850: external storage mounts must not recursively widen
+    # permissions to 0777. The source identity and the affected mount methods
+    # keep this rule tied to the reviewed component behavior; product build,
+    # filesystem selection, and attacker reachability remain obligations.
+    source_path = unit.path.replace("\\", "/")
+    if source_path.endswith("services/storage_daemon/volume/src/external_volume_info.cpp"):
+        for method in ("DoMount4Ext", "DoMount4Hmfs"):
+            mount = _body(s, method)
+            if not mount:
+                continue
+            start, body = mount
+            mode = re.search(r"\bmode_t\s+mode\s*=\s*0777\b", body)
+            chmod = re.search(r"\bTravelChmod\s*\(\s*mountPath_\s*,\s*mode\s*\)", body)
+            if mode and chmod:
+                out.append(_finding(
+                    unit, start + 1 + chmod.start(),
+                    "ohknowncve-storage-cve-2026-25850", "CVE-2026-25850",
+                    f"{method} recursively assigns mode 0777 to the mounted external-volume tree; the upstream fix removes this permission widening.",
+                    "CWE-732", impact="confidentiality",
+                ))
+    # CVE-2026-28733: StorageDaemonStub returns an opStatistics_ map iterator
+    # after GetUserStatistics releases its lock. The radar thread can clear the
+    # same map in GetTempStatistics before a handler dereferences that iterator.
+    # A mutex inside both helpers does not protect the iterator's lifetime.
+    if source_path.endswith("services/storage_daemon/ipc/src/storage_daemon_stub.cpp"):
+        getter = _body(s, "GetUserStatistics")
+        snapshot = _body(s, "GetTempStatistics")
+        if getter and snapshot:
+            getter_start, getter_body = getter
+            snapshot_start, snapshot_body = snapshot
+            returns_iterator = (
+                "std::map<uint32_t, RadarStatisticInfo>::iterator"
+                in s[max(0, getter_start - 140):getter_start]
+                and "opStatistics_.find" in getter_body
+                and "return it;" in getter_body
+                and "opStatistics_.insert" in getter_body
+            )
+            clears_shared_map = (
+                "opStatistics_.begin()" in snapshot_body
+                and "opStatistics_.end()" in snapshot_body
+                and "opStatistics_.clear()" in snapshot_body
+            )
+            callers = [
+                match for match in re.finditer(
+                    r"\bauto\s+(\w+)\s*=\s*GetUserStatistics\s*\([^;]*\);", s
+                )
+                if re.search(
+                    r"\b" + re.escape(match.group(1)) + r"\s*->\s*second\s*\.",
+                    s[match.end():match.end() + 1600],
+                )
+            ]
+            if returns_iterator and clears_shared_map and callers:
+                clear_pos = snapshot_body.find("opStatistics_.clear()")
+                out.append(_finding(
+                    unit, snapshot_start + 1 + clear_pos,
+                    "ohknowncve-storage-cve-2026-28733", "CVE-2026-28733",
+                    "GetUserStatistics returns an opStatistics_ iterator after its internal lock is released; a caller later dereferences it while GetTempStatistics clears the same map. This iterator-lifetime gap remains in the linked upstream mutex patch and requires concurrency review.",
+                    "CWE-416",
+                ))
+    # CVE-2026-28751: a full-length xattr result leaves a capacity-sized
+    # buffer unterminated when the code accepts only len < capacity, then uses
+    # it as a C string. The extra-byte allocation and <= guard are the upstream
+    # repair shape; product reachability remains an evidence obligation.
+    if source_path.endswith("services/storage_manager/volume/src/volume_manager_service.cpp"):
+        mtp = _body(s, "NotifyMtpMounted")
+        if mtp:
+            mtp_start, mtp_body = mtp
+            exact_capacity_alloc = re.search(
+                r"malloc\s*\(\s*sizeof\s*\(\s*char\s*\)\s*\*\s*MTP_DEVICE_NAME_LEN\s*\)",
+                mtp_body,
+            )
+            bounded_xattr = re.search(
+                r"getxattr\s*\([^;]*MTP_DEVICE_NAME_LEN\s*\)", mtp_body, re.S
+            )
+            strict_bound = re.search(
+                r"len\s*>=\s*0\s*&&\s*len\s*<\s*MTP_DEVICE_NAME_LEN", mtp_body
+            )
+            terminates_only_under_strict_bound = re.search(
+                r"if\s*\(\s*len\s*>=\s*0\s*&&\s*len\s*<\s*MTP_DEVICE_NAME_LEN\s*\)\s*\{[^{}]*value\s*\[\s*len\s*\]\s*=",
+                mtp_body,
+                re.S,
+            )
+            c_string_use = re.search(
+                r"(?:std::string\s*\(\s*value\s*\)|SetDescription\s*\(\s*std::string\s*\(\s*value\s*\)\s*\))",
+                mtp_body,
+            )
+            if (exact_capacity_alloc and bounded_xattr and strict_bound
+                    and terminates_only_under_strict_bound and c_string_use):
+                out.append(_finding(
+                    unit, mtp_start + 1 + c_string_use.start(),
+                    "ohknowncve-storage-cve-2026-28751", "CVE-2026-28751",
+                    "NotifyMtpMounted allocates MTP_DEVICE_NAME_LEN bytes but a full-capacity getxattr result skips NUL termination; the value is later consumed as a C string, allowing an out-of-bounds read.",
+                    "CWE-125", impact="availability_or_memory_safety",
+                ))
+    # CVE-2026-58313: the reviewed LRU stores std::list iterators in a
+    # shared unordered_map. Get itself erases/reinserts list nodes; concurrent
+    # Get/Put/Clear without the same mutex can invalidate/use freed iterators.
+    # Require the reviewed container pair and concrete operations, not just a
+    # class or method name. The upstream fix guards each operation with mutex_.
+    if source_path.endswith("frameworks/common/include/utils/lru_cache_util.h"):
+        cache_class = re.search(r"\bclass\s+LruCacheUtil\s*\{(?P<body>.*?)\n\};", s, re.S)
+        if cache_class:
+            class_body = cache_class.group("body")
+            has_list = bool(re.search(
+                r"std::list\s*<\s*std::pair\s*<\s*K\s*,\s*V\s*>\s*>\s*cache_\s*;",
+                class_body,
+            ))
+            has_iterator_map = bool(re.search(
+                r"std::unordered_map\s*<[\s\S]*?::\s*iterator[\s\S]*?lruMap_\s*;",
+                class_body,
+            ))
+            get = _body(s, "LruCacheUtil<K, V>::Get")
+            put = _body(s, "LruCacheUtil<K, V>::Put")
+            clear = _body(s, "LruCacheUtil<K, V>::Clear")
+            if has_list and has_iterator_map and get and (put or clear):
+                operations = [("Get", get), ("Put", put), ("Clear", clear)]
+                relevant = [(name, item) for name, item in operations if item]
+                unlocked = [
+                    (name, item) for name, item in relevant
+                    if not re.search(
+                        r"std::lock_guard\s*<\s*std::mutex\s*>\s+\w+\s*\(\s*mutex_\s*\)",
+                        item[1],
+                    )
+                ]
+                get_uses_iterator = (
+                    "lruMap_.find" in get[1]
+                    and "lruMap_[key]" in get[1]
+                    and "cache_.erase" in get[1]
+                    and "cache_.push_front" in get[1]
+                )
+                concurrent_mutator = bool(
+                    (put and ("cache_.erase" in put[1] or "cache_.pop_back" in put[1]))
+                    or (clear and "cache_.clear" in clear[1] and "lruMap_.clear" in clear[1])
+                )
+                if get_uses_iterator and concurrent_mutator and unlocked:
+                    erase = re.search(r"cache_\.erase\s*\(", get[1])
+                    if erase:
+                        out.append(_finding(
+                            unit, get[0] + 1 + erase.start(),
+                            "ohknowncve-appdomainverify-cve-2026-58313",
+                            "CVE-2026-58313",
+                            "LruCacheUtil stores std::list iterators in lruMap_; Get erases/reinserts their nodes while Get/Put/Clear lack a common mutex, so concurrent cache operations can use invalidated iterators and cause use-after-free.",
+                            "CWE-416",
+                        ))
+    # CVE-2026-92392: request cleanup must finish before connection filters
+    # release their references to Curl_easy.
+    if source_path.endswith("lib/multi.c"):
+        multi_done = _body(s, "multi_done")
+        affected = _curl_92392_affected(curl_version)
+        if multi_done and affected is not False:
+            multi_start, multi_body = multi_done
+            req_done = re.search(r"Curl_req_done\s*\(\s*&data->req\s*,\s*data\s*,\s*premature\s*\)", multi_body)
+            filter_done = re.search(r"Curl_conn_ev_data_done\s*\(\s*data\s*,\s*premature\s*\)", multi_body)
+            schedule = re.search(r"multi_schedule_pending\s*\(\s*data->multi\s*\)", multi_body)
+            pool_return = re.search(r"Curl_cpool_(?:return|do_locked)\s*\(", multi_body)
+            if (req_done and filter_done and pool_return
+                    and filter_done.start() < req_done.start()
+                    and pool_return.start() > req_done.start()):
+                version_note = (
+                    "source-declared libcurl version is in the published affected range"
+                    if affected is True else
+                    "no unique source-declared libcurl version was found; version applicability remains unknown"
+                )
+                out.append(_finding(
+                    unit, multi_start + 1 + filter_done.start(),
+                    "ohknowncve-curl-cve-2026-92392", "CVE-2026-92392",
+                    "multi_done notifies connection filters before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; " + version_note + ".",
+                    "CWE-416",
+                ))
     # CVE-2025-9900: only inspect the public wrapper body. The old expression
     # subtracts image height from raster height before passing a shifted raster
     # pointer to TIFFRGBAImageGet; another function's nearby bounds checks must
@@ -313,6 +515,7 @@ class KnownDisclosedCveDetector:
     def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
         del context
         selected = tuple(sorted((u for u in units if u.language in self.supported_languages), key=lambda u: u.path))
+        curl_version, _curl_version_ambiguous = _curl_version(selected)
         if not selected:
             return DetectorRun(self.detector_id, self.version, "blocked", limitations=("not_applicable: no C/C++ source supplied.",))
         if sum(len(u.text.encode("utf-8")) for u in selected) > MAX_TOTAL_BYTES:
@@ -324,7 +527,7 @@ class KnownDisclosedCveDetector:
             # Narrow lexical CVE signatures can still preserve evidence from a
             # partial AST. The run remains blocked and never turns the rest of
             # the unit into a negative/safe result.
-            findings.extend(_scan(u))
+            findings.extend(_scan(u, curl_version))
             analyzed.append(u.path)  # inspected; blocked run maps incomplete inputs to partial coverage
             if u.parse_status != "complete":
                 complete=False

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 SOURCE_MODEL_VERSION = '0.4.0'  # Frozen D3/D4 source semantics; new profiles are append-only.
 SOURCE_PROFILE_CATALOG_VERSION = '0.1.0'
-SINK_MODEL_VERSION = '0.6.0'  # Adds public OH_LOG macros and direct message output APIs.
+SINK_MODEL_VERSION = '0.7.0'  # Adds public OH_LOG macros and direct message output APIs.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
 
@@ -54,6 +54,7 @@ SINKS = (
      ExposureSinkModel('OH_LOG_PrintMsg', 4),
      ExposureSinkModel('OH_LOG_PrintMsgByLen', 5),
      ExposureSinkModel('HILOG_IMPL', 4)) +
+    tuple(ExposureSinkModel('WIFI_LOG' + level, 0) for level in 'FEWID') +
     tuple(ExposureSinkModel('OH_LOG_' + level, 1) for level in
           ('DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL')) +
     tuple(ExposureSinkModel('HILOG_' + level, 1) for level in
