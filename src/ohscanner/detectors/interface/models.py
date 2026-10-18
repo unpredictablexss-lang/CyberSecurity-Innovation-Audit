@@ -6,7 +6,7 @@ Additional components should supply reviewed exact-name models via IpcPolicy.
 from dataclasses import dataclass, field
 from typing import FrozenSet, Tuple
 
-MODEL_VERSION = "oh-ipc-2026.10-v6"
+MODEL_VERSION = "oh-ipc-2026.10-v9"
 
 # ---------------------------------------------------------------------------
 # Reviewed consequence catalogue (v1), kept separate from the mechanism rules.
@@ -45,6 +45,7 @@ IMPACT_BY_RULE = {
     "ipc.auth.object-owner": "cross_principal_effect",
     "ipc.parcel.copy-range": "out_of_bounds_read",
     "ipc.parcel.position-underflow": "out_of_bounds_read",
+    "ipc.tlv.fixed-width-length": "out_of_bounds_read",
     "ipc.capability.export": "capability_exposure",
 }
 
@@ -198,10 +199,29 @@ class IpcPolicy:
         "CallManagerService::StartRtt", "CallManagerService::StopRtt",
         "CallManagerService::GetImsConfig", "CallManagerService::SetImsConfig",
         "CallManagerService::GetImsFeatureValue", "CallManagerService::SetImsFeatureValue",
-        "CallManagerService::SetCameraZoom"})
+        "CallManagerService::SetCameraZoom",
+        "CallManagerService::RegisterVoipCallManagerCallback",
+        "CallManagerService::UnRegisterVoipCallManagerCallback",
+        "CallManagerService::ReportOttCallDetailsInfo",
+        "CallManagerService::ReportOttCallEventInfo"})
     transport_entries: FrozenSet[str] = frozenset({"TraceServerReceieve"})
     max_call_depth: int = 2
     max_paths: int = 96
+    # Reviewed repository-specific permission contracts. Bind to the exact
+    # repository and method; the same class/method name in another project must
+    # not inherit this product policy. Source: OpenHarmony telephony permission
+    # correction linked to CVE-2025-26691 (reviewed fixed-source pair).
+    repository_expected_permissions: Tuple[Tuple[str, str, str], ...] = (
+        ("openharmony/telephony_call_manager", "CallManagerService::RegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::UnRegisterVoipCallManagerCallback", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetCameraZoom", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::GetImsConfig", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetImsConfig", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::GetImsFeatureValue", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::SetImsFeatureValue", "OHOS_PERMISSION_SET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallDetailsInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+        ("openharmony/telephony_call_manager", "CallManagerService::ReportOttCallEventInfo", "OHOS_PERMISSION_GET_TELEPHONY_STATE"),
+    )
     expected_permissions: Tuple[Tuple[str, str], ...] = ()
     object_sensitive_calls: FrozenSet[str] = frozenset({"OpenUserFile", "GetUserData", "DeleteUserData", "ReadUserData"})
     # Bounded macro expansion (cpp_macros). It is a coverage/accuracy switch, not a

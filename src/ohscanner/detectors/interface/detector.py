@@ -4,12 +4,13 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
+from .tlv_fixed_width import find_fixed_width_tlv_overreads
 
 # Which family reports which mechanism CWE. Read from the family modules rather
 # than repeated here, so a family's id, its rules and its CWE land together and a
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
-assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "CAP-01"}, sorted(_CWE)
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "DATA-01", "DATA-05", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
     EvidenceObligation("entry_reachability","Verify actual caller reachability and product build/macro conditions."),
@@ -64,7 +65,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.8.0"
+    version = "0.8.3"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -111,6 +112,39 @@ class IpcInterfaceDetector:
                 +((_DESCRIPTOR_OBLIGATIONS[o.descriptor_identity],) if o.descriptor_identity else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
             ) for o in observations)
+        # Fixed-width TLV helpers are reusable parser code rather than IPC roots.
+        # Keep this exact structural check separate so a match does not imply
+        # that the helper is reachable from an exported service interface.
+        tlv_findings = []
+        for unit in applicable:
+            if unit.language != "cpp" or unit.parse_status in ("failed", "not_run"):
+                continue
+            for line, symbol in find_fixed_width_tlv_overreads(unit.text):
+                tlv_findings.append(DetectorFinding(
+                    file=unit.path,
+                    line=line,
+                    symbol=symbol,
+                    rule_id="ipc.tlv.fixed-width-length",
+                    message=("DATA-05 candidate: a TLV header length bounds available bytes, "
+                             "but a fixed-width memcpy_s still reads sizeof(T) without first "
+                             "requiring head.len == sizeof(T). Entry reachability, the exact "
+                             "serialized input source, and product impact are not established."),
+                    evidence_type="syntax",
+                    candidate_cwe="CWE-125",
+                    consequence_impact="out_of_bounds_read",
+                    consequence_cwe="CWE-125",
+                    evidence_obligations=(
+                        EvidenceObligation("serialized_input_binding",
+                                           "Verify the TLV header and backing byte vector derive from the same untrusted serialized input."),
+                        EvidenceObligation("source_extent",
+                                           "Confirm a short declared value can leave fewer than sizeof(T) physical bytes at cursor_ on the reached path."),
+                        EvidenceObligation("entry_reachability",
+                                           "Bind this reusable parser helper to a product IPC/service entry and attacker-controlled data."),
+                        EvidenceObligation("security_impact",
+                                           "Determine whether adjacent bytes are disclosed, only misparsed, or safely rejected by surrounding code."),
+                    ),
+                ))
+        findings = findings + tuple(tlv_findings)
         status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"
         return DetectorRun(self.detector_id,self.version,status,tuple(u.path for u in applicable),findings,
             ("Model="+MODEL_VERSION+"; first-party bounded structured syntax interpretation, no external scanner execution.",

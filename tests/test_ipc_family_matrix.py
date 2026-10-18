@@ -34,6 +34,7 @@ REVIEWED_CWE = {
     'AUTH-03': 'CWE-863',
     'AUTH-04': 'CWE-863',
     'DATA-01': 'CWE-20',
+    'DATA-05': 'CWE-125',
     'CAP-01': 'CWE-926',
 }
 
@@ -221,7 +222,7 @@ class FamilyFixtureMatrixTests(unittest.TestCase):
                     self.assertEqual(rules, set())
 
     def test_the_shared_manifest_names_registered_families(self):
-        """Every shipped fixture belongs to a family, and all six are represented."""
+        """Every shipped fixture belongs to a family, and all registered families are represented."""
         items = json.loads((BASE / 'manifest.json').read_text())
         self.assertEqual({item['family'] for item in items}, set(REVIEWED_CWE))
         self.matrix(BASE / 'manifest.json')

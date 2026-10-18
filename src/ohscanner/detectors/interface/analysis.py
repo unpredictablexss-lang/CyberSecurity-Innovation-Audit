@@ -106,6 +106,15 @@ def _returned_fact(value):
     return frozenset()
 
 
+def _returned_caller_class(value):
+    """Caller-class fact established by a true-valued local helper return."""
+    if (value.kind == "predicate" and len(value.predicate) >= 3
+            and value.predicate[0] == "caller_class"
+            and value.predicate[2] is True):
+        return frozenset({value.predicate[1]})
+    return frozenset()
+
+
 @dataclass
 class State:
     env: dict = field(default_factory=dict)
@@ -403,6 +412,7 @@ class Interpreter:
         self.observations = []
         self.limitations = set()
         self.seen_permissions = set()
+        self.permission_mismatch_roots = set()
         # Provenance for every cross-TU one-hop guard this run credited, one line
         # each. Kept separately from `limitations` while the walk is in progress so
         # a hop note is never mistaken for a refusal, and merged in `run()`.
@@ -867,9 +877,18 @@ class Interpreter:
                 return Value("constant", "1")
         return None
 
-    def authorized(self, state, name):
-        expected = dict(self.policy.expected_permissions).get(name)
-        if expected:return expected in state.auth
+    def expected_permission(self, name, qualified=""):
+        repository = self.request.repository if self.request is not None else None
+        for owner, method, expected in self.policy.repository_expected_permissions:
+            if owner == repository and method == qualified:
+                return expected
+        contracts = dict(self.policy.expected_permissions)
+        return contracts.get(qualified) or contracts.get(name)
+
+    def authorized(self, state, name, qualified=""):
+        expected = self.expected_permission(name, qualified)
+        if expected:
+            return expected in state.auth
         # A service-account role is accepted only for the operations the reviewed
         # record names. Recognizing the account that guards an interface is not a
         # statement that the account may do anything else, so this set is computed
@@ -1016,10 +1035,34 @@ class Interpreter:
             return
         root_key = (self.root.file, self.root.qualified)
         sensitive = name in self.policy.sensitive_calls or name in self.policy.object_sensitive_calls
+        # A reviewed method contract can reject a wrong permission at the check
+        # itself, even where no separate sensitive sink is modeled in this body.
+        expected_contract = (self.expected_permission(fn.name, fn.qualified)
+                             or self.expected_permission(self.root.name, self.root.qualified))
+        if name in self.policy.boolean_permissions | self.policy.result_permissions and expected_contract:
+            observed_permissions = {arg.key for arg in args
+                                    if arg.kind == "constant" and arg.key}
+            if observed_permissions and expected_contract not in observed_permissions:
+                self.permission_mismatch_roots.add(root_key)
+                operation = fn.name if self.expected_permission(fn.name, fn.qualified) else self.root.name
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Service operation " + operation + " checks permission "
+                          + ", ".join(sorted(observed_permissions)) + " but its reviewed "
+                          "contract requires " + expected_contract + ".",
+                          call=operation)
         if sensitive:
             for issue_fn,issue_node,issue_rule,issue_message in state.identity_issues:
                 self.emit("AUTH-03",issue_rule,issue_fn,issue_node,state,issue_message,call=name)
-        if sensitive and not self.authorized(state, name) and guard is None:
+        expected = self.expected_permission(name, fn.qualified)
+        mismatch = expected and state.auth and expected not in state.auth
+        if sensitive and mismatch and guard is None:
+            if root_key not in self.permission_mismatch_roots:
+                observed = ", ".join(sorted(state.auth))
+                self.emit("AUTH-02", "ipc.auth.missing", fn, node, state,
+                          "Sensitive modeled call " + name + " has a permission mismatch: "
+                          "reviewed contract requires " + expected + ", but this path checks "
+                          + observed + ".", call=name)
+        elif sensitive and not self.authorized(state, name, fn.qualified) and guard is None:
             if self.root_grade == "dispatch" and "dispatcher-guard-observed" in self.root_note:
                 # A guard runs before dispatch, so this is a guard-coverage question
                 # (does it dominate this transaction?), not an absent-authorization
@@ -1242,7 +1285,9 @@ class Interpreter:
             args = [self.value(fn, a, state, depth) for a in an.named_children] if an else []
             receiver = re.split(r"->|\.", callee)[0] if re.search(r"->|\.", callee) else ""
             if name in self.policy.caller_token_calls | self.policy.caller_uid_calls:
-                return Value("self" if state.reset else "caller", text, "uid" if name in self.policy.caller_uid_calls else "token")
+                subject = ("uid" if name in self.policy.caller_uid_calls else
+                           "full_token" if name == "GetCallingFullTokenID" else "token")
+                return Value("self" if state.reset else "caller", text, subject)
             if name in self.policy.self_calls:
                 return Value("self", text, "uid" if name in ("getuid","geteuid") else "token")
             if name == "ResetCallingIdentity":
@@ -1258,6 +1303,9 @@ class Interpreter:
                 return Value("descriptor_read", rv.key) if rv.kind == "parcel" else UNKNOWN
             if name == "GetDescriptor":
                 return self.descriptor_expectation(fn, callee, state)
+            if (callee == "TokenIdKit::IsSystemAppByFullTokenID" and len(args) == 1
+                    and args[0].kind == "caller" and args[0].subject == "full_token"):
+                return Value("predicate", predicate=("caller_class", "system_app", True))
             if name == "AsObject" and receiver and not args:
                 # `sptr<T>::AsObject()` hands back the IRemoteObject that smart
                 # pointer already holds -- the same object, not a new one. A reply
@@ -1357,6 +1405,10 @@ class Interpreter:
                         *(s.auth | _returned_fact(s.returned) for s in good)) - state.auth
                     if common:
                         return Value("predicate", predicate=("auth", sorted(common)[0], True))
+                    common_class = frozenset.intersection(
+                        *(s.caller_class | _returned_caller_class(s.returned) for s in good)) - state.caller_class
+                    if common_class:
+                        return Value("predicate", predicate=("caller_class", sorted(common_class)[0], True))
                 self.limitations.add("Unresolved multi-outcome helper return: " + helper.qualified)
                 return UNKNOWN
             if name in self.policy.boolean_permissions | self.policy.result_permissions:
@@ -1679,7 +1731,8 @@ class Interpreter:
             if obs.rule=="ipc.auth.missing":
                 # Permission call somewhere is not coverage. Keep the primary
                 # finding and add the explicit coverage subtype for these roots.
-                if obs.root_key in self.seen_permissions:
+                if (obs.root_key in self.seen_permissions
+                        and obs.root_key not in self.permission_mismatch_roots):
                     revised.append(replace(obs,family="AUTH-04",rule="ipc.auth.guard-coverage",
                         message="Authorization checks exist in the analyzed entry set, but this modeled sensitive path has no matched caller guard. "+obs.message))
             revised.append(obs)

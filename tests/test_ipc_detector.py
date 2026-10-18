@@ -12,10 +12,10 @@ from src.ohscanner.detectors.interface.models import IpcPolicy
 
 BASE=Path(__file__).parent/'fixtures/ipc'
 
-def context(text, path='sample.cpp'):
+def context(text, path='sample.cpp', repository='fixture/ipc'):
     index=parse_source(text,language='cpp')
     unit=SourceUnit(path,'cpp',text,hashlib.sha256(text.encode()).hexdigest(),index.parse_status)
-    request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:fixture/ipc')
+    request=ScanRequest('ipc-test',repository,'synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:'+repository)
     return ScanContext(request,(unit,),{'ast':{path:index.to_dict()}})
 
 def parses_raw(text, grammar):
@@ -63,6 +63,20 @@ class IpcDetectorTests(unittest.TestCase):
         policy=IpcPolicy(expected_permissions=(('StartAbility','"ohos.permission.OTHER"'),))
         run=IpcInterfaceDetector(policy).detect(ctx,ctx.units)
         self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
+
+    def test_reviewed_method_permission_contract_is_repository_scoped(self):
+        from src.ohscanner.detectors.interface.analysis import Interpreter
+        source = "class CallManagerService { void GetImsConfig(); };"
+        method = "CallManagerService::GetImsConfig"
+        contract = "OHOS_PERMISSION_GET_TELEPHONY_STATE"
+        same = context(source, repository="openharmony/telephony_call_manager")
+        foreign = context(source, repository="example/other_component")
+        same_walk = Interpreter(same.units, IpcPolicy(), same.request)
+        foreign_walk = Interpreter(foreign.units, IpcPolicy(), foreign.request)
+        self.assertEqual(same_walk.expected_permission("GetImsConfig", method), contract)
+        self.assertIsNone(foreign_walk.expected_permission("GetImsConfig", method))
+        self.assertIsNone(same_walk.expected_permission("GetImsConfig",
+                                                        "OtherService::GetImsConfig"))
 
     def test_format_models_preserve_original_offsets(self):
         from src.ohscanner.detectors.interface.analysis import normalize_syntax
