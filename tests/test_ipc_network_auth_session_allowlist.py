@@ -158,7 +158,7 @@ class NetworkAuthSessionAllowlistTests(unittest.TestCase):
         self.assertEqual(finding.consequence_impact, "unknown")
         self.assertIn("allowlist-length prefix", finding.message)
 
-    def test_prefix_candidate_is_suppressed_with_exact_fail_closed_registry_chain(self):
+    def test_prefix_candidate_is_retained_with_exact_registry_chain_without_allowlist_binding(self):
         prefix = FIXED.replace(
             "if (strcmp(appInfo->myData.sessionName, g_sessionWhiteList[index]) == 0)",
             "if (strncmp(appInfo->myData.sessionName, g_sessionWhiteList[index], "
@@ -167,8 +167,10 @@ class NetworkAuthSessionAllowlistTests(unittest.TestCase):
         self.assertTrue(has_exact_registered_session_resolution(
             (prefix, EXACT_REGISTERED_SESSION_CONTEXT)))
         ctx = context(prefix + EXACT_REGISTERED_SESSION_CONTEXT)
-        self.assertFalse(any(item.rule_id == "ipc.network.auth-session-whitelist"
-                             for item in IpcInterfaceDetector().detect(ctx, ctx.units).findings))
+        finding = next(item for item in IpcInterfaceDetector().detect(ctx, ctx.units).findings
+                       if item.rule_id == "ipc.network.auth-session-whitelist")
+        self.assertEqual(finding.consequence_impact, "unknown")
+        self.assertIn("does not prove it is an exact allowlist member", finding.message)
 
     def test_prefix_candidate_remains_when_registered_session_context_is_missing(self):
         prefix = FIXED.replace(

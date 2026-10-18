@@ -822,3 +822,29 @@ path. Also required: report test count / candidate count / confirmed count **sep
   confirmed textually because they are error nodes; entries are not reachability; three components
   have no dispatcher source in-repo (IDL-generated). Report:
   `https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit/blob/48bce9eab77fdf22acbb708cd9bf481ca32e7667/docs/research/ipc_scanner_v0_2_entry_coverage_2026-10-10.md`.
+
+---
+
+# AUTH-06 scope-aware prefix review (2026-10-19)
+
+`ohscanner.interface.ipc` is now `0.12.4` / model `oh-ipc-2026.10-v24`. A review of the
+CVE-2022-42463 fix found that the v0.12.3 cross-file suppression was too strong: exact
+`strcmp` lookups in the local session registry prove that a name is registered, but do not
+prove that the name is an exact member of the auth callback's allowlist or that the product's
+registration policy authorizes the peer. A `strncmp` prefix guard therefore remains a
+`candidate` with `consequence_impact=unknown` even when the exact registry lookup chain is
+visible. Only a source-recognized rejecting exact allowlist comparison suppresses this
+candidate.
+
+Regression: `tests.test_ipc_network_auth_session_allowlist` now checks that a prefix-only
+allowlist remains a candidate with and without the downstream exact registry chain. The
+fixed disclosure pair was rerun at its exact commits with both the auth callback and session
+registry implementation in scope; the vulnerable version reports a missing-guard candidate,
+and the fixed version reports a distinct prefix-only candidate. Both files parse `partial`;
+this is a source-bound static review, not a product exploit or a confirmed residual CVE.
+Report package: `research/deliveries/ipc/20261019-cve-2022-42463-scope-aware-v0.12.4/`.
+
+Next evidence needed to settle the suffix case: inspect the exact `CheckTransPermission`
+policy and deployed permission configuration that gate session-server registration, then
+confirm the remote peer identity binding and product build. Do not infer those facts from the
+local `strcmp` lookup alone.

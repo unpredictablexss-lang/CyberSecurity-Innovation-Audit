@@ -92,7 +92,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.3"
+    version = "0.12.4"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -233,18 +233,25 @@ class IpcInterfaceDetector:
             if unit.parse_status in ("failed", "not_run"):
                 continue
             for line, symbol, check_kind in find_auth_session_allowlist_candidates(unit.text):
-                if check_kind == "prefix" and exact_registered_session_resolution:
-                    continue
                 message = ("AUTH-06 candidate: a decoded peer AppInfo reaches auth-channel state "
                            "update and success notification without a source-recognized exact "
                            "sessionName whitelist rejection. Network reachability and policy effect "
                            "remain unknown.")
                 consequence = "unauthorized_effect"
                 if check_kind == "prefix":
-                    message = ("AUTH-06 candidate: the callback rejects names outside its sessionName "
-                               "allowlist, but the recognized strncmp comparison only checks an "
-                               "allowlist-length prefix. Whether suffix-bearing names are valid and "
-                               "whether this changes downstream authorization remain unknown.")
+                    if exact_registered_session_resolution:
+                        message = ("AUTH-06 candidate: the callback applies a prefix-only sessionName "
+                                   "allowlist before auth-channel state changes. A downstream exact "
+                                   "session-registry lookup proves that the name is registered, but "
+                                   "does not prove it is an exact allowlist member or that its "
+                                   "registration policy authorizes this peer. Suffix-bearing names "
+                                   "and product policy remain unknown.")
+                    else:
+                        message = ("AUTH-06 candidate: the callback rejects names outside its "
+                                   "sessionName allowlist, but the recognized strncmp comparison "
+                                   "only checks an allowlist-length prefix. Whether suffix-bearing "
+                                   "names are valid and whether this changes downstream authorization "
+                                   "remain unknown.")
                     consequence = "unknown"
                 network_auth_findings.append(DetectorFinding(
                     file=unit.path,
