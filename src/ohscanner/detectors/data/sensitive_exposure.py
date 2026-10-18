@@ -74,7 +74,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.3.0'
+    version = '0.4.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -229,17 +229,27 @@ class LocalFlow:
         flows=tuple(dict.fromkeys(flow for arg in args
                                   for flow in self.expr(arg,env,types)))
         if not flows:return
+        self.emit_unresolved_flows(fn,node,fnname,flows,reason)
+
+    def emit_unresolved_flows(self,fn,node,fnname,flows,reason,binding_kind='callee_binding'):
+        if not flows:return
         line=node.start_point[0]+1
         traces=sorted(set(' -> '.join(flow.steps+(f'{line} unresolved call {fn}',))
                           for flow in flows))
+        binding_question=(
+            'Resolve the exact overload, receiver, and implementation for '+fn+'.'
+            if binding_kind=='callee_binding' else
+            'Resolve the format string, operand mapping, and output destination for '+fn+'.'
+            if binding_kind=='format_resolution' else
+            'Resolve pointer/member aliases and the exact destination object written by '+fn+'.')
         self.findings.append(DetectorFinding(
             file=self.u.path,line=line,symbol=fnname,
             rule_id='data.sensitive.unresolved-escape',candidate_cwe=None,
             evidence_type='syntax',source_sha256=self.u.sha256,
-            message='Candidate sensitive-data escape with unresolved callee: '
+            message='Candidate sensitive-data escape with unresolved binding: '
                     +reason+'; path='+' | '.join(traces),
             evidence_obligations=(
-                EvidenceObligation('callee_binding','Resolve the exact overload, receiver, and implementation for '+fn+'.'),
+                EvidenceObligation(binding_kind,binding_question),
                 EvidenceObligation('sink_behavior','Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.'),
                 EvidenceObligation('runtime_log_visibility','No log exposure or reader reachability is established by this call alone.'),
                 EvidenceObligation('security_impact','Establish recoverable sensitive material and concrete impact independently.'),
@@ -325,6 +335,8 @@ class LocalFlow:
     def lvalue(self,node):
         if node is None:return ''
         if node.type=='identifier':return self.text(node)
+        if node.type=='parenthesized_expression' and len(node.named_children)==1:
+            return self.lvalue(node.named_children[0])
         if node.type in ('pointer_expression','unary_expression'):
             op=self.text(node.child_by_field_name('operator'))
             if op=='&':
@@ -362,18 +374,24 @@ class LocalFlow:
         if locally_defined and fn in ('memcpy_s','strcpy_s'):
             self.gaps.add('same-file copy-like definition has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.text(args[0])
-                if re.fullmatch(r'[A-Za-z_]\w*',dst):
+                dst=self.lvalue(args[0])
+                if dst:
                     source=args[2] if len(args)>2 else args[-1]
                     env[dst]=self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
+                else:
+                    self.emit_unresolved_escape(fn,args,env,types,n,fnname,
+                                                'same-file copy-like callee may write sensitive input to an unresolved destination')
             return
         if locally_defined and fn in ('snprintf','snprintf_s'):
             self.gaps.add('same-file formatting name has unresolved write semantics: '+fn)
             if len(args) >= 2:
-                dst=self.text(args[0])
-                if re.fullmatch(r'[A-Za-z_]\w*',dst):
+                dst=self.lvalue(args[0])
+                if dst:
                     flows=tuple(flow for arg in args[1:] for flow in self.expr(arg,env,types))
                     env[dst]=self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
+                else:
+                    self.emit_unresolved_escape(fn,args,env,types,n,fnname,
+                                                'same-file formatting callee may write sensitive input to an unresolved destination')
             return
         if locally_defined and fn in self.sinks:
             bodies=self.function_bodies.get(fn, [])
@@ -390,17 +408,28 @@ class LocalFlow:
                 self.gaps.add('source API argument count unresolved');return
             index=dict(self.model.output_calls)[fn]
             if index<len(args):
-                dst=self.text(args[index]).lstrip('&')
-                if re.fullmatch(r'[A-Za-z_]\w*',dst):env[dst]=(self.source(fn+' output argument '+str(index),n),)
-                else:self.gaps.add('complex source output destination')
+                dst=self.lvalue(args[index])
+                if dst:env[dst]=(self.source(fn+' output argument '+str(index),n),)
+                else:
+                    self.gaps.add('complex source output destination')
+                    source=self.source(fn+' output argument '+str(index),n)
+                    self.emit_unresolved_flows(fn,n,fnname,(source,),
+                                               'modeled sensitive source writes to a destination whose identity is unresolved',
+                                               'destination_binding')
             return
         if fn in ('memcpy_s','strcpy_s'):
             if len(args)!=(4 if fn=='memcpy_s' else 3):
                 self.gaps.add('copy API argument count unresolved');return
-            dst=self.text(args[0])
-            if re.fullmatch(r'[A-Za-z_]\w*',dst):
+            dst=self.lvalue(args[0])
+            if dst:
                 env[dst]=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
-            else:self.gaps.add('member/pointer output copy unsupported')
+            else:
+                self.gaps.add('member/pointer output copy unsupported')
+                flows=tuple(dict.fromkeys(flow for value in args
+                                          for flow in self.expr(value,env,types)))
+                self.emit_unresolved_flows(fn,n,fnname,flows,
+                                           'sensitive input is copied to a destination whose identity is unresolved',
+                                           'destination_binding')
             return
         if fn in ('snprintf','snprintf_s'):
             fi=2 if fn=='snprintf' else 3
@@ -410,8 +439,23 @@ class LocalFlow:
                 operands=args[fi+1:]
                 if count!=len(operands):raise ValueError('format arity')
                 vals=tuple(v for _,ids,_ in slots for i in ids for v in self.expr(operands[i],env,types))
-                dst=self.text(args[0]);env[dst]=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
-            except (ValueError,SyntaxError):self.gaps.add('unsupported formatting propagation')
+                dst=self.lvalue(args[0])
+                if dst:
+                    env[dst]=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
+                elif vals:
+                    self.gaps.add('member/pointer formatting destination identity unresolved')
+                    flows=tuple(dict.fromkeys(flow for value in args
+                                              for flow in self.expr(value,env,types)))
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                                               'sensitive formatting output has an unresolved destination',
+                                               'destination_binding')
+            except (ValueError,SyntaxError):
+                self.gaps.add('unsupported formatting propagation')
+                flows=tuple(dict.fromkeys(flow for value in args[fi+1:]
+                                          for flow in self.expr(value,env,types)))
+                self.emit_unresolved_flows(fn,n,fnname,flows,
+                                           'sensitive formatting input has unresolved format-to-destination flow',
+                                           'format_resolution')
             return
         if fn not in self.sinks:
             flows=tuple(flow for arg in args for flow in self.expr(arg,env,types))

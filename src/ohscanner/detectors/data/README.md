@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.3.0 (D6 review prototype)
+# D: sensitive-material log exposure, v0.4.0 (D7 review prototype)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
@@ -45,3 +45,9 @@ D3 adds an explicitly selected historical profile (0.3.0 detector / 0.2.0-histor
 The default entry remains compatible. Read research/data_sensitive/D3_HANDOFF.md
 for real pre/post experiments, public Runner admission limits and separate user docs.
 The real pre-change candidate is research-only; no confirmed vulnerability is claimed.
+
+D7 extends output binding for address-of local destinations and emits an unresolved
+escape candidate when a modeled sensitive copy/format/source writes through a
+member or otherwise unsupported destination. The change is still syntax-bounded;
+it does not establish alias identity, product impact, or a confirmed vulnerability.
+See research/data_sensitive/D7_IMPLEMENTATION.md and D7_VALIDATION.json.

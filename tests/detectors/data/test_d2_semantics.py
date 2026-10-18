@@ -37,6 +37,8 @@ class D2SemanticsTests(unittest.TestCase):
             ('modeled source through pointer output',
              'void create(char *out){SoftBusGenerateSessionKey(out,32);} '
              'void Callback(const char *unused){char out[64];create(out);AUTH_LOGI(0,"%{public}s",out);}',1),
+            ('modeled output through address-of local',
+             'void Callback(const char *unused){char out[64];SoftBusGenerateSessionKey(&out,32);AUTH_LOGI(0,"%{public}s",out);}',1),
             ('constant helper argument remains safe',
              'void emit(const char *v){AUTH_LOGI(0,"%{public}s",v);} '
              'void Callback(const char *s){emit("literal");}',0),
@@ -48,6 +50,7 @@ class D2SemanticsTests(unittest.TestCase):
                 if expected:
                     self.assertTrue(any('return from' in finding.message
                                         or 'may write through argument' in finding.message
+                                        or 'output argument' in finding.message
                                         or 'call emit argument' in finding.message
                                         for finding in run.findings))
 
@@ -68,6 +71,21 @@ class D2SemanticsTests(unittest.TestCase):
              'void relay(const char *v){relay(v);} '
              'void Callback(const char *secret){relay(secret);}',
              'data.sensitive.unresolved-escape','callee_binding'),
+            ('sensitive copy into unresolved member destination',
+             'struct State { char *out; }; '
+             'void Callback(SessionKey *secret,State *state){memcpy_s(state->out,64,secret->value,32);}',
+             'data.sensitive.unresolved-escape','destination_binding'),
+            ('sensitive formatting into unresolved member destination',
+             'struct State { char *out; }; '
+             'void Callback(SessionKey *secret,State *state){snprintf(state->out,64,"%{public}s",secret->value);}',
+             'data.sensitive.unresolved-escape','destination_binding'),
+            ('modeled source with unresolved member destination',
+             'struct State { char *out; }; '
+             'void Callback(State *state){SoftBusGenerateSessionKey(state->out,32);}',
+             'data.sensitive.unresolved-escape','destination_binding'),
+            ('sensitive formatting with unresolved runtime format',
+             'void Callback(SessionKey *secret){char out[64];snprintf(out,64,GetFormat(),secret->value);}',
+             'data.sensitive.unresolved-escape','format_resolution'),
         )
         for label,source,rule,obligation in cases:
             with self.subTest(case=label):
@@ -93,6 +111,12 @@ class D2SemanticsTests(unittest.TestCase):
                                         for item in public))
                     self.assertTrue(sidecar['detectors'][SensitiveExposureDetector.detector_id]
                                     ['evidence_obligations'])
+
+    def test_unrelated_member_write_does_not_create_sensitive_candidate(self):
+        source=('struct State { char *out; }; '
+                'void Callback(State *state){const char *ordinary="safe";memcpy_s(state->out,64,ordinary,32);}')
+        run=support.SensitiveTests().analyze(source)
+        self.assertEqual(run.findings,())
 
     def test_d1_fixtures_and_expectations_unchanged(self):
         record=json.loads((ROOT/'research/data_sensitive/D2_BASELINE.json').read_text())
