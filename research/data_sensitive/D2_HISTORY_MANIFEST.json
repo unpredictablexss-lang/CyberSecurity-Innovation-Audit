@@ -1,0 +1,74 @@
+[
+  {
+    "parent_relation_verified": true,
+    "url": "https://github.com/openharmony/communication_dsoftbus/commit/273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+    "fixed_tree": "6769137e1a2e44fd6ad097d58f5dcc1dd2a3f8af",
+    "pre_fix_tree": "cee46dbde477381172daba25c1b330860cb571f2",
+    "repository": "openharmony/communication_dsoftbus",
+    "versions": [
+      {
+        "sha256": "4c632881b9e055feb737f11bd436bb8a5848bed4964adc5428c29b13fdef5eee",
+        "cache_file": "05ca843ed7f6968686a47283916b7553f12932ed.c",
+        "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+        "file": "core/discovery/coap/nstackx_coap/src/disc_nstackx_adapter.c",
+        "size": 26074,
+        "blob": "c5eca1fcf10ffd03f37eff6019ee47f83391841a",
+        "removed_log_lines": [
+          289
+        ]
+      },
+      {
+        "sha256": "f997a1f48a2196bd2e789aabe386c86a9f69e847f5b385fa955d6202914f2dc5",
+        "cache_file": "273637945ecb7b53d5d9af3bfd4e48a40bb88252.c",
+        "commit": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+        "file": "core/discovery/coap/nstackx_coap/src/disc_nstackx_adapter.c",
+        "size": 26028,
+        "blob": "1dfeb98eeda90b3b88d56a726af5ae348f58739a",
+        "removed_log_lines": []
+      }
+    ],
+    "pre_fix_parent": "05ca843ed7f6968686a47283916b7553f12932ed",
+    "fixed": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+    "message": "fix:Delete sensitive information printing",
+    "classification": "verified_log_removal_hardening_pair; secret semantics and unauthorized visibility unproven",
+    "current_detector_support": "blocked: historical commit has no reviewed default source model; DISC_LOGI/SoftBusLog are not current AUTH/HiLog sink models",
+    "cve": null,
+    "validated_vulnerability": 0
+  },
+  {
+    "parent_relation_verified": true,
+    "url": "https://github.com/openharmony/communication_dsoftbus/commit/63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+    "fixed_tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+    "pre_fix_tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+    "repository": "openharmony/communication_dsoftbus",
+    "versions": [
+      {
+        "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+        "cache_file": "d33177135ec6c6aaf4a4c42de1f6878652b330e3.c",
+        "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+        "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+        "size": 26736,
+        "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+        "removed_log_lines": [
+          671
+        ]
+      },
+      {
+        "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+        "cache_file": "63efce3ff7f2708527eb29216decaf5fe2dc33d0.c",
+        "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+        "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+        "size": 26641,
+        "blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+        "removed_log_lines": []
+      }
+    ],
+    "pre_fix_parent": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+    "fixed": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+    "message": "Remove unused sensitive prints",
+    "classification": "verified_log_removal_hardening_pair; secret semantics and unauthorized visibility unproven",
+    "current_detector_support": "blocked: historical commit has no reviewed default source model; DISC_LOGI/SoftBusLog are not current AUTH/HiLog sink models",
+    "cve": null,
+    "validated_vulnerability": 0
+  }
+]

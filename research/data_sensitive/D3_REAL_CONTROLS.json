@@ -1,0 +1,67 @@
+{
+  "controls": [
+    {
+      "id": "real-public-constant",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+      "source_sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+      "lines": [
+        650
+      ],
+      "anchor": "srv process recv data: decrypt message err.",
+      "classification": "nonmaterial_log_control",
+      "actual_assessment": "Private target probe traversed it; no material operand candidate at these lines. Public Runner withholds target parse-partial file."
+    },
+    {
+      "id": "real-status",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+      "source_sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+      "lines": [
+        674
+      ],
+      "anchor": "srv process message fail.[%d]",
+      "classification": "status_log_control",
+      "actual_assessment": "Private probe traversed status ret log; not treated as secret material. Not a product-safety label."
+    },
+    {
+      "id": "real-anonymized",
+      "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+      "file": "core/discovery/coap/common/src/disc_coap_parser.c",
+      "blob": "c2139200c70d9341d06b62794bb0d3b584041d84",
+      "source_sha256": "7a18f6282c8ba728136a8fa1a283debaab3514dc01dd16cc5918449936ebc5c9",
+      "lines": [
+        47,
+        69
+      ],
+      "anchor": "AnonymizeWrapper(anonymizedStr)",
+      "classification": "protected_output_shape_unknown",
+      "actual_assessment": "Source inspection confirms explicit anonymization call, but this version/DISC API has no accepted source model; detector safety assessment unexecuted/unknown."
+    },
+    {
+      "id": "real-log-implementation",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "file": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "source_sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "lines": [
+        45
+      ],
+      "anchor": "void SoftBusLog(",
+      "classification": "unrelated_to_target_source",
+      "actual_assessment": "Public Runner scheduled this AST-complete file as partial; no target source and no candidate. This is API definition, not an independent same-name impostor function."
+    },
+    {
+      "id": "real-parse-blocked",
+      "file": "core/authentication/src/auth_session_key.c",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "classification": "unknown_parse_partial",
+      "actual_assessment": "Actual public not_analyzed; macro missing-semicolon regions and function overlaps saved in D3_REAL_SCAN.json."
+    }
+  ],
+  "real_same_name_impostor_control": "not acquired; covered by synthetic design control only",
+  "independent_truth": false,
+  "not_all_categories_formally_analyzed": true
+}

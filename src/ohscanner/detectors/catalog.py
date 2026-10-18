@@ -13,6 +13,7 @@ from .cpp.resource_lifetime_detector import CppResourceLifetimeDetector
 from .cpp.unsafe_memory_call_detector import CppUnsafeMemoryCallDetector
 from .interface.m2_adapter import M2IpcInterfaceDetector
 from .interface.arkts_js import ArkTsJsInterfaceDetector
+from .data.sensitive_exposure import SensitiveExposureDetector
 
 _APPROVED = {
     "ohscanner.oh.arkts_js": {
@@ -24,6 +25,13 @@ _APPROVED = {
         "factory": M2IpcInterfaceDetector,
         "kind": "research_candidate",
         "summary": "B: bounded IPC trust-boundary candidates; partial syntax is unknown, not safe",
+    },
+    "ohscanner.data.sensitive_exposure": {
+        "factory": SensitiveExposureDetector,
+        "kind": "research_candidate",
+        "default_enabled": False,
+        "admission_reason": "explicit_selection_required: exact-revision sensitive-source research model; partial coverage remains unknown",
+        "summary": "D: exact-revision sensitive-data-to-log candidates; not a vulnerability verdict",
     },
     CppCopyCallExampleDetector.detector_id: {
         "factory": CppCopyCallExampleDetector,

@@ -16,7 +16,9 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-ENGINE_MODEL_FILES = ()  # Reviewed shipped model data only; C/D models remain withheld.
+ENGINE_MODEL_FILES = (
+    "src/ohscanner/detectors/data/historical_profiles.json",
+)  # Freeze D exact-revision profile data with the engine identity.
 
 
 def engine_fingerprint():

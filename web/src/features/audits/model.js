@@ -1,9 +1,15 @@
 // Request builders match the existing strict /api/v1 request schemas.
-export function approvedDetectorIds(detectors) {
+export function approvedDetectorIds(detectors, explicitIds = []) {
   const approved = detectors.filter((d) => d.kind === "research_candidate" && d.default_enabled !== false &&
     typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
     Array.isArray(d.supported_languages) && d.supported_languages.length);
-  const ids = approved.map((d) => d.id).sort();
+  const availableExperimental = new Set(detectors.filter((d) =>
+    d.kind === "research_candidate" && d.default_enabled === false &&
+    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
+    Array.isArray(d.supported_languages) && d.supported_languages.length).map((d) => d.id));
+  if (!Array.isArray(explicitIds) || explicitIds.some((id) => !availableExperimental.has(id)))
+    throw new Error("显式选择包含不可用的实验规则，请刷新能力配置。");
+  const ids = [...approved.map((d) => d.id), ...explicitIds].sort();
   if (!ids.length) throw new Error("当前没有可用的已批准研究规则，请查看系统设置。");
   if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
   return ids;
@@ -17,7 +23,7 @@ export function includePaths(value = ".") {
     throw new Error("纳入路径必须是仓库内相对路径，不能包含 .. 或绝对路径。");
   return paths;
 }
-function common(values, detectors) {
+function common(values, detectors, explicitIds = []) {
   if (!values.repository_id) throw new Error("请选择已登记仓库。");
   const timeout = Number(values.timeout_seconds ?? 600);
   const memory = Number(values.memory_mb ?? 2048);
@@ -25,15 +31,15 @@ function common(values, detectors) {
       !Number.isInteger(memory) || memory < 256 || memory > 8192)
     throw new Error("执行预算超出允许范围。");
   return { repository_id: values.repository_id, include_paths: includePaths(values.include_text),
-    detector_ids: approvedDetectorIds(detectors), timeout_seconds: timeout, memory_mb: memory };
+    detector_ids: approvedDetectorIds(detectors, explicitIds), timeout_seconds: timeout, memory_mb: memory };
 }
-export function snapshotPayload(values, detectors) {
+export function snapshotPayload(values, detectors, explicitIds = []) {
   if (!values.revision?.trim()) throw new Error("请选择或填写分支、Tag 或完整 Commit。");
-  const { detector_ids, ...payload } = common(values, detectors);
-  return { ...payload, revision: values.revision.trim() };
+  const { detector_ids, ...payload } = common(values, detectors, explicitIds);
+  return { ...payload, ...(explicitIds.length ? { detector_ids } : {}), revision: values.revision.trim() };
 }
-export function planPayload(values, detectors) {
-  const { timeout_seconds, memory_mb, ...payload } = snapshotPayload(values, detectors);
+export function planPayload(values, detectors, explicitIds = []) {
+  const { timeout_seconds, memory_mb, ...payload } = snapshotPayload(values, detectors, explicitIds);
   return payload;
 }
 export function datePreviewPayload(values) {

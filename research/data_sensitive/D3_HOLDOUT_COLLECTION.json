@@ -1,0 +1,60 @@
+{
+  "collected_at": "2026-10-17T13:26:02.227719+00:00",
+  "freeze_sha256": "8d837313747b556f4bee83f81a2d1de379e871c8a9fbd2b90e6be59385e6e846",
+  "freeze_head": "88528b791323e25ea96108ab6c95cbc8f3ce646f",
+  "selection": "first 3 lexicographic non-test /src/ cpp files <=32KiB from exact official GitHub tree, selected after freeze without detector output",
+  "files": [
+    {
+      "sample_id": "D3-H1",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "frameworks/accesstoken/src/atm_tools_param_info_parcel.cpp",
+      "blob": "784ab88a3c179ca3d49f377a4c71f363e18c2e0e",
+      "sha256": "08ff667218cd088fd43bfe9a9408d4bdd304c4e40ca2b600a677b227fafda47e",
+      "size": 2448,
+      "url": "https://github.com/openharmony/security_access_token/blob/17d88bfb36bea6c9370ba919ac41a22d16dd66b3/frameworks/accesstoken/src/atm_tools_param_info_parcel.cpp",
+      "label": "unknown_pending_independent_review",
+      "detector_evaluation": "not_executed; no reviewed model for this repository/commit"
+    },
+    {
+      "sample_id": "D3-H2",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "frameworks/accesstoken/src/hap_base_info_parcel.cpp",
+      "blob": "7a55f37316c58568f41818d9deba3bd7cfc9ace6",
+      "sha256": "fd7315bd8250e6d828cc343710eead91c62fc3816583e582b0104907a1a4130c",
+      "size": 1605,
+      "url": "https://github.com/openharmony/security_access_token/blob/17d88bfb36bea6c9370ba919ac41a22d16dd66b3/frameworks/accesstoken/src/hap_base_info_parcel.cpp",
+      "label": "unknown_pending_independent_review",
+      "detector_evaluation": "not_executed; no reviewed model for this repository/commit"
+    },
+    {
+      "sample_id": "D3-H3",
+      "repository": "openharmony/security_access_token",
+      "commit": "17d88bfb36bea6c9370ba919ac41a22d16dd66b3",
+      "tree": "4621b3e40b31a958a4bbe9be87690afb6cec44b0",
+      "file": "frameworks/accesstoken/src/hap_info_parcel.cpp",
+      "blob": "c221ba55e2aa7a01554c836db7164186bbd5f4e6",
+      "sha256": "51b0eb9a21a05a7394e070019d4e47d6d890f5c0375f74bc6664687e9acc6b04",
+      "size": 3636,
+      "url": "https://github.com/openharmony/security_access_token/blob/17d88bfb36bea6c9370ba919ac41a22d16dd66b3/frameworks/accesstoken/src/hap_info_parcel.cpp",
+      "label": "unknown_pending_independent_review",
+      "detector_evaluation": "not_executed; no reviewed model for this repository/commit"
+    }
+  ],
+  "independently_labelled": false,
+  "holdout_evaluation_executed": false,
+  "precision": null,
+  "recall": null,
+  "gitcode_cross_verified": false,
+  "source": "official organization GitHub mirror",
+  "blind_review_protocol": [
+    "Reviewer receives sample IDs and fixed raw sources without predictions",
+    "Classify supported-sensitive-public-risk / protected-safe / unrelated / unknown with source and permission evidence",
+    "Record label provenance and disagreements; unknown is not negative",
+    "Do not tune using this pool; any post-freeze changes require a new evaluation set",
+    "Report unsupported repository/model and parser coverage separately; no metrics before valid truth exists"
+  ]
+}

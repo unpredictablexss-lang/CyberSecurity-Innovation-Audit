@@ -1,0 +1,8 @@
+{
+  "preferred_source_attempt": "https://gitcode.com/api/v5/repos/openharmony/communication_dsoftbus/commits/273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+  "http_status": 404,
+  "response_sha256": "a1214a52dc13ba48bd7c2445e58fd5038c20e4c2b340622fdbc3cd5c2abb0a0f",
+  "interpretation": "This endpoint request failed; it does not prove commit absence on GitCode.",
+  "fallback": "official organization GitHub mirror commit/contents API",
+  "cross_mirror_commit_identity_verified": false
+}

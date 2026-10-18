@@ -93,12 +93,30 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertEqual(r.status_code, 422)
         self.assertEqual(self.store.jobs(), [])
 
-    def test_unadmitted_c_d_ids_cannot_be_submitted_as_production(self):
-        for ident in ['ohscanner.ark.runtime.type_safety', 'ohscanner.data.sensitive_exposure']:
-            r = self.client.post('/api/v1/scans', json=self.request(detector_ids=[ident]), headers=fixtures.HEADERS)
-            self.assertEqual(r.status_code, 409, r.text)
-            self.assertIn('not-yet-approved', r.text)
+    def test_c_remains_blocked_while_d_requires_explicit_research_selection(self):
+        c_id = 'ohscanner.ark.runtime.type_safety'
+        r = self.client.post('/api/v1/scans', json=self.request(detector_ids=[c_id]), headers=fixtures.HEADERS)
+        self.assertEqual(r.status_code, 409, r.text)
+        self.assertIn('not-yet-approved', r.text)
         self.assertEqual(self.store.jobs(), [])
+
+        d_id = 'ohscanner.data.sensitive_exposure'
+        automatic = self.plan()
+        d_row = next(row for row in automatic['detectors'] if row['id'] == d_id)
+        self.assertEqual(d_row['decision'], 'skipped')
+        self.assertIn('explicit_selection_required', d_row['reason_codes'])
+        plan = self.plan(detector_ids=[d_id])
+        self.assertEqual(plan['suggested_detector_ids'], [d_id])
+        job = self.scan(detector_ids=[d_id], expected_plan_sha256=plan['plan_sha256'])
+        self.assertEqual(job['spec']['detector_ids'], [d_id])
+        Worker(self.settings).run(once=True)
+        completed = self.store.job(job['id'])
+        self.assertEqual(completed['status'], 'completed_with_limitations')
+        report = service.read_report(self.settings, completed)
+        run = next(item for item in report['detector_runs'] if item['tool'] == d_id)
+        self.assertEqual(run['status'], 'blocked')
+        self.assertIn('No reviewed sensitive-source model', ' '.join(run['limitations']))
+        self.assertEqual(report['validated_vulnerability'], 0)
 
     def test_changed_branch_after_preview_requires_new_plan(self):
         plan = self.plan(revision='HEAD')

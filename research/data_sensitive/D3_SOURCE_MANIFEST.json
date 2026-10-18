@@ -1,0 +1,315 @@
+{
+  "retrieved_at": "2026-10-17T13:16:08.997888+00:00",
+  "transport": "git HTTPS official OpenHarmony GitHub organization mirror; exact Git objects, not edited source",
+  "files": [
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "f929832bb488cef82cbc9c22427f548ae9935c98",
+      "sha256": "1c2b9ff35d5c0b726692358231722d830f7a96daf805450c01fb40fb53cbc6f9",
+      "size": 26736,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/common/src/softbus_message_open_channel.c",
+      "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "size": 8610,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/common/src/softbus_message_open_channel.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/common/include/softbus_message_open_channel.h",
+      "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "size": 1638,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/common/include/softbus_message_open_channel.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/common/include/softbus_app_info.h",
+      "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "size": 2049,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/common/include/softbus_app_info.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "size": 2814,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/common/log/softbus_log.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/common/include/softbus_log.h",
+      "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "size": 1770,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/common/include/softbus_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "adapter/common/log/softbus_adapter_log.c",
+      "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "size": 1321,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/adapter/common/log/softbus_adapter_log.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "adapter/common/include/softbus_adapter_log.h",
+      "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "size": 3212,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/adapter/common/include/softbus_adapter_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+      "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "size": 8686,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+      "tree": "18e92bf9aaf515b182240309ed1a4a12dd2b2d03",
+      "file": "core/common/softbus_property/softbus_feature_config.c",
+      "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "size": 9327,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/d33177135ec6c6aaf4a4c42de1f6878652b330e3/core/common/softbus_property/softbus_feature_config.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c",
+      "blob": "52ade9ae7136204a0174d94a77bf8dd008c9d505",
+      "sha256": "98d1dee8af6cb0761eae166264e5dfd25480cfe64bdf0b7ff9924f57f0ade4bc",
+      "size": 26641,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_message.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/common/src/softbus_message_open_channel.c",
+      "blob": "492dc72e032a85a0e7d26581974ce2e4250c6d0b",
+      "sha256": "b088c33045586be2487206dc8cc44b30181a3c31949f2949c99d909af11cfbf5",
+      "size": 8610,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/common/src/softbus_message_open_channel.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/common/include/softbus_message_open_channel.h",
+      "blob": "6f32af7b5ed7cc60815faea1fc1f231e58168a06",
+      "sha256": "4e22f4cf81aaf6def79785d153f443c0e29da464aba7e0219a5615fb252b7ce5",
+      "size": 1638,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/common/include/softbus_message_open_channel.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/common/include/softbus_app_info.h",
+      "blob": "393c79b2cceb39e781a1680384754f02560bf7a9",
+      "sha256": "db322ec201fb1cd1d8606f339593c2cb08ab5a2de3588a37625bf4977f514500",
+      "size": 2049,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/common/include/softbus_app_info.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/common/log/softbus_log.c",
+      "blob": "959dbdc938ab41f10946d07ea7cca2be7399ec9a",
+      "sha256": "850225e8b05cbe1dd1da2b3a5902ac7dee328b9c5dd2ad62a896be019912369b",
+      "size": 2814,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/common/log/softbus_log.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/common/include/softbus_log.h",
+      "blob": "ae058b91c79e326cb4a23d546211ebc5a18e022e",
+      "sha256": "59fdd037fac0eee9cf904bb8d07a4bfac9a70d177886315b371ba4700af06df8",
+      "size": 1770,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/common/include/softbus_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "adapter/common/log/softbus_adapter_log.c",
+      "blob": "1ef4b198b57e60c957cf200107f59e5db0633ce8",
+      "sha256": "e2b1fbcc4f3ff2afc9254b8b437c7b467dd510d2121292d36bc27b9a8bbf3c79",
+      "size": 1321,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/adapter/common/log/softbus_adapter_log.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "adapter/common/include/softbus_adapter_log.h",
+      "blob": "c91ad41cb765496501204144a63a2b3fe0f53c14",
+      "sha256": "6b953411b9d6163fcd5f13aed62c4895e38b9292261a934ba5ef027bd2037352",
+      "size": 3212,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/adapter/common/include/softbus_adapter_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c",
+      "blob": "c8d21576547ddad1f87341d451a895ebb515b90e",
+      "sha256": "eecde0623c13d9718c4e787890fe19672d6305784920b6e8c17afca3a3b042c5",
+      "size": 8686,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/transmission/trans_channel/tcp_direct/src/trans_tcp_direct_sessionconn.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+      "tree": "13fa948bd917684af7fd8e7b8c3f59b6943e1647",
+      "file": "core/common/softbus_property/softbus_feature_config.c",
+      "blob": "7c76c8c7ef041d8d579525444dc1a0940872ef03",
+      "sha256": "068244ad006cdb012a6a23ca46f7bddca96a6bcbbd7ee8de21544bf1f9937c01",
+      "size": 9327,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/63efce3ff7f2708527eb29216decaf5fe2dc33d0/core/common/softbus_property/softbus_feature_config.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+      "tree": "cee46dbde477381172daba25c1b330860cb571f2",
+      "file": "core/discovery/coap/nstackx_coap/src/disc_nstackx_adapter.c",
+      "blob": "c5eca1fcf10ffd03f37eff6019ee47f83391841a",
+      "sha256": "4c632881b9e055feb737f11bd436bb8a5848bed4964adc5428c29b13fdef5eee",
+      "size": 26074,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/05ca843ed7f6968686a47283916b7553f12932ed/core/discovery/coap/nstackx_coap/src/disc_nstackx_adapter.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+      "tree": "cee46dbde477381172daba25c1b330860cb571f2",
+      "file": "core/discovery/coap/nstackx_coap/src/disc_coap_capability.c",
+      "blob": "e4897d82c6abec6da445504c10707618bbbe31bd",
+      "sha256": "848d895b9565c403e07e61aea59f7d5a095730e0e496ad589fbb19a9604911a2",
+      "size": 3817,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/05ca843ed7f6968686a47283916b7553f12932ed/core/discovery/coap/nstackx_coap/src/disc_coap_capability.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+      "tree": "cee46dbde477381172daba25c1b330860cb571f2",
+      "file": "core/common/dfx/interface/include/disc_log.h",
+      "blob": "b58ffd86b00ebcbcb6eb46345a5ff5abd544ef59",
+      "sha256": "fe966d666c7629a77ad62cd08a341983d785a1e2d2446880673e364adc8fba62",
+      "size": 3769,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/05ca843ed7f6968686a47283916b7553f12932ed/core/common/dfx/interface/include/disc_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+      "tree": "cee46dbde477381172daba25c1b330860cb571f2",
+      "file": "core/common/dfx/interface/include/softbus_log.h",
+      "blob": "9c6a0df46b533c97a2419a38323eefc9458aab87",
+      "sha256": "c9627e6e71bc70c4e4cc677b88f56efdb1c29de0d96eac7861df2ecc6a974a7e",
+      "size": 4892,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/05ca843ed7f6968686a47283916b7553f12932ed/core/common/dfx/interface/include/softbus_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "05ca843ed7f6968686a47283916b7553f12932ed",
+      "tree": "cee46dbde477381172daba25c1b330860cb571f2",
+      "file": "core/discovery/coap/common/src/disc_coap_parser.c",
+      "blob": "c2139200c70d9341d06b62794bb0d3b584041d84",
+      "sha256": "7a18f6282c8ba728136a8fa1a283debaab3514dc01dd16cc5918449936ebc5c9",
+      "size": 6431,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/05ca843ed7f6968686a47283916b7553f12932ed/core/discovery/coap/common/src/disc_coap_parser.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+      "tree": "6769137e1a2e44fd6ad097d58f5dcc1dd2a3f8af",
+      "file": "core/discovery/coap/nstackx_coap/src/disc_nstackx_adapter.c",
+      "blob": "1dfeb98eeda90b3b88d56a726af5ae348f58739a",
+      "sha256": "f997a1f48a2196bd2e789aabe386c86a9f69e847f5b385fa955d6202914f2dc5",
+      "size": 26028,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/273637945ecb7b53d5d9af3bfd4e48a40bb88252/core/discovery/coap/nstackx_coap/src/disc_nstackx_adapter.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+      "tree": "6769137e1a2e44fd6ad097d58f5dcc1dd2a3f8af",
+      "file": "core/discovery/coap/nstackx_coap/src/disc_coap_capability.c",
+      "blob": "e4897d82c6abec6da445504c10707618bbbe31bd",
+      "sha256": "848d895b9565c403e07e61aea59f7d5a095730e0e496ad589fbb19a9604911a2",
+      "size": 3817,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/273637945ecb7b53d5d9af3bfd4e48a40bb88252/core/discovery/coap/nstackx_coap/src/disc_coap_capability.c"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+      "tree": "6769137e1a2e44fd6ad097d58f5dcc1dd2a3f8af",
+      "file": "core/common/dfx/interface/include/disc_log.h",
+      "blob": "b58ffd86b00ebcbcb6eb46345a5ff5abd544ef59",
+      "sha256": "fe966d666c7629a77ad62cd08a341983d785a1e2d2446880673e364adc8fba62",
+      "size": 3769,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/273637945ecb7b53d5d9af3bfd4e48a40bb88252/core/common/dfx/interface/include/disc_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+      "tree": "6769137e1a2e44fd6ad097d58f5dcc1dd2a3f8af",
+      "file": "core/common/dfx/interface/include/softbus_log.h",
+      "blob": "9c6a0df46b533c97a2419a38323eefc9458aab87",
+      "sha256": "c9627e6e71bc70c4e4cc677b88f56efdb1c29de0d96eac7861df2ecc6a974a7e",
+      "size": 4892,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/273637945ecb7b53d5d9af3bfd4e48a40bb88252/core/common/dfx/interface/include/softbus_log.h"
+    },
+    {
+      "repository": "openharmony/communication_dsoftbus",
+      "commit": "273637945ecb7b53d5d9af3bfd4e48a40bb88252",
+      "tree": "6769137e1a2e44fd6ad097d58f5dcc1dd2a3f8af",
+      "file": "core/discovery/coap/common/src/disc_coap_parser.c",
+      "blob": "c2139200c70d9341d06b62794bb0d3b584041d84",
+      "sha256": "7a18f6282c8ba728136a8fa1a283debaab3514dc01dd16cc5918449936ebc5c9",
+      "size": 6431,
+      "url": "https://github.com/openharmony/communication_dsoftbus/blob/273637945ecb7b53d5d9af3bfd4e48a40bb88252/core/discovery/coap/common/src/disc_coap_parser.c"
+    }
+  ],
+  "parent_relations": {
+    "63efce3ff7f2708527eb29216decaf5fe2dc33d0": "d33177135ec6c6aaf4a4c42de1f6878652b330e3",
+    "273637945ecb7b53d5d9af3bfd4e48a40bb88252": "05ca843ed7f6968686a47283916b7553f12932ed"
+  },
+  "gitcode_probe": {
+    "url": "https://gitcode.com/api/v5/repos/openharmony/communication_dsoftbus/commits/63efce3ff7f2708527eb29216decaf5fe2dc33d0",
+    "error": "HTTP Error 404: Not Found",
+    "cross_verified": false
+  }
+}
