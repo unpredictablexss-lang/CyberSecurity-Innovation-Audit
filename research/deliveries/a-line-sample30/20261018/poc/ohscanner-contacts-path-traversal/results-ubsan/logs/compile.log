@@ -1,0 +1,13 @@
+argv: g++ -std=c++17 -O0 -g -fsanitize=undefined -fno-omit-frame-pointer /sandbox/work/target_adapter.cpp -o /sandbox/out/target_ubsan
+target_ubsan_compile_exit=0
+argv: g++ -std=c++17 -O0 -g -fsanitize=undefined -fno-omit-frame-pointer -DPATCHED_TARGET=1 /sandbox/work/patched_target_adapter.cpp -o /sandbox/out/patched_ubsan
+patched_ubsan_compile_exit=0
+argv: g++ -std=c++17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer /sandbox/work/target_adapter.cpp -o /sandbox/out/target_asan_ubsan
+target_asan_ubsan_compile_exit=0
+argv: g++ -std=c++17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer -DPATCHED_TARGET=1 /sandbox/work/patched_target_adapter.cpp -o /sandbox/out/patched_asan_ubsan
+patched_asan_ubsan_compile_exit=0
+g++ (Debian 12.2.0-14+deb12u1) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+

@@ -1,21 +1,26 @@
 {
-  "schema_version": "artifact-reconciliation-v1",
-  "created_at": "2026-10-18T04:45:01.289436Z",
-  "output_root": "D:\\openHarmonyScanner\\outputs\\01a14d00-bc78-7ac2-9520-210d4b92b1ac",
+  "schema_version": "artifact-reconciliation-v2",
+  "created_at": "2026-10-18T16:30:00+08:00",
+  "output_root": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-sample30\\20261018",
   "canonical_counts": {
     "sample_reports": 30,
     "candidate_bearing_reports": 20,
     "zero_candidate_reports": 10,
-    "candidates": 345,
+    "scan_candidates": 345,
     "high_priority_candidates": 283,
     "normal_priority_candidates": 62,
-    "confirmed_vulnerabilities": 0,
-    "dedicated_pocs": 0
+    "scan_candidate_confirmed_vulnerabilities": 0,
+    "adjacent_confirmed_vulnerabilities": 1,
+    "confirmed_vulnerabilities": 1,
+    "dedicated_pocs": 1,
+    "detail_rows": 346
   },
   "source_artifacts": {
     "json": [
       "evidence/sample_manifest.json",
       "evidence/candidate_reviews.json",
+      "evidence/adjacent_findings.json",
+      "evidence/provenance_adjacent.json",
       "evidence/provenance.json",
       "evidence/sample_reproducibility.json",
       "poc/index.json"
@@ -24,8 +29,7 @@
       "report/technical-report.md"
     ],
     "xlsx": [
-      "openharmony-a-line-sample30.xlsx",
-      "openharmony-a-line-sample30.xlsx.inspect.ndjson"
+      "openharmony-a-line-sample30.xlsx"
     ],
     "pdf": [
       "report/technical-report.pdf"
@@ -36,41 +40,53 @@
       "sample_reports": 30,
       "candidate_bearing_reports": 20,
       "zero_candidate_reports": 10,
-      "candidates": 345,
+      "scan_candidates": 345,
       "high_priority_candidates": 283,
       "normal_priority_candidates": 62,
-      "confirmed_vulnerabilities": 0,
-      "dedicated_pocs": 0
+      "scan_candidate_confirmed_vulnerabilities": 0,
+      "adjacent_confirmed_vulnerabilities": 1,
+      "confirmed_vulnerabilities": 1,
+      "dedicated_pocs": 1,
+      "detail_rows": 346
     },
     "markdown": {
       "sample_reports": 30,
       "candidate_bearing_reports": 20,
       "zero_candidate_reports": 10,
-      "candidates": 345,
+      "scan_candidates": 345,
       "high_priority_candidates": 283,
       "normal_priority_candidates": 62,
-      "confirmed_vulnerabilities": 0,
-      "dedicated_pocs": 0
+      "scan_candidate_confirmed_vulnerabilities": 0,
+      "adjacent_confirmed_vulnerabilities": 1,
+      "confirmed_vulnerabilities": 1,
+      "dedicated_pocs": 1,
+      "detail_rows": 346
     },
     "xlsx": {
       "sample_reports": 30,
       "candidate_bearing_reports": 20,
       "zero_candidate_reports": 10,
-      "candidates": 345,
+      "scan_candidates": 345,
       "high_priority_candidates": 283,
       "normal_priority_candidates": 62,
-      "confirmed_vulnerabilities": 0,
-      "dedicated_pocs": 0
+      "scan_candidate_confirmed_vulnerabilities": 0,
+      "adjacent_confirmed_vulnerabilities": 1,
+      "confirmed_vulnerabilities": 1,
+      "dedicated_pocs": 1,
+      "detail_rows": 346
     },
     "pdf": {
       "sample_reports": 30,
       "candidate_bearing_reports": 20,
       "zero_candidate_reports": 10,
-      "candidates": 345,
+      "scan_candidates": 345,
       "high_priority_candidates": 283,
       "normal_priority_candidates": 62,
-      "confirmed_vulnerabilities": 0,
-      "dedicated_pocs": 0
+      "scan_candidate_confirmed_vulnerabilities": 0,
+      "adjacent_confirmed_vulnerabilities": 1,
+      "confirmed_vulnerabilities": 1,
+      "dedicated_pocs": 1,
+      "detail_rows": 346
     }
   },
   "match_flags": {
@@ -78,41 +94,53 @@
       "sample_reports": true,
       "candidate_bearing_reports": true,
       "zero_candidate_reports": true,
-      "candidates": true,
+      "scan_candidates": true,
       "high_priority_candidates": true,
       "normal_priority_candidates": true,
+      "scan_candidate_confirmed_vulnerabilities": true,
+      "adjacent_confirmed_vulnerabilities": true,
       "confirmed_vulnerabilities": true,
-      "dedicated_pocs": true
+      "dedicated_pocs": true,
+      "detail_rows": true
     },
     "markdown": {
       "sample_reports": true,
       "candidate_bearing_reports": true,
       "zero_candidate_reports": true,
-      "candidates": true,
+      "scan_candidates": true,
       "high_priority_candidates": true,
       "normal_priority_candidates": true,
+      "scan_candidate_confirmed_vulnerabilities": true,
+      "adjacent_confirmed_vulnerabilities": true,
       "confirmed_vulnerabilities": true,
-      "dedicated_pocs": true
+      "dedicated_pocs": true,
+      "detail_rows": true
     },
     "xlsx": {
       "sample_reports": true,
       "candidate_bearing_reports": true,
       "zero_candidate_reports": true,
-      "candidates": true,
+      "scan_candidates": true,
       "high_priority_candidates": true,
       "normal_priority_candidates": true,
+      "scan_candidate_confirmed_vulnerabilities": true,
+      "adjacent_confirmed_vulnerabilities": true,
       "confirmed_vulnerabilities": true,
-      "dedicated_pocs": true
+      "dedicated_pocs": true,
+      "detail_rows": true
     },
     "pdf": {
       "sample_reports": true,
       "candidate_bearing_reports": true,
       "zero_candidate_reports": true,
-      "candidates": true,
+      "scan_candidates": true,
       "high_priority_candidates": true,
       "normal_priority_candidates": true,
+      "scan_candidate_confirmed_vulnerabilities": true,
+      "adjacent_confirmed_vulnerabilities": true,
       "confirmed_vulnerabilities": true,
-      "dedicated_pocs": true
+      "dedicated_pocs": true,
+      "detail_rows": true
     }
   },
   "consistent": true,
@@ -131,29 +159,65 @@
       "source_checks": 345,
       "source_hash_matches": 345,
       "cited_lines_exist": 345,
-      "errors": 0
+      "errors": 0,
+      "adjacent_source_files": 8
     },
     "candidate_review": {
       "records": 345,
       "status_counts": {
-        "not_reproduced": 9,
-        "not_testable": 336
+        "not_testable": 336,
+        "not_reproduced": 9
       },
+      "scan_candidate_confirmed": 0,
       "all_reviewed_records_accounted_for": true
+    },
+    "adjacent_finding": {
+      "records": 1,
+      "confirmed": 1,
+      "dedicated_poc": 1,
+      "finding_id": "ohscanner-contacts-path-traversal-001"
+    },
+    "poc": {
+      "attack": "3/3 exit 0 and victim deleted",
+      "fixed": "3/3 exit 0 and victim retained",
+      "safe": "3/3 exit 0 and photo output created",
+      "fixed_safe": "3/3 exit 0 and photo output created",
+      "asan_ubsan_probe": "exit 139; limitation retained"
     },
     "xlsx": {
       "sheets": 4,
-      "candidate_rows": 345,
-      "formula_count": 396,
-      "iferror_hyperlink_formula_count": 389,
-      "formula_error_count": 0,
-      "formula_errors": []
+      "candidate_detail_rows": 346,
+      "candidate_detail_last_id": "ADJ-001",
+      "filter_tables": 4,
+      "frozen_header_sheets": 4,
+      "local_hyperlink_formulas": 2,
+      "standard_formula_error_values": 0,
+      "rendered_sheets": [
+        "总览",
+        "候选明细-头部",
+        "候选明细-ADJ001",
+        "PoC索引"
+      ],
+      "visual_defects": 0,
+      "artifact_tool_hyperlink_renderer_limitation": "预览器不计算 HYPERLINK，Excel 公式与本地目标路径已保留"
     },
     "pdf": {
-      "pages": 10,
-      "text_characters": 11130,
-      "required_phrases_present": true
+      "pages": 4,
+      "renderer": "Poppler pdftoppm",
+      "rendered_pages": 4,
+      "visual_defects": 0,
+      "checks": [
+        "无裁切",
+        "无乱码",
+        "无表格溢出",
+        "页码连续"
+      ],
+      "required_markers": [
+        "ohscanner-contacts-path-traversal-001",
+        "CWE-22",
+        "asan_ubsan_probe_exit=139"
+      ]
     }
   },
-  "interpretation": "所有“高危候选”均表示风险验证优先级，不表示扫描器已经确认高危漏洞。只有通过真实入口/权限边界、可达敏感操作、可控触发条件和具体 CIA 影响完整证据门的候选才能标记 confirmed；本轮为 0。"
+  "interpretation": "扫描候选的高危表示验证优先级，不表示已确认漏洞。扫描候选 confirmed 为 0；样本 2 相邻上下文审计确认 1 个独立漏洞，并提供 1 个专用 PoC。"
 }

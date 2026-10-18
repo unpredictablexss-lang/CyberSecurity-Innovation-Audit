@@ -1,26 +1,24 @@
 # OpenHarmony A 线 30 份报告抽查与沙箱验证
 
-本目录是 `D:\openHarmonyScanner\outputs\01a14d00-bc78-7ac2-9520-210d4b92b1ac` 的远端交付镜像。
+本目录是 A 线 30 份报告抽查、候选复核、相邻上下文审计和 Docker 沙箱验证的远端交付。
 
 ## 结论
 
-- 固定种子 `20261018` 确定性抽取 30 份报告：20 份有候选、10 份零候选。
-- 345 条候选全部复核：高优先级 283 条、普通优先级 62 条。
-- 0 个 `confirmed`，0 个专用漏洞 PoC；9 条 `not_reproduced`，336 条 `not_testable`。
+- 固定种子 `20261018` 抽取 30 份报告：20 份有候选、10 份零候选。
+- 345 条扫描候选全部复核：高优先级 283 条、普通优先级 62 条。
+- 扫描候选 confirmed 为 0；相邻上下文审计确认 1 个漏洞；专用 PoC 为 1。
+- 确认漏洞 `ohscanner-contacts-path-traversal-001`：CWE-22/CWE-73，`WRITE_CONTACTS` 调用者可删除 Contacts 服务可访问的任意文件。
 - “高危候选”仅表示验证优先级，不表示扫描器已经确认高危漏洞。
 
 ## 文件
 
 - `report/technical-report.md`：完整技术报告。
-- `report/technical-report.pdf`：评审版 PDF。
-- `openharmony-a-line-sample30.xlsx`：低认知负担四页签 Excel。
-- `evidence/`：抽样、溯源、候选逐条判定、Docker 沙箱证据、环境与哈希。
-- `poc/`：零确认漏洞记录；没有伪造的 `poc/<finding-id>/` 目录。
-- `evidence/reconciliation.json`：JSON、Markdown、Excel、PDF 统计对账。
-- `evidence/hashes.json`：原输出根目录 60 个文件的 SHA-256 清单。
+- `report/technical-report.pdf`：正式评审版 PDF。
+- `openharmony-a-line-sample30.xlsx`：四页签低认知负担 Excel。
+- `evidence/`：抽样、溯源、逐条判定、相邻发现、Docker 日志、环境、对账和哈希。
+- `poc/ohscanner-contacts-path-traversal/`：确认漏洞的源码绑定、harness、运行命令、攻击/固定/安全对照和原始输出。
+- `poc/index.json`：PoC 索引。
 
-## 远端打包边界
+## 验证边界
 
-本 Git 交付不包含 `evidence/sandbox/scratch/bin/` 下的本地编译二进制。它们属于可重建构建产物，未进入提交；其字节大小和 SHA-256 已保存在 `evidence/hashes.json` 与 `evidence/sandbox/sandbox_file_hashes.json`。源码控制、编译脚本、运行日志、退出结果和环境指纹均保留。
-
-Docker Hub 当时不可用，验证镜像使用本地 NVIDIA CUDA Ubuntu 22.04 镜像别名；为保证 sanitizer 地址映射稳定，运行参数包含 `seccomp=unconfined` 与 `setarch -R`。通用正/负控制只证明验证方法有效，不证明抽样产品组件存在漏洞。
+PoC 在固定 Docker 镜像中运行，使用无网络、只读根文件系统、`cap-drop ALL`、`no-new-privileges` 和资源限制；没有宿主进程回退。attack/fixed/safe/fixed-safe 各 3/3 稳定。ASan/UBSan 探针退出码 139，完整产品镜像、目标构建和 SELinux 域策略仍待上游集成验证。
