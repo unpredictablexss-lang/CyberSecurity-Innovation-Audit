@@ -84,6 +84,17 @@ outside the class-member race rule; they are recorded as `not_applicable` and
 the dynamic TSan results in the sandbox report remain the method evidence. This
 replay is a narrow three-control check, not Precision/Recall.
 
+## Delivered-diagnostic triage
+
+`research/evidence/cpp/sample30_diagnostic_triage_20261018/summary.json`
+re-groups the 345 delivered diagnostics without needing the pinned sources:
+263 `ohcpp-shared-ptr-race-candidate-001` access points collapse to 72
+repository/file/member groups, and 10 of the 30 samples carry no diagnostics.
+The largest groups are fuzz targets in `distributeddatamgr_preferences`
+(19-25 diagnostics each for `preferences_`). Grouping uses
+repository/file/symbol because the delivered diagnostics do not carry qualified
+class identity; it is an audit view, not a root-cause or verdict change.
+
 ## Pending
 
 The 30 sample source repositories are not present locally, so the sample30

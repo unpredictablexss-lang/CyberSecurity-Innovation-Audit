@@ -1,0 +1,2179 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_line_sample30_delivered_diagnostic_triage",
+  "status": "completed_with_limitations",
+  "source_manifest": "research/deliveries/a-line-sample30/20261018/evidence/sample_manifest.json",
+  "source_manifest_sha256": "22e6f54a758684e48bc52e3acbc0e1e6ac88a74c523da42630d6fab868d38372",
+  "samples": 30,
+  "samples_without_diagnostics": 10,
+  "diagnostic_total": 345,
+  "by_rule": {
+    "ipc.auth.guard-coverage": 1,
+    "ipc.auth.missing": 4,
+    "ipc.capability.export": 14,
+    "ipc.parcel.copy-range": 1,
+    "ipc.relay.descriptor-boundary": 62,
+    "ohcpp-shared-ptr-race-candidate-001": 263
+  },
+  "member_groups_by_rule": {
+    "ipc.auth.guard-coverage": 1,
+    "ipc.auth.missing": 4,
+    "ipc.capability.export": 13,
+    "ipc.parcel.copy-range": 1,
+    "ipc.relay.descriptor-boundary": 43,
+    "ohcpp-shared-ptr-race-candidate-001": 72
+  },
+  "member_groups": [
+    {
+      "repository": "openharmony/ability_ability_base",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/inner_api/base/include/user_object_wrapper.h",
+      "symbol": "value_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        16
+      ]
+    },
+    {
+      "repository": "openharmony/ai_intelligent_voice_framework",
+      "rule_id": "ipc.capability.export",
+      "file": "services/intell_voice_service/server/sa/intell_voice_service_stub.cpp",
+      "symbol": "IntellVoiceServiceStub::CreateEngineInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        14
+      ]
+    },
+    {
+      "repository": "openharmony/ai_intelligent_voice_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/intell_voice_engine/server/base/adapter_callback_service.h",
+      "symbol": "listener_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        14
+      ]
+    },
+    {
+      "repository": "openharmony/ai_intelligent_voice_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/intell_voice_engine/server/base/engine_util.h",
+      "symbol": "adapter_",
+      "count": 3,
+      "reads": 1,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        14
+      ]
+    },
+    {
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "symbol": "m_pdata",
+      "count": 16,
+      "reads": 11,
+      "writes": 5,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        7
+      ]
+    },
+    {
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/ra_napi_image/author/include/image_source_taihe.h",
+      "symbol": "navIncPixelMap_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        7
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ipc.capability.export",
+      "file": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_mgr_stub.cpp",
+      "symbol": "WifiDeviceMgrStub::GetWifiRemoteInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ipc.parcel.copy-range",
+      "file": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+      "symbol": "WifiP2pCallbackStub::RemoteOnConfigChanged",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "wifi/test/fuzztest/wifi_sta/wifidevicestub_fuzzer/wifidevicestub_fuzzer.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "wifi/test/fuzztest/wifi_sta/wifihotspotstub_fuzzer/wifihotspotstub_fuzzer.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "wifi/test/fuzztest/wifi_sta/wifip2pstub_fuzzer/wifip2pstub_fuzzer.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "wifi/test/fuzztest/wifi_sta/wifiscanstub_fuzzer/wifiscanstub_fuzzer.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "wifi/utils/src/wifi_event_handler.cpp",
+      "symbol": "eventHandler",
+      "count": 12,
+      "reads": 10,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/communication_wifi",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "wifi/utils/src/wifi_event_handler.cpp",
+      "symbol": "eventRunner",
+      "count": 6,
+      "reads": 4,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        18
+      ]
+    },
+    {
+      "repository": "openharmony/customization_enterprise_device_management",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/edm/src/admin_manager.cpp",
+      "symbol": "AdminManager::IsAdminExist",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        15
+      ]
+    },
+    {
+      "repository": "openharmony/customization_enterprise_device_management",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/edm/src/delay_unload_manager.cpp",
+      "symbol": "DelayUnloadManager::TryStartDelayUnload",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        15
+      ]
+    },
+    {
+      "repository": "openharmony/customization_enterprise_device_management",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/edm/src/enterprise_device_mgr_stub.cpp",
+      "symbol": "EnterpriseDeviceMgrStub::HandleOnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        15
+      ]
+    },
+    {
+      "repository": "openharmony/customization_enterprise_device_management",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/edm/src/enterprise_device_mgr_stub.cpp",
+      "symbol": "EnterpriseDeviceMgrStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        15
+      ]
+    },
+    {
+      "repository": "openharmony/customization_enterprise_device_management",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/edm/src/enterprise_device_mgr_stub.cpp",
+      "symbol": "EnterpriseDeviceMgrStub::OnRemoteRequestIdl",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        15
+      ]
+    },
+    {
+      "repository": "openharmony/customization_enterprise_device_management",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "test/unittest/services/edm/src/system_timer_manager_test.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        15
+      ]
+    },
+    {
+      "repository": "openharmony/developtools_hapsigner",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "binary_sign_tool/hap/sign/include/elf_sign_context.h",
+      "symbol": "convertor",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        13
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ipc.auth.missing",
+      "file": "frameworks/native/provider/src/datashare_stub.cpp",
+      "symbol": "DataShareStub::OpenFileInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ipc.capability.export",
+      "file": "frameworks/native/provider/src/datashare_stub.cpp",
+      "symbol": "DataShareStub::CmdOpenFile",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ipc.capability.export",
+      "file": "frameworks/native/provider/src/datashare_stub.cpp",
+      "symbol": "DataShareStub::CmdOpenFileWithErrCode",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/proxy/src/data_proxy_observer_stub.cpp",
+      "symbol": "ProxyDataObserverStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/ets/ani/include/ani_observer.h",
+      "symbol": "observer_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/ets/ani/include/datashare_ani.h",
+      "symbol": "dataProxyHandle_",
+      "count": 2,
+      "reads": 1,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/ets/ani/include/datashare_ani.h",
+      "symbol": "jsProxyDataObsManager_",
+      "count": 1,
+      "reads": 0,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/ets/ani/include/datashare_ani.h",
+      "symbol": "resultSetPtr_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/js/napi/dataShare/include/napi_datashare_observer.h",
+      "symbol": "observer_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/native/consumer/include/datashare_helper_impl.h",
+      "symbol": "dataShareObserver_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/native/provider/include/datashare_stub_impl.h",
+      "symbol": "extension_",
+      "count": 2,
+      "reads": 2,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_data_share",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/native/provider/include/datashare_stub_impl.h",
+      "symbol": "uvQueue_",
+      "count": 2,
+      "reads": 0,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        2
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/js/napi/common/include/js_proxy.h",
+      "symbol": "instance_",
+      "count": 2,
+      "reads": 1,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        3
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+      "symbol": "preferences_",
+      "count": 19,
+      "reads": 17,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        3
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+      "symbol": "preferences_",
+      "count": 25,
+      "reads": 23,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        3
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+      "symbol": "preferences_",
+      "count": 25,
+      "reads": 23,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        3
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/native/fuzztest/dbpreferencesvector_fuzzer/dbpreferencesvector_fuzzer.cpp",
+      "symbol": "preferences_",
+      "count": 6,
+      "reads": 4,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        3
+      ]
+    },
+    {
+      "repository": "openharmony/distributeddatamgr_preferences",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/native/fuzztest/preferences_fuzzer/preferences_fuzzer.cpp",
+      "symbol": "Preferences_",
+      "count": 19,
+      "reads": 17,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        3
+      ]
+    },
+    {
+      "repository": "openharmony/distributedhardware_mechbody_controller",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "interface/ets/mech_manager/src/ani_mech_manager_stub.cpp",
+      "symbol": "AniMechManagerStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        4
+      ]
+    },
+    {
+      "repository": "openharmony/distributedhardware_mechbody_controller",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "interface/napi/mech_manager/js_mech_manager_stub.cpp",
+      "symbol": "JsMechManagerStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        4
+      ]
+    },
+    {
+      "repository": "openharmony/distributedhardware_mechbody_controller",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/src/mechbody_controller_stub.cpp",
+      "symbol": "MechBodyControllerStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        4
+      ]
+    },
+    {
+      "repository": "openharmony/global_i18n",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/ets/ani/i18n/include/simple_number_format_addon.h",
+      "symbol": "simpleNumberFormat_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        11
+      ]
+    },
+    {
+      "repository": "openharmony/global_i18n",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/ets/ani/intl/include/number_format_addon.h",
+      "symbol": "numberfmt_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        11
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/backtrace/fp_backtrace.cpp",
+      "symbol": "maps_",
+      "count": 5,
+      "reads": 4,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/stack_printer/src/stack_printer.cpp",
+      "symbol": "root_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder/include/dfx_accessors.h",
+      "symbol": "accessors_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder/include/dfx_elf_parser.h",
+      "symbol": "mmap_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder/include/dwarf_cfa_instructions.h",
+      "symbol": "memory_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder/include/dwarf_op.h",
+      "symbol": "memory_",
+      "count": 15,
+      "reads": 15,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder/include/thread_context.h",
+      "symbol": "maps_",
+      "count": 1,
+      "reads": 0,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder/include/unwind_entry_parser.h",
+      "symbol": "memory_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/unwinder_refactor/include/unwinder_base.h",
+      "symbol": "state_",
+      "count": 12,
+      "reads": 12,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/coredump/coredump_note_segment_writer.h",
+      "symbol": "keyRegs_",
+      "count": 1,
+      "reads": 0,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/dfx_process.h",
+      "symbol": "keyThread_",
+      "count": 2,
+      "reads": 1,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/dfx_process.h",
+      "symbol": "regs_",
+      "count": 2,
+      "reads": 1,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/dfx_thread.h",
+      "symbol": "processInfo_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/dfx_thread.h",
+      "symbol": "stackBuf_",
+      "count": 2,
+      "reads": 1,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "symbol": "minidumpSubject_",
+      "count": 2,
+      "reads": 2,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "symbol": "streamMap_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_parser.h",
+      "symbol": "stream_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "symbol": "arm64Context_",
+      "count": 1,
+      "reads": 0,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "symbol": "modules_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "symbol": "regions_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "symbol": "threadNames_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/hiviewdfx_faultloggerd",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "tools/process_dump/minidump_parser/include/minidump_stream.h",
+      "symbol": "threads_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        5
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.auth.guard-coverage",
+      "file": "services/camera_service/src/hcamera_service.cpp",
+      "symbol": "HCameraService::CreateCameraDevice",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.auth.missing",
+      "file": "services/camera_service/src/hcamera_service.cpp",
+      "symbol": "HCameraService::CreateCameraDevice",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "symbol": "HStreamCapturePhotoCallbackStub::HandleOnPhotoAvailable",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "symbol": "HStreamCapturePhotoCallbackStub::HandleOnPhotoAvailableWithAuxiliary",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/camera_service/binder/server/src/hstream_capture_photo_callback_stub.cpp",
+      "symbol": "HStreamCapturePhotoCallbackStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+      "symbol": "HStreamCaptureThumbnailCallbackStub::HandleOnThumbnailAvailable",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/camera_service/binder/server/src/hstream_capture_thumbnail_callback_stub.cpp",
+      "symbol": "HStreamCaptureThumbnailCallbackStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/camera_service/binder/server/src/window_manager_service_callback_stub_impl/hcamera_window_manager_callback_stub.cpp",
+      "symbol": "CameraWindowManagerAgentStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "common/utils/watch_dog.h",
+      "symbol": "timeBroker_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/taihe/include/camera_auto_ref_taihe.h",
+      "symbol": "callbackRef_",
+      "count": 4,
+      "reads": 2,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/taihe/include/camera_event_listener_taihe.h",
+      "symbol": "eventListenerMap_",
+      "count": 3,
+      "reads": 3,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "frameworks/taihe/include/picker/camera_picker_taihe.h",
+      "symbol": "asyncCtx_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/inner_api/native/camera/include/session/capture_session.h",
+      "symbol": "metadataResultProcessor_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/kits/js/camera_napi/include/camera_napi_event_listener.h",
+      "symbol": "eventListenerMap_",
+      "count": 3,
+      "reads": 3,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/kits/js/camera_napi/include/camera_napi_object_types.h",
+      "symbol": "ptrHolder_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+      "symbol": "asyncFunction_",
+      "count": 5,
+      "reads": 5,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "mediastream/include/buffer/buffer_wrapper_base.h",
+      "symbol": "encodedBuffer_",
+      "count": 3,
+      "reads": 1,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "mediastream/include/filter/moving_photo_video_encoder_filter.h",
+      "symbol": "configureParameter_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+      "symbol": "audioCapturer_",
+      "count": 4,
+      "reads": 4,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+      "symbol": "wrapPtr_",
+      "count": 2,
+      "reads": 2,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/camera_service/include/camera_rotate_strategy_parser.h",
+      "symbol": "curNode_",
+      "count": 2,
+      "reads": 0,
+      "writes": 2,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_controller.h",
+      "symbol": "videoProcessor_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_processor.h",
+      "symbol": "postProcessor_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_camera_framework",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_processor.h",
+      "symbol": "repository_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        12
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/avmetadatahelper/ipc/helper_listener_stub.cpp",
+      "symbol": "HelperListenerStub::OnRemoteRequest",
+      "count": 3,
+      "reads": 0,
+      "writes": 0,
+      "other": 3,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/lpp_audio_streamer/ipc/lpp_audio_streamer_listener_stub.cpp",
+      "symbol": "LppAudioStreamerListenerStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/lpp_video_streamer/ipc/lpp_video_streamer_listener_stub.cpp",
+      "symbol": "LppVideoStreamerListenerStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/media_source/ipc/media_source_loader_stub.cpp",
+      "symbol": "MediaSourceLoaderStub::OnRemoteRequest",
+      "count": 3,
+      "reads": 0,
+      "writes": 0,
+      "other": 3,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/pcm_output/ipc/pcm_output_callback_stub.cpp",
+      "symbol": "PCMOutputCallbackStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/player/ipc/player_listener_stub.cpp",
+      "symbol": "PlayerListenerStub::OnInfo",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/player/ipc/player_listener_stub.cpp",
+      "symbol": "PlayerListenerStub::OnRemoteRequest",
+      "count": 3,
+      "reads": 0,
+      "writes": 0,
+      "other": 3,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/player/ipc/player_service_stub.cpp",
+      "symbol": "PlayerServiceStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/recorder/ipc/recorder_service_stub.cpp",
+      "symbol": "RecorderServiceStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/screen_capture_monitor/ipc/screen_capture_monitor_service_stub.cpp",
+      "symbol": "ScreenCaptureMonitorServiceStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/transcoder/ipc/transcoder_listener_stub.cpp",
+      "symbol": "TransCoderListenerStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/multimedia_player_framework",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/services/transcoder/ipc/transcoder_service_stub.cpp",
+      "symbol": "TransCoderServiceStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        6
+      ]
+    },
+    {
+      "repository": "openharmony/powermgr_battery_statistics",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "test/unittest/include/stats_test.h",
+      "symbol": "g_statsParser",
+      "count": 3,
+      "reads": 2,
+      "writes": 1,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        10
+      ]
+    },
+    {
+      "repository": "openharmony/resourceschedule_resource_schedule_service",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+      "symbol": "abilities_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        1
+      ]
+    },
+    {
+      "repository": "openharmony/resourceschedule_resource_schedule_service",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+      "symbol": "pidsMap_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        1
+      ]
+    },
+    {
+      "repository": "openharmony/resourceschedule_resource_schedule_service",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+      "symbol": "uidsMap_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        1
+      ]
+    },
+    {
+      "repository": "openharmony/resourceschedule_resource_schedule_service",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "ressched/plugins/cgroup_sched_plugin/framework/sched_controller/include/supervisor.h",
+      "symbol": "windows_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        1
+      ]
+    },
+    {
+      "repository": "openharmony/security_certificate_manager",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/cert_manager_standard/main/os_dependency/cm_ipc/src/cm_ipc_dialog_client.cpp",
+      "symbol": "CmDialogCallbackStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        17
+      ]
+    },
+    {
+      "repository": "openharmony/security_certificate_manager",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "cmdline/certmgr/src/certmgr_command.cpp",
+      "symbol": "promise_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        17
+      ]
+    },
+    {
+      "repository": "openharmony/security_huks",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/huks_standard/huks_service/extension/ability_native/inc/hks_crypto_ext_stub_impl.h",
+      "symbol": "extension_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        19
+      ]
+    },
+    {
+      "repository": "openharmony/security_huks",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/huks_standard/huks_service/extension/ukey_client_service/inc/hks_ukey_async_task.h",
+      "symbol": "cancelled_",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        19
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "rule_id": "ipc.auth.missing",
+      "file": "services/safwk/src/local_ability_manager_stub.cpp",
+      "symbol": "LocalAbilityManagerStub::StartAbilityInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        9
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "rule_id": "ipc.auth.missing",
+      "file": "test/services/safwk/unittest/multi_instance_test_probe/src/multi_instance_test_probe.cpp",
+      "symbol": "MultiInstanceTestProbe::TriggerRepublish",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        9
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/safwk/src/local_ability_manager_stub.cpp",
+      "symbol": "LocalAbilityManagerStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        9
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+      "symbol": "ListenAbilityStub::HandlePrivateRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        9
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "test/services/safwk/unittest/listen_ability/src/listen_ability_stub.cpp",
+      "symbol": "ListenAbilityStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        9
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_safwk",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "interfaces/innerkits/safwk/expire_lru_cache.h",
+      "symbol": "data_",
+      "count": 13,
+      "reads": 13,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        9
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::CheckRemtSystemAbilityInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityByUserIdInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityImmeInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::CheckSystemAbilityWithUserIdInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::GetExtensionRunningSaListInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::GetSystemAbilityInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::GetSystemAbilityWithUserIdInner",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.capability.export",
+      "file": "services/samgr/native/test/unittest/src/system_ability_mgr_proxy_test.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/source/system_ability_load_callback_stub.cpp",
+      "symbol": "SystemAbilityLoadCallbackStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/source/system_ability_status_change_stub.cpp",
+      "symbol": "SystemAbilityStatusChangeStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "frameworks/native/source/system_process_status_change_stub.cpp",
+      "symbol": "SystemProcessStatusChangeStub::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+      "symbol": "SystemAbilityManagerStub::OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/systemabilitymgr_samgr",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "services/samgr/native/test/unittest/src/system_ability_mgr_proxy_test.cpp",
+      "symbol": "OnRemoteRequest",
+      "count": 2,
+      "reads": 0,
+      "writes": 0,
+      "other": 2,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        8
+      ]
+    },
+    {
+      "repository": "openharmony/telephony_sms_mms",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "test/unittest/sms_delivery_callback_test.cpp",
+      "symbol": "SmsDeliveryCallbackTest::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        20
+      ]
+    },
+    {
+      "repository": "openharmony/telephony_sms_mms",
+      "rule_id": "ipc.relay.descriptor-boundary",
+      "file": "test/unittest/sms_send_callback_test.cpp",
+      "symbol": "SmsSendCallbackTest::OnRemoteRequest",
+      "count": 1,
+      "reads": 0,
+      "writes": 0,
+      "other": 1,
+      "detector_versions": [
+        "0.5.0"
+      ],
+      "samples": [
+        20
+      ]
+    },
+    {
+      "repository": "openharmony/telephony_sms_mms",
+      "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+      "file": "services/sms/include/gsm/gsm_sms_cb_handler.h",
+      "symbol": "header",
+      "count": 1,
+      "reads": 1,
+      "writes": 0,
+      "other": 0,
+      "detector_versions": [
+        "0.2.0-proposed"
+      ],
+      "samples": [
+        20
+      ]
+    }
+  ],
+  "validated_vulnerability": 0,
+  "eligible_for_metrics": false,
+  "limitations": [
+    "Delivered diagnostics only; no pinned-source rerun was performed.",
+    "Groups are repository/file/symbol shapes, not qualified class/member roots.",
+    "Counts are not vulnerabilities and no Precision/Recall is computed."
+  ]
+}
