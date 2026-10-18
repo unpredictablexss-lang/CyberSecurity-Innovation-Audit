@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/a_line_scan_20261018_selfcontained_v1",
+  "candidate": "research/evidence/cpp/a_line_scan_20261018_selfcontained_v4",
+  "runner": "research/evidence/cpp/mvp_20261018/run_scan.py",
+  "candidate_detector_versions": {
+    "ohscanner.cpp.bounds": "0.3.2",
+    "ohscanner.cpp.integer_bounds": "0.2.3",
+    "ohscanner.cpp.resource_lifetime": "0.1.3",
+    "ohscanner.cpp.unsafe_memory_call": "0.1.2"
+  },
+  "baseline_candidates": 60,
+  "candidate_candidates": 39,
+  "baseline_groups": 39,
+  "candidate_groups": 27,
+  "intermediate_runs": {
+    "selfcontained_v2": {"candidates": 45, "groups": 29},
+    "selfcontained_v3": {"candidates": 44, "groups": 28}
+  },
+  "per_rule": [
+    {"rule_id": "ohcpp-memory-bounds-copy-candidate-001", "baseline": 21, "candidate": 9},
+    {"rule_id": "ohcpp-integer-bounds-arithmetic-candidate-001", "baseline": 25, "candidate": 16},
+    {"rule_id": "ohcpp-resource-lifetime-double-free-candidate-001", "baseline": 3, "candidate": 3},
+    {"rule_id": "ohcpp-resource-lifetime-use-after-free-candidate-002", "baseline": 4, "candidate": 4},
+    {"rule_id": "ohcpp-format-string-candidate-002", "baseline": 7, "candidate": 7}
+  ],
+  "per_component": [
+    {"component": "communication_dsoftbus", "baseline_candidates": 36, "baseline_groups": 23, "candidate_candidates": 16, "candidate_groups": 11},
+    {"component": "distributeddatamgr_kv_store", "baseline_candidates": 10, "baseline_groups": 7, "candidate_candidates": 10, "candidate_groups": 7},
+    {"component": "security_access_token", "baseline_candidates": 6, "baseline_groups": 3, "candidate_candidates": 5, "candidate_groups": 3},
+    {"component": "update_updateservice", "baseline_candidates": 6, "baseline_groups": 5, "candidate_candidates": 6, "candidate_groups": 5},
+    {"component": "window_window_manager", "baseline_candidates": 2, "baseline_groups": 1, "candidate_candidates": 2, "candidate_groups": 1}
+  ],
+  "note": "Identity-factor normalization (x + 1 vs x + 1 * 1, N vs sizeof(char) * N), symbolic length+constant coverage, and allocator-checked implicit calloc/new[] suppression remove 21 candidates. Remaining bounds candidates are unknown-length or struct-size mismatches; remaining integer candidates are explicit user arithmetic. This is a precision change, not an accuracy metric; validated_vulnerability remains 0."
+}

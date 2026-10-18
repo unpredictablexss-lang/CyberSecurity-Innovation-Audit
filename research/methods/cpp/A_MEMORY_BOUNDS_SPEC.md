@@ -6,8 +6,8 @@
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.2.9` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
-| `ohscanner.cpp.integer_bounds` | `0.2.2` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
+| `ohscanner.cpp.bounds` | `0.3.2` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
+| `ohscanner.cpp.integer_bounds` | `0.2.3` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
 
@@ -24,7 +24,7 @@
 1. 固定 C 数组或 `std::array<T,N>` 的 `memcpy`、`memmove`、`strncpy`、`snprintf`、`strcpy`、`strcat`。
 2. 固定数组索引，包含常量越界和未证明上界的符号索引。
 3. 识别 `if (n >= cap) return`、`if (n > cap) return`、`if (n < 0) return` 等单函数分支收窄。`SortElements*` 中未被 stable-array/index guard 保护的直接 `ElementAccessor::Get/Set` 作为历史 OOB 候选。
-4. 识别简单的 `malloc/calloc/new[]` 指针目的地容量；复制长度与分配表达式相同时 quiet，确定超界或不同符号长度时产生候选；`new[]` 的已知元素容量也用于索引上界，动态/包装分配保持 unknown。
+4. 识别简单的 `malloc/calloc/new[]` 指针目的地容量；复制长度与分配表达式相同、或分配表达式是 `length + 正常量` 时 quiet，确定超界或不同符号长度时产生候选；`new[]` 的已知元素容量也用于索引上界，动态/包装分配保持 unknown。
 5. 识别一阶直接 copy wrapper：函数体内只有一个 `memcpy/memmove/strncpy/strcpy/strcat/sprintf`，目的地为函数参数；调用点代入调用者数组/分配容量。更深 wrapper、函数指针和重载保持 unknown。
 6. `snprintf` 使用第 1 个实参作为字节上限；`snprintf(dst, sizeof(dst), ...)` quiet，`snprintf(dst, 8, ...)` 对 4 字节数组产生候选。
 7. `<= 0`、`< 0`、`>= MAX`、`> MAX` 和 `nullptr` 早退 guard 收窄区间；例如 `if (n <= 0) return; if (n > 4) return; dst[n-1]` 保持 quiet。`if (x != 0) return;` 只生产 `GuardFact.kind=zero_check`（区间 `[0,0]`），不注入 bounds 区间推断：`dst[n - 1]` 在 `n==0` 时仍是越界/回绕，必须保留候选。
@@ -43,7 +43,7 @@
 3. `__builtin_*overflow`、`SIZE_MAX /`、明确 checked arithmetic guard 作为安全对照。
 4. `strnlen` + `if (len >= MAX) return` 的窄安全形状和 `uint8_t/uint16_t + 1` 整数提升安全形状不告警。
 5. `MAX_KEY_PATH + 1` 这类宏值未知保持 unknown，不按宏值臆测溢出。
-6. `calloc(count, size)` 与 `new T[count]` 的隐式 `count * element_size` 乘法；元素大小为 1、常量乘法或 checked arithmetic guard 为 quiet。
+6. `calloc(count, size)` 与 `new T[count]` 的隐式元素乘法由分配器检查，不作为候选；用户显式写出的 `count * size`、`len + 1` 仍检查，checked arithmetic guard 为 quiet。
 7. `if (len > MAX) return;` / `len < sizeof(dst)` 等上界 guard 让 `len + 1` 的目标类型上界可证时保持 quiet；没有上界 guard 的 `len + 1` 仍为 candidate。
 
 算术后果和溢出本身分开：CWE-190/191 是候选类别，分配不足或越界写是候选 consequence；不能把每个 `+`/`*` 都当漏洞。
@@ -64,7 +64,7 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 35 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 37 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
@@ -108,11 +108,13 @@ CVE-2025-0587 / `arkcompiler_ets_runtime-atomic-index-overflow-2025-03` 在 vuln
 > and therefore imported mainline detectors (`0.2.0`/`0.1.0`), not this A-line
 > worktree. They remain valid mainline baseline records but are not A-line
 > before/after evidence. The authoritative A-line run is
-> `research/evidence/cpp/a_line_scan_20261018_selfcontained_v1` using
-> `research/evidence/cpp/mvp_20261018/run_scan.py`: 60 candidates / 39 groups,
-> of which `bounds 0.2.9` contributes 21, `integer_bounds 0.2.2` 25,
-> `resource_lifetime 0.1.3` 7 and `unsafe_memory_call 0.1.2` 7. See
-> `CORRECTION.md` and `rule_comparison.json` in that directory.
+> `research/evidence/cpp/a_line_scan_20261018_selfcontained_v4` using
+> `research/evidence/cpp/mvp_20261018/run_scan.py`: 39 candidates / 27 groups,
+> of which `bounds 0.3.2` contributes 9, `integer_bounds 0.2.3` 16,
+> `resource_lifetime 0.1.3` 7 and `unsafe_memory_call 0.1.2` 7. The first
+> corrected run `selfcontained_v1` was 60/39 before capacity normalization and
+> implicit-allocator-product suppression. See
+> `selfcontained_v1/CORRECTION.md` and `selfcontained_v4/comparison.json`.
 
 `ohscanner.cpp.bounds` 0.2.1 was scanned over the same five pinned components as
 the 2026-10-17 baseline. The result remains 33 candidates / 22 lexical groups;

@@ -223,6 +223,22 @@
       "byte_length": 133
     },
     {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "bounds_symbolic_plus_one_safe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "765335f66b4029c5923a4cf18593b24eed7372505bbb9261b54ffae4208e5b6d",
+      "byte_length": 162
+    },
+    {
+      "category": "positive",
+      "expected_min": 1,
+      "fixture": "bounds_symbolic_plus_one_unsafe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "973dbef1f2003c83c75063fdccfabd89f6559d0fda6e835a0d2e0b4e5f3204e1",
+      "byte_length": 164
+    },
+    {
       "category": "unrelated",
       "expected_max": 0,
       "fixture": "bounds_unrelated.cpp",

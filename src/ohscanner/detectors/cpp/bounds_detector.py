@@ -44,7 +44,7 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.9"
+RULE_VERSION = "0.3.2"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 _SECURE_COPY_ARGS = {
@@ -191,7 +191,29 @@ def _contains_symbol(expression: str) -> bool:
 
 
 def _normalized_expression(expression: str) -> str:
-    return re.sub(r"\s+", "", expression)
+    text = re.sub(r"\s+", "", expression)
+    text = re.sub(r"\(sizeof\(char\)\)", "1", text)
+    text = re.sub(r"sizeof\(char\)", "1", text)
+    for _ in range(3):
+        updated = re.sub(r"\*1[uUlL]*(?![A-Za-z0-9_])", "", text)
+        updated = re.sub(r"(?<![A-Za-z0-9_])1[uUlL]*\*", "", updated)
+        if updated == text:
+            break
+        text = updated
+    return text
+
+
+def _covers_symbolically(capacity_expression: str, length_expression: str) -> bool:
+    """True when a symbolic allocation capacity is at least the copy length."""
+
+    capacity = _normalized_expression(capacity_expression)
+    length = _normalized_expression(length_expression)
+    if not capacity or not length:
+        return False
+    if capacity == length:
+        return True
+    match = re.fullmatch(re.escape(length) + r"\+(?P<extra>\d+)", capacity)
+    return bool(match) and int(match.group("extra")) > 0
 
 
 def _nonnegative_symbols(masked: str) -> Set[str]:
@@ -336,9 +358,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 if destination_shape is not None and _safe_copy_length(expression, destination, arrays):
                     continue
                 if capacity_bytes is None:
-                    if _normalized_expression(expression) == _normalized_expression(
-                        capacity_expression or ""
-                    ):
+                    if _covers_symbolically(capacity_expression or "", expression):
                         continue
                     if _contains_symbol(expression) and _contains_symbol(capacity_expression or ""):
                         findings.append(_finding(
@@ -393,7 +413,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if destination_shape is not None and _safe_copy_length(length_expression, destination, arrays):
             continue
         if capacity_bytes is None:
-            if _normalized_expression(length_expression) == _normalized_expression(capacity_expression or ""):
+            if _covers_symbolically(capacity_expression or "", length_expression):
                 continue
             if _contains_symbol(length_expression) and _contains_symbol(capacity_expression or ""):
                 findings.append(_finding(

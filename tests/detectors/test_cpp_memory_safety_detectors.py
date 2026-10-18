@@ -50,7 +50,7 @@ void positive(char *src, unsigned int n) {
 """)
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.bounds")
-        self.assertEqual(self.detector.version, "0.2.9")
+        self.assertEqual(self.detector.version, "0.3.2")
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
         self.assertEqual({item.rule_id for item in run.findings}, {
@@ -59,7 +59,7 @@ void positive(char *src, unsigned int n) {
         })
         for finding in run.findings:
             self.assertEqual(finding.source_sha256, source.sha256)
-            self.assertEqual(finding.rule_version, "0.2.9")
+            self.assertEqual(finding.rule_version, "0.3.2")
             self.assertEqual(finding.rule_lineage_id, "A-BOF-01:ohcpp-memory-bounds-candidate")
             self.assertEqual(finding.identity_quality, "partial")
             self.assertGreaterEqual(len(finding.evidence_obligations), 7)
@@ -249,13 +249,26 @@ void reviewed(char *key, char *value, char *pos, ssize_t offset, ssize_t size) {
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
 
-    def test_calloc_and_new_array_element_multiplication(self) -> None:
-        positive = unit("positive/calloc_new_multiply.cpp", """
+    def test_implicit_allocator_products_are_checked_but_explicit_arithmetic_is_not(self) -> None:
+        implicit = unit("safe/implicit_allocator_product.cpp", """
 #include <cstdint>
 #include <cstdlib>
-void positive(size_t count) {
+void implicit(size_t count) {
     void *buffer = calloc(count, 4);
     uint32_t *items = new uint32_t[count];
+    (void)buffer;
+    (void)items;
+}
+""")
+        run = self.detector.detect(context_for(implicit), (implicit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+
+        positive = unit("positive/explicit_size_arithmetic.cpp", """
+#include <cstdlib>
+void positive(size_t count) {
+    void *buffer = malloc(count * 4);
+    char *items = new char[count + 1];
     (void)buffer;
     (void)items;
 }
@@ -268,28 +281,13 @@ void positive(size_t count) {
             {"ohcpp-integer-bounds-arithmetic-candidate-001"},
         )
 
-        safe = unit("safe/calloc_new_multiply.cpp", """
-#include <cstdint>
-#include <cstdlib>
-void safe(size_t count) {
-    void *buffer = calloc(count, 1);
-    char *items = new char[count];
-    (void)buffer;
-    (void)items;
-}
-""")
-        safe_run = self.detector.detect(context_for(safe), (safe,))
-        self.assertEqual(safe_run.findings, ())
-
-        fixed = unit("fixed/calloc_new_multiply.cpp", """
+        fixed = unit("fixed/explicit_size_arithmetic.cpp", """
 #include <cstdint>
 #include <cstdlib>
 void fixed(size_t count) {
     if (count > SIZE_MAX / 4) return;
-    void *buffer = calloc(count, 4);
-    uint32_t *items = new uint32_t[count];
+    void *buffer = malloc(count * 4);
     (void)buffer;
-    (void)items;
 }
 """)
         fixed_run = self.detector.detect(context_for(fixed), (fixed,))

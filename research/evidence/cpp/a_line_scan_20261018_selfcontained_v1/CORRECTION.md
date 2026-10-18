@@ -53,3 +53,14 @@ Per-rule comparison (mainline → A-line):
 The higher total is coverage from the A-line rules, not an accuracy gain; the
 lower UAF count is a precision change. Neither is a vulnerability count, and
 `validated_vulnerability` remains `0`.
+
+## Precision follow-up (`selfcontained_v2`)
+
+Two systemic false-positive shapes were fixed after the first corrected run:
+capacity expressions are normalized for identity factors (`x + 1` vs
+`x + 1 * 1`, `N` vs `sizeof(char) * N`), symbolic `length + constant`
+capacities are recognized, and implicit `calloc`/`new[]` element products are
+treated as allocator-checked instead of candidates. The follow-up runs were
+45/29 and 44/28, and the final run is 39 candidates / 27 groups (bounds 9,
+integer 16, resource 7, unsafe 7); `communication_dsoftbus` drops from 36/23 to
+16/11. `a_line_scan_20261018_selfcontained_v4` is the authoritative A-line scan.

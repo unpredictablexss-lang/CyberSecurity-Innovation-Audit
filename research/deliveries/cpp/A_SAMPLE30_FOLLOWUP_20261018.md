@@ -26,7 +26,7 @@ The sandbox delivery reports:
 - `shared_ptr_race 0.5.3`: constructor-body writes are initialization; function
   parameters shadow same-named members; stable-owner and parameter-shadow
   controls added.
-- `bounds 0.2.9`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
+- `bounds 0.3.1`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
   guards narrow intervals; `if (x != 0) return;` emits a `zero_check` guard fact
   that is not injected into bounds intervals, so `dst[n - 1]` stays a candidate;
   constant offsets such as `n - 1` are evaluated;
@@ -35,8 +35,9 @@ The sandbox delivery reports:
   `snprintf_s`) checks the destination size and, where applicable, the count.
   The fixed five-component rerun stays at 33 candidates / 22 groups with every
   component unchanged (`a_line_scan_20261018_v11_comparison.json`).
-- `integer_bounds 0.2.2`: `calloc`/`new[]` element multiplication; upper
-  guards now prove `len + 1` cannot overflow the target type.
+- `integer_bounds 0.2.3`: implicit `calloc`/`new[]` element products are
+  allocator-checked and no longer reported; user-written `count * size` and
+  `len + 1` stay candidates unless an upper guard proves the type bound.
 - `resource_lifetime 0.1.3`: conditional release paths and one-hop release wrappers.
 - `unsafe_memory_call 0.1.2`: correct `fprintf/vfprintf/syslog` format argument.
 
@@ -102,12 +103,14 @@ The earlier `a_line_scan_20261018_v1`–`v16` runs used the shared mainline
 runner, which imported mainline detectors `0.2.0`/`0.1.0` through its own
 `sys.path` insert; their repeated 33/22 result is a mainline baseline, not an
 A-line result. The corrected self-contained runner
-(`research/evidence/cpp/mvp_20261018/run_scan.py`) reports 60 candidates /
-39 groups over the same five components: bounds 21, integer 25, resource
-lifetime 7, unsafe call 7. The per-rule and per-component comparison is in
-`research/evidence/cpp/a_line_scan_20261018_selfcontained_v1/rule_comparison.json`.
-This is a coverage difference plus a UAF-count reduction (8→4), not an accuracy
-claim; `validated_vulnerability=0`.
+(`research/evidence/cpp/mvp_20261018/run_scan.py`) first reported 60 candidates
+/ 39 groups, then 39 / 27 after capacity-expression normalization, symbolic
+`length + constant` coverage and suppressing allocator-checked implicit
+`calloc`/`new[]` products: bounds 9, integer 16, resource lifetime 7, unsafe
+call 7. The per-rule and per-component comparison is in
+`research/evidence/cpp/a_line_scan_20261018_selfcontained_v4/comparison.json`.
+This is a coverage difference plus a precision change, not an accuracy claim;
+`validated_vulnerability=0`.
 
 ## Pending
 
