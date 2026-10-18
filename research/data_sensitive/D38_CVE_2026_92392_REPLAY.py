@@ -16,6 +16,8 @@ from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector
 CURL_REPO_DEFAULT = "/tmp/d-curl-92392"
 OH_CURL_REPO_DEFAULT = "/mnt/g/OpenHarmony-GitCode-Mirror/campaign-100-20261017/repos/third_party_curl"
 CASES = (
+    ("official_8_12_0_shape_variant", CURL_REPO_DEFAULT, "1d6e08ca3268a1f61bd4e56d6348fe304428ead7"),
+    ("official_8_21_0_shape_variant", CURL_REPO_DEFAULT, "3f00a2f6fa97f7721b65606954aac979dcb6caac"),
     ("official_8_22_0_vulnerable", CURL_REPO_DEFAULT, "d0386aa3e805543ce464c993e1eb31b4d92c6356"),
     ("official_8_23_0_fixed", CURL_REPO_DEFAULT, "4c24dd7ba7244e0206d91a72fe414823add8a034"),
     ("openharmony_mirror_head", OH_CURL_REPO_DEFAULT, "1386bb128bb060b284309397b97adcaaec21c003"),

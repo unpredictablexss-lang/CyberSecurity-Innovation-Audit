@@ -187,6 +187,8 @@ class KnownDisclosedCveTests(unittest.TestCase):
                 path: code,
                 "include/curl/curlver.h": f'#define LIBCURL_VERSION "{version_text}"\n',
             }).findings if f.symbol == "CVE-2026-92392"]
+        without_pending_reschedule = vulnerable.replace("multi_schedule_pending(data->multi);", "")
+        self.assertEqual(1, len(scan_with("8.12.0", without_pending_reschedule)))
 
         self.assertEqual([], scan_with("8.23.0", fixed))
         self.assertEqual([], scan_with("8.22.0", fixed))

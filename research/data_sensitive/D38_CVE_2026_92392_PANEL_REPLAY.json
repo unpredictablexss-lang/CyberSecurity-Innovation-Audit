@@ -2,7 +2,7 @@
   "schema": 1,
   "experiment": "D38 Workbench API to Worker to report and hash-checked source viewer replay",
   "detector": "ohscanner.known_disclosed_cves",
-  "detector_version": "0.14.0",
+  "detector_version": "0.15.0",
   "upstream_repository": "curl/curl",
   "source_profile": "two pinned source files per case, materialized in isolated temporary Git repositories",
   "validated_vulnerability": 0,
@@ -17,14 +17,44 @@
   "repeat_run_signatures": [
     [
       {
-        "case": "curl-vulnerable",
+        "case": "curl-vulnerable-8.12.0",
+        "upstream_commit": "1d6e08ca3268a1f61bd4e56d6348fe304428ead7",
+        "local_scan_commit": "6df5aea72f9cbc16de9e82c4492fb34e2dbce09a",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.15.0",
+        "detector_status": "blocked",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:692cad8e1d086b4b",
+        "candidate_file": "lib/multi.c",
+        "candidate_line": 760,
+        "source_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+        "source_viewer_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "curl-vulnerable-8.21.0",
+        "upstream_commit": "3f00a2f6fa97f7721b65606954aac979dcb6caac",
+        "local_scan_commit": "4e6a12eb806287b13470672dc362878fb3592634",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.15.0",
+        "detector_status": "blocked",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:5d92d10c4618e3bf",
+        "candidate_file": "lib/multi.c",
+        "candidate_line": 752,
+        "source_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+        "source_viewer_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "curl-vulnerable-8.22.0",
         "upstream_commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
         "local_scan_commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
         "job_status": "completed_with_limitations",
-        "detector_version": "0.14.0",
+        "detector_version": "0.15.0",
         "detector_status": "blocked",
         "candidate_count": 1,
-        "candidate_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+        "candidate_id": "ohscanner.known_disclosed_cves:33863e8e2fb3daee",
         "candidate_file": "lib/multi.c",
         "candidate_line": 742,
         "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
@@ -32,11 +62,11 @@
         "validated_vulnerability": 0
       },
       {
-        "case": "curl-fixed",
+        "case": "curl-fixed-8.23.0",
         "upstream_commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
         "local_scan_commit": "b5d6101e5a531aa7905bf3af674fe71a79348f69",
         "job_status": "completed_with_limitations",
-        "detector_version": "0.14.0",
+        "detector_version": "0.15.0",
         "detector_status": "blocked",
         "candidate_count": 0,
         "candidate_id": null,
@@ -49,14 +79,44 @@
     ],
     [
       {
-        "case": "curl-vulnerable",
+        "case": "curl-vulnerable-8.12.0",
+        "upstream_commit": "1d6e08ca3268a1f61bd4e56d6348fe304428ead7",
+        "local_scan_commit": "6df5aea72f9cbc16de9e82c4492fb34e2dbce09a",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.15.0",
+        "detector_status": "blocked",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:692cad8e1d086b4b",
+        "candidate_file": "lib/multi.c",
+        "candidate_line": 760,
+        "source_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+        "source_viewer_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "curl-vulnerable-8.21.0",
+        "upstream_commit": "3f00a2f6fa97f7721b65606954aac979dcb6caac",
+        "local_scan_commit": "4e6a12eb806287b13470672dc362878fb3592634",
+        "job_status": "completed_with_limitations",
+        "detector_version": "0.15.0",
+        "detector_status": "blocked",
+        "candidate_count": 1,
+        "candidate_id": "ohscanner.known_disclosed_cves:5d92d10c4618e3bf",
+        "candidate_file": "lib/multi.c",
+        "candidate_line": 752,
+        "source_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+        "source_viewer_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+        "validated_vulnerability": 0
+      },
+      {
+        "case": "curl-vulnerable-8.22.0",
         "upstream_commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
         "local_scan_commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
         "job_status": "completed_with_limitations",
-        "detector_version": "0.14.0",
+        "detector_version": "0.15.0",
         "detector_status": "blocked",
         "candidate_count": 1,
-        "candidate_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+        "candidate_id": "ohscanner.known_disclosed_cves:33863e8e2fb3daee",
         "candidate_file": "lib/multi.c",
         "candidate_line": 742,
         "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
@@ -64,11 +124,11 @@
         "validated_vulnerability": 0
       },
       {
-        "case": "curl-fixed",
+        "case": "curl-fixed-8.23.0",
         "upstream_commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
         "local_scan_commit": "b5d6101e5a531aa7905bf3af674fe71a79348f69",
         "job_status": "completed_with_limitations",
-        "detector_version": "0.14.0",
+        "detector_version": "0.15.0",
         "detector_status": "blocked",
         "candidate_count": 0,
         "candidate_id": null,
@@ -82,11 +142,221 @@
   ],
   "cases": [
     {
-      "case": "curl-vulnerable",
+      "case": "curl-vulnerable-8.12.0",
+      "upstream_commit": "1d6e08ca3268a1f61bd4e56d6348fe304428ead7",
+      "local_scan_commit": "6df5aea72f9cbc16de9e82c4492fb34e2dbce09a",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.15.0",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "source_sha256": {
+          "include/curl/curlver.h": "0441efb74565ad6fdcd9d78f8725669d6506b4c83b4dbca9871e38af8e9b08b8",
+          "lib/multi.c": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982"
+        },
+        "unexamined": [
+          {
+            "file": "include/curl/curlver.h",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "lib/multi.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:692cad8e1d086b4b",
+            "file": "lib/multi.c",
+            "source_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/curl-vulnerable-8.12.0",
+              "commit": "6df5aea72f9cbc16de9e82c4492fb34e2dbce09a",
+              "snapshot_sha256": "90d1ed6e45dcabeb4dd61375bdf222c8d796163957a3f8bd275f69fb7ef470ec",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.15.0",
+              "rule_id": "ohknowncve-curl-cve-2026-92392",
+              "file": "lib/multi.c",
+              "source_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-416",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "candidate_count": 1,
+      "candidate_id": "ohscanner.known_disclosed_cves:692cad8e1d086b4b",
+      "candidate_file": "lib/multi.c",
+      "candidate_line": 760,
+      "source_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+      "source_viewer_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    },
+    {
+      "case": "curl-vulnerable-8.21.0",
+      "upstream_commit": "3f00a2f6fa97f7721b65606954aac979dcb6caac",
+      "local_scan_commit": "4e6a12eb806287b13470672dc362878fb3592634",
+      "job_status": "completed_with_limitations",
+      "detector_version": "0.15.0",
+      "detector_status": "blocked",
+      "coverage": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 2,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "source_sha256": {
+          "include/curl/curlver.h": "4d0c6264b426e80c0907c53ff73b43d238402c896ecc5d03ebcc1cbae3d055ce",
+          "lib/multi.c": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3"
+        },
+        "unexamined": [
+          {
+            "file": "include/curl/curlver.h",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "lib/multi.c",
+            "parse_status": "partial",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          }
+        ],
+        "inspected_files": [
+          "include/curl/curlver.h",
+          "lib/multi.c"
+        ],
+        "not_analyzed_files": [],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 2,
+          "not_analyzed": 0,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.known_disclosed_cves:5d92d10c4618e3bf",
+            "file": "lib/multi.c",
+            "source_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "fixture/curl-vulnerable-8.21.0",
+              "commit": "4e6a12eb806287b13470672dc362878fb3592634",
+              "snapshot_sha256": "c43bb2601b166e81d6b505141e557df1997355d49095a064e75bbb385ade5b05",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.known_disclosed_cves",
+              "detector_version": "0.15.0",
+              "rule_id": "ohknowncve-curl-cve-2026-92392",
+              "file": "lib/multi.c",
+              "source_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3"
+            },
+            "consequence_impact": "availability_or_memory_safety",
+            "consequence_cwe": "CWE-416",
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "component_identity",
+                "description": "Bind source to exact built component/version.",
+                "status": "missing"
+              },
+              {
+                "kind": "product_build",
+                "description": "Confirm component is included in target product build.",
+                "status": "missing"
+              },
+              {
+                "kind": "attacker_path",
+                "description": "Trace attacker-controlled input to the vulnerable API/path.",
+                "status": "missing"
+              },
+              {
+                "kind": "impact",
+                "description": "Verify product impact with controlled evidence.",
+                "status": "missing"
+              }
+            ]
+          }
+        ]
+      },
+      "candidate_count": 1,
+      "candidate_id": "ohscanner.known_disclosed_cves:5d92d10c4618e3bf",
+      "candidate_file": "lib/multi.c",
+      "candidate_line": 752,
+      "source_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+      "source_viewer_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+      "validated_vulnerability": 0,
+      "limitations": [
+        "Diagnostics are candidates/evidence only, not proof of security impact.",
+        "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+        "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+        "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+      ]
+    },
+    {
+      "case": "curl-vulnerable-8.22.0",
       "upstream_commit": "d0386aa3e805543ce464c993e1eb31b4d92c6356",
       "local_scan_commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
       "job_status": "completed_with_limitations",
-      "detector_version": "0.14.0",
+      "detector_version": "0.15.0",
       "detector_status": "blocked",
       "coverage": {
         "scope_mode": "per_file",
@@ -129,17 +399,17 @@
         "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
         "evidence_obligations": [
           {
-            "diagnostic_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+            "diagnostic_id": "ohscanner.known_disclosed_cves:33863e8e2fb3daee",
             "file": "lib/multi.c",
             "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
             "analysis_status": "partial",
             "source_binding": {
-              "repository": "fixture/curl-vulnerable",
+              "repository": "fixture/curl-vulnerable-8.22.0",
               "commit": "67fbc4abf34aabb8bede6560be008949099f1a85",
               "snapshot_sha256": "8360f1af2e59598e63ec1706ee6dbfd1a59af6f8f63fa20a7c75e53f9524df7a",
               "profile_id": "light-ast",
               "detector_id": "ohscanner.known_disclosed_cves",
-              "detector_version": "0.14.0",
+              "detector_version": "0.15.0",
               "rule_id": "ohknowncve-curl-cve-2026-92392",
               "file": "lib/multi.c",
               "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97"
@@ -173,7 +443,7 @@
         ]
       },
       "candidate_count": 1,
-      "candidate_id": "ohscanner.known_disclosed_cves:1838db02c2e69317",
+      "candidate_id": "ohscanner.known_disclosed_cves:33863e8e2fb3daee",
       "candidate_file": "lib/multi.c",
       "candidate_line": 742,
       "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
@@ -187,11 +457,11 @@
       ]
     },
     {
-      "case": "curl-fixed",
+      "case": "curl-fixed-8.23.0",
       "upstream_commit": "4c24dd7ba7244e0206d91a72fe414823add8a034",
       "local_scan_commit": "b5d6101e5a531aa7905bf3af674fe71a79348f69",
       "job_status": "completed_with_limitations",
-      "detector_version": "0.14.0",
+      "detector_version": "0.15.0",
       "detector_status": "blocked",
       "coverage": {
         "scope_mode": "per_file",

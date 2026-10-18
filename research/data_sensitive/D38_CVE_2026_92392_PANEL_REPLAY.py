@@ -18,8 +18,10 @@ from src.workbench import service
 
 CURL_REPO = "/tmp/d-curl-92392"
 CASES = (
-    ("curl-vulnerable", "d0386aa3e805543ce464c993e1eb31b4d92c6356"),
-    ("curl-fixed", "4c24dd7ba7244e0206d91a72fe414823add8a034"),
+    ("curl-vulnerable-8.12.0", "1d6e08ca3268a1f61bd4e56d6348fe304428ead7", 1),
+    ("curl-vulnerable-8.21.0", "3f00a2f6fa97f7721b65606954aac979dcb6caac", 1),
+    ("curl-vulnerable-8.22.0", "d0386aa3e805543ce464c993e1eb31b4d92c6356", 1),
+    ("curl-fixed-8.23.0", "4c24dd7ba7244e0206d91a72fe414823add8a034", 0),
 )
 PATHS = ("lib/multi.c", "include/curl/curlver.h")
 HEADERS = {"x-ohscanner-client": "workbench-v1"}
@@ -34,7 +36,7 @@ def source_bytes(repo: Path, revision: str, path: str) -> bytes:
     return subprocess.check_output(["git", "-C", str(repo), "show", f"{revision}:{path}"])
 
 
-def scan_case(root: Path, name: str, upstream_repo: Path, revision: str) -> dict:
+def scan_case(root: Path, name: str, upstream_repo: Path, revision: str, expected: int) -> dict:
     target = root / "targets" / name
     target.mkdir(parents=True)
     blobs = {path: source_bytes(upstream_repo, revision, path) for path in PATHS}
@@ -79,7 +81,6 @@ def scan_case(root: Path, name: str, upstream_repo: Path, revision: str) -> dict
         if len(runs) != 1:
             raise AssertionError(f"expected one selected detector run, got {len(runs)}")
         findings = [item for item in runs[0]["diagnostics"] if item["symbol"] == "CVE-2026-92392"]
-        expected = 1 if name == "curl-vulnerable" else 0
         if len(findings) != expected:
             raise AssertionError(f"{name}: expected {expected} candidates, got {len(findings)}")
         viewer = None
@@ -120,7 +121,7 @@ def main() -> None:
     for round_number in (1, 2):
         round_root = root / f"round-{round_number}"
         round_root.mkdir(parents=True)
-        cases = [scan_case(round_root, name, upstream_repo, revision) for name, revision in CASES]
+        cases = [scan_case(round_root, name, upstream_repo, revision, expected) for name, revision, expected in CASES]
         rounds.append(cases)
 
     stable_fields = ("case", "upstream_commit", "local_scan_commit", "job_status", "detector_version",

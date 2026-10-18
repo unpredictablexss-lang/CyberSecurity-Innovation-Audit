@@ -4,7 +4,7 @@
   "advisory": "https://curl.se/docs/CVE-2026-92392.html",
   "fix_commit": "https://github.com/curl/curl/commit/8b0744af5b1b631da5b938ca31c3f9895ad5a321",
   "detector": "ohscanner.known_disclosed_cves",
-  "detector_version": "0.14.0",
+  "detector_version": "0.15.0",
   "validated_vulnerability": 0,
   "product_status": "unknown",
   "limitations": [
@@ -14,6 +14,68 @@
     "A candidate signature and an upstream fix comparison do not confirm a product vulnerability."
   ],
   "cases": [
+    {
+      "name": "official_8_12_0_shape_variant",
+      "repository": "curl/curl",
+      "commit": "1d6e08ca3268a1f61bd4e56d6348fe304428ead7",
+      "tree": "2620b60186e91d8ac05506e3dedccde5a653721a",
+      "source_paths": {
+        "include/curl/curlver.h": {
+          "blob": "376272eb8ab528ef5298d673328607ec555dbf80",
+          "sha256": "0441efb74565ad6fdcd9d78f8725669d6506b4c83b4dbca9871e38af8e9b08b8",
+          "size": 3051
+        },
+        "lib/multi.c": {
+          "blob": "d4dd4a0047c141823393f9d3959ed23e06533f00",
+          "sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+          "size": 125191
+        }
+      },
+      "source_declared_version": "8.12.0-DEV",
+      "detector_status": "blocked",
+      "parse_status": "not_run",
+      "findings": [
+        {
+          "line": 760,
+          "rule_id": "ohknowncve-curl-cve-2026-92392",
+          "cwe": "CWE-416",
+          "source_sha256": "b037827c035459327b7c634fda52e9743f95d33ce9055ab982871a41b0c94982",
+          "message": "Candidate component-code match for CVE-2026-92392: multi_done notifies connection filters before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; source-declared libcurl version is in the published affected range. Product reachability and vulnerability status remain unconfirmed."
+        }
+      ],
+      "candidate_count": 1
+    },
+    {
+      "name": "official_8_21_0_shape_variant",
+      "repository": "curl/curl",
+      "commit": "3f00a2f6fa97f7721b65606954aac979dcb6caac",
+      "tree": "e23d273aeb073c04aa5b073b35c9fde16979c896",
+      "source_paths": {
+        "include/curl/curlver.h": {
+          "blob": "5cc0e27c61ddde82b6887463525d7afc8a699a3c",
+          "sha256": "4d0c6264b426e80c0907c53ff73b43d238402c896ecc5d03ebcc1cbae3d055ce",
+          "size": 3058
+        },
+        "lib/multi.c": {
+          "blob": "d6ae111d8ee33a9ff8fa838fc0605b5ba4bcb012",
+          "sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+          "size": 131512
+        }
+      },
+      "source_declared_version": "8.21.0-DEV",
+      "detector_status": "blocked",
+      "parse_status": "not_run",
+      "findings": [
+        {
+          "line": 752,
+          "rule_id": "ohknowncve-curl-cve-2026-92392",
+          "cwe": "CWE-416",
+          "source_sha256": "b5dc84f15ed14179acbd06ae6b108331c46dd6c7067395282f0d1a2c42a5cdf3",
+          "message": "Candidate component-code match for CVE-2026-92392: multi_done notifies connection filters before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; source-declared libcurl version is in the published affected range. Product reachability and vulnerability status remain unconfirmed."
+        }
+      ],
+      "candidate_count": 1
+    },
     {
       "name": "official_8_22_0_vulnerable",
       "repository": "curl/curl",
@@ -40,7 +102,7 @@
           "rule_id": "ohknowncve-curl-cve-2026-92392",
           "cwe": "CWE-416",
           "source_sha256": "20bd4c9758d62cea5f436f2821f18fbb1646af1f55a2685ffc570f4b2aba8c97",
-          "message": "Candidate component-code match for CVE-2026-92392: multi_done notifies connection filters and schedules pending handles before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; source-declared libcurl version is in the published affected range. Product reachability and vulnerability status remain unconfirmed."
+          "message": "Candidate component-code match for CVE-2026-92392: multi_done notifies connection filters before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; source-declared libcurl version is in the published affected range. Product reachability and vulnerability status remain unconfirmed."
         }
       ],
       "candidate_count": 1

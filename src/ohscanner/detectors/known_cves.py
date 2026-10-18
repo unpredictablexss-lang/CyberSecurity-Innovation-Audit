@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.14.0"
+VERSION = "0.15.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -167,8 +167,7 @@ def _scan(unit: SourceUnit, curl_version=None):
                     "CWE-125", impact="availability_or_memory_safety",
                 ))
     # CVE-2026-92392: request cleanup must finish before connection filters
-    # release their references to Curl_easy; queued handles must not run before
-    # the connection has returned to its pool.
+    # release their references to Curl_easy.
     if source_path.endswith("lib/multi.c"):
         multi_done = _body(s, "multi_done")
         affected = _curl_92392_affected(curl_version)
@@ -178,9 +177,8 @@ def _scan(unit: SourceUnit, curl_version=None):
             filter_done = re.search(r"Curl_conn_ev_data_done\s*\(\s*data\s*,\s*premature\s*\)", multi_body)
             schedule = re.search(r"multi_schedule_pending\s*\(\s*data->multi\s*\)", multi_body)
             pool_return = re.search(r"Curl_cpool_(?:return|do_locked)\s*\(", multi_body)
-            if (req_done and filter_done and schedule and pool_return
+            if (req_done and filter_done and pool_return
                     and filter_done.start() < req_done.start()
-                    and schedule.start() < req_done.start()
                     and pool_return.start() > req_done.start()):
                 version_note = (
                     "source-declared libcurl version is in the published affected range"
@@ -190,7 +188,7 @@ def _scan(unit: SourceUnit, curl_version=None):
                 out.append(_finding(
                     unit, multi_start + 1 + filter_done.start(),
                     "ohknowncve-curl-cve-2026-92392", "CVE-2026-92392",
-                    "multi_done notifies connection filters and schedules pending handles before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; " + version_note + ".",
+                    "multi_done notifies connection filters before Curl_req_done completes, permitting a Curl_easy lifetime violation on the affected HTTP/2 upload reset path; " + version_note + ".",
                     "CWE-416",
                 ))
     # CVE-2025-9900: only inspect the public wrapper body. The old expression
