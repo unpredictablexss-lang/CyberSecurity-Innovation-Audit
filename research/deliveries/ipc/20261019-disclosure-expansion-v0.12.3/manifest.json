@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "detector_baseline": "b8adb2a2908b8e8c3757878b1b1fae7e5a781d74",
+  "detector": "ohscanner.interface.ipc",
+  "version": "0.12.3",
+  "files": [
+    {
+      "file": "README.md",
+      "sha256": "7c0830f267b0da13a98ce7253911a8a1aa4cebe9ed06608488bef36b201cdb4e"
+    },
+    {
+      "file": "cve-2024-38382-fixed.md",
+      "sha256": "b1f068ac502e642b421534ee15914a3d012bd8c45008530df2fdf1c36a4ab475"
+    },
+    {
+      "file": "cve-2024-38382-vulnerable.md",
+      "sha256": "a13562b53d7417b0b761f432bc44413005bf0584f42af70c9024010678bc4327"
+    },
+    {
+      "file": "cve-2024-39612-fixed.md",
+      "sha256": "4c6a0f2624460afbb9c69a24e37f6c477a43d5e9fcba5463226ca7aff5b617ec"
+    },
+    {
+      "file": "cve-2024-39612-vulnerable.md",
+      "sha256": "cfacc49b882eb5ac67bcf38a9b251225a21c9d4d01cd457bc3c23435ab6e9b93"
+    },
+    {
+      "file": "cve-2025-27563-fixed.md",
+      "sha256": "6cf4224c84ccb59318b29c4c47d74e6db3c1fbaf8bdb7e528cd83b0bdb5a456a"
+    },
+    {
+      "file": "cve-2025-27563-vulnerable.md",
+      "sha256": "8fa4d20ee6497afe81f65d9734c50d112b3c8178ec002bde0bf9c85014f16247"
+    }
+  ]
+}
