@@ -70,3 +70,16 @@ test("D sensitive exposure rule stays off by default and is sent only after expl
   });
   assert.throws(() => approvedDetectorIds([...detectors, d], ["test.example"]), /实验规则/);
 });
+
+test("D disclosed-CVE source rule is sent to preview and scan only after explicit selection", () => {
+  const id = "ohscanner.known_disclosed_cves";
+  const d = { id, version: "0.8.0", kind: "research_candidate", default_enabled: false,
+    supported_languages: ["c", "cpp"] };
+  const catalog = [...detectors, d];
+  assert.deepEqual(approvedDetectorIds(catalog), ["test.cpp"]);
+  assert.deepEqual(approvedDetectorIds(catalog, [id]), [id, "test.cpp"]);
+  assert.deepEqual(snapshotPayload(values, catalog, [id]).detector_ids, [id, "test.cpp"]);
+  assert.deepEqual(planPayload(values, catalog, [id]), {
+    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: [id, "test.cpp"]
+  });
+});
