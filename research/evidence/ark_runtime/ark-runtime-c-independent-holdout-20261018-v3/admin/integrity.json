@@ -1,14 +1,14 @@
 {
   "artifacts": {
-    "README.md": "8a8da01bfd45d1ad2e5573336b6ed48108438be4015be7f123c1ae1b0de1443f",
-    "admin/assessment_status.json": "ed6b45fb95804e38c3182f738fccfca9cb78e33a4e99797ccebc1b7619c752fe",
-    "admin/frozen_detector_0.7.0.json": "e5d80460e66362c70ef63be8eae00fb5fa3d5e8d70056e758bc84649cde835a4",
-    "admin/applicability_contract_0.7.0.json": "4e98f891a71534d4554cfff5c2b1d72dfa28d126602340acf7afc8f5603abfa7",
-    "admin/detector_dependencies_0.7.0.lock": "f0702fcfea4950211e74ebc1b15ca747e0ede5806014e00d5026a2ac56a87b1d",
-    "admin/clean_archive_verification_0.7.0.json": "b75d7bd2104cc15dccf4d642392220674f0297a36fab528970fff7d216b132e8",
-    "admin/final_gate_audit.json": "198391a74cb1f2d5360652d00d08406e677c6a1555e64b83757bcdc0824e5e01",
-    "admin/development_exclusion_inventory.csv": "be57ec005f206f97eeba558cd11ae3323960b0ea1e45285d7c01d3142f7d4082",
-    "admin/development_exclusion_inventory_summary.json": "c3f24d07f6cc1f83444d5a29ec1144c3941eabc36ebf514894c3466f1bf80540",
+    "README.md": "98b47e1dab147e9267f48d28e5cf7726b790e22f60174efc14a45762ab00bf39",
+    "admin/assessment_status.json": "dbcbad03e6b5b82dd597069b5ea07ec5036e01cea0f9b8b8a3e49dd7abd5caab",
+    "admin/frozen_detector_0.7.0.json": "bf823d7281942a9b1b6b90ba2ecf0e66cd0dcdc06e6b145deed912787403a1ab",
+    "admin/applicability_contract_0.7.0.json": "246c7126e112788dfa69a2eee226b1bf573e06aafcfe6c7a5cda5101c614441a",
+    "admin/detector_dependencies_0.7.0.lock": "e7de5fd6ac25e23184bb41361f694a97dadec299a1b707191f01b8ec31aa2b47",
+    "admin/clean_archive_verification_0.7.0.json": "36a1e8cb26d08e227e993f61095046c9e4984ada046e2845e2a0e82e4808b5e6",
+    "admin/final_gate_audit.json": "69b3c28e52694f2488f2c8c157937fbac4e7bdd9c21a90571f431bafd1bb5c80",
+    "admin/development_exclusion_inventory.csv": "6d474770b5dda61e2c22ea2f3d070191fc3cd20c8b6cc37500d512cb6a934acc",
+    "admin/development_exclusion_inventory_summary.json": "44ef133e6ac63a308287e1771571404c1ecf9e4b15ead48171acdc8d5f3741ae",
     "admin/development_artifacts_manifest.csv": "a381a0e676cb9545a27b5c47697bc7bb9b7569633265b7e3af62a89af1f2c708"
   },
   "v2_package_hashes_checked": 26,

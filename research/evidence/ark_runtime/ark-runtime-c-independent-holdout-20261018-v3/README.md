@@ -30,11 +30,11 @@ Coverage of vulnerable, fixed, safe, unrelated, and partial/unknown holdout samp
 
 ## Integrity
 
-- Frozen Detector: `e5d80460e66362c70ef63be8eae00fb5fa3d5e8d70056e758bc84649cde835a4`
-- Applicability contract: `4e98f891a71534d4554cfff5c2b1d72dfa28d126602340acf7afc8f5603abfa7`
-- Dependency lock: `f0702fcfea4950211e74ebc1b15ca747e0ede5806014e00d5026a2ac56a87b1d`
-- Clean archive verification: `b75d7bd2104cc15dccf4d642392220674f0297a36fab528970fff7d216b132e8`
+- Frozen Detector: `bf823d7281942a9b1b6b90ba2ecf0e66cd0dcdc06e6b145deed912787403a1ab`
+- Applicability contract: `246c7126e112788dfa69a2eee226b1bf573e06aafcfe6c7a5cda5101c614441a`
+- Dependency lock: `e7de5fd6ac25e23184bb41361f694a97dadec299a1b707191f01b8ec31aa2b47`
+- Clean archive verification: `36a1e8cb26d08e227e993f61095046c9e4984ada046e2845e2a0e82e4808b5e6`
 - Source inventory: 78 rows, `be57ec005f206f97eeba558cd11ae3323960b0ea1e45285d7c01d3142f7d4082`
 - Artifact inventory: 232 rows, `a381a0e676cb9545a27b5c47697bc7bb9b7569633265b7e3af62a89af1f2c708`
-- Machine-readable assessment state: `ed6b45fb95804e38c3182f738fccfca9cb78e33a4e99797ccebc1b7619c752fe`
+- Machine-readable assessment state: `dbcbad03e6b5b82dd597069b5ea07ec5036e01cea0f9b8b8a3e49dd7abd5caab`
 - Original v0.6.2 package: 26/26 indexed file hashes match.

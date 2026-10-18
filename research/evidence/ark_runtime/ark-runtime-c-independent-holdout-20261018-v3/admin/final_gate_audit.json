@@ -3,7 +3,7 @@
   "assessment_state": "blocked_before_sample_selection",
   "frozen_detector_commit": "ff03077fd1bd963e51f22f43e4cb25f3669a0f0e",
   "frozen_tree": "e76488731ff3410eb26bdb9b2bc3d95abbd1e467",
-  "clean_archive_verification_file_sha256": "b75d7bd2104cc15dccf4d642392220674f0297a36fab528970fff7d216b132e8",
+  "clean_archive_verification_file_sha256": "36a1e8cb26d08e227e993f61095046c9e4984ada046e2845e2a0e82e4808b5e6",
   "clean_archive_test": "6 passed, 2 skipped in clean archive; 8 passed with local Ark object store",
   "v2_package_hash_entries": 26,
   "v2_package_hash_mismatches": [],
