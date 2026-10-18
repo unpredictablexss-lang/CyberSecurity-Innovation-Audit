@@ -47,6 +47,10 @@ The reduction is explained by constructor-body initialization and parameter
 shadowing, not by a coverage drop. Evidence:
 `research/evidence/cpp/shared_ptr_triage_20261018/comparison.json`.
 
+The current 0.5.3 triage also classifies member access points: 375 reads and
+112 writes, with the remaining points unclassified. The raw candidate count is
+unchanged by this classification; it is an audit aid, not a new verdict.
+
 ## Pending
 
 The 30 sample source repositories are not present locally, so the sample30

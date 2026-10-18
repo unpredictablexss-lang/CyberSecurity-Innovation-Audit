@@ -22,6 +22,15 @@
       "candidates": 504,
       "groups": 108,
       "change": "function parameters shadow same-named members"
+    },
+    {
+      "version": "0.5.3",
+      "path": "research/evidence/cpp/shared_ptr_triage_20261018_v4",
+      "candidates": 504,
+      "groups": 108,
+      "reads": 375,
+      "writes": 112,
+      "change": "member-level read/write classification; no candidate suppression"
     }
   ],
   "note": "These counts are access-point diagnostics on a fixed five-component corpus, not the sample30 sandbox corpus and not vulnerability or Precision/Recall measurements."

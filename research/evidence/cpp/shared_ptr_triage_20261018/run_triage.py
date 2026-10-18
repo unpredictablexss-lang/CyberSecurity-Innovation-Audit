@@ -53,6 +53,11 @@ def _manifest_paths(manifest: Mapping[str, Any]) -> Tuple[str, ...]:
 
 
 def _finding_json(finding: Any) -> Dict[str, Any]:
+    operation = "unknown"
+    if "member write" in finding.message:
+        operation = "write"
+    elif "member read" in finding.message:
+        operation = "read"
     return {
         "file": finding.file,
         "line": finding.line,
@@ -63,6 +68,7 @@ def _finding_json(finding: Any) -> Dict[str, Any]:
         "source_sha256": finding.source_sha256,
         "rule_version": finding.rule_version,
         "candidate_cwe": finding.candidate_cwe,
+        "operation": operation,
     }
 
 
@@ -93,8 +99,27 @@ def _run_component(manifest_path: Path) -> Dict[str, Any]:
     run = SharedPtrRaceDetector().detect(context, context.units)
     findings = [_finding_json(item) for item in run.findings]
     counts = Counter((item["file"], item["symbol"]) for item in findings)
+    operations = Counter(
+        (item["file"], item["symbol"], item["operation"]) for item in findings
+    )
     top_members = [
-        {"file": file, "symbol": symbol, "count": count}
+        {
+            "file": file,
+            "symbol": symbol,
+            "count": count,
+            "reads": operations.get((file, symbol, "read"), 0),
+            "writes": operations.get((file, symbol, "write"), 0),
+            "shape": (
+                "mutable_owner"
+                if operations.get((file, symbol, "read"), 0)
+                and operations.get((file, symbol, "write"), 0)
+                else "write_only"
+                if operations.get((file, symbol, "write"), 0)
+                else "read_only"
+                if operations.get((file, symbol, "read"), 0)
+                else "unknown"
+            ),
+        }
         for (file, symbol), count in sorted(
             counts.items(), key=lambda item: (-item[1], item[0][0], item[0][1])
         )
@@ -111,6 +136,8 @@ def _run_component(manifest_path: Path) -> Dict[str, Any]:
         "detector": {"id": run.detector_id, "version": run.version, "status": run.status},
         "candidate_count": len(findings),
         "group_count": len(counts),
+        "read_candidates": sum(item["operation"] == "read" for item in findings),
+        "write_candidates": sum(item["operation"] == "write" for item in findings),
         "top_members": top_members,
         "findings": findings,
         "coverage": coverage,
@@ -140,7 +167,10 @@ def _write_markdown(rows: Sequence[Dict[str, Any]], path: Path) -> None:
         if not row["top_members"]:
             lines.append("- No candidate in the selected lexical scope.")
         for item in row["top_members"][:12]:
-            lines.append(f"- `{item['file']}` `{item['symbol']}`: {item['count']} candidate(s)")
+            lines.append(
+                f"- `{item['file']}` `{item['symbol']}`: {item['count']} candidate(s), "
+                f"reads={item['reads']}, writes={item['writes']}, shape={item['shape']}"
+            )
         lines.append("")
     lines.extend([
         "## Boundary",
@@ -175,6 +205,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             "selected_source_bytes": sum(row["selected_source_bytes"] for row in rows),
             "candidate_count": sum(row["candidate_count"] for row in rows),
             "group_count": sum(row["group_count"] for row in rows),
+            "read_candidates": sum(row["read_candidates"] for row in rows),
+            "write_candidates": sum(row["write_candidates"] for row in rows),
             "validated_vulnerability": 0,
             "eligible_for_metrics": False,
         },
