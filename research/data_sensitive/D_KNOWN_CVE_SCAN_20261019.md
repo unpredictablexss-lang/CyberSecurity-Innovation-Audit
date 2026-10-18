@@ -2,7 +2,7 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.7.0，支持 10 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.8.0，支持 10 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
 17 项公开 CVE 审查清单中，当前规则覆盖 10 个 CVE 形态。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 7 项没有正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
 
@@ -68,4 +68,4 @@ Detector 0.6.0 adds the one-character `pointer[0]` versus `pointer[position]` ro
 
 ## D28 WebView CVE-2026-27648
 
-新增规则经固定官方修复 blob 与内存反向修复重建样本回放：修复版本 0 命中，重建版本在 nweb_handler_delegate.cc:4511 命中 1 条 candidate。该正例不是历史上游漏洞提交；Tree-sitter 未运行，两个 run 均 blocked。另有 Workbench API 到 Worker、报告和源码查看的回归，确保候选携带固定源码 SHA 并保持 validated_vulnerability=0。复现细节和边界见 D28 WebView 报告与 JSON 回放结果。
+新增规则经官方 6.0 发布线固定快照 6539ea501a7a 中的真实修复前提交 a2de9fed 命中 1 条 candidate（nweb_handler_delegate.cc:4510），修复提交 18c5ba4d 无命中；二者均在该发布线历史内。Tree-sitter 未运行，两个 run 均 blocked。另有 Workbench API 到 Worker、报告和源码查看的回归，确保候选携带固定源码 SHA 并保持 validated_vulnerability=0。复现细节和边界见 D28 WebView 报告与 JSON 回放结果。

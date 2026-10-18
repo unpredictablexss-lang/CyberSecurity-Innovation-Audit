@@ -184,6 +184,10 @@ class KnownDisclosedCveTests(unittest.TestCase):
             "            size_t curIndex = 0;")
         findings = {f.symbol for f in self.run_source(vulnerable, "nweb_handler_delegate.cc").findings}
         self.assertIn("CVE-2026-27648", findings)
+        candidate = next(f for f in self.run_source(vulnerable, "nweb_handler_delegate.cc").findings
+                         if f.symbol == "CVE-2026-27648")
+        self.assertIn("unchecked shared-memory offset/length", candidate.message)
+        self.assertIn("without a destination-size loop bound", candidate.message)
         self.assertNotIn("CVE-2026-27648", {f.symbol for f in self.run_source(fixed, "nweb_handler_delegate.cc").findings})
         self.assertIn("CVE-2026-27648", {f.symbol for f in self.run_source(partial_fix, "nweb_handler_delegate.cc").findings})
         self.assertNotIn("CVE-2026-27648", {f.symbol for f in self.run_source(unrelated, "nweb_handler_delegate.cc").findings})

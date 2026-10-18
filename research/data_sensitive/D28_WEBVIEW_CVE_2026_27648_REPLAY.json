@@ -1,38 +1,44 @@
 {
   "schema": 1,
   "repository": "openharmony-tpc/chromium_src",
-  "commit": "18c5ba4d75a909c8736e0e45355f358860e47778",
-  "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
   "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
-  "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
-  "fixed_source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
-  "detector": "ohscanner.known_disclosed_cves",
-  "detector_version": "0.7.0",
-  "fixed_control": {
-    "variant": "official_fixed_blob",
-    "parse_status": "not_run",
-    "run_status": "blocked",
-    "source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
-    "candidate_count": 0
+  "branch_snapshot": "6539ea501a7a2bac6aa0825bb9180443b864b0c1",
+  "branch_history": {
+    "pre_fix_commit": "a2de9fedca08d339593849732aceacbc72cebc4c",
+    "pre_fix_is_ancestor_of_fix": true,
+    "fix_commit": "18c5ba4d75a909c8736e0e45355f358860e47778",
+    "fix_is_ancestor_of_branch_snapshot": true
   },
-  "positive_regression": {
-    "variant": "reverse_fix_reconstruction",
-    "source_sha256": "67631ae37227cfa0abf0536269388bdc80aa294bde76c2e86e19b0d4cb2ac560",
+  "pre_fix": {
+    "tree": "aa962f036b96bbca53e5bc1d711f99b233f5806e",
+    "blob": "78e83fea67a2db3297cc59f07566a0c0b6153e7a",
+    "source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+    "parse_status": "not_run",
     "run_status": "blocked",
     "candidate_count": 1,
     "candidate": {
       "rule_id": "ohknowncve-webview-cve-2026-27648",
       "symbol": "CVE-2026-27648",
-      "line": 4511,
-      "source_sha256": "67631ae37227cfa0abf0536269388bdc80aa294bde76c2e86e19b0d4cb2ac560",
-      "message": "Candidate component-code match for CVE-2026-27648: Flowbuffer result reconstruction has an unchecked shared-memory offset/length. Product reachability and vulnerability status remain unconfirmed."
+      "line": 4510,
+      "source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+      "message": "Candidate component-code match for CVE-2026-27648: Flowbuffer decoding has an unchecked shared-memory offset/length, and result reconstruction writes dataList[curIndex] without a destination-size loop bound. Product reachability and vulnerability status remain unconfirmed."
     }
   },
-  "classification": "candidate-only rule regression; not an upstream vulnerable commit or product confirmation",
+  "fixed": {
+    "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+    "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+    "source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+    "parse_status": "not_run",
+    "run_status": "blocked",
+    "candidate_count": 0
+  },
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.8.0",
+  "classification": "pre-fix/fixed upstream component source regression; product status remains unknown",
   "validated_vulnerability": 0,
   "limitations": [
-    "Positive source is reconstructed in memory by reversing the official fix hunk.",
+    "The positive is a real pre-fix commit in the pinned 6.0 release branch history, not a reconstructed source.",
     "Parser is not run, so both executions remain blocked.",
-    "No product build, remote input reachability, runtime exploit, or product impact was tested."
+    "No OpenHarmony product build, remote input reachability, runtime exploit, or product impact was tested."
   ]
 }

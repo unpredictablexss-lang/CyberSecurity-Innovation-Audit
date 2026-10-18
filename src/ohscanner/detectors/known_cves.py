@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -214,9 +214,13 @@ def _scan(unit: SourceUnit):
         unsafe_byte_range = reads_entry and not byte_range_bounded
         unsafe_destination_index = sized_destination and writes_destination and bool(unbounded_loops)
         if unsafe_byte_range or unsafe_destination_index:
-            detail = ("Flowbuffer result reconstruction has an unchecked shared-memory offset/length."
-                      if unsafe_byte_range else
-                      "Flowbuffer result reconstruction writes dataList[curIndex] without a destination-size loop bound.")
+            if unsafe_byte_range and unsafe_destination_index:
+                detail = ("Flowbuffer decoding has an unchecked shared-memory offset/length, and result reconstruction "
+                          "writes dataList[curIndex] without a destination-size loop bound.")
+            elif unsafe_byte_range:
+                detail = "Flowbuffer decoding has an unchecked shared-memory offset/length."
+            else:
+                detail = "Flowbuffer result reconstruction writes dataList[curIndex] without a destination-size loop bound."
             finding_pos = (result_pos + 1 + unbounded_loops[0].start()
                            if unsafe_destination_index else flow_pos)
             out.append(_finding(
