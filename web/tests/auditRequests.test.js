@@ -57,3 +57,16 @@ test("plan preview sends source selection only, with no browser-chosen rule list
 test("explicit-only research rules are not silently requested by normal UI flows", () => {
   assert.deepEqual(approvedDetectorIds([...detectors, { ...detectors[0], id: "test.research-only", default_enabled: false }]), ["test.cpp"]);
 });
+
+test("D sensitive exposure rule stays off by default and is sent only after explicit selection", () => {
+  const id = "ohscanner.data.sensitive_exposure";
+  const d = { id, version: "0.13.0", kind: "research_candidate", default_enabled: false,
+    supported_languages: ["c", "cpp"] };
+  assert.deepEqual(approvedDetectorIds([...detectors, d]), ["test.cpp"]);
+  assert.deepEqual(approvedDetectorIds([...detectors, d], [id]), [id, "test.cpp"]);
+  assert.deepEqual(snapshotPayload(values, [...detectors, d], [id]).detector_ids, [id, "test.cpp"]);
+  assert.deepEqual(planPayload(values, [...detectors, d], [id]), {
+    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: [id, "test.cpp"]
+  });
+  assert.throws(() => approvedDetectorIds([...detectors, d], ["test.example"]), /实验规则/);
+});

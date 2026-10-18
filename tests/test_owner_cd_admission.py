@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 from src.ohscanner.detectors.admission import pending_admissions
-from src.ohscanner.detectors.catalog import build_registry, default_detector_ids
+from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
 from src.ohscanner.planning import approved_metadata
 from src.workbench.planning import plan_audit
 from tests.test_audit_plan import manifest
@@ -19,6 +19,24 @@ class AdmissionBoundaryTests(unittest.TestCase):
             for ids in ((row['id'],), ('ohscanner.interface.ipc', row['id'])):
                 with self.subTest(ids=ids), self.assertRaisesRegex(ValueError, 'admission blocked'):
                     build_registry(ids)
+
+    def test_d_is_available_only_by_explicit_research_selection(self):
+        ident = 'ohscanner.data.sensitive_exposure'
+        self.assertNotIn(ident, default_detector_ids())
+        metadata = catalog_metadata()[ident]
+        self.assertEqual(metadata['kind'], 'research_candidate')
+        self.assertFalse(metadata['default_enabled'])
+        detector = build_registry((ident,)).detectors()[0]
+        self.assertEqual(detector.version, '0.13.0')
+        self.assertNotIn(ident, {row['id'] for row in pending_admissions()})
+        automatic = plan_audit(manifest(), approved_metadata())
+        automatic_row = next(row for row in automatic['detectors'] if row['id'] == ident)
+        self.assertEqual(automatic_row['decision'], 'skipped')
+        self.assertIn('explicit_selection_required', automatic_row['reason_codes'])
+        explicit = plan_audit(manifest(), approved_metadata(), selected_detector_ids=[ident])
+        explicit_row = next(row for row in explicit['detectors'] if row['id'] == ident)
+        self.assertEqual(explicit_row['decision'], 'planned')
+        self.assertIn(ident, explicit['suggested_detector_ids'])
 
     def test_complete_syntax_and_explicit_selection_do_not_bypass_review(self):
         for selected in (None, [row['id'] for row in pending_admissions()]):
@@ -64,7 +82,7 @@ class AdmissionApiTests(unittest.TestCase):
         response = self.client.get('/api/v1/detector-admissions')
         self.assertEqual(response.status_code, 200)
         records = response.json()
-        self.assertEqual({r['lane'] for r in records}, {'C', 'D'})
+        self.assertEqual({r['lane'] for r in records}, {'C'})
         before = self.client.get('/api/v1/scans').json()
         for row in records:
             for ids in ([row['id']], ['ohscanner.interface.ipc', row['id']]):
@@ -82,6 +100,6 @@ class AdmissionApiTests(unittest.TestCase):
         self.assertEqual(result.status_code, 200, result.text)
         plan = result.json()
         pending = [d for d in plan['detectors'] if d.get('admission')]
-        self.assertEqual(len(pending), 2)
+        self.assertEqual(len(pending), 1)
         self.assertTrue(all(d['decision'] == 'blocked' for d in pending))
         self.assertEqual(self.client.get('/api/v1/scans').json(), before)

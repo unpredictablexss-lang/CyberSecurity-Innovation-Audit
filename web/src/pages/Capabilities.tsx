@@ -58,7 +58,10 @@ export default function Capabilities({ detectors, embedded = false }: { detector
                 <Text strong>{d.id}</Text>
                 <Tag>{d.version}</Tag>
                 <Paragraph>{d.summary}</Paragraph>
-                <Tag color="blue">candidate / unassessed</Tag>
+                {d.admission_reason && <Paragraph type="secondary">{d.admission_reason}</Paragraph>}
+                <Tag color={d.default_enabled === false ? "orange" : "blue"}>
+                  {d.default_enabled === false ? "需显式选择" : "candidate / unassessed"}
+                </Tag>
               </div>
             ))}
           </Card>

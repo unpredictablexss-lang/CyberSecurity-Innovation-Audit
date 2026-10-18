@@ -126,7 +126,7 @@ class WorkbenchTests(unittest.TestCase):
             "ohscanner.cpp.null_dereference", "ohscanner.cpp.bounds",
             "ohscanner.cpp.integer_bounds", "ohscanner.cpp.resource_lifetime",
             "ohscanner.cpp.unsafe_memory_call", "ohscanner.interface.ipc",
-            "ohscanner.oh.arkts_js",
+            "ohscanner.oh.arkts_js", "ohscanner.data.sensitive_exposure",
         })
         self.assertTrue(all(x["version"] for x in r.json()))
 

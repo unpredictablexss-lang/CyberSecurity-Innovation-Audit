@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Alert, Button, Card, Col, Form, Row, Space, Typography } from "antd";
+import { Alert, Button, Card, Checkbox, Col, Form, Row, Space, Typography } from "antd";
 import { api } from "../../api";
 import { go, Header } from "../../components";
 import { approvedDetectorIds, snapshotPayload, planPayload, requestGate } from "./model";
@@ -9,13 +9,16 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
   const [form] = Form.useForm(); const repository = Form.useWatch("repository_id", form);
   const { refs, error: refsError, loading } = useRepositoryRefs(repository);
   const [busy, setBusy] = useState(false); const [error, setError] = useState("");
+  const [includeSensitiveExposure, setIncludeSensitiveExposure] = useState(false);
+  const sensitiveExposureId = "ohscanner.data.sensitive_exposure";
+  const explicitIds = includeSensitiveExposure ? [sensitiveExposureId] : [];
   const [plan, setPlan] = useState<any>(null); const [planning, setPlanning] = useState(false);
   const gate = useRef(requestGate());
   const invalidate = () => { gate.current.invalidate(); setPlan(null); setPlanning(false); };
   async function preview() {
     const ticket = gate.current.next(); setPlanning(true); setError(""); setPlan(null);
     try { const values = await form.validateFields();
-      const result = await api("/audit-plans", planPayload(values, detectors));
+      const result = await api("/audit-plans", planPayload(values, detectors, explicitIds));
       if (gate.current.current(ticket)) setPlan(result);
     } catch (e) { if (gate.current.current(ticket)) setError(String(e)); }
     finally { if (gate.current.current(ticket)) setPlanning(false); }
@@ -29,12 +32,18 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
       <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults }} onValuesChange={invalidate} onFinish={async (values) => {
         setBusy(true); setError("");
-        try { const job = await api("/scans", { ...snapshotPayload(values, detectors), ...(plan ? { expected_plan_sha256: plan.plan_sha256 } : {}) }); await refresh(); go("/tasks/" + job.id); }
+        try { const job = await api("/scans", { ...snapshotPayload(values, detectors, explicitIds), ...(plan ? { expected_plan_sha256: plan.plan_sha256 } : {}) }); await refresh(); go("/tasks/" + job.id); }
         catch (e) { setError(String(e)); } finally { setBusy(false); }
       }}>
         <RepositoryField repos={repos} refresh={refresh} onChange={() => { form.setFieldValue("revision", undefined); setError(""); invalidate(); }} />
         <RefField name="revision" label={loading ? "正在加载当前仓库版本…" : "审计版本"} refs={refs} />
-        <ScopeBudget /><RuleNotice detectors={detectors} />
+        <ScopeBudget />
+        {detectors.some((d) => d.id === sensitiveExposureId) && <Form.Item label="实验研究规则">
+          <Checkbox checked={includeSensitiveExposure} onChange={(event) => {
+            setIncludeSensitiveExposure(event.target.checked); invalidate();
+          }}>D 敏感数据到日志（固定版本候选；partial / blocked 表示未知）</Checkbox>
+        </Form.Item>}
+        <RuleNotice detectors={detectors} />
         <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览适用规则</Button>
         <AuditPlanView plan={plan} />
         <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length}>冻结版本并开始扫描</Button>
