@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "a_line_sandbox_method_control_static_replay",
+  "status": "passed",
+  "detectors": {
+    "bounds": "0.2.8"
+  },
+  "copy_range_controls": [
+    {
+      "file": "copy_range_model.cpp",
+      "sha256": "1132733930347d64b8f2fd9af7c76c98f215c4c0f62643e19371c857dbf02654",
+      "byte_length": 2790,
+      "runs": [
+        {
+          "detector": "ohscanner.cpp.bounds",
+          "version": "0.2.8",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict; partial/failed source is unknown, not a miss.",
+            "Candidate only: lexical array/copy facts do not prove exploitability or a product vulnerability.",
+            "Only direct one-hop copy wrappers are summarized; deeper wrappers, function pointers, aliases, macros, templates and full C++ CFG semantics remain unknown."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "A guarded or unknown expression is not a safe verdict; partial/failed source remains unknown.",
+            "Candidate only: lexical integer arithmetic does not prove allocation undersizing or product impact.",
+            "Signedness, promotions, macro constants, overflow intrinsics, templates and interprocedural range facts remain unknown unless explicitly modeled."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "version": "0.1.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict; partial/failed source remains unknown.",
+            "Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.",
+            "Candidate only: local lexical resource state does not prove UAF/double-free exploitability."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.2",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict.",
+            "Candidate only: lexical unsafe-call recognition does not prove exploitability.",
+            "Macro-only format expressions are unresolved/unknown and are not emitted as format-string candidates.",
+            "Wrappers, macros, varargs, destination aliases, compile context and attacker control remain unknown."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_model.cpp: research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_model.cpp: no class-member shared_ptr declaration was observed in the narrow lexical scope; absence of a finding is not a safe verdict."
+          ]
+        }
+      ],
+      "bounds_candidates": 0,
+      "expected_minimum": 0,
+      "result": "passed"
+    },
+    {
+      "file": "copy_range_safe_control.cpp",
+      "sha256": "7beadede2e4275804c164049c8161d1e66c8997010dc4c95e6023678fac5cf28",
+      "byte_length": 439,
+      "runs": [
+        {
+          "detector": "ohscanner.cpp.bounds",
+          "version": "0.2.8",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict; partial/failed source is unknown, not a miss.",
+            "Candidate only: lexical array/copy facts do not prove exploitability or a product vulnerability.",
+            "Only direct one-hop copy wrappers are summarized; deeper wrappers, function pointers, aliases, macros, templates and full C++ CFG semantics remain unknown."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "A guarded or unknown expression is not a safe verdict; partial/failed source remains unknown.",
+            "Candidate only: lexical integer arithmetic does not prove allocation undersizing or product impact.",
+            "Signedness, promotions, macro constants, overflow intrinsics, templates and interprocedural range facts remain unknown unless explicitly modeled."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "version": "0.1.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict; partial/failed source remains unknown.",
+            "Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.",
+            "Candidate only: local lexical resource state does not prove UAF/double-free exploitability."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.2",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict.",
+            "Candidate only: lexical unsafe-call recognition does not prove exploitability.",
+            "Macro-only format expressions are unresolved/unknown and are not emitted as format-string candidates.",
+            "Wrappers, macros, varargs, destination aliases, compile context and attacker control remain unknown."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_safe_control.cpp: research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_safe_control.cpp: no class-member shared_ptr declaration was observed in the narrow lexical scope; absence of a finding is not a safe verdict."
+          ]
+        }
+      ],
+      "bounds_candidates": 0,
+      "expected_minimum": 0,
+      "result": "passed"
+    },
+    {
+      "file": "copy_range_unsafe_control.cpp",
+      "sha256": "2289562bc25bf3291fde911208be85b01f9dac31cf0b284cdc813d239aec2d21",
+      "byte_length": 620,
+      "runs": [
+        {
+          "detector": "ohscanner.cpp.bounds",
+          "version": "0.2.8",
+          "status": "completed",
+          "findings": [
+            {
+              "rule_id": "ohcpp-memory-bounds-index-candidate-002",
+              "file": "research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_unsafe_control.cpp",
+              "line": 12,
+              "column": 62,
+              "symbol": "dest",
+              "message": "Candidate only: index `i` has an unproven in-range index for fixed array `dest` with capacity 1024. Complete CFG, signedness and alias facts remain unknown."
+            }
+          ],
+          "limitations": [
+            "Absence of a finding is not a safe verdict; partial/failed source is unknown, not a miss.",
+            "Candidate only: lexical array/copy facts do not prove exploitability or a product vulnerability.",
+            "Only direct one-hop copy wrappers are summarized; deeper wrappers, function pointers, aliases, macros, templates and full C++ CFG semantics remain unknown."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.integer_bounds",
+          "version": "0.2.1",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "A guarded or unknown expression is not a safe verdict; partial/failed source remains unknown.",
+            "Candidate only: lexical integer arithmetic does not prove allocation undersizing or product impact.",
+            "Signedness, promotions, macro constants, overflow intrinsics, templates and interprocedural range facts remain unknown unless explicitly modeled."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "version": "0.1.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict; partial/failed source remains unknown.",
+            "Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.",
+            "Candidate only: local lexical resource state does not prove UAF/double-free exploitability."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.unsafe_memory_call",
+          "version": "0.1.2",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Absence of a finding is not a safe verdict.",
+            "Candidate only: lexical unsafe-call recognition does not prove exploitability.",
+            "Macro-only format expressions are unresolved/unknown and are not emitted as format-string candidates.",
+            "Wrappers, macros, varargs, destination aliases, compile context and attacker control remain unknown."
+          ]
+        },
+        {
+          "detector": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict.",
+            "research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_unsafe_control.cpp: research/deliveries/a-line-sample30/20261018/evidence/sandbox/method_controls/copy_range_unsafe_control.cpp: no class-member shared_ptr declaration was observed in the narrow lexical scope; absence of a finding is not a safe verdict."
+          ]
+        }
+      ],
+      "bounds_candidates": 1,
+      "expected_minimum": 1,
+      "result": "passed"
+    }
+  ],
+  "shared_ptr_controls": [
+    {
+      "file": "shared_ptr_tsan_unsafe_control.cpp",
+      "sha256": "635cb086986e22800dad69d3f24a5c16ae52ae35773cb32f5e94274057540f6f",
+      "byte_length": 840,
+      "runs": [
+        {
+          "detector": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict."
+          ]
+        }
+      ],
+      "result": "not_applicable",
+      "reason": "local shared_ptr objects are outside the class-member race rule; the dynamic TSan control validates the method, not this detector"
+    },
+    {
+      "file": "shared_ptr_tsan_atomic_control.cpp",
+      "sha256": "9a2ef438b23753fff2a0704fef93071322e47c7c65410515bc199c914e6c2f16",
+      "byte_length": 962,
+      "runs": [
+        {
+          "detector": "ohscanner.cpp.shared_ptr_race",
+          "version": "0.5.3",
+          "status": "completed",
+          "findings": [],
+          "limitations": [
+            "Cross-function protocols, lock aliases, template instantiations and real product builds remain unknown; pairwise lexical evidence is not a global concurrency proof.",
+            "Mutex identity and atomic_load/atomic_store observations are lexical heuristics, not synchronization proofs.",
+            "No CFG, dataflow, cross-function escape, template instantiation, alias resolution or real product build is modeled.",
+            "completed covers only the selected cpp units under the declared narrow lexical scope; it is not a safe verdict."
+          ]
+        }
+      ],
+      "result": "not_applicable",
+      "reason": "local shared_ptr objects are outside the class-member race rule; the dynamic TSan control validates the method, not this detector"
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "Reduced models validate the method only; they are not product builds or product PoCs.",
+    "Candidate presence/absence is a narrow control result, not Precision/Recall.",
+    "No confirmed vulnerability or dedicated PoC is claimed."
+  ]
+}

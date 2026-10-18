@@ -26,7 +26,7 @@ The sandbox delivery reports:
 - `shared_ptr_race 0.5.3`: constructor-body writes are initialization; function
   parameters shadow same-named members; stable-owner and parameter-shadow
   controls added.
-- `bounds 0.2.7`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
+- `bounds 0.2.8`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
   guards narrow intervals; `if (x != 0) return;` emits a `zero_check` guard fact
   that is not injected into bounds intervals, so `dst[n - 1]` stays a candidate;
   constant offsets such as `n - 1` are evaluated;
@@ -66,6 +66,23 @@ quiet, 24 `mutable_owner` (42 candidates), 82 `cross_function_unknown`
 ambiguous between `OHOS::AbilityContext::abilityInfo_` and
 `OHOS::ExtensionContext::abilityInfo_` because both classes share one header.
 This grouping changes no verdict and is not a Precision/Recall measurement.
+
+## Static replay of the delivered method controls
+
+`research/evidence/cpp/sandbox_controls_20261018/summary.json` replays the
+current A-line bounds detector over the reduced models delivered with the
+sandbox report:
+
+| Control | Expected | `bounds 0.2.8` |
+|---|---|---|
+| `copy_range_model.cpp` (Parcel-derived model) | quiet | 0 candidates |
+| `copy_range_safe_control.cpp` | quiet | 0 candidates |
+| `copy_range_unsafe_control.cpp` | hits | 1 index candidate (line 12) |
+
+The two shared_ptr TSan controls use local `shared_ptr` objects, which are
+outside the class-member race rule; they are recorded as `not_applicable` and
+the dynamic TSan results in the sandbox report remain the method evidence. This
+replay is a narrow three-control check, not Precision/Recall.
 
 ## Pending
 

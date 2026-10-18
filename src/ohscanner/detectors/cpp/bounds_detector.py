@@ -32,7 +32,9 @@ from .memory_safety import (
     guard_constraints,
     guard_shapes,
     line_column,
+    loop_constraints,
     mask_comments_and_literals,
+    merge_constraints,
     parameter_names,
     pointer_declarations,
     split_call_arguments,
@@ -42,7 +44,7 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.7"
+RULE_VERSION = "0.2.8"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 _SECURE_COPY_ARGS = {
@@ -285,6 +287,12 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if shape.capacity is not None and shape.element_size is not None
     }
 
+    def _constraints(position: int) -> Dict[str, Tuple[Optional[int], Optional[int]]]:
+        return merge_constraints(
+            guard_constraints(guards, position, constants, sizeof_values),
+            loop_constraints(masked, position, constants, sizeof_values),
+        )
+
     for match in re.finditer(r"\b(?P<name>memcpy_s|memmove_s|strcpy_s|strcat_s|strncpy_s|sprintf_s|snprintf_s|memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\(", masked):
         span = call_argument_span(masked, match.start())
         if span is None:
@@ -342,7 +350,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                         ))
                     continue
                 explicit_size = _size_of_value(expression, arrays)
-                constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
+                constraints = _constraints(match.start())
                 interval = expression_interval(expression, constants, constraints)
                 if explicit_size is not None and explicit_size <= capacity_bytes:
                     continue
@@ -397,7 +405,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 ))
             continue
         explicit_size = _size_of_value(length_expression, arrays)
-        constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
+        constraints = _constraints(match.start())
         interval = expression_interval(length_expression, constants, constraints)
         if explicit_size is not None and explicit_size <= capacity_bytes:
             continue
@@ -472,7 +480,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                     ))
                 continue
             explicit_size = _size_of_value(length_expression, arrays)
-            constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
+            constraints = _constraints(match.start())
             interval = expression_interval(length_expression, constants, constraints)
             if explicit_size is not None and explicit_size <= capacity_bytes:
                 continue
@@ -514,7 +522,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if capacity is None:
             continue
         index_expression = match.group("index").strip()
-        constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
+        constraints = _constraints(match.start())
         interval = expression_interval(index_expression, constants, constraints)
         safe_upper = interval.maximum is not None and interval.maximum < capacity
         safe_lower = interval.is_nonnegative() or index_expression in nonnegative

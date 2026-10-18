@@ -356,6 +356,8 @@ def declarations(masked: str) -> Tuple[Dict[str, ArrayShape], Dict[str, IntegerS
         if capacity is not None:
             constants[match.group("name")] = capacity
     for match in _INT_TYPE_RE.finditer(masked):
+        if _inside_for_header(masked, match.start()):
+            continue
         bits, signed = type_shape(match.group("type"))
         initial = match.group("init").strip() if match.group("init") else None
         integers[match.group("name")] = IntegerShape(
@@ -367,6 +369,110 @@ def declarations(masked: str) -> Tuple[Dict[str, ArrayShape], Dict[str, IntegerS
             if value is not None:
                 constants[match.group("name")] = value
     return arrays, integers, constants
+
+
+def _inside_for_header(masked: str, position: int) -> bool:
+    boundary = max(
+        masked.rfind(";", 0, position),
+        masked.rfind("{", 0, position),
+        masked.rfind("}", 0, position),
+    )
+    return bool(re.search(r"\bfor\s*\([^()]*$", masked[boundary + 1:position]))
+
+
+def loop_constraints(
+    masked: str,
+    position: int,
+    constants: Mapping[str, int],
+    sizeof_values: Optional[Mapping[str, int]] = None,
+) -> Dict[str, Tuple[Optional[int], Optional[int]]]:
+    """Bounds for a simple counting ``for`` loop containing ``position``.
+
+    Only ``for (init; i < bound; step)`` and ``i <= bound`` with a constant or
+    named bound are modeled. Step direction, mutation inside the body and
+    ``break``/``continue`` remain unknown.
+    """
+
+    result: Dict[str, Tuple[Optional[int], Optional[int]]] = {}
+    for match in re.finditer(r"\bfor\s*\(", masked):
+        open_paren = match.end() - 1
+        close_paren = balanced_end(masked, open_paren, "(", ")")
+        if close_paren is None:
+            continue
+        header = masked[open_paren + 1:close_paren - 1]
+        parts: List[str] = []
+        depth = 0
+        start = 0
+        for index, char in enumerate(header):
+            if char in "([{":
+                depth += 1
+            elif char in ")]}":
+                depth = max(0, depth - 1)
+            elif char == ";" and depth == 0:
+                parts.append(header[start:index].strip())
+                start = index + 1
+        parts.append(header[start:].strip())
+        if len(parts) != 3:
+            continue
+        body_match = re.match(
+            r"\s*(?P<body>\{.*?\}|[^;{}]+;)", masked[close_paren:], re.S
+        )
+        if not body_match:
+            continue
+        body_start = close_paren + body_match.start("body")
+        body_end = close_paren + body_match.end("body")
+        if not body_start <= position < body_end:
+            continue
+        condition = re.fullmatch(
+            r"\s*(?P<name>[A-Za-z_]\w*)\s*(?P<op><=|<)\s*(?P<bound>[^;]+?)\s*",
+            parts[1],
+        )
+        if not condition:
+            continue
+        name = condition.group("name")
+        bound = _comparison_value(
+            condition.group("bound"), constants, sizeof_values
+        )
+        init = re.search(
+            r"(?P<name>[A-Za-z_]\w*)\s*=\s*(?P<value>[^,]+)", parts[0]
+        )
+        low = None
+        if init is not None and init.group("name") == name:
+            low = _constant_value(init.group("value").strip(), constants)
+        high = None
+        if bound is not None:
+            high = bound - 1 if condition.group("op") == "<" else bound
+        if low is None and high is None:
+            continue
+        previous_low, previous_high = result.get(name, (None, None))
+        if previous_low is None:
+            merged_low = low
+        elif low is None:
+            merged_low = previous_low
+        else:
+            merged_low = max(previous_low, low)
+        if previous_high is None:
+            merged_high = high
+        elif high is None:
+            merged_high = previous_high
+        else:
+            merged_high = min(previous_high, high)
+        result[name] = (merged_low, merged_high)
+    return result
+
+
+def merge_constraints(
+    base: Mapping[str, Tuple[Optional[int], Optional[int]]],
+    extra: Mapping[str, Tuple[Optional[int], Optional[int]]],
+) -> Dict[str, Tuple[Optional[int], Optional[int]]]:
+    merged = dict(base)
+    for name, (low, high) in extra.items():
+        base_low, base_high = merged.get(name, (None, None))
+        merged[name] = (
+            low if base_low is None else base_low if low is None else max(base_low, low),
+            high if base_high is None else base_high if high is None else min(base_high, high),
+        )
+    return merged
 
 
 def guard_shapes(masked: str, functions: Sequence[FunctionShape]) -> Tuple[GuardShape, ...]:
