@@ -239,6 +239,22 @@
       "byte_length": 224
     },
     {
+      "category": "positive",
+      "expected_min": 1,
+      "fixture": "integer_guard_unbounded_positive.cpp",
+      "detector": "ohscanner.cpp.integer_bounds",
+      "sha256": "e7bd17558321562a64f7d05b61d74ba67ecd0c198914dd0ddec88b1e11014309",
+      "byte_length": 107
+    },
+    {
+      "category": "fixed",
+      "expected_max": 0,
+      "fixture": "integer_guard_bounded_fixed.cpp",
+      "detector": "ohscanner.cpp.integer_bounds",
+      "sha256": "9374d70405489100e87fcdaf3eab224a2ba869cdf5087a6b51523068ceee409d",
+      "byte_length": 133
+    },
+    {
       "category": "fixed",
       "expected_max": 0,
       "fixture": "integer_fixed.cpp",

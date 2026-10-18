@@ -35,7 +35,8 @@ The sandbox delivery reports:
   `snprintf_s`) checks the destination size and, where applicable, the count.
   The fixed five-component rerun stays at 33 candidates / 22 groups with every
   component unchanged (`a_line_scan_20261018_v11_comparison.json`).
-- `integer_bounds 0.2.1`: `calloc`/`new[]` element multiplication.
+- `integer_bounds 0.2.2`: `calloc`/`new[]` element multiplication; upper
+  guards now prove `len + 1` cannot overflow the target type.
 - `resource_lifetime 0.1.3`: conditional release paths and one-hop release wrappers.
 - `unsafe_memory_call 0.1.2`: correct `fprintf/vfprintf/syslog` format argument.
 

@@ -7,7 +7,7 @@
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
 | `ohscanner.cpp.bounds` | `0.2.9` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
-| `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
+| `ohscanner.cpp.integer_bounds` | `0.2.2` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
 
@@ -44,6 +44,7 @@
 4. `strnlen` + `if (len >= MAX) return` 的窄安全形状和 `uint8_t/uint16_t + 1` 整数提升安全形状不告警。
 5. `MAX_KEY_PATH + 1` 这类宏值未知保持 unknown，不按宏值臆测溢出。
 6. `calloc(count, size)` 与 `new T[count]` 的隐式 `count * element_size` 乘法；元素大小为 1、常量乘法或 checked arithmetic guard 为 quiet。
+7. `if (len > MAX) return;` / `len < sizeof(dst)` 等上界 guard 让 `len + 1` 的目标类型上界可证时保持 quiet；没有上界 guard 的 `len + 1` 仍为 candidate。
 
 算术后果和溢出本身分开：CWE-190/191 是候选类别，分配不足或越界写是候选 consequence；不能把每个 `+`/`*` 都当漏洞。
 
@@ -63,7 +64,7 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 33 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 35 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
@@ -167,3 +168,10 @@ The loop-variable mutation guard with `bounds` 0.2.9 is compared in
 groups remain 33/22. Wall time was 161.31s with 372,176 KiB peak RSS. A body
 assignment to the counting variable now discards the loop bound; the synthetic
 `bounds_loop_mutation_positive.cpp` control keeps the candidate.
+
+The `integer_bounds` 0.2.2 upper-guard proof for `len + 1` is compared in
+`research/evidence/cpp/a_line_scan_20261018_v16_comparison.json`: candidates and
+groups remain 33/22. Wall time was 164.44s with 372,076 KiB peak RSS. No guarded
+`len + 1` shape exists in this corpus, so the existing unbounded candidates stay
+unchanged; the new fixture pair covers the guarded quiet and unguarded positive
+shapes.
