@@ -40,6 +40,9 @@ Unsupported or ambiguous behavior must remain visible as a limitation or candida
 The new tests establish detector behavior on synthetic controls and the public
 Runner representation for one unresolved-call family. They do not establish real
 product log output, unauthorized read access, affected releases, remediation
-success, community recall/precision, or a confirmed vulnerability. Existing
-D4 historical replay remains blocked until the exact Git objects are available;
-the dynamic Harness and independent real-source holdout remain not run.
+success, community recall/precision, or a confirmed vulnerability. D6 restored the
+missing D4_SOURCE_MANIFEST.json and reproduced its verifier: 44 source objects and
+35 assertions passed. D6 also reproduced the D4 static replay from exact GitHub
+commit-ref snapshots, matching every profile entry's size, SHA-256, and Git blob SHA-1.
+Both runs remain blocked because six of ten files are partial. The dynamic Harness
+and independent real-source holdout remain not run. See D6_REAL_REPLAY.json.

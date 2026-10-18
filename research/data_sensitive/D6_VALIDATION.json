@@ -27,7 +27,27 @@
     },
     "compileall": "passed for src/ohscanner/detectors/data and tests/detectors/data",
     "git_diff_check": "passed",
-    "d5_fixture_json_parse": "passed"
+    "d5_fixture_json_parse": "passed",
+    "historical_replay": {
+      "status": "reproduced",
+      "before_candidates": 1,
+      "after_candidates": 0,
+      "before_partial_files": 6,
+      "after_partial_files": 6,
+      "before_total_files": 10,
+      "after_total_files": 10,
+      "source_manifest_entries_verified": 20,
+      "unique_blobs_verified": 11,
+      "classification": "candidate delta only; both runs blocked"
+    },
+    "historical_source_verifier": {
+      "status": "passed",
+      "command": "node d4_verify_sources.js --source-cache <verified-cache> --manifest D4_SOURCE_MANIFEST.json --api-evidence D4_SOURCE_API_VERIFICATION.json",
+      "source_objects": 44,
+      "unique_blobs": 23,
+      "source_assertions": 35,
+      "cache_storage": "temporary local cache; not committed"
+    }
   },
   "scope": [
     "src/ohscanner/detectors/data/",
@@ -38,7 +58,7 @@
   "not_run_or_blocked": {
     "remote_latest_main_ci": "not_run",
     "frontend_node_tests_and_build": "not_run this D6 turn; no frontend sources changed",
-    "exact_d4_historical_git_replay": "blocked: exact target Git objects unavailable in the local repository",
+    "exact_d4_historical_git_replay": "Local Git objects are absent; D6 reproduced the replay using exact GitHub commit-ref snapshots and verified size, SHA-256, and Git blob SHA-1 for all profile entries.",
     "dynamic_component_harness": "not_run",
     "independent_real_source_holdout": "not_run; zero independently labeled cases",
     "performance_rss_benchmark": "not_run"
@@ -49,5 +69,9 @@
     "catalog_registered": false,
     "default_enabled": false,
     "agent_panel_integrated": false
-  }
+  },
+  "source_replay_report": "research/data_sensitive/D6_REAL_REPLAY.json",
+  "delivery_fixes": [
+    "Restored missing D4_SOURCE_MANIFEST.json from recorded GitHub API tree entries and exact-hash-verified source snapshots; D4 verifier is now executable from a clean checkout when the local source cache is provided."
+  ]
 }
