@@ -94,6 +94,8 @@ class PointerShape:
     element_size: Optional[int]
     kind: str
     start: int
+    count_expression: Optional[str] = None
+    element_expression: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -530,7 +532,8 @@ def pointer_declarations(masked: str, constants: Mapping[str, int]) -> Dict[str,
             expression = args[0].strip()
             capacity = _constant_value(expression, constants)
             result[name] = PointerShape(
-                name, capacity, expression, None, "malloc", match.start()
+                name, capacity, expression, None, "malloc", match.start(),
+                count_expression=expression,
             )
         elif len(args) >= 2:
             count, element = args[0].strip(), args[1].strip()
@@ -543,7 +546,9 @@ def pointer_declarations(masked: str, constants: Mapping[str, int]) -> Dict[str,
             )
             expression = f"{count} * {element}"
             result[name] = PointerShape(
-                name, capacity, expression, None, "calloc", match.start()
+                name, capacity, expression, None, "calloc", match.start(),
+                count_expression=count,
+                element_expression=element,
             )
     for match in _NEW_ARRAY_ASSIGN_RE.finditer(masked):
         count = match.group("count").strip()
@@ -563,7 +568,9 @@ def pointer_declarations(masked: str, constants: Mapping[str, int]) -> Dict[str,
             expression = f"{count} * {element_size}"
         name = match.group("name")
         result[name] = PointerShape(
-            name, capacity, expression, element_size, "new_array", match.start()
+            name, capacity, expression, element_size, "new_array", match.start(),
+            count_expression=count,
+            element_expression=None if element_size is None else str(element_size),
         )
     return result
 

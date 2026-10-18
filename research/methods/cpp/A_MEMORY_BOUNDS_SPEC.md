@@ -7,7 +7,7 @@
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
 | `ohscanner.cpp.bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
-| `ohscanner.cpp.integer_bounds` | `0.2.0` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
+| `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
 
@@ -37,6 +37,7 @@
 3. `__builtin_*overflow`、`SIZE_MAX /`、明确 checked arithmetic guard 作为安全对照。
 4. `strnlen` + `if (len >= MAX) return` 的窄安全形状和 `uint8_t/uint16_t + 1` 整数提升安全形状不告警。
 5. `MAX_KEY_PATH + 1` 这类宏值未知保持 unknown，不按宏值臆测溢出。
+6. `calloc(count, size)` 与 `new T[count]` 的隐式 `count * element_size` 乘法；元素大小为 1、常量乘法或 checked arithmetic guard 为 quiet。
 
 算术后果和溢出本身分开：CWE-190/191 是候选类别，分配不足或越界写是候选 consequence；不能把每个 `+`/`*` 都当漏洞。
 
@@ -108,3 +109,7 @@ this corpus. This is a coverage regression check, not an accuracy claim.
 The follow-up `new[]` index-capacity rerun is compared in
 `research/evidence/cpp/a_line_scan_20261018_v2_comparison.json`: candidates and
 groups remain 33/22, with no new real-source hit in this corpus.
+
+The `integer_bounds` 0.2.1 rerun is compared in
+`research/evidence/cpp/a_line_scan_20261018_v3_comparison.json`: candidates and
+groups also remain 33/22, with no new real-source hit in this corpus.

@@ -248,6 +248,53 @@ void reviewed(char *key, char *value, char *pos, ssize_t offset, ssize_t size) {
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
+
+    def test_calloc_and_new_array_element_multiplication(self) -> None:
+        positive = unit("positive/calloc_new_multiply.cpp", """
+#include <cstdint>
+#include <cstdlib>
+void positive(size_t count) {
+    void *buffer = calloc(count, 4);
+    uint32_t *items = new uint32_t[count];
+    (void)buffer;
+    (void)items;
+}
+""")
+        run = self.detector.detect(context_for(positive), (positive,))
+        self.assertEqual(run.status, "completed")
+        self.assertGreaterEqual(len(run.findings), 2)
+        self.assertEqual(
+            {item.rule_id for item in run.findings},
+            {"ohcpp-integer-bounds-arithmetic-candidate-001"},
+        )
+
+        safe = unit("safe/calloc_new_multiply.cpp", """
+#include <cstdint>
+#include <cstdlib>
+void safe(size_t count) {
+    void *buffer = calloc(count, 1);
+    char *items = new char[count];
+    (void)buffer;
+    (void)items;
+}
+""")
+        safe_run = self.detector.detect(context_for(safe), (safe,))
+        self.assertEqual(safe_run.findings, ())
+
+        fixed = unit("fixed/calloc_new_multiply.cpp", """
+#include <cstdint>
+#include <cstdlib>
+void fixed(size_t count) {
+    if (count > SIZE_MAX / 4) return;
+    void *buffer = calloc(count, 4);
+    uint32_t *items = new uint32_t[count];
+    (void)buffer;
+    (void)items;
+}
+""")
+        fixed_run = self.detector.detect(context_for(fixed), (fixed,))
+        self.assertEqual(fixed_run.findings, ())
+
     def test_subtraction_without_lower_bound_is_candidate(self) -> None:
         source = unit("positive/subtraction.cpp", """
 void positive(char *src, size_t len) {

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/a_line_scan_20261018",
+  "candidate": "research/evidence/cpp/a_line_scan_20261018_v3",
+  "detector": "ohscanner.cpp.integer_bounds",
+  "candidate_detector_version": "0.2.1",
+  "baseline_candidates": 33,
+  "candidate_candidates": 33,
+  "baseline_groups": 22,
+  "candidate_groups": 22,
+  "delta": 0,
+  "baseline_wall_seconds": 170.938481054,
+  "candidate_wall_seconds": 171.213865115,
+  "baseline_peak_rss_kib": 371736,
+  "candidate_peak_rss_kib": 372088,
+  "note": "The calloc/new[] element-multiplication extension produced no additional candidates on this fixed five-component corpus. Candidate counts are not vulnerability counts or accuracy metrics."
+}

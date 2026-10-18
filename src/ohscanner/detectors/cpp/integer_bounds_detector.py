@@ -23,6 +23,7 @@ from .memory_safety import (
     guard_shapes,
     line_column,
     mask_comments_and_literals,
+    pointer_declarations,
     split_call_arguments,
     type_shape,
 )
@@ -31,7 +32,7 @@ from .memory_safety import (
 RULE_ARITHMETIC = "ohcpp-integer-bounds-arithmetic-candidate-001"
 RULE_TRUNCATION = "ohcpp-integer-bounds-truncation-candidate-002"
 RULE_NARROW_INDEX = "ohcpp-integer-bounds-narrow-index-candidate-003"
-RULE_VERSION = "0.2.0"
+RULE_VERSION = "0.2.1"
 RULE_LINEAGE_ID = "A-INT-01:ohcpp-integer-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -230,6 +231,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
     _arrays, integers, constants = declarations(masked)
+    pointers = pointer_declarations(masked, constants)
     guards = guard_shapes(masked, functions)
     sensitive = _sensitive_names(masked)
 
@@ -355,6 +357,38 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "a modeled checked-arithmetic guard; overflow may yield an undersized allocation.",
                 "CWE-190", "CWE-787",
             ))
+
+    for pointer in pointers.values():
+        if pointer.kind == "malloc":
+            continue
+        count = pointer.count_expression
+        element = pointer.element_expression
+        if not count or not element:
+            continue
+        if _macro_only_expression(count) or _macro_only_expression(element):
+            continue
+        _count_value, count_operation, _left, _right = _constant_arithmetic(count, constants)
+        _element_value, element_operation, _left, _right = _constant_arithmetic(element, constants)
+        if count_operation or element_operation:
+            continue
+        count_known, count_constant = _safe_constant(count, constants)
+        element_known, element_constant = _safe_constant(element, constants)
+        if count_known and element_known:
+            continue
+        if (count_known and count_constant == 1) or (element_known and element_constant == 1):
+            continue
+        function = function_at(functions, pointer.start)
+        function_text = function.text if function is not None else ""
+        names = tuple(re.findall(r"[A-Za-z_]\w*", count + " " + element))
+        if _has_checked_guard(function_text, names, "*"):
+            continue
+        findings.append(_finding(
+            unit, unit.text, pointer.start, RULE_ARITHMETIC, pointer.name,
+            f"Candidate only: `{pointer.kind}` multiplies count `{count}` by element size "
+            f"`{element}` for `{pointer.name}` without a modeled checked multiplication; "
+            "overflow may undersize the allocation. Allocator semantics and reachability remain unknown.",
+            "CWE-190", "CWE-787",
+        ))
     return findings, limitations, True
 
 
