@@ -29,6 +29,11 @@ allocation/copy.
 - `error_path`: `return`, `break`, `continue`, `goto`, `throw`, `unknown`
 - `proof_ref`: stable reference to the parsed condition/CFG evidence
 
+The A-line producer is implemented as
+`src/ohscanner/detectors/cpp/memory_safety.build_guard_facts`; it returns
+in-memory `GuardFact` objects and does not serialize or change the public
+contract.
+
 ## Ownership
 
 - A line produces C/C++ interval and early-return guard facts.

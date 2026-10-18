@@ -100,6 +100,28 @@ class PointerShape:
 
 
 @dataclass(frozen=True)
+class GuardFact:
+    symbol: str
+    condition: str
+    lower: Optional[int]
+    upper: Optional[int]
+    kind: str
+    error_path: str
+    position: int
+
+    def to_dict(self) -> Dict[str, object]:
+        return {
+            "symbol": self.symbol,
+            "condition": self.condition,
+            "lower": self.lower,
+            "upper": self.upper,
+            "kind": self.kind,
+            "error_path": self.error_path,
+            "position": self.position,
+        }
+
+
+@dataclass(frozen=True)
 class IntegerShape:
     name: str
     type_text: str
@@ -505,6 +527,53 @@ def guard_constraints(
                     high = -1 if high is None else min(high, -1)
             constraints[name] = (low, high)
     return constraints
+
+
+def build_guard_facts(
+    masked: str,
+    functions: Sequence[FunctionShape],
+    constants: Optional[Mapping[str, int]] = None,
+    sizeof_values: Optional[Mapping[str, int]] = None,
+) -> Tuple[GuardFact, ...]:
+    """Produce bounded guard facts without changing the public fact schema."""
+    constants = constants or {}
+    sizeof_values = sizeof_values or {}
+    guards = guard_shapes(masked, functions)
+    facts: List[GuardFact] = []
+    for guard in guards:
+        before = guard_constraints(guards, guard.start, constants, sizeof_values)
+        after = guard_constraints(guards, guard.body_end, constants, sizeof_values)
+        if guard.true_returns:
+            error_path = "return"
+        elif guard.true_breaks:
+            error_path = "break/continue"
+        elif guard.false_returns:
+            error_path = "false_return"
+        else:
+            error_path = "unknown"
+        for symbol, (lower, upper) in sorted(after.items()):
+            if before.get(symbol) == (lower, upper):
+                continue
+            if lower is not None and upper is not None:
+                kind = "range"
+            elif lower is not None:
+                kind = "lower_bound"
+            elif upper is not None:
+                kind = "upper_bound"
+            elif "nullptr" in guard.condition:
+                kind = "null_check"
+            else:
+                kind = "unknown"
+            facts.append(GuardFact(
+                symbol=symbol,
+                condition=guard.condition,
+                lower=lower,
+                upper=upper,
+                kind=kind,
+                error_path=error_path,
+                position=guard.start,
+            ))
+    return tuple(sorted(facts, key=lambda item: (item.position, item.symbol)))
 
 
 def contains_unsafe_unknown_macro(text: str, position: int) -> bool:
