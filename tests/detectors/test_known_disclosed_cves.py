@@ -145,6 +145,69 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertFalse(catalog_metadata()["ohscanner.known_disclosed_cves"]["default_enabled"])
         self.assertEqual("ohscanner.known_disclosed_cves", build_registry(("ohscanner.known_disclosed_cves",)).detectors()[0].detector_id)
 
+    def test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes(self):
+        vulnerable = """char *FlowbufStrAtIndex(void *mem, int i, int *argIndex, size_t *strLen) {
+            char *header = (char *)mem;
+            size_t offset = header[i * INDEX_SIZE];
+            *strLen = *(header + (i * INDEX_SIZE) + 1) - 1;
+            *argIndex = header[i * INDEX_SIZE + 2];
+            return (char *)mem + HEADER_SIZE + offset;
+        }
+        int ProcessNativeProxyResultNewFlowbuf(Args *args, int flowbufSize, int flowbufIndex, int argIndex) {
+            size_t argsSize = args->GetSize();
+            std::vector<std::vector<uint8_t>> dataList(argsSize +
+                static_cast<size_t>(flowbufSize));
+            size_t curIndex = 0;
+            char *flowbufStr = FlowbufStrAtIndex(nullptr, flowbufIndex, &argIndex, &strLen);
+            while (argIndex == curIndex) {
+                std::string value(flowbufStr, strLen);
+                dataList[curIndex] = std::vector<uint8_t>(value.begin(), value.end());
+            }
+            return 0;
+        }"""
+        fixed = vulnerable.replace(
+            "*strLen = *(header + (i * INDEX_SIZE) + 1) - 1;",
+            "*strLen = *(header + (i * INDEX_SIZE) + 1) - 1;\n"
+            "            if ((offset + *strLen) > MAX_FLOWBUF_DATA_SIZE) return nullptr;")
+        fixed = fixed.replace(
+            "size_t curIndex = 0;",
+            "size_t dataListSize = argsSize + static_cast<size_t>(flowbufSize);\n"
+            "            size_t curIndex = 0;")
+        fixed = fixed.replace("while (argIndex == curIndex)",
+                              "while (curIndex < dataListSize && argIndex == curIndex)")
+        unrelated = vulnerable.replace("FlowbufStrAtIndex", "UnrelatedStringAtIndex")
+        partial_fix = vulnerable.replace(
+            "while (argIndex == curIndex)",
+            "while (curIndex < dataListSize && argIndex == curIndex)").replace(
+            "size_t curIndex = 0;",
+            "size_t dataListSize = argsSize + static_cast<size_t>(flowbufSize);\n"
+            "            size_t curIndex = 0;")
+        findings = {f.symbol for f in self.run_source(vulnerable, "nweb_handler_delegate.cc").findings}
+        self.assertIn("CVE-2026-27648", findings)
+        self.assertNotIn("CVE-2026-27648", {f.symbol for f in self.run_source(fixed, "nweb_handler_delegate.cc").findings})
+        self.assertIn("CVE-2026-27648", {f.symbol for f in self.run_source(partial_fix, "nweb_handler_delegate.cc").findings})
+        self.assertNotIn("CVE-2026-27648", {f.symbol for f in self.run_source(unrelated, "nweb_handler_delegate.cc").findings})
+
+    def test_webview_flowbuffer_candidate_survives_partial_parse(self):
+        source = """char *FlowbufStrAtIndex(void *mem, int i, int *argIndex, size_t *strLen) {
+            char *header = (char *)mem; size_t offset = header[i * INDEX_SIZE];
+            *strLen = *(header + (i * INDEX_SIZE) + 1) - 1;
+            return (char *)mem + HEADER_SIZE + offset;
+        }
+        int ProcessNativeProxyResultNewFlowbuf(Args *args, int flowbufSize, int argIndex) {
+            size_t argsSize = args->GetSize();
+            std::vector<std::vector<uint8_t>> dataList(argsSize + static_cast<size_t>(flowbufSize));
+            size_t curIndex = 0; char *value = FlowbufStrAtIndex(nullptr, 0, &argIndex, &strLen);
+            while (argIndex == curIndex) { dataList[curIndex] = {}; }
+            return 0;
+        }"""
+        run = self.run_source(source, "nweb_handler_delegate.cc", parse_status="partial")
+        self.assertEqual("blocked", run.status)
+        self.assertIn("CVE-2026-27648", {f.symbol for f in run.findings})
+        finding = next(f for f in run.findings if f.symbol == "CVE-2026-27648")
+        self.assertEqual("CWE-787", finding.candidate_cwe)
+        self.assertEqual("missing", next(o.status for o in finding.evidence_obligations if o.kind == "product_build"))
+
     def test_all_matches_remain_candidate_obligated(self):
         source="void f(png_structp p,png_infop i){png_read_info(p,i);png_read_end(p,i);}"
         run=self.run_source(source)

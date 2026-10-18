@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "repository": "openharmony-tpc/chromium_src",
+  "commit": "18c5ba4d75a909c8736e0e45355f358860e47778",
+  "tree": "a7769bf612be457e6e368f14ee355f3ea8ed2935",
+  "path": "arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc",
+  "blob": "27e93e338ced03aeed6e7d892e29d4d0740f3653",
+  "fixed_source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+  "detector": "ohscanner.known_disclosed_cves",
+  "detector_version": "0.7.0",
+  "fixed_control": {
+    "variant": "official_fixed_blob",
+    "parse_status": "not_run",
+    "run_status": "blocked",
+    "source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+    "candidate_count": 0
+  },
+  "positive_regression": {
+    "variant": "reverse_fix_reconstruction",
+    "source_sha256": "67631ae37227cfa0abf0536269388bdc80aa294bde76c2e86e19b0d4cb2ac560",
+    "run_status": "blocked",
+    "candidate_count": 1,
+    "candidate": {
+      "rule_id": "ohknowncve-webview-cve-2026-27648",
+      "symbol": "CVE-2026-27648",
+      "line": 4511,
+      "source_sha256": "67631ae37227cfa0abf0536269388bdc80aa294bde76c2e86e19b0d4cb2ac560",
+      "message": "Candidate component-code match for CVE-2026-27648: Flowbuffer result reconstruction has an unchecked shared-memory offset/length. Product reachability and vulnerability status remain unconfirmed."
+    }
+  },
+  "classification": "candidate-only rule regression; not an upstream vulnerable commit or product confirmation",
+  "validated_vulnerability": 0,
+  "limitations": [
+    "Positive source is reconstructed in memory by reversing the official fix hunk.",
+    "Parser is not run, so both executions remain blocked.",
+    "No product build, remote input reachability, runtime exploit, or product impact was tested."
+  ]
+}

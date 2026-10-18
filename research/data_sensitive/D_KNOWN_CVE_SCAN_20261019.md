@@ -2,9 +2,9 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.6.0，支持 9 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.7.0，支持 10 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
-17 项公开 CVE 审查清单中，当前规则覆盖 9 个 CVE 形态。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 8 项没有正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
+17 项公开 CVE 审查清单中，当前规则覆盖 10 个 CVE 形态。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 7 项没有正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
 
 ## 固定源码回放
 
@@ -21,6 +21,7 @@
 libpng 归档成员同时记录上游归档 Git blob、归档 SHA-256 和 `png.h` SHA-256。D22 通过 `/api/v1/detectors` 检查面板目录注册，再以固定提交重复执行真实 API→Worker→报告→源码查看流程；候选路径为 `libpng-1.6.55.tar.gz.members/libpng-1.6.55/png.h:277`。每条结果仍不是 OpenHarmony 产品漏洞确认。公开披露事实与受影响版本以审查记录引用的公告/上游安全页为准。
 
 ## 规则与回归
+- CVE-2026-27648：FlowbufStrAtIndex 未核对 offset 与长度是否仍处于共享 flowbuffer 数据区；ProcessNativeProxyResultNewFlowbuf 在重建 dataList 时按 curIndex 写入但循环无容器上界。两类风险独立保留：只要范围检查或目标数组上界之一仍缺失，就保留 candidate。官方 6.0/5.1/5.0.3 修复 PR 分别为 [#7093](https://gitcode.com/openharmony-tpc/chromium_src/pull/7093)、[#7110](https://gitcode.com/openharmony-tpc/chromium_src/pull/7110)、[#7108](https://gitcode.com/openharmony-tpc/chromium_src/pull/7108)。详细固定 commit、重放和限制见 D28_WEBVIEW_CVE_2026_27648.md.
 
 - CVE-2025-9900：先对栅格目标指针按图像尺寸偏移的危险形态；正例、已校验尺寸/非偏移修复形态对照。
 - CVE-2025-25212：Pasteboard observer 集合写入但函数内未见按进程身份配额；生命周期、外部限流和真实调用者仍需复核。
@@ -45,9 +46,9 @@ D22 的可重复面板/候选回归脚本与结果分别见 `d22_archive_runner_
 
 ## 未覆盖项及不可推断事项
 
-审查记录余下 8 项尚未获得正向可检出形态：CVE-2026-27648 本地镜像缺 web_webview 源码；CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-33636 当前 libpng 补丁清单包含修复；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。
+审查记录余下 7 项尚未获得正向可检出形态：CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-33636 当前 libpng 补丁清单包含修复；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。
 
-没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 9 个规则家族不代表对 17 项清单或整个项目达到完整覆盖；D25 上游旧/新源码对照不能替代冻结 holdout。
+没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 10 个规则家族不代表对 17 项清单或整个项目达到完整覆盖；D25 上游旧/新源码对照不能替代冻结 holdout。
 
 
 ## 2026-10-19 D23 calibration
@@ -63,3 +64,8 @@ Detector 0.5.0 adds a positive vulnerable-shape rule for CVE-2026-9079 and a neg
 ## 2026-10-19 D25 cJSON CVE-2025-57052
 
 Detector 0.6.0 adds the one-character `pointer[0]` versus `pointer[position]` root-cause signature. The exact upstream parent commit produces one CVE-2025-57052 candidate at `cJSON_Utils.c:285`; the official fix commit produces none for this CVE. A rootless component PoC with synthetic JSON demonstrates that the malformed pointer `/1844674407370955160B` resolves the synthetic array element in the old source and is rejected after the fix. This is a component API reproduction, not an OpenHarmony product PoC; product inclusion, caller reachability, and impact remain unknown, so `validated_vulnerability=0`. Details: D25_CJSON_CVE_2025_57052_REPORT.md, `D25_CJSON_CVE_2025_57052_POC.c`, and `d25_cjson_cve_2025_57052_replay.py`.
+
+
+## D28 WebView CVE-2026-27648
+
+新增规则经固定官方修复 blob 与内存反向修复重建样本回放：修复版本 0 命中，重建版本在 nweb_handler_delegate.cc:4511 命中 1 条 candidate。该正例不是历史上游漏洞提交；Tree-sitter 未运行，两个 run 均 blocked。另有 Workbench API 到 Worker、报告和源码查看的回归，确保候选携带固定源码 SHA 并保持 validated_vulnerability=0。复现细节和边界见 D28 WebView 报告与 JSON 回放结果。

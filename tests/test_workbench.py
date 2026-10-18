@@ -384,6 +384,41 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(report["validated_vulnerability"], 0)
         viewed = service.source(self.settings, self.store, job, candidate["file"])
         self.assertEqual(viewed["text"], source)
+    def test_webview_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
+        source = """char *FlowbufStrAtIndex(void *mem, int i, int *argIndex, size_t *strLen) {
+            char *header = (char *)mem;
+            size_t offset = header[i * INDEX_SIZE];
+            *strLen = *(header + (i * INDEX_SIZE) + 1) - 1;
+            *argIndex = header[i * INDEX_SIZE + 2];
+            return (char *)mem + HEADER_SIZE + offset;
+        }
+        int ProcessNativeProxyResultNewFlowbuf(Args *args, int flowbufSize, int argIndex) {
+            size_t argsSize = args->GetSize();
+            std::vector<std::vector<uint8_t>> dataList(argsSize +
+                static_cast<size_t>(flowbufSize));
+            size_t curIndex = 0;
+            char *value = FlowbufStrAtIndex(nullptr, 0, &argIndex, &strLen);
+            while (argIndex == curIndex) {
+                dataList[curIndex] = {};
+            }
+            return 0;
+        }"""
+        (self.repo / "nweb_handler_delegate.cc").write_text(source)
+        git(self.repo, "add", "nweb_handler_delegate.cc")
+        git(self.repo, "commit", "-qm", "add pinned WebView component fixture")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        job_request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job_request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = report["detector_runs"][0]["diagnostics"]
+        candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2026-27648")
+        self.assertEqual(candidate["source_sha256"], hashlib.sha256(source.encode()).hexdigest())
+        self.assertEqual(report["validated_vulnerability"], 0)
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], source)
+
     def test_archived_candidate_runs_through_api_worker_and_source_viewer(self):
         archive_path = self.repo / "vendor" / "sample.tar.gz"
         archive_path.parent.mkdir()

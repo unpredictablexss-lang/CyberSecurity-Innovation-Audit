@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -192,6 +192,39 @@ def _scan(unit: SourceUnit):
         guarded = bool(re.search(r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)", db + hb, re.I))
         if mapped and routed and reads_and_returns and not guarded:
             out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch returns paste data without a visible permission check in the dispatch or handler.", "CWE-862"))
+    # CVE-2026-27648: Flowbuffer decoding must bound both the byte range in
+    # shared memory and the destination vector index. A local match remains
+    # candidate-only; build/version and remote input reachability are external.
+    flowbuf = _body(s, "FlowbufStrAtIndex")
+    result_flowbuf = _body(s, "ProcessNativeProxyResultNewFlowbuf")
+    if flowbuf and result_flowbuf:
+        flow_pos, flow_body = flowbuf
+        result_pos, result_body = result_flowbuf
+        reads_entry = ("*strLen" in flow_body and "header" in flow_body
+                       and "INDEX_SIZE" in flow_body and "offset" in flow_body)
+        byte_range_bounded = bool(re.search(
+            r"(?:offset\s*\+\s*\*strLen|\*strLen\s*\+\s*offset)"
+            r"\)?\s*>\s*MAX_FLOWBUF_DATA_SIZE", flow_body))
+        sized_destination = bool(re.search(
+            r"dataList\s*\([^;]*argsSize\s*\+\s*"
+            r"static_cast\s*<\s*size_t\s*>\s*\(\s*flowbufSize\s*\)", result_body))
+        writes_destination = bool(re.search(r"dataList\s*\[\s*curIndex\s*\]\s*=", result_body))
+        unbounded_loops = list(re.finditer(
+            r"while\s*\(\s*argIndex\s*==\s*curIndex\s*\)", result_body))
+        unsafe_byte_range = reads_entry and not byte_range_bounded
+        unsafe_destination_index = sized_destination and writes_destination and bool(unbounded_loops)
+        if unsafe_byte_range or unsafe_destination_index:
+            detail = ("Flowbuffer result reconstruction has an unchecked shared-memory offset/length."
+                      if unsafe_byte_range else
+                      "Flowbuffer result reconstruction writes dataList[curIndex] without a destination-size loop bound.")
+            finding_pos = (result_pos + 1 + unbounded_loops[0].start()
+                           if unsafe_destination_index else flow_pos)
+            out.append(_finding(
+                unit, finding_pos,
+                "ohknowncve-webview-cve-2026-27648", "CVE-2026-27648",
+                detail,
+                "CWE-787",
+            ))
     return tuple(out)
 
 class KnownDisclosedCveDetector:
