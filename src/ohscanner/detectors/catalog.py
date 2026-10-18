@@ -30,8 +30,8 @@ _APPROVED = {
         "factory": SensitiveExposureDetector,
         "kind": "research_candidate",
         "default_enabled": False,
-        "admission_reason": "explicit_selection_required: exact-revision sensitive-source research model; partial coverage remains unknown",
-        "summary": "D: exact-revision sensitive-data-to-log candidates; not a vulnerability verdict",
+        "admission_reason": "explicit_selection_required: reviewed source profiles plus blocked candidate-only fallback for unknown revisions; partial coverage remains unknown",
+        "summary": "D: sensitive-data exposure candidates; unknown revisions remain blocked/partial, not a vulnerability verdict",
     },
     CppCopyCallExampleDetector.detector_id: {
         "factory": CppCopyCallExampleDetector,

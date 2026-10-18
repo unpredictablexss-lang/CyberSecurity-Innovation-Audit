@@ -10,7 +10,7 @@ import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation
-from .models import DEFAULT_SOURCE, SINKS, SUPPORTED_SOURCE_MODELS
+from .models import DEFAULT_SOURCE, SINKS, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel
 
 @dataclass(frozen=True)
 class Flow:
@@ -48,6 +48,36 @@ def walk(n):
         yield from walk(c)
 
 
+def looks_sensitive_name(value):
+    # Match semantic words, not arbitrary substrings. In Netstack, for example,
+    # HTTP_API_KEY_FETCH is an API method name and WSI_TOKEN_HTTP is a protocol
+    # constant; neither is a secret value merely because the spelling contains
+    # "key" or "token".
+    words = [word.lower() for word in re.findall(
+        r'[A-Z]+(?=[A-Z][a-z]|[^A-Za-z]|$)|[A-Z]?[a-z]+|[0-9]+', value)]
+    if not words:
+        return False
+    if any(word in {'password', 'passwd', 'secret', 'credential'} for word in words):
+        return True
+    if any(words[i:i + 2] in (
+            ['private', 'key'], ['session', 'key'], ['client', 'key'],
+            ['access', 'key'], ['signing', 'key'], ['encryption', 'key'],
+            ['key', 'material'], ['key', 'bytes'], ['auth', 'header'],
+            ['authorization', 'header']) for i in range(len(words) - 1)):
+        return True
+    # API_KEY is a plausible secret field, while names such as
+    # HTTP_API_KEY_FETCH describe an API entry point, not key material.
+    if words == ['api', 'key']:
+        return True
+    # A bare "token" is commonly an ID or protocol token in this codebase.
+    # Retain explicit bearer/auth/access/refresh/session token names only.
+    return any(words[i:i + 2] in (
+        ['bearer', 'token'], ['auth', 'token'], ['access', 'token'],
+        ['refresh', 'token'], ['session', 'token'], ['security', 'token'])
+        for i in range(len(words) - 1)) and not any(
+            word in {'id', 'identifier', 'name', 'type', 'count'} for word in words)
+
+
 def formats(value, default_privacy='private'):
     """(privacy, consumed operand indexes, conversion); unsupported => ValueError."""
     out, pos, arg = [], 0, 0
@@ -74,7 +104,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.13.0'
+    version = '0.14.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -85,17 +115,22 @@ class SensitiveExposureDetector:
         self.model = model if model is not None else DEFAULT_SOURCE
         self.models = (model,) if model is not None else SUPPORTED_SOURCE_MODELS
 
-    def make_flow(self, unit, model=None):
-        return LocalFlow(unit, model if model is not None else self.model)
+    def make_flow(self, unit, model=None, heuristic_sources=False):
+        return LocalFlow(unit, model if model is not None else self.model, heuristic_sources)
 
     def detect(self, context, units):
         model = next((candidate for candidate in self.models
                       if (context.request.repository, context.request.commit) ==
                       (candidate.repository, candidate.commit)), None)
-        if model is None:
-            return DetectorRun(self.detector_id, self.version, 'blocked', limitations=(
-                'No reviewed sensitive-source model for this repository/commit; not a clean scan.',))
+        heuristic_sources = model is None
+        if heuristic_sources:
+            model = SensitiveSourceModel(
+                'unreviewed/heuristic', '0' * 40, fields=(), non_sensitive_fields=(),
+                output_calls=(), parameters=(),
+                provenance='Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.')
         findings, outcomes, limits = [], [], set()
+        if heuristic_sources:
+            limits.add('No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.')
         for u in units:
             if u.language not in self.supported_languages:
                 continue
@@ -107,10 +142,10 @@ class SensitiveExposureDetector:
                 outcomes.append((u.path, 'failed')); continue
             if u.parse_status == 'not_run' or not outline:
                 outcomes.append((u.path, 'not_analyzed')); continue
-            analysis = self.make_flow(u, model)
+            analysis = (self.make_flow(u, model, True) if heuristic_sources else self.make_flow(u, model))
             rows = analysis.run()
             findings.extend(rows)
-            partial = analysis.gaps or u.parse_status != 'complete' or outline.get('parse_status') != 'complete'
+            partial = heuristic_sources or analysis.gaps or u.parse_status != 'complete' or outline.get('parse_status') != 'complete'
             outcomes.append((u.path, 'partial' if partial else 'complete'))
             limits.update(u.path+': '+s for s in analysis.gaps)
         limits.update((
@@ -121,15 +156,16 @@ class SensitiveExposureDetector:
             'Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.',
         ))
         return DetectorRun(self.detector_id, self.version,
-            'completed' if outcomes and all(s == 'complete' for _, s in outcomes) else 'blocked',
+            'completed' if not heuristic_sources and outcomes and all(s == 'complete' for _, s in outcomes) else 'blocked',
             analyzed_files=tuple(p for p,s in outcomes if s in ('complete','partial')),
             findings=tuple(sorted(findings, key=lambda f:(f.file,f.line,f.rule_id,f.symbol or ''))),
             file_outcomes=tuple(outcomes), limitations=tuple(sorted(limits)))
 
 
 class LocalFlow:
-    def __init__(self, unit, model):
+    def __init__(self, unit, model, heuristic_sources=False):
         self.u, self.model = unit, model
+        self.heuristic_sources = heuristic_sources
         self.b = unit.text.encode()
         self.gaps, self.findings = set(), []
         self.source_sites, self.sink_sites = [], []
@@ -180,11 +216,21 @@ class LocalFlow:
 
     def expr(self,n,env,types):
         if n is None:return ()
-        if n.type=='identifier':return env.get(self.text(n),())
+        if n.type=='identifier':
+            ident=self.text(n)
+            known=env.get(ident,())
+            if known:return known
+            if self.heuristic_sources and looks_sensitive_name(ident):
+                self.gaps.add('unreviewed sensitive-name heuristic source; semantics unknown')
+                return (self.source('heuristic suspected sensitive identifier '+ident,n),)
+            return ()
         if n.type in ('string_literal','char_literal','number_literal','sizeof_expression','null','true','false'):return ()
         if n.type=='field_expression':
             obj=n.child_by_field_name('argument'); field=self.text(n.child_by_field_name('field'))
             root=self.text(obj)
+            if self.heuristic_sources and looks_sensitive_name(field):
+                self.gaps.add('unreviewed sensitive-field-name heuristic source; semantics unknown')
+                return (self.source('heuristic suspected sensitive field '+field,n),)
             if root in types and types[root] in self.type_conflicts:
                 type_name=types[root]
                 self.gaps.add('shadowed sensitive record type identity unresolved; candidate retained')
@@ -223,6 +269,9 @@ class LocalFlow:
             if n.id in self.call_results:
                 return self.call_results[n.id]
             fn=self.text(n.child_by_field_name('function'))
+            if self.heuristic_sources and looks_sensitive_name(fn):
+                self.gaps.add('unreviewed sensitive-API-name heuristic source; return semantics unknown')
+                return (self.source('heuristic suspected sensitive-return API '+fn,n),)
             if fn in ('strlen','strnlen','strnlen_s','wcslen') and fn not in self.function_definitions and fn not in self.shadows:
                 return () # A scalar length is not the sensitive material itself.
             args=n.child_by_field_name('arguments')

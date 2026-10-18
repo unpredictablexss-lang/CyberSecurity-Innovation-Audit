@@ -105,6 +105,15 @@ class OwnerIntegrationTests(unittest.TestCase):
         d_row = next(row for row in automatic['detectors'] if row['id'] == d_id)
         self.assertEqual(d_row['decision'], 'skipped')
         self.assertIn('explicit_selection_required', d_row['reason_codes'])
+        # Unknown-source fallback should preserve a name-based finding through
+        # the same API -> Worker -> report path, without changing its status.
+        (self.repo/'sensitive.cpp').write_text('''void logCredential(const char *password) {
+            HILOG_INFO(1, "%{public}s", password);
+        }
+''')
+        fixtures.git(self.repo, 'add', 'sensitive.cpp')
+        fixtures.git(self.repo, 'commit', '-qm', 'unknown-source candidate fixture')
+        self.commit = fixtures.git(self.repo, 'rev-parse', 'HEAD')
         plan = self.plan(detector_ids=[d_id])
         self.assertEqual(plan['suggested_detector_ids'], [d_id])
         job = self.scan(detector_ids=[d_id], expected_plan_sha256=plan['plan_sha256'])
@@ -116,6 +125,9 @@ class OwnerIntegrationTests(unittest.TestCase):
         run = next(item for item in report['detector_runs'] if item['tool'] == d_id)
         self.assertEqual(run['status'], 'blocked')
         self.assertIn('No reviewed sensitive-source model', ' '.join(run['limitations']))
+        self.assertTrue(any(item['rule_id'] == 'data.log.sensitive-value'
+                            for item in run['diagnostics']))
+        self.assertEqual(run['tool_version'], '0.14.0')
         self.assertEqual(report['validated_vulnerability'], 0)
 
     def test_changed_branch_after_preview_requires_new_plan(self):

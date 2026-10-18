@@ -60,7 +60,7 @@ test("explicit-only research rules are not silently requested by normal UI flows
 
 test("D sensitive exposure rule stays off by default and is sent only after explicit selection", () => {
   const id = "ohscanner.data.sensitive_exposure";
-  const d = { id, version: "0.13.0", kind: "research_candidate", default_enabled: false,
+  const d = { id, version: "0.14.0", kind: "research_candidate", default_enabled: false,
     supported_languages: ["c", "cpp"] };
   assert.deepEqual(approvedDetectorIds([...detectors, d]), ["test.cpp"]);
   assert.deepEqual(approvedDetectorIds([...detectors, d], [id]), [id, "test.cpp"]);
