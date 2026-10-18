@@ -28,7 +28,7 @@ from .memory_safety import (
 
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
-RULE_VERSION = "0.1.6"
+RULE_VERSION = "0.1.7"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -159,7 +159,7 @@ def _flow_segments(start: int, end: int, masked: str) -> Tuple[Tuple[int, int], 
     boundaries = [start]
     pattern = re.compile(
         r"^\s*(?:if|else|for|while|switch|try|catch|do)\b"
-        r"|\b(?:goto|return|break|continue)\b"
+        r"|\b(?:else|goto|return|break|continue)\b"
         r"|^[A-Za-z_]\w*\s*:",
         re.MULTILINE,
     )

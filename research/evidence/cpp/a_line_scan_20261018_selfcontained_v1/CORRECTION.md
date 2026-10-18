@@ -62,6 +62,6 @@ capacity expressions are normalized for identity factors (`x + 1` vs
 capacities are recognized, and implicit `calloc`/`new[]` element products are
 treated as allocator-checked instead of candidates. Further precision fixes
 remove unconditional-exit/lambda fall-throughs and preprocessor macro bodies.
-The final run is 30 candidates / 20 groups (bounds 9, integer 16, resource 2,
+The final run is 28 candidates / 19 groups (bounds 9, integer 16, resource 0,
 unsafe 3); `communication_dsoftbus` drops from 36/23 to 13/9.
-`a_line_scan_20261018_selfcontained_v7` is the authoritative A-line scan.
+`a_line_scan_20261018_selfcontained_v8` is the authoritative A-line scan.

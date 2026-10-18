@@ -108,6 +108,13 @@
       "byte_length": 176
     },
     {
+      "fixture": "safe_sibling_branch_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "13c257343acb1a96059450bc60977293a8e01f5c941296fc87c5081b8fc93a09",
+      "byte_length": 205
+    },
+    {
       "fixture": "safe_conditional_null.cpp",
       "category": "safe",
       "expected_max": 0,

@@ -108,13 +108,13 @@ CVE-2025-0587 / `arkcompiler_ets_runtime-atomic-index-overflow-2025-03` 在 vuln
 > and therefore imported mainline detectors (`0.2.0`/`0.1.0`), not this A-line
 > worktree. They remain valid mainline baseline records but are not A-line
 > before/after evidence. The authoritative A-line run is
-> `research/evidence/cpp/a_line_scan_20261018_selfcontained_v7` using
-> `research/evidence/cpp/mvp_20261018/run_scan.py`: 30 candidates / 20 groups,
+> `research/evidence/cpp/a_line_scan_20261018_selfcontained_v8` using
+> `research/evidence/cpp/mvp_20261018/run_scan.py`: 28 candidates / 19 groups,
 > of which `bounds 0.3.2` contributes 9, `integer_bounds 0.2.3` 16,
-> `resource_lifetime 0.1.6` 2 and `unsafe_memory_call 0.1.3` 3. The first
+> `resource_lifetime 0.1.7` 0 and `unsafe_memory_call 0.1.3` 3. The first
 > corrected run `selfcontained_v1` was 60/39 before capacity normalization and
 > implicit-allocator-product suppression. See
-> `selfcontained_v1/CORRECTION.md` and `selfcontained_v7/comparison.json`.
+> `selfcontained_v1/CORRECTION.md` and `selfcontained_v8/comparison.json`.
 
 `ohscanner.cpp.bounds` 0.2.1 was scanned over the same five pinned components as
 the 2026-10-17 baseline. The result remains 33 candidates / 22 lexical groups;
