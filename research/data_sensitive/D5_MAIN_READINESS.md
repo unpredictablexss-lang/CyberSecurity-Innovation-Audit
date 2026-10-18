@@ -49,5 +49,5 @@ An exact-revision source model now recognizes PBKDF2 output -> UtilsHexify -> IO
 
 固定 G 镜像 Git 对象扫描器两次稳定产生 CVE-2025-9900 candidate；通过 ASan 在旧版 libtiff 4.7.0 组件中 3/3 复现 `put8bitcmaptile` 越界写访问，上游 MR !732 修复对照和正确 raster 尺寸控制均为 0/3 ASan 报告。脚本只用固定 commit 的 `git archive`，不读入 G 盘 dirty 文件、不联网、不写回源仓库。复现入口与限制见 `D31_LIBTIFF_CVE_2025_9900_REPORT.md`；scanner 仍报 candidate，产品状态 unknown，`validated_vulnerability=0`。
 
-D30 的 GitHub CI run `39161430278` 的 Workbench TypeScript/production build 与 Python unit tests 均通过。D31 新增脚本、夹具和报告仍须在本提交本地回归及推送后 CI 验证。页面集成仍为显式 default-off 研究规则；M2 独立 holdout 与 M3 产品构建/入口/影响/修复后复验仍未满足，不据此宣称商业就绪或产品漏洞 confirmed。
+D30 的 GitHub CI run `39161430278` 与 D31 的 GitHub Actions run `39162408024` 均通过 Workbench TypeScript/production build 和 Python unit tests。D31 新增脚本、夹具和报告已完成本地及远端回归。页面集成仍为显式 default-off 研究规则；M2 独立 holdout 与 M3 产品构建/入口/影响/修复后复验仍未满足，不据此宣称商业就绪或产品漏洞 confirmed。
 D31 提交前本地完整回归：`.venv-web/bin/python -m unittest discover -s tests -q` 为 923 项，918 passed、5 skipped；D31 脚本已完成三轮旧版/修复版/安全控制 ASan 验证并写出 JSON，`py_compile` 和 `git diff --check` 通过。D30 GitHub CI `39161430278` 的 UI/build 与 Python jobs 均 success；D31 GitHub Actions run `39162408024` 的 Workbench TypeScript/production build 与 Python unit tests 均通过。
