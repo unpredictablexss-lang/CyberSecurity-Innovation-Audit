@@ -2026,6 +2026,30 @@ class Interpreter:
                         self.capacities["sizeof("+name+")"]=size
             elif kind=="expression_statement":
                 for expr in node.named_children:
+                    macro_guard = self._fail_fast_macro_predicate(fn, expr, s, depth)
+                    if macro_guard is not None:
+                        # The definition is source-bound and proves that a false
+                        # condition returns from this function. Only the normal
+                        # continuation receives the predicate's true facts.
+                        guarded = self.refine(fn, macro_guard, s, True, depth)
+                        for continuation in guarded:
+                            continuation.trace = (continuation.trace +
+                                ((expr.start_point[0] + 1,
+                                  "source-verified fail-fast macro => true"),))[-20:]
+                        if guarded:
+                            safe = guarded[0]
+                            s.auth = safe.auth
+                            s.descriptor = safe.descriptor
+                            s.owner = safe.owner
+                            s.lower = safe.lower
+                            s.upper = safe.upper
+                            s.size_lower = safe.size_lower
+                            s.caller_class = safe.caller_class
+                            s.service_account = safe.service_account
+                            s.trace = safe.trace
+                        else:
+                            s.flow = "return"
+                        continue
                     if (expr.type=="call_expression" and terminal(fn.text(expr.child_by_field_name("function")))
                             == "ResetCallingIdentity"):
                         # The call stands alone, so its returned identity has no
@@ -2043,6 +2067,45 @@ class Interpreter:
             else:
                 self.value(fn,node,s,depth)
         return self.bounded(done+active)
+
+    def _fail_fast_macro_predicate(self, fn, expr, state, depth):
+        """Recognize only source-proven `if (!arg) return` macro wrappers.
+
+        Some OpenHarmony fail-fast macros stringify their condition for logging,
+        so the bounded expander refuses them. For descriptor guards, model the
+        normal continuation only when the scan contains one unconditional macro
+        definition with the narrow two-parameter shape checked below. The macro
+        name alone never grants a guard.
+        """
+        if expr.type != "call_expression":
+            return None
+        name_node = expr.child_by_field_name("function")
+        name = terminal(fn.text(name_node)) if name_node is not None else ""
+        definitions = self.macro_catalog.get(name, ()) if self.macro_catalog else ()
+        if not definitions:
+            return None
+        signatures = {(item.get("body", ""), tuple(item.get("parameters") or ()),
+                       tuple(item.get("conditional_context") or ())) for item in definitions}
+        if len(signatures) != 1:
+            return None
+        body, params, conditions = next(iter(signatures))
+        if conditions or len(params) != 2:
+            return None
+        cond_param, return_param = params
+        pattern = (r"^do\s*\{\s*bool\s+([A-Za-z_]\w*)\s*=\s*\(\s*"
+                   + re.escape(cond_param) + r"\s*\)\s*;\s*if\s*\(\s*!\s*\1\s*\)\s*\{"
+                   + r".*?\breturn\s+" + re.escape(return_param)
+                   + r"\s*;.*?\}\s*\}\s*while\s*\(\s*0\s*\)$")
+        if not re.match(pattern, body):
+            return None
+        arguments = expr.child_by_field_name("arguments")
+        args = list(arguments.named_children) if arguments is not None else []
+        if len(args) != 2:
+            return None
+        predicate = self.value(fn, args[0], state, depth)
+        if predicate.kind != "predicate" or predicate.predicate[:1] != ("descriptor",):
+            return None
+        return args[0]
 
     def _entry_roots(self):
         """Build roots from source-confirmed IPC dispatchers and explicit service entries.
