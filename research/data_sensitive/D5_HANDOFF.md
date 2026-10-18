@@ -35,3 +35,11 @@ D13 independently verified the D4 source manifest against the exact upstream Git
 The later commit subject is "Remove unused sensitive prints", with the before commit as its parent. This is provenance/history evidence only: it is not a security advisory, product release/deployment proof, or exploitability proof. D13 does not change validated_vulnerability=0; D4 historical replay remains blocked and product H01-H08 remain not_run.
 
 D13 implementation and reproducible commands are in D13_IMPLEMENTATION.md; machine-readable per-file evidence is in D13_SOURCE_GIT_OBJECT_VERIFICATION.json. The D13 unit tests cover both matching local commit objects and manifest-digest rejection. This does not meet M0-M3 or authorize panel registration, PR Ready, merge, or product confirmation.
+
+## D13 delivery identity
+
+- Branch: feat/teammate-d-sensitive-exposure-20261017.
+- D13 code/evidence commit: 478d3d6fdc7febc66064f0b7e513b8f9e2993248; pushed to origin.
+- Post-push check: remote branch and refs/pull/17/head both resolved to 478d3d6fdc7febc66064f0b7e513b8f9e2993248. The fetched PR merge ref parents were latest main 1c21ac60890fca0ce6be5d50d82e4757dd5e4623 and that PR head. The working tree was clean.
+- D13 data tests: 55 passed. Full Python suite: 889 run, 884 passed, 5 skipped, 0 failed. compileall and git diff --check passed.
+- PR #17 metadata and latest Actions status were not refreshed by this handoff update; the last observed PR state was open/Draft. No PR state was changed.
