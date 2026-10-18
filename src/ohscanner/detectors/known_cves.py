@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -68,6 +68,31 @@ def _scan(unit: SourceUnit):
         start, b = body
         if len(re.findall(r"\bcJSON_Compare\s*\(", b)) >= 2 and "get_object_item" in b and "cJSON_ArrayForEach" in b:
             out.append(_finding(unit, start, "ohknowncve-cjson-cve-2026-67216", "CVE-2026-67216", "cJSON_Compare recursively compares object pairs and repeats linear key lookups.", "CWE-407"))
+    # CVE-2025-57052: the loop's upper-bound check accidentally references
+    # pointer[0] instead of pointer[position], so a digit-leading token can
+    # continue consuming non-digit bytes as array-index digits.
+    array_index = _body(s, "decode_array_index_from_pointer")
+    if array_index:
+        index_start, index_body = array_index
+        loop = re.search(
+            r"for\s*\(\s*position\s*=\s*0\s*;"
+            r"[^;]*pointer\s*\[\s*position\s*\][^;]*&&"
+            r"[^;]*pointer\s*\[\s*0\s*\][^;]*;\s*position\s*\+\+\s*\)",
+            index_body,
+            re.S,
+        )
+        accumulates_index = re.search(
+            r"parsed_index\s*=\s*\([^;]*parsed_index[^;]*pointer\s*\[\s*position\s*\]",
+            index_body,
+            re.S,
+        )
+        if loop and accumulates_index:
+            out.append(_finding(
+                unit, index_start + 1 + loop.start(),
+                "ohknowncve-cjson-cve-2025-57052", "CVE-2025-57052",
+                "decode_array_index_from_pointer checks pointer[0] for every loop iteration, allowing a digit-leading JSON Pointer array index to consume non-digit bytes.",
+                "CWE-129",
+            ))
     # CVE-2026-9079: clearing CURLOPT_PROXYUSERPWD with NULL must clear
     # both stored credential fields even though the parsed u/p values are NULL.
     # Old code freed each field only inside its matching non-NULL component branch.

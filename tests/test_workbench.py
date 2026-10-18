@@ -3,6 +3,7 @@
 import copy
 import json
 import io
+import hashlib
 import tarfile
 from pathlib import Path
 import subprocess
@@ -351,6 +352,32 @@ class WorkbenchTests(unittest.TestCase):
         )
 
 
+    def test_cjson_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
+        source = """static cJSON_bool decode_array_index_from_pointer(const unsigned char * const pointer, size_t * const index) {
+            size_t parsed_index = 0;
+            size_t position = 0;
+            for (position = 0; (pointer[position] >= '0') && (pointer[0] <= '9'); position++) {
+                parsed_index = (10 * parsed_index) + (size_t)(pointer[position] - '0');
+            }
+            if ((pointer[position] != '\\0') && (pointer[position] != '/')) return 0;
+            *index = parsed_index;
+            return 1;
+        }"""
+        (self.repo / "cJSON_Utils.c").write_text(source)
+        git(self.repo, "add", "cJSON_Utils.c")
+        git(self.repo, "commit", "-qm", "add pinned cJSON component fixture")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        job_request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(job_request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = report["detector_runs"][0]["diagnostics"]
+        candidate = next(item for item in diagnostics if item["symbol"] == "CVE-2025-57052")
+        self.assertEqual(candidate["source_sha256"], hashlib.sha256(source.encode()).hexdigest())
+        self.assertEqual(report["validated_vulnerability"], 0)
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], source)
     def test_archived_candidate_runs_through_api_worker_and_source_viewer(self):
         archive_path = self.repo / "vendor" / "sample.tar.gz"
         archive_path.parent.mkdir()

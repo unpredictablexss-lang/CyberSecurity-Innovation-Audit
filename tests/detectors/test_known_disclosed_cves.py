@@ -47,6 +47,26 @@ class KnownDisclosedCveTests(unittest.TestCase):
         bounded=source.replace("void mime_subparts_free(void *p){ curl_mime_free(p); }", "void mime_subparts_free(void *p,int depth){ if(depth > MAX_MIME_DEPTH) return; curl_mime_free(p); }")
         self.assertNotIn("CVE-2026-92391", {f.symbol for f in self.run_source(bounded, "mime.c").findings})
 
+    def test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes(self):
+        vulnerable = """static cJSON_bool decode_array_index_from_pointer(const unsigned char * const pointer, size_t * const index) {
+            size_t parsed_index = 0;
+            size_t position = 0;
+            for (position = 0; (pointer[position] >= '0') && (pointer[0] <= '9'); position++) {
+                parsed_index = (10 * parsed_index) + (size_t)(pointer[position] - '0');
+            }
+            if ((pointer[position] != '\0') && (pointer[position] != '/')) return 0;
+            *index = parsed_index;
+            return 1;
+        }"""
+        fixed = vulnerable.replace("pointer[0] <= '9'", "pointer[position] <= '9'")
+        unrelated = """static void other(const unsigned char *pointer) {
+            if (pointer[0] <= '9') consume(pointer);
+        }"""
+        vulnerable_findings = {f.symbol for f in self.run_source(vulnerable, "cJSON_Utils.c").findings}
+        self.assertIn("CVE-2025-57052", vulnerable_findings)
+        self.assertNotIn("CVE-2025-57052", {f.symbol for f in self.run_source(fixed, "cJSON_Utils.c").findings})
+        self.assertNotIn("CVE-2025-57052", {f.symbol for f in self.run_source(unrelated, "cJSON_Utils.c").findings})
+
     def test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes(self):
         vulnerable = """CURLcode setopt_cptr_proxy(Curl_easy *data, CURLoption option, va_list param) {
             case CURLOPT_PROXYUSERPWD: {
