@@ -49,6 +49,58 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertEqual([], [f for f in self.run_source(unrelated, path).findings
                               if f.symbol == "CVE-2026-25850"])
 
+    def test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch(self):
+        path = "services/storage_daemon/ipc/src/storage_daemon_stub.cpp"
+        shared = """std::map<uint32_t, RadarStatisticInfo>::iterator
+        StorageDaemonStub::GetUserStatistics(const uint32_t userId) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            auto it = opStatistics_.find(userId);
+            if (it != opStatistics_.end()) return it;
+            RadarStatisticInfo radarInfo = { 0 };
+            return opStatistics_.insert(make_pair(userId, radarInfo)).first;
+        }
+        void StorageDaemonStub::GetTempStatistics(std::map<uint32_t, RadarStatisticInfo> &statistics) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            statistics.insert(opStatistics_.begin(), opStatistics_.end());
+            opStatistics_.clear();
+        }
+        int StorageDaemonStub::HandleStartUser(uint32_t userId) {
+            auto it = GetUserStatistics(userId);
+            int err = StartUser(userId);
+            if (err != E_OK) it->second.userStartFailCount++;
+            return err;
+        }"""
+        findings = [f for f in self.run_source(shared, path).findings
+                    if f.symbol == "CVE-2026-28733"]
+        self.assertEqual(1, len(findings))
+        self.assertGreater(findings[0].line, 0)
+        self.assertEqual("CWE-416", findings[0].candidate_cwe)
+        self.assertEqual(hashlib.sha256(shared.encode()).hexdigest(), findings[0].source_sha256)
+        self.assertIn("iterator-lifetime gap", findings[0].message)
+
+        fixed = """void StorageDaemonStub::UpdateUserStatistics(uint32_t userId) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            auto it = opStatistics_.find(userId);
+            if (it == opStatistics_.end()) {
+                it = opStatistics_.insert(make_pair(userId, RadarStatisticInfo{0})).first;
+            }
+            it->second.userStartFailCount++;
+        }
+        void StorageDaemonStub::GetTempStatistics(std::map<uint32_t, RadarStatisticInfo> &statistics) {
+            std::lock_guard<std::mutex> lock(mutexStats_);
+            statistics.insert(opStatistics_.begin(), opStatistics_.end());
+            opStatistics_.clear();
+        }
+        int StorageDaemonStub::HandleStartUser(uint32_t userId) {
+            int err = StartUser(userId);
+            if (err != E_OK) UpdateUserStatistics(userId);
+            return err;
+        }"""
+        self.assertEqual([], [f for f in self.run_source(fixed, path).findings
+                              if f.symbol == "CVE-2026-28733"])
+        self.assertEqual([], [f for f in self.run_source(shared, "other.cpp").findings
+                              if f.symbol == "CVE-2026-28733"])
+
     def test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed(self):
         vulnerable = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
             int32_t pinCode = GeneratePincode();

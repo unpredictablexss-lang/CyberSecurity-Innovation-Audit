@@ -2,9 +2,9 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.11.0，支持 13 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-25850、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.12.0，支持 14 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-25850、CVE-2026-28733、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
-17 项独立公开 CVE 审查清单中，当前规则覆盖 13 个 CVE 条目；剩余 4 项没有可靠的正向规则映射。D20-D24 固定 G 盘快照记录的结果保持不变；D25 对 cJSON 上游漏洞父提交/修复提交进行精确源码对照；D35 新增 filemanagement_storage_service 两条官方分支固定源码正反对照。所有规则样本仍是开发/回归材料，不是独立 holdout，也不能据此声称 17 项或全项目的 Recall。
+17 项独立公开 CVE 审查清单中，当前规则覆盖 14 个 CVE 条目；剩余 3 项没有可靠的正向规则映射。D20-D24 固定 G 盘快照记录的结果保持不变；D25 对 cJSON 上游漏洞父提交/修复提交进行精确源码对照；D35 新增 filemanagement_storage_service 两条官方分支固定源码正反对照；D36 新增 CVE-2026-28733 的跨函数 map-iterator 生命周期候选，并发现官方 mutex 补丁与当前 5.1 源码仍保留该结构。所有规则样本仍是开发/回归材料，不是独立 holdout，也不能据此声称 17 项或全项目的 Recall。
 
 ## 固定源码回放
 
@@ -53,9 +53,9 @@ D30 在 G 镜像中实际跟踪的 libpng 1.6.55 构建归档上补齐了独立�
 
 ## 未覆盖项及不可推断事项
 
-审查清单中其余 4 项目前没有可靠的正向规则映射：CVE-2026-58313、CVE-2026-28733、CVE-2026-28751 仍缺少从公告根因到可审源码形态的闭环（其中部分 master 有修复迹象）；CVE-2026-92392 的本地 curl 8.8.0 低于其受影响版本。未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
+审查清单中其余 3 项目前没有可靠的正向规则映射：CVE-2026-58313、CVE-2026-28751 仍缺少从公告根因到可审源码形态的闭环（其中部分 master 有修复迹象）；CVE-2026-92392 的本地 curl 8.8.0 低于其受影响版本。未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
 
-没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有扫描结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。当前已覆盖 17 项独立审查条目中的 13 个窄源码形态，未覆盖 4 项；规则开发样本不能替代冻结且独立标注的数据，也不代表对整个项目达到完整覆盖。D25/D29/D35 上游旧/新源码对照不能替代冻结 holdout。
+没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有扫描结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。当前已覆盖 17 项独立审查条目中的 14 个窄源码形态，未覆盖 3 项；规则开发样本不能替代冻结且独立标注的数据，也不代表对整个项目达到完整覆盖。D25/D29/D35/D36 上游旧/新源码对照不能替代冻结 holdout。
 
 
 ## 2026-10-19 D23 calibration
@@ -90,3 +90,7 @@ D31 在固定 `third_party_libtiff@d4a0516c477dfbaf1153ae295893ab75aadd63d4` 上
 ## D35 CVE-2026-25850 external-volume 权限扩大
 
 `known_disclosed_cves` 0.11.0 新增 filemanagement_storage_service 的精确路径/方法形态。官方 5.1 与 6.0 MR 分支中，`DoMount4Ext` / `DoMount4Hmfs` 在挂载成功后对挂载树递归调用 `TravelChmod(..., 0777)`；固定修复分支删除这两处调用。D35 直接读取四个 pinned commit 的 Git 对象，校验 tree/blob/SHA-256，并校验 helper 的递归实现。两条 release pair 均为旧源 2 candidate、修复源 0；direct replay 设 parse `not_run`，所以两端覆盖为 blocked，candidate 保留。组件问题与官方公告相符；不证明产品镜像采用受影响提交或未授权主体能读到具体数据。详见 [D35 报告](D35_FILEMANAGEMENT_CVE_2026_25850_REPORT.md)、脚本和 JSON。D35 是源码扫描复现，不是 runtime permission PoC。
+
+## D36 CVE-2026-28733 storage statistics iterator lifetime
+
+0.12.0 增加同文件跨函数候选：GetUserStatistics 返回共享 opStatistics_ map iterator，多个 handler 在 helper 返回、内部锁已释放后写 it->second；GetTempStatistics 在另一调用路径复制并清空同一 map。官方 5.1 修复 MR !2114 确实给两个 helper 加了 mutexStats_，但当前 5.1 头与补丁 blob 完全相同，迭代器仍逃逸锁作用域。固定父提交、补丁提交和当前 release head 的源文件 SHA 均由 D36 replay 校验，三者各报告 1 条 candidate。因因果调度和完整服务动态复现尚未验证，该项是并发/UAF 候选，不断言官方补丁无效，也不升级产品确认；修复建议是把读取/更新放在统一锁保护的 API 内并让快照清空与更新互斥，避免向调用者返回容器迭代器。详见 D36_CVE_2026_28733_REPORT.md、脚本和 JSON。

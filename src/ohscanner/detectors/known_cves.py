@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.11.0"
+VERSION = "0.12.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -58,6 +58,45 @@ def _scan(unit: SourceUnit):
                     "ohknowncve-storage-cve-2026-25850", "CVE-2026-25850",
                     f"{method} recursively assigns mode 0777 to the mounted external-volume tree; the upstream fix removes this permission widening.",
                     "CWE-732", impact="confidentiality",
+                ))
+    # CVE-2026-28733: StorageDaemonStub returns an opStatistics_ map iterator
+    # after GetUserStatistics releases its lock. The radar thread can clear the
+    # same map in GetTempStatistics before a handler dereferences that iterator.
+    # A mutex inside both helpers does not protect the iterator's lifetime.
+    if source_path.endswith("services/storage_daemon/ipc/src/storage_daemon_stub.cpp"):
+        getter = _body(s, "GetUserStatistics")
+        snapshot = _body(s, "GetTempStatistics")
+        if getter and snapshot:
+            getter_start, getter_body = getter
+            snapshot_start, snapshot_body = snapshot
+            returns_iterator = (
+                "std::map<uint32_t, RadarStatisticInfo>::iterator"
+                in s[max(0, getter_start - 140):getter_start]
+                and "opStatistics_.find" in getter_body
+                and "return it;" in getter_body
+                and "opStatistics_.insert" in getter_body
+            )
+            clears_shared_map = (
+                "opStatistics_.begin()" in snapshot_body
+                and "opStatistics_.end()" in snapshot_body
+                and "opStatistics_.clear()" in snapshot_body
+            )
+            callers = [
+                match for match in re.finditer(
+                    r"\bauto\s+(\w+)\s*=\s*GetUserStatistics\s*\([^;]*\);", s
+                )
+                if re.search(
+                    r"\b" + re.escape(match.group(1)) + r"\s*->\s*second\s*\.",
+                    s[match.end():match.end() + 1600],
+                )
+            ]
+            if returns_iterator and clears_shared_map and callers:
+                clear_pos = snapshot_body.find("opStatistics_.clear()")
+                out.append(_finding(
+                    unit, snapshot_start + 1 + clear_pos,
+                    "ohknowncve-storage-cve-2026-28733", "CVE-2026-28733",
+                    "GetUserStatistics returns an opStatistics_ iterator after its internal lock is released; a caller later dereferences it while GetTempStatistics clears the same map. This iterator-lifetime gap remains in the linked upstream mutex patch and requires concurrency review.",
+                    "CWE-416",
                 ))
     # CVE-2025-9900: only inspect the public wrapper body. The old expression
     # subtracts image height from raster height before passing a shifted raster
