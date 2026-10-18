@@ -5,6 +5,7 @@ from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 from .tlv_fixed_width import find_fixed_width_tlv_overreads
+from .network_session_allowlist import find_missing_auth_session_allowlist
 
 
 # Exact path components are review cues, not proof that a file is excluded from
@@ -26,7 +27,7 @@ def _test_source_path(path):
 # than repeated here, so a family's id, its rules and its CWE land together and a
 # new family cannot be emitted without declaring the CWE it reports.
 _CWE = cwes()
-assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05",
+assert set(_CWE) == {"AUTH-01", "AUTH-02", "AUTH-03", "AUTH-04", "AUTH-05", "AUTH-06",
                      "DATA-01", "DATA-02", "DATA-03", "DATA-04", "DATA-05", "CAP-01"}, sorted(_CWE)
 
 _BASE_OBLIGATIONS = (
@@ -87,7 +88,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.10.0"
+    version = "0.11.0"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -216,6 +217,39 @@ class IpcInterfaceDetector:
                 ),
             ))
         findings = findings + tuple(resource_findings) + tuple(permission_findings)
+        # A narrowly reviewed SoftBus network-auth callback is not a Binder
+        # OnRemoteRequest root. Keep this source-only check separate and attach
+        # explicit reachability/policy obligations to its candidate.
+        network_auth_findings = []
+        for unit in applicable:
+            if unit.parse_status in ("failed", "not_run"):
+                continue
+            for line, symbol in find_missing_auth_session_allowlist(unit.text):
+                network_auth_findings.append(DetectorFinding(
+                    file=unit.path,
+                    line=line,
+                    symbol=symbol,
+                    rule_id="ipc.network.auth-session-whitelist",
+                    message=("AUTH-06 candidate: a decoded peer AppInfo reaches auth-channel "
+                             "state update and success notification without a source-recognized "
+                             "exact sessionName whitelist rejection. Prefix-only comparisons do "
+                             "not establish full identity equality; network reachability and "
+                             "policy effect remain unknown."),
+                    evidence_type="syntax",
+                    candidate_cwe="CWE-862",
+                    consequence_impact="unauthorized_effect",
+                    evidence_obligations=(
+                        EvidenceObligation("network_entry_binding",
+                                           "Bind this callback to the authenticated transport, peer and enabled product module."),
+                        EvidenceObligation("session_name_policy",
+                                           "Verify the approved session-name set and exact identity comparison semantics."),
+                        EvidenceObligation("authorization_effect",
+                                           "Verify whether a non-approved peer identity can create state or trigger a privileged callback."),
+                        EvidenceObligation("security_impact",
+                                           "Establish attacker reachability, required pairing/trust prerequisites and concrete impact."),
+                    ),
+                ))
+        findings = findings + tuple(network_auth_findings)
         # TLV fixed-width serializers are reusable parser helpers, not IPC roots.
         # Keep this exact non-entry pass separate; do not imply IPC reachability.
         tlv_findings = []
