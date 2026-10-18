@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.12.0"
+VERSION = "0.13.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -97,6 +97,41 @@ def _scan(unit: SourceUnit):
                     "ohknowncve-storage-cve-2026-28733", "CVE-2026-28733",
                     "GetUserStatistics returns an opStatistics_ iterator after its internal lock is released; a caller later dereferences it while GetTempStatistics clears the same map. This iterator-lifetime gap remains in the linked upstream mutex patch and requires concurrency review.",
                     "CWE-416",
+                ))
+    # CVE-2026-28751: a full-length xattr result leaves a capacity-sized
+    # buffer unterminated when the code accepts only len < capacity, then uses
+    # it as a C string. The extra-byte allocation and <= guard are the upstream
+    # repair shape; product reachability remains an evidence obligation.
+    if source_path.endswith("services/storage_manager/volume/src/volume_manager_service.cpp"):
+        mtp = _body(s, "NotifyMtpMounted")
+        if mtp:
+            mtp_start, mtp_body = mtp
+            exact_capacity_alloc = re.search(
+                r"malloc\s*\(\s*sizeof\s*\(\s*char\s*\)\s*\*\s*MTP_DEVICE_NAME_LEN\s*\)",
+                mtp_body,
+            )
+            bounded_xattr = re.search(
+                r"getxattr\s*\([^;]*MTP_DEVICE_NAME_LEN\s*\)", mtp_body, re.S
+            )
+            strict_bound = re.search(
+                r"len\s*>=\s*0\s*&&\s*len\s*<\s*MTP_DEVICE_NAME_LEN", mtp_body
+            )
+            terminates_only_under_strict_bound = re.search(
+                r"if\s*\(\s*len\s*>=\s*0\s*&&\s*len\s*<\s*MTP_DEVICE_NAME_LEN\s*\)\s*\{[^{}]*value\s*\[\s*len\s*\]\s*=",
+                mtp_body,
+                re.S,
+            )
+            c_string_use = re.search(
+                r"(?:std::string\s*\(\s*value\s*\)|SetDescription\s*\(\s*std::string\s*\(\s*value\s*\)\s*\))",
+                mtp_body,
+            )
+            if (exact_capacity_alloc and bounded_xattr and strict_bound
+                    and terminates_only_under_strict_bound and c_string_use):
+                out.append(_finding(
+                    unit, mtp_start + 1 + c_string_use.start(),
+                    "ohknowncve-storage-cve-2026-28751", "CVE-2026-28751",
+                    "NotifyMtpMounted allocates MTP_DEVICE_NAME_LEN bytes but a full-capacity getxattr result skips NUL termination; the value is later consumed as a C string, allowing an out-of-bounds read.",
+                    "CWE-125", impact="availability_or_memory_safety",
                 ))
     # CVE-2025-9900: only inspect the public wrapper body. The old expression
     # subtracts image height from raster height before passing a shifted raster
