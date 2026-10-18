@@ -48,6 +48,20 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertIn("CVE-2026-46675", {f.symbol for f in self.run_source(bad, "decoder.c").findings})
         self.assertEqual((), self.run_source(safe, "decoder.c").findings)
 
+    def test_pasteboard_disclosed_cves_and_guarded_controls(self):
+        vulnerable = """void AddPasteboardChangedObserver(Observer *observer){ if(!observer)return; observers->insert(observer); }
+        PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
+        int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
+        int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        fixed = """void AddPasteboardChangedObserver(Observer *observer){ int pid=GetCallingPid(); if(observers->size() >= MAX_OBSERVERS_PER_PID)return; observers->insert(observer); }
+        PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
+        int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
+        int OnGetPasteData(){ CheckPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"""
+        findings = {f.symbol for f in self.run_source(vulnerable, "pasteboard_service.cpp").findings}
+        self.assertIn("CVE-2025-25212", findings)
+        self.assertIn("CVE-2025-27247", findings)
+        self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
+
     def test_partial_parse_retains_lexical_candidate_but_blocks_coverage(self):
         source="void f(png_structp p,png_infop i){png_read_info(p,i);png_read_end(p,i);}"
         run=self.run_source(source, parse_status="partial")

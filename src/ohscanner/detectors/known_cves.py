@@ -5,7 +5,7 @@ from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObliga
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -80,6 +80,33 @@ def _scan(unit: SourceUnit):
         row = re.search(r"\b(?:png_read_row|png_read_rows|png_read_image|png_start_read_image)\s*\(", b)
         if info and finish and info.start() < finish.start() and not row:
             out.append(_finding(unit, start+1+finish.start(), "ohknowncve-libpng-cve-2026-46675", "CVE-2026-46675", "png_read_end follows png_read_info without reading image rows.", "CWE-416"))
+    # CVE-2025-25212: observer registrations can accumulate without a
+    # per-process quota. Lifecycle and Binder caller reachability remain
+    # outside this local signature, so every match is a candidate.
+    observer = _body(s, "AddPasteboardChangedObserver")
+    if observer:
+        pos, b = observer
+        inserts = re.search(r"(?:observers|observerMap_)\s*(?:->|\.)\s*(?:insert|emplace|push_back)", b)
+        process_key = re.search(r"(?:GetCallingPid|GetCallingTokenID|GetCallingUid)", b)
+        quota = re.search(r"(?:size\s*\(\)\s*(?:>=|>)|(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|\b(?:max|limit|quota)\w*\b)", b, re.I)
+        if inserts and not process_key and not quota:
+            out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212", "pasteboard observer registration inserts into a shared collection without a visible per-process quota.", "CWE-770"))
+    # CVE-2025-27247: the old pasteboard Binder dispatch exposed GetPasteData
+    # without a service-side read permission check. A source-local match is
+    # only a candidate because enforcement may live outside this file.
+    dispatch = _body(s, "OnRemoteRequest")
+    mapping = _body(s, "PasteboardServiceStub")
+    handler = _body(s, "OnGetPasteData")
+    if dispatch and mapping and handler:
+        pos, db = dispatch
+        mb = mapping[1]
+        hb = handler[1]
+        mapped = "memberFuncMap_" in mb and "OnGetPasteData" in mb and "GET_PASTE_DATA" in mb
+        routed = "memberFuncMap_" in db and "memberFuncMap_.find" in db
+        reads_and_returns = "GetPasteData" in hb and "WriteParcelable" in hb
+        guarded = bool(re.search(r"(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|PermissionManager|CheckPermission)", db + hb, re.I))
+        if mapped and routed and reads_and_returns and not guarded:
+            out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch returns paste data without a visible permission check in the dispatch or handler.", "CWE-862"))
     return tuple(out)
 
 class KnownDisclosedCveDetector:
