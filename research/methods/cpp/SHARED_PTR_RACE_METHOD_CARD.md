@@ -7,7 +7,7 @@
 
 ## Identity and output
 
-- Detector: `ohscanner.cpp.shared_ptr_race`; detector version `0.5.0`. Rule ID remains stable.
+- Detector: `ohscanner.cpp.shared_ptr_race`; detector version `0.5.3`. Rule ID remains stable.
 - Rule: `ohcpp-shared-ptr-race-candidate-001`.
 - Input: fixed `SourceUnit` C/C++ text with `parse_status=complete`; no target execution,
   external scanner result or historical verdict is required.
@@ -64,6 +64,17 @@ entry or privilege boundary, reachable sensitive operation, trigger conditions, 
 CIA impact, and auditable synchronization/interleaving evidence. AST and lexical matches
 do not prove ownership, guard dominance, lock alias identity, concurrency, attacker
 control or impact.
+
+## 0.5.2/0.5.3 precision controls
+
+- Constructor-body member assignment is classified as `initialization`, not a
+  later race `write`; constructor-only initialization followed by stable reads is quiet.
+- Function parameters shadow same-named members for unqualified accesses;
+  `this->member` and `Class::member` remain member accesses.
+- Controls include constructor-body stable owner, non-constructor `Init()` mutable owner,
+  and a raw-pointer parameter named like a shared_ptr member.
+- These controls reduce syntax noise only. They do not prove concurrency,
+  happens-before, product reachability or CIA impact.
 
 ## Regression record
 

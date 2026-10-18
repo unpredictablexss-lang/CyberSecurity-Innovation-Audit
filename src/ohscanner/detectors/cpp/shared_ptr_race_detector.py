@@ -36,6 +36,7 @@ from src.ohscanner.contracts import (
     ScanContext,
     SourceUnit,
 )
+from .memory_safety import parameter_names
 
 
 _RULE_ID = "ohcpp-shared-ptr-race-candidate-001"
@@ -114,6 +115,13 @@ class _FunctionShape:
     name: str
     owner_class: Optional[str]
     span: _Span
+    params: str = ""
+
+
+def _is_constructor_function(function: Optional[_FunctionShape]) -> bool:
+    if function is None or not function.owner_class:
+        return False
+    return function.owner_class.rsplit("::", 1)[-1] == function.name
 
 
 @dataclass(frozen=True)
@@ -400,6 +408,7 @@ def _function_spans(
                 name=name,
                 owner_class=owner_class,
                 span=_Span(match.start(), closing + 1),
+                params=match.group("params"),
             )
         )
     return tuple(sorted(found, key=lambda item: (item.span.start, item.name)))
@@ -1086,6 +1095,12 @@ def _analyze_unit(
             object_bindings,
             known_class_names,
         )
+        if (
+            function is not None
+            and access_kind == "unqualified"
+            and name in parameter_names(function.params)
+        ):
+            continue
         if access_kind != "this" and _is_shadowed(
             locals_by_name.get(name, ()), name, token.start()
         ):
@@ -1164,6 +1179,18 @@ def _analyze_unit(
             lock_scopes, token.start()
         )
         atomic_operation = _atomic_access_kind(masked, token.start())
+        in_initializer = (
+            atomic_operation is None
+            and function is not None
+            and token.start() < masked.find("{", function.span.start)
+        )
+        in_constructor_body = (
+            atomic_operation is None and _is_constructor_function(function)
+        )
+        looks_like_write = (
+            atomic_operation is None
+            and _looks_like_write(masked, token.start(), name)
+        )
         accesses_by_member[key].append(
             _MemberAccess(
                 unit=unit,
@@ -1178,17 +1205,10 @@ def _analyze_unit(
                         "compare_exchange_strong",
                         "compare_exchange_weak",
                     }
-                    or (
-                        atomic_operation is None
-                        and _looks_like_write(masked, token.start(), name)
-                    )
+                    or (looks_like_write and not in_constructor_body)
                     else (
                         "initialization"
-                        if (
-                            atomic_operation is None
-                            and function is not None
-                            and token.start() < masked.find("{", function.span.start)
-                        )
+                        if in_initializer or (looks_like_write and in_constructor_body)
                         else "read"
                     )
                 ),
@@ -1230,7 +1250,7 @@ def _analyze_unit(
 
 class SharedPtrRaceDetector:
     detector_id = "ohscanner.cpp.shared_ptr_race"
-    version = "0.5.1"
+    version = "0.5.3"
     supported_languages = ("cpp",)
     required_facts = ()
 

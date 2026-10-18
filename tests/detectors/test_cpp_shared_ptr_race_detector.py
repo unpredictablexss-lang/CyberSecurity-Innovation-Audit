@@ -44,7 +44,7 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(self.detector.version, "0.5.1")
+        self.assertEqual(self.detector.version, "0.5.3")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
 
@@ -80,6 +80,22 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
         self.assertGreater(len(run.findings), 0)
         self.assertTrue(all(item.symbol == "instance_" for item in run.findings))
         self.assertTrue(all(item.rule_id == "ohcpp-shared-ptr-race-candidate-001" for item in run.findings))
+
+    def test_constructor_body_write_is_initialization(self) -> None:
+        stable = unit_by_path(self.units, "constructor_body_stable_owner.cpp")
+        stable_run = self.detector.detect(self.context, (stable,))
+        self.assertEqual(stable_run.findings, ())
+
+        mutable = unit_by_path(self.units, "mutable_owner_init_write.cpp")
+        mutable_run = self.detector.detect(self.context, (mutable,))
+        self.assertGreater(len(mutable_run.findings), 0)
+        self.assertTrue(all(item.symbol == "value_" for item in mutable_run.findings))
+
+    def test_parameter_shadow_does_not_add_member_access(self) -> None:
+        unit = unit_by_path(self.units, "parameter_shadow_control.cpp")
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(len(run.findings), 2)
+        self.assertTrue(all(item.line != 21 for item in run.findings))
 
     def test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe(self) -> None:
         fixed = unit_by_path(self.units, "fixed_atomic_shared_ptr.cpp")
