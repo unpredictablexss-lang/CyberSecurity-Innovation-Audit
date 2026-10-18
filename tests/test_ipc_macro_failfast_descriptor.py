@@ -8,8 +8,8 @@ from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
 from src.ohscanner.fixture import snapshot_digest
 
 
-PREFIX = '''#define Stub Fixture_macro_descriptor
-#include "common_types.h"
+PREFIX = '''#include "common_types.h"
+class IFixture { public: static const char *GetDescriptor(); };
 #define FALSE_RETURN_V(exec, ret) do { bool returnValue = (exec); if (!returnValue) { LOG("guard " #exec); return ret; } } while (0)
 class Stub : public IRemoteStub<IFixture> {
 public:
@@ -63,6 +63,38 @@ class MacroFailFastDescriptorTests(unittest.TestCase):
             "#if FEATURE_X\n#define FALSE_RETURN_V(exec, ret)",
         ).replace("} while (0)\nclass Stub", "} while (0)\n#endif\nclass Stub")
         self.assertTrue(relay_candidates(run(ENTRY, macro)))
+
+    def test_local_token_compare_zero_guards_member_pointer_dispatch(self):
+        body = ENTRY.replace(
+            "FALSE_RETURN_V(GetDescriptor() == data.ReadInterfaceToken(), -1);",
+            "std::u16string token = data.ReadInterfaceToken();\n"
+            "  if (token.compare(IFixture::GetDescriptor()) != 0) return -1;",
+        )
+        self.assertEqual(relay_candidates(run(body)), [])
+
+    def test_compare_against_a_different_interface_stays_a_candidate(self):
+        body = ENTRY.replace(
+            "FALSE_RETURN_V(GetDescriptor() == data.ReadInterfaceToken(), -1);",
+            "std::u16string token = data.ReadInterfaceToken();\n"
+            "  if (token.compare(IUnrelated::GetDescriptor()) != 0) return -1;",
+        )
+        self.assertTrue(relay_candidates(run(body)))
+
+    def test_compare_on_the_wrong_parcel_stays_a_candidate(self):
+        body = ENTRY.replace(
+            "FALSE_RETURN_V(GetDescriptor() == data.ReadInterfaceToken(), -1);",
+            "std::u16string token = reply.ReadInterfaceToken();\n"
+            "  if (token.compare(IFixture::GetDescriptor()) != 0) return -1;",
+        )
+        self.assertTrue(relay_candidates(run(body)))
+
+    def test_ignored_compare_result_is_not_a_guard(self):
+        body = ENTRY.replace(
+            "FALSE_RETURN_V(GetDescriptor() == data.ReadInterfaceToken(), -1);",
+            "std::u16string token = data.ReadInterfaceToken();\n"
+            "  token.compare(IFixture::GetDescriptor());",
+        )
+        self.assertTrue(relay_candidates(run(body)))
 
 
 if __name__ == "__main__":

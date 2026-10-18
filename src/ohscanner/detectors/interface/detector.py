@@ -86,7 +86,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.9.4"
+    version = "0.9.7"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -139,6 +139,82 @@ class IpcInterfaceDetector:
                 +((_DESCRIPTOR_OBLIGATIONS[o.descriptor_identity],) if o.descriptor_identity else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
             ) for o in observations)
+        resource_findings = []
+        for fn, line, container in analysis.unbounded_observer_registrations():
+            resource_findings.append(DetectorFinding(
+                file=fn.file,
+                line=line,
+                symbol=fn.qualified,
+                rule_id="ipc.resource.unbounded-observer-registration",
+                message=("Observer-growth candidate: the component contains an IPC On*Observer "
+                         "entry calling SubscribeObserver and a same-owner AddObserver helper "
+                         "inserting " + container + " without the reviewed aggregate observer-cap "
+                         "shape. This lightweight rule does not prove the cross-class/virtual call "
+                         "edge, complete insertion accounting, caller reachability, or product-level "
+                         "denial of service."),
+                evidence_type="syntax",
+                candidate_cwe="CWE-400",
+                evidence_obligations=(
+                    EvidenceObligation(
+                        "call_path_binding",
+                        "Bind the On*Observer entry, SubscribeObserver implementation and AddObserver "
+                        "sink through interface/virtual dispatch in the pinned component.",
+                    ),
+                    EvidenceObligation(
+                        "entry_reachability",
+                        "Verify the pinned product build registers this IPC entry and an untrusted "
+                        "caller can reach it with distinct observer objects.",
+                    ),
+                    EvidenceObligation(
+                        "resource_bound",
+                        "Review all insertion paths and cross-type aggregate accounting; this rule "
+                        "recognizes only a local limit comparison followed by an early exit.",
+                    ),
+                    EvidenceObligation(
+                        "product_impact",
+                        "Measure resource growth and service availability in a supported product "
+                        "configuration before assigning denial-of-service impact.",
+                    ),
+                ),
+            ))
+        permission_findings = []
+        for fn, line, grant_name in analysis.privileged_permission_grants():
+            permission_findings.append(DetectorFinding(
+                file=fn.file,
+                line=line,
+                symbol=fn.qualified,
+                rule_id="ipc.auth.privileged-app-bypass",
+                message=("Authorization-policy candidate: the component contains an "
+                         "OnGetPasteData IPC entry and a GetPasteData/VerifyPermission implementation "
+                         "where default-app/IME predicate " + grant_name + " contributes to the grant. "
+                         "This lightweight rule does not fully resolve the cross-class call edge; review "
+                         "whether this alternate grant exceeds the documented permission policy."),
+                evidence_type="syntax",
+                candidate_cwe="CWE-862",
+                evidence_obligations=(
+                    EvidenceObligation(
+                        "call_path_binding",
+                        "Bind the OnGetPasteData entry to this GetPasteData/VerifyPermission implementation "
+                        "through the pinned interface and virtual-dispatch hierarchy.",
+                    ),
+                    EvidenceObligation(
+                        "grant_policy",
+                        "Verify the privileged-app exception against the permission policy and "
+                        "fixed-version security patch; a named exception is not automatically safe.",
+                    ),
+                    EvidenceObligation(
+                        "entry_reachability",
+                        "Verify the pinned product build and caller identities that can reach the "
+                        "GetPasteData transaction.",
+                    ),
+                    EvidenceObligation(
+                        "disclosure_impact",
+                        "Confirm whether an unauthorized caller can retrieve protected pasteboard "
+                        "data in the product configuration.",
+                    ),
+                ),
+            ))
+        findings = findings + tuple(resource_findings) + tuple(permission_findings)
         status = "blocked" if any(u.parse_status != "complete" for u in applicable) else "completed"
         return DetectorRun(self.detector_id,self.version,status,tuple(u.path for u in applicable),findings,
             ("Model="+MODEL_VERSION+"; first-party bounded structured syntax interpretation, no external scanner execution.",

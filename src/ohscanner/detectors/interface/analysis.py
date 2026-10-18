@@ -531,6 +531,109 @@ class Interpreter:
                                                    reply_params=tuple(parcels[1:])))
         self._build_index(units)
 
+    def unbounded_observer_registrations(self):
+        """Find source-linked IPC observer registration paths with no local cap.
+
+        This narrow structural rule requires an On*Observer entry to call
+        SubscribeObserver, an implementation to call AddObserver, and AddObserver
+        to insert an observer-like value into a collection. A recognizable limit
+        comparison followed by an early exit before insertion suppresses the
+        candidate. It does not prove caller reachability or product impact.
+        """
+        def body_text(fn):
+            return fn.text(fn.body)
+
+        roots = [fn for fn in self.functions
+                 if fn.name.startswith("On") and "Observer" in fn.name
+                 and re.search(r"\bSubscribeObserver\s*\(", body_text(fn))]
+        if not roots:
+            return ()
+        subscribe_impls = [fn for fn in self.functions if fn.name == "SubscribeObserver"
+                           and re.search(r"\bAddObserver\s*\(", body_text(fn))]
+        if not subscribe_impls:
+            return ()
+        # Bind the sink to the implementation that actually invokes it.
+        # Name-only joins across a repository can otherwise combine an IPC entry
+        # in one subsystem with an unrelated AddObserver in another.
+        sink_owners = {fn.owner for fn in subscribe_impls if fn.owner}
+        if not sink_owners:
+            return ()
+        sinks = []
+        for fn in self.functions:
+            if fn.name != "AddObserver" or fn.owner not in sink_owners:
+                continue
+            body = body_text(fn)
+            insert = re.search(
+                r"(?:->|\.)\s*(?:insert|push_back|emplace|emplace_back)\s*\(\s*[^)]*\b(observer|callback)\b",
+                body,
+            )
+            if insert is None:
+                continue
+            # Suppress only the reviewed aggregate observer-cap shape. A random
+            # limit/return earlier in AddObserver is not evidence that this
+            # collection is bounded.
+            aggregate_count = re.search(
+                r"\b(?:auto|uint(?:32_t)?|size_t)\s+(\w+)\s*=\s*GetAllObserversSize\s*\(", body
+            )
+            if aggregate_count is None or "MAX_OBSERVER_COUNT" not in body:
+                aggregate_name = None
+            else:
+                aggregate_name = aggregate_count.group(1)
+            insertion_byte = fn.body.start_byte + len(body[:insert.start()].encode("utf-8"))
+            bounded = False
+            for branch in walk(fn.body, "if_statement"):
+                if branch.end_byte > insertion_byte:
+                    continue
+                condition = fn.text(branch.child_by_field_name("condition"))
+                consequence_node = branch.child_by_field_name("consequence")
+                consequence = fn.text(consequence_node)
+                direct_exit = consequence_node is not None and (
+                    consequence_node.type in ("return_statement", "throw_statement")
+                    or any(child.type in ("return_statement", "throw_statement")
+                           for child in consequence_node.named_children)
+                )
+                if (aggregate_name
+                        and re.search(r"\bMAX_OBSERVER_COUNT\b", condition)
+                        and re.search(r"\b" + re.escape(aggregate_name) + r"\b", condition)
+                        and re.search(r"(?:>=|>)", condition)
+                        and direct_exit):
+                    bounded = True
+                    break
+            if bounded:
+                continue
+            line = fn.body.start_point[0] + 1 + body[:insert.start()].count("\n")
+            sinks.append((fn, line, insert.group(1)))
+        return tuple(sinks)
+
+    def privileged_permission_grants(self):
+        """Find a default-app exemption that directly grants pasteboard reads."""
+        if not any(fn.name == "OnGetPasteData"
+                   and re.search(r"\bGetPasteData\s*\(", fn.text(fn.body))
+                   for fn in self.functions):
+            return ()
+        results = []
+        for verifier in self.functions:
+            if verifier.name != "VerifyPermission" or not verifier.owner:
+                continue
+            body = verifier.text(verifier.body)
+            privilege = re.search(
+                r"\b(?:auto|bool)\s+(\w+)\s*=\s*IsDefaultIME\s*\(", body
+            )
+            grant = re.search(
+                r"\b(?:auto|bool)\s+isGrant\s*=\s*([^;]+);", body
+            )
+            if privilege is None or grant is None:
+                continue
+            if not re.search(r"\b" + re.escape(privilege.group(1)) + r"\b", grant.group(1)):
+                continue
+            callers = [fn for fn in self.functions
+                       if fn.name == "GetPasteData" and fn.owner == verifier.owner
+                       and re.search(r"\bVerifyPermission\s*\(", fn.text(fn.body))]
+            if not callers:
+                continue
+            line = verifier.body.start_point[0] + 1 + body[:grant.start()].count("\n")
+            results.append((verifier, line, privilege.group(1)))
+        return tuple(results)
     def _build_macro_catalog(self, units):
         """Catalogue the scan's own `#define`s, headers first.
 
@@ -1459,6 +1562,17 @@ class Interpreter:
                 return Value("descriptor_read", rv.key) if rv.kind == "parcel" else UNKNOWN
             if name == "GetDescriptor":
                 return self.descriptor_expectation(fn, callee, state)
+            if name == "compare" and receiver:
+                # `ReadInterfaceToken()` is commonly copied into a local
+                # std::u16string and checked with compare() instead of ==/!=.
+                # Preserve the descriptor provenance through that exact
+                # one-argument string comparison; the result is not itself a
+                # guard until the caller compares it with zero below.
+                compared = state.env.get(receiver, UNKNOWN)
+                if (compared.kind == "descriptor_read" and len(args) == 1
+                        and args[0].kind == "descriptor_expected"):
+                    return Value("descriptor_compare", compared.key,
+                                 terms=(args[0],))
             if name == "AsObject" and receiver and not args:
                 # `sptr<T>::AsObject()` hands back the IRemoteObject that smart
                 # pointer already holds -- the same object, not a new one. A reply
@@ -1621,6 +1735,14 @@ class Interpreter:
             right = self.value(fn,node.child_by_field_name("right"),state,depth)
             op = fn.text(node.child_by_field_name("operator"))
             if op in ("==", "!=", "<", "<=", ">", ">="):
+                compared = left if left.kind == "descriptor_compare" else (
+                    right if right.kind == "descriptor_compare" else None)
+                zero = right if left.kind == "descriptor_compare" else left
+                if (compared is not None and zero.kind == "constant"
+                        and zero.key == "0" and op in ("==", "!=")):
+                    expected = compared.terms[0] if compared.terms else UNKNOWN
+                    return Value("predicate", predicate=(
+                        "descriptor", compared.key, op == "==", expected))
                 if left.kind == "descriptor_read" and right.kind == "descriptor_expected" or right.kind == "descriptor_read" and left.kind == "descriptor_expected":
                     rd = left if left.kind == "descriptor_read" else right
                     expected = right if left.kind == "descriptor_read" else left
