@@ -1,0 +1,159 @@
+{
+  "schema_version": "artifact-reconciliation-v1",
+  "created_at": "2026-10-18T04:45:01.289436Z",
+  "output_root": "D:\\openHarmonyScanner\\outputs\\01a14d00-bc78-7ac2-9520-210d4b92b1ac",
+  "canonical_counts": {
+    "sample_reports": 30,
+    "candidate_bearing_reports": 20,
+    "zero_candidate_reports": 10,
+    "candidates": 345,
+    "high_priority_candidates": 283,
+    "normal_priority_candidates": 62,
+    "confirmed_vulnerabilities": 0,
+    "dedicated_pocs": 0
+  },
+  "source_artifacts": {
+    "json": [
+      "evidence/sample_manifest.json",
+      "evidence/candidate_reviews.json",
+      "evidence/provenance.json",
+      "evidence/sample_reproducibility.json",
+      "poc/index.json"
+    ],
+    "markdown": [
+      "report/technical-report.md"
+    ],
+    "xlsx": [
+      "openharmony-a-line-sample30.xlsx",
+      "openharmony-a-line-sample30.xlsx.inspect.ndjson"
+    ],
+    "pdf": [
+      "report/technical-report.pdf"
+    ]
+  },
+  "observed_counts": {
+    "json": {
+      "sample_reports": 30,
+      "candidate_bearing_reports": 20,
+      "zero_candidate_reports": 10,
+      "candidates": 345,
+      "high_priority_candidates": 283,
+      "normal_priority_candidates": 62,
+      "confirmed_vulnerabilities": 0,
+      "dedicated_pocs": 0
+    },
+    "markdown": {
+      "sample_reports": 30,
+      "candidate_bearing_reports": 20,
+      "zero_candidate_reports": 10,
+      "candidates": 345,
+      "high_priority_candidates": 283,
+      "normal_priority_candidates": 62,
+      "confirmed_vulnerabilities": 0,
+      "dedicated_pocs": 0
+    },
+    "xlsx": {
+      "sample_reports": 30,
+      "candidate_bearing_reports": 20,
+      "zero_candidate_reports": 10,
+      "candidates": 345,
+      "high_priority_candidates": 283,
+      "normal_priority_candidates": 62,
+      "confirmed_vulnerabilities": 0,
+      "dedicated_pocs": 0
+    },
+    "pdf": {
+      "sample_reports": 30,
+      "candidate_bearing_reports": 20,
+      "zero_candidate_reports": 10,
+      "candidates": 345,
+      "high_priority_candidates": 283,
+      "normal_priority_candidates": 62,
+      "confirmed_vulnerabilities": 0,
+      "dedicated_pocs": 0
+    }
+  },
+  "match_flags": {
+    "json": {
+      "sample_reports": true,
+      "candidate_bearing_reports": true,
+      "zero_candidate_reports": true,
+      "candidates": true,
+      "high_priority_candidates": true,
+      "normal_priority_candidates": true,
+      "confirmed_vulnerabilities": true,
+      "dedicated_pocs": true
+    },
+    "markdown": {
+      "sample_reports": true,
+      "candidate_bearing_reports": true,
+      "zero_candidate_reports": true,
+      "candidates": true,
+      "high_priority_candidates": true,
+      "normal_priority_candidates": true,
+      "confirmed_vulnerabilities": true,
+      "dedicated_pocs": true
+    },
+    "xlsx": {
+      "sample_reports": true,
+      "candidate_bearing_reports": true,
+      "zero_candidate_reports": true,
+      "candidates": true,
+      "high_priority_candidates": true,
+      "normal_priority_candidates": true,
+      "confirmed_vulnerabilities": true,
+      "dedicated_pocs": true
+    },
+    "pdf": {
+      "sample_reports": true,
+      "candidate_bearing_reports": true,
+      "zero_candidate_reports": true,
+      "candidates": true,
+      "high_priority_candidates": true,
+      "normal_priority_candidates": true,
+      "confirmed_vulnerabilities": true,
+      "dedicated_pocs": true
+    }
+  },
+  "consistent": true,
+  "quality_checks": {
+    "sampling": {
+      "seed": "20261018",
+      "selection_sha256": "16e7da3a1fe9fda80ae66dcda856b5e776b649c0d3ce9fd40de9240ddf56a979",
+      "rerun_same_selection": true,
+      "sample_records": 30
+    },
+    "provenance": {
+      "sample_records": 30,
+      "commit_matches": 30,
+      "tree_matches": 30,
+      "snapshot_matches": 30,
+      "source_checks": 345,
+      "source_hash_matches": 345,
+      "cited_lines_exist": 345,
+      "errors": 0
+    },
+    "candidate_review": {
+      "records": 345,
+      "status_counts": {
+        "not_reproduced": 9,
+        "not_testable": 336
+      },
+      "all_reviewed_records_accounted_for": true
+    },
+    "xlsx": {
+      "sheets": 4,
+      "candidate_rows": 345,
+      "formula_count": 396,
+      "iferror_hyperlink_formula_count": 389,
+      "formula_error_count": 0,
+      "formula_errors": []
+    },
+    "pdf": {
+      "pages": 10,
+      "text_characters": 11130,
+      "required_phrases_present": true
+    }
+  },
+  "interpretation": "所有“高危候选”均表示风险验证优先级，不表示扫描器已经确认高危漏洞。只有通过真实入口/权限边界、可达敏感操作、可控触发条件和具体 CIA 影响完整证据门的候选才能标记 confirmed；本轮为 0。"
+}

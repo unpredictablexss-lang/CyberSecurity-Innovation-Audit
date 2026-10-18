@@ -1,0 +1,1 @@
+ARGV: clang++-14 -std=c++17 -O1 -g -fno-omit-frame-pointer -fsanitize=thread /sandbox/src/shared_ptr_tsan_atomic_control.cpp -o /sandbox/out/bin/shared_ptr_atomic_control

@@ -1,0 +1,1 @@
+ARGV: clang++-14 -std=c++17 -O1 -g -fno-omit-frame-pointer -fsanitize=address\,undefined /sandbox/src/copy_range_model.cpp -o /sandbox/out/bin/copy_range_model
