@@ -5,7 +5,7 @@ from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 from .tlv_fixed_width import find_fixed_width_tlv_overreads
-from .network_session_allowlist import find_missing_auth_session_allowlist
+from .network_session_allowlist import find_auth_session_allowlist_candidates
 from .auth_transport_status import find_permission_denial_transport_success
 
 
@@ -89,7 +89,7 @@ class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
     # 0.9.3 was used by the archived campaign implementation; skip it here so
     # this source-verified macro-flow change cannot collide with that identity.
-    version = "0.12.1"
+    version = "0.12.2"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -225,20 +225,27 @@ class IpcInterfaceDetector:
         for unit in applicable:
             if unit.parse_status in ("failed", "not_run"):
                 continue
-            for line, symbol in find_missing_auth_session_allowlist(unit.text):
+            for line, symbol, check_kind in find_auth_session_allowlist_candidates(unit.text):
+                message = ("AUTH-06 candidate: a decoded peer AppInfo reaches auth-channel state "
+                           "update and success notification without a source-recognized exact "
+                           "sessionName whitelist rejection. Network reachability and policy effect "
+                           "remain unknown.")
+                consequence = "unauthorized_effect"
+                if check_kind == "prefix":
+                    message = ("AUTH-06 candidate: the callback rejects names outside its sessionName "
+                               "allowlist, but the recognized strncmp comparison only checks an "
+                               "allowlist-length prefix. Whether suffix-bearing names are valid and "
+                               "whether this changes downstream authorization remain unknown.")
+                    consequence = "unknown"
                 network_auth_findings.append(DetectorFinding(
                     file=unit.path,
                     line=line,
                     symbol=symbol,
                     rule_id="ipc.network.auth-session-whitelist",
-                    message=("AUTH-06 candidate: a decoded peer AppInfo reaches auth-channel "
-                             "state update and success notification without a source-recognized "
-                             "exact sessionName whitelist rejection. Prefix-only comparisons do "
-                             "not establish full identity equality; network reachability and "
-                             "policy effect remain unknown."),
+                    message=message,
                     evidence_type="syntax",
                     candidate_cwe="CWE-862",
-                    consequence_impact="unauthorized_effect",
+                    consequence_impact=consequence,
                     evidence_obligations=(
                         EvidenceObligation("network_entry_binding",
                                            "Bind this callback to the authenticated transport, peer and enabled product module."),

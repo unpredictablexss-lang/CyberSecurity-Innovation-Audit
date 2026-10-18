@@ -1,8 +1,11 @@
 import unittest
 
 from src.ohscanner.detectors.interface.network_session_allowlist import (
+    find_auth_session_allowlist_candidates,
     find_missing_auth_session_allowlist,
 )
+from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
+from tests.test_ipc_detector import context
 
 
 VULNERABLE = r"""
@@ -77,6 +80,25 @@ class NetworkAuthSessionAllowlistTests(unittest.TestCase):
             "strnlen(g_sessionWhiteList[index], SESSION_NAME_SIZE_MAX)) == 0)",
         )
         self.assertEqual(len(find_missing_auth_session_allowlist(source)), 1)
+        findings = find_auth_session_allowlist_candidates(source)
+        self.assertEqual(len(findings), 1)
+        self.assertEqual(findings[0][2], "prefix")
+
+    def test_exact_rejecting_whitelist_is_not_a_candidate(self):
+        self.assertEqual(find_auth_session_allowlist_candidates(FIXED), ())
+
+    def test_prefix_candidate_keeps_impact_unknown_and_names_the_limitation(self):
+        source = FIXED.replace(
+            "if (strcmp(appInfo->myData.sessionName, g_sessionWhiteList[index]) == 0)",
+            "if (strncmp(appInfo->myData.sessionName, g_sessionWhiteList[index], "
+            "strnlen(g_sessionWhiteList[index], SESSION_NAME_SIZE_MAX)) == 0)",
+        )
+        ctx = context(source)
+        run = IpcInterfaceDetector().detect(ctx, ctx.units)
+        finding = next(item for item in run.findings
+                       if item.rule_id == "ipc.network.auth-session-whitelist")
+        self.assertEqual(finding.consequence_impact, "unknown")
+        self.assertIn("allowlist-length prefix", finding.message)
 
     def test_guard_after_state_update_does_not_suppress_candidate(self):
         source = FIXED.replace(

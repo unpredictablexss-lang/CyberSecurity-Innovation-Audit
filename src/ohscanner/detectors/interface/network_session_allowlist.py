@@ -73,6 +73,34 @@ def _validated_session_name_helpers(root):
     return helpers
 
 
+def _validated_prefix_session_name_helpers(root):
+    """Recognize a rejecting whitelist helper that uses strncmp."""
+    helpers = set()
+    for function in _walk(root, "function_definition"):
+        name = _function_name(function)
+        compact = _compact(function)
+        body = function.child_by_field_name("body")
+        if (not name or body is None or "sessionName" not in compact
+                or "strncmp" not in compact or "WhiteList" not in compact):
+            continue
+        positive_match = False
+        for branch in _walk(body, "if_statement"):
+            condition = branch.child_by_field_name("condition")
+            consequence = branch.child_by_field_name("consequence")
+            if (condition is not None and consequence is not None
+                    and "strncmp" in _compact(condition)
+                    and "==0" in _compact(condition)
+                    and "returntrue" in _compact(consequence)):
+                positive_match = True
+                break
+        statements = body.named_children
+        rejecting_fallback = bool(statements and statements[-1].type == "return_statement"
+                                  and _compact(statements[-1]) == "returnfalse;")
+        if positive_match and rejecting_fallback:
+            helpers.add(name)
+    return helpers
+
+
 def _rejects_before_effect(function, helpers, effect_start):
     body = function.child_by_field_name("body")
     if body is None:
@@ -96,8 +124,8 @@ def _rejects_before_effect(function, helpers, effect_start):
     return False
 
 
-def find_missing_auth_session_allowlist(source):
-    """Return `(line, callback)` for peer session data used before an allowlist.
+def find_auth_session_allowlist_candidates(source):
+    """Return `(line, callback, check_kind)` for weakly guarded peer identity.
 
     This is deliberately limited to the reviewed SoftBus AuthChannel request
     shape. It is not a generic claim that arbitrary network callbacks are unsafe.
@@ -109,6 +137,7 @@ def find_missing_auth_session_allowlist(source):
     parser = Parser(Language(tree_sitter_c.language()))
     root = parser.parse(source.encode("utf-8")).root_node
     helpers = _validated_session_name_helpers(root)
+    prefix_helpers = _validated_prefix_session_name_helpers(root)
     results = []
     for function in _walk(root, "function_definition"):
         if _function_name(function) != "OnRecvAuthChannelRequest":
@@ -132,5 +161,13 @@ def find_missing_auth_session_allowlist(source):
             continue
         if _rejects_before_effect(function, helpers, effect.start_byte):
             continue
-        results.append((effect.start_point.row + 1, "OnRecvAuthChannelRequest"))
+        check_kind = ("prefix" if _rejects_before_effect(
+            function, prefix_helpers, effect.start_byte) else "missing")
+        results.append((effect.start_point.row + 1, "OnRecvAuthChannelRequest", check_kind))
     return tuple(results)
+
+
+def find_missing_auth_session_allowlist(source):
+    """Compatibility wrapper returning locations for weakly guarded callbacks."""
+    return tuple((line, symbol) for line, symbol, _ in
+                 find_auth_session_allowlist_candidates(source))

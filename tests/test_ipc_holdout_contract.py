@@ -6,7 +6,6 @@ import unittest
 from src.ohscanner.detectors.interface.families import registry
 from src.ohscanner.detectors.interface.arkts_js import ArkTsJsInterfaceDetector
 from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
-from src.ohscanner.detectors.interface.models import MODEL_VERSION
 
 MANIFEST = (Path(__file__).parent.parent / "research/evidence/interface/ipc/"
             "high_recall_holdout_20261018/manifest.json")
@@ -23,12 +22,14 @@ class IpcHoldoutContractTests(unittest.TestCase):
                             for family, rules in declared.items()))
         self.assertEqual(manifest["status"], "not_established")
         self.assertFalse(manifest["frozen"])
-        self.assertEqual(manifest["detector_version"], IpcInterfaceDetector.version)
-        self.assertEqual(manifest["model_version"], MODEL_VERSION)
+        # A holdout manifest records the detector that originally produced its
+        # unmeasured declaration. Later detector versions must not rewrite history.
+        self.assertEqual(manifest["detector_version"], "0.12.1")
+        self.assertEqual(manifest["model_version"], "oh-ipc-2026.10-v21")
         self.assertEqual(manifest["detectors"]["ipc"]["version"],
-                         IpcInterfaceDetector.version)
+                         manifest["detector_version"])
         self.assertEqual(manifest["detectors"]["ipc"]["model_version"],
-                         MODEL_VERSION)
+                         manifest["model_version"])
         self.assertTrue(all(item["status"] == "unmeasured"
                             and item["independent_positive_count"] == 0
                             and item["holdout_case_ids"] == []
