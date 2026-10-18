@@ -2,7 +2,7 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 从 0.1.0 升至 0.8.0，支持 10 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.9.0，支持 11 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
 17 项公开 CVE 审查清单中，当前规则覆盖 10 个 CVE 形态。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 7 项没有正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
 
@@ -23,6 +23,8 @@ libpng 归档成员同时记录上游归档 Git blob、归档 SHA-256 和 `png.h
 ## 规则与回归
 - CVE-2026-27648：FlowbufStrAtIndex 未核对 offset 与长度是否仍处于共享 flowbuffer 数据区；ProcessNativeProxyResultNewFlowbuf 在重建 dataList 时按 curIndex 写入但循环无容器上界。两类风险独立保留：只要范围检查或目标数组上界之一仍缺失，就保留 candidate。官方 6.0/5.1/5.0.3 修复 PR 分别为 [#7093](https://gitcode.com/openharmony-tpc/chromium_src/pull/7093)、[#7110](https://gitcode.com/openharmony-tpc/chromium_src/pull/7110)、[#7108](https://gitcode.com/openharmony-tpc/chromium_src/pull/7108)。详细固定 commit、重放和限制见 D28_WEBVIEW_CVE_2026_27648.md.
 
+- CVE-2026-33636：新增 ARM NEON 调色板扩展规则，分别检查 RGBA 4 像素和 RGB 8 像素函数是否处理不完整尾块，以及是否恢复预调整的输出指针。固定官方 libpng 1.6.55 源码保留两条候选，官方 1.6.56 修复源码为 0；原始文件 Git blob/SHA-256 均锁定并重复三轮。G 盘 OpenHarmony 镜像记录已指出对应补丁清单含修复，但具体产品依赖/构建仍未知。该回放是组件源码规则回归，未运行 ARM NEON PoC，产品状态不是 confirmed。详见 D29_LIBPNG_NEON_CVE_2026_33636.md.
+
 - CVE-2025-9900：先对栅格目标指针按图像尺寸偏移的危险形态；正例、已校验尺寸/非偏移修复形态对照。
 - CVE-2025-25212：Pasteboard observer 集合写入但函数内未见按进程身份配额；生命周期、外部限流和真实调用者仍需复核。
 - CVE-2025-27247：在同一源码文件中连接 Binder `GET_PASTE_DATA` dispatch、handler 和数据返回；只在路径内没有可见权限检查时保留候选，不能排除文件/系统服务外部授权。
@@ -31,7 +33,7 @@ libpng 归档成员同时记录上游归档 Git blob、归档 SHA-256 和 `png.h
 - CVE-2026-67216：`cJSON_Compare` 对对象递归比较并重复线性 key lookup；普通解析、非递归比较为负例。
 - CVE-2026-92391：拥有子 MIME 的释放回调重入 `curl_mime_free`，且相关路径无可见深度上限；有限深度控制为负例。
 
-`tests.detectors.test_known_disclosed_cves` 当前 12 项测试通过，包含 vulnerable/fixed、安全、无关、partial 候选保留及上述剪贴板两项控制；另有归档索引、限制/损坏处理、source manifest 与面板源码查看回归；新增 D25 固定合成源 API→Worker→报告→源码查看测试 1/1 通过。最终全量 Python 回归（D25 面板集成测试后）为 917 项（912 passed / 5 skipped / 0 failed），前端 Node 测试 17/17、TypeScript 检查、`compileall`、D22 JSON 解析与 `git diff --check` 通过。生产 Web bundle 构建未通过，原因是 WSL 的 `node_modules` 带 Linux esbuild，而唯一可用 Node 是 Windows 运行时；Web 源码未修改。用于构造规则的已披露样本是调参/回归集，不能作为独立 holdout。
+已披露 CVE 样本来自规则开发语料，是调参/回归集，不能作为独立 holdout。D29 增加了两份官方原始文件哈希校验、三轮稳定重放和 Workbench API→Worker→报告→源码查看的修复前后集成测试；这些证明候选引擎能识别该已知根因并绑定源码，仍不构成独立召回评估。
 
 ## 已证实的上游修复信息与 PoC 边界
 
@@ -46,9 +48,9 @@ D22 的可重复面板/候选回归脚本与结果分别见 `d22_archive_runner_
 
 ## 未覆盖项及不可推断事项
 
-审查记录余下 7 项尚未获得正向可检出形态：CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-33636 当前 libpng 补丁清单包含修复；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。
+审查清单中的其余 6 项目前没有可用的正向检测形态：CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增了历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
 
-没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 10 个规则家族不代表对 17 项清单或整个项目达到完整覆盖；D25 上游旧/新源码对照不能替代冻结 holdout。
+没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 11 个规则家族不代表对审查清单或整个项目达到完整覆盖；D25/D29 上游旧/新源码对照不能替代冻结 holdout。
 
 
 ## 2026-10-19 D23 calibration

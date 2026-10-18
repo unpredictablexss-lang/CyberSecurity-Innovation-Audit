@@ -419,6 +419,44 @@ class WorkbenchTests(unittest.TestCase):
         viewed = service.source(self.settings, self.store, job, candidate["file"])
         self.assertEqual(viewed["text"], source)
 
+    def test_libpng_neon_cve_candidate_and_fix_run_through_api_worker_report(self):
+        fixture_dir = ROOT / "tests" / "fixtures" / "data_sensitive" / "cve_2026_33636"
+        relative = Path("arm/palette_neon_intrinsics.c")
+        source_path = self.repo / relative
+        source_path.parent.mkdir(parents=True)
+        vulnerable = (fixture_dir / "libpng-1.6.55-palette_neon_intrinsics.c").read_bytes()
+        fixed = (fixture_dir / "libpng-1.6.56-palette_neon_intrinsics.c").read_bytes()
+
+        def scan_blob(blob, message):
+            source_path.write_bytes(blob)
+            git(self.repo, "add", str(relative))
+            git(self.repo, "commit", "-qm", message)
+            request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+            Worker(self.settings).run(once=True)
+            job = self.store.job(request["id"])
+            self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+            return job, service.read_report(self.settings, job)
+
+        vulnerable_job, vulnerable_report = scan_blob(vulnerable, "add pinned libpng 1.6.55 source")
+        vulnerable_findings = [
+            item for run in vulnerable_report["detector_runs"] for item in run["diagnostics"]
+            if item["symbol"] == "CVE-2026-33636"
+        ]
+        self.assertEqual(2, len(vulnerable_findings))
+        self.assertTrue(all(item["source_sha256"] == hashlib.sha256(vulnerable).hexdigest()
+                            for item in vulnerable_findings))
+        self.assertEqual(0, vulnerable_report["validated_vulnerability"])
+        viewed = service.source(self.settings, self.store, vulnerable_job, vulnerable_findings[0]["file"])
+        self.assertEqual(viewed["text"].encode(), vulnerable)
+
+        _, fixed_report = scan_blob(fixed, "replace with pinned libpng 1.6.56 fixed source")
+        fixed_findings = [
+            item for run in fixed_report["detector_runs"] for item in run["diagnostics"]
+            if item["symbol"] == "CVE-2026-33636"
+        ]
+        self.assertEqual([], fixed_findings)
+        self.assertEqual(0, fixed_report["validated_vulnerability"])
+
     def test_archived_candidate_runs_through_api_worker_and_source_viewer(self):
         archive_path = self.repo / "vendor" / "sample.tar.gz"
         archive_path.parent.mkdir()

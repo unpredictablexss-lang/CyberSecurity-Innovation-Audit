@@ -1,6 +1,7 @@
 from __future__ import annotations
 import hashlib
 import unittest
+from pathlib import Path
 from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
 from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector
@@ -112,6 +113,57 @@ class KnownDisclosedCveTests(unittest.TestCase):
         safe="void decode(png_structp p,png_infop i){ png_read_info(p,i); png_read_row(p,row,0); png_read_end(p,i); }"
         self.assertIn("CVE-2026-46675", {f.symbol for f in self.run_source(bad, "decoder.c").findings})
         self.assertEqual((), self.run_source(safe, "decoder.c").findings)
+
+    def test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair(self):
+        fixture = Path(__file__).parent / "../fixtures/data_sensitive/cve_2026_33636"
+        vulnerable_path = (fixture / "libpng-1.6.55-palette_neon_intrinsics.c").resolve()
+        fixed_path = (fixture / "libpng-1.6.56-palette_neon_intrinsics.c").resolve()
+        vulnerable = vulnerable_path.read_bytes()
+        fixed = fixed_path.read_bytes()
+
+        def git_blob_sha1(blob):
+            return hashlib.sha1(b"blob " + str(len(blob)).encode() + b"\0" + blob).hexdigest()
+
+        self.assertEqual("3068e9b6e62be16bee2a8f1ff8271a02f32be97f", git_blob_sha1(vulnerable))
+        self.assertEqual("0967ea1aebd718907fda1e767957deeddbe676b3", git_blob_sha1(fixed))
+        self.assertEqual("d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+                         hashlib.sha256(vulnerable).hexdigest())
+        self.assertEqual("a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+                         hashlib.sha256(fixed).hexdigest())
+
+        old_run = self.run_source(vulnerable.decode(), "arm/palette_neon_intrinsics.c")
+        new_run = self.run_source(fixed.decode(), "arm/palette_neon_intrinsics.c")
+        old = [f for f in old_run.findings if f.symbol == "CVE-2026-33636"]
+        self.assertEqual(2, len(old))
+        self.assertEqual({"CWE-119"}, {finding.candidate_cwe for finding in old})
+        self.assertEqual(2, len({finding.line for finding in old}))
+        self.assertEqual({hashlib.sha256(vulnerable).hexdigest()},
+                         {finding.source_sha256 for finding in old})
+        self.assertEqual([], [f for f in new_run.findings if f.symbol == "CVE-2026-33636"])
+
+        loop_only = vulnerable.decode().replace(
+            "i < row_width; i += pixels_per_chunk",
+            "i + pixels_per_chunk <= row_width; i += pixels_per_chunk",
+        )
+        pointer_only = vulnerable.decode().replace(
+            "*ssp = *ssp - i;",
+            "*ddp = *ddp + (pixels_per_chunk * 4 - 1);\n   *ssp = *ssp - i;",
+            1,
+        ).replace(
+            "*ssp = *ssp - i;",
+            "*ddp = *ddp + (pixels_per_chunk * 3 - 1);\n   *ssp = *ssp - i;",
+            1,
+        )
+        for incomplete_fix in (loop_only, pointer_only):
+            remaining = [f for f in self.run_source(
+                incomplete_fix, "arm/palette_neon_intrinsics.c").findings
+                if f.symbol == "CVE-2026-33636"
+            ]
+            self.assertEqual(2, len(remaining))
+
+        unrelated = """void png_do_expand_palette_rgba8_neon(void) { for (i=0; i<row_width; i++) scalar_copy(); }
+        void png_do_expand_palette_rgb8_neon(void) { return; }"""
+        self.assertNotIn("CVE-2026-33636", {f.symbol for f in self.run_source(unrelated, "other.c").findings})
 
     def test_cjson_json_patch_unbounded_recursion_candidate(self):
         vulnerable = """static int apply_patch(node *object,node *patch){ node *value=cJSON_Duplicate(patch,1); if(!value)return 0; cleanup: if(value)cJSON_Delete(value); return 0; }
