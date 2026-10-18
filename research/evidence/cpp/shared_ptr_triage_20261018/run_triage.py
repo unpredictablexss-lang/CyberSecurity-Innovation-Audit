@@ -19,7 +19,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[4]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.ohscanner.detectors.cpp.shared_ptr_race_detector import SharedPtrRaceDetector
+from src.ohscanner.detectors.cpp.shared_ptr_race_detector import (
+    SharedPtrRaceDetector,
+    member_access_groups,
+)
 from src.ohscanner.git_source import load_git_sources
 from src.ohscanner.indexing import prepare_git_context
 
@@ -96,9 +99,16 @@ def _run_component(manifest_path: Path) -> Dict[str, Any]:
         or tree != expected_tree
     ):
         raise ValueError("pinned source identity changed during triage: " + repository)
-    run = SharedPtrRaceDetector().detect(context, context.units)
+    run, records = SharedPtrRaceDetector().analyze(context.units)
     findings = [_finding_json(item) for item in run.findings]
+    member_groups = list(member_access_groups(records, run.findings))
     counts = Counter((item["file"], item["symbol"]) for item in findings)
+    group_categories: Dict[Tuple[str, str], List[str]] = {}
+    for group in member_groups:
+        for file in group["files"]:
+            group_categories.setdefault((file, group["member"]), []).append(
+                str(group["category"])
+            )
     operations = Counter(
         (item["file"], item["symbol"], item["operation"]) for item in findings
     )
@@ -119,6 +129,13 @@ def _run_component(manifest_path: Path) -> Dict[str, Any]:
                 if operations.get((file, symbol, "read"), 0)
                 else "unknown"
             ),
+            "category": (
+                group_categories[(file, symbol)][0]
+                if len(group_categories.get((file, symbol), [])) == 1
+                else "ambiguous"
+                if group_categories.get((file, symbol))
+                else "unknown"
+            ),
         }
         for (file, symbol), count in sorted(
             counts.items(), key=lambda item: (-item[1], item[0][0], item[0][1])
@@ -136,9 +153,19 @@ def _run_component(manifest_path: Path) -> Dict[str, Any]:
         "detector": {"id": run.detector_id, "version": run.version, "status": run.status},
         "candidate_count": len(findings),
         "group_count": len(counts),
+        "member_group_count": len(member_groups),
+        "member_group_category_counts": dict(sorted(Counter(
+            item["category"] for item in member_groups
+        ).items())),
+        "candidate_category_counts": dict(sorted(Counter(
+            item["category"] for item in member_groups
+            for _ in range(item["candidate_findings"])
+        ).items())),
         "read_candidates": sum(item["operation"] == "read" for item in findings),
         "write_candidates": sum(item["operation"] == "write" for item in findings),
         "top_members": top_members,
+        "member_groups": member_groups,
+        "access_records": [item.to_dict() for item in records],
         "findings": findings,
         "coverage": coverage,
         "limitations": list(run.limitations),
@@ -152,14 +179,48 @@ def _write_markdown(rows: Sequence[Dict[str, Any]], path: Path) -> None:
         "> Candidate-only lexical triage; counts are access-point diagnostics,",
         "> not vulnerability, root-cause, or Precision/Recall measurements.",
         "",
-        "| Component | Files | Candidates | File/symbol groups |",
-        "|---|---:|---:|---:|",
+        "| Component | Files | Candidates | File/symbol groups | Class/member groups |",
+        "|---|---:|---:|---:|---:|",
     ]
     for row in rows:
         lines.append(
             f"| `{row['component']}` | {row['selected_source_files']} | "
-            f"{row['candidate_count']} | {row['group_count']} |"
+            f"{row['candidate_count']} | {row['group_count']} | "
+            f"{row['member_group_count']} |"
         )
+    category_totals: Counter = Counter()
+    category_candidates: Counter = Counter()
+    for row in rows:
+        for category, count in row["member_group_category_counts"].items():
+            category_totals[category] += count
+        for category, count in row["candidate_category_counts"].items():
+            category_candidates[category] += count
+    lines.extend([
+        "",
+        "| Category | Member groups | Attributed candidate findings |",
+        "|---|---:|---:|",
+    ])
+    for category in sorted(category_totals):
+        lines.append(
+            f"| `{category}` | {category_totals[category]} | "
+            f"{category_candidates.get(category, 0)} |"
+        )
+    lines.extend(["", "## Class/member groups", ""])
+    for row in rows:
+        lines.append(f"### `{row['component']}`")
+        lines.append("")
+        if not row["member_groups"]:
+            lines.append("- No modeled member access in the selected lexical scope.")
+        for item in row["member_groups"]:
+            lines.append(
+                f"- `{item['qualified_class_name']}::{item['member']}`: "
+                f"category={item['category']}, accesses={item['accesses']} "
+                f"(reads={item['reads']}, writes={item['writes']}, "
+                f"initializations={item['initializations']}), "
+                f"locks={','.join(item['lock_identities']) or 'none'}, "
+                f"candidate_findings={item['candidate_findings']}"
+            )
+        lines.append("")
     lines.extend(["", "## Top members", ""])
     for row in rows:
         lines.append(f"### `{row['component']}`")
@@ -205,6 +266,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             "selected_source_bytes": sum(row["selected_source_bytes"] for row in rows),
             "candidate_count": sum(row["candidate_count"] for row in rows),
             "group_count": sum(row["group_count"] for row in rows),
+            "member_group_count": sum(row["member_group_count"] for row in rows),
+            "member_group_category_counts": dict(sorted(Counter(
+                category
+                for row in rows
+                for category, count in row["member_group_category_counts"].items()
+                for _ in range(count)
+            ).items())),
+            "candidate_category_counts": dict(sorted(Counter(
+                category
+                for row in rows
+                for category, count in row["candidate_category_counts"].items()
+                for _ in range(count)
+            ).items())),
             "read_candidates": sum(row["read_candidates"] for row in rows),
             "write_candidates": sum(row["write_candidates"] for row in rows),
             "validated_vulnerability": 0,

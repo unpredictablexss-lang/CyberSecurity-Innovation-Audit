@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/shared_ptr_triage_20261018_v4",
+  "candidate": "research/evidence/cpp/shared_ptr_triage_20261018_v5",
+  "detector": "ohscanner.cpp.shared_ptr_race",
+  "detector_version": "0.5.3",
+  "baseline_candidates": 504,
+  "candidate_candidates": 504,
+  "baseline_groups": 108,
+  "candidate_groups": 108,
+  "candidate_member_groups": 212,
+  "member_group_category_counts": {
+    "constructor_only": 53,
+    "cross_function_unknown": 82,
+    "mutable_owner": 24,
+    "stable_owner": 45,
+    "write_only": 8
+  },
+  "candidate_category_counts": {
+    "cross_function_unknown": 451,
+    "mutable_owner": 42,
+    "write_only": 9
+  },
+  "attributed_candidate_findings": 502,
+  "ambiguous_candidate_findings": 2,
+  "note": "The method-level view re-groups the same 504 access-point candidates by qualified class/member without changing any candidate or verdict. 98 of 212 member groups are quiet (45 read-only stable owners and 53 constructor-only owners); 2 findings remain ambiguous between OHOS::AbilityContext::abilityInfo_ and OHOS::ExtensionContext::abilityInfo_, which share one header. Categories are triage labels, not root causes or Precision/Recall."
+}

@@ -76,6 +76,40 @@ control or impact.
 - These controls reduce syntax noise only. They do not prove concurrency,
   happens-before, product reachability or CIA impact.
 
+## Method-level triage (2026-10-18)
+
+`SharedPtrRaceDetector.analyze()` returns the same `DetectorRun` plus an A-line
+internal tuple of method-level `MemberAccessRecord`s (file/line, qualified
+class/member, function identity, `initialization/read/write`, atomic flag, held
+lock identities, unreliable-lock reasons, constructor flag). The record API is
+not part of the public detector contract and does not change findings.
+
+`member_access_groups()` aggregates those records by qualified class/member and
+labels each group for triage only:
+
+| Category | Meaning | Pairwise rule behaviour |
+|---|---|---|
+| `atomic_only` | every modeled access uses the atomic shared_ptr API | no candidate |
+| `stable_owner` | reads only | no candidate |
+| `constructor_only` | mutation only in constructor bodies (`initialization`) | no candidate |
+| `write_only` | writes without reads in the narrowed scope | candidate/unknown (external reader remains possible) |
+| `mutable_owner` | reads and post-construction writes inside one function | candidate/unknown |
+| `cross_function_unknown` | post-construction writes and reads span functions or files | candidate/unknown; protocol unproven |
+
+Fixed five-component replay (`shared_ptr_triage_20261018_v5`): 504 candidates /
+108 file-symbol groups, unchanged from v4. The method-level view resolves them
+into 212 class/member groups: 45 `stable_owner` and 53 `constructor_only` are
+quiet, 24 `mutable_owner` (42 candidates), 82 `cross_function_unknown`
+(451 candidates) and 8 `write_only` (9 candidates). Two findings cannot be
+attributed to one class because `OHOS::AbilityContext::abilityInfo_` and
+`OHOS::ExtensionContext::abilityInfo_` share one header. Evidence:
+`research/evidence/cpp/shared_ptr_triage_20261018_v5/summary.json` and
+`comparison.json`.
+
+Candidate counts are unchanged by design: this is an audit grouping, not a new
+detector rule. No group is promoted to a root cause, and no Precision/Recall is
+derived from these categories.
+
 ## Regression record
 
 - Failure gate before implementation: targeted suite `31` tests, `9` failures; the mixed

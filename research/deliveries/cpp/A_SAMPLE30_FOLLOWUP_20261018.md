@@ -56,6 +56,15 @@ The current 0.5.3 triage also classifies member access points: 375 reads and
 112 writes, with the remaining points unclassified. The raw candidate count is
 unchanged by this classification; it is an audit aid, not a new verdict.
 
+The 2026-10-18 method-level triage (`shared_ptr_triage_20261018_v5`) keeps the
+same 504 candidates / 108 file-symbol groups and re-groups them by qualified
+class/member into 212 groups: 45 `stable_owner` and 53 `constructor_only` are
+quiet, 24 `mutable_owner` (42 candidates), 82 `cross_function_unknown`
+(451 candidates) and 8 `write_only` (9 candidates). Two findings remain
+ambiguous between `OHOS::AbilityContext::abilityInfo_` and
+`OHOS::ExtensionContext::abilityInfo_` because both classes share one header.
+This grouping changes no verdict and is not a Precision/Recall measurement.
+
 ## Pending
 
 The 30 sample source repositories are not present locally, so the sample30
