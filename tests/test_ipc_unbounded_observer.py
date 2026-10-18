@@ -22,6 +22,10 @@ class PasteStub {
 """
 SERVICE = """
 class PasteService : public PasteStub {
+  bool IsDefaultIME(AppInfo info) {
+    if (bundles_.empty()) { return true; }
+    return false;
+  }
   void SubscribeObserver(Observer *observer) {
     AddObserver(observer);
   }
@@ -177,6 +181,22 @@ class UnboundedObserverTests(unittest.TestCase):
             if item.kind == "call_path_binding"))
         self.assertEqual({item.kind for item in findings[0].evidence_obligations},
                          {"call_path_binding", "grant_policy", "entry_reachability", "disclosure_impact"})
+
+    def test_empty_bundle_true_branch_is_reported_as_source_evidence(self):
+        findings = finding_rule(run_service(SERVICE), "ipc.auth.privileged-app-bypass")
+        self.assertEqual(len(findings), 1)
+        self.assertIn("IsDefaultIME returns true when bundles_ is empty", findings[0].message)
+        self.assertIn("empty configuration can contribute to the verifier grant", findings[0].message)
+        self.assertIn("Configuration state is unknown", findings[0].message)
+
+    def test_empty_bundle_false_branch_does_not_claim_fail_open_evidence(self):
+        safe = SERVICE.replace(
+            "if (bundles_.empty()) { return true; }",
+            "if (bundles_.empty()) { return false; }",
+        )
+        findings = finding_rule(run_service(safe), "ipc.auth.privileged-app-bypass")
+        self.assertEqual(len(findings), 1)
+        self.assertNotIn("bundles_ is empty", findings[0].message)
 
     def test_missing_hierarchy_keeps_candidate_without_claiming_a_call_path(self):
         unlinked = SERVICE.replace("class PasteService : public PasteStub {", "class PasteService {")

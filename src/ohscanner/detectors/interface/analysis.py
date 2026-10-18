@@ -742,7 +742,26 @@ class Interpreter:
             line = verifier.body.start_point[0] + 1 + body[:grant.start()].count("\n")
             path_notes = paths_by_owner.get(verifier.owner, ())
             path_note = path_notes[0] if len(set(path_notes)) == 1 else None
-            results.append((verifier, line, privilege.group(1), path_note))
+            helper_candidates = [candidate for candidate in self.functions
+                                 if candidate.name == "IsDefaultIME"
+                                 and candidate.owner == verifier.owner]
+            empty_branch_note = None
+            if len(helper_candidates) == 1:
+                helper = helper_candidates[0]
+                helper_body = helper.text(helper.body)
+                empty_true = re.search(
+                    r"if\s*\(\s*(\w+(?:->\w+|\.\w+)*)\s*\.\s*empty\s*\(\s*\)\s*\)\s*\{\s*return\s+true\s*;",
+                    helper_body,
+                )
+                if empty_true is not None:
+                    helper_line = helper.body.start_point[0] + 1 + helper_body[:empty_true.start()].count("\n")
+                    empty_branch_note = (
+                        helper.qualified + " returns true when " + empty_true.group(1)
+                        + " is empty at " + helper.file + ":" + str(helper_line)
+                        + "; because the result contributes to isGrant, empty configuration "
+                        + "can contribute to the verifier grant. Configuration state is unknown."
+                    )
+            results.append((verifier, line, privilege.group(1), path_note, empty_branch_note))
         return tuple(results)
     def _build_macro_catalog(self, units):
         """Catalogue the scan's own `#define`s, headers first.
