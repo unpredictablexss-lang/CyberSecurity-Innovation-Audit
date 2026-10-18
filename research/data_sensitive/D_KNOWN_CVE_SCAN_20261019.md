@@ -2,9 +2,9 @@
 
 ## 结论与范围
 
-针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.9.0，支持 11 项有具体源码线索的公开 CVE 形态：CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
+针对 `OHScanner_G盘源码漏洞审查记录_20261018.md`，`ohscanner.known_disclosed_cves` 当前为 0.10.0，支持 12 项有具体源码线索的公开 CVE 形态：CVE-2022-45877、CVE-2025-9900、CVE-2025-25212、CVE-2025-27247、CVE-2025-57052、CVE-2026-27648、CVE-2026-33636、CVE-2026-46675、CVE-2026-67215、CVE-2026-67216、CVE-2026-92391、CVE-2026-9079。每个命中都是 `candidate`，仍绑定源 SHA、规则版本、CWE，并保留组件构建、产品入口、攻击者控制和影响等证据义务；`validated_vulnerability` 不升级。
 
-17 项公开 CVE 审查清单中，当前规则覆盖 10 个 CVE 形态。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 7 项没有正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
+17 项公开 CVE 审查清单中，当前规则覆盖 12 个 CVE 条目。D20-D24 固定 G 盘快照记录的 7 个候选命中与 1 个已修复 curl 形态控制保持原样；D25 另对 cJSON 上游漏洞父提交/修复提交进行精确源码对照，旧提交命中、修复提交不命中。审查清单仍有 5 项没有当前快照正向可检出形态。该组合不是独立 holdout，也不是对 17 项或全项目的 Recall。
 
 ## 固定源码回放
 
@@ -53,7 +53,7 @@ D30 在 G 镜像中实际跟踪的 libpng 1.6.55 构建归档上补齐了独立�
 
 ## 未覆盖项及不可推断事项
 
-审查清单中的其余 6 项目前没有可用的正向检测形态：CVE-2022-45877 当前旧代码不足以证明 PIN 明文传输；CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增了历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
+审查清单中其余 5 项目前没有当前快照的正向检测形态：CVE-2026-58313、CVE-2026-28733、CVE-2026-25850、CVE-2026-28751 缺少当前快照到公告根因/受影响产品版本的可靠闭环（其中部分 master 有修复迹象）；CVE-2026-92392 当前 curl 8.8.0 低于其受影响版本；未扫描、不命中和有修复线索都不自动代表安全。CVE-2026-33636 虽新增了历史组件版本检测形态，但 G 镜像显示本地补丁清单已有该修复，因此它不作为当前产品漏洞报告。
 
 没有 OpenHarmony 产品产物/构建来源、产品级入口、权限与攻击者控制、影响证据及必要的受控动态验证，因此当前所有结果仍为候选，产品 `confirmed/reportable=0`。静态命中和组件级 Harness 不证明产品漏洞。下一步是补真实修复提交的正反样例，再用冻结且独立标注的数据评估召回；当前 11 个规则家族不代表对审查清单或整个项目达到完整覆盖；D25/D29 上游旧/新源码对照不能替代冻结 holdout。
 
@@ -82,3 +82,7 @@ Detector 0.6.0 adds the one-character `pointer[0]` versus `pointer[position]` ro
 D31 在固定 `third_party_libtiff@d4a0516c477dfbaf1153ae295893ab75aadd63d4` 上重复得到 `tif_getimage.c:621` 候选，source SHA-256 与 Git 对象相同。CMake 构建的 ASan 组件 PoC 以合法 16×16 调色板 TIFF 请求写入 16×1 栅格，旧版 3/3 在 `put8bitcmaptile` 报 WRITE 访问；应用上游 MR !732 的完整尺寸处理改动后 0/3 报告，16×16 安全控制 0/3。代码、回放脚本与机器结果见 `D31_LIBTIFF_CVE_2025_9900_REPORT.md`、`d31_libtiff_cve_2025_9900_replay.py` 和 `D31_LIBTIFF_CVE_2025_9900_REPLAY.json`。
 
 此处 confirmed 只表示固定 libtiff 4.7.0 组件路径出现 ASan 越界写；漏洞公告描述更强的 write-what-where 风险，但本 Harness 未证明任意地址可控或代码执行。OpenHarmony 产品构建、攻击者可控调用入口及影响仍 unknown，扫描命中仍为 candidate，`validated_vulnerability=0`。此处是固定源码 Runner 回放，不是本轮 UI API 回归；扫描页集成与其他面板路径验证见 D22/D30。
+
+## D33 CVE-2022-45877 device-manager PIN 传输
+
+0.10.0 增加 OnGroupCreated 同函数内 PIN→authToken→认证响应 SoftBus 发送链规则。对官方固定旧源码 97c3d5c7b07a0ab599afcc1464143b255e7dbb68 命中 1 条 candidate（dm_auth_manager.cpp:348）；修复提交 8bea775dc169bca2d9a1ce57ada2d86cbd179163 不命中。两份 Git 源文件 SHA 固定在 JSON 结果。旧/新 detector run 均 blocked（partial AST），结果只验证组件规则对已知根因的正反识别。NVD 将 OpenHarmony 3.1 至 3.1.4（含）列为受影响；目标产品实际版本、构建纳入、SoftBus 通道可观察性及产品影响 unknown。组件历史根因 confirmed，不升级产品 finding 或 validated_vulnerability。详见 [D33 组件 PoC 与修复复审](D33_CVE_2022_45877_REPORT.md)、回放脚本和 JSON。

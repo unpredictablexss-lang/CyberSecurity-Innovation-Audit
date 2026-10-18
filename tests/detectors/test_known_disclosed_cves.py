@@ -14,6 +14,37 @@ class KnownDisclosedCveTests(unittest.TestCase):
         run=KnownDisclosedCveDetector().detect(ScanContext(request=request, units=(unit,)), (unit,))
         return run
 
+    def test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed(self):
+        vulnerable = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
+            int32_t pinCode = GeneratePincode();
+            nlohmann::json jsonObj;
+            jsonObj[PIN_CODE_KEY] = pinCode;
+            jsonObj[PIN_TOKEN] = authResponseContext_->token;
+            authResponseContext_->authToken = jsonObj.dump();
+            authMessageProcessor_->SetResponseContext(authResponseContext_);
+            std::string message = authMessageProcessor_->CreateSimpleMessage(MSG_TYPE_RESP_AUTH);
+            softbusConnector_->GetSoftbusSession()->SendData(authResponseContext_->sessionId, message);
+        }"""
+        fixed = vulnerable.replace("jsonObj[PIN_CODE_KEY] = pinCode;\n            ", "")
+        unrelated = """void Other::OnGroupCreated() {
+            jsonObj[PIN_CODE_KEY] = pinCode;
+            authResponseContext_->authToken = jsonObj.dump();
+        }
+        void SendOtherMessage() {
+            softbusConnector_->GetSoftbusSession()->SendData(authResponseContext_->sessionId, message);
+        }"""
+        vulnerable_run = self.run_source(vulnerable, "dm_auth_manager.cpp", "partial")
+        findings = [f for f in vulnerable_run.findings if f.symbol == "CVE-2022-45877"]
+        self.assertEqual(1, len(findings))
+        self.assertEqual("CWE-319", findings[0].candidate_cwe)
+        self.assertEqual("sensitive_data_exposure", findings[0].consequence_impact)
+        self.assertIn("unconfirmed", findings[0].message)
+        self.assertEqual("blocked", vulnerable_run.status)
+        self.assertEqual([], [f for f in self.run_source(fixed, "dm_auth_manager.cpp").findings
+                              if f.symbol == "CVE-2022-45877"])
+        self.assertEqual([], [f for f in self.run_source(unrelated, "dm_auth_manager.cpp").findings
+                              if f.symbol == "CVE-2022-45877"])
+
     def test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes(self):
         vulnerable = """int TIFFReadRGBAImageOriented(TIFF *tif, uint32_t rwidth, uint32_t rheight, uint32_t *raster, int orientation, int stop) {
             ok = TIFFRGBAImageGet(&img, raster + (rheight - img.height) * rwidth, rwidth, img.height);

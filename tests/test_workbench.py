@@ -384,6 +384,38 @@ class WorkbenchTests(unittest.TestCase):
         self.assertEqual(report["validated_vulnerability"], 0)
         viewed = service.source(self.settings, self.store, job, candidate["file"])
         self.assertEqual(viewed["text"], source)
+    def test_device_manager_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
+        source = """void DmAuthManager::OnGroupCreated(int64_t requestId, const std::string &groupId) {
+            int32_t pinCode = GeneratePincode();
+            nlohmann::json jsonObj;
+            jsonObj[PIN_CODE_KEY] = pinCode;
+            jsonObj[PIN_TOKEN] = authResponseContext_->token;
+            authResponseContext_->authToken = jsonObj.dump();
+            authMessageProcessor_->SetResponseContext(authResponseContext_);
+            std::string message = authMessageProcessor_->CreateSimpleMessage(MSG_TYPE_RESP_AUTH);
+            softbusConnector_->GetSoftbusSession()->SendData(authResponseContext_->sessionId, message);
+        }"""
+        (self.repo / "dm_auth_manager.cpp").write_text(source)
+        git(self.repo, "add", "dm_auth_manager.cpp")
+        git(self.repo, "commit", "-qm", "add pinned device manager CVE source fixture")
+        self.commit = git(self.repo, "rev-parse", "HEAD")
+        request = self.queue(detector_ids=["ohscanner.known_disclosed_cves"])
+        Worker(self.settings).run(once=True)
+        job = self.store.job(request["id"])
+        self.assertIn(job["status"], {"completed", "completed_with_limitations"}, job)
+        report = service.read_report(self.settings, job)
+        diagnostics = [
+            item for run in report["detector_runs"] for item in run["diagnostics"]
+            if item["symbol"] == "CVE-2022-45877"
+        ]
+        self.assertEqual(1, len(diagnostics))
+        candidate = diagnostics[0]
+        self.assertEqual("CWE-319", candidate["candidate_cwe"])
+        self.assertEqual(hashlib.sha256(source.encode()).hexdigest(), candidate["source_sha256"])
+        self.assertEqual(0, report["validated_vulnerability"])
+        viewed = service.source(self.settings, self.store, job, candidate["file"])
+        self.assertEqual(viewed["text"], source)
+
     def test_webview_cve_candidate_runs_through_api_worker_report_and_source_viewer(self):
         source = """char *FlowbufStrAtIndex(void *mem, int i, int *argIndex, size_t *strLen) {
             char *header = (char *)mem;
