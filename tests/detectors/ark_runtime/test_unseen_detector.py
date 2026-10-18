@@ -1,5 +1,7 @@
+import os
 from dataclasses import replace
 from hashlib import sha1
+from pathlib import Path
 import unittest
 
 from src.ohscanner.detectors.catalog import build_registry
@@ -50,6 +52,72 @@ class UnseenSourceContractTests(unittest.TestCase):
         # Filter is inspected under the new identity, but the exception rule
         # still reports its missing Map sibling as partial coverage.
         self.assertEqual(coverage["detectors"][DETECTOR_ID]["coverage_counts"]["partial"], 1)
+
+    def test_same_type_fixed_and_safe_controls_do_not_emit_candidates(self):
+        for case_id in ("C04", "C05", "C06"):
+            with self.subTest(case_id=case_id):
+                source = case(case_id)
+                scan_context = self.make_git_context((source,), "d" * 40)
+                reports, coverage = run_all_with_coverage(
+                    scan_context, build_registry((DETECTOR_ID,)))
+                entry = coverage["detectors"][DETECTOR_ID]
+                self.assertEqual(entry["applicable_files"], 1)
+                self.assertEqual(reports[0].diagnostic_count, 0)
+
+    def test_partial_unknown_control_stays_blocked(self):
+        source = case("C07")
+        scan_context = self.make_git_context((source,), "c" * 40)
+        reports, coverage = run_all_with_coverage(
+            scan_context, build_registry((DETECTOR_ID,)))
+        entry = coverage["detectors"][DETECTOR_ID]
+        self.assertEqual(entry["applicable_files"], 1)
+        self.assertEqual(reports[0].status, "blocked")
+        self.assertGreater(entry["coverage_counts"]["partial"], 0)
+
+    def test_unrelated_same_language_code_is_not_selected(self):
+        unrelated = case("C08")
+        scan_context = self.make_git_context((unrelated,), "b" * 40)
+        detector = ArkRuntimeUnseenTypeSafetyDetector()
+        self.assertEqual(detector.select_applicable_units(scan_context, scan_context.units), ())
+
+    @unittest.skipUnless(os.environ.get("OHSCANNER_ARK_REPO"),
+                         "Pinned Ark Git store not supplied; no implicit fetch")
+    def test_unseen_fixed_upstream_revision_is_semantically_applicable(self):
+        from src.ohscanner.indexing import prepare_git_context
+        repository = Path(os.environ["OHSCANNER_ARK_REPO"])
+        commit = "a0e30483ab3e4aead67ecfb5c708489915e447f9"
+        path = "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+        scan_context, _, _, _, _ = prepare_git_context(
+            repository, "openharmony/arkcompiler_ets_runtime", commit, (path,))
+        reports, coverage = run_all_with_coverage(
+            scan_context, build_registry((DETECTOR_ID,)))
+        entry = coverage["detectors"][DETECTOR_ID]
+        self.assertEqual(entry["applicable_files"], 1)
+        self.assertEqual(reports[0].tool_version, "0.7.0")
+        self.assertFalse(any(d.rule_id == "ark.runtime.typedarray-store-type-origin"
+                             for d in reports[0].diagnostics))
+
+    @unittest.skipUnless(os.environ.get("OHSCANNER_ARK_REPO"),
+                         "Pinned Ark Git store not supplied; no implicit fetch")
+    def test_unseen_exception_guard_parent_and_fix_controls(self):
+        from src.ohscanner.indexing import prepare_git_context
+        repository = Path(os.environ["OHSCANNER_ARK_REPO"])
+        path = "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+        expected = {
+            "c758818dbfd0b146a908d43d21f6ca1706c33783": True,
+            "81ca57487d04ea30cd11c271e86494a4e130f43e": False,
+        }
+        for commit, should_report in expected.items():
+            with self.subTest(commit=commit):
+                scan_context, _, _, _, _ = prepare_git_context(
+                    repository, "openharmony/arkcompiler_ets_runtime", commit, (path,))
+                reports, coverage = run_all_with_coverage(
+                    scan_context, build_registry((DETECTOR_ID,)))
+                entry = coverage["detectors"][DETECTOR_ID]
+                self.assertEqual(entry["applicable_files"], 1)
+                findings = [d for d in reports[0].diagnostics
+                            if d.rule_id == "ark.runtime.typedarray-allocation-exception-guard"]
+                self.assertEqual(bool(findings), should_report)
 
     def test_unrelated_source_is_not_admitted_by_path_or_repository_only(self):
         unrelated = unit("void unrelated() {}", "another/path/unrelated.cpp")
