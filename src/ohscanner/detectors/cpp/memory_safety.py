@@ -393,6 +393,24 @@ def expression_interval(
             low, high = constraints[text]
             return Interval(low, high, low is not None or high is not None)
         return Interval.unknown()
+    offset_match = re.fullmatch(
+        r"\s*(?P<name>[A-Za-z_]\w*)\s*(?P<op>[+-])\s*(?P<value>\d+)\s*", text
+    )
+    if offset_match:
+        base = expression_interval(offset_match.group("name"), constants, constraints)
+        offset = int(offset_match.group("value"))
+        if base.known:
+            if offset_match.group("op") == "+":
+                return Interval(
+                    None if base.minimum is None else base.minimum + offset,
+                    None if base.maximum is None else base.maximum + offset,
+                    base.known,
+                )
+            return Interval(
+                None if base.minimum is None else base.minimum - offset,
+                None if base.maximum is None else base.maximum - offset,
+                base.known,
+            )
     if re.search(r"[A-Za-z_]\w*", text):
         identifiers = re.findall(r"[A-Za-z_]\w*", text)
         lows: List[int] = []
@@ -448,6 +466,8 @@ def guard_constraints(
         patterns = (
             (r"(?P<name>[A-Za-z_]\w*)\s*>=\s*(?P<value>sizeof\s*\([^)]+\)|[A-Za-z_]\w*|\d+)", "ge"),
             (r"(?P<name>[A-Za-z_]\w*)\s*>\s*(?P<value>sizeof\s*\([^)]+\)|[A-Za-z_]\w*|\d+)", "gt"),
+            (r"(?P<name>[A-Za-z_]\w*)\s*<=\s*(?P<value>sizeof\s*\([^)]+\)|[A-Za-z_]\w*|\d+)", "le"),
+            (r"(?P<name>[A-Za-z_]\w*)\s*<\s*(?P<value>sizeof\s*\([^)]+\)|[A-Za-z_]\w*|\d+)", "lt"),
             (r"(?P<name>[A-Za-z_]\w*)\s*<\s*0", "lt_zero"),
             (r"(?P<name>[A-Za-z_]\w*)\s*==\s*nullptr", "null"),
         )
@@ -459,13 +479,25 @@ def guard_constraints(
             value_text = match.groupdict().get("value")
             value = _comparison_value(value_text, constants, sizeof_values) if value_text else None
             low, high = constraints.get(name, (None, None))
-            if kind in {"ge", "gt"} and value is not None:
+            if kind in {"ge", "gt", "le", "lt"} and value is not None:
                 if negated:
-                    bound = value - 1 if kind == "ge" else value
-                    high = bound if high is None else min(high, bound)
+                    if kind == "ge":
+                        high = value - 1 if high is None else min(high, value - 1)
+                    elif kind == "gt":
+                        high = value if high is None else min(high, value)
+                    elif kind == "le":
+                        low = value + 1 if low is None else max(low, value + 1)
+                    else:
+                        low = value if low is None else max(low, value)
                 else:
-                    bound = value if kind == "ge" else value + 1
-                    low = bound if low is None else max(low, bound)
+                    if kind == "ge":
+                        low = value if low is None else max(low, value)
+                    elif kind == "gt":
+                        low = value + 1 if low is None else max(low, value + 1)
+                    elif kind == "le":
+                        high = value if high is None else min(high, value)
+                    else:
+                        high = value - 1 if high is None else min(high, value - 1)
             elif kind == "lt_zero":
                 if negated:
                     low = 0 if low is None else max(low, 0)

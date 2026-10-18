@@ -111,6 +111,14 @@
       "byte_length": 119
     },
     {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "bounds_guard_lower_bound.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "e16f2aa5d23a7d6676894ab8612ca661c013c3e5eeed65e205410efe385ed832",
+      "byte_length": 118
+    },
+    {
       "category": "unrelated",
       "expected_max": 0,
       "fixture": "bounds_unrelated.cpp",
