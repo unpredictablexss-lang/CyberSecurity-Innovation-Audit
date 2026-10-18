@@ -1,0 +1,280 @@
+{
+  "stage": "C3_in_progress_additional_review_before_fix",
+  "implementation_sha256": {
+    "analysis.py": "18f9b07da22cf1c7c35e898a86c747d22ff42ffd8274b9bda5e580f50221f51b",
+    "detector.py": "5dd3dfd92c57abe999cf6ce4828f6ce8c40843ef18a718822ce167432aee7d32",
+    "model.py": "0607cf8f1f81e65bd3a2153be3542f9ed85612e993e3c04ea5b8f3a55e048f23",
+    "runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "syntax.py": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+    "type_origin.py": "8bf12d7ef3c1722cd2e3a9fae8b01557735e5395045c765a1e66f43a7a92ce80",
+    "__init__.py": "3b3d8588d98a48ad44a9ef10cf66be74c927ed9b44c4b387b5ed3d9840db2636"
+  },
+  "cases": [
+    {
+      "expression": "tag++;",
+      "source_sha256": "aa6d148fa52a063a2d796b2c1b80ae8dc0aac49b3ccffe1a460d006e861388c5",
+      "expected": "unknown",
+      "actual": "matched",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 449,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "4756ced4ea3a97145d9adae4d7b6b9f9cca8c09dfe18848fa8a4acf3416567ce"
+      }
+    },
+    {
+      "expression": "++tag;",
+      "source_sha256": "4d2cba069e2a5191ad2a8db896f7823bfe0157d35b5abadb17e9fdd14ee1858e",
+      "expected": "unknown",
+      "actual": "matched",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 449,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "4756ced4ea3a97145d9adae4d7b6b9f9cca8c09dfe18848fa8a4acf3416567ce"
+      }
+    },
+    {
+      "expression": "GateRef scratch = Int32Add((tag = inputTag), Int32(0));",
+      "source_sha256": "b245134c133cde19b9c4964cc7201dc559015f60c3c02aef48625a64ab69af5e",
+      "expected": "unknown",
+      "actual": "matched",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 498,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "4756ced4ea3a97145d9adae4d7b6b9f9cca8c09dfe18848fa8a4acf3416567ce"
+      }
+    },
+    {
+      "expression": "GateRef scratch = Int32Add((output = input), Int32(0));",
+      "source_sha256": "f540fa1c0724fa1aa3216c78170ccb97a3dc9fe90a35cdc29f0560786b362125",
+      "expected": "unknown",
+      "actual": "matched",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 498,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "4756ced4ea3a97145d9adae4d7b6b9f9cca8c09dfe18848fa8a4acf3416567ce"
+      }
+    },
+    {
+      "expression": "GateRef other = GetObjectType(LoadHClass(output)), changed = (tag = inputTag);",
+      "source_sha256": "51bdfef745c7b3681cad272c1498fee9ca5655110dd5837a697692e5b667f84c",
+      "expected": "unknown",
+      "actual": "matched",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 521,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 6,
+        "model_digest": "4756ced4ea3a97145d9adae4d7b6b9f9cca8c09dfe18848fa8a4acf3416567ce"
+      }
+    },
+    {
+      "expression": "Label write(GetEnvironment()); BRANCH((tag = inputTag), &write, exit); Bind(&write);",
+      "source_sha256": "83e5ad4d3fcfada50f693aa80ec271ef4f5459f90bb15bd83c481531235005cb",
+      "expected": "unknown",
+      "actual": "matched",
+      "result": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 8,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "new:281",
+            "token_origin": "new:281",
+            "token_line": 6,
+            "creation_line": 5,
+            "path": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              7,
+              7,
+              8
+            ],
+            "constraints": [
+              [
+                7,
+                "(tag = inputTag)",
+                true
+              ]
+            ],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 527,
+            "effect_sites": [
+              [
+                5,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "steps": 8,
+        "model_digest": "4756ced4ea3a97145d9adae4d7b6b9f9cca8c09dfe18848fa8a4acf3416567ce"
+      }
+    }
+  ]
+}

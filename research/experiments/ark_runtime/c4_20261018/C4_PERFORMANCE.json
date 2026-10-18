@@ -1,0 +1,18 @@
+{
+  "kind": "single_translation_unit_microbenchmark",
+  "date": "2026-10-18",
+  "scope": "Direct parse_source plus analyze_exception_guard replay for the exact pinned exception-guard parent/fix; not complete Runner, Worker, or repository-scale scan.",
+  "runtime": {"python": "3.10.12", "host": "Ubuntu-22.04 WSL", "parser": "Tree-sitter binding from main-integration worktree .venv-web, read-only"},
+  "method": {"repetitions_per_revision": 2, "warmup_per_revision": 1, "timed_region": "parse_source plus analyze_exception_guard", "memory": "tracemalloc peak from an extra analyzer invocation; process ru_maxrss is cumulative across sequential cases"},
+  "revisions": [
+    {"name": "parent", "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783", "blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d", "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9", "bytes": 152202, "parse": "partial", "indexed_functions": 53, "runs": [
+      {"run": 1, "status": "limited", "outcome": "partial", "steps": 4, "observations": [["candidate",1487,"Filter"],["candidate",2656,"Map"]], "wall_seconds": 0.183365, "analysis_peak_python_bytes": 13073181, "cumulative_process_max_rss_kib": 58536},
+      {"run": 2, "status": "limited", "outcome": "partial", "steps": 4, "observations": [["candidate",1487,"Filter"],["candidate",2656,"Map"]], "wall_seconds": 0.162264, "analysis_peak_python_bytes": 13134738, "cumulative_process_max_rss_kib": 58784}]},
+    {"name": "fixed", "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e", "blob": "3b9de9d915d767d7a67316145451da2446162884", "sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0", "bytes": 152910, "parse": "partial", "indexed_functions": 53, "runs": [
+      {"run": 1, "status": "limited", "outcome": "partial", "steps": 14, "observations": [["matched",1494,"Filter"],["matched",2665,"Map"]], "wall_seconds": 0.181605, "analysis_peak_python_bytes": 13141081, "cumulative_process_max_rss_kib": 60832},
+      {"run": 2, "status": "limited", "outcome": "partial", "steps": 14, "observations": [["matched",1494,"Filter"],["matched",2665,"Map"]], "wall_seconds": 0.185269, "analysis_peak_python_bytes": 13210305, "cumulative_process_max_rss_kib": 60960}]}
+  ],
+  "interpretation": "All four observations were stable across repeats and retained partial status. The measured region was about 0.16-0.19 seconds per 152 KB TU in this environment. This does not establish repository throughput, Worker latency, per-file peak RSS, scalability, or product readiness.",
+  "dynamic_runtime_available": false,
+  "dynamic_runtime_note": "ark_js_vm, ark_js_runtime, es2abc, and hb were absent; no upstream runtime test or PoC was executed."
+}

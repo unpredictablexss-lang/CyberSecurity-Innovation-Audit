@@ -1,0 +1,438 @@
+{
+  "algorithm_commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/__init__.py": "3b3d8588d98a48ad44a9ef10cf66be74c927ed9b44c4b387b5ed3d9840db2636",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "5e1b818981930d34c0f686172b0f2bbf71fa13ae6f4c7819d9cc3bd34c030f80",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "5dd3dfd92c57abe999cf6ce4828f6ce8c40843ef18a718822ce167432aee7d32",
+    "src/ohscanner/detectors/ark_runtime/model.py": "e37e42d282426243d4f66b3a0c6c3f9f393c9f1629c755e2b26b6a253c86768d",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "3ba6af5739953f8a74634df8b2e350542adff9e00db6a7e4e27e353a06aede3a"
+  },
+  "model": {
+    "version": "0.2.0",
+    "caller": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+    "caller_types": [
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "Variable*",
+      "Label*",
+      "Label*"
+    ],
+    "store_name": "StoreTypedArrayElement",
+    "store_types": [
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "GateRef",
+      "GateRef"
+    ],
+    "target_argument": 1,
+    "token_argument": 4,
+    "creator_owner": "panda::ecmascript::kungfu::NewObjectStubBuilder",
+    "creator_name": "NewTypedArray",
+    "creator_arguments": 4,
+    "species_may_change_type": true,
+    "caller_profiles": [
+      "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::CopyWithin",
+      "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Set",
+      "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::With"
+    ],
+    "host_constructors": [
+      [
+        "Label",
+        [
+          1
+        ]
+      ],
+      [
+        "NewObjectStubBuilder",
+        [
+          1
+        ]
+      ],
+      [
+        "BuiltinsArrayStubBuilder",
+        [
+          1
+        ]
+      ],
+      [
+        "JSCallArgs",
+        [
+          0,
+          1
+        ]
+      ],
+      [
+        "CallStubBuilder",
+        [
+          1,
+          8
+        ]
+      ]
+    ],
+    "by_value_operations": [
+      [
+        "TaggedIsUndefinedOrNull",
+        1
+      ],
+      [
+        "TaggedIsHeapObject",
+        1
+      ],
+      [
+        "TaggedIsProtoChangeMarker",
+        1
+      ],
+      [
+        "IsEcmaObject",
+        1
+      ],
+      [
+        "IsFastTypeArray",
+        1
+      ],
+      [
+        "IsCallable",
+        1
+      ],
+      [
+        "HasConstructor",
+        1
+      ],
+      [
+        "GetViewedArrayBuffer",
+        1
+      ],
+      [
+        "IsDetachedBuffer",
+        1
+      ],
+      [
+        "GetPrototypeFromHClass",
+        1
+      ],
+      [
+        "GetProtoChangeMarkerFromHClass",
+        1
+      ],
+      [
+        "GetAccessorHasChanged",
+        1
+      ],
+      [
+        "GetCallArg0",
+        1
+      ],
+      [
+        "GetCallArg1",
+        1
+      ],
+      [
+        "GetArrayLength",
+        1
+      ],
+      [
+        "FastGetPropertyByIndex",
+        4
+      ]
+    ],
+    "readonly_operations": [
+      [
+        "HasPendingException",
+        1
+      ]
+    ],
+    "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+    "effect_summary_sources": [
+      [
+        "ecmascript/compiler/stub_builder.h",
+        "b784eb0812c27f11c1bfd8673cda4bf884a6a9cd"
+      ],
+      [
+        "ecmascript/compiler/stub_builder-inl.h",
+        "8658e6ee729c3b171639772ad3a1ada06442abd0"
+      ],
+      [
+        "ecmascript/compiler/stub_builder.cpp",
+        "8aae4bfa151e8b8dbd58d03a5cd881f3315151c2"
+      ],
+      [
+        "ecmascript/compiler/hcr_circuit_builder.h",
+        "176dd0a5ee320f814049c2b671119515c746380d"
+      ],
+      [
+        "ecmascript/compiler/mcr_circuit_builder.h",
+        "631911dec663addd62533d6a6808ffe699a6f884"
+      ],
+      [
+        "ecmascript/compiler/lcr_circuit_builder.cpp",
+        "af4d27bcd46ea0a4a2980a805dd7de77970ffb56"
+      ],
+      [
+        "ecmascript/compiler/circuit_builder.cpp",
+        "b4bf452cac6bdeb820b78334be98cb3dc11330cb"
+      ],
+      [
+        "ecmascript/compiler/new_object_stub_builder.h",
+        "f411d72cbca7915e56b9d851beeb57b788e438ac"
+      ],
+      [
+        "ecmascript/compiler/builtins/builtins_stubs.cpp",
+        "715c5d65164369bc93a82aa4a6cc1d19b7970143"
+      ],
+      [
+        "ecmascript/compiler/builtins/builtins_array_stub_builder.h",
+        "88e131561f756db9bd9e57b3078df22ac3c34c6a"
+      ],
+      [
+        "ecmascript/compiler/call_stub_builder.h",
+        "f1f44f44679a9a6d648c8dd0182864d4af7c24f7"
+      ],
+      [
+        "ecmascript/compiler/profiler_operation.h",
+        "e68a2db48f222945629adb637cd50be8a0f93651"
+      ]
+    ],
+    "scalar_operations": [
+      [
+        "GetEnvironment",
+        0
+      ],
+      [
+        "Int32",
+        1
+      ],
+      [
+        "Int64",
+        1
+      ],
+      [
+        "IntPtr",
+        1
+      ],
+      [
+        "Boolean",
+        1
+      ],
+      [
+        "True",
+        0
+      ],
+      [
+        "False",
+        0
+      ],
+      [
+        "Hole",
+        0
+      ],
+      [
+        "Undefined",
+        0
+      ],
+      [
+        "Exception",
+        0
+      ],
+      [
+        "Int32Add",
+        2
+      ],
+      [
+        "Int64Add",
+        2
+      ],
+      [
+        "Int64Sub",
+        2
+      ],
+      [
+        "Int32LessThan",
+        2
+      ],
+      [
+        "Int64LessThan",
+        2
+      ],
+      [
+        "Int64Equal",
+        2
+      ],
+      [
+        "Int32Equal",
+        2
+      ],
+      [
+        "Equal",
+        2
+      ],
+      [
+        "ZExtInt32ToInt64",
+        1
+      ],
+      [
+        "TruncInt64ToInt32",
+        1
+      ],
+      [
+        "SExtInt32ToInt64",
+        1
+      ],
+      [
+        "VariableType::INT32",
+        0
+      ],
+      [
+        "VariableType::INT64",
+        0
+      ],
+      [
+        "VariableType::JS_ANY",
+        0
+      ]
+    ]
+  },
+  "model_sha256": "1421ec97eb81e0f08910a83d7b72cfdd9d5bcd22aa752105739faf36341c72fe",
+  "cases": [
+    {
+      "id": "H01",
+      "path": "holdout/H01.cpp",
+      "source_sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b",
+      "sampling_intent": "risk_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H02",
+      "path": "holdout/H02.cpp",
+      "source_sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0",
+      "sampling_intent": "risk_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H03",
+      "path": "holdout/H03.cpp",
+      "source_sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a",
+      "sampling_intent": "risk_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H04",
+      "path": "holdout/H04.cpp",
+      "source_sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a",
+      "sampling_intent": "risk_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H05",
+      "path": "holdout/H05.cpp",
+      "source_sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c",
+      "sampling_intent": "same_origin_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H06",
+      "path": "holdout/H06.cpp",
+      "source_sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183",
+      "sampling_intent": "same_origin_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H07",
+      "path": "holdout/H07.cpp",
+      "source_sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51",
+      "sampling_intent": "same_origin_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H08",
+      "path": "holdout/H08.cpp",
+      "source_sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c",
+      "sampling_intent": "same_origin_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H09",
+      "path": "holdout/H09.cpp",
+      "source_sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748",
+      "sampling_intent": "unrelated_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H10",
+      "path": "holdout/H10.cpp",
+      "source_sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3",
+      "sampling_intent": "unrelated_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H11",
+      "path": "holdout/H11.cpp",
+      "source_sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377",
+      "sampling_intent": "unrelated_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H12",
+      "path": "holdout/H12.cpp",
+      "source_sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c",
+      "sampling_intent": "unrelated_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H13",
+      "path": "holdout/H13.cpp",
+      "source_sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed",
+      "sampling_intent": "unknown_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H14",
+      "path": "holdout/H14.cpp",
+      "source_sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e",
+      "sampling_intent": "unknown_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H15",
+      "path": "holdout/H15.cpp",
+      "source_sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298",
+      "sampling_intent": "unknown_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    },
+    {
+      "id": "H16",
+      "path": "holdout/H16.cpp",
+      "source_sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd",
+      "sampling_intent": "unknown_sampling_intent",
+      "label": null,
+      "label_status": "awaiting_independent_reviewer"
+    }
+  ],
+  "created_after_algorithm_freeze": true,
+  "used_for_tuning": false,
+  "author": "same development assistant; not an independent label authority",
+  "independence": "unseen instances after code freeze only; source and mechanism independence limited",
+  "independent_labels_available": false,
+  "predictions_executed": true,
+  "scored": false,
+  "precision": null,
+  "recall": null
+}
