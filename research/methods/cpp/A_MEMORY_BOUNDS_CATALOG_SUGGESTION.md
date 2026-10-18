@@ -8,6 +8,6 @@
 - 必须新增正/固定/安全/非相关/unknown 回归后再由负责人审查；不要把研究脚本的候选数当成漏洞数。
 
 
-- `ohscanner.cpp.resource_lifetime` -> `src.ohscanner.detectors.cpp.resource_lifetime_detector.CppResourceLifetimeDetector`, version `0.1.2`, kind `research_candidate`; keep branch/label transitions unknown and require the A-RES-01 controls before owner review.
+- `ohscanner.cpp.resource_lifetime` -> `src.ohscanner.detectors.cpp.resource_lifetime_detector.CppResourceLifetimeDetector`, version `0.1.3`, kind `research_candidate`; keep branch/label transitions unknown and require the A-RES-01 controls before owner review.
 
 - `ohscanner.cpp.unsafe_memory_call` -> `src.ohscanner.detectors.cpp.unsafe_memory_call_detector.CppUnsafeMemoryCallDetector`, version `0.1.2`, kind `research_candidate`; macro-only format expressions remain unknown rather than candidates.

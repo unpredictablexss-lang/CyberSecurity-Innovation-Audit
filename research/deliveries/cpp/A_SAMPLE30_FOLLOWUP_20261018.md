@@ -30,7 +30,7 @@ The sandbox delivery reports:
   guards narrow intervals; constant offsets such as `n - 1` are evaluated;
   `memcpy_s/memmove_s(dst, dstsz, src, count)` checks both size arguments.
 - `integer_bounds 0.2.1`: `calloc`/`new[]` element multiplication.
-- `resource_lifetime 0.1.2`: conditional release paths.
+- `resource_lifetime 0.1.3`: conditional release paths and one-hop release wrappers.
 - `unsafe_memory_call 0.1.2`: correct `fprintf/vfprintf/syslog` format argument.
 
 ## Triage before/after

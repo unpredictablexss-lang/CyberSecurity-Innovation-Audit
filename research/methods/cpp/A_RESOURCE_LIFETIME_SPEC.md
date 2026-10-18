@@ -1,6 +1,6 @@
 # A-RES-01 C/C++ resource lifetime specification
 
-更新：2026-10-18。`ohscanner.cpp.resource_lifetime` 0.1.2 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
+更新：2026-10-18。`ohscanner.cpp.resource_lifetime` 0.1.3 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector。默认 `candidate/unassessed`。
 
 ## 触发
 
@@ -10,6 +10,7 @@
 - `p=nullptr` 或重新分配使旧状态失效。
 - `delete[] p->member` / `delete p->member` 只释放成员，不把 owner `p` 标成已释放；这是 0.1.1 修复的已知误报形状，0.1.2 保留。
 - 有界 `if` 分支内释放 `p` 且该分支继续落入主路径时，后续 `free/delete` 或 `*p`/`p->`/`p[...]` 产生 conditional double-free/UAF candidate；分支内提前 `return/break/continue/goto` 或释放后置空/重绑定时不产生。
+- 一阶 release wrapper：函数体只有一个无条件 `free/delete` 且目标是按值参数时，把调用点当作 release；`Release(p); Release(p);` 和 `Release(p); p[...]` 产生候选。带 `if`/循环/提前返回或引用参数的 wrapper 保持 unknown。
 
 ## 排除和 unknown
 
@@ -24,6 +25,10 @@
 The same five-component fixed corpus was replayed with 0.1.2: candidate and
 group totals remain 33/22, with no additional real-source hit. The comparison
 is `research/evidence/cpp/a_line_scan_20261018_v4_comparison.json`.
+
+The one-hop release-wrapper 0.1.3 rerun is compared in
+`research/evidence/cpp/a_line_scan_20261018_v10_comparison.json`: candidates and
+groups remain 33/22, with no new real-source hit in this corpus.
 
 ## PoC
 

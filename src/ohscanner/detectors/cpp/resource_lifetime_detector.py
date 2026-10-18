@@ -17,15 +17,18 @@ from .memory_safety import (
     MAX_TOTAL_BYTES,
     MAX_UNIT_BYTES,
     balanced_end,
+    call_argument_span,
     function_shapes,
     line_column,
     mask_comments_and_literals,
+    parameter_names,
+    split_call_arguments,
 )
 
 
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
-RULE_VERSION = "0.1.2"
+RULE_VERSION = "0.1.3"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -167,7 +170,33 @@ def _flow_segments(start: int, end: int, masked: str) -> Tuple[Tuple[int, int], 
     return tuple((boundaries[i], boundaries[i + 1]) for i in range(len(boundaries) - 1) if boundaries[i] < boundaries[i + 1])
 
 
-def _events(masked: str, start: int, end: int) -> Tuple[_Event, ...]:
+def _release_wrappers(masked: str, functions) -> Dict[str, int]:
+    wrappers: Dict[str, int] = {}
+    for function in functions:
+        if "&" in function.params:
+            continue
+        params = parameter_names(function.params)
+        if not params:
+            continue
+        body = masked[function.body_start:function.body_end]
+        if re.search(r"\b(?:if|for|while|switch|return|break|continue|goto)\b", body):
+            continue
+        releases = list(_FREE_RE.finditer(body))
+        if len(releases) != 1:
+            continue
+        name = releases[0].group("free_name") or releases[0].group("delete_name")
+        if name in params:
+            wrappers[function.name] = params.index(name)
+    return wrappers
+
+
+def _events(
+    masked: str,
+    start: int,
+    end: int,
+    release_wrappers: Optional[Dict[str, int]] = None,
+    function_name: str = "",
+) -> Tuple[_Event, ...]:
     events: List[_Event] = []
     region = masked[start:end]
     offset = start
@@ -189,6 +218,20 @@ def _events(masked: str, start: int, end: int) -> Tuple[_Event, ...]:
         for match in pattern.finditer(region):
             name = match.group("name")
             events.append(_Event(offset + match.start(), "use", name, match.group(0)))
+    for wrapper, parameter_index in (release_wrappers or {}).items():
+        if wrapper == function_name:
+            continue
+        for match in re.finditer(r"\b" + re.escape(wrapper) + r"\s*\(", region):
+            position = offset + match.start()
+            span = call_argument_span(masked, position)
+            if span is None:
+                continue
+            args = split_call_arguments(span[2])
+            if len(args) <= parameter_index:
+                continue
+            name = args[parameter_index].strip()
+            if re.fullmatch(r"[A-Za-z_]\w*", name):
+                events.append(_Event(position, "release", name, wrapper + "()"))
     return tuple(sorted(set(events), key=lambda item: (item.position, item.kind, item.name)))
 
 
@@ -208,7 +251,12 @@ def _conditional_release_names(then_text: str) -> Set[str]:
     return names
 
 
-def _conditional_release_findings(unit: SourceUnit, masked: str, function) -> List[DetectorFinding]:
+def _conditional_release_findings(
+    unit: SourceUnit,
+    masked: str,
+    function,
+    release_wrappers: Optional[Dict[str, int]] = None,
+) -> List[DetectorFinding]:
     """Find a release on one falling-through if-path followed by use/release."""
     findings: List[DetectorFinding] = []
     region_start, region_end = function.body_start, function.body_end
@@ -247,7 +295,7 @@ def _conditional_release_findings(unit: SourceUnit, masked: str, function) -> Li
                 continue
             tail_start = else_end
 
-        tail_events = _events(masked, tail_start, region_end)
+        tail_events = _events(masked, tail_start, region_end, release_wrappers, function.name)
         for name in sorted(names):
             for event in tail_events:
                 if event.name != name:
@@ -277,6 +325,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
 
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
+    release_wrappers = _release_wrappers(masked, functions)
     for function in functions:
         states: Dict[str, str] = {}
         aliases: Dict[str, str] = {}
@@ -287,7 +336,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
         ):
             states: Dict[str, str] = {}
             aliases: Dict[str, str] = {}
-            for event in _events(masked, segment_start, segment_end):
+            for event in _events(masked, segment_start, segment_end, release_wrappers, function.name):
                 canonical = aliases.get(event.name, event.name)
                 if event.kind == "alloc":
                     states[event.name] = "allocated"
@@ -327,7 +376,7 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
             limitations.append(
                 f"{unit.path}:{function.name}: unresolved allocation/release alias state remains unknown."
             )
-        findings.extend(_conditional_release_findings(unit, masked, function))
+        findings.extend(_conditional_release_findings(unit, masked, function, release_wrappers))
     limitations.extend((
         "Candidate only: local lexical resource state does not prove UAF/double-free exploitability.",
         "Branch, label, cross-function ownership, containers, callbacks, exceptions, destructor timing and custom allocators remain unknown; transitions between lexical flow segments are not joined.",

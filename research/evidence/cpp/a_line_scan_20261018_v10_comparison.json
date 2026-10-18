@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "baseline": "research/evidence/cpp/a_line_scan_20261018",
+  "candidate": "research/evidence/cpp/a_line_scan_20261018_v10",
+  "detector": "ohscanner.cpp.resource_lifetime",
+  "candidate_detector_version": "0.1.3",
+  "baseline_candidates": 33,
+  "candidate_candidates": 33,
+  "baseline_groups": 22,
+  "candidate_groups": 22,
+  "delta": 0,
+  "baseline_wall_seconds": 170.938481054,
+  "candidate_wall_seconds": 163.639071301,
+  "baseline_peak_rss_kib": 371736,
+  "candidate_peak_rss_kib": 371884,
+  "note": "The one-hop release-wrapper extension produced no additional candidates on this fixed five-component corpus. Candidate counts are not vulnerability counts or accuracy metrics."
+}

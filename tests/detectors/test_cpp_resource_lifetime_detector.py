@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.1.2")
+        self.assertEqual(self.detector.version, "0.1.3")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,7 +69,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.1.2")
+                self.assertEqual(finding.rule_version, "0.1.3")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:
@@ -103,6 +103,20 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
             with self.subTest(name=name):
                 run, _ = self.run_case(name)
                 self.assertEqual(run.findings, ())
+
+    def test_release_wrapper_controls(self) -> None:
+        double_free, _ = self.run_case("wrapper_double_free_positive.cpp")
+        self.assertEqual(
+            {item.rule_id for item in double_free.findings},
+            {"ohcpp-resource-lifetime-double-free-candidate-001"},
+        )
+        uaf, _ = self.run_case("wrapper_uaf_positive.cpp")
+        self.assertEqual(
+            {item.rule_id for item in uaf.findings},
+            {"ohcpp-resource-lifetime-use-after-free-candidate-002"},
+        )
+        safe, _ = self.run_case("wrapper_safe_null.cpp")
+        self.assertEqual(safe.findings, ())
 
     def test_deterministic_output_and_budget(self) -> None:
         first, unit = self.run_case("positive_alias_uaf.cpp")
