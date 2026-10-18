@@ -41,6 +41,21 @@ The Runner contract controls passed: a fixed/safe control does not produce a rul
 
 The runtime model references 19 supporting source blobs (effect summaries and allocation/type dependencies). At the current commit, 1 blob is unchanged and 18 differ. These supporting files have not been semantically re-reviewed for this snapshot. The exact target file binding therefore authorizes only a bounded research attempt; it does not validate the old model assumptions against the current product build. The full expected/observed list is in `model_dependency_comparison.json`.
 
+## Source drift review record
+
+`source_drift_review.json` and `source_drift_review.md` bind each changed model reference to the historical and current Git commit/tree/blob and raw-source SHA-256, and retain per-item textual diff and changed identifier cues. The effect/type rows use the model's pinned effect-summary revision `a0e30483ab3e4aead67ecfb5c708489915e447f9`; the two exception-guard rows use their separate pinned revisions `c758818dbfd0b146a908d43d21f6ca1706c33783` and `81ca57487d04ea30cd11c271e86494a4e130f43e` respectively. The recorded historical blob OIDs equal the model's expected OIDs.
+
+This pass completes the provenance binding and per-item textual change inventory. Semantic meaning and rule-applicability impact remain `unknown` for all 18 changed references: exact preprocessing, declaration/call context, and product build configuration were not established. No changed dependency is treated as unaffected. The unchanged `profiler_operation.h` reference is also recorded. The exact-source and partial gates remain unchanged. The parent/fix, safe/fixed, and unrelated controls retain the outcomes documented above and in the historical replay record; they are not recast as semantic validation of all dependency drift.
+
+Recompute the source binding and inventory from the pinned Git objects:
+
+```bash
+cd /mnt/d/openHarmonyScanner
+python3 CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c3_20261018/generate_source_drift_review.py
+```
+
+This script verifies the model-recorded old/current blob OIDs and hashes the raw bytes returned by `git show`. It does not parse or normalize source bytes.
+
 ## Exact commands
 
 Metadata checks (read-only; the `.git/config` link in the component checkout is a repo-tooling symlink that Windows Git cannot read, so Git metadata commands use WSL):

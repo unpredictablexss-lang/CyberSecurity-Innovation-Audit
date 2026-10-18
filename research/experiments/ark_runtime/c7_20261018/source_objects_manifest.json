@@ -1,0 +1,124 @@
+{
+  "source_packet": "C:\\Users\\DeepSleep\\Documents\\Codex\\2026-10-18\\c-agents-md-research-experiments-ark\\work",
+  "declared_origin": "GitHub REST API https://api.github.com/repos/openharmony/arkcompiler_ets_runtime ; GitHub repo commit/tree/blob API as accessed through configured GitHub connector; exact source bytes from git blobs",
+  "repository": "D:\\openHarmonyScanner\\tmp\\c-line-ark-history-0.7-recovered2.git",
+  "target_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+  "installed_counts": {
+    "commits": 5,
+    "trees": 20,
+    "blobs": 5
+  },
+  "objects": {
+    "commits": [
+      "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "830e85b40240677039719fcbf14f721ad3b19050",
+      "95554c2ee75b35d556640eb6f2591d429796f60e",
+      "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "c758818dbfd0b146a908d43d21f6ca1706c33783"
+    ],
+    "trees": [
+      "24dedb3547396094fbda1ea84c1cf89cd40c8913",
+      "379ec01b51ef4db64bb3b65284756f53ee71460f",
+      "4bbdcac658e1ff0b63c1dfc96b4d6176982938f2",
+      "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "5c18209c779c419593d1d0cc9183043df6627e16",
+      "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+      "65728158c365a0100db906bfca1cedf3ee3f5ebf",
+      "66e5a19b6c34323ac3c5e881d629124401f9d124",
+      "82af11ced4297818410ccf61906b703d25b69165",
+      "84cd9e71bc0ede7e69d96e742fc04160d34d0f86",
+      "949a1143865aa745832646e3565e9b87d5c6abb0",
+      "95997500e4f82a4b075e6248fac0b0efde864ff5",
+      "9cd27a314b5b480f56694f4c1f6e4407d656465f",
+      "ac1cd5cf0c13069d6fa6ee4fbfaa328380b9b384",
+      "aeea29d7b154887126a129a78569fa10b89b4922",
+      "b62badbca306df13938066ead03de70e89b9a06d",
+      "e067a49f1da543cd8d0fa30e2a9d1604d62eba2d",
+      "e99dd285f638e438f972f5b35a77ca89d3060ef7",
+      "edd28405e364298a325d1c01eea681fc59b9eeb6",
+      "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5"
+    ],
+    "blobs": [
+      {
+        "sample": "c1_parent",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "oid": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+        "bytes": 150433
+      },
+      {
+        "sample": "c1_fix",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "oid": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+        "bytes": 150509
+      },
+      {
+        "sample": "c2_parent",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "oid": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+        "source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+        "bytes": 152202
+      },
+      {
+        "sample": "c2_fix",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "oid": "3b9de9d915d767d7a67316145451da2446162884",
+        "source_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0",
+        "bytes": 152910
+      },
+      {
+        "sample": "unrelated",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "oid": "e652d5e5ef1cec7176527f4d04023a8060abb5e9",
+        "source_sha256": "db7856c17f46d4a6c9ac1e5114e72504c5487ace4cc92d70eacb8deaeb190fb4",
+        "bytes": 153164
+      }
+    ]
+  },
+  "commit_bindings": [
+    {
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "parents": [
+        "0f5024602bd29681dedb70f5bb3832c79870c4ce",
+        "01652f9b256fdbc58ab256be45117ec0578b7961"
+      ],
+      "verified": true
+    },
+    {
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "parents": [
+        "830e85b40240677039719fcbf14f721ad3b19050"
+      ],
+      "verified": true
+    },
+    {
+      "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a",
+      "parents": [
+        "952188685663d5024954269269979ef4f34174b2",
+        "bf8c27dc8f2bfb5652f02221f06528072424be33"
+      ],
+      "verified": true
+    },
+    {
+      "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5",
+      "parents": [
+        "c758818dbfd0b146a908d43d21f6ca1706c33783"
+      ],
+      "verified": true
+    },
+    {
+      "commit": "95554c2ee75b35d556640eb6f2591d429796f60e",
+      "tree": "65728158c365a0100db906bfca1cedf3ee3f5ebf",
+      "parents": [
+        "1ff0b7c7e257085834c3f16c7ab145d60bc2aee0"
+      ],
+      "verified": true
+    }
+  ],
+  "scope_note": "Exact target-path trees and blobs are verified. The packet does not include all unrelated subtrees, so it cannot provide whole-repository inventory."
+}

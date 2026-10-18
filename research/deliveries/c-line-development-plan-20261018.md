@@ -4,43 +4,46 @@
 
 ## 状态依据
 
-- 当前 C 线工作树：`CyberSecurity-Innovation-Audit-c4`，分支 `codex/c-line-ark-runtime-20261018`，HEAD `ab2ce2b735bf4e48f8427652334995bb10a2dafc`。
-- 当前正在进行：审查和验证 0.7.0 语义适用契约，确保它能评估未见 commit/blob/path，同时继续要求 Git 对象来源校验，并让 partial/unknown 保持 blocked。实现及三项初始回归已在本地提交 `a2fce96`；本轮未运行该提交的测试。下一阶段 C0 会补齐控制用例和边界审查。
-- 其他本地改动包括 19 个模型依赖的来源漂移清单/逐项文本差异、独立留出集准入审计材料及状态文档更新。独立留出审计确认现有 9 个样本均不适用于冻结规则，没有双人标签和争议裁决，不能计算 TP/FP/FN、precision 或 recall。`research/evidence/ark_runtime/` 中包含 admin 审阅材料，必须按其访问/分发限制管理，不能整体打包或公开。
+- 当前 C 线工作树：`CyberSecurity-Innovation-Audit-c4`，分支 `codex/c-line-ark-runtime-20261018`；本轮复核起点 HEAD `bcfd3fc`。
+- C0 语义适用合同已在 `ff03077` 冻结并补充控制用例。v3 评估 README 记录 dedicated suite 本地对象库配置下 8 passed，以及 Ark Runtime/Runner focused suite 103 passed、10 skipped；这些是开发控制，不代表独立性能评估。旧 C0 检查项转为版本变更时的回归门。
+- 主依赖阻塞是 C1：取得目标 exact snapshot 的可复现产品编译/预处理 profile。C4 本地工作区已有依赖清单/摘要 verifier 草稿，但状态为 blocked：没有可接受的产品 compile database、有效宏/工具链和已确认 include closure；当前摘要不是可信编译缓存键。C2 的 18 项依赖语义影响仍 unknown。
+- C7 historical replay（roadmap C3 的开发对照部分）已产出 scoped final manifest：历史 C1/C2 漏洞父版本分别有 1/2 个候选，fixed/unrelated 对照为 0 个；五个 run 均 partial + blocked。精确目标文件 commit/tree/blob/source hash 已复核，但完整树 inventory 仍因缺失非目标 subtree object 而 blocked。它不能证明漏洞、修复或安全，也不能替代匹配产品 profile 的重放。
+- C5 独立评估在选样前停止：没有两位合格独立评审者的预先声明，且外部/未跟踪的开发/调参家族历史不全；没有新样本、标签、预测或评分。C6 已有动态验证准入审计，但没有案例通过入口、攻击者控制、敏感操作、触发条件和 CIA 影响门，未构建、未运行 PoC、未制作修复。
+- 工作区有 C3 依赖漂移审计、C4 manifest/test、C6 gate 等未提交文件；另有旧 `research/evidence/ark_runtime/independent-holdout/` 目录未跟踪。admin/holdout 资料需遵守隔离规则，不把旧目录整体纳入推送。
 - 文档记载的当前主风险仍是缺少可复现的预处理/产品构建配置、18 项依赖漂移的语义影响未判定、未见源码适用性未冻结、真实运行时可达性与 CIA 影响未验证。
-- 本轮 `git fetch origin --prune` 和 `git ls-remote` 均因 GitHub HTTPS 连接重置/不可达失败。`origin/*` 只是本机缓存引用，不能据此声称远端当前头部或同步已完成。工作树仍有未提交和未跟踪研究内容；本文件给出后续路线，不代表这些内容已推送。
+- 本轮 `git fetch origin --prune` 因 GitHub HTTPS 连接失败；缓存比较为本地 8 个独有提交、缓存远端 1 个独有提交，但不能视为实时状态。之前的 push/pull 尝试也失败。当前远端头部未知；提交尚未推送，工作树仍有未提交和未跟踪研究内容。
 
 ## 任务树
 
 ```mermaid
 flowchart TD
-    C0[进行中：冻结并验证 0.7.0 未见源码语义合同]
-    C1[建立 exact snapshot 的预处理与产品构建配置]
-    C2[逐项审查 18 个模型依赖漂移的语义影响]
-    C3[同一冻结模型/parser/config 重放历史父/修复与负例]
-    C4[固化预处理输入与依赖哈希]
-    C5[构造规则适用的独立留出集并完成双人盲标]
-    C6[对证据充分的候选做隔离动态验证和修复复验]
-    C7[准入复审与交付]
+    C0[已完成：冻结 0.7.0 语义合同与开发控制]
+    C1[当前阻塞：取得 exact snapshot 产品构建/预处理 profile]
+    C2[待办：判定 18 项模型依赖漂移]
+    C3[已完成 scoped C7 历史重放；full-tree 与产品 profile 仍阻塞]
+    C4[部分完成/阻塞：固化完整依赖哈希]
+    C5[阻塞：合格评审者与完整排除历史后再选样]
+    C6[阻塞：无候选通过动态验证门]
+    C7[排队：准入复审与交付]
     C0 --> C1 --> C2 --> C3 --> C4 --> C5 --> C6 --> C7
 ```
 
 ## 排期与完成门
 
-| 顺序 | 任务 | 依赖 | 完成门 |
-|---|---|---|---|
-| C0 | 冻结并验证未见源码语义合同 | 当前工作 | 规则适用性由语义身份决定；精确来源仍作为 provenance 验证；正例、修复、安全、无关和不完整输入均有控制；未把 partial/unknown 升级为安全或 miss；版本与模型摘要冻结。 |
-| C1 | 取得 exact snapshot 的可复现预处理/产品构建配置 | C0 | 命令、工具链、宏、include 路径和配置输入可复现；运行在固定 commit/tree；失败或缺项明确标 unknown。 |
-| C2 | 审查 18 个漂移依赖的语义影响 | C1 | 每项绑定旧/新 commit/tree/blob/source SHA、预处理上下文、符号/宏/调用差异及对规则的影响；逐项给出 changed/unaffected/unknown 及证据，不能默认 unaffected。 |
-| C3 | 历史父/修复、安全及无关控制重放 | C1、C2 | 同一 detector/model/parser/config 下重放；来源对象与哈希可复核；保留所有 partial/blocked/unknown；差异有解释。 |
-| C4 | 固化 exact snapshot 预处理依赖哈希 | C1-C3 | 依赖清单覆盖源、头文件、宏、编译参数、工具版本；重放可验证同一摘要；不完整依赖 fail closed。 |
-| C5 | 建立可计分的独立留出集 | C0-C4 | 新规则和数据集先冻结；适用的未见来源、漏洞/修复、安全/无关样本覆盖预先定义；两位独立且未接触预测/调参的审查者分别标注并完成裁决；排除账本与泄漏审计齐全。 |
-| C6 | 隔离动态验证与修复复验 | C3-C5 | 仅对达到候选准入条件的案例，在本地隔离环境复现；保存构建、PoC、影响、修复和修复后结果；没有可复现影响时按证据降级。 |
-| C7 | 准入复审与竞赛交付 | C0-C6 | 独立复核规则、数据、来源、覆盖、漏洞影响、修复、性能和限制；按评审决定更新准入状态，不自动开启默认扫描，不擅自改 Draft/合并。 |
+| 顺序 | 任务 | 状态 | 依赖 | 完成门 |
+|---|---|---|---|---|
+| C0 | 冻结并验证未见源码语义合同 | 已完成开发冻结 | — | 语义身份决定适用性；Git 来源只做 provenance；控制结果有记录，partial/unknown 仍 fail closed。 |
+| C1 | 取得 exact snapshot 的可复现预处理/产品构建配置 | 当前阻塞 | C0 | 命令、工具链、宏、include 搜索顺序和配置输入可复现；绑定固定 commit/tree；缺项明确标 unknown。 |
+| C2 | 审查 18 个漂移依赖的语义影响 | 待办 | C1 | 每项有旧/新对象、预处理上下文、差异和 changed/unaffected/unknown 结论；不得默认 unaffected。 |
+| C3 | 历史父/修复、安全及无关控制重放（本地工作项 C7） | scoped replay 已记录，整体门仍阻塞 | C1、C2 | 同一 Detector/model/parser/config；来源可核验；partial/blocked/unknown 不降级；解释父/修复差异。当前受限回放父版本候选 1/2、fixed/unrelated 为 0，不能当作漏洞命中、修复验证或安全结论；完整 tree 与产品 profile 仍缺。 |
+| C4 | 固化 exact snapshot 预处理依赖哈希 | 部分完成/阻塞 | C1-C3 | manifest 覆盖实际源、头文件、宏、编译参数、工具版本与生成输入；摘要可复算；缺依赖 fail closed。 |
+| C5 | 建立可计分的独立留出集 | 阻塞在选样前 | C0-C4，评审者与完整排除历史 | 冻结规则后抽取适用的未见漏洞/修复/安全/无关样本；双人独立盲标、事先声明、分歧裁决与泄漏账本齐全。 |
+| C6 | 隔离动态验证与修复复验 | 阻塞，无达门候选 | C3-C5 | 仅对证明入口/控制/触发/影响的案例做隔离复现、PoC、修复和复验。 |
+| C7 | 准入复审与竞赛交付 | 排队 | C0-C6 | 独立核验来源、覆盖、影响、修复、性能和限制；不自动改默认准入或 PR 状态。 |
 
 ## 独立 Vibe Coding 提示词
 
-### C0：冻结并验证未见源码语义合同（当前任务）
+### C0：未见源码语义合同冻结（版本变更时复用）
 
 ```text
 你负责 C 线 Ark Runtime 检测器。先读 AGENTS.md 要求的六份当前文档，以及 docs/项目现状与下一步.md、docs/架构与公共协议.md、docs/开发协作与交付指南.md；检查当前分支和工作树，不覆盖或清理任何既有脏文件/证据。
@@ -54,7 +57,7 @@ flowchart TD
 完成标准：新来源身份可由语义合同进入分析；无关文件不会只因路径/仓库身份被纳入；精确来源字段只负责 provenance；未解析语义始终 unknown/partial/blocked；模型/Detector 版本摘要稳定且有变更记录；docs/项目现状与下一步.md 如实记录验证、限制和下一项。交付改动清单、测试结果、残余风险，不推送、不合并、不改 PR Draft 状态。
 ```
 
-### C1：建立可复现的预处理与产品构建配置
+### C1：建立可复现的预处理与产品构建配置（当前任务）
 
 ```text
 你负责 C 线 Ark Runtime 的构建上下文复现。先读 AGENTS.md 要求的六份当前文档，并检查本地 OpenHarmony checkout、目标精确 commit/tree 和现有 C3 证据；保留所有工作树改动，不要隐式 fetch 或更换源码版本。

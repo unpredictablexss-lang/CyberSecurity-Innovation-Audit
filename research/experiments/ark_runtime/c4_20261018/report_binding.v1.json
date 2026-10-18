@@ -1,0 +1,43 @@
+{
+  "schema": "ohscanner.ark-runtime-report-dependency-reference/v1",
+  "binding_scope": "retrospective_reference_only",
+  "reports": [
+    {
+      "id": "c4-exact-run",
+      "path": "research/experiments/ark_runtime/c3_20261018/current-run.json",
+      "sha256": "d66a52203e2de2359047dca7255d2aad29003f8c89df1894a2f8960033334182",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "git_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+      "profile_id": "light-ast",
+      "status": "completed_with_limitations"
+    },
+    {
+      "id": "c3-review-exact-run",
+      "path": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/current-run.json",
+      "sha256": "d66a52203e2de2359047dca7255d2aad29003f8c89df1894a2f8960033334182",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "git_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+      "profile_id": "light-ast",
+      "status": "completed_with_limitations"
+    },
+    {
+      "id": "c3-review-dependency-gated-run",
+      "path": "CyberSecurity-Innovation-Audit-c3-review/research/experiments/ark_runtime/c3_20261018/dependency-gated-run-20261018.json",
+      "sha256": "621b79c95ea7cce456a3bc0223c1603c382fded48d9d362e663f76b345ca5450",
+      "repository": "openharmony/arkcompiler_ets_runtime",
+      "commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "git_tree": "8781f036a3e7e04d8e0b34970d5f623b42875016",
+      "profile_id": "light-ast",
+      "status": "completed_with_limitations"
+    }
+  ],
+  "dependency_reference": {
+    "manifest_path": "CyberSecurity-Innovation-Audit-c4/research/experiments/ark_runtime/c4_20261018/exact_snapshot_manifest.v1.json",
+    "manifest_schema": "ohscanner.ark-runtime-exact-snapshot-dependencies/v1",
+    "dependency_summary_sha256": "6aba13c03d071edb4e07076a5e1910d631903c95755691c4e068ed4d27a653a9",
+    "verification_status": "blocked"
+  },
+  "note": "Reference only. C3 reports are immutable and predate this dependency manifest. The sidecar links their exact report hashes to the same deterministic summary; it does not claim those runs used a complete preprocessor closure or share Detector/model version."
+}
