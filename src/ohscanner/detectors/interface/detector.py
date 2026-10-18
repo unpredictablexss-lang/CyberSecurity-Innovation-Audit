@@ -5,6 +5,22 @@ from .analysis import Interpreter
 from .families import cwes, merge_policy
 from .models import IMPACT_DESCRIPTION, MODEL_VERSION, reviewed_consequence
 
+
+# Exact path components are review cues, not proof that a file is excluded from
+# a product build. Some OpenHarmony tests and fuzzers deliberately compile
+# production sources, so these candidates must remain visible and carry an
+# explicit build-membership obligation instead of being silently dropped.
+_TEST_SOURCE_SEGMENTS = frozenset({
+    "test", "tests", "unittest", "unittests", "fuzz", "fuzztest",
+    "fuzztests", "fuzzer", "fuzzers", "mock", "mocks", "rdbmock",
+})
+
+
+def _test_source_path(path):
+    normalized = path.replace(chr(92), "/").lower()
+    return bool(_TEST_SOURCE_SEGMENTS.intersection(
+        segment for segment in normalized.split("/") if segment))
+
 # Which family reports which mechanism CWE. Read from the family modules rather
 # than repeated here, so a family's id, its rules and its CWE land together and a
 # new family cannot be emitted without declaring the CWE it reports.
@@ -49,7 +65,10 @@ def _finding_message(o):
     can be reviewed rather than trusted. Both CWE numbers appear: the mechanism
     CWE on the finding, the consequence CWE here.
     """
-    message = o.family + " candidate: " + o.message + " Entry=" + o.root_key[1]
+    message = (o.family + " candidate: " + o.message + " Entry=" + o.root_key[1]
+               + " [entry-source=" + o.root_key[0] + "]")
+    if _test_source_path(o.root_key[0]):
+        message += " [entry-source-review-cue=test/fuzz/mock path; product-build membership is unverified]"
     if o.entry_grade == "dispatch" and o.dispatch_note:
         message += " [" + o.dispatch_note + "]"
     if o.impact and o.impact != "unknown":
@@ -65,7 +84,7 @@ def _finding_message(o):
 
 class IpcInterfaceDetector:
     detector_id = "ohscanner.interface.ipc"
-    version = "0.9.1"
+    version = "0.9.2"
     # The interpretation model, recorded so a persisted candidate can name the
     # rule set it came from, not only the code version. Read by the audit driver
     # through getattr; it is not part of the shared Detector protocol.
@@ -109,6 +128,12 @@ class IpcInterfaceDetector:
             consequence_cwe=o.impact_cwe or None,
             evidence_obligations=_BASE_OBLIGATIONS
                 +((_DISPATCH_OBLIGATION,) if o.entry_grade=="dispatch" else ())
+                +((EvidenceObligation(
+                    "entry_build_membership",
+                    "The modeled entry source path contains a test/fuzz/mock segment. This is only a path cue; "
+                    "verify whether the entry is included in the pinned product build before treating it as a "
+                    "product-reachable interface.",
+                ),) if _test_source_path(o.root_key[0]) else ())
                 +((_DESCRIPTOR_OBLIGATIONS[o.descriptor_identity],) if o.descriptor_identity else ())
                 +((_CONSEQUENCE_OBLIGATION,) if o.impact and o.impact!="unknown" else ()),
             ) for o in observations)

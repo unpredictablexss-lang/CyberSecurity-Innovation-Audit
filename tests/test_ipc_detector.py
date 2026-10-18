@@ -45,6 +45,35 @@ class IpcDetectorTests(unittest.TestCase):
                 else:
                     self.assertEqual(rules,set())
 
+    def test_findings_bind_entry_source_and_test_build_membership(self):
+        text=(BASE/'auth_positive.cpp').read_text()
+        product=context(text,'services/ability/ability_stub.cpp')
+        product_findings=IpcInterfaceDetector().detect(product,product.units).findings
+        self.assertTrue(product_findings)
+        self.assertTrue(all('[entry-source=services/ability/ability_stub.cpp]' in f.message
+                            for f in product_findings))
+        self.assertFalse(any(o.kind=='entry_build_membership'
+                             for f in product_findings for o in f.evidence_obligations))
+
+        harness=context(text,'services/ability/test/fuzztest/ability_stub_fuzzer.cpp')
+        harness_findings=IpcInterfaceDetector().detect(harness,harness.units).findings
+        self.assertTrue(harness_findings)
+        self.assertTrue(all('entry-source-review-cue=test/fuzz/mock path' in f.message
+                            for f in harness_findings))
+        self.assertTrue(all(any(o.kind=='entry_build_membership'
+                                for o in f.evidence_obligations)
+                            for f in harness_findings))
+
+        # Exact path components prevent incidental names from being mistaken
+        # for test-only build evidence.
+        from src.ohscanner.detectors.interface.detector import _test_source_path
+        self.assertFalse(_test_source_path('services/contest/mockery/ability_stub.cpp'))
+        self.assertTrue(_test_source_path(r'services\ability\tests\ability_stub.cpp'))
+
+        fixed=context((BASE/'auth_fixed.cpp').read_text(),
+                      'services/ability/test/fuzztest/ability_stub_fuzzer.cpp')
+        self.assertFalse(IpcInterfaceDetector().detect(fixed,fixed.units).findings)
+
     def test_contract_bridge_and_obligations(self):
         ctx=context((BASE/'auth_positive.cpp').read_text())
         registry=DetectorRegistry();registry.register(IpcInterfaceDetector())
