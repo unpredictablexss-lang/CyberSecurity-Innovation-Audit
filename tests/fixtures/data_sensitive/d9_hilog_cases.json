@@ -1,6 +1,6 @@
 [
   {"id":"hilog_native_public_positive","file":"hilog_native_public_positive.cpp","expected_candidates":1},
-  {"id":"hilog_native_private_fixed","file":"hilog_native_private_fixed.cpp","expected_candidates":0},
+  {"id":"hilog_native_private_candidate","file":"hilog_native_private_candidate.cpp","expected_candidates":1},
   {"id":"hilog_comm_public_positive","file":"hilog_comm_public_positive.cpp","expected_candidates":1},
   {"id":"hilog_constant_safe","file":"hilog_constant_safe.cpp","expected_candidates":0}
 ]

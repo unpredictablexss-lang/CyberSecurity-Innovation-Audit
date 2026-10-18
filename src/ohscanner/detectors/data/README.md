@@ -1,4 +1,4 @@
-# D: sensitive-material log exposure, v0.8.0 (D12 type-identity candidate retention)
+# D: sensitive-material log exposure, v0.11.0 (retain privacy-masked sensitive flows as conditional candidates)
 
 Proposed Detector ID: `ohscanner.data.sensitive_exposure`; first and only rule:
 `data.log.sensitive-value` (provisional CWE-532). Owner ID/model review and catalog
@@ -12,8 +12,7 @@ Exact default repository/commit is in models.py. Other versions are blocked unti
 reviewed models are supplied. Fixtures explicitly inject a synthetic model.
 
 Algorithm: detailed Tree-sitter statement walk -> typed material fields or reviewed
-callback/output argument -> local assignments/copies/formatting -> explicitly
-public HiLog operand. Per-operand format mapping handles %% and * width/precision;
+callback/output argument -> local assignments/copies/formatting -> modeled HiLog operand. Public operands are direct candidates; private/default-private operands remain conditional candidates with a sink_privacy obligation. Per-operand format mapping handles %% and * width/precision;
 unsupported formats become partial. No keyword password/token matching. Buffer
 contents are not written to diagnostics; only symbol/location dependency steps.
 Unknown wrappers retain tentative dependencies and are not assumed sanitizers.
@@ -61,3 +60,4 @@ matching validation records. Neither regression fixtures nor macro mapping alone
 confirm a product vulnerability.
 
 D12 retains a candidate when a modeled sensitive field is used through a same-name local type whose compiler identity is unresolved; the finding carries a `type_identity` obligation and remains candidate-only. The source model explicitly treats `SessionKey.len` as non-sensitive metadata. See `research/data_sensitive/D12_IMPLEMENTATION.md` and the pinned real-source replay; no new candidate was added to that profile.
+D14 adds DSoftBus LNN/CONN/DISC, DFILE/DFINDER and FILLP wrappers plus HiLog base APIs; signatures and format operand positions were checked against pinned upstream headers and covered by regressions. D15 adds an exact-commit, exact-file AccessToken identity profile for source experiments; its one-file replay is partial/blocked and retains candidates only. AccessToken IDs are authorization identities, not bearer secrets. See `research/data_sensitive/D15_ACCESS_TOKEN_REPLAY.md` and its JSON evidence. This profile is not catalog-registered, is not a full component scan, and does not establish a vulnerability or impact.

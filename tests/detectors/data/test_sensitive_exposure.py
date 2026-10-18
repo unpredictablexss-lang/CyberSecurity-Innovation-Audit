@@ -8,7 +8,7 @@ from src.ohscanner.frontend import index_sources
 from src.ohscanner.git_source import GitSource
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
-from src.ohscanner.detectors.data.models import SensitiveSourceModel
+from src.ohscanner.detectors.data.models import ACCESS_TOKEN_SOURCE, SensitiveSourceModel
 from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats
 
 MODEL=SensitiveSourceModel('fixture/d-sensitive','d'*40,parameters=(('service.cpp','Callback',0),),provenance='Synthetic model for regression only; no real vulnerability')
@@ -61,7 +61,9 @@ class SensitiveTests(unittest.TestCase):
         self.assertTrue(any(item.kind == 'source_semantics' for item in public.findings[0].evidence_obligations))
 
         private = self.analyze('void UnreviewedName(SessionKey *secret){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{private}s",secret->value); }')
-        self.assertEqual(private.findings, ())
+        self.assertEqual(len(private.findings), 1)
+        self.assertTrue(any(item.kind == 'sink_privacy' for item in private.findings[0].evidence_obligations))
+        self.assertIn('private operand', private.findings[0].message)
         unrelated = self.analyze('void UnreviewedName(const char *ordinary){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{public}s",ordinary); }')
         self.assertEqual(unrelated.findings, ())
 
@@ -102,7 +104,7 @@ void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{publi
             ('COMM_LOGW(COMM_ADAPTER,"%{public}s",secret->value);',1),
             ('TRANS_CHECK_AND_RETURN_RET_LOGE(false,0,TRANS_CTRL,"%{public}s",secret->value);',1),
             ('COMM_CHECK_AND_RETURN_LOGE(false,COMM_ADAPTER,"%{public}s",secret->value);',1),
-            ('TRANS_LOGI(TRANS_CTRL,"%{private}s",secret->value);',0),
+            ('TRANS_LOGI(TRANS_CTRL,"%{private}s",secret->value);',1),
         )
         for call,expected in cases:
             with self.subTest(call=call):
@@ -136,16 +138,102 @@ void UnreviewedName(SessionKey *maybe){ HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{publi
                 self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
                 self.assertEqual(run.findings[0].candidate_cwe,'CWE-532')
                 self.assertTrue(run.findings[0].evidence_obligations)
-        private_calls=(
-            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{private}s",secret->value);',
-            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"%s",secret->value);',
-            'HILOG_COMM_INFO("%{private}s",secret->value);',
-            'HiLogInfo(label,"%s",secret->value);',
-            'HILOG_INFO(HILOG_MODULE_SOFTBUS,"literal only");',
+        privacy_calls=(
+            ('HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{private}s",secret->value);',1),
+            ('HILOG_INFO(HILOG_MODULE_SOFTBUS,"%s",secret->value);',1),
+            ('HILOG_COMM_INFO("%{private}s",secret->value);',1),
+            ('HiLogInfo(label,"%s",secret->value);',1),
+            ('HILOG_INFO(HILOG_MODULE_SOFTBUS,"literal only");',0),
+            ('HILOG_INFO(HILOG_MODULE_SOFTBUS,"%{private}p",secret->value);',0),
         )
-        for call in private_calls:
+        for call,expected in privacy_calls:
             with self.subTest(call=call):
-                self.assertEqual(self.analyze('void Callback(SessionKey *secret){'+call+'}').findings,())
+                run=self.analyze('void Callback(SessionKey *secret){'+call+'}')
+                self.assertEqual(len(run.findings),expected)
+                if expected:
+                    self.assertTrue(any(item.kind == 'sink_privacy' for item in run.findings[0].evidence_obligations))
+
+    def test_access_token_profile_is_revision_and_path_bound(self):
+        path = 'interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp'
+        cases = (
+            ('public_sensitive', 'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) {\n'
+             ' LOGI(ATM_DOMAIN, ATM_TAG, "TokenID=%{public}u", tokenID);\n}', 1),
+            ('private_conditional', 'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) {\n'
+             ' LOGI(ATM_DOMAIN, ATM_TAG, "TokenID=%{private}u", tokenID);\n}', 1),
+            ('removed_sensitive_log', 'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) {\n'
+             ' LOGI(ATM_DOMAIN, ATM_TAG, "operation completed");\n}', 0),
+            ('unrelated_value', 'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) {\n'
+             ' uint32_t count = 7; LOGI(ATM_DOMAIN, ATM_TAG, "count=%{public}u", count);\n}', 0),
+        )
+
+        def analyze_access_token(source, source_path=path, commit=ACCESS_TOKEN_SOURCE.commit):
+            data = source.encode()
+            units, ast, _ = index_sources((GitSource(
+                source_path, 'cpp',
+                hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(), data),))
+            request = ScanRequest(
+                'd-access-token-model', ACCESS_TOKEN_SOURCE.repository, commit,
+                snapshot_digest(units), 'current-component:'+ACCESS_TOKEN_SOURCE.repository)
+            context = ScanContext(request, units, {'ast': ast})
+            return SensitiveExposureDetector(ACCESS_TOKEN_SOURCE).detect(context, units)
+
+        for label, source, expected in cases:
+            with self.subTest(label=label):
+                run = analyze_access_token(source)
+                self.assertEqual(len(run.findings), expected)
+                if label in ('public_sensitive', 'private_conditional'):
+                    self.assertTrue(run.findings[0].evidence_obligations)
+                if label == 'private_conditional':
+                    self.assertTrue(any(
+                        item.kind == 'sink_privacy'
+                        for item in run.findings[0].evidence_obligations))
+
+        self.assertIn('authorization principals', ACCESS_TOKEN_SOURCE.provenance)
+        unrelated = analyze_access_token(cases[0][1], source_path='unrelated.cpp')
+        self.assertEqual(unrelated.findings, ())
+        wrong_commit = analyze_access_token(cases[0][1], commit='f'*40)
+        self.assertEqual(wrong_commit.status, 'blocked')
+
+    def test_dsoftbus_reviewed_log_header_families_are_modeled_sinks(self):
+        # Format operand positions checked against dfx/interface/include/*_log.h
+        # and the nested nstackx/fillp log.h wrappers in the downloaded source.
+        calls = (
+            ('LNN_LOGE(LNN_LABEL,"key=%{public}s",secret->value);', 1),
+            ('CONN_LOGW(CONN_LABEL,"key=%{private}s",secret->value);', 1),
+            ('DISC_LOGI(DISC_LABEL,"key=%s",secret->value);', 1),
+            ('CONN_CHECK_AND_RETURN_RET_LOGI(false,-1,CONN_LABEL,"key=%{public}s",secret->value);', 1),
+            ('DISC_CHECK_AND_RETURN_LOGD(false,DISC_LABEL,"key=%{public}s",secret->value);', 1),
+            ('DFILE_LOGE(MODULE,"key=%{public}s",secret->value);', 1),
+            ('DFINDER_LOGI(MODULE,"key=%{public}s",secret->value);', 1),
+            ('FILLP_LOGERR("key=%{public}s",secret->value);', 1),
+        )
+        for call, expected in calls:
+            with self.subTest(call=call):
+                run = self.analyze('void Callback(SessionKey *secret){'+call+'}')
+                self.assertEqual(len(run.findings), expected)
+                if expected:
+                    self.assertEqual(run.findings[0].rule_id, 'data.log.sensitive-value')
+                    self.assertTrue(run.findings[0].evidence_obligations)
+
+    def test_hilog_base_header_interfaces_are_modeled_sinks(self):
+        # Signatures and macro argument positions verified against hiviewdfx_hilog
+        # interfaces/native/innerkits/include/hilog_base/log_base.h.
+        calls = (
+            ('HILOG_BASE_DEBUG(LOG_CORE,"%{public}s",secret->value);', 1),
+            ('HILOG_BASE_INFO(LOG_CORE,"%s",secret->value);', 1),
+            ('HILOG_BASE_WARN(LOG_CORE,"%{private}s",secret->value);', 1),
+            ('HILOG_BASE_ERROR(LOG_CORE,"%{public}s",secret->value);', 1),
+            ('HILOG_BASE_FATAL(LOG_CORE,"%{public}s",secret->value);', 1),
+            ('HiLogBasePrint(LOG_CORE,LOG_ERROR,0,"tag","%{public}s",secret->value);', 1),
+            ('HiLogBasePrint(LOG_CORE,LOG_ERROR,0,"tag","literal only");', 0),
+        )
+        for call, expected in calls:
+            with self.subTest(call=call):
+                run = self.analyze('void Callback(SessionKey *secret){'+call+'}')
+                self.assertEqual(len(run.findings), expected)
+                if expected:
+                    self.assertEqual(run.findings[0].rule_id, 'data.log.sensitive-value')
+                    self.assertTrue(run.findings[0].evidence_obligations)
 
     def test_d9_hilog_cases_from_additive_manifest(self):
         cases=json.loads((ROOT/"fixtures/data_sensitive/d9_hilog_cases.json").read_text())

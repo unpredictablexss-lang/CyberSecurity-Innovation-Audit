@@ -122,6 +122,12 @@ def replay(args: argparse.Namespace) -> dict:
         },
         "detector_id": run.detector_id,
         "detector_version": run.version,
+        "detector_implementation": {
+            "historical.py_sha256": hashlib.sha256(
+                (ROOT / "src/ohscanner/detectors/data/historical.py").read_bytes()).hexdigest(),
+            "sensitive_exposure.py_sha256": hashlib.sha256(
+                (ROOT / "src/ohscanner/detectors/data/sensitive_exposure.py").read_bytes()).hexdigest(),
+        },
         "public_runner_invoked": False,
         "validated_vulnerability": 0,
         "product_impact": "unknown",

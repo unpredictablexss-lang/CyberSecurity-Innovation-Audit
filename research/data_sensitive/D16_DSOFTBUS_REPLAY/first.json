@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "experiment_kind": "first_party_detector_execution",
+  "status": "completed_with_limitations",
+  "repository": "openharmony/communication_dsoftbus",
+  "target_id": "current-component:openharmony/communication_dsoftbus",
+  "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+  "git_tree": "bd915661eedd139df17f249191e2a691e76f7565",
+  "snapshot_sha256": "cd873f97cfbfa8740efbf31545cb4ddd7c4dd9755ea60f3bc96e8b15b408174f",
+  "provenance": "local_git_objects",
+  "profile_id": "light-ast",
+  "environment": {
+    "python": "3.10.12",
+    "git": "git version 2.34.1",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "build_profile": "none",
+    "macro_expansion": false,
+    "product_manifest_locked": false
+  },
+  "scope": {
+    "tracked_entries": 3722,
+    "out_of_scope": 3713,
+    "non_source": 0,
+    "symlinks": 0,
+    "submodules": 0,
+    "oversize": 0,
+    "binary_or_non_utf8": 0,
+    "selected_source_files": 9,
+    "selected_source_bytes": 76983,
+    "skipped": [],
+    "git_tree": "bd915661eedd139df17f249191e2a691e76f7565",
+    "declared_scope": [
+      "core/authentication/include/auth_session_key.h",
+      "core/authentication/src/auth_session_key.c",
+      "interfaces/kits/authentication/auth_session_key_struct.h",
+      "core/authentication/src/auth_hichain.c",
+      "core/authentication/src/auth_hichain_adapter.c",
+      "adapter/common/include/softbus_adapter_crypto.h",
+      "dfx/interface/include/auth_log.h",
+      "dfx/interface/include/softbus_log.h",
+      "dfx/log/src/auth_log.c"
+    ]
+  },
+  "source_parsing": {
+    "parsing_status": {
+      "complete": 3,
+      "partial": 6
+    },
+    "languages": {
+      "c": 4,
+      "cpp": 5
+    }
+  },
+  "detector_count": 1,
+  "diagnostic_count": 1,
+  "validated_vulnerability": 0,
+  "detector_runs": [
+    {
+      "schema_version": 2,
+      "run_id": "git-index:0e0c18c4a10b:cd873f97cfbf:ohscanner.data.sensitive_exposure",
+      "tool": "ohscanner.data.sensitive_exposure",
+      "tool_version": "0.11.0",
+      "target_id": "current-component:openharmony/communication_dsoftbus",
+      "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+      "scope_files": 3,
+      "scope_loc": 1047,
+      "status": "blocked",
+      "elapsed_seconds": 0.04166696799984493,
+      "peak_memory_mb": null,
+      "diagnostic_count": 1,
+      "diagnostics": [
+        {
+          "diagnostic_id": "ohscanner.data.sensitive_exposure:a0dccb0bb6b38fed",
+          "provider": "ohscanner.data.sensitive_exposure",
+          "evidence_type": "syntax",
+          "file": "core/authentication/src/auth_hichain.c",
+          "line": 136,
+          "column": null,
+          "rule_id": "data.sensitive.unresolved-escape",
+          "severity": "unassessed",
+          "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+          "candidate_cwe": null,
+          "confidence": "unassessed",
+          "symbol": "OnSessionKeyReturned",
+          "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+          "consequence_impact": null,
+          "consequence_cwe": null,
+          "finding_identity": {
+            "schema_version": "ohscanner.finding-identity-record.v1",
+            "stable": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "identity_quality:unknown",
+                "missing:ast_fingerprint",
+                "missing:rule_lineage_id",
+                "missing:symbol_identity"
+              ]
+            },
+            "occurrence": {
+              "id": null,
+              "status": "unknown",
+              "basis": null,
+              "unknown_reasons": [
+                "missing:rule_version"
+              ]
+            },
+            "observation": {
+              "legacy_diagnostic_id": "ohscanner.data.sensitive_exposure:a0dccb0bb6b38fed",
+              "detector_id": "ohscanner.data.sensitive_exposure",
+              "detector_version": "0.11.0",
+              "rule_id": "data.sensitive.unresolved-escape",
+              "rule_version": null,
+              "file": "core/authentication/src/auth_hichain.c",
+              "line": 136,
+              "message": "Candidate sensitive-data escape with unresolved binding: the call is outside the same-file reviewed model; path=core/authentication/src/auth_hichain.c:126 source OnSessionKeyReturned parameter 1 -> 136 unresolved call AuthSessionSaveSessionKey",
+              "source_blob_oid": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+              "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+              "byte_start": 4857,
+              "byte_end": 4930,
+              "identity_quality": "unknown",
+              "rule_lineage_id": null,
+              "symbol_identity": null,
+              "ast_fingerprint": null
+            },
+            "source_binding": {
+              "repository": "openharmony/communication_dsoftbus",
+              "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+              "snapshot_sha256": "cd873f97cfbfa8740efbf31545cb4ddd7c4dd9755ea60f3bc96e8b15b408174f",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.data.sensitive_exposure",
+              "detector_version": "0.11.0",
+              "rule_id": "data.sensitive.unresolved-escape",
+              "rule_version": null,
+              "file": "core/authentication/src/auth_hichain.c",
+              "source_blob_oid": "1aadc4dafe81bc42f9916b9bd7aa3f9f0a616c2d",
+              "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+              "byte_start": 4857,
+              "byte_end": 4930,
+              "status": "unbound",
+              "verification": "not_performed_by_identity_layer"
+            },
+            "historical_ids": [
+              "ohscanner.data.sensitive_exposure:a0dccb0bb6b38fed"
+            ],
+            "backfilled": false,
+            "interpretation": "Layered identity describes observation correspondence only; it does not prove a vulnerability, fix, safety, miss, or disappearance."
+          },
+          "source_binding": "bound"
+        }
+      ],
+      "limitations": [
+        "Candidate only: runtime log readers, production enablement and impact require independent review.",
+        "Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.",
+        "Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.",
+        "Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.",
+        "Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.",
+        "core/authentication/src/auth_hichain.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+        "core/authentication/src/auth_hichain.c: branch merge is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: conditional effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: conditional value is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: member/pointer output copy unsupported",
+        "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGE",
+        "core/authentication/src/auth_hichain.c: nonliteral/unsupported log format: AUTH_LOGI",
+        "core/authentication/src/auth_hichain.c: pointer/member assignment requires alias proof",
+        "core/authentication/src/auth_hichain.c: preprocessor/build context not expanded",
+        "core/authentication/src/auth_hichain.c: same-file helper call has unresolved overload/arity: UnregTrustDataChangeListener",
+        "core/authentication/src/auth_hichain.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain.c: unknown field/alias propagation",
+        "core/authentication/src/auth_hichain.c: unmodeled call may mutate/escape sensitive value: AuthSessionSaveSessionKey",
+        "core/authentication/src/auth_hichain_adapter.c: bounded same-file helper expansion; cross-file and deeper call flows remain unknown",
+        "core/authentication/src/auth_hichain_adapter.c: branch merge is may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain_adapter.c: break/continue exits need enclosing-loop proof; loops not analyzed",
+        "core/authentication/src/auth_hichain_adapter.c: loop body analyzed for may-flow only at line 155; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_hichain_adapter.c: loop body analyzed for may-flow only at line 245; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_hichain_adapter.c: loop body analyzed for may-flow only at line 297; iteration count/path feasibility unresolved",
+        "core/authentication/src/auth_hichain_adapter.c: preprocessor/build context not expanded",
+        "core/authentication/src/auth_hichain_adapter.c: same-file helper call has unresolved overload/arity: InitHichain",
+        "core/authentication/src/auth_hichain_adapter.c: short-circuit effects are may-flow; no path feasibility proof",
+        "core/authentication/src/auth_hichain_adapter.c: unsupported statement preproc_ifdef at line 72",
+        "dfx/log/src/auth_log.c: preprocessor/build context not expanded",
+        "M1 local Git objects pinned by full commit/tree; repository ownership is user-declared.",
+        "Execution is synchronous; hard timeout/memory isolation is not yet implemented.",
+        "Diagnostic does not establish vulnerability, reachability or security impact.",
+        "INCOMPLETE COVERAGE: 6 applicable files not analyzed; inspect parsing.analysis_status and the coverage sidecar.",
+        "INCOMPLETE COVERAGE: detector-internal file outcome is unknown/partial; see coverage sidecar.",
+        "Coverage incomplete or unsupported; do not infer safety."
+      ],
+      "parsing": [
+        {
+          "file": "adapter/common/include/softbus_adapter_crypto.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 121, \"kind\": \"error\", \"start_line\": 16}",
+            "{\"end_line\": 117, \"kind\": \"error\", \"start_line\": 117}"
+          ],
+          "analysis_status": "not_analyzed",
+          "analysis_reason": "incomplete_ast:partial"
+        },
+        {
+          "file": "core/authentication/include/auth_session_key.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 72, \"kind\": \"error\", \"start_line\": 16}",
+            "{\"end_line\": 68, \"kind\": \"error\", \"start_line\": 68}"
+          ],
+          "analysis_status": "not_analyzed",
+          "analysis_reason": "incomplete_ast:partial"
+        },
+        {
+          "file": "core/authentication/src/auth_hichain.c",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "core/authentication/src/auth_hichain_adapter.c",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "core/authentication/src/auth_session_key.c",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 45, \"kind\": \"missing\", \"start_line\": 45}",
+            "{\"end_line\": 54, \"kind\": \"missing\", \"start_line\": 54}",
+            "{\"end_line\": 111, \"kind\": \"missing\", \"start_line\": 111}",
+            "{\"end_line\": 123, \"kind\": \"missing\", \"start_line\": 123}",
+            "{\"end_line\": 135, \"kind\": \"missing\", \"start_line\": 135}",
+            "{\"end_line\": 149, \"kind\": \"missing\", \"start_line\": 149}",
+            "{\"end_line\": 166, \"kind\": \"missing\", \"start_line\": 166}",
+            "{\"end_line\": 184, \"kind\": \"missing\", \"start_line\": 184}",
+            "{\"end_line\": 212, \"kind\": \"missing\", \"start_line\": 212}",
+            "{\"end_line\": 234, \"kind\": \"missing\", \"start_line\": 234}",
+            "{\"end_line\": 294, \"kind\": \"missing\", \"start_line\": 294}",
+            "{\"end_line\": 328, \"kind\": \"missing\", \"start_line\": 328}",
+            "{\"end_line\": 352, \"kind\": \"missing\", \"start_line\": 352}",
+            "{\"end_line\": 375, \"kind\": \"missing\", \"start_line\": 375}",
+            "{\"end_line\": 401, \"kind\": \"missing\", \"start_line\": 401}",
+            "{\"end_line\": 539, \"kind\": \"missing\", \"start_line\": 539}"
+          ],
+          "analysis_status": "not_analyzed",
+          "analysis_reason": "incomplete_ast:partial"
+        },
+        {
+          "file": "dfx/interface/include/auth_log.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 60, \"kind\": \"missing\", \"start_line\": 60}"
+          ],
+          "analysis_status": "not_analyzed",
+          "analysis_reason": "incomplete_ast:partial"
+        },
+        {
+          "file": "dfx/interface/include/softbus_log.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 117, \"kind\": \"missing\", \"start_line\": 117}"
+          ],
+          "analysis_status": "not_analyzed",
+          "analysis_reason": "incomplete_ast:partial"
+        },
+        {
+          "file": "dfx/log/src/auth_log.c",
+          "status": "complete",
+          "issues": [],
+          "analysis_status": "partial",
+          "analysis_reason": "detector_model_incomplete"
+        },
+        {
+          "file": "interfaces/kits/authentication/auth_session_key_struct.h",
+          "status": "partial",
+          "issues": [
+            "{\"end_line\": 49, \"kind\": \"error\", \"start_line\": 16}",
+            "{\"end_line\": 46, \"kind\": \"error\", \"start_line\": 46}"
+          ],
+          "analysis_status": "not_analyzed",
+          "analysis_reason": "incomplete_ast:partial"
+        }
+      ],
+      "interpretation": "Descriptive scanner evidence only. Diagnostics are candidates/evidence, not validated vulnerabilities; an empty diagnostic list is not proof of safety."
+    }
+  ],
+  "detector_coverage": {
+    "schema_version": 1,
+    "detectors": {
+      "ohscanner.data.sensitive_exposure": {
+        "scope_mode": "per_file",
+        "status": "partial",
+        "applicable_files": 9,
+        "analyzed_files": [],
+        "partially_inspected_files": [
+          "core/authentication/src/auth_hichain.c",
+          "core/authentication/src/auth_hichain_adapter.c",
+          "dfx/log/src/auth_log.c"
+        ],
+        "source_sha256": {
+          "adapter/common/include/softbus_adapter_crypto.h": "1a999bf0c65d68b6e46a7dfecf23caac96bf599561df1b84e2192e0bed393dea",
+          "core/authentication/include/auth_session_key.h": "e7c41081253debc12aae90380b91bc4302b0b06c23f2a301d6b68682b27e8df2",
+          "core/authentication/src/auth_hichain.c": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+          "core/authentication/src/auth_hichain_adapter.c": "0bbbfe21cf79a85343848f59620cedb1b67a42d5f1196d7e36816e9cd562f6de",
+          "core/authentication/src/auth_session_key.c": "5dc2f567cd127876aaaf35f7373c4b5a802a5802607eb7d05e34f62d5870701f",
+          "dfx/interface/include/auth_log.h": "8572980b13d1425c1423618b258c4259ac89ec153e9221d7d610b9860f67145f",
+          "dfx/interface/include/softbus_log.h": "c9627e6e71bc70c4e4cc677b88f56efdb1c29de0d96eac7861df2ecc6a974a7e",
+          "dfx/log/src/auth_log.c": "66efee6c3dc668112c46f1f412290b92e3830472f506f4778523736e4a78c9ca",
+          "interfaces/kits/authentication/auth_session_key_struct.h": "30a86e2bce66b686133456f5af4820054169b0bddd1dfaade2cfb726290176db"
+        },
+        "unexamined": [
+          {
+            "file": "adapter/common/include/softbus_adapter_crypto.h",
+            "parse_status": "partial",
+            "reason": "incomplete_ast:partial",
+            "analysis_status": "not_analyzed"
+          },
+          {
+            "file": "core/authentication/include/auth_session_key.h",
+            "parse_status": "partial",
+            "reason": "incomplete_ast:partial",
+            "analysis_status": "not_analyzed"
+          },
+          {
+            "file": "core/authentication/src/auth_hichain.c",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "core/authentication/src/auth_hichain_adapter.c",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "core/authentication/src/auth_session_key.c",
+            "parse_status": "partial",
+            "reason": "incomplete_ast:partial",
+            "analysis_status": "not_analyzed"
+          },
+          {
+            "file": "dfx/interface/include/auth_log.h",
+            "parse_status": "partial",
+            "reason": "incomplete_ast:partial",
+            "analysis_status": "not_analyzed"
+          },
+          {
+            "file": "dfx/interface/include/softbus_log.h",
+            "parse_status": "partial",
+            "reason": "incomplete_ast:partial",
+            "analysis_status": "not_analyzed"
+          },
+          {
+            "file": "dfx/log/src/auth_log.c",
+            "parse_status": "complete",
+            "reason": "detector_model_incomplete",
+            "analysis_status": "partial"
+          },
+          {
+            "file": "interfaces/kits/authentication/auth_session_key_struct.h",
+            "parse_status": "partial",
+            "reason": "incomplete_ast:partial",
+            "analysis_status": "not_analyzed"
+          }
+        ],
+        "inspected_files": [
+          "core/authentication/src/auth_hichain.c",
+          "core/authentication/src/auth_hichain_adapter.c",
+          "dfx/log/src/auth_log.c"
+        ],
+        "not_analyzed_files": [
+          "adapter/common/include/softbus_adapter_crypto.h",
+          "core/authentication/include/auth_session_key.h",
+          "core/authentication/src/auth_session_key.c",
+          "dfx/interface/include/auth_log.h",
+          "dfx/interface/include/softbus_log.h",
+          "interfaces/kits/authentication/auth_session_key_struct.h"
+        ],
+        "coverage_counts": {
+          "complete": 0,
+          "partial": 3,
+          "not_analyzed": 6,
+          "failed": 0
+        },
+        "coverage_semantics": "scope_files counts inspection; analyzed_files is complete analysis; partial stays unknown",
+        "evidence_obligations": [
+          {
+            "diagnostic_id": "ohscanner.data.sensitive_exposure:a0dccb0bb6b38fed",
+            "file": "core/authentication/src/auth_hichain.c",
+            "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b",
+            "analysis_status": "partial",
+            "source_binding": {
+              "repository": "openharmony/communication_dsoftbus",
+              "commit": "0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132",
+              "snapshot_sha256": "cd873f97cfbfa8740efbf31545cb4ddd7c4dd9755ea60f3bc96e8b15b408174f",
+              "profile_id": "light-ast",
+              "detector_id": "ohscanner.data.sensitive_exposure",
+              "detector_version": "0.11.0",
+              "rule_id": "data.sensitive.unresolved-escape",
+              "file": "core/authentication/src/auth_hichain.c",
+              "source_sha256": "4132e6577e6d736a7f922b0344fbcb2002d533f079ee332494ffdf007ec47e7b"
+            },
+            "consequence_impact": null,
+            "consequence_cwe": null,
+            "model_version": null,
+            "obligations": [
+              {
+                "kind": "callee_binding",
+                "description": "Resolve the exact overload, receiver, and implementation for AuthSessionSaveSessionKey.",
+                "status": "unknown"
+              },
+              {
+                "kind": "sink_behavior",
+                "description": "Determine whether the callee logs, serializes, stores, or safely transforms the sensitive value.",
+                "status": "unknown"
+              },
+              {
+                "kind": "runtime_log_visibility",
+                "description": "No log exposure or reader reachability is established by this call alone.",
+                "status": "unknown"
+              },
+              {
+                "kind": "security_impact",
+                "description": "Establish recoverable sensitive material and concrete impact independently.",
+                "status": "unknown"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "files_in_scope_without_a_claiming_detector": [],
+  "limitations": [
+    "Diagnostics are candidates/evidence only, not proof of security impact.",
+    "Zero diagnostics does NOT mean the component is free of vulnerabilities.",
+    "Git origin name is user declared; source is pinned local objects, not an OH product build.",
+    "No compilation flags/macros, symbolic execution, hard plugin timeout or runtime validation."
+  ]
+}

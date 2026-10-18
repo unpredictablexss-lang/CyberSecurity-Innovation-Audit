@@ -11,7 +11,7 @@
 - 未知函数可能变换/修改/逃逸参数：保留受限依赖及partial，可能有误报也可能漏掉间接传播。
 - 支持格式子集；位置参数、PRI宏、动态格式、未知转换、转义差异和不一致参数明确partial。
   字符串参数不自动等于秘密，指针地址输出不按本规则判为密钥材料泄露。
-- private/default-private 不产生public材料候选，但日志隐私开关/工程构建/读取权限仍unknown。
+- Private/default-private operands with sensitive flows are conditional candidates; review sink implementation, product privacy configuration, log collection policy, and reader access. This does not prove public exposure.
 - 当前公共Runner先跳过partial AST，再调用要求ast的检测器；D不能私自绕过这个公共行为。
   真实复测9文件仅3个进入部分分析、6个未分析，零候选不代表无风险。
 - 没有4个已验证的真实危险日志示例；没有真实漏洞修复对、CVE、独立holdout和准确率。

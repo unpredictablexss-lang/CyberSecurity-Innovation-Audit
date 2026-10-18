@@ -43,3 +43,29 @@ D13 implementation and reproducible commands are in D13_IMPLEMENTATION.md; machi
 - Post-push check: remote branch and refs/pull/17/head both resolved to 478d3d6fdc7febc66064f0b7e513b8f9e2993248. The fetched PR merge ref parents were latest main 1c21ac60890fca0ce6be5d50d82e4757dd5e4623 and that PR head. The working tree was clean.
 - D13 data tests: 55 passed. Full Python suite: 889 run, 884 passed, 5 skipped, 0 failed. compileall and git diff --check passed.
 - PR #17 metadata and latest Actions status were not refreshed by this handoff update; the last observed PR state was open/Draft. No PR state was changed.
+
+## D14 high-recall sink privacy handling and D5 replay
+
+D14 changed detector version 0.9.0 / sink-model version 0.3.0 so sensitive data reaching a private or default-private log slot remains a conditional candidate with sink_privacy obligations. This is a review candidate, not a claim that private logging is exposed. D1 frozen fixture bytes remain unchanged; D5 additive controls now override the old private-as-safe expectation, and D9 has a private-slot positive candidate.
+
+Exact Git-object D5 replay now runs on the ten files required by the historical model. Before commit: 1 candidate at trans_tcp_direct_message.c:671, 4/10 complete, 6/10 partial, blocked. After commit: 0 candidate, 4/10 complete, 6/10 partial, blocked. Both report detector implementation hashes. D11's separate 11-source manifest replay remains 1/0 at 5/6 parsing. The static delta is not product confirmation.
+
+D14 validation: data tests 55/55; full Python 889 (884 passed, 5 skipped). See D14_IMPLEMENTATION.md, D14_VALIDATION.json, D14_D5_HISTORICAL_BEFORE.json, and D14_D5_HISTORICAL_AFTER.json. M0-M3 remain not met; public partial admission, panel, Catalog, product runtime/reader proof and independent holdout are open.
+
+
+## D15 external source experiment
+
+Added an exact-commit AccessTokenID/FullTokenID source profile, with LOGF/E/W/I/D sinks scoped to the pinned source file to avoid treating generic LOGI names as global sinks. The pinned `security_access_token` file produced 5 direct log candidates and 3 unresolved cross-component candidates; its parser outcome is partial and aggregate status blocked. The identifiers are authorization principals, not bearer secrets, and all outcomes retain unknown impact obligations. Two exact-snapshot reruns produced identical candidate identities and obligations; see `D15_REPEAT_STABILITY.json`. See `D15_ACCESS_TOKEN_REPLAY.md/.json`.
+
+The D5 historical ten-file replay was repeated under the current detector implementation: before revision retains 1 candidate, after revision 0; both remain blocked with 4/10 complete and 6/10 partial. Exact `PackRequest`/`UnpackRequest` blobs were reverified against Git blob SHA-1, SHA-256, and size, confirming that `SESSION_KEY` carries `AppInfo.sessionKey` in the request. The extracted-function component Harness was also rerun successfully: the synthetic marker reaches only the old logger stub; ordinary reply and decrypt-failure controls behave as expected. Full current-run observations are in `D15_COMPONENT_HARNESS_RERUN.json`. The historical finding remains candidate/unknown; product build, unauthorized-reader impact, and product PoC remain unverified. See `D15_D5_CANDIDATE_ASSESSMENT.md` for evidence and bounded remediation.
+
+Validation on 2026-10-18: D data tests 58/58; full Python suite 892 run, 887 passed, 5 skipped, 0 failed; compileall, report JSON parsing and `git diff --check` passed. The external AccessToken experiment is one file, not an independent holdout or full scan; no PoC, product fix test, confirmed vulnerability or impact is established. `validated_vulnerability=0`.
+
+Delivery remains research-only and unregistered. The lane checker currently rejects `--lane D` because `config/collaboration/ownership.json` has no D lane; no scope policy or shared owner files were changed.
+
+## D16 fixed-profile DSoftBus replay
+
+The default 9-file session-key profile at commit `0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132` was executed twice through the offline reviewed-detector registry. Both runs were identical: one unresolved-escape candidate at `auth_hichain.c:136`, 3 files partial and 6 not analyzed; aggregate status `completed_with_limitations`. The candidate is a call to `AuthSessionSaveSessionKey`, not a demonstrated log sink. See `D16_DSOFTBUS_REPLAY/`; no vulnerability or complete scan is claimed.
+
+
+D17 follow-up: exact commit-tree blobs now bind AuthSessionSaveSessionKey through AuthManagerSetSessionKey to AddSessionKey. The reviewed bounded path copies the key into the internal session-key list and does not pass key bytes to logging macros. The detector candidate remains visible; downstream readers and product/runtime behavior remain unknown. See D17_DSOFTBUS_CALLEE_BINDING.md.

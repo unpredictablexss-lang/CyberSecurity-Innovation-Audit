@@ -74,7 +74,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.8.0'
+    version = '0.11.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -111,7 +111,7 @@ class SensitiveExposureDetector:
             'Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.',
             'Model scope is exact repository/commit; receiver/typedef identity and include binding remain obligations.',
             'Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.',
-            'Private/default-private operands withheld under modeled HiLog semantics, not proof of all product privacy configurations.',
+            'Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.',
         ))
         return DetectorRun(self.detector_id, self.version,
             'completed' if outcomes and all(s == 'complete' for _, s in outcomes) else 'blocked',
@@ -128,7 +128,8 @@ class LocalFlow:
         self.source_sites, self.sink_sites = [], []
         lang = tree_sitter_c if unit.language == 'c' else tree_sitter_cpp
         self.tree = Parser(Language(lang.language())).parse(self.b)
-        self.sinks = {s.name:s for s in SINKS}
+        self.sinks = {s.name:s for s in SINKS if not s.files or unit.path in s.files}
+        self.sinks.update({s.name:s for s in model.additional_sinks if not s.files or unit.path in s.files})
         self.fields = dict(model.fields)
         self.non_sensitive_fields = dict(model.non_sensitive_fields)
         self.shadows = set()
@@ -365,9 +366,9 @@ class LocalFlow:
                 return self.lvalue(node.child_by_field_name('argument'),types)
         return ''
 
-    def emit_log_candidate(self,fn,fnname,node,flows,message,extra_obligation):
+    def emit_log_candidate(self,fn,fnname,node,flows,message,extra_obligation,operand_status='unresolved operand-privacy status'):
         line=node.start_point[0]+1
-        traces=sorted(set(' -> '.join(flow.steps+(f'{line} {fn} unresolved public-operand status',))
+        traces=sorted(set(' -> '.join(flow.steps+(f'{line} {fn} {operand_status}',))
                           for flow in flows))
         self.findings.append(DetectorFinding(
             file=self.u.path,line=line,symbol=fnname,rule_id='data.log.sensitive-value',
@@ -506,8 +507,21 @@ class LocalFlow:
             return
         for privacy,ids,conversion in slots:
             if privacy!='public':
-                if any(self.expr(operands[i],env,types) for i in ids):
-                    self.gaps.add('private operand requires runtime privacy-configuration review')
+                for i in ids:
+                    if conversion=='p' and i==ids[-1]:
+                        if self.expr(operands[i],env,types):
+                            self.gaps.add('pointer-address output outside material rule')
+                        continue
+                    flows=self.expr(operands[i],env,types)
+                    if not flows:continue
+                    self.gaps.add('private operand requires runtime privacy-configuration review; conditional candidate retained')
+                    self.emit_log_candidate(
+                        fn,fnname,n,flows,
+                        'Sensitive data reaches a modeled logging call through a private/default-private operand; exposure is conditional and not established.',
+                        EvidenceObligation(
+                            'sink_privacy',
+                            'Verify the exact sink implementation, production privacy configuration, log collection policy, and reader permissions; the static private marker does not prove non-exposure.'),
+                        operand_status=f'{privacy} operand {i}')
                 continue
             for i in ids:
                 # Pointer-address output is not automatically a secret material leak.

@@ -126,5 +126,37 @@
     "split": "d5_unresolved_boundary",
     "partial": true,
     "reason": "A same-name local declaration makes the modeled type identity ambiguous; preserve a candidate with a type_identity obligation instead of silently suppressing the possible sensitive flow."
+  },
+  {
+    "id": "private_fixed",
+    "file": "private_fixed.cpp",
+    "expected_candidates": 1,
+    "split": "d5_high_recall_privacy",
+    "partial": false,
+    "reason": "A private format marker does not prove the active product logging policy and readers cannot expose the value; keep a conditional candidate for Agent review."
+  },
+  {
+    "id": "default_private_safe",
+    "file": "default_private_safe.cpp",
+    "expected_candidates": 1,
+    "split": "d5_high_recall_privacy",
+    "partial": false,
+    "reason": "A sink's modeled default privacy is not a product-wide exposure guarantee; retain the sensitive flow as a conditional candidate."
+  },
+  {
+    "id": "slot_mapping_safe",
+    "file": "slot_mapping_safe.cpp",
+    "expected_candidates": 1,
+    "split": "d5_high_recall_privacy",
+    "partial": false,
+    "reason": "A private sensitive operand remains a conditional candidate even when another public operand carries only metadata."
+  },
+  {
+    "id": "mixed_slots_fixed",
+    "file": "d2_mixed_slots_fixed.cpp",
+    "expected_candidates": 1,
+    "split": "d5_high_recall_privacy",
+    "partial": false,
+    "reason": "The sensitive value occupies a private slot, so it remains a conditional candidate pending exact runtime privacy configuration."
   }
 ]

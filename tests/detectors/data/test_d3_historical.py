@@ -53,7 +53,7 @@ class D3HistoricalTests(unittest.TestCase):
     def test_d5_source_model_version_and_d3_controls_remain_frozen(self):
         from src.ohscanner.detectors.data.models import DSOFTBUS_COMMIT, SOURCE_MODEL_VERSION
         self.assertEqual(DSOFTBUS_COMMIT,'0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132')
-        self.assertEqual(SOURCE_MODEL_VERSION,'0.2.0')
+        self.assertEqual(SOURCE_MODEL_VERSION,'0.3.0')
         frozen=json.loads((ROOT/'research/data_sensitive/D3_BASELINE.json').read_text())
         for path,digest in frozen['existing_control_sha256'].items():
             self.assertEqual(hashlib.sha256((ROOT/path).read_bytes()).hexdigest(),digest,path)
@@ -161,7 +161,8 @@ class D3HistoricalTests(unittest.TestCase):
             'summary_parameter':1,'output_member':'payload','output_type':'DecodedEnvelope',
             'allocator':'PayloadAlloc','sink':'AuditLog','format_index':0,
             'default_private':True,'format_syntax':'printf'})
-        self.assertEqual(run.findings,())
+        self.assertEqual(len(run.findings),1)
+        self.assertTrue(any(item.kind == 'sink_privacy' for item in run.findings[0].evidence_obligations))
         self.assertTrue(any('private operand' in text for text in run.limitations))
 
     def test_renamed_same_name_sink_in_unrelated_function_is_not_a_candidate(self):
