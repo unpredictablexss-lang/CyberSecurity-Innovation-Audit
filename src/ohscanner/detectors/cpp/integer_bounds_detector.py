@@ -20,6 +20,7 @@ from .memory_safety import (
     expression_interval,
     function_at,
     function_shapes,
+    guard_constraints,
     guard_shapes,
     line_column,
     mask_comments_and_literals,
@@ -31,7 +32,7 @@ from .memory_safety import (
 RULE_ARITHMETIC = "ohcpp-integer-bounds-arithmetic-candidate-001"
 RULE_TRUNCATION = "ohcpp-integer-bounds-truncation-candidate-002"
 RULE_NARROW_INDEX = "ohcpp-integer-bounds-narrow-index-candidate-003"
-RULE_VERSION = "0.2.0"
+RULE_VERSION = "0.2.3"
 RULE_LINEAGE_ID = "A-INT-01:ohcpp-integer-bounds-candidate"
 
 _OBLIGATIONS = (
@@ -220,6 +221,44 @@ def _macro_only_expression(expression: str) -> bool:
     )
 
 
+def _bounded_addition(
+    guards,
+    functions,
+    position: int,
+    expression: str,
+    integers: Dict[str, Any],
+    constants: Dict[str, int],
+    sizeof_values: Dict[str, int],
+) -> bool:
+    """True when a ``name + constant`` addition is bounded by an upper guard."""
+
+    match = re.fullmatch(
+        r"\s*(?P<name>[A-Za-z_]\w*)\s*\+\s*(?P<value>\d+(?:[uUlL]*)?)\s*",
+        expression,
+    )
+    if not match:
+        return False
+    name = match.group("name")
+    shape = integers.get(name)
+    bits = shape.bits if shape is not None else None
+    signed = shape.signed if shape is not None else None
+    if bits is None:
+        function = function_at(functions, position)
+        if function is not None:
+            for item in split_call_arguments(function.params):
+                declaration = item.split("=", 1)[0].strip()
+                identifiers = re.findall(r"[A-Za-z_]\w*", declaration)
+                if identifiers and identifiers[-1] == name:
+                    bits, signed = type_shape(" ".join(identifiers[:-1]))
+                    break
+    if bits is None:
+        return False
+    constraints = guard_constraints(guards, position, constants, sizeof_values)
+    interval = expression_interval(expression, constants, constraints)
+    _low, high = _range(bits, signed)
+    return interval.maximum is not None and high is not None and interval.maximum <= high
+
+
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bool]:
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
@@ -229,7 +268,12 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         return findings, [f"{unit.path}: source exceeds the 1MiB per-unit fail-closed budget."], False
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
-    _arrays, integers, constants = declarations(masked)
+    arrays, integers, constants = declarations(masked)
+    sizeof_values = {
+        name: shape.capacity * shape.element_size
+        for name, shape in arrays.items()
+        if shape.capacity is not None and shape.element_size is not None
+    }
     guards = guard_shapes(masked, functions)
     sensitive = _sensitive_names(masked)
 
@@ -248,6 +292,11 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if operation == "+" and _guarded_strnlen_symbols(function_text) & set(names):
             checked = True
         if operation == "+" and _promotion_safe_addition(expression, integers, constants):
+            checked = True
+        if operation == "+" and _bounded_addition(
+            guards, functions, match.start(), expression, integers, constants,
+            sizeof_values,
+        ):
             checked = True
         if value is not None and shape.bits is not None:
             low, high = _range(shape.bits, shape.signed)
@@ -324,6 +373,11 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 checked = True
             if operation == "+" and _promotion_safe_addition(arg, integers, constants):
                 checked = True
+            if operation == "+" and _bounded_addition(
+                guards, functions, match.start(), arg.strip(), integers, constants,
+                sizeof_values,
+            ):
+                checked = True
             if not checked:
                 findings.append(_finding(
                     unit, unit.text, match.start(), RULE_ARITHMETIC, arg.strip(),
@@ -348,6 +402,11 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
             checked = True
         if operation == "+" and _promotion_safe_addition(expression, integers, constants):
             checked = True
+        if operation == "+" and _bounded_addition(
+            guards, functions, match.start(), expression, integers, constants,
+            sizeof_values,
+        ):
+            checked = True
         if not checked:
             findings.append(_finding(
                 unit, unit.text, match.start(), RULE_ARITHMETIC, expression,
@@ -355,6 +414,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
                 "a modeled checked-arithmetic guard; overflow may yield an undersized allocation.",
                 "CWE-190", "CWE-787",
             ))
+
     return findings, limitations, True
 
 

@@ -11,6 +11,20 @@
       "byte_length": 193
     },
     {
+      "expected_min": 1,
+      "category": "positive",
+      "fixture": "positive_nonliteral_format.cpp",
+      "sha256": "71abd4fa73794548f40817539e6723cea32e5f49c54e156100883653a83236df",
+      "byte_length": 93
+    },
+    {
+      "expected_min": 1,
+      "category": "positive",
+      "fixture": "positive_fprintf_format.cpp",
+      "sha256": "96eb44be0b1c7f946b4e6e718810b5be17fab693dbe750f5fdaa99ea51422705",
+      "byte_length": 117
+    },
+    {
       "expected_max": 0,
       "category": "fixed",
       "fixture": "fixed_bounded.cpp",
@@ -23,6 +37,27 @@
       "fixture": "safe_literal.cpp",
       "sha256": "55aa2be7122a5b7921ce5038c24a3a8b7814c8e5ca87b9c3f0903009a40f73eb",
       "byte_length": 105
+    },
+    {
+      "expected_max": 0,
+      "category": "safe",
+      "fixture": "safe_macro_format.cpp",
+      "sha256": "473451b3ad3dbe7e72c5fb0bd5f83a7f3e2230e7f93842f653ef9daba56e7593",
+      "byte_length": 124
+    },
+    {
+      "expected_max": 0,
+      "category": "safe",
+      "fixture": "safe_fprintf_literal.cpp",
+      "sha256": "9b5f89ae5819bd159a45a08f6eb6d2f3169873c034957e494a1cfac85ed11671",
+      "byte_length": 107
+    },
+    {
+      "expected_max": 0,
+      "category": "safe",
+      "fixture": "unsafe_macro_define_safe.cpp",
+      "sha256": "c507af8dd156cb18108665bf23faea6ecdfebc8118bb7b350782d3914b2bbe3e",
+      "byte_length": 153
     },
     {
       "expected_max": 0,

@@ -50,7 +50,7 @@ void positive(char *src, unsigned int n) {
 """)
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.bounds")
-        self.assertEqual(self.detector.version, "0.2.0")
+        self.assertEqual(self.detector.version, "0.3.2")
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
         self.assertEqual({item.rule_id for item in run.findings}, {
@@ -59,7 +59,7 @@ void positive(char *src, unsigned int n) {
         })
         for finding in run.findings:
             self.assertEqual(finding.source_sha256, source.sha256)
-            self.assertEqual(finding.rule_version, "0.2.0")
+            self.assertEqual(finding.rule_version, "0.3.2")
             self.assertEqual(finding.rule_lineage_id, "A-BOF-01:ohcpp-memory-bounds-candidate")
             self.assertEqual(finding.identity_quality, "partial")
             self.assertGreaterEqual(len(finding.evidence_obligations), 7)
@@ -248,6 +248,51 @@ void reviewed(char *key, char *value, char *pos, ssize_t offset, ssize_t size) {
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
+
+    def test_implicit_allocator_products_are_checked_but_explicit_arithmetic_is_not(self) -> None:
+        implicit = unit("safe/implicit_allocator_product.cpp", """
+#include <cstdint>
+#include <cstdlib>
+void implicit(size_t count) {
+    void *buffer = calloc(count, 4);
+    uint32_t *items = new uint32_t[count];
+    (void)buffer;
+    (void)items;
+}
+""")
+        run = self.detector.detect(context_for(implicit), (implicit,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+
+        positive = unit("positive/explicit_size_arithmetic.cpp", """
+#include <cstdlib>
+void positive(size_t count) {
+    void *buffer = malloc(count * 4);
+    char *items = new char[count + 1];
+    (void)buffer;
+    (void)items;
+}
+""")
+        run = self.detector.detect(context_for(positive), (positive,))
+        self.assertEqual(run.status, "completed")
+        self.assertGreaterEqual(len(run.findings), 2)
+        self.assertEqual(
+            {item.rule_id for item in run.findings},
+            {"ohcpp-integer-bounds-arithmetic-candidate-001"},
+        )
+
+        fixed = unit("fixed/explicit_size_arithmetic.cpp", """
+#include <cstdint>
+#include <cstdlib>
+void fixed(size_t count) {
+    if (count > SIZE_MAX / 4) return;
+    void *buffer = malloc(count * 4);
+    (void)buffer;
+}
+""")
+        fixed_run = self.detector.detect(context_for(fixed), (fixed,))
+        self.assertEqual(fixed_run.findings, ())
+
     def test_subtraction_without_lower_bound_is_candidate(self) -> None:
         source = unit("positive/subtraction.cpp", """
 void positive(char *src, size_t len) {
@@ -316,6 +361,18 @@ class MemorySafetyControlManifestTests(unittest.TestCase):
                 self.assertGreaterEqual(len(run.findings), item["expected_min"])
             if "expected_max" in item:
                 self.assertLessEqual(len(run.findings), item["expected_max"])
+
+    def test_malloc_symbolic_capacity_is_candidate_unknown(self) -> None:
+        path = self.root / "bounds_malloc_symbolic.cpp"
+        source = unit(
+            "fixtures/cpp_memory_safety/bounds_malloc_symbolic.cpp",
+            path.read_text(encoding="utf-8"),
+        )
+        run = CppBoundsDetector().detect(context_for(source), (source,))
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(len(run.findings), 1)
+        self.assertIn("allocation capacity", run.findings[0].message)
+        self.assertIn("CWE-119", run.findings[0].candidate_cwe)
 
 if __name__ == "__main__":
     unittest.main()

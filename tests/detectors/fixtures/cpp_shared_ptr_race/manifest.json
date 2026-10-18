@@ -4,7 +4,7 @@
     "kind": "self_authored_synthetic_fixture",
     "repository": "synthetic/fixture",
     "commit": "2222222222222222222222222222222222222222",
-    "snapshot_sha256": "a30276427ea23ffc4dcaf357a1ae3b926c341296be303fcf141637f9f16f13f6",
+    "snapshot_sha256": "1d7ab0af906d5404711056d29b928e39cdd6836d4d6bbb4cab4bb72bbdcfa82d",
     "profile_id": "fixture-no-build",
     "note": "Fixture metadata only; not a public vulnerability benchmark."
   },
@@ -16,6 +16,42 @@
       "parse_issues": [],
       "fixture_category": "fixed",
       "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/constructor_body_stable_owner.cpp",
+      "sha256": "1aafef9a795ff37c86bef67371f58c89534e086b50ebea31bc2d2c946cfd9c14",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "safe",
+      "expected_observation": "no_candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/mutable_owner_init_write.cpp",
+      "sha256": "2a8cb838059200f958261c70eca7109e5fc83d9b88fd43ff751e2200cafb0612",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/parameter_shadow_control.cpp",
+      "sha256": "f82ae381e679d3c6ae3344096ad4930e99335093f3fc6ad2cd0c9dd7a2d9dd71",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
+      "language": "cpp"
+    },
+    {
+      "path": "tests/detectors/fixtures/cpp_shared_ptr_race/jsproxy_instance_positive.cpp",
+      "sha256": "6e13d13de6d0461f6c44294df23d94bcffdf4b5cce255c4a4b66041fb7734f51",
+      "parse_status": "complete",
+      "parse_issues": [],
+      "fixture_category": "vulnerable",
+      "expected_observation": "candidate_shape",
       "language": "cpp"
     },
     {

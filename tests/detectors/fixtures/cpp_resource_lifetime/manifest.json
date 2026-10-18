@@ -20,6 +20,38 @@
       "byte_length": 134
     },
     {
+      "fixture": "conditional_double_free.cpp",
+      "category": "positive",
+      "expected_rule": "double_free",
+      "expected_min": 1,
+      "sha256": "37333d34f529da8b09116ab429ea50e45393cc6ea5867cade594532217c3cf85",
+      "byte_length": 141
+    },
+    {
+      "fixture": "conditional_uaf.cpp",
+      "category": "positive",
+      "expected_rule": "use_after_free",
+      "expected_min": 1,
+      "sha256": "94c4937ea0baaa57813bd3d23c9a5f5897bc0bdd0cd89554ff66faad6f547fac",
+      "byte_length": 142
+    },
+    {
+      "fixture": "wrapper_double_free_positive.cpp",
+      "category": "positive",
+      "expected_rule": "double_free",
+      "expected_min": 1,
+      "sha256": "d87fc60cfd8db353c6e90dc35be77eb434a4f9009af2c48340cc259ecf99defc",
+      "byte_length": 166
+    },
+    {
+      "fixture": "wrapper_uaf_positive.cpp",
+      "category": "positive",
+      "expected_rule": "use_after_free",
+      "expected_min": 1,
+      "sha256": "dcce4052fd4e80ac78879562eba7ebcd42737c9f3d14d3ec47f6fb154a78cb58",
+      "byte_length": 158
+    },
+    {
       "fixture": "fixed_null_after_free.cpp",
       "category": "fixed",
       "expected_max": 0,
@@ -32,6 +64,69 @@
       "expected_max": 0,
       "sha256": "006e3097e6380b5fb5675e7f80103bb3daad9d09f7fa39b46598385f906c2fd8",
       "byte_length": 148
+    },
+    {
+      "fixture": "safe_member_buffer_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "5ab96a3bef505b28ff77f0289abf09e8f10b7505b87e56eba9d2eccc82453255",
+      "byte_length": 161
+    },
+    {
+      "fixture": "safe_early_return_member_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "f56c5e3e86135d3d4b3937dfbdae84c361145f5393803aec83d4b4c924e81bc1",
+      "byte_length": 260
+    },
+    {
+      "fixture": "safe_conditional_early_return.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "26d92480d660919ad8d621138b76abc22c54cf54257b7049bb464bbd834d5259",
+      "byte_length": 163
+    },
+    {
+      "fixture": "safe_conditional_free_then_label.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "6380372d45409c745f166f9d486137ac44f72125b3d062f2ac458f9743be3867",
+      "byte_length": 217
+    },
+    {
+      "fixture": "safe_lambda_shadow_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "b0283ef6875e408e14373b91e8cead86cd5ee49b5c45eb57e079c63a5f491f82",
+      "byte_length": 289
+    },
+    {
+      "fixture": "safe_lambda_deferred_delete.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "4a5e36fb14933370b54dc318fc70b3da164cc2b1ffaa9c90e1f8fa2ef5b08d81",
+      "byte_length": 176
+    },
+    {
+      "fixture": "safe_sibling_branch_release.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "13c257343acb1a96059450bc60977293a8e01f5c941296fc87c5081b8fc93a09",
+      "byte_length": 205
+    },
+    {
+      "fixture": "safe_conditional_null.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "cb6a6e9e1467566bb482cd7cda3bbe28013962b628da2963fd0e66a9197ae83c",
+      "byte_length": 160
+    },
+    {
+      "fixture": "wrapper_safe_null.cpp",
+      "category": "safe",
+      "expected_max": 0,
+      "sha256": "cbf850ce07ad3bc6c50174d5ccd43954c8a22eecab003a822bf57140d858e5ff",
+      "byte_length": 172
     },
     {
       "fixture": "unrelated_release.cpp",

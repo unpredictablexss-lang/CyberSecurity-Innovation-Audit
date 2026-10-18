@@ -6,6 +6,7 @@ import unittest
 from src.ohscanner.contracts import DetectorRun, ScanContext, ScanRequest, SourceUnit
 from src.ohscanner.detectors.cpp.shared_ptr_race_detector import (
     SharedPtrRaceDetector,
+    member_access_groups,
 )
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all
@@ -44,7 +45,7 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
 
     def test_declares_exact_scope_and_required_facts(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.shared_ptr_race")
-        self.assertEqual(self.detector.version, "0.5.1")
+        self.assertEqual(self.detector.version, "0.5.3")
         self.assertEqual(self.detector.supported_languages, ("cpp",))
         self.assertEqual(self.detector.required_facts, ())
 
@@ -72,6 +73,138 @@ class SharedPtrRaceDetectorTests(unittest.TestCase):
         self.assertTrue(
             any("completed covers only" in item for item in run.limitations)
         )
+
+    def test_jsproxy_instance_set_get_pair_is_candidate(self) -> None:
+        unit = unit_by_path(self.units, "jsproxy_instance_positive.cpp")
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(run.status, "completed")
+        self.assertGreater(len(run.findings), 0)
+        self.assertTrue(all(item.symbol == "instance_" for item in run.findings))
+        self.assertTrue(all(item.rule_id == "ohcpp-shared-ptr-race-candidate-001" for item in run.findings))
+
+    def test_constructor_body_write_is_initialization(self) -> None:
+        stable = unit_by_path(self.units, "constructor_body_stable_owner.cpp")
+        stable_run = self.detector.detect(self.context, (stable,))
+        self.assertEqual(stable_run.findings, ())
+
+        mutable = unit_by_path(self.units, "mutable_owner_init_write.cpp")
+        mutable_run = self.detector.detect(self.context, (mutable,))
+        self.assertGreater(len(mutable_run.findings), 0)
+        self.assertTrue(all(item.symbol == "value_" for item in mutable_run.findings))
+
+    def test_member_access_triage_separates_owner_shapes(self) -> None:
+        stable = unit_by_path(self.units, "constructor_body_stable_owner.cpp")
+        stable_run, stable_records = self.detector.analyze((stable,))
+        stable_groups = member_access_groups(stable_records, stable_run.findings)
+        self.assertEqual(stable_run.findings, ())
+        self.assertEqual(len(stable_groups), 1)
+        self.assertEqual(stable_groups[0]["member"], "value_")
+        self.assertEqual(stable_groups[0]["category"], "constructor_only")
+        self.assertEqual(stable_groups[0]["initializations"], 1)
+        self.assertEqual(stable_groups[0]["writes"], 0)
+        self.assertEqual(stable_groups[0]["reads"], 1)
+        self.assertEqual(stable_groups[0]["candidate_findings"], 0)
+        initialization = [
+            item for item in stable_records if item.operation == "initialization"
+        ]
+        self.assertEqual(len(initialization), 1)
+        self.assertTrue(initialization[0].in_constructor)
+        self.assertEqual(initialization[0].class_name, "Holder")
+        self.assertTrue(
+            initialization[0].qualified_class_name.endswith("Holder")
+        )
+        self.assertTrue(
+            initialization[0].function_name.endswith("::Holder")
+        )
+        self.assertEqual(initialization[0].held_mutexes, ())
+
+        mutable = unit_by_path(self.units, "mutable_owner_init_write.cpp")
+        mutable_run, mutable_records = self.detector.analyze((mutable,))
+        mutable_groups = member_access_groups(mutable_records, mutable_run.findings)
+        self.assertEqual(len(mutable_groups), 1)
+        self.assertEqual(mutable_groups[0]["category"], "cross_function_unknown")
+        function_names = mutable_groups[0]["functions"]
+        self.assertEqual(len(function_names), 2)
+        self.assertTrue(any(name.endswith("::Init") for name in function_names))
+        self.assertTrue(any(name.endswith("::Get") for name in function_names))
+        self.assertEqual(mutable_groups[0]["writes"], 1)
+        self.assertEqual(mutable_groups[0]["reads"], 1)
+        self.assertGreater(mutable_groups[0]["candidate_findings"], 0)
+
+    def test_member_access_triage_read_only_and_single_function_shapes(self) -> None:
+        reader = self.generated_unit("member_access_reader", """
+#include <memory>
+
+class Reader {
+public:
+    int Get() const
+    {
+        return *value_;
+    }
+
+private:
+    std::shared_ptr<int> value_;
+};
+""")
+        run, records = self.detector.analyze((reader,))
+        groups = member_access_groups(records, run.findings)
+        self.assertEqual(run.findings, ())
+        self.assertEqual(groups[0]["category"], "stable_owner")
+        self.assertEqual(groups[0]["writes"], 0)
+        self.assertEqual(groups[0]["initializations"], 0)
+        self.assertEqual(groups[0]["unlocked_accesses"], 1)
+
+        mutator = self.generated_unit("member_access_single_function", """
+#include <memory>
+#include <utility>
+
+class Mutator {
+public:
+    int Reset(std::shared_ptr<int> value)
+    {
+        value_ = std::move(value);
+        return *value_;
+    }
+
+private:
+    std::shared_ptr<int> value_;
+};
+""")
+        run, records = self.detector.analyze((mutator,))
+        groups = member_access_groups(records, run.findings)
+        self.assertEqual(groups[0]["category"], "mutable_owner")
+        self.assertEqual(groups[0]["writes"], 1)
+        self.assertEqual(groups[0]["reads"], 1)
+        self.assertEqual(len(groups[0]["functions"]), 1)
+        self.assertGreater(groups[0]["candidate_findings"], 0)
+
+        writer = self.generated_unit("member_access_writer", """
+#include <memory>
+#include <utility>
+
+class Writer {
+public:
+    void Reset(std::shared_ptr<int> value)
+    {
+        value_ = std::move(value);
+    }
+
+private:
+    std::shared_ptr<int> value_;
+};
+""")
+        run, records = self.detector.analyze((writer,))
+        groups = member_access_groups(records, run.findings)
+        self.assertEqual(groups[0]["category"], "write_only")
+        self.assertEqual(groups[0]["reads"], 0)
+        self.assertGreater(len(run.findings), 0)
+        self.assertGreater(groups[0]["candidate_findings"], 0)
+
+    def test_parameter_shadow_does_not_add_member_access(self) -> None:
+        unit = unit_by_path(self.units, "parameter_shadow_control.cpp")
+        run = self.detector.detect(self.context, (unit,))
+        self.assertEqual(len(run.findings), 2)
+        self.assertTrue(all(item.line != 21 for item in run.findings))
 
     def test_legacy_fixed_mixed_shape_is_candidate_unknown_and_atomic_only_is_safe(self) -> None:
         fixed = unit_by_path(self.units, "fixed_atomic_shared_ptr.cpp")
