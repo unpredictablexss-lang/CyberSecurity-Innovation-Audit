@@ -42,7 +42,7 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.4"
+RULE_VERSION = "0.2.5"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
 
 
@@ -275,7 +275,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if shape.capacity is not None and shape.element_size is not None
     }
 
-    for match in re.finditer(r"\b(?P<name>memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\(", masked):
+    for match in re.finditer(r"\b(?P<name>memcpy_s|memmove_s|memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\(", masked):
         span = call_argument_span(masked, match.start())
         if span is None:
             limitations.append(f"{unit.path}: unbalanced call at offset {match.start()} remains unknown.")
@@ -305,6 +305,52 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         else:
             continue
         call_name = match.group("name")
+        capacity_kind = "fixed array" if destination_shape is not None else "allocation"
+        if call_name in {"memcpy_s", "memmove_s"}:
+            if len(args) < 4:
+                continue
+            for label, expression in (
+                ("destination size", args[1].strip()),
+                ("copy length", args[3].strip()),
+            ):
+                if destination_shape is not None and _safe_copy_length(expression, destination, arrays):
+                    continue
+                if capacity_bytes is None:
+                    if _normalized_expression(expression) == _normalized_expression(
+                        capacity_expression or ""
+                    ):
+                        continue
+                    if _contains_symbol(expression) and _contains_symbol(capacity_expression or ""):
+                        findings.append(_finding(
+                            unit, unit.text, match.start(), RULE_COPY, destination,
+                            f"Candidate only: `{call_name}` {label} `{expression}` is not proven "
+                            f"<= allocation capacity `{capacity_expression}` for `{destination}`; "
+                            "aliases, guards and reachability remain unknown.",
+                            "CWE-119", "CWE-787",
+                        ))
+                    continue
+                explicit_size = _size_of_value(expression, arrays)
+                constraints = guard_constraints(guards, match.start(), constants, sizeof_values)
+                interval = expression_interval(expression, constants, constraints)
+                if explicit_size is not None and explicit_size <= capacity_bytes:
+                    continue
+                definite = (
+                    interval.definitely_greater_than(capacity_bytes)
+                    or (explicit_size is not None and explicit_size > capacity_bytes)
+                )
+                unbounded = _contains_symbol(expression) and not _effective_upper_guard(
+                    expression, capacity_bytes, constraints
+                )
+                if definite or unbounded:
+                    qualifier = "demonstrated upper-bound violation" if definite else "unproven upper bound"
+                    findings.append(_finding(
+                        unit, unit.text, match.start(), RULE_COPY, destination,
+                        f"Candidate only: `{call_name}` {label} `{expression}` has an "
+                        f"{qualifier} against {capacity_kind} "
+                        f"`{destination}` ({capacity_bytes} bytes); aliases and guards remain unknown.",
+                        "CWE-119", "CWE-787",
+                    ))
+            continue
         if call_name in {"strcpy", "strcat", "sprintf"}:
             findings.append(_finding(
                 unit, unit.text, match.start(), RULE_COPY, destination,

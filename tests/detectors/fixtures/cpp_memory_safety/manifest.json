@@ -47,6 +47,14 @@
       "byte_length": 113
     },
     {
+      "category": "positive",
+      "expected_min": 1,
+      "fixture": "bounds_memcpy_s_unsafe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "a3de75981688696eca5ec278b56eecc54e331b8e25dbb166dbee8fd53dcfe791",
+      "byte_length": 109
+    },
+    {
       "category": "fixed",
       "expected_max": 0,
       "fixture": "bounds_fixed.cpp",
@@ -69,6 +77,14 @@
       "detector": "ohscanner.cpp.bounds",
       "sha256": "e6fa0f9bea5a7a01bfd7142293412193a2c8cdaf9cd6e9b4cc9410cf2cd68083",
       "byte_length": 186
+    },
+    {
+      "category": "fixed",
+      "expected_max": 0,
+      "fixture": "bounds_memcpy_s_safe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "c323a22ec5b9f911b84e23bc4ca919e8050334b83926c543f42b718539f69dc3",
+      "byte_length": 117
     },
     {
       "category": "safe",
@@ -117,6 +133,14 @@
       "detector": "ohscanner.cpp.bounds",
       "sha256": "e16f2aa5d23a7d6676894ab8612ca661c013c3e5eeed65e205410efe385ed832",
       "byte_length": 118
+    },
+    {
+      "category": "safe",
+      "expected_max": 0,
+      "fixture": "bounds_memcpy_s_wifi_safe.cpp",
+      "detector": "ohscanner.cpp.bounds",
+      "sha256": "248cc507af04f7519c50e3be6091067bf009aaff5c22d524df9f8c7217dc6cad",
+      "byte_length": 154
     },
     {
       "category": "unrelated",

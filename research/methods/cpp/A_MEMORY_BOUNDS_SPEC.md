@@ -6,7 +6,7 @@
 
 | Detector | Version | Languages | Rules | Candidate CWE |
 |---|---|---|---|---|
-| `ohscanner.cpp.bounds` | `0.2.4` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
+| `ohscanner.cpp.bounds` | `0.2.5` | `c`, `cpp` | `ohcpp-memory-bounds-copy-candidate-001`, `ohcpp-memory-bounds-index-candidate-002`, `ohcpp-memory-bounds-element-access-candidate-003` | CWE-119/125/787 |
 | `ohscanner.cpp.integer_bounds` | `0.2.1` | `c`, `cpp` | `ohcpp-integer-bounds-arithmetic-candidate-001`, `ohcpp-integer-bounds-truncation-candidate-002`, `ohcpp-integer-bounds-narrow-index-candidate-003` | CWE-190/191/681/680 |
 
 实现入口：
@@ -28,6 +28,7 @@
 5. 识别一阶直接 copy wrapper：函数体内只有一个 `memcpy/memmove/strncpy/strcpy/strcat/sprintf`，目的地为函数参数；调用点代入调用者数组/分配容量。更深 wrapper、函数指针和重载保持 unknown。
 6. `snprintf` 使用第 1 个实参作为字节上限；`snprintf(dst, sizeof(dst), ...)` quiet，`snprintf(dst, 8, ...)` 对 4 字节数组产生候选。
 7. `<= 0`、`< 0`、`>= MAX`、`> MAX` 和 `nullptr` 早退 guard 收窄区间；例如 `if (n <= 0) return; if (n > 4) return; dst[n-1]` 保持 quiet。
+8. `memcpy_s/memmove_s(dst, dstsz, src, count)`：分别检查 `dstsz` 与 `count` 对目的地容量的上界；WiFi Parcel 的 `new char[cfgLen] + memcpy_s(..., cfgLen, ..., cfgLen)` 保持 quiet。
 
 候选只在目的地容量可归属、常量越界或复制/索引上界未证明时产生。`sizeof(destination)` 精确容量、完整上界守卫、动态目的地、宏/别名未知和 `partial/failed/not_run` 不产生强结论。字节/元素单位、指针别名、包装函数、跨函数参数、模板和完整 CFG dominance 仍是 unknown。
 
@@ -60,7 +61,7 @@
 
 ## Controls and regression
 
-`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 20 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
+`tests/detectors/fixtures/cpp_memory_safety/manifest.json` 绑定 23 个自编 synthetic fixtures 的 SHA-256，覆盖 `positive`、`fixed`、`safe`、`unrelated`、`unknown` 五类；另有 `bounds_malloc_symbolic.cpp` 覆盖符号容量 unknown。`tests/detectors/test_cpp_memory_safety_detectors.py` 固定：
 
 - 正例产生候选；
 - 修复/精确容量/checked arithmetic 为 quiet；
@@ -129,4 +130,8 @@ groups remain 33/22, with no new real-source hit in this corpus.
 
 The `<=0`/offset guard normalization with `bounds` 0.2.4 is compared in
 `research/evidence/cpp/a_line_scan_20261018_v8_comparison.json`: candidates and
+groups remain 33/22, with no new real-source hit in this corpus.
+
+The `memcpy_s/memmove_s` 0.2.5 rerun is compared in
+`research/evidence/cpp/a_line_scan_20261018_v9_comparison.json`: candidates and
 groups remain 33/22, with no new real-source hit in this corpus.

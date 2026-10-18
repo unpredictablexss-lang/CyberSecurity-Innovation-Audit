@@ -26,8 +26,9 @@ The sandbox delivery reports:
 - `shared_ptr_race 0.5.3`: constructor-body writes are initialization; function
   parameters shadow same-named members; stable-owner and parameter-shadow
   controls added.
-- `bounds 0.2.4`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
-  guards narrow intervals; constant offsets such as `n - 1` are evaluated.
+- `bounds 0.2.5`: `<= 0`, `< 0`, `>= MAX`, `> MAX` and `nullptr` early-return
+  guards narrow intervals; constant offsets such as `n - 1` are evaluated;
+  `memcpy_s/memmove_s(dst, dstsz, src, count)` checks both size arguments.
 - `integer_bounds 0.2.1`: `calloc`/`new[]` element multiplication.
 - `resource_lifetime 0.1.2`: conditional release paths.
 - `unsafe_memory_call 0.1.2`: correct `fprintf/vfprintf/syslog` format argument.
