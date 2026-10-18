@@ -8,6 +8,7 @@ from src.ohscanner.contracts import SourceUnit, ScanContext, ScanRequest
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
+from src.ohscanner.detectors.interface.m2_adapter import M2IpcInterfaceDetector
 from src.ohscanner.detectors.interface.models import IpcPolicy, ServiceAccountRole
 
 BASE=Path(__file__).parent/'fixtures/ipc'
@@ -168,6 +169,38 @@ class IpcDetectorTests(unittest.TestCase):
         self.assertTrue(any(d.rule_id=='ipc.auth.missing' for d in reports[0].diagnostics))
         # runner.py:253 turns a blocked run with inspected files into 'partial'.
         self.assertEqual(sidecar['detectors']['ohscanner.interface.ipc']['status'],'partial')
+
+    def test_partial_source_candidate_keeps_its_parse_obligation_in_public_adapter(self):
+        """A useful partial-tree finding must still reach review as a candidate.
+
+        The default catalog uses the owner M2 adapter, which records file-level
+        partial coverage while retaining findings from syntax it did inspect.
+        This is an evidence-preservation contract, not a claim that parsing the
+        intact function proves the rest of the file was understood.
+        """
+        ctx=context((BASE/'auth_positive.cpp').read_text()+'\nint broken( {')
+        run=M2IpcInterfaceDetector().detect(ctx,ctx.units)
+
+        self.assertEqual(run.status,'completed')
+        self.assertEqual(run.file_outcomes,((ctx.units[0].path,'partial'),))
+        candidates=[finding for finding in run.findings
+                    if finding.rule_id=='ipc.auth.missing']
+        self.assertTrue(candidates)
+        self.assertTrue(all(any(item.kind=='parse_completeness_impact'
+                                for item in finding.evidence_obligations)
+                            for finding in candidates))
+        self.assertTrue(all(any(item.status=='unknown'
+                                for item in finding.evidence_obligations)
+                            for finding in candidates))
+
+        registry=DetectorRegistry()
+        registry.register(M2IpcInterfaceDetector())
+        reports,_=run_all_with_coverage(ctx,registry)
+        public_candidates=[item for item in reports[0].diagnostics
+                           if item.rule_id=='ipc.auth.missing']
+        self.assertTrue(public_candidates)
+        self.assertTrue(all(item.confidence=='unassessed'
+                            for item in public_candidates))
 
     def test_uid_cannot_substitute_for_access_token(self):
         ctx=context((BASE/'auth_fixed.cpp').read_text().replace('GetCallingTokenID()','GetCallingUid()'))

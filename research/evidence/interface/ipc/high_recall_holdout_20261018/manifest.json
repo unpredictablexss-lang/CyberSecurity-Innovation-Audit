@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "dataset_id": "ohscanner.ipc.real-positive-holdout.2026-10",
+  "status": "not_established",
+  "frozen": false,
+  "as_of": "2026-10-18",
+  "source_branch": "work/ipc-20261017",
+  "source_commit": "04201e708538706a8bfb633ff5e22c50d643fb6a",
+  "detector_id": "ohscanner.interface.ipc",
+  "detector_version": "0.9.1",
+  "model_version": "oh-ipc-2026.10-v10",
+  "reason": "No independently adjudicated, source-bound real vulnerable examples have been curated and frozen for this lane. Synthetic controls, Harness results, and unadjudicated component candidates are not holdout labels. ArkTS/JS families also have no independent frozen holdout; their rule families are listed separately because the frontend does not yet declare a shared family registry.",
+  "families": [
+    {
+      "family_id": "AUTH-01",
+      "rules": [
+        "ipc.relay.descriptor-boundary"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "AUTH-02",
+      "rules": [
+        "ipc.auth.missing"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "AUTH-03",
+      "rules": [
+        "ipc.auth.caller-class",
+        "ipc.auth.object-owner",
+        "ipc.auth.identity-domain",
+        "ipc.auth.service-identity",
+        "ipc.auth.request-identity"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "AUTH-04",
+      "rules": [
+        "ipc.auth.guard-coverage"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "AUTH-05",
+      "rules": [
+        "ipc.auth.flow"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "CAP-01",
+      "rules": [
+        "ipc.capability.export"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "DATA-01",
+      "rules": [
+        "ipc.parcel.copy-range",
+        "ipc.parcel.position-underflow"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "DATA-02",
+      "rules": [
+        "ipc.parcel.bounds",
+        "ipc.parcel.write-bounds"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "DATA-03",
+      "rules": [
+        "ipc.parcel.lifecycle"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "DATA-04",
+      "rules": [
+        "ipc.data.sensitive-flow"
+      ],
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    }
+  ],
+  "acceptance_policy": {
+    "supported_family_requires": "100_percent_true_positive_hits_on_frozen_independent_real_positive_holdout",
+    "unmeasured_family_claim_allowed": false,
+    "fixed_safe_unrelated_and_unknown_are_reported_separately": true,
+    "precision_is_observed_but_not_a_static_release_gate": true,
+    "candidate_or_agent_opinion_never_equals_confirmed": true
+  },
+  "future_case_binding_fields": [
+    "case_id",
+    "family_id",
+    "label",
+    "repository",
+    "commit",
+    "tree",
+    "path",
+    "blob",
+    "source_sha256",
+    "rule_version",
+    "model_version",
+    "scope",
+    "profile",
+    "adjudicator",
+    "adjudication_evidence"
+  ],
+  "detectors": {
+    "ipc": {
+      "detector_id": "ohscanner.interface.ipc",
+      "version": "0.9.1",
+      "model_version": "oh-ipc-2026.10-v10"
+    },
+    "arkts_js": {
+      "detector_id": "ohscanner.oh.arkts_js",
+      "version": "0.3.0",
+      "model_version": null
+    }
+  },
+  "arkts_js_rules": [
+    {
+      "family_id": "ohscanner.js.dangerous_eval",
+      "rule_id": "ohscanner.js.dangerous_eval",
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "ohscanner.js.path_taint",
+      "rule_id": "ohscanner.js.path_taint",
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "ohscanner.oh.arkts.component_exposure",
+      "rule_id": "ohscanner.oh.arkts.component_exposure",
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "ohscanner.oh.arkts.webview_bridge",
+      "rule_id": "ohscanner.oh.arkts.webview_bridge",
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    },
+    {
+      "family_id": "ohscanner.oh.native_bridge",
+      "rule_id": "ohscanner.oh.native_bridge",
+      "status": "unmeasured",
+      "independent_positive_count": 0,
+      "holdout_case_ids": []
+    }
+  ]
+}
