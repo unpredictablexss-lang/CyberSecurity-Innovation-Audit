@@ -42,8 +42,18 @@ from .memory_safety import (
 RULE_COPY = "ohcpp-memory-bounds-copy-candidate-001"
 RULE_INDEX = "ohcpp-memory-bounds-index-candidate-002"
 RULE_ELEMENT_ACCESS = "ohcpp-memory-bounds-element-access-candidate-003"
-RULE_VERSION = "0.2.5"
+RULE_VERSION = "0.2.6"
 RULE_LINEAGE_ID = "A-BOF-01:ohcpp-memory-bounds-candidate"
+
+_SECURE_COPY_ARGS = {
+    "memcpy_s": (1, 3),
+    "memmove_s": (1, 3),
+    "strcpy_s": (1, None),
+    "strcat_s": (1, None),
+    "strncpy_s": (1, 3),
+    "sprintf_s": (1, None),
+    "snprintf_s": (1, 2),
+}
 
 
 @dataclass(frozen=True)
@@ -275,7 +285,7 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
         if shape.capacity is not None and shape.element_size is not None
     }
 
-    for match in re.finditer(r"\b(?P<name>memcpy_s|memmove_s|memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\(", masked):
+    for match in re.finditer(r"\b(?P<name>memcpy_s|memmove_s|strcpy_s|strcat_s|strncpy_s|sprintf_s|snprintf_s|memcpy|memmove|strncpy|snprintf|sprintf|strcpy|strcat)\s*\(", masked):
         span = call_argument_span(masked, match.start())
         if span is None:
             limitations.append(f"{unit.path}: unbalanced call at offset {match.start()} remains unknown.")
@@ -306,13 +316,15 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], bo
             continue
         call_name = match.group("name")
         capacity_kind = "fixed array" if destination_shape is not None else "allocation"
-        if call_name in {"memcpy_s", "memmove_s"}:
-            if len(args) < 4:
+        secure_spec = _SECURE_COPY_ARGS.get(call_name)
+        if secure_spec is not None:
+            size_index, length_index = secure_spec
+            if len(args) <= size_index:
                 continue
-            for label, expression in (
-                ("destination size", args[1].strip()),
-                ("copy length", args[3].strip()),
-            ):
+            expressions = [("destination size", args[size_index].strip())]
+            if length_index is not None and len(args) > length_index:
+                expressions.append(("copy length", args[length_index].strip()))
+            for label, expression in expressions:
                 if destination_shape is not None and _safe_copy_length(expression, destination, arrays):
                     continue
                 if capacity_bytes is None:
