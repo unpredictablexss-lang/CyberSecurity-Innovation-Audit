@@ -4,11 +4,11 @@
 
 ## 状态依据
 
-- 当前 C 线工作树：`CyberSecurity-Innovation-Audit-c4`，分支 `codex/c-line-ark-runtime-20261018`，HEAD `7709a9bb4677e220c34ec4e0335f883c6a4f1165`。
-- 当前正在进行：以 `0.7.0` 语义适用契约替代精确源码身份枚举，使 Ark Runtime 检测器可以评估未见 commit/blob/path，同时继续要求 Git 对象来源校验，并让 partial/unknown 保持 blocked。工作树已有 `unseen_detector.py`、`unseen_model.py`、注册表切换和基础回归草稿；这些修改尚未提交。
+- 当前 C 线工作树：`CyberSecurity-Innovation-Audit-c4`，分支 `codex/c-line-ark-runtime-20261018`，HEAD `ab2ce2b735bf4e48f8427652334995bb10a2dafc`。
+- 当前正在进行：审查和验证 0.7.0 语义适用契约，确保它能评估未见 commit/blob/path，同时继续要求 Git 对象来源校验，并让 partial/unknown 保持 blocked。实现及三项初始回归已在本地提交 `a2fce96`；本轮未运行该提交的测试。下一阶段 C0 会补齐控制用例和边界审查。
 - 其他本地改动包括 19 个模型依赖的来源漂移清单/逐项文本差异、独立留出集准入审计材料及状态文档更新。独立留出审计确认现有 9 个样本均不适用于冻结规则，没有双人标签和争议裁决，不能计算 TP/FP/FN、precision 或 recall。`research/evidence/ark_runtime/` 中包含 admin 审阅材料，必须按其访问/分发限制管理，不能整体打包或公开。
 - 文档记载的当前主风险仍是缺少可复现的预处理/产品构建配置、18 项依赖漂移的语义影响未判定、未见源码适用性未冻结、真实运行时可达性与 CIA 影响未验证。
-- 本轮 `git fetch origin --prune` 和 `git ls-remote` 均因 GitHub HTTPS 连接重置/不可达失败。`origin/*` 只是本机缓存引用，不能据此声称远端当前头部或同步已完成。工作树有未提交和未跟踪内容；本文件给出后续路线，不代表这些内容已推送。
+- 本轮 `git fetch origin --prune` 和 `git ls-remote` 均因 GitHub HTTPS 连接重置/不可达失败。`origin/*` 只是本机缓存引用，不能据此声称远端当前头部或同步已完成。工作树仍有未提交和未跟踪研究内容；本文件给出后续路线，不代表这些内容已推送。
 
 ## 任务树
 
@@ -45,7 +45,7 @@ flowchart TD
 ```text
 你负责 C 线 Ark Runtime 检测器。先读 AGENTS.md 要求的六份当前文档，以及 docs/项目现状与下一步.md、docs/架构与公共协议.md、docs/开发协作与交付指南.md；检查当前分支和工作树，不覆盖或清理任何既有脏文件/证据。
 
-目标：审查并完成当前 `ArkRuntimeUnseenTypeSafetyDetector` / `UnseenRuntimeTypeModel` 0.7.0 草稿，使适用性由有界的 owner/method/signature 语义合同决定，而不是由预先枚举的 commit/path/blob/content hash 决定。Git commit/tree/blob/source hash 仍用于证明输入来源和字节一致性；不得把仓库名、方法名或语法命中单独当成漏洞证明。
+目标：审查并完成本地提交 `a2fce96` 中的 `ArkRuntimeUnseenTypeSafetyDetector` / `UnseenRuntimeTypeModel` 0.7.0 实现，使适用性由有界的 owner/method/signature 语义合同决定，而不是由预先枚举的 commit/path/blob/content hash 决定。Git commit/tree/blob/source hash 仍用于证明输入来源和字节一致性；不得把仓库名、方法名或语法命中单独当成漏洞证明。
 
 先核对 `src/ohscanner/detectors/ark_runtime/` 的现有分析器、catalog 注册、Runner 选择/coverage 协议和旧模型。重点查：模型字段继承是否仍泄漏精确来源约束；函数签名/重载/命名空间解析是否会误选；selector 与 detector 看到的文件集合是否一致；共享 AST / blob provenance 缺失或冲突时是否 fail closed；两个规则共用同一文件时 outcome 是否准确；异常、预算耗尽和 partial 输入是否能被错误标为 complete/safe。修复应限定在 C 线范围。
 
