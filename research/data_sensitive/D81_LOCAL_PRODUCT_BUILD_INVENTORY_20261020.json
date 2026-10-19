@@ -1,0 +1,430 @@
+{
+  "schema": "ohscanner.d81.local_product_build_inventory/v1",
+  "created_local_date": "2026-10-20",
+  "decision": "product_definition_found_concrete_build_unknown",
+  "scope": {
+    "D53_T53_source_config_evidence": true,
+    "OpenHarmony807_root": "D:\\OpenHarmony807",
+    "top_level_entries_observed": [
+      "gitcode-807.xml",
+      "logs",
+      "progress.json",
+      "projects.csv",
+      "repos",
+      "scan-results",
+      "t56-distributeddatamgr-official.git",
+      "t56-miscservices-official.git",
+      "t56-security-official.git"
+    ],
+    "build_output_directory_at_root": false,
+    "build_output_directory_candidates": [],
+    "searched_for_concrete_artifacts": [
+      "product image or OTA package",
+      "product build output manifest",
+      "build fingerprint / build.prop",
+      "installed-device record",
+      "product args.gn, build.ninja, compile database or successful build log"
+    ],
+    "search_boundary": "OpenHarmony807 top-level structure plus frozen D53/T53 source/config evidence; no claim about arbitrary devices or external stores"
+  },
+  "frozen_evidence": {
+    "D53_developer_commit": "3f1c9aa72f245d7d7c6312970f2c3bdd11c3b8f2",
+    "D53_developer_tree": "394035ddd60cab02bb783437b20892cdadfdba68",
+    "D53_json_path": "research/data_sensitive/D53_PASTEBOARD_PRODUCT_PROFILE_20261021.json",
+    "D53_json_sha256_in_worktree": "ad84f410fcecd34e10702842a768080b391510643b95593cb4afc41bb03120df",
+    "D53_raw_git_file_sha256": "ad84f410fcecd34e10702842a768080b391510643b95593cb4afc41bb03120df",
+    "T53_acceptance_commit": "92844f7becbbd6dbf41584e1ce21a4c885352bb8",
+    "T53_acceptance_tree": "c5fc312a8c3a6276bc736967889e71eafb2fc1f2",
+    "T53_json_sha256": "77fc96537c94e3345a1cceffd5f1a985595add9d4fd4843575e79ca5721b5d54",
+    "T53_markdown_sha256": "2872a421b381c459e1d410b71625a9299b7ac517979eb3ecad9c4a7ba2617a4e",
+    "D53_files_independently_recomputed": 31,
+    "D53_files_mismatch_count": 0
+  },
+  "source_repositories": {
+    "pasteboard": {
+      "head": "e73747b227104e6743e957ce31040edf58507221",
+      "tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d",
+      "branch": "master",
+      "worktree_clean_at_d53_freeze": true,
+      "role": "current component source and product config"
+    },
+    "productdefine_common": {
+      "head": "c9317af4074bf0e445fe3fc3979e53c470687153",
+      "tree": "71f1c83472fbf4b0360bf9fbde23572c529cef21",
+      "branch": "master",
+      "worktree_clean_at_d53_freeze": true,
+      "role": "shared product inheritance templates"
+    },
+    "vendor_hihope": {
+      "head": "b40eabbe69943126c65df1f9ff28057f56e93e46",
+      "tree": "aa95785ef84ddde8d1c3622e2c2d80d6b388caeb",
+      "branch": "master",
+      "worktree_clean_at_d53_freeze": true,
+      "role": "HiHope product config definitions"
+    },
+    "build": {
+      "head": "6b6d6533967db07e8e7d40d140fc63d0faabacbd",
+      "tree": "d58b57c4bc6273a51e182a1014eea26ae60df028",
+      "branch": "master",
+      "worktree_clean_at_d53_freeze": true,
+      "role": "component and compilation allowlists"
+    }
+  },
+  "HiHope_product_definitions": [
+    {
+      "name": "2in1_core_system",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "2in1_core_system/config.json",
+        "blob": "65c0832b4263e208f63a27ae8fdcf31cc68c122f",
+        "sha256": "dce7ea75b3616f5f6a9ce2a40fdfe76922ca9c056c222bb1d47afe5cf964c5b2",
+        "bytes": 828
+      },
+      "inherit": [
+        "productdefine/common/inherit/2in1.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/2in1.json",
+          "blob": "dc030a39993e919101db77ab56887f3ffa84f052",
+          "includes_pasteboard": true,
+          "sha256": "4ebd6cb43d501fd34fa5d49af603d3e764243b4144c06c34f82447bc6e90793f",
+          "bytes": 26577
+        }
+      ],
+      "product_definition_includes_pasteboard": true,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "dayu210",
+      "product_type": "standard",
+      "board": "rk3588",
+      "config": {
+        "path": "dayu210/config.json",
+        "blob": "6e2f432646cab1034286ea49df0009fd6aedd409",
+        "sha256": "b6f5a9c6b3932e4f81646d7d18719d2088ed8930a699c69a36df2b90f0c442c4",
+        "bytes": 8083
+      },
+      "inherit": [
+        "productdefine/common/inherit/rich.json",
+        "productdefine/common/inherit/chipset_common.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/rich.json",
+          "blob": "2cb27d51ed29cb72c19486732e1395f0b4ba3ab0",
+          "includes_pasteboard": true,
+          "sha256": "f7fb7b340e555347de56af035e3b5883c18a60a6ea4d1e8502ee2a8cef3256c8",
+          "bytes": 35215
+        },
+        {
+          "path": "inherit/chipset_common.json",
+          "blob": "32760cf1d5aa4102a080ac40d3035ef9146f57c9",
+          "includes_pasteboard": false,
+          "sha256": "69e1e7f4f7087a9e5bb04185c84e700f0b8225635c2659cedefc60d9de311dbd",
+          "bytes": 4372
+        }
+      ],
+      "product_definition_includes_pasteboard": true,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "default_core_system",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "default_core_system/config.json",
+        "blob": "a3797dd805b2dbe33b527b1fb9fec81409cc9852",
+        "sha256": "d96e1a10f8ac30307189b8992f0936e2a6a8df18d992a75a397d636229077e3a",
+        "bytes": 754
+      },
+      "inherit": [
+        "productdefine/common/inherit/phone.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/phone.json",
+          "blob": "bbd37f51614611fa1686a546b0819d0cf7f715be",
+          "includes_pasteboard": true,
+          "sha256": "9c0b7c20040f3fcc2b1fe4f5a90c32d0a75ff6d73fe4f8a0fd9954e406ead116",
+          "bytes": 28812
+        }
+      ],
+      "product_definition_includes_pasteboard": true,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "ipcamera_core_system",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "ipcamera_core_system/config.json",
+        "blob": "781629b75c9d14c5ad5602b7b0874eab567ea4a5",
+        "sha256": "caba317d3319ef38f1d72865cbdff6ad1ed3e9cb5e71fe1722ac6c2cd6bdfc84",
+        "bytes": 3483
+      },
+      "inherit": [
+        "productdefine/common/inherit/ipcamera.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/ipcamera.json",
+          "blob": "ce0c05846759c5fbc3a6ea5f5740ffef58a0f831",
+          "includes_pasteboard": false,
+          "sha256": "88c759a0a018f2592df0d31f7cfcfc49cbe349c70de13312085b794b1c93fa9b",
+          "bytes": 19230
+        }
+      ],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "nearlink_dk_3863",
+      "product_type": "mini",
+      "board": "nearlink_dk_3863",
+      "config": {
+        "path": "nearlink_dk_3863/config.json",
+        "blob": "bdfbd6ea37ed5ddc13c8931344092ab2ba51c673",
+        "sha256": "e0ca4f778ac13e14ff1b21ae23fd5124ca9fd82f5ecf62f774e93425206c0c2b",
+        "bytes": 2350
+      },
+      "inherit": [],
+      "inherited_profiles": [],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "nearlink_dk_3863_xts",
+      "product_type": "mini",
+      "board": "nearlink_dk_3863",
+      "config": {
+        "path": "nearlink_dk_3863_xts/config.json",
+        "blob": "6d1a64175da30384d09f8aecda945697b94b2d62",
+        "sha256": "1943df2d61176de0f12366c91eaac077b8330526d3f3b576a1176194e9696aea",
+        "bytes": 2542
+      },
+      "inherit": [],
+      "inherited_profiles": [],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "nearlink_dk_3863_xts_minimal",
+      "product_type": "mini",
+      "board": "nearlink_dk_3863",
+      "config": {
+        "path": "nearlink_dk_3863_xts_minimal/config.json",
+        "blob": "c8447b1333ada4c153092afd6ca1523460ba3e76",
+        "sha256": "546f57fcb4ed7f712580c28400d25862205bce0e59c628f8e863593685f8ca4d",
+        "bytes": 3375
+      },
+      "inherit": [],
+      "inherited_profiles": [],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "neptune_iotlink_demo",
+      "product_type": "mini",
+      "board": "neptune100",
+      "config": {
+        "path": "neptune_iotlink_demo/config.json",
+        "blob": "5d85187e6f7f17af4bcc9cb30dcc9d31ffa97e6d",
+        "sha256": "951b174f3473f78a42d2ed32d6f955e8ae05c3f8eb6df9176ab972bd77235030",
+        "bytes": 2397
+      },
+      "inherit": [],
+      "inherited_profiles": [],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "rk3568",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "rk3568/config.json",
+        "blob": "fc7fed801d07f19f05a752878e738d8d40f1bc01",
+        "sha256": "46dc640a6ca988687245de967f4e2ec3aebd20ed3423472c48b89bc845c28408",
+        "bytes": 10569
+      },
+      "inherit": [
+        "productdefine/common/inherit/rich.json",
+        "productdefine/common/inherit/chipset_common.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/rich.json",
+          "blob": "2cb27d51ed29cb72c19486732e1395f0b4ba3ab0",
+          "includes_pasteboard": true,
+          "sha256": "f7fb7b340e555347de56af035e3b5883c18a60a6ea4d1e8502ee2a8cef3256c8",
+          "bytes": 35215
+        },
+        {
+          "path": "inherit/chipset_common.json",
+          "blob": "32760cf1d5aa4102a080ac40d3035ef9146f57c9",
+          "includes_pasteboard": false,
+          "sha256": "69e1e7f4f7087a9e5bb04185c84e700f0b8225635c2659cedefc60d9de311dbd",
+          "bytes": 4372
+        }
+      ],
+      "product_definition_includes_pasteboard": true,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "rk3568_mini_system",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "rk3568_mini_system/config.json",
+        "blob": "5a99f7b4646babdacbb86137fcf64caf5a054783",
+        "sha256": "d71d455589834c42b8cdc516ea0665865462ed14df5fc9005a28ed48e4e81708",
+        "bytes": 1651
+      },
+      "inherit": [
+        "productdefine/common/base/standard_system.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "base/standard_system.json",
+          "blob": "a462928364984affda43ca989a84d3c97678f9d1",
+          "includes_pasteboard": false,
+          "sha256": "0e87fb91498128d3a9d9d3785474cfacc152789cb16b02a2ee818157891f130d",
+          "bytes": 3339
+        }
+      ],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "tablet_core_system",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "tablet_core_system/config.json",
+        "blob": "289b7e96110df7b5b91f8e539de9252548f6982c",
+        "sha256": "216d99795cb19bc80af35eb76fb9dfa9b8d6590cd3fceaf7b8c6c2c2bc6c9e43",
+        "bytes": 2071
+      },
+      "inherit": [
+        "productdefine/common/inherit/tablet.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/tablet.json",
+          "blob": "11b67e562e2c30a8f9f6520a29ac067c0982f3be",
+          "includes_pasteboard": true,
+          "sha256": "f7b6a77f9603c293515d6f788357dcf9a141359fb880883f0d97a1ff24017c95",
+          "bytes": 28808
+        }
+      ],
+      "product_definition_includes_pasteboard": true,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "tv",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "tv/config.json",
+        "blob": "f77ddd7687cdd5eeb99c622e35a665b7923a396d",
+        "sha256": "0b471146c53057feea84f4f28957ae5411dd859f7f8f1aebe511268b017798c8",
+        "bytes": 734
+      },
+      "inherit": [
+        "productdefine/common/inherit/tv.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/tv.json",
+          "blob": "3fd90e9613d40d8ccae51dfee3a46b74deac21a7",
+          "includes_pasteboard": false,
+          "sha256": "085d20a6a9eef4ad9a15480dc87f075bb8bc397496a7681a2af2f8910a518f83",
+          "bytes": 20326
+        }
+      ],
+      "product_definition_includes_pasteboard": false,
+      "status": "source_configuration_only"
+    },
+    {
+      "name": "wearable",
+      "product_type": "standard",
+      "board": "rk3568",
+      "config": {
+        "path": "wearable/config.json",
+        "blob": "56058b3d9794109a50da24636e65b877668e74d8",
+        "sha256": "db54dead4b6a4a7e52b1441b97cf5d2b71aeb6527892be17acebd25b6176b625",
+        "bytes": 746
+      },
+      "inherit": [
+        "productdefine/common/inherit/wearable.json"
+      ],
+      "inherited_profiles": [
+        {
+          "path": "inherit/wearable.json",
+          "blob": "d84abafb20aa31b21c37d00758c3b0f19d593284",
+          "includes_pasteboard": true,
+          "sha256": "179971f47e428510b11c450f7be9927121c81cd8286ac0ed8dba36a9925cbece",
+          "bytes": 26623
+        }
+      ],
+      "product_definition_includes_pasteboard": true,
+      "status": "source_configuration_only"
+    }
+  ],
+  "build_metadata": {
+    "pasteboard_related_allowlist_objects": [
+      {
+        "path": "indep_component_whitelist.json",
+        "blob": "79cef6d85e2566920f2971aab222121910c912f1",
+        "sha256": "e41447242c7e2c8ac421988207f51a83c443c0dcaf9193ccf3c695e62b9516da",
+        "bytes": 18207
+      },
+      {
+        "path": "component_compilation_whitelist.json",
+        "blob": "832084097de2dd4e6a14dce2246e83668f1f5a86",
+        "sha256": "48f5a1a9d15a0ff6bb029a5645490ec492e863403520cdbe076d36063e7f64b2",
+        "bytes": 960700
+      }
+    ],
+    "meaning": "repository allowlist/target metadata; does not prove a product target was built"
+  },
+  "historical_D52_candidate": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "source_file": "services/zidl/src/pasteboard_service_stub.cpp",
+    "source_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "relation_to_current_repo": "migration_or_ancestry_not_verified"
+  },
+  "concrete_product_evidence": {
+    "fingerprint": null,
+    "product_build_id": null,
+    "locked_product_manifest": null,
+    "compiled_image_or_ota": null,
+    "product_output_manifest": null,
+    "successful_product_build_log": null,
+    "installed_device_record": null,
+    "status": "not_found_in_scoped_local_evidence",
+    "research_scan_report": {
+      "path": "D:\\OpenHarmony807\\scan-results\\build\\report.md",
+      "sha256": "9db6c5c40fd86718b6a7bae206a4321562207808f3b533b4de4067969ae8fcaa",
+      "classification": "research_scan_admission_not_product_build_evidence"
+    }
+  },
+  "strongest_supported_conclusion": "Several pinned HiHope product definitions/configuration inheritance paths and build allowlist objects contain or recognize the current Pasteboard component; none identifies one concrete executed or installed product build. D52 target product applicability and historical-source inclusion remain unknown.",
+  "source_only_target_proposal": {
+    "label": "SOURCE_ONLY; not a device, release, or built product",
+    "product_definition": "vendor_hihope@b40eabbe69943126c65df1f9ff28057f56e93e46:rk3568/config.json",
+    "shared_template": "productdefine_common@c9317af4074bf0e445fe3fc3979e53c470687153:inherit/rich.json",
+    "component_source_for_config_study": "distributeddatamgr_pasteboard@e73747b227104e6743e957ce31040edf58507221",
+    "purpose": "reproducible source/config study only; cannot establish D52 historical code presence, build inclusion, or product vulnerability",
+    "configuration_tuple_is_unified_manifest": false
+  },
+  "reproduction": {
+    "command": "python scripts/research/build_d81_product_inventory.py",
+    "verifies": "four repo HEAD/tree pins and all 31 D53 raw Git blob OID/size/SHA-256 entries before writing this inventory"
+  }
+}
