@@ -1,0 +1,35 @@
+{
+  "audit": "T74 independent acceptance of D74 cross-layer Pasteboard source trace",
+  "reviewed_commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7",
+  "verdict": "accepted_with_limitations",
+  "checks": {
+    "fix_correctness": {"verdict": "pass", "details": "Evidence and claims match the pinned repository excerpts reviewed; no actionable mismatch found."},
+    "candidate_retention": {"verdict": "pass", "details": "Historical source observation is retained without a product or CVE verdict."},
+    "coverage": {"verdict": "pass_with_limitations", "details": "Historical/current component paths and explicit external evidence gaps are covered; installed policy and product mapping remain unknown."},
+    "scope": {"verdict": "pass", "details": "Frozen D74 changes only report, JSON evidence, and replay script."}
+  },
+  "identities": {
+    "historical": {"repository": "openharmony/miscservices_pasteboard", "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840", "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee", "evidence_files": 10},
+    "current": {"repository": "openharmony/distributeddatamgr_pasteboard", "commit": "e73747b227104e6743e957ce31040edf58507221", "tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d", "evidence_files": 8}
+  },
+  "replay": {
+    "script": "research/evidence/cpp/D74_pasteboard_source_trace.py",
+    "result": "success",
+    "committed_json_matches_replay": true,
+    "historical_entries_with_line_hits": 10,
+    "current_entries_with_line_hits": 8
+  },
+  "key_observations": [
+    "Pinned D52 route shows no visible in-component read-permission call before its concrete clip lookup/copy; this does not establish absence of external platform enforcement.",
+    "Historical profile/BUILD.gn/init files do not resolve the installed profile mapping: source is 3701.xml, init names pasteboard_service.xml.",
+    "The pinned current VerifyPermission source includes named permission checks and explicit native/shell, Ctrl+V, and legacy SDK compatibility branches; current behavior is not projected backward.",
+    "Downstream prompt preserves separate source identities and prohibits product safety and CVE-causality conclusions."
+  ],
+  "unresolved": [
+    "Installed historical/current System Ability profiles and platform SAMgr ACL enforcement",
+    "AccessTokenKit/PermissionUtils implementation and policy",
+    "Generated IPC glue and exact product build provenance",
+    "Product manifest/image mapping to either source commit"
+  ],
+  "actionable_mismatch": null
+}
