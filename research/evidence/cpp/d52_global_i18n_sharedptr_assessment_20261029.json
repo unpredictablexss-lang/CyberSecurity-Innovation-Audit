@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "task": "D52",
+  "status": "PARTIAL/BLOCK",
+  "result": "no_change_no_concrete_generalized_detector_gap_reproduced",
+  "repository": "openharmony/global_i18n",
+  "commit": "5e1210b17e720af2748685ee65bd480709c08a52",
+  "tree": "80d9a2200344cf348f3dd582c74e8c4aa7ed2969",
+  "detector": "ohscanner.cpp.shared_ptr_race",
+  "detector_version": "0.5.1",
+  "a0_status_preserved": "not_testable / paused_pending_evidence",
+  "candidates": [
+    {"review_id": "CR-0255", "file": "interfaces/ets/ani/i18n/include/simple_number_format_addon.h", "line": 35, "blob": "23803c9108c4e4c6b88a92ad366b600108a16317", "sha256": "588f5783b8be2b3c1b49874e43464dce8c750cb340437f334053b57a665d4289", "original_status": "not_testable"},
+    {"review_id": "CR-0256", "file": "interfaces/ets/ani/intl/include/number_format_addon.h", "line": 38, "blob": "216b68e9e1ba22c1c478b5966ebc713fe00e5bfe", "sha256": "a2548ed27d5e424132a1ed16cde48fdedb1e85dc89f504ab86f7267f57a20389", "original_status": "not_testable"}
+  ],
+  "runs": [
+    {"scope": "reported_headers", "files": ["interfaces/ets/ani/i18n/include/simple_number_format_addon.h", "interfaces/ets/ani/intl/include/number_format_addon.h"], "snapshot_sha256": "5e939a0ba39ed1044cc83ea79e0530a40716d505ba34773d9d53421ef7ac8e8f", "parse_status": "complete", "diagnostics": 0, "cli_json": "d52_global_i18n_cli_20261029.json"},
+    {"scope": "headers_and_production_implementations", "files": ["interfaces/ets/ani/i18n/include/simple_number_format_addon.h", "interfaces/ets/ani/i18n/src/simple_number_format_addon.cpp", "interfaces/ets/ani/intl/include/number_format_addon.h", "interfaces/ets/ani/intl/src/number_format_addon.cpp"], "snapshot_sha256": "0c3cb2d64e581d9ba8ff6c82adb851f6cb12b270bb17873f7a4e0fa6b5e84607", "parse_status": "complete", "diagnostics": 0, "cli_json": "d52_global_i18n_cli_wide_20261029.json"}
+  ],
+  "source_findings": {
+    "simpleNumberFormat_": "factory-time assignment, then read from Format; no later reset/reassignment found in scoped implementation",
+    "numberfmt_": "factory-time assignments in two constructors, then reads from formatting/options methods; no later reset/reassignment found in scoped implementation",
+    "build_targets": ["interfaces/ets/ani/i18n/BUILD.gn: ohos_shared_library(\"i18n_ani\")", "interfaces/ets/ani/intl/BUILD.gn: ohos_shared_library(\"intl_ani\")"],
+    "product_selection_and_ani_threading": "unknown"
+  },
+  "blocked_evidence": ["product build/image inclusion", "ANI object lifetime and thread-affinity guarantees", "same-object unordered concurrent access and triggering conditions", "concrete confidentiality, integrity, or availability impact"],
+  "a0_modified": false,
+  "detector_modified": false,
+  "tests_added_or_run": false,
+  "interpretation": "Zero findings do not establish safety. This is a source-bound detector assessment, not a confirmed vulnerability verdict."
+}
