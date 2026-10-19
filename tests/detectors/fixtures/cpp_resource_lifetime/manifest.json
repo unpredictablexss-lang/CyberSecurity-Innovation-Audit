@@ -121,6 +121,13 @@
       "expected_max": 0,
       "sha256": "5382bb30650a01567187a54d407b7a7c70d1e231c8c616fbe621126658ab17a0",
       "byte_length": 807
+    },
+    {
+      "fixture": "unrelated_recursive_delete_name.c",
+      "category": "unrelated",
+      "expected_max": 0,
+      "sha256": "cca572fc63d6c0451b6f83dab0e8aaf8b69296f2a6ffb529988e72ecd989e145",
+      "byte_length": 1005
     }
   ]
 }
