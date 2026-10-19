@@ -1,0 +1,8 @@
+test_five_controls_keep_positive_hit_and_fixed_safe_unrelated_unknown (tests.detectors.ark_runtime.test_c13_real_replay.C13RealReplayTests.test_five_controls_keep_positive_hit_and_fixed_safe_unrelated_unknown) ... ok
+test_manifest_is_source_bound_and_missing_blob_fails_closed (tests.detectors.ark_runtime.test_c13_real_replay.C13RealReplayTests.test_manifest_is_source_bound_and_missing_blob_fails_closed) ... ok
+test_production_cli_replay_is_retained_and_partial_is_not_safe (tests.detectors.ark_runtime.test_c13_real_replay.C13RealReplayTests.test_production_cli_replay_is_retained_and_partial_is_not_safe) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.028s
+
+OK

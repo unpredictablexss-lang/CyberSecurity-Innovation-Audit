@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "case_id": "IBS5YG",
+  "controls": {
+    "positive": {"source": "tests/detectors/ark_runtime/fixtures/C03.cpp", "expected": "candidate", "observed": "candidate", "status": "pass"},
+    "fixed": {"source": "tests/detectors/ark_runtime/fixtures/C04.cpp", "expected": "matched/no_same_root_candidate", "observed": "matched", "status": "pass"},
+    "safe": {"source": "tests/detectors/ark_runtime/fixtures/C04.cpp", "expected": "matched/no_same_root_candidate", "observed": "matched", "status": "pass"},
+    "unrelated": {"source": "self-authored no-sink control", "expected": "no candidate", "observed": "no candidate", "status": "pass"},
+    "unknown": {"source": "self-authored wrong-sink-arity control", "expected": "unknown", "observed": "unknown", "status": "pass"}
+  },
+  "real_source_pair": {
+    "parent": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+    "fixed": "919e4fbb011f610427e788889083fa8e28d2f951",
+    "production_cli": "python -m src.cli ohscan-run",
+    "status": "blocked_partial_unknown",
+    "same_root_diagnostics": {"parent": 0, "fixed": 0},
+    "safety_claim": "none; zero on blocked/partial side is not safe"
+  },
+  "truth_status": "development controls only; no independent truth and no Precision/Recall"
+}
