@@ -64,12 +64,44 @@
         "bytes": 43892,
         "same_blob_in_parent_and_fixed": true,
         "object_verification": "verified"
+      },
+      {
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+        "source_sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+        "bytes": 67342,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
+      },
+      {
+        "path": "ecmascript/compiler/hcr_circuit_builder.h",
+        "blob": "176dd0a5ee320f814049c2b671119515c746380d",
+        "source_sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+        "bytes": 16622,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
+      },
+      {
+        "path": "ecmascript/js_hclass-inl.h",
+        "blob": "e1955be5999ac4e49679b79be4df7b8d0d793725",
+        "source_sha256": "a067f3cec1653a4005b07598b731b153edee2543b3d2f38f5673b974cd89d3e1",
+        "bytes": 17679,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
+      },
+      {
+        "path": "ecmascript/byte_array.h",
+        "blob": "69da8709b1412d9246968b5db96b066b819bbc50",
+        "source_sha256": "d089cc14c93cd28f357b014b90d4a2a0797f1a5279de1714b20d6370e2d7e85b",
+        "bytes": 2620,
+        "same_blob_in_parent_and_fixed": true,
+        "object_verification": "verified"
       }
     ]
   },
   "static_root_cause": "supported",
   "decision": "candidate_supported",
-  "root_cause": "In parent BuiltinsTypedArrayStubBuilder::Filter, the final copy loop writes to newArray but supplies arrayType derived from thisValue to StoreTypedArrayElement. The fixed source reads newArrayType from the allocated destination and supplies that type. StoreTypedArrayElement forwards jsType to SetTypeArrayPropertyByIndex; the runtime converts it to JSType and FastSetPropertyByIndex uses it for element size/type while checking index against the destination array length. The shared buffer write path then writes at that computed byte offset; the inspected helper path has no destination byte-length argument/check. If callback/species semantics produce a destination with a narrower element width than the source arrayType, the final indices could therefore compute writes beyond the destination buffer. This is a plausible source-level out-of-bounds write candidate, not a confirmed runtime result: the exact guarded-path species conditions, destination length and allocation relationship, buffer bounds behavior elsewhere, and security impact remain unverified.",
+  "root_cause": "In parent BuiltinsTypedArrayStubBuilder::Filter, the copy loop writes to newArray while passing arrayType captured from thisValue. The callback runs before allocation, so it can install a constructor on the receiver; HasConstructor reads the receiver HClass bit and NewTypedArray then routes through TypedArraySpeciesCreate. That helper accepts a constructed TypedArray if its length is at least requested and its ContentType matches the exemplar; it does not require the same element type. For example, an Int32Array receiver can use a species constructor returning a Uint8Array of the requested length. The parent then passes Int32 jsType into the store. FastSetPropertyByIndex checks index against the destination length but computes byte offset and write type from jsType; the inspected FastSetValueInBuffer path performs detached check and writes by computed type/byteIndex without a destination byte-length argument. For n=3, the final index 2 with four-byte Int32 width computes offset 8 and a four-byte write against a three-byte Uint8 backing store. The on-heap ByteArray allocation rounds its data extent from three to eight bytes; the write ends four bytes beyond the aligned ByteArray object allocation, so this concrete source-level scenario does not depend on integer overflow or allocator padding assumptions. The fixed source obtains the actual destination HClass type before storing. This is a concrete static out-of-bounds write candidate under the described callback/species path, supported by the source. Runtime reproduction, full-build path equivalence, allocator effects, product applicability and security impact remain unverified.",
   "evidence": [
     {
       "claim": "Filter allocates newArray after the callback/filter loop, checks allocation exception state, then copies kept values into that destination.",
@@ -170,6 +202,96 @@
       "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
       "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
       "kind": "inference"
+    },
+    {
+      "claim": "The fast Filter calls user callback before constructing newArray; after callback it calls NewTypedArray with captured source arrayType and then uses that same arrayType in every parent output store.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1444-1458,1474-1500",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "direct"
+    },
+    {
+      "claim": "HasConstructor reads the HClass HasConstructor bit, enabling callback-created constructor property to send the later NewTypedArray call to slow species path.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/hcr_circuit_builder.h",
+      "symbol": "CircuitBuilder::HasConstructor / HasConstructorByHClass",
+      "line_or_range": "287-290,327-332",
+      "blob": "176dd0a5ee320f814049c2b671119515c746380d",
+      "source_sha256": "c43c0a5de7474f763ca1c37e2276e5129e911324c31993c3043d5441f1758c51",
+      "kind": "direct"
+    },
+    {
+      "claim": "TypedArraySpeciesCreate slow path constructs the selected species, requires a TypedArray, length at least requested and matching ContentType, but does not require matching element type.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "symbol": "TypedArrayHelper::TypedArraySpeciesCreate / TypedArrayCreate",
+      "line_or_range": "970-1043",
+      "blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+      "source_sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+      "kind": "direct"
+    },
+    {
+      "claim": "Concrete static scenario: an Int32Array species result of Uint8Array length n>=2 is permitted by the same ContentType and minimum-length checks; parent uses four-byte Int32 offsets for indices 0..n-1, so the final four-byte write ends at offset 4n against n-byte storage.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1476-1499",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "inference"
+    },
+    {
+      "claim": "Adding a constructor property to a TypedArray transitions to an HClass with HasConstructor set, so the user callback can cause the later NewTypedArray check to take its species slow path.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/js_hclass-inl.h",
+      "symbol": "JSHClass::AddPropertyTransition",
+      "line_or_range": "408-417",
+      "blob": "e1955be5999ac4e49679b79be4df7b8d0d793725",
+      "source_sha256": "a067f3cec1653a4005b07598b731b153edee2543b3d2f38f5673b974cd89d3e1",
+      "kind": "direct"
+    },
+    {
+      "claim": "If the Uint8Array species result is longer than n, the particular final-write overrun depends on its backing byte length; the stated exact-length n case is accepted by the length lower-bound check and provides the narrow static candidate. Results with sufficient extra length can avoid this specific bound crossing.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "symbol": "TypedArrayHelper::TypedArrayCreate",
+      "line_or_range": "1048-1055",
+      "blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+      "source_sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+      "kind": "direct"
+    },
+    {
+      "claim": "On-heap TypedArray allocation computes byteLength as destination elementSize times length, calls NewByteArray(arrayLength, elementSize) below the on-heap threshold, and records exact byteLength and arrayLength on the destination. A Uint8Array(n) species result therefore has n logical backing bytes.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/base/typed_array_helper.cpp",
+      "symbol": "TypedArrayHelper::AllocateTypedArrayBuffer<NON_SHARED>",
+      "line_or_range": "194-235",
+      "blob": "17f4b8f50ea126eb646ef011e9b7fa7e461394dc",
+      "source_sha256": "0704698674d39389525de7ccca0941138fc0bb4a84d3acdf0f14544a119558a3",
+      "kind": "direct"
+    },
+    {
+      "claim": "ByteArray computes raw object size as DATA_OFFSET + elementSize*length, GetData points to DATA_OFFSET + index*elementSize, and object alignment is 8 bytes. For a 3-byte Uint8 backing area, object allocation padding is five bytes; the candidate final write range [8,12) relative to data extends four bytes past the aligned ByteArray object extent.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/byte_array.h",
+      "symbol": "ByteArray::ComputeSize / GetData / DATA_OFFSET",
+      "line_or_range": "30-64,72",
+      "blob": "69da8709b1412d9246968b5db96b066b819bbc50",
+      "source_sha256": "d089cc14c93cd28f357b014b90d4a2a0797f1a5279de1714b20d6370e2d7e85b",
+      "kind": "direct"
+    },
+    {
+      "claim": "NewByteArray aligns DATA_OFFSET + elementSize*length to object alignment before allocating, so the n=3 Int32-to-Uint8 candidate final write [8,12) relative to data exceeds the aligned object allocation by four bytes.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "symbol": "NewObjectStubBuilder::NewByteArray",
+      "line_or_range": "2555-2571",
+      "blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+      "kind": "direct"
     }
   ],
   "protections": [
@@ -200,8 +322,8 @@
   "entry_attacker_trigger_impact": {
     "entry": "unknown",
     "attacker_control": "unknown",
-    "trigger": "Static candidate: callback/species flow yields a destination whose element width is narrower than source arrayType; a later result-copy index may then use an oversized jsType byte offset/width. Exact reachable conditions are unknown.",
-    "cia_impact": "unknown; source path supports a plausible out-of-bounds write candidate only, with no runtime reproduction or product impact evidence."
+    "trigger": "Static scenario: during Int32Array Filter callback, install a constructor/species that returns Uint8Array(3). Species construction accepts it because it is a TypedArray with matching Number ContentType and length equal to requested result count. Parent copy index 2 uses Int32 jsType: byte offset 8, four-byte write [8,12); the Uint8 backing data is 3 bytes and its ByteArray allocation is 8-byte aligned, so source layout arithmetic extends the write four bytes beyond the allocated object. Runtime build path/reproduction remains unverified.",
+    "cia_impact": "unknown at product level; source supports a plausible backing-storage out-of-bounds write candidate in the stated static scenario."
   },
   "missing_evidence": [
     "Independent acquisition/custody or server-authenticity evidence for the local object store",
@@ -210,19 +332,26 @@
     "A product-reachable entry, attacker-controlled trigger, and security-relevant impact",
     "Same-profile fixed-product build and regression revalidation",
     "Runtime reproduction proving callback-mediated type divergence under the exact guarded product path",
-    "Dynamic proof or disproof that narrower species destination types cause writes beyond backing storage, including full buffer bounds and allocation-size checks"
+    "Confirmation that the shipped product executes this exact Filter stub and helper path, plus attacker reachability and security impact",
+    "Pinned build/runtime or sanitizer proof that the exact-length Int32Array-to-Uint8Array scenario crosses the actual backing allocation boundary; verify inline/heap layout and full execution path"
   ],
   "recommended_next_check": [
-    "Obtain the target product release/branch/manifest and prove its exact Ark Runtime component revision before product-profile work.",
-    "On that source revision, trace NewTypedArray result type and SetTypeArrayPropertyByIndex behavior for the guarded Filter path.",
-    "Build a focused runtime test that varies source and species result element widths and verifies write bounds under the exact fast Filter guards; inspect sanitizer or allocator evidence without claiming product reachability.",
-    "Keep product vulnerability, exploitability, and safety unknown until build, runtime, and impact evidence is independently verified."
+    "On a build of the pinned source revision, run a focused runtime test with Int32Array Filter callback installing a Uint8Array species of exact requested length, and use a memory sanitizer/guard allocation to verify final-index write bounds.",
+    "Compare same scenario against fixed source and preserve exact build/profile identity.",
+    "Obtain target product release/branch/manifest and prove its exact Ark Runtime component revision before product-profile work.",
+    "Keep product vulnerability, exploitability, and severity unknown until product build, runtime, reachability and impact evidence are independently verified."
   ],
-  "confidence": "medium-low",
+  "confidence": "medium",
   "limitations": [
-    "The out-of-bounds write mechanism is an inference from the source/fixed diff and local helper chain; no dynamic bounds or memory-safety reproduction was obtained.",
+    "The n=3 source-level write and ByteArray extent arithmetic are directly supported by pinned source. Actual execution of this generated fast stub, sanitizer detection, process effects, and product applicability still require runtime/build evidence.",
     "The local object database is content-consistent with its declared remote but acquisition and custody were not independently attested.",
     "No product build, preprocessed TU, runtime test, product PoC, exploitability analysis, or fixed-product replay was performed.",
     "The review does not map the candidate to a CVE or assert vulnerability severity."
-  ]
+  ],
+  "candidate_assessment": {
+    "static_mechanism_confidence": "high",
+    "runtime_memory_safety": "unverified",
+    "product_applicability": "blocked",
+    "security_impact": "unknown"
+  }
 }
