@@ -1,0 +1,79 @@
+{
+  "record_id": "T54-M2-HOLDOUT-PROTOCOL-ACCEPTANCE-20261020",
+  "date": "2026-10-20",
+  "role": "independent_test_protocol_design",
+  "checkout": "D:/openHarmonyScanner/worktrees/t51-pasteboard-independent-20261020",
+  "d55_artifact_present": false,
+  "result": "PROTOCOL_CHECKLIST_READY_D55_REVIEW_PENDING",
+  "m2_status": "NOT_MET",
+  "constraints_observed": {
+    "scanner_modified": false,
+    "samples_generated": false,
+    "future_labels_accessed": false,
+    "expected_outcomes_accessed": false
+  },
+  "reviewed_records": [
+    "research/data_sensitive/D5_MAIN_READINESS.md",
+    "research/data_sensitive/D41_HOLDOUT_PREREGISTRATION.md",
+    "research/data_sensitive/D41_HOLDOUT_RESULTS.md",
+    "research/data_sensitive/D48_HOLDOUT_PREREGISTRATION.md",
+    "research/evidence/cpp/t51_pasteboard_quota_acceptance_0193_20261020.md",
+    "research/evidence/cpp/t52_pasteboard_permission_acceptance_20261020.md"
+  ],
+  "evidence_state": {
+    "d41": {
+      "snapshots": 6,
+      "files": 3820,
+      "blind_packet_cases": 99,
+      "independent_labels": 0,
+      "selection": "post_scan_stratified_review_packet",
+      "accuracy_estimable": false,
+      "replay_stability": "stable_twice"
+    },
+    "d48": {
+      "eligible_files": 97,
+      "candidate_count": 0,
+      "partial_files": 97,
+      "independent_labels": 0,
+      "selection": "convenience_sample",
+      "accuracy_estimable": false
+    },
+    "t51_t52": {
+      "nature": "narrow_rule_regression_and_source_case_reviews",
+      "independent_population_holdout": false,
+      "product_status": "unknown_or_unassessed"
+    }
+  },
+  "gates": [
+    {"id":"freeze_identity","name":"Detector/model/parser/config/driver freeze","pass_condition":"Exact commit and hashes frozen before source selection, scan, and label access.","status":"PENDING_D55"},
+    {"id":"data_separation","name":"Development/holdout disjointness","pass_condition":"Auditable repository, commit/tree, blob/content, known-case, and fixture exclusion against D1-D54 and all tuning data.","status":"PENDING_D55"},
+    {"id":"sampling_frame","name":"Target population and selection frame","pass_condition":"Population, time window, eligible units, strata, seed, and selection probabilities preregistered without conditioning on scanner output.","status":"PENDING_D55"},
+    {"id":"inclusion_exclusion","name":"Eligibility and frozen denominator","pass_condition":"All include/exclude, generated/vendor/test, language, duplicate, symlink/submodule, unavailable-object rules defined; eligible manifest/hash frozen.","status":"PENDING_D55"},
+    {"id":"label_unit_rubric","name":"Label unit and evidence rubric","pass_condition":"Operational positive, negative, unrelated, unknown labels with support and counterevidence requirements.","status":"PENDING_D55"},
+    {"id":"blind_independence","name":"Reviewer independence and blinding","pass_condition":"Independent reviewers do not see prediction/severity/confidence before initial labels; access and role are documented.","status":"PENDING_D55"},
+    {"id":"label_disagreement","name":"Double review and adjudication","pass_condition":"Independent labels preserved; disagreement adjudicated independently; nonresponse and unknown retained.","status":"PENDING_D55"},
+    {"id":"candidate_nohit","name":"Candidate and no-hit review","pass_condition":"Candidates sampled/reviewed for precision and no-hit eligible units probability-sampled or exhaustively audited for recall; weights defined.","status":"PENDING_D55"},
+    {"id":"coverage_accounting","name":"Coverage/status accounting","pass_condition":"Eligible/scanned/complete/partial/blocked/not-analyzed/candidate/reviewed/unlabeled/excluded counts reconcile; partial statuses retained.","status":"PENDING_D55"},
+    {"id":"estimands_denominators","name":"Estimands and denominators","pass_condition":"Finding/file units separated; precision/recall denominator formulas predeclared; unknowns counted and sensitivity treatment stated.","status":"PENDING_D55"},
+    {"id":"uncertainty","name":"Uncertainty and design effects","pass_condition":"Sample sizes and design-appropriate intervals/weights reported; unknowns/disagreement reflected; no point-estimate-only claims.","status":"PENDING_D55"},
+    {"id":"stopping_claims","name":"Stopping/inconclusive rules","pass_condition":"Minimum coverage, thresholds, stratum underfill, missing labels, instability, stop and claim scope preregistered before labels.","status":"PENDING_D55"},
+    {"id":"audit_reproduction","name":"Independent recomputation artifacts","pass_condition":"Raw outputs, hashes, frame/seed, blinded labels, adjudication, and metric scripts retained and independently reproducible.","status":"PENDING_D55"}
+  ],
+  "decision_rules": [
+    "All core protocol gates must PASS for READY_TO_RUN.",
+    "Any holdout contamination or prediction exposure before initial labels invalidates the holdout for the claimed detector version.",
+    "Unknown frame, no-hit review, coverage, or denominator prevents an accuracy claim.",
+    "M2 evidence sufficiency requires completed frozen scan, independent labels, reconciled accounting, uncertainty, and preregistered thresholds met.",
+    "This protocol does not establish M3 product applicability or vulnerability."
+  ],
+  "unknowns": [
+    "D55 detector/model/parser bundle freeze timing and hashes",
+    "Content-level holdout separation from prior development material",
+    "Target population, strata, sample frame, seed, inclusion probabilities",
+    "Label unit, independent reviewer roles, blindness, double review, adjudication, unknown treatment",
+    "No-hit sample design sufficient for recall estimand",
+    "Coverage denominators, uncertainty method, sample-size rationale, stopping thresholds, runtime/RSS procedure",
+    "Reproducibility and audit artifact completeness"
+  ],
+  "authoring_prompt": "Author a D55 preregistered M2 protocol and JSON companion only. Do not modify scanner/models/tests/fixtures/expected outputs; do not generate, inspect, or reveal holdout labels or anticipated outcomes. Audit D5 readiness and D41/D48/T51/T52; treat all listed profiles and examples as previously exposed unless content-level checks prove disjointness. Freeze and hash detector/model/parser/dependencies/config/path filters/driver before selection or exposure. Define population/frame, eligibility, content-level split audit, strata/seed/inclusion probabilities, label units/rubric, independent blind reviewers, double review/adjudication, candidate and probability-sampled or exhaustive no-hit review, unknown/nonresponse policy, reconciled coverage accounting, estimands/denominators, design-appropriate intervals, sample-size rationale, stopping/inconclusive rules, runtime/RSS, audit artifacts, and claim boundaries. Do not equate partial/blocked/not-analyzed/unlabeled with negative. Do not invent missing values; list unknowns. T54 independently reviews the frozen D55 artifact against the checklist; any post-label protocol change requires a fresh holdout or an exploratory-only classification."
+}
