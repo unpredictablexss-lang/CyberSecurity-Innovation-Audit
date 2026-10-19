@@ -1,0 +1,868 @@
+{
+  "schema_version": "d37-preferences-get-fuzzer-replay-v1",
+  "task": "D37",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+      "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+      "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+      "bytes": 6092
+    }
+  },
+  "build_target": {
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesget_fuzzer/BUILD.gn",
+      "blob": "8691c817b79ed1e92e087272b9e3055ac5f3809f",
+      "sha256": "8285b7a9006ad1312166633f2a2a1518eb90ec7c9c06747586b49a1d58cd6e24",
+      "bytes": 2074
+    },
+    "target": "ohos_fuzztest(DBPreferencesGetFuzzTest)",
+    "test_group": "group(\"fuzztest\") [testonly = true]",
+    "harness_entry": "LLVMFuzzerTestOneInput",
+    "production_evidence": false
+  },
+  "queue": {
+    "total_rows": 345,
+    "audited_ids": [
+      "CR-0066",
+      "CR-0067",
+      "CR-0068",
+      "CR-0069",
+      "CR-0070",
+      "CR-0071",
+      "CR-0072",
+      "CR-0073",
+      "CR-0074",
+      "CR-0075",
+      "CR-0076",
+      "CR-0077",
+      "CR-0078",
+      "CR-0079",
+      "CR-0080",
+      "CR-0081",
+      "CR-0082",
+      "CR-0083",
+      "CR-0084",
+      "CR-0085",
+      "CR-0086",
+      "CR-0087",
+      "CR-0088",
+      "CR-0089",
+      "CR-0090"
+    ],
+    "a0_status_unchanged": true
+  },
+  "cli": {
+    "raw": "d37_preferences_get_fuzzer_20261024.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 1,
+    "scope_loc": 197,
+    "parse": {
+      "complete": 1
+    },
+    "findings": 25,
+    "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-source-checkout> --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "items": [
+    {
+      "queue_id": "CR-0066",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ea649f7693617f0e",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 43
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 43,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d3ab21ac0a0bcaf8"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0067",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:9f1a397d9b2d61b1",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 48
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 48,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:693417e85a752f1e"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0068",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:99c5961e47c4ae7f",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 50
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 50,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:61f87dc7e1b4f51f"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0069",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:cc461074bcd7246a",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 65
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 65,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:24115590a1bb16c2"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0070",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:b088c4f8579e0f7e",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 66
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 66,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:1e0e5b8f25f87b59"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0071",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:413489e8740a4084",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 74
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 74,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:33e05c69e57671a2"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0072",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:be64e36c36535756",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 75
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 75,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b2e6f93bf7fcb707"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0073",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8cf9ae9b81337449",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 83
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 83,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7f73216448a6519b"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0074",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8f814215cf369a49",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 91
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 91,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ac15cd92b81ae3ca"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0075",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a70eb1dc4a1bc4ba",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 92
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 92,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8e7dfb458a975add"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0076",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:20a05d26de5964af",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 100
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 100,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7eb4ec4ca0aaeebd"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0077",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8ff6e0fd7efa9f5b",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 108
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 108,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9e380eb76ec1ab12"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0078",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:07e500bb2f593c08",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 109
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 109,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7cb1d733fa09ecd0"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0079",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c4be390243495e69",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 117
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 117,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:325c1121397ce2c6"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0080",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c08a1e95041ab1c4",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 125
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 125,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2607b0b172fb9c8f"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0081",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ccf469e545b3c347",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 126
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 126,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:34d91f654eb99897"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0082",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:29b22010c92cc7e8",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 134
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 134,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c97882dfaa11aeb3"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0083",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:4e4d6f18c913b7ad",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 142
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 142,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ae1c333cc9e5c0a1"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0084",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:5df05821765ed1a1",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 143
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 143,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:87972f9c1630ab3d"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0085",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3be3a2b9cc5d7700",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 151
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 151,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4ab9639085e90264"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0086",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:b8feb14288946577",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 159
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 159,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:1e9356bc5747910d"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0087",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8e7974b4da24a189",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 160
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 160,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7b657db8132dfb56"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0088",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:4e6930068f34b8ea",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 168
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 168,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:9cd718b2d63d18ae"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0089",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:664c4c9ccec2b18f",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 176
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 176,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:f76b00fa47f4a13b"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0090",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:db3e3407d1fe0e76",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesget_fuzzer/dbpreferencesget_fuzzer.cpp",
+        "blob": "7a5c8a263fa4142579a3f4c6161c7d28b3350f50",
+        "sha256": "3e72c80d962f8dc9df6573328198c37072f4dddcd88dbc004ed2f72128d176b9",
+        "bytes": 6092,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 177
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 177,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7dca39f01879dd07"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The exact GN target is a test-only fuzz harness. It invokes Preferences APIs sequentially; syntax candidates do not establish overlapping production accesses, product inclusion, reachability or impact.",
+      "queue_preserved": true
+    }
+  ],
+  "overall_disposition": "PARTIAL",
+  "detector_change": "none; all 25 source-bound candidates reproduce in a test-only fuzz file, with no demonstrated product-root miss",
+  "queue_states_changed": false,
+  "structured_vibe_prompt": {
+    "role": "A 线 Preferences shared_ptr_race 开发负责人",
+    "sustained_goal": "区分测试 harness 语法候选与生产可达、确有并发交错的同对象根因；保持源码绑定和 A0 队列状态不变。",
+    "input": "D37 精确 source/build 身份、当前 CLI 原始输出及 CR-0066–CR-0090 对应行。",
+    "steps": [
+      "单独追踪 production BUILD inclusion、调用链和可达性，不以 fuzz target 依赖推断产品发布。",
+      "核验 shared_ptr 同对象读写、线程/任务创建与重叠、锁/原子或 join 的同步关系。",
+      "仅在具体产品源码漏检已复现时改 shared_ptr_race；同时提供 positive、fixed、safe、unrelated、renamed 和 partial controls。",
+      "每次复跑记录 commit/tree/blob/SHA、规则版本、scope、解析覆盖和命令。"
+    ],
+    "completion_gate": "独立复验精确对象和发现；产品构建/可达性及重叠未同步同对象访问均有证据后才能确认产品根因，否则保留 PARTIAL/BLOCK 并列明缺失项。",
+    "boundaries": [
+      "不按 CVE、仓库、函数名或哈希硬编码。",
+      "不把测试 harness 候选提升为产品漏洞。",
+      "不改 A0 状态、共享 API 或 Catalog。"
+    ]
+  }
+}
