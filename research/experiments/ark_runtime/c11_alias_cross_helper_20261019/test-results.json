@@ -1,0 +1,37 @@
+{
+  "focused_c11": {
+    "command": "\"C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -m unittest tests.detectors.ark_runtime.test_c11_alias_cross_helper -v",
+    "exit_code": 0,
+    "summary": "OK",
+    "stdout": "logs-final/focused_c11.stdout.txt",
+    "stderr": "logs-final/focused_c11.stderr.txt"
+  },
+  "focused_known_cases": {
+    "command": "\"C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -m unittest tests.detectors.ark_runtime.test_c10_known_case_controls tests.detectors.ark_runtime.test_c10_ark_gap_rules tests.detectors.ark_runtime.test_c11_alias_cross_helper -v",
+    "exit_code": 0,
+    "summary": "OK",
+    "stdout": "logs-final/focused_known_cases.stdout.txt",
+    "stderr": "logs-final/focused_known_cases.stderr.txt"
+  },
+  "full_ark": {
+    "command": "\"C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -m unittest discover -s tests/detectors/ark_runtime -t . -v",
+    "exit_code": 0,
+    "summary": "OK (skipped=3)",
+    "stdout": "logs-final/full_ark.stdout.txt",
+    "stderr": "logs-final/full_ark.stderr.txt"
+  },
+  "compileall": {
+    "command": "\"C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe\" -m compileall -q src/ohscanner/detectors/ark_runtime tests/detectors/ark_runtime",
+    "exit_code": 0,
+    "summary": "",
+    "stdout": "logs-final/compileall.stdout.txt",
+    "stderr": "logs-final/compileall.stderr.txt"
+  },
+  "git_diff_check": {
+    "command": "git diff --check",
+    "exit_code": 0,
+    "summary": "",
+    "stdout": "logs-final/git_diff_check.stdout.txt",
+    "stderr": "logs-final/git_diff_check.stderr.txt"
+  }
+}

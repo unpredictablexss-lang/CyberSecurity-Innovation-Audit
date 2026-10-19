@@ -1,0 +1,33 @@
+{
+  "case": "full_no_cache",
+  "repeat": 2,
+  "environment": {
+    "python": "3.12.14",
+    "git": "git version 2.55.0.windows.5",
+    "parsers": {
+      "tree-sitter": "0.26.0",
+      "tree-sitter-c": "0.24.2",
+      "tree-sitter-cpp": "0.23.4",
+      "tree-sitter-javascript": "0.25.0",
+      "tree-sitter-typescript": "0.23.2"
+    },
+    "parse_profile": "light-ast",
+    "macro_expansion": false
+  },
+  "wall_seconds": 0.5689143999989028,
+  "peak_rss_bytes": 51744768,
+  "result": {
+    "source_identity_sha256": "49560a1586701e70971ec816b191796403d8e2a769483fc0355e4cc56d2e935a",
+    "parse_signature_sha256": "36013619f892f45fe7e3eed222d6d08d0c54c25d3b3c33e351d102c238f4639c",
+    "diagnostic_signature_sha256": "9af11de32a7ebc8304dfcc0518a5476fdfa89b7e2c2b799bffbd156f66567d78",
+    "diagnostic_count": 2000,
+    "coverage": {
+      "parsing_status": {
+        "complete": 2000
+      },
+      "languages": {
+        "cpp": 2000
+      }
+    }
+  }
+}

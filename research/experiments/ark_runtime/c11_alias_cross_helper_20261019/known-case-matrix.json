@@ -1,0 +1,530 @@
+{
+  "cases": [
+    {
+      "finding_id": "CVE-2025-24304",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 7,
+            "column": 1,
+            "reason": "distinct_origin_with_type_changing_creation",
+            "target_identity": "new:358",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map:172:input",
+            "token_line": 4,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 118,
+            "region_end_byte": 474,
+            "effect_sites": [
+              [
+                6,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 7,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:362",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map:176:input",
+            "token_line": 4,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Map",
+            "region_start_byte": 122,
+            "region_end_byte": 486,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "matched_local_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IBS5YG",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 7,
+            "column": 1,
+            "reason": "distinct_origin_with_type_changing_creation",
+            "target_identity": "new:350",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:164:input",
+            "token_line": 4,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 107,
+            "region_end_byte": 466,
+            "effect_sites": [
+              [
+                6,
+                "builder.NewTypedArray"
+              ]
+            ]
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 7,
+            "column": 1,
+            "reason": "target_origin_or_proved_type_equality",
+            "target_identity": "same-type:361",
+            "token_origin": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter:175:input",
+            "token_line": 4,
+            "creation_line": 6,
+            "path": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 118,
+            "region_end_byte": 485,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b"
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "matched_local_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7KZJ7",
+      "rule_id": "ark.runtime.typedarray-buffer-size-multiplication-overflow",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "line": 2,
+            "column": 26,
+            "function": "convert",
+            "result_name": "byteCount",
+            "factor_names": [
+              "stride",
+              "count"
+            ],
+            "allocation_line": 3,
+            "loop_line": 6,
+            "start_byte": 73,
+            "end_byte": 87,
+            "may_overflow": true
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "fixed_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IC7B8Q",
+      "rule_id": "ark.runtime.typedarray-allocation-exception-guard",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 6,
+            "column": 31,
+            "reason": "allocation_result_hclass_read_on_pending_exception_path",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 5,
+            "creation_line": 0,
+            "path": [
+              5,
+              6
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 392,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 9,
+            "column": 46,
+            "reason": "pending_exception_check_guards_allocation_result_use",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 5,
+            "creation_line": 0,
+            "path": [
+              5,
+              6,
+              6,
+              6,
+              7,
+              9,
+              9
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 653,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "matched_local_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7E0FM",
+      "rule_id": "ark.runtime.callback-exception-before-result-conversion",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 6,
+            "column": 21,
+            "reason": "callback_completion_may_reach_result_conversion_without_dominating_exception_exit",
+            "target_identity": "callbackOutcome",
+            "token_origin": "JSFunction::Call",
+            "token_line": 5,
+            "creation_line": 0,
+            "path": [
+              5,
+              6
+            ],
+            "constraints": [],
+            "symbol": "BuiltinsTypedArray::Filter",
+            "region_start_byte": 27,
+            "region_end_byte": 409,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "fixed_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 9,
+            "column": 30,
+            "reason": "reflect_apply_result_sentinel_comparison_may_drop_pending_exception",
+            "target_identity": "ReplaceGateWithPendingException",
+            "token_origin": "ExceptionConstant",
+            "token_line": 9,
+            "creation_line": 9,
+            "path": [
+              9
+            ],
+            "constraints": [
+              [
+                9,
+                "checks_pending_thread_exception",
+                false
+              ]
+            ],
+            "symbol": "ReplaceGateWithPendingException",
+            "region_start_byte": 443,
+            "region_end_byte": 469,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [
+          "local_sentinel_comparison_does_not_prove_exception_propagation"
+        ],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [
+          "fixed_pending_exception_check_control_not_security_verdict"
+        ],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "fixed_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7W51D",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "line": 5,
+            "column": 5,
+            "function": "TypedArrayHelper::TypedArrayConstructor",
+            "result_name": "elementLength",
+            "conversion_line": 5,
+            "allocation_line": 6,
+            "start_byte": 238,
+            "end_byte": 294
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "fixed_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "rule_id": "ark.runtime.dataview-index-width-bounds",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "line": 6,
+            "column": 9,
+            "function": "DataViewGet",
+            "index_expression": "DoubleInRangeInt32(numberIndex.GetNumber())",
+            "arithmetic_line": 6,
+            "start_byte": 333,
+            "end_byte": 375
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "limited",
+        "file_outcome": "partial",
+        "candidate_count": 0,
+        "matched_count": 0,
+        "unknown_count": 1,
+        "observations": [],
+        "limitations": [
+          "index_width_bounds_arithmetic_not_fully_proven:DataViewGet"
+        ],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "explicit_unknown_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IAO7E8",
+      "rule_id": "ark.runtime.typedarray-receiver-type-guard",
+      "rule_version": "1.1.0",
+      "parent": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 1,
+        "matched_count": 0,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "candidate",
+            "line": 5,
+            "column": 18,
+            "reason": "backing_buffer_read_not_dominated_by_receiver_type_guard",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              2,
+              5
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 479,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "fixed": {
+        "status": "completed",
+        "file_outcome": "complete",
+        "candidate_count": 0,
+        "matched_count": 1,
+        "unknown_count": 0,
+        "observations": [
+          {
+            "kind": "matched",
+            "line": 7,
+            "column": 18,
+            "reason": "receiver_type_guard_dominates_backing_buffer_read",
+            "target_identity": "",
+            "token_origin": "",
+            "token_line": 0,
+            "creation_line": 0,
+            "path": [
+              2,
+              7
+            ],
+            "constraints": [],
+            "symbol": "panda::ecmascript::kungfu::BuiltinsTypedArrayStubBuilder::Filter",
+            "region_start_byte": 38,
+            "region_end_byte": 479,
+            "effect_sites": []
+          }
+        ],
+        "limitations": [],
+        "model_digest": ""
+      },
+      "parent_disposition": "source_bound_candidate",
+      "fixed_disposition": "matched_local_control_no_same_root_candidate_not_safety",
+      "security_claim": "not_asserted"
+    }
+  ],
+  "all_parent_candidate_or_explicit_unknown": true,
+  "all_fixed_have_no_same_root_candidate": true,
+  "security_claims": "not_asserted"
+}
