@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "task": "T independent replay of D libtiff CVE-2025-9900 evidence",
+  "acceptance_commit": "febc34f7757b5cb58bee6af77e053ba6bdb1a21c",
+  "development_evidence_commit": "9904375320e3f136f199f286751f44dbce8d6013",
+  "disposition": "PARTIAL/BLOCK",
+  "whole_file_cli": {
+    "vuln": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "source_parsing": {
+        "parsing_status": {
+          "partial": 2
+        },
+        "languages": {
+          "c": 1,
+          "cpp": 1
+        }
+      },
+      "detector_runs": [
+        {
+          "tool": "ohscanner.cpp.bounds",
+          "tool_version": "0.3.0",
+          "status": "blocked",
+          "diagnostic_count": 0
+        }
+      ],
+      "coverage": "completed_with_limitations"
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "source_parsing": {
+        "parsing_status": {
+          "partial": 2
+        },
+        "languages": {
+          "c": 1,
+          "cpp": 1
+        }
+      },
+      "detector_runs": [
+        {
+          "tool": "ohscanner.cpp.bounds",
+          "tool_version": "0.3.0",
+          "status": "blocked",
+          "diagnostic_count": 0
+        }
+      ],
+      "coverage": "completed_with_limitations"
+    }
+  },
+  "bounded_function_probe": {
+    "vulnerable": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+      "path": "libtiff/tif_getimage.c",
+      "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+      "file_sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+      "bytes": 105147,
+      "header": {
+        "path": "libtiff/tiffio.h",
+        "blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8",
+        "sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f",
+        "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a"
+      },
+      "function": {
+        "name": "TIFFReadRGBAImageOriented",
+        "original_start_line": 610,
+        "original_end_line": 631,
+        "function_slice_sha256": "fdae36a9e7a21e00392236fda8715cb7dded4a1276210d7d37fe565f0d12b8e9",
+        "function_parse": "complete",
+        "function_and_exact_field_declaration_parse": "complete",
+        "parse_issues": [],
+        "standalone_type_shim": "typedef unsigned int uint32_t; (platform alias shim for system stdint.h)"
+      },
+      "detector": {
+        "id": "ohscanner.cpp.bounds",
+        "version": "0.3.0",
+        "status": "completed",
+        "findings": [
+          {
+            "rule_id": "ohcpp-memory-bounds-pointer-offset-candidate-004",
+            "rule_version": "0.1.0",
+            "local_line": 50,
+            "original_function_line": 621,
+            "symbol": "raster",
+            "source_sha256": "6302a9c9f11f62a244fd3d765f39f1cac87855423cc59d01f51a5e3cc9ce1d06"
+          }
+        ]
+      },
+      "whole_file_parse": "partial",
+      "whole_file_parse_issue_count": 6
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+      "path": "libtiff/tif_getimage.c",
+      "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+      "file_sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+      "bytes": 106010,
+      "header": {
+        "path": "libtiff/tiffio.h",
+        "blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074",
+        "sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c",
+        "tree": "77361ef7262189e16a2010b5c333f6b275d17f09"
+      },
+      "function": {
+        "name": "TIFFReadRGBAImageOriented",
+        "original_start_line": 626,
+        "original_end_line": 645,
+        "function_slice_sha256": "51617edc21ee5637de99c242a834eebc1341f28315d4ae74a279b775ddd13486",
+        "function_parse": "complete",
+        "function_and_exact_field_declaration_parse": "complete",
+        "parse_issues": [],
+        "standalone_type_shim": "typedef unsigned int uint32_t; (platform alias shim for system stdint.h)"
+      },
+      "detector": {
+        "id": "ohscanner.cpp.bounds",
+        "version": "0.3.0",
+        "status": "completed",
+        "findings": []
+      },
+      "whole_file_parse": "partial",
+      "whole_file_parse_issue_count": 6
+    }
+  },
+  "a0": {
+    "source_candidates": 345,
+    "unique_queue_ids": 345,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "queue_status_counts": {
+      "paused_pending_evidence": 331,
+      "queued_first_batch": 5,
+      "queued_not_reproduced": 9
+    },
+    "verifier": "PASS"
+  },
+  "scope": {
+    "base": "5e9f8f52b2c0fd53c71667ef2255493843ac1321",
+    "lane": "cpp",
+    "violations": 0,
+    "diff_check": "PASS"
+  },
+  "limitations": [
+    "Whole translation units are partial and blocked.",
+    "The function probe is a bounded slice with uint32_t underlying-type shim.",
+    "Product build, input reachability, raster capacity and impact remain unknown."
+  ]
+}
