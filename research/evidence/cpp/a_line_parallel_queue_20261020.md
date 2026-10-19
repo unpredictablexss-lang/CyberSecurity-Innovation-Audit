@@ -323,7 +323,7 @@ Owner follow-up: [D42 B-owner detector review request](d42_b_owner_ipc_review_re
 
 ## T43 — Taihe FFI independent audit CR-0197–CR-0213
 
-T43 independently replayed the exact Taihe source objects: both files parsed completely, 16 current `shared_ptr_race` findings mapped to 16/17 A0 rows, with CR-0213 unmapped (not a safety result). The root `BUILD.gn` is for Taihe tooling and does not reference the audited author files; product target/build inclusion and same-object cross-thread overlap remain unknown. Preserve all 17 rows as PARTIAL/BLOCK and `not_testable / paused_pending_evidence`. See [T43 addendum](a_line_parallel_queue_20261020_T43_addendum.md), [audit](t43_taihe_ffi_audit_20261026.md), and [verifier](verify_t43_taihe_ffi_audit_20261026.py).
+T43 independently replayed the exact Taihe source objects: both files parsed completely, 16 current `shared_ptr_race` findings mapped to 16/17 A0 rows, with CR-0213 unmapped (not a safety result). The root `BUILD.gn` is for Taihe tooling and does not reference the audited author files; product target/build inclusion and same-object cross-thread overlap remain unknown. Preserve all 17 rows as PARTIAL/BLOCK and `not_testable / paused_pending_evidence`. See [T43 addendum](a_line_parallel_queue_20261020_T43_addendum.md), [audit](t43_taihe_ffi_audit_20261026.md), [independent checkout attestation](t43_independent_checkout_attestation_20261026.md), and [verifier](verify_t43_taihe_ffi_audit_20261026.py).
 
 ## D43 — Taihe FFI generator shared_ptr family CR-0197–CR-0213
 
