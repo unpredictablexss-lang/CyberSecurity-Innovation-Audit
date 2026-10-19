@@ -12,7 +12,7 @@
 
 - `docs/项目现状与下一步.md` 记录 Ark Runtime 静态候选已接第一方 Catalog，Detector `0.6.2` / model `0.8.13`，默认关闭；C1 两文件 Runner 重放为 partial/blocked、0 diagnostics。单测 146 passed / 3 skipped 是开发控制，不是独立准确率证据。
 - C11/C12 的局部语义增强和控制矩阵已完成相应开发记录。C12 focused 20 tests、Ark 全套 193 tests / 3 skips 属于该代码快照的测试记录，不证明产品构建、完整 TU 覆盖或漏洞确认。
-- `research/deliveries/product_closure_20261019/task_tree.json` 的 G12-PC 当前为 `ACTIVE_NOT_ADMITTED`：PC-1 profile `IN_PROGRESS_BLOCKED`；PC-2 holdout 管线已实现但真实评估未执行；PC-3 applicability `BLOCKED`；PC-4 PoC、PC-5 fixed-product revalidation 未运行；PC-6 `NOT_ADMITTED`。
+- `research/deliveries/product_closure_20261019/task_tree.json` 的 G12-PC 当前为 `ACTIVE_NOT_ADMITTED`：PC-1 profile `IN_PROGRESS_BLOCKED`；PC-2 的人工评审前置要求由 owner 豁免，但真实评估仍未执行、指标不可用；PC-3 applicability `BLOCKED`；PC-4 PoC、PC-5 fixed-product revalidation 未运行；PC-6 `NOT_ADMITTED`。
 - 16 个案例中只有 6 个有完整 source identity 字段，完整产品 build/preprocess profile 为 0。验证器 `verified_blocked_manifest` 只证明清单内部可复算。official Ark Git object store、产品版本/manifest、GN/compile actions、toolchain/sysroot、宏/include/generated-input closure 和预处理 TU 尚缺。
 - 独立重放分支的 freeze `v0.3.2` 记录 `detector_invoked=false`。它是审计准备状态，不是 Catalog 静态候选线的 replay 结果；不得把不同 detector/model/profile 的结果拼接或计算共同指标。
 - C4 工作树 `e4e0761501a83ac25cc67d04c527eefe9f4a1b50` 存在大量未提交实验；其 `a65…` rk3568 profile 与历史 5.0.2 parent/fix 样本不匹配。C4 两个 object build 不能替代 G12-PC 的 16 案例 profile。
@@ -54,7 +54,7 @@ flowchart TD
 | T1 | 测试 | P0 | `59cf0c8` 独立复测 D1 `3e97ad8`，42 项通过；raw replay、错误身份、错误极性 unknown 控制均有断言 | 独立加入/审阅 guard 反例、receiver 混淆、别名/重新赋值、partial parse、预算失败与现有 known-case 回归 | 所有不确定输入显式 unknown/partial；不把零诊断算 safe；向 D1 提交差异和复测结果 |
 | D2 | 开发/证据 | P0 | `0795106` 补 7 个 anchored cases（14 commit/tree、24 blob、7/7 ancestry）；`c7526e8` 输出 MATCH/NOT_RECORDED/MISMATCH 计数；`31d2a3e` 按 T4 反例加入 fail-closed gates；T4 `a297e79` 独立验收通过；3 个 unanchored cases 保持 UNKNOWN，PC-1 仍 blocked | 等源 owner 提供三案明确 parent/fix/path 锚点；保留负向变异与独立复算；不改历史 manifest | 本地对象证据和可复算计数通过仍不等于 custody、产品关联或 build profile；16 个 case profiles 独立闭合才关闭 PC-1；缺资料继续 blocked |
 | T2 | 测试/治理 | P1 | `14df233` 已通过 22/22 合成单测及端到端 self-test；ledger evidence 必须通过 evidence-root 安全相对路径重算原始字节 SHA，真实 PC-2 仍 NOT_RUN | 继续确认 custodian 的真实抽样框/泄漏账本/角色材料能满足 byte-bound intake；身份/权限需外部证明，schema 不能替代；真实独立人员/样本未就绪时不执行 freeze | malformed/missing/tampered/outside-root fail closed；synthetic metrics=false；真实 truth、人员独立性及 PC-2 独立准确率仍未建立 |
-| H2 / PC-2 | 独立评估/人工审查 | P1 | `PIPELINE_IMPLEMENTED_NOT_EXECUTED` | owner 指定与开发者分离的数据保管人；T2 治理自测通过且 D1 规则冻结后，冻结无泄漏抽样框与预注册协议；需要独立样本、两名评审和一名裁决人 | 完成真实双盲 review、分歧裁决与 final label hash；缺人员/数据时保持 `NOT_RUN`，不把 T2 自测计作 holdout；不得未经授权联系外部评审者 |
+| H2 / PC-2 | 独立评估/人工审查 | P1 | `WAIVED_BY_OWNER_NOT_EXECUTED` | owner 于 2026-10-20 豁免 reviewer/source-set staffing 前置要求；T2 pipeline 已实现，真实样本和真人 review 仍不存在 | 不宣称 review PASS、不生成可靠 truth、不计算 Precision/Recall；以后若需真实指标，再恢复独立评审流程。未经单独授权不得联系外部人员 |
 | L2 | 第二层模型审查 | P1 | 已对 C12 Native Inline 一例完成 source-level JSON 审查；待 T1 raw-blob detector replay 后补运行结果 | 对每条冻结的 source-bound candidate 逐案审查；不要求 PC-1 产品 profile 或 PC-2 真值先完成，缺产品语境的字段直接标 unknown | 每个结论都有源码位置；unknown 保留；LLM 不自证、不替代独立标签或产品门 |
 | PC-3 | 产品适用性 | P2 | `BLOCKED` | 依赖 PC-1 对目标 case 的 profile；逐候选补真实产品 manifest/version/binary、入口、权限、攻击者输入、触发、可达 sink 与 CIA 证据 | 每项直接证据绑定精确产品/source identity；缺项继续 unknown |
 | PC-4 | 授权隔离 PoC | P2 | `NOT_RUN` | 仅当 PC-1 profile 和 PC-3 applicability 证据齐全且有明确授权后执行 | vulnerable product build 可重复触发，隔离/资源/网络/恢复条件和原始产物哈希完整 |
@@ -164,7 +164,7 @@ H2 在真实样本之前先准备待审批模板：预注册（目标总体、�
 
 依赖：D1/T1 冻结的 detector/model/ruleset；T2 对 packet isolation、hash lock 和 adjudication pipeline 的治理验收。开发 fixture、known-case、scanner verdict、模型输出和历史 review 不得作真值。先建立预注册抽样框与 family/leakage ledger，确认样本和开发家族隔离后再 freeze。样本身份、标签与 parent/fix 配对不得泄漏给 reviewer；保留 unknown 和分歧，由独立第三人裁决。
 
-只有获得 owner 批准且 scope 明确后，才可写入 `research/evaluation/ark_runtime_holdout_20261019/freeze-20261020/**`。未获授权、无独立来源或评审者未签署时保持 `NOT_RUN`，不替换样本、不生成标签、不计算指标。完成后交付 preregistration、freeze manifest、blind packets、locked reviews、adjudication 与 final-label hashes，供 T2 审计。
+owner 已豁免该真实 holdout 的评审人员配置作为本轮决策前置条件；这只代表流程 waiver，真实评估仍是 `NOT_RUN`。不替换样本、不生成标签、不计算指标。若后续恢复真实评估，须另获明确 scope/授权后才写入 `research/evaluation/ark_runtime_holdout_20261019/freeze-20261020/**`，并交付 preregistration、freeze manifest、blind packets、locked reviews、adjudication 与 final-label hashes，供 T2 审计。
 ```
 
 ### D2 — G12-PC-1 来源与产品 profile 闭合
@@ -211,7 +211,7 @@ manifest 字段齐全的 6 案仅表示 source identity 字段被填写。只读
 
 对 commit/tree/blob/source SHA 缺失或不符、错误 repository/path、toolchain/sysroot/args/include/generated input 缺失、profile hash 漂移及伪造 host-only 信息做负向 mutation；确认每项都 fail closed 且不会产生安全、适用或已验证产品结论。针对 intake hash/协议内容、source identity/家族泄漏、角色签署和身份独立、blind packet 泄漏、A/B 裁决盲态、freeze/hash lock、完整 review/adjudication/final-label case set 与评分链实施合成负向变异；检查任何失败均阻止真实 scoring。区分纯合成 self-test 和真实盲评。
 
-交付每个 mutation 的输入改动、命令、预期/实际、报告 hash 与缺陷；profile 负例回传 D2，pipeline/holdout 负例回传 pipeline owner 修复并重测。没有独立抽样框、两名评审及裁决人时，真实盲评保持 NOT_RUN，不得计算 Precision/Recall；pipeline 通过本身不构成评估完成。按 workspace manifest 运行 scope check。
+交付每个 mutation 的输入改动、命令、预期/实际、报告 hash 与缺陷；profile 负例回传 D2，pipeline/holdout 负例回传 pipeline owner 修复并重测。owner 已豁免评审人员配置，但真实盲评保持 NOT_RUN，不得计算 Precision/Recall；pipeline 通过本身不构成评估完成。按 workspace manifest 运行 scope check。
 ```
 
 ## 第二层大模型逐候选审查提示词
@@ -276,7 +276,7 @@ D3（开发线）：你负责 C12 loop_backedges 数据流。先核对冻结基�
 T3（独立测试线）：独立检查 loop_backedges 的生产与消费语义，不参与 D3 实现。以冻结的正例、修复例、安全/无关例和 unknown 例构造行为级断言，验证完整 LoopEnd→LoopBegin 关联是否改变真实 observation 及证据链；不接受“配对数量正确”作为行为验收。若 D3 选择 instrumentation-only，验收该限制被准确记录且 detector observation 不被错误归因。负例回传 D3 修复后独立复测；只改 T3 allowlist，提交逐例 expected/actual、命令、哈希和 scope check。
 ```
 
-D3/T3 此轮状态：D3/T3 开发/独立测试已完成；D3/T3 分支各自 scope check 相对基线 74971572e3eac6b743c0e91d75c6c45d00c2067c 无违规，git diff --check 通过，T3 在精确 D3 SHA 上通过。下一轮优先推进 G12-PC-1 的 IBS5YG 产品 profile 证据：需产品 owner 提供具体发行版本与源码 pin、GN/build action/args、toolchain/sysroot、完整 include/generated inputs、预处理 TU 与 binary 映射；缺任一项就保持 BLOCKED。真实 holdout PC-2 仍需独立抽样框、两名 reviewer 和一名 adjudicator。
+D3/T3 此轮状态：D3/T3 开发/独立测试已完成；D3/T3 分支各自 scope check 相对基线 74971572e3eac6b743c0e91d75c6c45d00c2067c 无违规，git diff --check 通过，T3 在精确 D3 SHA 上通过。下一轮优先推进 G12-PC-1 的 IBS5YG 产品 profile 证据：需产品 owner 提供具体发行版本与源码 pin、GN/build action/args、toolchain/sysroot、完整 include/generated inputs、预处理 TU 与 binary 映射；缺任一项就保持 BLOCKED。PC-2 的 reviewer/source-set 前置要求已由 owner 豁免，但真实 holdout 仍未执行，指标继续不可用。
 
 ### D4/T4 第四轮：IBS5YG 产品画像证据盘点
 

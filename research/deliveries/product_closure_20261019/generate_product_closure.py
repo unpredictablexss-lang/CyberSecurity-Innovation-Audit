@@ -62,7 +62,7 @@ def main() -> int:
         "profile_payload_sha256": profile.get("payload_sha256"),
         "case_count": len(cases),
         "cases": cases,
-        "metrics": {"precision": None, "recall": None, "reason": "no independent reliable labelled holdout"},
+        "metrics": {"precision": None, "recall": None, "reason": "no independent reliable labelled holdout; owner waived reviewer staffing prerequisite, but no review ran and no metrics are available"},
     }
     matrix["payload_sha256"] = canonical_hash_payload(matrix)
     task_tree = {
@@ -71,7 +71,7 @@ def main() -> int:
         "status": "ACTIVE_NOT_ADMITTED",
         "nodes": [
             {"id": "G12-PC-1", "title": "Ark parent/fix build and preprocess profile", "status": "IN_PROGRESS_BLOCKED", "next": "Bind official Ark Git store and exact product build/preprocess artifacts."},
-            {"id": "G12-PC-2", "title": "Independent holdout freeze and double-blind adjudication", "status": "PIPELINE_IMPLEMENTED_NOT_EXECUTED", "next": "Recruit independent source set and two human reviewers plus one adjudicator."},
+            {"id": "G12-PC-2", "title": "Independent holdout freeze and double-blind adjudication", "status": "WAIVED_BY_OWNER_NOT_EXECUTED", "next": "Owner waived the human-review prerequisite for this decision; do not claim evaluation pass or compute metrics without reliable independent human labels."},
             {"id": "G12-PC-3", "title": "Candidate product applicability closure", "status": "BLOCKED", "next": "Close entry, permission, trigger, attacker control and CIA impact per case."},
             {"id": "G12-PC-4", "title": "Authorized isolated PoC", "status": "NOT_RUN", "next": "Execute only after product build and authorization gates are locked."},
             {"id": "G12-PC-5", "title": "Fix and fixed-product revalidation", "status": "NOT_RUN", "next": "Patch, rebuild same profile, replay PoC and controls."},

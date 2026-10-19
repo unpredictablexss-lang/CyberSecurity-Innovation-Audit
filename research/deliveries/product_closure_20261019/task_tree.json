@@ -8,8 +8,8 @@
     },
     {
       "id": "G12-PC-2",
-      "next": "Recruit independent source set and two human reviewers plus one adjudicator.",
-      "status": "PIPELINE_IMPLEMENTED_NOT_EXECUTED",
+      "next": "Owner waived the human-review prerequisite for this decision; do not claim evaluation pass or compute metrics without reliable independent human labels.",
+      "status": "WAIVED_BY_OWNER_NOT_EXECUTED",
       "title": "Independent holdout freeze and double-blind adjudication"
     },
     {
@@ -37,8 +37,8 @@
       "title": "Competition admission"
     }
   ],
-  "payload_sha256": "99a96985fc258fad07170d74e44a9dfb2dd8adf3a37dcf9086ed33995719e164",
   "root": "G12-PC-PRODUCT-ADMISSION-CLOSURE",
   "schema": "ohscanner.g12-pc-task-tree/v1",
-  "status": "ACTIVE_NOT_ADMITTED"
+  "status": "ACTIVE_NOT_ADMITTED",
+  "payload_sha256": "d4a057d65a48f5b45e157795c6ca0840509347dcf654de7f3a792a725f64c877"
 }
