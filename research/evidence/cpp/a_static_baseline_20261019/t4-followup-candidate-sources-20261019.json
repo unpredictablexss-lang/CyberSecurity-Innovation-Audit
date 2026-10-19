@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-19",
+  "task": "T4 independent source/provenance and PR30 baseline replay",
+  "worktree": "D:\\openHarmonyScanner\\worktrees\\a-t1-audit-pr30-20261019",
+  "scanner_base": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+  "current_head_before_t4": "a447b556c2c3da2cbcf2e856bd2c0798b32c48fb",
+  "detector_baseline": {
+    "id": "ohscanner.cpp.resource_lifetime",
+    "version": "0.1.0",
+    "rule_versions": [
+      "see per-finding raw reports; zero findings in all T4 runs"
+    ],
+    "profile": "light-ast"
+  },
+  "provenance_method": "Official GitHub advisory/file pages and previously source-bound exact OH pins. GitHub github_fetch_file blob OIDs for libpng v1.6.55/v1.6.56 were independently compared against local synthetic scanner snapshot git tree OIDs; upstream commits and synthetic commits are kept separate.",
+  "cases": [
+    {
+      "id": "CVE-2026-46675 / GHSA-qvg3-h654-xq3j",
+      "status": "PARTIAL",
+      "advisory": "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
+      "advisory_current": "Affected <=1.6.58; patched 1.6.59 and 1.8.0; official advisory describes png_read_info then png_read_end without row reads.",
+      "sources": [
+        {
+          "role": "vulnerable release",
+          "repo": "pnggroup/libpng",
+          "ref": "v1.6.55",
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910",
+          "path": "pngrutil.c",
+          "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa",
+          "sha256": "b328fb05352226866b1e44c8cddd3e03df35413f1f38f4d81ba51afe4f2333a5e"
+        },
+        {
+          "role": "fix parent",
+          "repo": "pnggroup/libpng",
+          "commit": "4eeb825ab26605ed34cd74495d4cce920939fe9f",
+          "tree": null,
+          "path": "pngrutil.c",
+          "blob": "5513951681f52da994ba72c96af135bfede5393e",
+          "sha256": "f67dbcc82dce533ec0a768184a142216f6ac3d9e68f2a35d5cd90c4667b24d1c"
+        },
+        {
+          "role": "official fix commit",
+          "repo": "pnggroup/libpng",
+          "commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+          "tree": null,
+          "path": "pngrutil.c",
+          "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a",
+          "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e"
+        }
+      ],
+      "official_fix": "https://github.com/pnggroup/libpng/commit/aa77ef38c17ab2fc1b41bec09fb973c6a386641d",
+      "replay": {
+        "synthetic_commit": "e283ed5d3a74c0112f092ddb1003c97e0e9a4717",
+        "tree": "c78da20c3ffe37b09653eaa3b49c5213745ac4bd",
+        "runs": [
+          {
+            "variant": "vulnerable-1.6.55",
+            "report": "t4-libpng46675-vuln.json",
+            "findings": 0,
+            "parse": "partial",
+            "run": "blocked"
+          },
+          {
+            "variant": "fix-parent",
+            "report": "t4-libpng46675-parent.json",
+            "findings": 0,
+            "parse": "partial",
+            "run": "blocked"
+          },
+          {
+            "variant": "official fixed pngrutil.c",
+            "report": "t4-libpng46675-fixed.json",
+            "findings": 0,
+            "parse": "partial",
+            "run": "blocked"
+          },
+          {
+            "variant": "OpenHarmony install-generated",
+            "report": "t4-libpng46675-oh.json",
+            "findings": 0,
+            "parse": "partial",
+            "run": "blocked"
+          }
+        ]
+      },
+      "controls": "Separate prior component ASan evidence: vulnerable OH-generated source reproduces UAF for crafted invalid-window zTXt plus png_read_info→png_read_end without rows; one-row and valid-zTXt controls are quiet; official-fix transplant is quiet but is not byte-identical official fix source. No production parser-complete static result.",
+      "gap": "Upstream tree IDs for fix parent/fix commit and full upstream tree object binding unavailable in this T1 worktree; parse partial; exact safe/unrelated code control missing. Keep PARTIAL."
+    },
+    {
+      "id": "CVE-2026-33416 / GHSA-m4pc-p4q3-4c7j",
+      "status": "PARTIAL",
+      "advisory": "https://github.com/pnggroup/libpng/security/advisories/GHSA-m4pc-p4q3-4c7j",
+      "advisory_current": "Affected <=1.6.55; patched 1.6.56 and 1.8.0.",
+      "upstream_tags": {
+        "vulnerable": {
+          "repo": "pnggroup/libpng",
+          "ref": "v1.6.55",
+          "commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d",
+          "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910"
+        },
+        "fixed": {
+          "repo": "pnggroup/libpng",
+          "ref": "v1.6.56",
+          "commit": "d5515b5b8be3901aac04e5bd8bd5c89f287bcd33",
+          "tree": "a28bb962645843af84063c77f574f6d88da79f76"
+        }
+      },
+      "file_blobs": {
+        "vulnerable": {
+          "pngset.c": {
+            "blob": "3e63c2724ec8737482d1746a790cfe0840c3a83e",
+            "sha256": "9bd59a79669db37b2ecc481439481eb5f49bf77bee0de4b1aba649915609b3d0"
+          },
+          "png.c": {
+            "blob": "a0cad0197e760013abf67eb5c23ce5e4055cdb4d",
+            "sha256": "0d8e45e9039cf04088764a09dcda7b24695f199288a44e11dba54ebfaca1c730"
+          },
+          "pngread.c": {
+            "blob": "af2f44c9ca8eaa40177b2ae5612c0eccc0f625a5",
+            "sha256": "feee8bdd4c553cc4f01bb288a868d4b83e1ce0f75014a96163a49eb32119cba6"
+          },
+          "pngrtran.c": {
+            "blob": "1fce9af121d1073d465e5d57a4278a67c522db69",
+            "sha256": "4df05c2e5db00911817d7f125c862524205895f34a65106e016d351f7e6edb53"
+          }
+        },
+        "fixed": {
+          "pngset.c": {
+            "blob": "b9ccb7fb156d134265133541209be1ab12034366",
+            "sha256": "d3a203e40b6a6000a7cb78a61e0fd9664b0c39a65d82260efedb0f0184a8bc19"
+          },
+          "png.c": {
+            "blob": "fda0a8e6ae06b42c672d9e5ae476a4259a29e357",
+            "sha256": "29a37cedb5be5597aafa3cab62a223c0accbd6016edfff97386471a6e118100c"
+          },
+          "pngread.c": {
+            "blob": "24199689a76b2cac8e75ca8bb37fd67e62d9f53b",
+            "sha256": "2a2c02673c7dcd6853f3efe8cc16c893df3f7bdffe7b53abde835e7c6e4c6fc3"
+          },
+          "pngrtran.c": {
+            "blob": "978dac588801a111ebd9917a74179e081ea39290",
+            "sha256": "6b724ff0047cced71884176296aac10a6fc1d2592477034bbd622222ded3373f"
+          }
+        }
+      },
+      "official_fix_commits": [
+        "https://github.com/pnggroup/libpng/commit/23019269764e35ed8458e517f1897bd3c54820eb",
+        "https://github.com/pnggroup/libpng/commit/7ea9eea884a2328cc7fdcb3c0c00246a50d90667",
+        "https://github.com/pnggroup/libpng/commit/c1b0318b393c90679e6fa5bc1d329fd5d5012ec1"
+      ],
+      "github_blob_crosscheck": "T4 fetched all 4 paths at each exact commit through official GitHub github_fetch_file; all 8 returned blob OIDs matched corresponding git object IDs in the previously byte-bound synthetic scan snapshots.",
+      "replay": {
+        "vulnerable": {
+          "synthetic_commit": "afad740f043acd9bee412677d0a5ff1e046aaa24",
+          "tree": "5d18312a3b10c4aa1a488b91ac41d010606640ef",
+          "snapshot_sha256": "f80ae78bc09612fd5b8c5a925f858b41e15711319d0a794cafeb4764f7ec73d9",
+          "report": "t4-libpng33416-vuln.json",
+          "findings": 0,
+          "parse": "4/4 partial",
+          "run": "blocked"
+        },
+        "fixed": {
+          "synthetic_commit": "dcd78000a2e39558bd0b9340633d7acff796d37b",
+          "tree": "444dba821b3f8b58326ce85d0daf056f64029ec7",
+          "snapshot_sha256": "21cfd3bac010b1ba63611630ac8381487a9455c24591618cb16bb52e0a600eae",
+          "report": "t4-libpng33416-fixed.json",
+          "findings": 0,
+          "parse": "4/4 partial",
+          "run": "blocked"
+        },
+        "later_rule_comparison": "Other independent later checkout recorded resource_lifetime 0.1.9 as vulnerable 2 / fixed 0 at pngrtran.c:1187 and :1228, but both 4/4 partial. This T4 PR30 checkout is version 0.1.0 and fresh result 0/0; retain these as separate scanner baselines."
+      },
+      "controls": "Official fixed tag v1.6.56 and component ASan/runtime controls exist; source report includes memory-safe no-free/API-sequence controls. They cannot turn partial parse into a static pass.",
+      "gap": "No parser-complete static coverage for the four source files; no same-scope unrelated source sample. Keep PARTIAL."
+    },
+    {
+      "id": "CVE-2026-67215 / GHSA-5q3m-r3x7-8phg",
+      "status": "PARTIAL",
+      "advisory": "https://github.com/advisories/GHSA-5q3m-r3x7-8phg",
+      "root_cause": "JSON Patch add/copy subtree amplification followed by recursive cJSON_Delete stack exhaustion.",
+      "source": {
+        "repo": "OpenHarmony third_party_cjson",
+        "upstream_component_commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+        "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+        "files": {
+          "cJSON.c": {
+            "blob": "152b2caa479c9f448001652913c980a6dafb82e0",
+            "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+          },
+          "cJSON_Utils.c": {
+            "blob": "8fa24f8e9bf452cf1ba49d1325c85423ce742c74",
+            "sha256": "bf3092696763a9a446c39365d7c35f23e5acfdca1bd1da33ef66c1161f9243e9"
+          }
+        }
+      },
+      "replay": {
+        "synthetic_commit": "105eaddbf0d0110b07d16bdefc81ffc796e1444a",
+        "tree": "3c07134d5a05aa546b15739e32503a2ca192d258",
+        "snapshot_sha256": "c0482c314ead7b9131426e7aa74f1073f734341c2ac56fb9a2578efecb51b3e7",
+        "report": "t4-cjson-67215-67216-oh.json",
+        "detector": "resource_lifetime 0.1.0",
+        "findings": 0,
+        "parse": "cJSON.c partial; cJSON_Utils.c complete; detector analysis partial/blocked"
+      },
+      "fix_status": "No confirmed upstream fix/version; GHSA patched version unknown, Red Hat says none as of 1.7.19, issue #1073 open. PR #1064 addresses MergePatch recursion; #1078 depth guards compare/merge generation; neither fixes JSON Patch add/copy amplification followed by recursive deletion.",
+      "controls": "Earlier component-only runtime has bounded safe stack controls. No trusted fixed/unrelated source control.",
+      "gap": "Upstream canonical cJSON vulnerable source commit not bound in this T4 run; only exact OpenHarmony 1.7.19 component source is bound. No fixed source or complete parser analysis. Keep PARTIAL."
+    },
+    {
+      "id": "CVE-2026-67216 / GHSA-ff2v-f99f-wm3f",
+      "status": "PARTIAL",
+      "advisory": "https://github.com/advisories/GHSA-ff2v-f99f-wm3f",
+      "root_cause": "Exponential CPU work in nested cJSON_Compare matching.",
+      "source": {
+        "repo": "OpenHarmony third_party_cjson",
+        "upstream_component_commit": "0c2c9dff82cc85539c8362132d7a5f6bf7d1e748",
+        "tree": "0d8e50cc18f9ae178e9969eed40f8a0c94fb3856",
+        "file": "cJSON.c",
+        "blob": "152b2caa479c9f448001652913c980a6dafb82e0",
+        "sha256": "427c72055ae68467b451599f36da074351a5ca53f6e103cd30064e32cf0fffbb"
+      },
+      "replay": "Shares exact T4 cJSON source replay t4-cjson-67215-67216-oh.json; cJSON.c partial; zero diagnostics uninterpretable.",
+      "fix_status": "No verified CPU-complexity fix/source. Issue #1073 open; PR #1078's recursion depth guard is not a measured fix for shallow exponential comparison; tested depth-14 runtime remains similar to local OH source.",
+      "controls": "Prior component cost probe includes fast type-mismatch control and exponential-growth cases. No trusted fixed/unrelated source control.",
+      "gap": "No canonical upstream vulnerable commit/tree/blob bound for the specific advisory in this T4 run; no valid fixed source and scanner parser partial. Keep PARTIAL."
+    }
+  ],
+  "t4_commands": [
+    "python -m src.cli ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\libpng-ghsa-qvg3-scan-20261019 --repository pnggroup/libpng --commit e283ed5d3a74c0112f092ddb1003c97e0e9a4717 --include vulnerable-1.6.55/pngrutil.c --detector ohscanner.cpp.resource_lifetime --json-out research/evidence/cpp/a_static_baseline_20261019/t4-libpng46675-vuln.json --md-out research/evidence/cpp/a_static_baseline_20261019/t4-libpng46675-vuln.md",
+    "same command with --include parent-fix/pngrutil.c and output basename t4-libpng46675-parent",
+    "same command with --include fixed/pngrutil.c and output basename t4-libpng46675-fixed",
+    "same command with --include openharmony-generated/pngrutil.c and output basename t4-libpng46675-oh",
+    "python -m src.cli ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\libpng-cve-2026-33416-current-m2-20261019 --repository pnggroup/libpng --commit afad740f043acd9bee412677d0a5ff1e046aaa24 --include pngset.c --include png.c --include pngread.c --include pngrtran.c --detector ohscanner.cpp.resource_lifetime --json-out research/evidence/cpp/a_static_baseline_20261019/t4-libpng33416-vuln.json --md-out research/evidence/cpp/a_static_baseline_20261019/t4-libpng33416-vuln.md",
+    "same 33416 command with fixed synthetic commit dcd78000a2e39558bd0b9340633d7acff796d37b and fixed output basename",
+    "python -m src.cli ohscan-run --repo-dir D:\\openHarmonyScanner\\tmp\\cjson-cve67215-current-replay-20261019 --repository openharmony/third_party_cjson --commit 105eaddbf0d0110b07d16bdefc81ffc796e1444a --include third_party/cjson/cJSON.c --include third_party/cjson/cJSON_Utils.c --detector ohscanner.cpp.resource_lifetime --json-out research/evidence/cpp/a_static_baseline_20261019/t4-cjson-67215-67216-oh.json --md-out research/evidence/cpp/a_static_baseline_20261019/t4-cjson-67215-67216-oh.md"
+  ],
+  "evidence_limits": [
+    "All T4 CLI runs used PR30 base code detector ohscanner.cpp.resource_lifetime v0.1.0; no D3/D4 code is included.",
+    "No static PASS assigned; no zero-finding partial result interpreted as safety or miss.",
+    "Exact upstream trees for libpng 46675 fix parent/fix commit remain unavailable in official connector metadata; source blob identity is pinned.",
+    "The two cJSON advisories have no genuine fixed sources at review time.",
+    "No same-scope unrelated file controls were available for these cases."
+  ],
+  "post_D4_action": "T3 should independently replay the applicable 46675/33416/cJSON cases on frozen D4 commit f880613 in a fresh checkout, preserving the same upstream source bytes and scopes. Compare same-root diagnostics and parser coverage. For cJSON, keep fixed differential BLOCK until a genuine same-root fix becomes available; for 46675/33416, partial parses remain PARTIAL even if candidates disappear."
+}
