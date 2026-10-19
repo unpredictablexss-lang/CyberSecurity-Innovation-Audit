@@ -194,7 +194,7 @@ D4 binds the vulnerable and fixed `pngrutil.c` variants as separate byte-bound s
 
 The production CLI was independently rerun against both byte-bound files with detector `0.3.0`, scope `vulnerable-1.6.55/pngrutil.c` or `fixed/pngrutil.c`, and the same synthetic commit/tree. Both runs matched D4 snapshot hashes (`192e4c1ac567f539395a92a383b0f55e22baa49467de510efda1198962064098` vulnerable; `0e27e208e7bb29cbb2a95d76ed7e1ee53959fac13eb529fe6ee6bced724179c1` fixed), parser partial, detector blocked, coverage partial, and 0 findings.
 
-There is one transcription error in `d4_libpng_20261019/README.md`: its vulnerable SHA-256 string has an extra `d` and is 65 characters. The D4 raw JSON, T3 recomputation from file bytes, and independent replay agree on the 64-character hash above. The fixed SHA-256 and both Git blob SHA-1 values match. This is documentation-only and does not change D4 run status.
+At the time of the initial D4 audit, its README vulnerable SHA-256 transcription had an extra `d`. D4 follow-up commit `eda76eabc543ebdaa9369df1e0b81549e32e1463` corrected the value; T3 cherry-picked it as local commit `6587f73` and confirmed the now-64-character README hash matches the raw JSON and T3 recomputation from source bytes. The fixed SHA-256 and Git blob SHA-1 values also match. This documentation correction does not change D4 run status.
 
 **Disposition: PARTIAL/BLOCK.** Source-byte identities and same-version replay are consistent, but both target files parse partial; zero findings cannot pass detection or establish the fixed source as safe. Minimum follow-up is a parser-visible target context/complete analysis and reproducible source-bound sequence for the stale zstream transition, plus upstream tree binding if full source-tree identity is needed. Product call-path evidence remains outstanding.
 
@@ -203,6 +203,28 @@ There is one transcription error in `d4_libpng_20261019/README.md`: its vulnerab
 | Case | T3 disposition | Evidence boundary / minimum remaining work |
 |---|---|---|
 | CVE-2026-33416 | PARTIAL/BLOCK | Exact vulnerable/fixed byte hashes and 0.3.0 replays agree; all four scoped files are partial and both runs blocked. Obtain usable parser/type context for cross-file owner/release/use sequence and safe/unrelated controls. |
-| CVE-2026-46675 | PARTIAL/BLOCK | Vulnerable/fixed SHA-256 and recorded Git blob IDs match; both 0.3.0 runs are partial/blocked. Correct the D4 README SHA typo; obtain complete parser-visible zstream state and caller sequence. |
+| CVE-2026-46675 | PARTIAL/BLOCK | Vulnerable/fixed SHA-256 and recorded Git blob IDs match; both 0.3.0 runs are partial/blocked. The D4 README SHA typo was corrected and verified; obtain complete parser-visible zstream state and caller sequence. |
 
 The existing first-wave matrix, D3 acceptance, and 940409d baseline are unchanged. These replays support the D4 conclusion that no detector change is justified by the current partial parse evidence; they do not establish either source as fixed/safe or validate product exposure.
+
+## T4 frozen v0.1.0 evidence provenance audit
+
+T3 cherry-picked T4 frozen evidence commit `8132dd9a338ba11a77a38cc4c87465f16bfeda47` into the independent branch without conflict (local cherry-pick `a28d969`). This is a provenance/artifact audit of the frozen T4 reports; its scanner baseline is PR #30 `8ec5f56a12e90bba56953b39eb17faa20e154da9` and its detector is `ohscanner.cpp.resource_lifetime` `0.1.0`. It is recorded separately from D4's later `0.3.0` replays.
+
+### GitHub file OID and synthetic snapshot blob correspondence
+
+T3 fetched the eight libpng 1.6.55/1.6.56 files directly from GitHub at their exact refs. The official OIDs matched the blob IDs stored in T4's synthetic source snapshots: vulnerable (`v1.6.55`) `pngset.c` `3e63c2724ec8737482d1746a790cfe0840c3a83e`, `png.c` `a0cad0197e760013abf67eb5c23ce5e4055cdb4d`, `pngread.c` `af2f44c9ca8eaa40177b2ae5612c0eccc0f625a5`, `pngrtran.c` `1fce9af121d1073d465e5d57a4278a67c522db69`; fixed (`v1.6.56`) `pngset.c` `b9ccb7fb156d134265133541209be1ab12034366`, `png.c` `fda0a8e6ae06b42c672d9e5ae476a4259a29e357`, `pngread.c` `24199689a76b2cac8e75ca8bb37fd67e62d9f53b`, `pngrtran.c` `978dac588801a111ebd9917a74179e081ea39290`. T3 independently resolved all eight local tree entries from the corresponding synthetic commits and confirmed the same OIDs. Thus upstream file bytes and scan snapshot file bytes are bound; the synthetic commit/tree remains a transport snapshot and does not replace the upstream commit/tree identity.
+
+For CVE-2026-46675, T3 fetched `pngrutil.c` at the vulnerable commit `c3e304954a9cfd154bc0dfbfea2b01cd61d6546d`, fix-parent `4eeb825ab26605ed34cd74495d4cce920939fe9f`, and official fix commit `aa77ef38c17ab2fc1b41bec09fb973c6a386641d`. GitHub returned OIDs `a4eda54c8cb3d36cf1651dba159067b65030e3aa`, `5513951681f52da994ba72c96af135bfede5393e`, and `482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a`; each equals the corresponding blob in T4's synthetic tree `c78da20c3ffe37b09653eaa3b49c5213745ac4bd`. The fourth OpenHarmony-generated variant is a separate local blob (`6af6b3658728af209aff2fca0df13b16700ae8d8`) and is not claimed as an upstream GitHub file.
+
+### Seven raw report pairs and status semantics
+
+T3 parsed each of the seven T4 CLI JSON files and confirmed its paired Markdown file is present: four CVE-2026-46675 variants (vulnerable, fix parent, official fixed file, OpenHarmony-generated file), two CVE-2026-33416 variants (vulnerable and fixed), and one shared two-file cJSON replay for CVE-2026-67215/67216. All seven JSON outputs identify detector `0.1.0`, contain the expected source/snapshot metadata, and have zero diagnostics. The separate `t4-followup-candidate-sources-20261019.json` is a provenance manifest, not an eighth CLI run.
+
+For 46675, all four T4 runs are `completed_with_limitations`, detector run `blocked`, one target file parsed `partial`, and zero findings. For 33416, both runs are `completed_with_limitations`, detector run `blocked`, all four target files parse `partial`, and zero findings; detector coverage lists the files as not analyzed. The cJSON run is `completed_with_limitations`, detector `blocked`, one source file parse partial and one complete, with zero diagnostics and partial coverage. T4 labels each case `PARTIAL`; no zero-finding result is promoted to fixed or safe.
+
+### Distinction from D4 v0.3.0
+
+These T4 artifacts record the PR #30 `0.1.0` baseline only. D4 reports were produced from the D3-era baseline `940409d3670dafd036b0e8afcbdbe479d815230c` using detector `0.3.0`. For both libpng cases D4 also records zero findings and partial parsing; its evidence is a distinct later run and must not be merged into the T4 v0.1.0 result. In the cJSON case, D4 v0.3.0 emits two separate partial-identity candidates (tree amplification and recursive comparison cost), while T4 v0.1.0 emits none and has one complete / one partial parser result. This difference reflects detector version and must remain version-labeled. Neither version establishes complete detector coverage or a security conclusion for the partial inputs.
+
+**T4 audit disposition: PASS for GitHub file-OID-to-synthetic-blob correspondence and completeness of the seven original JSON/Markdown report pairs; PARTIAL for all underlying CVE cases.** Remaining limitations are those in T4 and D4: parser/detector coverage stays incomplete, libpng 46675 upstream full trees are unavailable, cJSON has no trusted fixed source, and product call paths/builds are unbound.
