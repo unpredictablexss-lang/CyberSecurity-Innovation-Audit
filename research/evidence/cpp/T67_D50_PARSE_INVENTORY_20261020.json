@@ -1,0 +1,72 @@
+{
+  "task": "T67_inventory_followup",
+  "artifact": "research/data_sensitive/D50_COMPONENT_CVE_REPLAY/pasteboard.json",
+  "saved_D50_counts": {
+    "selected_source_files": 68,
+    "cpp": {
+      "complete": 57,
+      "partial": 10
+    },
+    "typescript": {
+      "not_run": 1
+    },
+    "detector_coverage": {
+      "complete": 0,
+      "partial": 67,
+      "not_analyzed": 0,
+      "failed": 0
+    }
+  },
+  "partial_files": [
+    {"file":"interfaces/kits/napi/src/napi_init.cpp","issues":[{"line":26,"kind":"error"},{"line":42,"kind":"error"}]},
+    {"file":"services/core/include/i_pasteboard_observer.h","issues":[{"line":30,"kind":"error"}]},
+    {"file":"services/core/include/i_pasteboard_service.h","issues":[{"line":43,"kind":"error"}]},
+    {"file":"services/core/include/pasteboard_service.h","issues":[{"line":52,"kind":"missing"},{"line":53,"kind":"missing"}]},
+    {"file":"services/core/src/pasteboard_storage.cpp","issues":[{"line":88,"kind":"error"}]},
+    {"file":"services/test/unittest/src/paste_service_test.cpp","issues":[{"line":60,"kind":"missing"},{"line":83,"kind":"missing"},{"line":94,"kind":"missing"},{"line":105,"kind":"missing"},{"line":117,"kind":"missing"},{"line":130,"kind":"missing"},{"line":152,"kind":"missing"},{"line":175,"kind":"missing"},{"line":198,"kind":"missing"}]},
+    {"file":"services/zidl/include/pasteboard_observer_stub.h","issues":[{"line":34,"kind":"missing"}]},
+    {"file":"services/zidl/include/pasteboard_service_stub.h","issues":[{"line":35,"kind":"missing"}]},
+    {"file":"services/zidl/src/pasteboard_observer_stub.cpp","issues":[{"line":46,"kind":"error"}]},
+    {"file":"services/zidl/src/pasteboard_service_stub.cpp","issues":[{"line":58,"kind":"error"}]}
+  ],
+  "partial_row_semantics": {
+    "analysis_status": "partial",
+    "analysis_reason": "detector_model_incomplete",
+    "stored_issue_fields": ["kind","start_line","end_line"],
+    "underlying_diagnostic_text_available": false,
+    "node_or_recovery_context_available": false,
+    "file_fixability_independently_verifiable": false
+  },
+  "not_run_boundary": {
+    "aggregate_language": "ts",
+    "per_file_row_in_D50": false,
+    "D50_declared_scope": ["."],
+    "D50_run_parse_rows": 67,
+    "path_recoverable_from_D50_artifact": false,
+    "later_D68_exact_source_path": "interfaces/declaration/api/@ohos.pasteboard.d.ts"
+  },
+  "environment": {
+    "D50_python": "3.10.12",
+    "D50_tree_sitter": "0.26.0",
+    "D50_tree_sitter_c": "0.24.2",
+    "D50_tree_sitter_cpp": "0.23.4",
+    "local_python_3_10": "3.10.11",
+    "local_python_3_10_tree_sitter_available": false,
+    "local_python_3_13": "3.13.9",
+    "local_python_3_13_tree_sitter": "0.26.0",
+    "local_python_3_13_tree_sitter_c": "0.24.2",
+    "local_python_3_13_tree_sitter_cpp": "0.23.4",
+    "exact_D50_runtime_recreated": false
+  },
+  "separate_D68_replay": {
+    "cpp_complete": 59,
+    "cpp_partial": 8,
+    "typescript_not_run": 1,
+    "D50_partial_to_D68_complete": [
+      "services/zidl/src/pasteboard_observer_stub.cpp",
+      "services/zidl/src/pasteboard_service_stub.cpp"
+    ],
+    "historical_D50_upgrade": false
+  },
+  "assessment": "D50 artifact supports exact partial-file/line inventory but not root-cause diagnosis, fixability, per-file not-run attribution, or exact Python 3.10.12 behavior."
+}
