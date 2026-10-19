@@ -476,7 +476,11 @@ class KnownDisclosedCveTests(unittest.TestCase):
         observer_finding = next(f for f in vulnerable_run.findings if f.symbol == "CVE-2025-25212")
         expected_line = vulnerable[:vulnerable.index("observers->insert(observer)")].count("\n") + 1
         self.assertEqual(expected_line, observer_finding.line)
-        self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
+        fixed_findings = self.run_source(fixed, "pasteboard_service.cpp").findings
+        self.assertEqual({"CVE-2025-27247"}, {item.symbol for item in fixed_findings})
+        permission_finding = next(item for item in fixed_findings if item.symbol == "CVE-2025-27247")
+        permission_obligation = next(item for item in permission_finding.evidence_obligations if item.kind == "permission_guard")
+        self.assertEqual("unknown", permission_obligation.status)
 
     def test_pasteboard_permission_suppression_requires_pre_read_denial_exit(self):
         prefix = """PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
@@ -507,15 +511,19 @@ class KnownDisclosedCveTests(unittest.TestCase):
             findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
             return "CVE-2025-27247" in {item.symbol for item in findings}
 
-        for guarded in (valid_paste_helper, valid_has_paste_helper):
-            self.assertFalse(has_candidate(guarded), "a pre-read denial with an immediate exit is a syntactic suppression control")
-        for ineffective in (valid, valid_status, valid_throw, valid_secure_permission, valid_read_permission,
+        untrusted_state = "int OnGetPasteData(){ if (untrustedState[READ_PASTEBOARD] != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_result_state = "int OnGetPasteData(){ if (bluetoothResult[PERMISSION_READ_PASTEBOARD] != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        for unresolved_guard in (valid_paste_helper, valid_has_paste_helper, valid, valid_status, valid_throw,
+                            valid_secure_permission, valid_read_permission, untrusted_state, bluetooth_result_state,
                             unconditional_true_helper, bluetooth_helper_with_read_identity,
                             handler, ignored, mixed_condition, conditional_guard,
                             after_read, after_serialization, dead_nested, bluetooth_permission,
                             bluetooth_with_read_identity, unrelated_permission, generic_permission):
-            with self.subTest(handler=ineffective):
-                self.assertTrue(has_candidate(ineffective), "ineffective or unreachable token must retain the candidate")
+            with self.subTest(handler=unresolved_guard):
+                findings = self.run_source(prefix + unresolved_guard, "pasteboard_service_stub.cpp").findings
+                candidate = next(item for item in findings if item.symbol == "CVE-2025-27247")
+                obligation = next(item for item in candidate.evidence_obligations if item.kind == "permission_guard")
+                self.assertEqual("unknown", obligation.status, "unresolved guard semantics must remain explicit")
 
     def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
         helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {

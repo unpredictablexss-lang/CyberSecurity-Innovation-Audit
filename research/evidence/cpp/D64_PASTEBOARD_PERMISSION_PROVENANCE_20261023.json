@@ -1,0 +1,70 @@
+{
+  "task": "D64",
+  "detector": "ohscanner.known_disclosed_cves",
+  "version": "0.19.8",
+  "base_commit": "c2447a0449ba90622ee77ddc5434e282f28fb7db",
+  "independent_counterexample": {
+    "review": "T63",
+    "commit": "c593be5543d5e6c28d7bc97fa50df3a8ae2f516f",
+    "shapes": [
+      "untrustedState[READ_PASTEBOARD]",
+      "bluetoothResult[PERMISSION_READ_PASTEBOARD]"
+    ]
+  },
+  "candidate": {
+    "symbol": "CVE-2025-27247",
+    "route": "Binder GET_PASTE_DATA mapping plus OnRemoteRequest dispatch plus OnGetPasteData read-and-return shape",
+    "permission_guard": "unknown",
+    "classification": "source-only candidate; CVE causality, product identity, build inclusion, runtime reachability, and vulnerability status unknown"
+  },
+  "behavior": {
+    "guard_suppression": "removed when provenance is not resolved",
+    "unknown_guard_obligation": {
+      "kind": "permission_guard",
+      "status": "unknown",
+      "description": "Resolve the actual authorization state and prove that its denial dominates the Pasteboard read."
+    },
+    "identifier_or_token_allowlist": false
+  },
+  "probes": [
+    {
+      "shape": "untrustedState indexed by READ_PASTEBOARD",
+      "expected": "retain candidate; permission_guard unknown",
+      "result": "passed"
+    },
+    {
+      "shape": "bluetoothResult indexed by PERMISSION_READ_PASTEBOARD",
+      "expected": "retain candidate; permission_guard unknown",
+      "result": "passed"
+    },
+    {
+      "shape": "D63 direct-map helper and named-helper examples",
+      "expected": "retain candidate; permission_guard unknown",
+      "result": "passed"
+    },
+    {
+      "shape": "unrelated permissions and D59/D61 ordering/dead/mixed/post-read controls",
+      "expected": "retain candidate; permission_guard unknown",
+      "result": "passed"
+    },
+    {
+      "shape": "sibling CVE detector identities",
+      "expected": "unchanged",
+      "result": "passed"
+    }
+  ],
+  "validation": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "tests": 32,
+    "passed": 32,
+    "failed": 0,
+    "diff_check": "passed",
+    "T64_review": "pending"
+  },
+  "limitations": [
+    "No permission API or value provenance is resolved by this matcher.",
+    "No CFG, dominance, alias, dataflow, or interprocedural proof is performed.",
+    "The source route does not establish CVE causality, product identity, build inclusion, attacker reachability, or runtime vulnerability status.",
+    "No product safety classification is made."
+  ]
+}

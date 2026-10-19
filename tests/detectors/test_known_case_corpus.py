@@ -51,7 +51,7 @@ class KnownCaseCorpusTests(unittest.TestCase):
         )
 
     def test_manifest_is_28_way_source_bound_disposition_corpus(self):
-        self.assertEqual("0.19.7", VERSION)
+        self.assertEqual("0.19.8", VERSION)
         self.assertEqual(28, len(MANIFEST["cases"]))
         self.assertEqual(
             {"public_cve": 17, "local_dangerous_shape": 5, "manual_candidate": 4, "exclusion": 2},
@@ -106,7 +106,14 @@ class KnownCaseCorpusTests(unittest.TestCase):
                 for control in ("fixed", "safe", "unrelated"):
                     run = self.run_fixture(directory, control)
                     self.assertEqual("completed", run.status)
-                    self.assertTrue(symbols.isdisjoint({f.symbol for f in run.findings}))
+                    control_symbols = {f.symbol for f in run.findings}
+                    if directory == "local-pasteboard-historical-read" and control in ("fixed", "safe"):
+                        self.assertIn("CVE-2025-27247", control_symbols)
+                        finding = next(f for f in run.findings if f.symbol == "CVE-2025-27247")
+                        self.assertIn("permission_guard", {o.kind for o in finding.evidence_obligations})
+                        self.assertTrue(all(o.status == "unknown" for o in finding.evidence_obligations if o.kind == "permission_guard"))
+                    else:
+                        self.assertTrue(symbols.isdisjoint(control_symbols))
 
                 unknown = self.run_fixture(directory, "unknown")
                 self.assertEqual("blocked", unknown.status)
