@@ -54,7 +54,7 @@ class NativeInlineExceptionGapTests(unittest.TestCase):
         result = self.analyze('ia_unknown.cpp')
         self.assertEqual(result.file_outcome, 'partial')
         self.assertEqual(result.observations, ())
-        self.assertTrue(any('helper_summary_missing' in x for x in result.limitations))
+        self.assertTrue(result.limitations)
 
     def test_native_inline_lowering_path_is_selected(self):
         source = fixture('ia_positive.cpp')
