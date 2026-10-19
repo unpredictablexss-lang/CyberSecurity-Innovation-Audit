@@ -77,6 +77,16 @@
       "allowed": [
         "tests/detectors/ark_runtime/test_c12_loop_backedge_observation.py"
       ]
+    },
+    "c_d4": {
+      "allowed": [
+        "research/methods/ark_runtime/ibs5yg_profile_gap_20261020/**"
+      ]
+    },
+    "c_t4": {
+      "allowed": [
+        "research/methods/ark_runtime/ibs5yg_profile_gap_20261020/review/**"
+      ]
     }
   },
   "shared_owner_only": [
