@@ -1,0 +1,741 @@
+{
+  "audit": "D74 cross-layer Pasteboard source trace",
+  "repos": {
+    "D52_historical": {
+      "repository": "openharmony/miscservices_pasteboard",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "remote": "https://gitcode.com/openharmony/miscservices_pasteboard.git",
+      "evidence": [
+        {
+          "path": "services/core/include/i_pasteboard_service.h",
+          "blob_oid": "1a5b83f314d6188f0b3465a13ac1668cb9933839",
+          "sha256": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc",
+          "matched_line_numbers": [
+            28,
+            37
+          ],
+          "excerpts": [
+            {
+              "start_line": 26,
+              "end_line": 32,
+              "text": "26: public:\n27:     enum {\n28:         GET_PASTE_DATA = 0,\n29:         HAS_PASTE_DATA = 1,\n30:         SET_PASTE_DATA = 2,\n31:         CLEAR_ALL = 3,\n32:         ADD_OBSERVER = 4,"
+            },
+            {
+              "start_line": 35,
+              "end_line": 41,
+              "text": "35:     };\n36:     virtual void Clear() = 0;\n37:     virtual bool GetPasteData(PasteData& data) = 0;\n38:     virtual bool HasPasteData() = 0;\n39:     virtual void SetPasteData(PasteData& pasteData) = 0;\n40:     virtual void AddPasteboardChangedObserver(const sptr<IPasteboardChangedObserver>& observer) = 0;\n41:     virtual void RemovePasteboardChangedObserver(const sptr<IPasteboardChangedObserver>& observer) = 0;"
+            }
+          ]
+        },
+        {
+          "path": "services/zidl/src/pasteboard_service_stub.cpp",
+          "blob_oid": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+          "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+          "matched_line_numbers": [
+            27,
+            39,
+            49,
+            73
+          ],
+          "excerpts": [
+            {
+              "start_line": 25,
+              "end_line": 32,
+              "text": "25: PasteboardServiceStub::PasteboardServiceStub()\n26: {\n27:     memberFuncMap_[static_cast<uint32_t>(GET_PASTE_DATA)] = &PasteboardServiceStub::OnGetPasteData;\n28:     memberFuncMap_[static_cast<uint32_t>(HAS_PASTE_DATA)] = &PasteboardServiceStub::OnHasPasteData;\n29:     memberFuncMap_[static_cast<uint32_t>(SET_PASTE_DATA)] = &PasteboardServiceStub::OnSetPasteData;\n30:     memberFuncMap_[static_cast<uint32_t>(CLEAR_ALL)] = &PasteboardServiceStub::OnClear;\n31:     memberFuncMap_[static_cast<uint32_t>(ADD_OBSERVER)] =\n32:         &PasteboardServiceStub::OnAddPasteboardChangedObserver;"
+            },
+            {
+              "start_line": 37,
+              "end_line": 44,
+              "text": "37: }\n38: \n39: int32_t PasteboardServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,\n40:     MessageOption &option)\n41: {\n42:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"start##code = %{public}u\", code);\n43:     std::u16string myDescripter = PasteboardServiceStub::GetDescriptor();\n44:     std::u16string remoteDescripter = data.ReadInterfaceToken();"
+            },
+            {
+              "start_line": 47,
+              "end_line": 54,
+              "text": "47:         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);\n48:     }\n49:     pid_t p = IPCSkeleton::GetCallingPid();\n50:     pid_t p1 = IPCSkeleton::GetCallingUid();\n51:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE,\n52:         \"CallingPid = %{public}d, CallingUid = %{public}d, code = %{public}u\",\n53:         p, p1, code);\n54:     auto itFunc = memberFuncMap_.find(code);"
+            },
+            {
+              "start_line": 71,
+              "end_line": 78,
+              "text": "71: }\n72: \n73: int32_t PasteboardServiceStub::OnGetPasteData(MessageParcel &data, MessageParcel &reply)\n74: {\n75:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \" start.\");\n76:     PasteData pasteData {};\n77:     auto hasPasteData = GetPasteData(pasteData);\n78:     if (!hasPasteData) {"
+            }
+          ]
+        },
+        {
+          "path": "services/zidl/src/pasteboard_service_proxy.cpp",
+          "blob_oid": "679117492f1207fc9aa424899daa143d4df07249",
+          "sha256": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600",
+          "matched_line_numbers": [
+            147,
+            156
+          ],
+          "excerpts": [
+            {
+              "start_line": 145,
+              "end_line": 153,
+              "text": "145: }\n146: \n147: bool PasteboardServiceProxy::GetPasteData(PasteData& pasteData)\n148: {\n149:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_CLIENT, \"start.\");\n150:     MessageParcel data, reply;\n151:     MessageOption option;\n152:     if (!data.WriteInterfaceToken(GetDescriptor())) {\n153:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_CLIENT, \"Failed to write parcelable\");"
+            },
+            {
+              "start_line": 154,
+              "end_line": 162,
+              "text": "154:         return false;\n155:     }\n156:     int32_t result = Remote()->SendRequest(GET_PASTE_DATA, data, reply, option);\n157:     if (result != ERR_NONE) {\n158:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_CLIENT, \"failed, error code is: %{public}d\", result);\n159:         return false;\n160:     }\n161:     std::unique_ptr<PasteData> pasteInfo(reply.ReadParcelable<PasteData>());\n162:     if (pasteInfo == nullptr) {"
+            }
+          ]
+        },
+        {
+          "path": "framework/innerkits/src/pasteboard_client.cpp",
+          "blob_oid": "c204c426cff25c7ee637068143ecaaccc98614ec",
+          "sha256": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a",
+          "matched_line_numbers": [
+            113,
+            126,
+            208
+          ],
+          "excerpts": [
+            {
+              "start_line": 111,
+              "end_line": 120,
+              "text": "111: }\n112: \n113: bool PasteboardClient::GetPasteData(PasteData& pasteData)\n114: {\n115:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_CLIENT, \"start.\");\n116:     if (pasteboardServiceProxy_ == nullptr) {\n117:         PASTEBOARD_HILOGW(PASTEBOARD_MODULE_CLIENT, \"Redo ConnectService\");\n118:         ConnectService();\n119:     }\n120: "
+            },
+            {
+              "start_line": 124,
+              "end_line": 133,
+              "text": "124:     }\n125:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_CLIENT, \"end.\");\n126:     return pasteboardServiceProxy_->GetPasteData(pasteData);\n127: }\n128: \n129: bool PasteboardClient::HasPasteData()\n130: {\n131:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_CLIENT, \"start.\");\n132:     if (pasteboardServiceProxy_ == nullptr) {\n133:         PASTEBOARD_HILOGW(PASTEBOARD_MODULE_CLIENT, \"Redo ConnectService\");"
+            },
+            {
+              "start_line": 206,
+              "end_line": 215,
+              "text": "206: }\n207: \n208: void PasteboardClient::ConnectService()\n209: {\n210:     std::lock_guard<std::mutex> lock(instanceLock_);\n211:     if (pasteboardServiceProxy_ != nullptr) {\n212:         return ;\n213:     }\n214:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_CLIENT, \"start.\");\n215:     sptr<ISystemAbilityManager> sam = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();"
+            }
+          ]
+        },
+        {
+          "path": "interfaces/kits/napi/src/napi_pasteboard.cpp",
+          "blob_oid": "527f7664d092f1bbbcbee8749919b31b1bffd536",
+          "sha256": "279d80bea2171bb9daa10ed96a6f918c5aaec40fb9f85b587dc1ced22218a55c",
+          "matched_line_numbers": [
+            630,
+            673
+          ],
+          "excerpts": [
+            {
+              "start_line": 628,
+              "end_line": 637,
+              "text": "628: }\n629: \n630: napi_value SystemPasteboardNapi::GetPasteData(napi_env env, napi_callback_info info)\n631: {\n632:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_JS_NAPI, \"GetPasteData is called!\");\n633:     size_t argc = ARGC_TYPE_SET1;\n634:     napi_value argv[ARGC_TYPE_SET1] = {0};\n635:     napi_value thisVar = nullptr;\n636:     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, NULL));\n637: "
+            },
+            {
+              "start_line": 671,
+              "end_line": 680,
+              "text": "671:             if ((ret == napi_ok) || (obj != nullptr)) {\n672:                 PasteData pasteData;\n673:                 PasteboardClient::GetInstance()->GetPasteData(pasteData);\n674:                 obj->value_ = std::make_shared<PasteData>(pasteData);\n675:                 if (!obj->value_) {\n676:                     asyncContext->status = -1;\n677:                 }\n678:             } else {\n679:                 asyncContext->status = -1;\n680:             }"
+            }
+          ]
+        },
+        {
+          "path": "services/core/src/pasteboard_service.cpp",
+          "blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+          "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+          "matched_line_numbers": [
+            38,
+            68,
+            155,
+            466
+          ],
+          "excerpts": [
+            {
+              "start_line": 36,
+              "end_line": 45,
+              "text": "36: const std::int32_t ERROR_USERID = -1;\n37: const bool G_REGISTER_RESULT =\n38:     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<PasteboardService>::GetInstance().get());\n39:     const std::string FAIL_TO_GET_TIME_STAMP = \"FAIL_TO_GET_TIME_STAMP\";\n40: }\n41: \n42: std::vector<std::shared_ptr<std::string>> PasteboardService::dataHistory_;\n43: std::shared_ptr<Command> PasteboardService::copyHistory;\n44: std::shared_ptr<Command> PasteboardService::copyData;\n45: "
+            },
+            {
+              "start_line": 66,
+              "end_line": 75,
+              "text": "66: }\n67: \n68: void PasteboardService::OnStart()\n69: {\n70:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"PasteboardService OnStart.\");\n71:     if (state_ == ServiceRunningState::STATE_RUNNING) {\n72:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"PasteboardService is already running.\");\n73:         return;\n74:     }\n75:     InitServiceHandler();"
+            },
+            {
+              "start_line": 153,
+              "end_line": 162,
+              "text": "153: }\n154: \n155: bool PasteboardService::GetPasteData(PasteData& data)\n156: {\n157:     PasteboardTrace tracer(\"PasteboardService, GetPasteData\");\n158:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"start.\");\n159:     auto userId = GetUserId();\n160: \n161:     GetPasteDataDot();\n162: "
+            },
+            {
+              "start_line": 464,
+              "end_line": 473,
+              "text": "464: }\n465: \n466: void PasteboardService::GetPasteDataDot()\n467: {\n468:     int32_t uId = IPCSkeleton::GetCallingUid();\n469:     std::string bundleName;\n470:     std::string time = GetTime();\n471:     SetPasteboardHistory(uId, \"Get\", time);\n472:     if (GetBundleNameByUid(uId, bundleName)) {\n473:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"get bundleName success!\");"
+            }
+          ]
+        },
+        {
+          "path": "utils/native/src/pasteboard_permission.cpp",
+          "blob_oid": "5e7bf43287374eb21a8200400cbe350e8d234368",
+          "sha256": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761",
+          "matched_line_numbers": [
+            47,
+            52,
+            72
+          ],
+          "excerpts": [
+            {
+              "start_line": 45,
+              "end_line": 53,
+              "text": "45: }\n46: \n47: bool PasteboardPermission::CheckSelfPermission(std::string permName)\n48: {\n49:     return true;\n50: }\n51: \n52: bool PasteboardPermission::CheckCallingPermission(int32_t uid, std::string permName)\n53: {"
+            },
+            {
+              "start_line": 50,
+              "end_line": 58,
+              "text": "50: }\n51: \n52: bool PasteboardPermission::CheckCallingPermission(int32_t uid, std::string permName)\n53: {\n54:     if (bundleMgrProxy_ == nullptr) {\n55:         bundleMgrProxy_ = GetBundleManager();\n56:         PASTEBOARD_HILOGI(PASTEBOARD_MODULE_COMMON, \"get bundle mgr\");\n57:     }\n58: "
+            },
+            {
+              "start_line": 70,
+              "end_line": 78,
+              "text": "70:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_COMMON, \"VerifyPermission bundleName %{public}s, permission %{public}s\",\n71: \t\t\t\t\t\t\t\tbundleName.c_str(), permName.c_str());\n72:     return MockPermission::VerifyPermission(bundleName, permName, userId);\n73: }\n74: \n75: sptr<AppExecFwk::IBundleMgr> PasteboardPermission::GetBundleManager()\n76: {\n77:     if (bundleMgrProxy_ == nullptr) {\n78:         sptr<ISystemAbilityManager> systemManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();"
+            }
+          ]
+        },
+        {
+          "path": "profile/3701.xml",
+          "blob_oid": "0078b08118d73e01ffdfd13fe84760a43ee4ce47",
+          "sha256": "532df48215df846c96efe07c9fde6614557f8d61cb39551474a91170f70aead8",
+          "matched_line_numbers": [
+            16,
+            18,
+            21
+          ],
+          "excerpts": [
+            {
+              "start_line": 14,
+              "end_line": 19,
+              "text": "14: -->\n15: <info>\n16:     <process>pasteboard_service</process>\n17:     <systemability>\n18:         <name>3701</name>\n19:         <libpath>libpasteboard_service.z.so</libpath>"
+            },
+            {
+              "start_line": 16,
+              "end_line": 21,
+              "text": "16:     <process>pasteboard_service</process>\n17:     <systemability>\n18:         <name>3701</name>\n19:         <libpath>libpasteboard_service.z.so</libpath>\n20:         <run-on-create>true</run-on-create>\n21:         <distributed>false</distributed>"
+            },
+            {
+              "start_line": 19,
+              "end_line": 24,
+              "text": "19:         <libpath>libpasteboard_service.z.so</libpath>\n20:         <run-on-create>true</run-on-create>\n21:         <distributed>false</distributed>\n22:         <dump-level>1</dump-level>\n23:     </systemability>\n24: </info>"
+            }
+          ]
+        },
+        {
+          "path": "profile/BUILD.gn",
+          "blob_oid": "827e9a79890056f1743e95afb0c117e2d67a8320",
+          "sha256": "0ec6d782e96d2596279d0d56fc9618e49e1412c096ab8817a47c018e2304ee1c",
+          "matched_line_numbers": [
+            16,
+            17
+          ],
+          "excerpts": [
+            {
+              "start_line": 14,
+              "end_line": 19,
+              "text": "14: import(\"//build/ohos/sa_profile/sa_profile.gni\")\n15: \n16: ohos_sa_profile(\"distributeddatamgr_pasteboard_sa_profiles\") {\n17:   sources = [ \"3701.xml\" ]\n18:   part_name = \"pasteboard\"\n19: }"
+            },
+            {
+              "start_line": 15,
+              "end_line": 19,
+              "text": "15: \n16: ohos_sa_profile(\"distributeddatamgr_pasteboard_sa_profiles\") {\n17:   sources = [ \"3701.xml\" ]\n18:   part_name = \"pasteboard\"\n19: }"
+            }
+          ]
+        },
+        {
+          "path": "etc/init/pasteboardservice.cfg",
+          "blob_oid": "a44bf3066c8631ecc34db1684019c97439e9e28d",
+          "sha256": "6c7a7da14cd1b8b02da941cd5527d8d97dc37bdd34fed24a03962daa32df6f97",
+          "matched_line_numbers": [
+            11,
+            15
+          ],
+          "excerpts": [
+            {
+              "start_line": 9,
+              "end_line": 14,
+              "text": "9:     \"services\" : [{\n10:             \"name\" : \"pasteboard_service\",\n11:             \"path\" : [\"/system/bin/sa_main\", \"/system/profile/pasteboard_service.xml\"],\n12:             \"uid\" : \"pasteboard\",\n13:             \"gid\" : [\"pasteboard\", \"shell\"],\n14:             \"caps\" : [],"
+            },
+            {
+              "start_line": 13,
+              "end_line": 18,
+              "text": "13:             \"gid\" : [\"pasteboard\", \"shell\"],\n14:             \"caps\" : [],\n15:             \"secon\" : \"u:r:pasteboard_service:s0\"\n16:         }\n17:     ]\n18: }"
+            }
+          ]
+        }
+      ]
+    },
+    "current": {
+      "repository": "openharmony/distributeddatamgr_pasteboard",
+      "commit": "e73747b227104e6743e957ce31040edf58507221",
+      "tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d",
+      "remote": "https://gitcode.com/openharmony/distributeddatamgr_pasteboard.git",
+      "evidence": [
+        {
+          "path": "services/IPasteboardService.idl",
+          "blob_oid": "533f99d4a4f4a2c65dad418d7cf66fd4245db5e8",
+          "sha256": "180175611bec3ef4ba42a527a61b53a7e30a7d65d15a7e404fd839447f3d78a7",
+          "matched_line_numbers": [
+            23,
+            50
+          ],
+          "excerpts": [
+            {
+              "start_line": 21,
+              "end_line": 28,
+              "text": "21: interface OHOS.MiscServices.IEntityRecognitionObserver;\n22: import PasteboardTypes;\n23: option_stub_hooks on;\n24: \n25: interface OHOS.MiscServices.IPasteboardService {\n26:     [ipccode 1] void RegisterClientDeathObserver([in] IRemoteObject observer);\n27:     [ipccode 2] void SubscribeObserver([in] PasteboardObserverType type, [in] IPasteboardChangedObserver observer);\n28:     [ipccode 3] void UnsubscribeObserver([in] PasteboardObserverType type, [in] IPasteboardChangedObserver observer);"
+            },
+            {
+              "start_line": 48,
+              "end_line": 55,
+              "text": "48:     [ipccode 106] void ClearByUser([in] int userId);\n49: \n50:     [ipccode 200] void GetPasteData([out] FileDescriptorSan fd, [out] long memSize, [out] unsigned char[] buffer,\n51:         [in] unsigned int pasteSeqId, [out] int syncTime, [out] int realErrCode);\n52:     [ipccode 201] void GetRecordValueByType([in] unsigned int dataId, [in] unsigned int recordId,\n53:         [inout] long rawDataSize, [inout] unsigned char[] buffer, [inout] FileDescriptorSan fd);\n54:     [ipccode 202] void PasteStart([in] String pasteId);\n55:     [ipccode 203] void PasteComplete([in] String deviceId, [in] String pasteId);"
+            }
+          ]
+        },
+        {
+          "path": "services/BUILD.gn",
+          "blob_oid": "e4213d16a2ec73d3dd3e73b9c0fce177ad1ba1b2",
+          "sha256": "109e63f83b540820603b12f7345f4bf9564e613f8baf1dc7b5121e0608bb85ff",
+          "matched_line_numbers": [
+            18,
+            21
+          ],
+          "excerpts": [
+            {
+              "start_line": 16,
+              "end_line": 23,
+              "text": "16: import(\"//foundation/distributeddatamgr/pasteboard/pasteboard.gni\")\n17: \n18: idl_gen_interface(\"pasteboard_service_interface\") {\n19:   sources = [\n20:     \"IPasteboardClientDeathObserver.idl\",\n21:     \"IPasteboardService.idl\",\n22:     \"IPasteboardSignal.idl\",\n23:   ]"
+            },
+            {
+              "start_line": 19,
+              "end_line": 26,
+              "text": "19:   sources = [\n20:     \"IPasteboardClientDeathObserver.idl\",\n21:     \"IPasteboardService.idl\",\n22:     \"IPasteboardSignal.idl\",\n23:   ]\n24:   sources_common = [ \"PasteboardTypes.idl\" ]\n25:   log_domainid = \"0xD001C00\"\n26:   log_tag = \"PBIDL\""
+            }
+          ]
+        },
+        {
+          "path": "services/core/include/pasteboard_service.h",
+          "blob_oid": "e248b0162bbc3e28ed97d9833181377b79891ee7",
+          "sha256": "d9b3f06ab92833ad893c8093279706338bf0c8f7e1ab6eb1ed3617554240d296",
+          "matched_line_numbers": [
+            125,
+            137,
+            151
+          ],
+          "excerpts": [
+            {
+              "start_line": 123,
+              "end_line": 130,
+              "text": "123: };\n124: \n125: class PasteboardService final : public SystemAbility, public PasteboardServiceStub {\n126:     DECLARE_SYSTEM_ABILITY(PasteboardService)\n127: \n128: public:\n129:     API_EXPORT PasteboardService();\n130:     API_EXPORT ~PasteboardService();"
+            },
+            {
+              "start_line": 135,
+              "end_line": 142,
+              "text": "135:     virtual int32_t GetRecordValueByType(uint32_t dataId, uint32_t recordId, int64_t &rawDataSize,\n136:         std::vector<uint8_t> &buffer, int &fd) override;\n137:     virtual int32_t GetPasteData(int &fd, int64_t &size, std::vector<uint8_t> &rawData,\n138:         uint32_t pasteSeqId, int32_t &syncTime, int32_t &realErrCode) override;\n139:     virtual int32_t HasPasteData(bool &funcResult) override;\n140:     virtual int32_t HasRemoteData(bool &funcResult) override;\n141:     virtual int32_t SetPasteData(int fd, int64_t memSize, const std::vector<uint8_t> &buffer,\n142:         const sptr<IPasteboardDelayGetter> &delayGetter, const sptr<IPasteboardEntryGetter> &entryGetter) override;"
+            },
+            {
+              "start_line": 149,
+              "end_line": 156,
+              "text": "149:     virtual int32_t IsRemoteData(bool &funcResult) override;\n150:     virtual int32_t GetMimeTypes(std::vector<std::string> &funcResult) override;\n151:     virtual int32_t GetPasteDataInfo(PasteDataInfo &pasteDataInfo) override;\n152:     virtual int32_t HasDataType(const std::string &mimeType, bool &funcResult) override;\n153:     virtual int32_t HasUtdType(const std::string &utdType, bool &funcResult) override;\n154:     virtual int32_t DetectPatterns(\n155:         const std::vector<Pattern> &patternsToCheck, std::vector<Pattern>& funcResult) override;\n156:     virtual int32_t GetDataSource(std::string &bundleNme) override;"
+            }
+          ]
+        },
+        {
+          "path": "framework/innerkits/src/pasteboard_client.cpp",
+          "blob_oid": "fd350e92da5e44818452e1c996bbe93863df3a3f",
+          "sha256": "81e8acdc0c299b776a44ec5c632a09f9388f95d66ba590b7b662ddb8fdc0cbeb",
+          "matched_line_numbers": [
+            289,
+            312,
+            465,
+            1102
+          ],
+          "excerpts": [
+            {
+              "start_line": 287,
+              "end_line": 295,
+              "text": "287: }\n288: \n289: int32_t PasteboardClient::GetPasteData(PasteData &pasteData)\n290: {\n291:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_CLIENT, \"enter\");\n292:     pid_t pid = getpid();\n293:     std::string currentPid = std::to_string(pid);\n294:     uint32_t seqId = getSequenceId_++;\n295:     std::string currentId = std::to_string(seqId);"
+            },
+            {
+              "start_line": 310,
+              "end_line": 318,
+              "text": "310:     int64_t rawDataSize = 0;\n311:     std::vector<uint8_t> recvTLV;\n312:     int32_t ret = proxyService->GetPasteData(fd, rawDataSize, recvTLV, seqId, syncTime, realErrCode);\n313:     int32_t bizStage = (syncTime == 0) ? RadarReporter::DFX_LOCAL_PASTE_END : RadarReporter::DFX_DISTRIBUTED_PASTE_END;\n314:     ret = ConvertErrCode(realErrCode);\n315:     int32_t result = ProcessPasteData<PasteData>(pasteData, rawDataSize, fd, recvTLV);\n316:     PasteboardWebController::GetInstance().RetainUri(pasteData);\n317:     PasteboardWebController::GetInstance().RemoveInvalidUri(pasteData);\n318:     PasteboardWebController::GetInstance().RebuildWebviewPasteData(pasteData);"
+            },
+            {
+              "start_line": 463,
+              "end_line": 471,
+              "text": "463:     std::vector<uint8_t> recvTLV(0);\n464:     uint32_t pasteSeqId = pasteDataFromServiceInfo.currentSeqId;\n465:     int32_t ret = proxyService->GetPasteData(fd, rawDataSize, recvTLV, pasteSeqId, syncTime, realErrCode);\n466:     int32_t bizStage = (syncTime == 0) ? RadarReporter::DFX_LOCAL_PASTE_END : RadarReporter::DFX_DISTRIBUTED_PASTE_END;\n467:     ret = ConvertErrCode(realErrCode);\n468:     int32_t result = ProcessPasteData<PasteData>(pasteData, rawDataSize, fd, recvTLV);\n469:     ProgressSmoothToTwentyPercent(pasteData, progressKey, params);\n470:     PasteboardWebController::GetInstance().RetainUri(pasteData);\n471:     PasteboardWebController::GetInstance().RemoveInvalidUri(pasteData);"
+            },
+            {
+              "start_line": 1100,
+              "end_line": 1108,
+              "text": "1100:         static_cast<int32_t>(PasteboardError::OBTAIN_SERVER_SA_ERROR),\n1101:         PASTEBOARD_MODULE_CLIENT, \"proxyService is nullptr\");\n1102:     int32_t ret = proxyService->GetPasteDataInfo(pasteDataInfo);\n1103:     ret = ConvertErrCode(ret);\n1104:     if (ret != ERR_OK) {\n1105:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_CLIENT, \"GetPasteDataInfo failed, ret=%{public}d\", ret);\n1106:         return ret;\n1107:     }\n1108:     return ret;"
+            }
+          ]
+        },
+        {
+          "path": "framework/innerkits/src/pasteboard_service_loader.cpp",
+          "blob_oid": "0baef45483a849f97f590c014f53f1417ca75015",
+          "sha256": "8ba8ec88d83378c85cea4217df1dab3d7b8879fdda3c50b550b061102999f17c",
+          "matched_line_numbers": [
+            110,
+            119
+          ],
+          "excerpts": [
+            {
+              "start_line": 108,
+              "end_line": 115,
+              "text": "108:         return nullptr;\n109:     }\n110:     sptr<IRemoteObject> remoteObject = saMgrProxy->CheckSystemAbility(PASTEBOARD_SERVICE_ID);\n111:     if (remoteObject != nullptr) {\n112:         PASTEBOARD_HILOGI(PASTEBOARD_MODULE_CLIENT, \"Get PasteboardServiceProxy succeed.\");\n113:         SetPasteboardServiceProxy(remoteObject);\n114:         return pasteboardServiceProxy_;\n115:     }"
+            },
+            {
+              "start_line": 117,
+              "end_line": 124,
+              "text": "117:     sptr<PasteboardLoadCallback> loadCallback = new PasteboardLoadCallback();\n118:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGI(loadCallback != nullptr, nullptr, PASTEBOARD_MODULE_CLIENT, \"loadCb is null\");\n119:     int32_t ret = saMgrProxy->LoadSystemAbility(PASTEBOARD_SERVICE_ID, loadCallback);\n120:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(ret == ERR_OK, nullptr, PASTEBOARD_MODULE_CLIENT, \"Failed to load SA\");\n121:     constructing_ = true;\n122:     auto waitStatus = proxyConVar_.wait_for(lock, std::chrono::milliseconds(LOADSA_TIMEOUT_MS), [this]() {\n123:         return pasteboardServiceProxy_ != nullptr;\n124:     });"
+            }
+          ]
+        },
+        {
+          "path": "interfaces/kits/napi/src/napi_systempasteboard.cpp",
+          "blob_oid": "ee860fecc47eb04c8a8d45cd8b5daed872a0e4d6",
+          "sha256": "74ccdd1ae4c44e68966f492e81798dc8864ba5d7b5b9fba4ccc662724df8265a",
+          "matched_line_numbers": [
+            445,
+            455,
+            467,
+            1064
+          ],
+          "excerpts": [
+            {
+              "start_line": 443,
+              "end_line": 451,
+              "text": "443:     auto exec = [context](AsyncCall::Context *ctx) {\n444:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_JS_NAPI, \"GetPasteData Begin\");\n445:         PasteboardClient::GetInstance()->GetPasteData(*context->pasteData);\n446:         context->status = napi_ok;\n447:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_JS_NAPI, \"GetPasteData End\");\n448:     };\n449: \n450:     // 0: the AsyncCall at the first position;\n451:     AsyncCall asyncCall(env, info, context, 0);"
+            },
+            {
+              "start_line": 453,
+              "end_line": 461,
+              "text": "453: }\n454: \n455: napi_value SystemPasteboardNapi::GetData(napi_env env, napi_callback_info info)\n456: {\n457:     HISTOGRAM_BOOLEAN_SAMPLED(\"Pasteboard.APICall.SystemPasteboard.getData\", true);\n458:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_JS_NAPI, \"GetData is called!\");\n459:     std::shared_ptr<DfxAppEvent> processorEvent = std::make_shared<DfxAppEvent>();\n460: \n461:     auto context = std::make_shared<GetContextInfo>();"
+            },
+            {
+              "start_line": 465,
+              "end_line": 473,
+              "text": "465:     auto exec = [context, processorEvent](AsyncCall::Context *ctx) {\n466:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_JS_NAPI, \"GetData Begin\");\n467:         int32_t ret = PasteboardClient::GetInstance()->GetPasteData(*context->pasteData);\n468:         if (ret == static_cast<int32_t>(PasteboardError::TASK_PROCESSING)) {\n469:             context->SetErrInfo(ret, \"Another getData is being processed\");\n470:         } else {\n471:             context->status = napi_ok;\n472:         }\n473:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_JS_NAPI, \"GetData End\");"
+            },
+            {
+              "start_line": 1062,
+              "end_line": 1070,
+              "text": "1062:     auto block = std::make_shared<BlockObject<std::shared_ptr<int32_t>>>(SYNC_TIMEOUT);\n1063:     std::thread thread([block, pasteData = obj->value_]() mutable {\n1064:         auto ret = PasteboardClient::GetInstance()->GetPasteData(*pasteData);\n1065:         std::shared_ptr<int32_t> value = std::make_shared<int32_t>(ret);\n1066:         block->SetValue(value);\n1067:     });\n1068:     PasteBoardCommonUtils::SetThreadTaskName(thread, \"NGetDataSync\");\n1069:     thread.detach();\n1070:     auto value = block->GetValue();"
+            }
+          ]
+        },
+        {
+          "path": "services/core/src/pasteboard_service.cpp",
+          "blob_oid": "fa6a08cdbaa18f34dcb6632babc70f22a700c860",
+          "sha256": "2f18a183e6eaa75f996d221fac735703a534d00cf294d122cbc6637bb28fa78a",
+          "matched_line_numbers": [
+            126,
+            143,
+            482,
+            517,
+            529,
+            563,
+            757,
+            901,
+            1020,
+            1029,
+            1030,
+            1199,
+            1267,
+            1322,
+            1347,
+            1353,
+            1358,
+            2111,
+            2320,
+            2335,
+            2394,
+            2419,
+            2575,
+            2596,
+            2607,
+            2649,
+            2687,
+            2734,
+            2850,
+            2860,
+            2913,
+            2928,
+            3002,
+            3224,
+            3250,
+            3261,
+            3287,
+            3474,
+            3503,
+            3585,
+            4119,
+            4857,
+            4890,
+            5508,
+            5520,
+            5536
+          ],
+          "excerpts": [
+            {
+              "start_line": 124,
+              "end_line": 132,
+              "text": "124: constexpr uint16_t MAX_TRANSFER_SIZE = 1300;\n125: \n126: const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(new PasteboardService());\n127: const std::string CONSTRAINT = \"constraint.distributed.transmission.outgoing\";\n128: } // namespace\n129: using namespace Security::AccessToken;\n130: using namespace OHOS::AppFileService::ModuleRemoteFileShare;\n131: std::mutex PasteboardService::historyMutex_;\n132: std::shared_mutex PasteboardService::pasteDataMutex_;"
+            },
+            {
+              "start_line": 141,
+              "end_line": 149,
+              "text": "141: const std::string PasteboardService::P2P_PRESYNC_ID = \"P2pPreSyncId_\";\n142: \n143: PasteboardService::PasteboardService(): SystemAbility(PASTEBOARD_SERVICE_ID, true)\n144: {\n145:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"PasteboardService Start.\");\n146:     PasteboardService::state_ = ServiceRunningState::STATE_NOT_START;\n147:     p2pEstablishInfo_.pasteBlock = nullptr;\n148: }\n149: "
+            },
+            {
+              "start_line": 480,
+              "end_line": 488,
+              "text": "480: void PasteboardService::ReportUeCopyEvent(PasteData &pasteData, int64_t dataSize, int32_t result)\n481: {\n482:     auto appInfo = GetAppInfo(IPCSkeleton::GetCallingTokenID());\n483:     auto res = (result == static_cast<int32_t>(PasteboardError::E_OK)) ? E_OK_OPERATION : result;\n484:     UeReportInfo reportInfo;\n485:     reportInfo.ret = res;\n486:     reportInfo.dataType = pasteData.GenerateDataType();\n487:     reportInfo.bundleName = appInfo.bundleName;\n488:     reportInfo.description = pasteData.GetReportDescription();"
+            },
+            {
+              "start_line": 515,
+              "end_line": 523,
+              "text": "515: {\n516:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"enter, clips_.Size=%{public}zu\", clips_.Size());\n517:     auto appInfo = GetAppInfo(IPCSkeleton::GetCallingTokenID());\n518:     auto userId = appInfo.userId;\n519:     if (userId == ERROR_USERID) {\n520:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n521:         return static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR);\n522:     }\n523:     return ClearInner(userId, appInfo);"
+            },
+            {
+              "start_line": 527,
+              "end_line": 535,
+              "text": "527: {\n528:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"enter, clips_.Size=%{public}zu\", clips_.Size());\n529:     auto appInfo = GetAppInfo(IPCSkeleton::GetCallingTokenID());\n530:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(appInfo.tokenType == ATokenTypeEnum::TOKEN_NATIVE,\n531:         static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR), PASTEBOARD_MODULE_SERVICE,\n532:         \"userId is %{public}d\", userId);\n533:     return ClearInner(userId, appInfo);\n534: }\n535: "
+            },
+            {
+              "start_line": 561,
+              "end_line": 569,
+              "text": "561: int32_t PasteboardService::GetChangeCount(uint32_t &changeCount)\n562: {\n563:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n564:     auto appInfo = GetAppInfo(tokenId);\n565:     changeCount = 0;\n566:     clipChangeCount_.ComputeIfPresent(appInfo.userId, [&changeCount](auto, auto &value) {\n567:         changeCount = value;\n568:         PASTEBOARD_HILOGI(\n569:             PASTEBOARD_MODULE_SERVICE, \"Find changeCount succeed, changeCount is %{public}u\", changeCount);"
+            },
+            {
+              "start_line": 755,
+              "end_line": 763,
+              "text": "755:         static_cast<int32_t>(PasteboardError::INVALID_PARAM_ERROR), PASTEBOARD_MODULE_SERVICE,\n756:         \"expected data length exceeds limitation\");\n757:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n758:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(VerifyPermission(tokenId),\n759:         static_cast<int32_t>(PasteboardError::PERMISSION_VERIFICATION_ERROR), PASTEBOARD_MODULE_SERVICE,\n760:         \"check permission failed\");\n761:     auto callingPid = IPCSkeleton::GetCallingPid();\n762:     bool overLimit = false;\n763:     entityObserverMap_.Compute("
+            },
+            {
+              "start_line": 899,
+              "end_line": 907,
+              "text": "899: int32_t PasteboardService::GetRecordValueByType(uint32_t dataId, uint32_t recordId, PasteDataEntry &value)\n900: {\n901:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n902:     auto callPid = IPCSkeleton::GetCallingPid();\n903:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE((dataId == delayDataId_ && tokenId == delayTokenId_) ||\n904:         VerifyPermission(tokenId), static_cast<int32_t>(PasteboardError::PERMISSION_VERIFICATION_ERROR),\n905:         PASTEBOARD_MODULE_SERVICE, \"check permission failed, calling pid is %{public}d\", callPid);\n906: \n907:     auto appInfo = GetAppInfo(tokenId);"
+            },
+            {
+              "start_line": 1018,
+              "end_line": 1026,
+              "text": "1018: }\n1019: \n1020: bool PasteboardService::VerifyPermission(uint32_t tokenId)\n1021: {\n1022:     auto version = GetSdkVersion(tokenId);\n1023:     auto callPid = IPCSkeleton::GetCallingPid();\n1024:     if (version == INVALID_VERSION) {\n1025:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE,\n1026:             \"get hap version failed, callPid is %{public}d, tokenId is %{public}d\", callPid, tokenId);"
+            },
+            {
+              "start_line": 1027,
+              "end_line": 1035,
+              "text": "1027:         return false;\n1028:     }\n1029:     auto isReadGrant = PermissionUtils::IsPermissionGranted(READ_PASTEBOARD_PERMISSION, tokenId);\n1030:     auto isSecureGrant = PermissionUtils::IsPermissionGranted(SECURE_PASTE_PERMISSION, tokenId);\n1031:     AddPermissionRecord(tokenId, isReadGrant, isSecureGrant);\n1032:     if (isSecureGrant || isReadGrant) {\n1033:         return true;\n1034:     }\n1035:     auto tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);"
+            },
+            {
+              "start_line": 1028,
+              "end_line": 1036,
+              "text": "1028:     }\n1029:     auto isReadGrant = PermissionUtils::IsPermissionGranted(READ_PASTEBOARD_PERMISSION, tokenId);\n1030:     auto isSecureGrant = PermissionUtils::IsPermissionGranted(SECURE_PASTE_PERMISSION, tokenId);\n1031:     AddPermissionRecord(tokenId, isReadGrant, isSecureGrant);\n1032:     if (isSecureGrant || isReadGrant) {\n1033:         return true;\n1034:     }\n1035:     auto tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);\n1036:     bool isAllowTokenAccess = (tokenType == ATokenTypeEnum::TOKEN_NATIVE || tokenType == ATokenTypeEnum::TOKEN_SHELL);"
+            },
+            {
+              "start_line": 1197,
+              "end_line": 1205,
+              "text": "1197:         return static_cast<int32_t>(PasteboardError::NO_DATA_ERROR);\n1198:     }\n1199:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n1200:     if (!IsFocusedApp(tokenId)) {\n1201:         PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"not focused app, no need to show progress.\");\n1202:         return static_cast<int32_t>(PasteboardError::INVALID_DATA_ERROR);\n1203:     }\n1204:     PasteboardDialog::ProgressMessageInfo message;\n1205:     std::string deviceName = \"\";"
+            },
+            {
+              "start_line": 1265,
+              "end_line": 1273,
+              "text": "1265: {\n1266:     CommonInfo commonInfo;\n1267:     commonInfo.currentAccountId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n1268:     commonInfo.deviceType = DMAdapter::GetInstance().GetLocalDeviceType();\n1269:     commonInfo.dataSize = dataSize;\n1270:     return commonInfo;\n1271: }\n1272: \n1273: void PasteboardService::SetRadarEvent(const AppInfo &appInfo, PasteData &data, bool isPeerOnline,"
+            },
+            {
+              "start_line": 1320,
+              "end_line": 1328,
+              "text": "1320:     std::string pasteId = PasteData::CreatePasteId(\"GetPasteData\", pasteSeqId, IPCSkeleton::GetCallingPid());\n1321:     UeReportInfo ueReportInfo;\n1322:     int32_t ret = GetPasteDataInner(fd, size, rawData, pasteId, syncTime, ueReportInfo);\n1323:     if (fd == -1) {\n1324:         fd = AshmemCreate(\"GetPasteData Ashmem\", 1);\n1325:         PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(fd >= 0, static_cast<int32_t>(PasteboardError::SERIALIZATION_ERROR),\n1326:             PASTEBOARD_MODULE_SERVICE, \"ashmem create failed\");\n1327:         fdsan_exchange_owner_tag(fd, 0, PASTEBOARD_FD_TAG);\n1328:     }"
+            },
+            {
+              "start_line": 1345,
+              "end_line": 1353,
+              "text": "1345: }\n1346: \n1347: int32_t PasteboardService::GetPasteDataInner(int &fd, int64_t &size, std::vector<uint8_t> &rawData,\n1348:     const std::string &pasteId, int32_t &syncTime, UeReportInfo &ueReportInfo)\n1349: {\n1350:     PasteboardTrace tracer(\"PasteboardService GetPasteData\");\n1351:     PasteData data{};\n1352:     data.SetPasteId(pasteId);\n1353:     auto tokenId = IPCSkeleton::GetCallingTokenID();"
+            },
+            {
+              "start_line": 1351,
+              "end_line": 1359,
+              "text": "1351:     PasteData data{};\n1352:     data.SetPasteId(pasteId);\n1353:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n1354:     auto callPid = IPCSkeleton::GetCallingPid();\n1355:     auto appInfo = GetAppInfo(tokenId);\n1356:     bool developerMode = OHOS::system::GetBoolParameter(\"const.security.developermode.state\", false);\n1357:     bool isTestServerSetPasteData = developerMode && setPasteDataUId_.load() == TEST_SERVER_UID;\n1358:     if (!VerifyPermission(tokenId) && !isTestServerSetPasteData) {\n1359:         RADAR_REPORT(DFX_GET_PASTEBOARD, DFX_CHECK_GET_AUTHORITY, DFX_SUCCESS, GET_DATA_APP, appInfo.bundleName,"
+            },
+            {
+              "start_line": 1356,
+              "end_line": 1364,
+              "text": "1356:     bool developerMode = OHOS::system::GetBoolParameter(\"const.security.developermode.state\", false);\n1357:     bool isTestServerSetPasteData = developerMode && setPasteDataUId_.load() == TEST_SERVER_UID;\n1358:     if (!VerifyPermission(tokenId) && !isTestServerSetPasteData) {\n1359:         RADAR_REPORT(DFX_GET_PASTEBOARD, DFX_CHECK_GET_AUTHORITY, DFX_SUCCESS, GET_DATA_APP, appInfo.bundleName,\n1360:             RadarReporter::CONCURRENT_ID, data.GetPasteId());\n1361:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"check permission failed, callingPid is %{public}d\", callPid);\n1362:         HiViewAdapter::ReportUseBehaviour(data, HiViewAdapter::PASTE_STATE,\n1363:             static_cast<int32_t>(PasteboardError::PERMISSION_VERIFICATION_ERROR));\n1364:         return static_cast<int32_t>(PasteboardError::PERMISSION_VERIFICATION_ERROR);"
+            },
+            {
+              "start_line": 2109,
+              "end_line": 2117,
+              "text": "2109: {\n2110:     PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"enter\");\n2111:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2112:     auto appInfo = GetAppInfo(tokenId);\n2113:     auto event = GetValidDistributeEvent(appInfo.userId);\n2114: #ifdef PB_DEVICE_MANAGER_ENABLE\n2115:     DmDeviceInfo remoteDevice;\n2116:     if (!event.second.deviceId.empty()) {\n2117:         auto ret = DMAdapter::GetInstance().GetRemoteDeviceInfo(event.second.deviceId, remoteDevice);"
+            },
+            {
+              "start_line": 2318,
+              "end_line": 2326,
+              "text": "2318: bool PasteboardService::HasPasteData()\n2319: {\n2320:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n2321:     if (userId == ERROR_USERID) {\n2322:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n2323:         return false;\n2324:     }\n2325: \n2326:     if (GetScreenStatus(userId) == ScreenEvent::ScreenUnlocked) {"
+            },
+            {
+              "start_line": 2333,
+              "end_line": 2341,
+              "text": "2333:     auto it = clips_.Find(userId);\n2334:     if (it.first && (it.second != nullptr)) {\n2335:         auto tokenId = IPCSkeleton::GetCallingTokenID();\n2336:         auto ret = IsDataValid(*(it.second), tokenId, userId);\n2337:         if (ret != static_cast<int32_t>(PasteboardError::E_OK)) {\n2338:             PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE,\n2339:                 \"pasteData is invalid, tokenId: %{public}d, userId: %{public}d,\"\n2340:                 \"ret is %{public}d\", tokenId, userId, ret);\n2341:             return false;"
+            },
+            {
+              "start_line": 2392,
+              "end_line": 2400,
+              "text": "2392: bool PasteboardService::HasRemoteData()\n2393: {\n2394:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2395:     auto appInfo = GetAppInfo(tokenId);\n2396:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGI(GetScreenStatus(appInfo.userId) == ScreenEvent::ScreenUnlocked, false,\n2397:         PASTEBOARD_MODULE_SERVICE, \"screen is locked.\");\n2398:     auto [distRet, distEvt] = GetValidDistributeEvent(appInfo.userId);\n2399:     if (distRet == static_cast<int32_t>(PasteboardError::E_OK)) {\n2400:         return true;"
+            },
+            {
+              "start_line": 2417,
+              "end_line": 2425,
+              "text": "2417: int32_t PasteboardService::GetDataTokenId(PasteData &pasteData)\n2418: {\n2419:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2420:     auto originTokenId = pasteData.GetOriginTokenId();\n2421:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGD(\n2422:         originTokenId != PasteData::INVALID_TOKEN_ID, tokenId, PASTEBOARD_MODULE_SERVICE, \"originTokenId invalid\");\n2423:     auto isUriProxyGrant = PermissionUtils::IsPermissionGranted(\n2424:         PermissionUtils::PERMISSION_PROXY_AUTHORIZATION_URI, tokenId);\n2425:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGI("
+            },
+            {
+              "start_line": 2573,
+              "end_line": 2581,
+              "text": "2573: int32_t PasteboardService::GetMimeTypes(std::vector<std::string> &funcResult)\n2574: {\n2575:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n2576:     if (GetScreenStatus(userId) == ScreenEvent::ScreenUnlocked) {\n2577:         auto [distRet, distEvt] = GetValidDistributeEvent(userId);\n2578:         if (distRet == static_cast<int32_t>(PasteboardError::E_OK)) {\n2579:             if (distEvt.version != ClipPlugin::InfoType::DEFAULT) {\n2580:                 return GetRemoteMimeTypes(funcResult, distEvt);\n2581:             }"
+            },
+            {
+              "start_line": 2594,
+              "end_line": 2602,
+              "text": "2594: int32_t PasteboardService::GetPasteDataInfo(PasteDataInfo &pasteDataInfo)\n2595: {\n2596:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n2597:     PASTEBOARD_HILOGD(PASTEBOARD_MODULE_SERVICE, \"GetDataInfo userId: %{public}d, clips_ find: %{public}d\",\n2598:         userId, clips_.Find(userId).first);\n2599:     auto it = clips_.Find(userId);\n2600:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(it.first, static_cast<int32_t>(PasteboardError::NO_DATA_ERROR),\n2601:         PASTEBOARD_MODULE_SERVICE, \"Can not find data. userId: %{public}d\", userId);\n2602:     if (it.second == nullptr) {"
+            },
+            {
+              "start_line": 2605,
+              "end_line": 2613,
+              "text": "2605:     }\n2606:     auto &pasteData = *(it.second);\n2607:     auto ret = IsDataValid(pasteData, IPCSkeleton::GetCallingTokenID(), userId);\n2608:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(ret == static_cast<int32_t>(PasteboardError::E_OK), ret,\n2609:         PASTEBOARD_MODULE_SERVICE, \"pasteData is invalid, ret is %{public}d\", ret);\n2610:     \n2611:     pasteDataInfo.isDelayedData = pasteData.IsDelayData();\n2612:     pasteDataInfo.isDelayedRecord = pasteData.IsDelayRecord();\n2613:     pasteDataInfo.mimeTypes = pasteData.GetMimeTypes();"
+            },
+            {
+              "start_line": 2647,
+              "end_line": 2655,
+              "text": "2647: bool PasteboardService::HasDataType(const std::string &mimeType)\n2648: {\n2649:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2650:     auto userId = GetAppInfo(tokenId).userId;\n2651:     if (userId == ERROR_USERID) {\n2652:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n2653:         return false;\n2654:     }\n2655:     if (GetScreenStatus(userId) == ScreenEvent::ScreenUnlocked) {"
+            },
+            {
+              "start_line": 2685,
+              "end_line": 2693,
+              "text": "2685: bool PasteboardService::HasUtdType(const std::string &utdType)\n2686: {\n2687:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2688:     auto appInfo = GetAppInfo(tokenId);\n2689:     auto userId = appInfo.userId;\n2690:     auto screenStatus = GetScreenStatus(appInfo.userId);\n2691:     PasteData data;\n2692:     if (screenStatus == ScreenEvent::ScreenUnlocked) {\n2693:         auto [distRet, distEvt] = GetValidDistributeEvent(userId);"
+            },
+            {
+              "start_line": 2732,
+              "end_line": 2740,
+              "text": "2732:     std::vector<Pattern> &funcResult)\n2733: {\n2734:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2735:     auto userId = GetAppInfo(tokenId).userId;\n2736:     if (userId == ERROR_USERID) {\n2737:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n2738:         return static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR);\n2739:     }\n2740:     bool hasPlain = HasLocalDataType(MIMETYPE_TEXT_PLAIN, tokenId, userId);"
+            },
+            {
+              "start_line": 2848,
+              "end_line": 2856,
+              "text": "2848: std::vector<std::string> PasteboardService::GetLocalMimeTypes()\n2849: {\n2850:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n2851:     auto it = clips_.Find(userId);\n2852:     if (!it.first) {\n2853:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"can not find data. userId: %{public}d\", userId);\n2854:         return {};\n2855:     }\n2856:     if (it.second == nullptr) {"
+            },
+            {
+              "start_line": 2858,
+              "end_line": 2866,
+              "text": "2858:         return {};\n2859:     }\n2860:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n2861:     auto ret = IsDataValid(*(it.second), tokenId, userId);\n2862:     if (ret != static_cast<int32_t>(PasteboardError::E_OK)) {\n2863:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE,\n2864:             \"pasteData is invalid, tokenId is %{public}d, userId: %{public}d, ret is %{public}d\",\n2865:             tokenId, userId, ret);\n2866:         return {};"
+            },
+            {
+              "start_line": 2911,
+              "end_line": 2919,
+              "text": "2911: bool PasteboardService::IsRemoteData()\n2912: {\n2913:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n2914:     if (userId == ERROR_USERID) {\n2915:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId is error\");\n2916:         return false;\n2917:     }\n2918:     auto it = clips_.Find(userId);\n2919:     if (!it.first) {"
+            },
+            {
+              "start_line": 2926,
+              "end_line": 2934,
+              "text": "2926: int32_t PasteboardService::GetDataSource(std::string &bundleName)\n2927: {\n2928:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n2929:     if (userId == ERROR_USERID) {\n2930:         return static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR);\n2931:     }\n2932:     auto it = clips_.Find(userId);\n2933:     if (!it.first) {\n2934:         return static_cast<int32_t>(PasteboardError::NO_USER_DATA_ERROR);"
+            },
+            {
+              "start_line": 3000,
+              "end_line": 3008,
+              "text": "3000: \n3001:     pid_t pid = IPCSkeleton::GetCallingPid();\n3002:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n3003:     DisposableInfo info(pid, tokenId, targetWindowId, type, maxLength, observer);\n3004:     int32_t ret = DisposableManager::GetInstance().AddDisposableInfo(info);\n3005:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(ret == static_cast<int32_t>(PasteboardError::E_OK), ret,\n3006:         PASTEBOARD_MODULE_SERVICE, \"add observer info failed, ret=%{public}d\", ret);\n3007:     return ERR_OK;\n3008: }"
+            },
+            {
+              "start_line": 3222,
+              "end_line": 3230,
+              "text": "3222: {\n3223:     auto callPid = IPCSkeleton::GetCallingPid();\n3224:     auto appInfo = GetAppInfo(IPCSkeleton::GetCallingTokenID());\n3225:     bool isEventType = static_cast<uint32_t>(type) & static_cast<uint32_t>(PasteboardObserverType::OBSERVER_EVENT);\n3226:     int32_t userId = isEventType ? COMMON_USERID : appInfo.userId;\n3227:     SetInputMethodPid(userId, callPid);\n3228:     if (userId == ERROR_USERID) {\n3229:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n3230:         return static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR);"
+            },
+            {
+              "start_line": 3248,
+              "end_line": 3256,
+              "text": "3248:     PasteboardObserverType type, const sptr<IPasteboardChangedObserver> &observer)\n3249: {\n3250:     auto appInfo = GetAppInfo(IPCSkeleton::GetCallingTokenID());\n3251:     if (appInfo.tokenType == ATokenTypeEnum::TOKEN_HAP) {\n3252:         return SubscribeObserver(type, observer);\n3253:     }\n3254:     return ERR_OK;\n3255: }\n3256: "
+            },
+            {
+              "start_line": 3259,
+              "end_line": 3267,
+              "text": "3259: {\n3260:     auto callPid = IPCSkeleton::GetCallingPid();\n3261:     auto appInfo = GetAppInfo(IPCSkeleton::GetCallingTokenID());\n3262:     bool isEventType = static_cast<uint32_t>(type) & static_cast<uint32_t>(PasteboardObserverType::OBSERVER_EVENT);\n3263:     int32_t userId = isEventType ? COMMON_USERID : appInfo.userId;\n3264:     ClearInputMethodPidByPid(userId, callPid);\n3265:     if (userId == ERROR_USERID) {\n3266:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n3267:         return static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR);"
+            },
+            {
+              "start_line": 3285,
+              "end_line": 3293,
+              "text": "3285:     auto callPid = IPCSkeleton::GetCallingPid();\n3286:     bool isEventType = static_cast<uint32_t>(type) & static_cast<uint32_t>(PasteboardObserverType::OBSERVER_EVENT);\n3287:     int32_t userId = isEventType ? COMMON_USERID : GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n3288:     ClearInputMethodPidByPid(userId, callPid);\n3289:     if (userId == ERROR_USERID) {\n3290:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n3291:         return static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR);\n3292:     }\n3293:     if (static_cast<uint32_t>(type) & static_cast<uint32_t>(PasteboardObserverType::OBSERVER_LOCAL)) {"
+            },
+            {
+              "start_line": 3472,
+              "end_line": 3480,
+              "text": "3472:         \"shareOptions invalid, shareOptions=%{public}d\", shareOptions);\n3473:     auto fullTokenId = IPCSkeleton::GetCallingFullTokenID();\n3474:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n3475:     if (!IsSystemAppByFullTokenID(fullTokenId)) {\n3476:         if (shareOptions != ShareOption::InApp) {\n3477:             PASTEBOARD_HILOGI(PASTEBOARD_MODULE_SERVICE, \"param is invalid\");\n3478:             return static_cast<int32_t>(PasteboardError::INVALID_PARAM_ERROR);\n3479:         }\n3480:         auto isManageGrant = PermissionUtils::IsPermissionGranted(MANAGE_PASTEBOARD_APP_SHARE_OPTION_PERMISSION,"
+            },
+            {
+              "start_line": 3501,
+              "end_line": 3509,
+              "text": "3501: {\n3502:     auto fullTokenId = IPCSkeleton::GetCallingFullTokenID();\n3503:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n3504:     if (!IsSystemAppByFullTokenID(fullTokenId)) {\n3505:         auto isManageGrant = PermissionUtils::IsPermissionGranted(MANAGE_PASTEBOARD_APP_SHARE_OPTION_PERMISSION,\n3506:             tokenId);\n3507:         if (!isManageGrant) {\n3508:             PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"No permission, token id: 0x%{public}x.\", tokenId);\n3509:             return static_cast<int32_t>(PasteboardError::PERMISSION_VERIFICATION_ERROR);"
+            },
+            {
+              "start_line": 3583,
+              "end_line": 3591,
+              "text": "3583:         return false;\n3584:     }\n3585:     int32_t userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n3586:     if (userId == ERROR_USERID) {\n3587:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n3588:         return false;\n3589:     }\n3590:     auto imc = InputMethodController::GetInstance();\n3591:     if (imc == nullptr) {"
+            },
+            {
+              "start_line": 4117,
+              "end_line": 4125,
+              "text": "4117: {\n4118:     FocusedAppInfo appInfo = { 0 };\n4119:     int32_t userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n4120:     if (userId == ERROR_USERID) {\n4121:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"userId invalid.\");\n4122:         return appInfo;\n4123:     }\n4124:     FocusChangeInfo info;\n4125:     std::vector<sptr<WindowVisibilityInfo>> windowVisibilityInfos;"
+            },
+            {
+              "start_line": 4855,
+              "end_line": 4863,
+              "text": "4855: int32_t PasteboardService::SyncDelayedData()\n4856: {\n4857:     auto tokenId = IPCSkeleton::GetCallingTokenID();\n4858:     auto appInfo = GetAppInfo(tokenId);\n4859:     auto [hasData, data] = clips_.Find(appInfo.userId);\n4860:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(hasData && data, static_cast<int32_t>(PasteboardError::NO_DATA_ERROR),\n4861:         PASTEBOARD_MODULE_SERVICE, \"data not find, userId=%{public}u\", appInfo.userId);\n4862:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(tokenId == data->GetTokenId(),\n4863:         static_cast<int32_t>(PasteboardError::INVALID_TOKEN_ID), PASTEBOARD_MODULE_SERVICE,"
+            },
+            {
+              "start_line": 4888,
+              "end_line": 4896,
+              "text": "4888:     std::vector<std::string> uris;\n4889:     std::vector<size_t> indexes;\n4890:     auto userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n4891:     PASTEBOARD_CHECK_AND_RETURN_LOGE(userId != ERROR_USERID, PASTEBOARD_MODULE_SERVICE, \"invalid userId\");\n4892:     std::unique_lock<std::shared_mutex> write(pasteDataMutex_);\n4893:     for (size_t i = 0; i < data.GetRecordCount(); i++) {\n4894:         auto item = data.GetRecordAt(i);\n4895:         if (item == nullptr) {\n4896:             continue;"
+            },
+            {
+              "start_line": 5506,
+              "end_line": 5514,
+              "text": "5506: {\n5507:     pid_t pid = IPCSkeleton::GetCallingPid();\n5508:     int32_t userId = GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId;\n5509:     PASTEBOARD_CHECK_AND_RETURN_RET_LOGE(userId != ERROR_USERID,\n5510:         static_cast<int32_t>(PasteboardError::INVALID_USERID_ERROR), PASTEBOARD_MODULE_SERVICE, \"invalid userId\");\n5511:     sptr<PasteboardDeathRecipient> deathRecipient = sptr<PasteboardDeathRecipient>::MakeSptr(*this, pid, userId);\n5512:     observer->AddDeathRecipient(deathRecipient);\n5513:     clients_.InsertOrAssign(pid, std::make_pair(observer, deathRecipient));\n5514:     return ERR_OK;"
+            },
+            {
+              "start_line": 5518,
+              "end_line": 5526,
+              "text": "5518: {\n5519:     pid_t pid = IPCSkeleton::GetCallingPid();\n5520:     return AppExit(pid, GetAppInfo(IPCSkeleton::GetCallingTokenID()).userId);\n5521: }\n5522: \n5523: std::function<void(const OHOS::MiscServices::Event &)> PasteboardService::RemotePasteboardChange()\n5524: {\n5525:     return [this](const OHOS::MiscServices::Event &event) {\n5526:         (void)event;"
+            },
+            {
+              "start_line": 5534,
+              "end_line": 5542,
+              "text": "5534: }\n5535: \n5536: int32_t PasteboardService::CallbackEnter(uint32_t code)\n5537: {\n5538:     if (!IPCSkeleton::IsLocalCalling()) {\n5539:         PASTEBOARD_HILOGE(PASTEBOARD_MODULE_SERVICE, \"invalid request, only support local, cmd:%{public}u\", code);\n5540:         return ERR_TRANSACTION_FAILED;\n5541:     }\n5542:     if (code == static_cast<uint32_t>(IPasteboardServiceIpcCode::COMMAND_HAS_PASTE_DATA)) {"
+            }
+          ]
+        },
+        {
+          "path": "etc/init/pasteboardservice.cfg",
+          "blob_oid": "bad8c665a6aaec041bfd70482ff8a61143493172",
+          "sha256": "94462316b2eb65c47eda973c86df79f1678f34e49340f6675e43dac36a97aa5a",
+          "matched_line_numbers": [
+            4,
+            12,
+            31
+          ],
+          "excerpts": [
+            {
+              "start_line": 2,
+              "end_line": 8,
+              "text": "2:     \"services\" : [{\n3:             \"name\" : \"pasteboard_service\",\n4:             \"path\" : [\"/system/bin/sa_main\", \"/system/profile/pasteboard_service.json\"],\n5:             \"uid\" : \"pasteboard\",\n6:             \"gid\" : [\"pasteboard\", \"shell\", \"dfs_share\", \"user_data_rw\"],\n7:             \"caps\" : [\"DAC_READ_SEARCH\"],\n8:             \"ondemand\" : true,"
+            },
+            {
+              "start_line": 10,
+              "end_line": 16,
+              "text": "10:                 \"on-start\" : \"services:pasteboard_service\"\n11:             },\n12:             \"secon\" : \"u:r:pasteboard_service:s0\",\n13:             \"sandbox\" : 0,\n14:             \"permission\" : [\n15:                 \"ohos.permission.DISTRIBUTED_DATASYNC\",\n16:                 \"ohos.permission.ACCESS_SERVICE_DM\","
+            },
+            {
+              "start_line": 29,
+              "end_line": 35,
+              "text": "29:                 \"ohos.permission.MANAGE_WIFI_CONNECTION\"\n30:             ],\n31:             \"permission_acls\" : [\n32:                 \"ohos.permission.INPUT_MONITORING\",\n33:                 \"ohos.permission.MONITOR_DEVICE_NETWORK_STATE\",\n34:                 \"ohos.permission.GRANT_URI_PERMISSION_PRIVILEGED\",\n35:                 \"ohos.permission.GET_WIFI_INFO\","
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
