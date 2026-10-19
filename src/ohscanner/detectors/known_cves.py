@@ -2,10 +2,11 @@ from __future__ import annotations
 import re
 from typing import List, Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
+from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.17.0"
+VERSION = "0.18.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -630,14 +631,27 @@ class KnownDisclosedCveDetector:
     supported_languages = ("c", "cpp")
     required_facts = ()
     def detect(self, context: ScanContext, units: Tuple[SourceUnit, ...]) -> DetectorRun:
-        del context
         selected = tuple(sorted((u for u in units if u.language in self.supported_languages), key=lambda u: u.path))
         curl_version, _curl_version_ambiguous = _curl_version(selected)
-        if not selected:
-            return DetectorRun(self.detector_id, self.version, "blocked", limitations=("not_applicable: no C/C++ source supplied.",))
-        if sum(len(u.text.encode("utf-8")) for u in selected) > MAX_TOTAL_BYTES:
-            return DetectorRun(self.detector_id, self.version, "failed", limitations=("Selected source exceeds detector run budget.",))
         findings=[]; analyzed=[]; limitations=[]; complete=True
+        artifact_inventory = context.shared_facts.get("artifact_inventory", ())
+        if isinstance(artifact_inventory, (list, tuple)):
+            for item in artifact_inventory:
+                try:
+                    artifact_path, artifact_data = item
+                    limitations.append(limitation_message(classify_artifact(artifact_path, artifact_data)))
+                except (TypeError, ValueError) as exc:
+                    complete = False
+                    limitations.append(f"artifact adapter: explicit-unknown malformed inventory entry: {exc}")
+        else:
+            complete = False
+            limitations.append("artifact adapter: explicit-unknown malformed artifact inventory container.")
+        if not selected:
+            return DetectorRun(self.detector_id, self.version, "blocked",
+                limitations=tuple(sorted(set(limitations + ("not_applicable: no C/C++ source supplied.",)))))
+        if sum(len(u.text.encode("utf-8")) for u in selected) > MAX_TOTAL_BYTES:
+            return DetectorRun(self.detector_id, self.version, "failed",
+                limitations=tuple(sorted(set(limitations + ("Selected source exceeds detector run budget.",)))))
         for u in selected:
             if len(u.text.encode("utf-8")) > MAX_UNIT_BYTES:
                 complete=False; limitations.append(f"{u.path}: source exceeds 1MiB unit budget; coverage remains unknown."); continue

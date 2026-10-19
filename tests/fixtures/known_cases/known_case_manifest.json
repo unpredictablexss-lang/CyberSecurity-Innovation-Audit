@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
   "corpus_id": "C11-KNOWN-CASE-CORPUS-20261019",
-  "baseline_commit": "ab30df6a01797af455d2abbbc9533ab15964ee68",
+  "baseline_commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
   "detector_id": "ohscanner.known_disclosed_cves",
-  "detector_version": "0.17.0",
+  "detector_version": "0.18.0",
   "source_audit": {
     "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
     "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
@@ -30,7 +30,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-libpng-cve-2026-46675",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_libpng_sequence_requires_end_without_row_read",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-component-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-02",
@@ -42,7 +56,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-libtiff-cve-2025-9900",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_libtiff_vulnerable_fixed_and_unrelated_guard_shapes",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-component-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-03",
@@ -54,7 +82,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-curl-cve-2026-92391",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_curl_recursive_owned_mime_cleanup",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-component-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-04",
@@ -66,7 +108,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-cjson-cve-2026-67216",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_cjson_recursive_bidirectional_linear_matching",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-component-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-05",
@@ -78,7 +134,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-cjson-cve-2026-67215",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_cjson_json_patch_unbounded_recursion_candidate",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-component-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-06",
@@ -90,7 +160,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-webview-cve-2026-27648",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_webview_flowbuffer_cve_vulnerable_fixed_and_unrelated_shapes",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "explicit-unknown-source-unavailable",
+      "c12_replay_kind": "not-replayed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-07",
@@ -102,7 +186,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_pasteboard_disclosed_cves_and_guarded_controls",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-historical-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-08",
@@ -114,7 +212,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-device-manager-cve-2022-45877",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_device_manager_cve_2022_45877_pin_serialized_to_softbus_and_fixed",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "explicit-unknown-source-unavailable",
+      "c12_replay_kind": "not-replayed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-09",
@@ -126,7 +238,45 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-appdomainverify-cve-2026-58313",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_appdomainverify_cve_2026_58313_real_lru_fix_pair",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-static-source-unavailable",
+      "c12_replay_kind": "repository-control-parent-fixed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "parent": {
+          "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+          "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+          "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+          "blob": "7ce4262e3f1d2c0173d929318a4795ff1573c721",
+          "source_sha256": "77cf22fe5fc52a1f365f556344360ba4912341c1b6875f8778e40ca80c576ad4",
+          "bytes": 2507,
+          "path": "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_vulnerable.h",
+          "status": "verified"
+        },
+        "fixed": {
+          "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+          "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+          "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+          "blob": "68114f10d83c8f0bdc46679c7efa35ed286bef8a",
+          "source_sha256": "a9bed219a9e789ff71072846d786894cee90042602ddff18f7c2b133e81947ad",
+          "bytes": 2714,
+          "path": "tests/fixtures/data_sensitive/d39_cve_2026_58313_lru_fixed.h",
+          "status": "verified"
+        },
+        "scan_path": "frameworks/common/include/utils/lru_cache_util.h",
+        "replay_scope": "OHScanner repository control pair, not original app_domain_verify repository"
+      }
     },
     {
       "case_id": "CVE-10",
@@ -138,7 +288,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-storage-cve-2026-28733",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_storage_cve_2026_28733_iterator_escape_survives_mutex_patch",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-static-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-11",
@@ -150,7 +314,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-storage-cve-2026-25850",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_storage_external_volume_cve_2026_25850_vulnerable_fixed_and_unrelated",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-static-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-12",
@@ -162,7 +340,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-storage-cve-2026-28751",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_storage_cve_2026_28751_mtp_full_length_xattr_and_fixed_shape",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "explicit-unknown-source-unavailable",
+      "c12_replay_kind": "not-replayed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-13",
@@ -174,7 +366,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_pasteboard_disclosed_cves_and_guarded_controls",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-historical-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-14",
@@ -186,7 +392,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-cjson-cve-2025-57052",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_cjson_array_pointer_cve_2025_57052_vulnerable_and_fixed_shapes",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-fixed-shape-source-unavailable",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-15",
@@ -198,7 +418,45 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-libpng-cve-2026-33636",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_libpng_neon_palette_cve_2026_33636_exact_upstream_pair",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "candidate-fixed-patch-present-source-unavailable",
+      "c12_replay_kind": "repository-control-parent-fixed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "parent": {
+          "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+          "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+          "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+          "blob": "3068e9b6e62be16bee2a8f1ff8271a02f32be97f",
+          "source_sha256": "d58734a03a91df0f2c11e3558354281d7613888d85c83887586560a270bffa41",
+          "bytes": 4704,
+          "path": "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.55-palette_neon_intrinsics.c",
+          "status": "verified"
+        },
+        "fixed": {
+          "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+          "commit": "db77164fdc2af0da02e4d3efc056d84694fd68e8",
+          "tree": "8c5a296d8304d98193a29a4695aaf61ca0c0996c",
+          "blob": "0967ea1aebd718907fda1e767957deeddbe676b3",
+          "source_sha256": "a844760f611829df29ca583f1b08832cac1440c74a2a22b35bc35a464ddf6b5e",
+          "bytes": 4665,
+          "path": "tests/fixtures/data_sensitive/cve_2026_33636/libpng-1.6.56-palette_neon_intrinsics.c",
+          "status": "verified"
+        },
+        "scan_path": "third_party/libpng/arm/palette_neon_intrinsics.c",
+        "replay_scope": "OHScanner repository control pair, not original third_party_libpng repository"
+      }
     },
     {
       "case_id": "CVE-16",
@@ -210,7 +468,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-curl-cve-2026-92392",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_curl_cve_2026_92392_version_bound_cleanup_order_and_fix",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "not-applicable-version-bound",
+      "c12_replay_kind": "boundary-version-control",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "CVE-17",
@@ -222,7 +494,21 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-curl-cve-2026-9079",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_curl_proxy_credentials_null_clear_vulnerable_and_fixed_shapes",
-      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple"
+      "target_source_binding": "source unavailable/unknown: report supplies short repository HEAD only, not a fixed full commit/tree/blob tuple",
+      "c12_disposition": "explicit-unknown-fixed-not-locally-verified",
+      "c12_replay_kind": "repository-control-scan-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "LOCAL-01",
@@ -234,7 +520,84 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknownlocal-group-delete-without-membership-check",
       "control_ref": "tests/fixtures/known_cases/local-group-delete/",
-      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects"
+      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects",
+      "c12_disposition": "candidate-control-synthetic-replay-only-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "a6f914c5edec04ca6a3b50f814072397a7e9cfd6",
+            "source_sha256": "ada3263b95c8926d5687ffc41909544f2418c67e89c61c73734495594309f9da",
+            "bytes": 75,
+            "path": "tests/fixtures/known_cases/local-group-delete/positive.cpp",
+            "status": "verified"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "80da7e7ccf95e4e5bd59905857c2a908e850885e",
+            "source_sha256": "32751b27408f67a16f66a0c1dce3118956fd2a953a1d4a8c1db05fc29c585e6d",
+            "bytes": 101,
+            "path": "tests/fixtures/known_cases/local-group-delete/fixed.cpp",
+            "status": "verified"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "77fbb4a8949f3196fee42f8e69714afdd49f7a14",
+            "source_sha256": "c9c5ae439ce7f7c27dbf4287bae47919c7bc345efc8b1e7c125941ac75df3e30",
+            "bytes": 87,
+            "path": "tests/fixtures/known_cases/local-group-delete/safe.cpp",
+            "status": "verified"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "f44a60eaf551be88cce556e10a49e3c39cacd8ee",
+            "source_sha256": "ae1efc3e177f8760e597925ce06f178322b9e63c8bd24fa46ef1be67ced2e994",
+            "bytes": 48,
+            "path": "tests/fixtures/known_cases/local-group-delete/unrelated.cpp",
+            "status": "verified"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "a6f914c5edec04ca6a3b50f814072397a7e9cfd6",
+            "source_sha256": "ada3263b95c8926d5687ffc41909544f2418c67e89c61c73734495594309f9da",
+            "bytes": 75,
+            "path": "tests/fixtures/known_cases/local-group-delete/unknown.cpp",
+            "status": "verified"
+          }
+        },
+        "result": {
+          "parent": "1 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "1 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "LOCAL-02",
@@ -246,7 +609,84 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknownlocal-request-path-without-canonical-base-boundary",
       "control_ref": "tests/fixtures/known_cases/local-request-path/",
-      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects"
+      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects",
+      "c12_disposition": "candidate-control-synthetic-replay-only-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "b02ac4e083e8a013020b6f2afbe0091b2397613e",
+            "source_sha256": "d46fb430c976817fab9c12bbef5562fe2e61b93c5e0a6e45c6615322c3946e2a",
+            "bytes": 90,
+            "path": "tests/fixtures/known_cases/local-request-path/positive.cpp",
+            "status": "verified"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "ddefc92b43299180d5e2a516257694cb620710c1",
+            "source_sha256": "3a206e39f6be2bbc4279ba0b36aaa7c636d662bb238c53bd20fb5fb599001952",
+            "bytes": 130,
+            "path": "tests/fixtures/known_cases/local-request-path/fixed.cpp",
+            "status": "verified"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "3e08dcf53f337a4b8fc1ba4066b9d007a73aa194",
+            "source_sha256": "7100fa2889d8a2a71570b3751163cb0ae0911a610ca9b965e4723b59f72eb3bb",
+            "bytes": 99,
+            "path": "tests/fixtures/known_cases/local-request-path/safe.cpp",
+            "status": "verified"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "2ac976723a2c94492f447d776d6bd97ac37707d3",
+            "source_sha256": "4ad64388449090825cffbecb94eba790163074c8afbdeaee687b3c3facb5ece3",
+            "bytes": 75,
+            "path": "tests/fixtures/known_cases/local-request-path/unrelated.cpp",
+            "status": "verified"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "b02ac4e083e8a013020b6f2afbe0091b2397613e",
+            "source_sha256": "d46fb430c976817fab9c12bbef5562fe2e61b93c5e0a6e45c6615322c3946e2a",
+            "bytes": 90,
+            "path": "tests/fixtures/known_cases/local-request-path/unknown.cpp",
+            "status": "verified"
+          }
+        },
+        "result": {
+          "parent": "1 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "1 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "LOCAL-03",
@@ -258,7 +698,84 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknownlocal-request-raw-fd-double-close",
       "control_ref": "tests/fixtures/known_cases/local-request-fd/",
-      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects"
+      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects",
+      "c12_disposition": "candidate-control-synthetic-replay-only-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "3f52403445044927cd62e33155d60616b0902698",
+            "source_sha256": "dc4b2d2dd8da3993ad2214da4e718aef9a27ccc6372ec6ccc0024f7a011568d6",
+            "bytes": 85,
+            "path": "tests/fixtures/known_cases/local-request-fd/positive.cpp",
+            "status": "verified"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "e9c0c691684abcfb44fdae3e3d9891fe4ba0afa8",
+            "source_sha256": "d409089f09c177e1ae10952fe8518dc27fbb0f6283c7fb02b2b5b62db1f2c0f9",
+            "bytes": 80,
+            "path": "tests/fixtures/known_cases/local-request-fd/fixed.cpp",
+            "status": "verified"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "0345cd65b782da2b17720e7bc12885e0b1a070cd",
+            "source_sha256": "7fb463be51cc55907cead03a066eb1da5b396efd999165a70b4f9cbe6600cce7",
+            "bytes": 94,
+            "path": "tests/fixtures/known_cases/local-request-fd/safe.cpp",
+            "status": "verified"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "681fe976be6deec4dbc88af66da3950811c0733c",
+            "source_sha256": "751aac42e440a468dd0ab4da8464af04f011ecd8e7f55e037161aabb9d40df17",
+            "bytes": 76,
+            "path": "tests/fixtures/known_cases/local-request-fd/unrelated.cpp",
+            "status": "verified"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "3f52403445044927cd62e33155d60616b0902698",
+            "source_sha256": "dc4b2d2dd8da3993ad2214da4e718aef9a27ccc6372ec6ccc0024f7a011568d6",
+            "bytes": 85,
+            "path": "tests/fixtures/known_cases/local-request-fd/unknown.cpp",
+            "status": "verified"
+          }
+        },
+        "result": {
+          "parent": "1 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "1 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "LOCAL-04",
@@ -270,7 +787,84 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknownlocal-deviceauth-negative-length-ipc",
       "control_ref": "tests/fixtures/known_cases/local-deviceauth-negative-length/",
-      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects"
+      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects",
+      "c12_disposition": "candidate-control-synthetic-replay-only-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "b1427656a2209978f102b9f5ccf0aa6e9a7c73aa",
+            "source_sha256": "7c08593d2027ecc17126fc0b8e88bee4c75878810db8feeb9f72dff2853c790e",
+            "bytes": 94,
+            "path": "tests/fixtures/known_cases/local-deviceauth-negative-length/positive.cpp",
+            "status": "verified"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "39f4dc7c4b208b88ab3966f92d2aac2d222f2683",
+            "source_sha256": "7a5f802d302200769cb8b893ea846b60978d37471bd6c7de9cac69dafa3071a4",
+            "bytes": 115,
+            "path": "tests/fixtures/known_cases/local-deviceauth-negative-length/fixed.cpp",
+            "status": "verified"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "5637ebe367d4ff9d16c80f1031d0cd1ca3c3b8e9",
+            "source_sha256": "bbcc7c7108dec4cce456cb0ef995e734646bbc84bca1f3ac36e05fa847c19b34",
+            "bytes": 135,
+            "path": "tests/fixtures/known_cases/local-deviceauth-negative-length/safe.cpp",
+            "status": "verified"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "da67f450de0e6bcc3c23a155b3e8a9008a31ff76",
+            "source_sha256": "18f3240dc7d60e16053a3aac39cddc4a66d391df9e89ade2b539e97c46916884",
+            "bytes": 69,
+            "path": "tests/fixtures/known_cases/local-deviceauth-negative-length/unrelated.cpp",
+            "status": "verified"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "b1427656a2209978f102b9f5ccf0aa6e9a7c73aa",
+            "source_sha256": "7c08593d2027ecc17126fc0b8e88bee4c75878810db8feeb9f72dff2853c790e",
+            "bytes": 94,
+            "path": "tests/fixtures/known_cases/local-deviceauth-negative-length/unknown.cpp",
+            "status": "verified"
+          }
+        },
+        "result": {
+          "parent": "1 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "1 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "LOCAL-05",
@@ -282,7 +876,89 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
       "control_ref": "tests/detectors/test_known_disclosed_cves.py::KnownDisclosedCveTests::test_pasteboard_disclosed_cves_and_guarded_controls",
-      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects"
+      "target_source_binding": "source unavailable/unknown: review gives source locations but no fixed full Git objects",
+      "c12_disposition": "candidate-historical-overlap-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown-worktree-control",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown-worktree-control",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": null,
+            "tree": null,
+            "blob": "954282144218b844bce9ca836a4bb6a2cb9f12af",
+            "source_sha256": "f513d6d1a35e3d047e6c2b31b518e574da92e7b48347de0ecf4e5bca84d62d39",
+            "bytes": 447,
+            "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/positive.cpp",
+            "status": "explicit-unknown",
+            "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": null,
+            "tree": null,
+            "blob": "79be73932fc3f754cd3d8eba320a938d074c2369",
+            "source_sha256": "e4fbb3cd79cac977feeae7c04f4be07a0023a1df0733833effd9dd1db4ac1689",
+            "bytes": 524,
+            "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/fixed.cpp",
+            "status": "explicit-unknown",
+            "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": null,
+            "tree": null,
+            "blob": "72c21898456bf73c0831f2ec0906bb1c510878d9",
+            "source_sha256": "dec904f7bdb984753f1a3d31d8eef921c8fae1e5a0809e1610129a4d71afa8da",
+            "bytes": 559,
+            "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/safe.cpp",
+            "status": "explicit-unknown",
+            "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": null,
+            "tree": null,
+            "blob": "ce467cbf0de08b6c99d0a5b6c58d4102edd07d90",
+            "source_sha256": "40ac466a0fd701853ce3d844b5afc59e5f2652c85f0ed4e7573759b069ce0ffa",
+            "bytes": 436,
+            "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/unrelated.cpp",
+            "status": "explicit-unknown",
+            "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": null,
+            "tree": null,
+            "blob": "954282144218b844bce9ca836a4bb6a2cb9f12af",
+            "source_sha256": "f513d6d1a35e3d047e6c2b31b518e574da92e7b48347de0ecf4e5bca84d62d39",
+            "bytes": 447,
+            "path": "tests/fixtures/known_cases/local-pasteboard-historical-read/unknown.cpp",
+            "status": "explicit-unknown",
+            "reason": "uncommitted C12 control fixture; no baseline commit/tree binding and no target-source claim"
+          }
+        },
+        "result": {
+          "parent": "2 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "2 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "MANUAL-01",
@@ -294,7 +970,21 @@
       "scanner_expectation": "explicit-unknown-auditable-limitation",
       "rule_id": null,
       "control_ref": "no C/C++ rule applies",
-      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only"
+      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only",
+      "c12_disposition": "explicit-unknown-bounded-artifact-p12-json5-no-cpp-coverage",
+      "c12_replay_kind": "artifact-identification-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "MANUAL-02",
@@ -306,7 +996,84 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknownmanual-appdomain-shared-priority-read",
       "control_ref": "tests/fixtures/known_cases/manual-appdomain-priority/",
-      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only"
+      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only",
+      "c12_disposition": "candidate-control-synthetic-replay-only-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "1d25d0d117a37b2e6e235e259692eed77e67f20a",
+            "source_sha256": "d74f8b9555b3d20e5f4d8808b21f82da34eea38973c8f6d945efe6112cd5b918",
+            "bytes": 170,
+            "path": "tests/fixtures/known_cases/manual-appdomain-priority/positive.cpp",
+            "status": "verified"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "2a15265d831fb8446b385262200f24877a0ca818",
+            "source_sha256": "141182ede3478667924e846991e24ffa74bfd658194c3524ce8982be5417b530",
+            "bytes": 213,
+            "path": "tests/fixtures/known_cases/manual-appdomain-priority/fixed.cpp",
+            "status": "verified"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "ea44aca64c16d37519338a11f707652c17698604",
+            "source_sha256": "16f2265adf3f1a26509aae8006d1b63fb12d90ee695b330060c7f089a081cf97",
+            "bytes": 177,
+            "path": "tests/fixtures/known_cases/manual-appdomain-priority/safe.cpp",
+            "status": "verified"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "7248630b120f9a18a4869958bc31a4f6aff4ccbc",
+            "source_sha256": "fca4674a007637070e12093d65e2a6c701744cdec0c4cf0a2738c55c825ed586",
+            "bytes": 157,
+            "path": "tests/fixtures/known_cases/manual-appdomain-priority/unrelated.cpp",
+            "status": "verified"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "1d25d0d117a37b2e6e235e259692eed77e67f20a",
+            "source_sha256": "d74f8b9555b3d20e5f4d8808b21f82da34eea38973c8f6d945efe6112cd5b918",
+            "bytes": 170,
+            "path": "tests/fixtures/known_cases/manual-appdomain-priority/unknown.cpp",
+            "status": "verified"
+          }
+        },
+        "result": {
+          "parent": "1 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "1 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "MANUAL-03",
@@ -318,7 +1085,84 @@
       "scanner_expectation": "candidate",
       "rule_id": "ohknownmanual-storage-statistics-unlocked-read",
       "control_ref": "tests/fixtures/known_cases/manual-storage-statistics/",
-      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only"
+      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only",
+      "c12_disposition": "candidate-control-synthetic-replay-only-source-unavailable",
+      "c12_replay_kind": "parent-fixed-safe-unrelated-unknown",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      },
+      "repository_control_replay": {
+        "scope": "parent-fixed-safe-unrelated-unknown",
+        "controls": {
+          "positive.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "af3e75e4014594436dc58ea9514f6d74e50e7adc",
+            "source_sha256": "2a6dc4f4afaa5d297830beb36e2ddbc22680eca5a13164447de7c24b30f6b098",
+            "bytes": 170,
+            "path": "tests/fixtures/known_cases/manual-storage-statistics/positive.cpp",
+            "status": "verified"
+          },
+          "fixed.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "eff08055251b0471804c45fa55e66f63348835bd",
+            "source_sha256": "95da68de8b473e3a895ae4ccc366f193b9bb0a5a9b049fbcd9baa154aa2b30f9",
+            "bytes": 218,
+            "path": "tests/fixtures/known_cases/manual-storage-statistics/fixed.cpp",
+            "status": "verified"
+          },
+          "safe.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "8caf45818b904bf2faf8be227051da5114d3fd3e",
+            "source_sha256": "8ba4ba874d76a48a615b3ab178d0e59c480219bc1cb021b1fc06888bfe1bc1ae",
+            "bytes": 203,
+            "path": "tests/fixtures/known_cases/manual-storage-statistics/safe.cpp",
+            "status": "verified"
+          },
+          "unrelated.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "7d7224fa951f7f43ec29026c778da20a368a2ce7",
+            "source_sha256": "ffa573f078c10f137594b03766138d636a2abcf93f292a673702bb25a6f2d8cb",
+            "bytes": 168,
+            "path": "tests/fixtures/known_cases/manual-storage-statistics/unrelated.cpp",
+            "status": "verified"
+          },
+          "unknown.cpp": {
+            "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+            "commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
+            "tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+            "blob": "af3e75e4014594436dc58ea9514f6d74e50e7adc",
+            "source_sha256": "2a6dc4f4afaa5d297830beb36e2ddbc22680eca5a13164447de7c24b30f6b098",
+            "bytes": 170,
+            "path": "tests/fixtures/known_cases/manual-storage-statistics/unknown.cpp",
+            "status": "verified"
+          }
+        },
+        "result": {
+          "parent": "1 candidate(s)",
+          "fixed": 0,
+          "safe": 0,
+          "unrelated": 0,
+          "unknown": "1 candidate(s) + blocked/partial"
+        },
+        "boundary": "synthetic/reconstructed controls; target source identity remains explicit-unknown"
+      }
     },
     {
       "case_id": "MANUAL-04",
@@ -330,7 +1174,21 @@
       "scanner_expectation": "explicit-unknown-auditable-limitation",
       "rule_id": null,
       "control_ref": "no C/C++ rule applies",
-      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only"
+      "target_source_binding": "source unavailable/unknown: review gives short repository HEAD or source locations only",
+      "c12_disposition": "explicit-unknown-bounded-language-rust-no-cpp-coverage",
+      "c12_replay_kind": "language-identification-only",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "EXCLUDED-01",
@@ -342,7 +1200,21 @@
       "scanner_expectation": "not-applicable",
       "rule_id": null,
       "control_ref": "audit conclusion sentence; not an independent reviewed item",
-      "target_source_binding": "source unavailable/unknown: no fixed patch/source mapping imported"
+      "target_source_binding": "source unavailable/unknown: no fixed patch/source mapping imported",
+      "c12_disposition": "not-applicable-no-independent-source-case",
+      "c12_replay_kind": "not-replayed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     },
     {
       "case_id": "EXCLUDED-02",
@@ -354,7 +1226,31 @@
       "scanner_expectation": "not-applicable",
       "rule_id": null,
       "control_ref": "audit conclusion sentence; not an independent reviewed item",
-      "target_source_binding": "source unavailable/unknown: no fixed patch/source mapping imported"
+      "target_source_binding": "source unavailable/unknown: no fixed patch/source mapping imported",
+      "c12_disposition": "not-applicable-no-independent-source-case",
+      "c12_replay_kind": "not-replayed",
+      "target_source_identity": {
+        "status": "explicit-unknown",
+        "reason": "source unavailable/unknown: review/import data contain path descriptions or short HEADs, not a locally pinned full commit/tree/blob/path/source-SHA tuple"
+      },
+      "audit_document_identity": {
+        "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+        "commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+        "tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+        "blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+        "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+        "status": "verified"
+      }
     }
-  ]
+  ],
+  "baseline_tree": "7d102eb9d2f0c2149fe978bb350129b7cf2fac71",
+  "c12_adapter_scope": {
+    "git_identity": "repository+full commit/tree/blob/path+SHA-256 verified or explicit-unknown",
+    "artifacts": [
+      "JSON5",
+      "P12",
+      "Rust"
+    ],
+    "language_boundary": "production scan coverage remains C/C++ only"
+  }
 }
