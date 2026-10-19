@@ -22,7 +22,30 @@
       "snapshot_status": "blocked",
       "immutable_response_bytes_sha256": null,
       "response_body_file": null,
-      "response_headers_file": "CVE-2026-33636.headers (zero bytes; no HTTP headers received)",
+      "response_headers_file": "CVE-2026-33636.headers",
+      "limitations": [
+        "The canonical GHSA page raw response remains blocked and has no advisory-body hash; its zero-byte headers file records that curl received no HTTP response headers.",
+        "The separate MITRE CVE Services CNA record was captured successfully. It confirms the CVE/source/version data but does not replace the GHSA page snapshot."
+      ],
+      "additional_primary_source_snapshots": [
+        {
+          "source_type": "CNA CVE_RECORD from MITRE CVE Services API",
+          "publisher": "CVE record CNA assigner GitHub_M (GitHub)",
+          "canonical_record_url": "https://cveawg.mitre.org/api/cve/CVE-2026-33636",
+          "retrieval_date_utc": "2026-10-19",
+          "retrieved_at_utc": "2026-10-19T18:15:00Z",
+          "snapshot_status": "captured",
+          "http_status": 200,
+          "content_type": "application/json; charset=utf-8",
+          "response_body_file": "CVE-2026-33636.mitre-cve.body",
+          "response_body_bytes": 3207,
+          "immutable_response_bytes_sha256": "6d68fea804893b01cf88c685d260962fe592e78425007565afd47809ae457f4e",
+          "response_headers_file": "CVE-2026-33636.mitre-cve.headers",
+          "response_headers_sha256": "a02c3fe623263540c198c579749677b5058962c689e1c55d3a4936d39a0a645b",
+          "scope_transcription": "CNA JSON identifies vendor pnggroup, product libpng, affected versions >=1.6.36 and <1.6.56; its description specifies the ARM/AArch64 Neon palette-expansion path and says 1.6.56 fixes the issue.",
+          "cna_record_scope_does_not_replace": "The separate GHSA advisory-page raw response snapshot, which remains blocked."
+        }
+      ],
       "capture_attempt": {
         "requested_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-wjr5-c57x-95m2",
         "method": "curl.exe -L --http1.1 --max-time 12 -sS -D <headers> -o <body> -w <metadata> -A D55-advisory-evidence/1.0 --url <URL>",
@@ -50,13 +73,34 @@
       "snapshot_status": "blocked",
       "immutable_response_bytes_sha256": null,
       "response_body_file": null,
-      "response_headers_file": "CVE-2026-46675.headers (zero bytes; no HTTP headers received)",
+      "response_headers_file": "CVE-2026-46675.headers",
+      "limitations": [
+        "The canonical GHSA page raw response remains blocked and has no advisory-body hash; its zero-byte headers file records that curl received no HTTP response headers.",
+        "The separate MITRE CVE Services API lookup returned CVE_RECORD_DNE (HTTP 404); this is an error response, not an advisory snapshot."
+      ],
+      "additional_primary_source_lookups": [
+        {
+          "source_type": "MITRE CVE Services API lookup; not an advisory record",
+          "publisher": "CVE Services / MITRE",
+          "requested_url": "https://cveawg.mitre.org/api/cve/CVE-2026-46675",
+          "retrieval_date_utc": "2026-10-19",
+          "retrieved_at_utc": "2026-10-19T18:15:09Z",
+          "http_status": 404,
+          "content_type": "application/json; charset=utf-8",
+          "response_body_file": "CVE-2026-46675.mitre-cve.body",
+          "response_body_bytes": 84,
+          "response_body_sha256": "ff0793bc04d228fac6b8634ea8a29ce08d68067d615654d72b11955d01433b66",
+          "response_headers_file": "CVE-2026-46675.mitre-cve.headers",
+          "response_headers_sha256": "bf25c73df5a41722ee30442a532990acada84f82e86446777343d2cd9ebd2a48",
+          "response_meaning": "CVE_RECORD_DNE. This does not establish that no GHSA advisory exists."
+        }
+      ],
       "capture_attempt": {
         "requested_url": "https://github.com/pnggroup/libpng/security/advisories/GHSA-qvg3-h654-xq3j",
         "method": "curl.exe -L --http1.1 --max-time 12 -sS -D <headers> -o <body> -w <metadata> -A D55-advisory-evidence/1.0 --url <URL>",
         "curl_exit_code": 28,
         "http_status": null,
-        "curl_result": "000; connection timed out after 12009 ms; 0 response bytes; api.github.com/advisories endpoint separately returned HTTP 404",
+      "curl_result": "000; connection timed out after 12009 ms; 0 response bytes; api.github.com/advisories endpoint separately returned HTTP 404; MITRE CVE Services API lookup returned CVE_RECORD_DNE (HTTP 404)",
         "headers_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
         "body_sha256": null
       },
