@@ -1,12 +1,13 @@
 {
   "task": "T59",
   "date": "2026-10-23",
-  "phase": "frozen-D59-reviewed-follow-up-requested",
+  "phase": "complete-independent-review-of-D59-follow-up",
   "patch": {
-    "commit": "7182aaf7c2334a3cf91dcf9a1016116b4709fccd",
+    "commit": "da0195610f2203ce97af1f43385f0091f040504e",
     "parent_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
-    "detector_version": "0.19.4",
-    "independent_worktree": "D:/openHarmonyScanner/worktrees/t59-d59-patch-review-20261023"
+    "initial_commit": "7182aaf7c2334a3cf91dcf9a1016116b4709fccd",
+    "detector_version": "0.19.5",
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t59-d59-followup-review-20261023"
   },
   "baseline": {
     "scanner_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
@@ -84,6 +85,15 @@
       "baseline_observed": "suppressed",
       "expected_after_D59": "suppressed",
       "purpose": "syntactic early-exit control; exception/catch behavior is not modeled"
+    },
+    {
+      "id": "denial-guard-under-conditional-outer-branch",
+      "shape": "if (is_privileged) { if (!VerifyCallingPermission(...)) return denial; } GetPasteData; parcel write",
+      "baseline_observed": "suppressed",
+      "initial_D59_0_19_4_observed": "suppressed",
+      "expected_after_D59": "candidate",
+      "final_D59_0_19_5_observed": "candidate",
+      "purpose": "non-dominating guard adversary; outer branch can bypass denial exit"
     }
   ],
   "sibling_candidate_retention": {
@@ -93,10 +103,10 @@
     "expected_after_D59": "no change in D51 rule behavior or unrelated CVE identities"
   },
   "acceptance_scope": {
-    "fix_correctness": "FAIL_PENDING_FOLLOWUP; required counterexamples pass, but an additional non-dominating guard probe still suppresses the candidate",
+    "fix_correctness": "PASS for the specified matrix, including the previously failing non-dominating conditional guard in D59 0.19.5; return/throw are syntactic early exits only",
     "candidate_retention": "PASS; exact pinned D52 candidate and D51 sibling candidate retained with same IDs, anchors, and source hashes",
     "coverage": "PARTIAL; exact source-unit and 67-unit component runs are blocked; parser states are 57 complete / 10 partial; full framework/product coverage is not established",
-    "scope": "PASS for frozen commit 7182aaf7; patch diff is limited to D52 matcher, focused regression/corpus controls, fixture binding updates, and D59 evidence; T59 modified no detector, fixture, or expected-output file"
+    "scope": "PASS for frozen commit da019561; patch diff is limited to D52 matcher, focused regression/corpus controls, fixture binding updates, and D59 evidence; T59 modified no detector, fixture, or expected-output file"
   },
   "semantic_limit": "All matrix expectations concern source-local syntactic candidate behavior. They do not prove control-flow dominance, helper semantics, real permission enforcement, complete IPC/framework authorization, CVE causality, product inclusion, or runtime exploitability.",
   "baseline_replay": {
@@ -117,11 +127,16 @@
     "focused_test_count": 32,
     "diff_base": "c8f83b82291e82b3272c73b943623336a3c836c3",
     "diff_stat": {
-      "files_changed": 8,
-      "insertions": 237,
+    "files_changed": 8,
+    "insertions": 243,
       "deletions": 12,
       "non_evidence_scope_paths": 6,
-      "unexpected_or_unrelated_rule_files": []
+    "unexpected_or_unrelated_rule_files": [],
+    "followup_delta_7182_to_da019561": [
+      "src/ohscanner/detectors/known_cves.py: require top-level guard in checked method",
+      "tests/detectors/test_known_disclosed_cves.py: add conditional-outer-guard regression",
+      "research/evidence/cpp/D59_PASTEBOARD_PERMISSION_SUPPRESSION_20261023.md and .json: record scope and throw/catch limitation"
+    ]
     },
     "diff_check": "PASS",
     "changed_paths": [
@@ -145,7 +160,8 @@
         {"symbol": "CVE-2025-25212", "rule_id": "ohknowncve-pasteboard-cve-2025-25212", "file": "services/core/src/pasteboard_service.cpp", "line": 241, "column": 5, "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"},
         {"symbol": "CVE-2025-27247", "rule_id": "ohknowncve-pasteboard-cve-2025-27247", "file": "services/zidl/src/pasteboard_service_stub.cpp", "line": 41, "column": 1, "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"}
       ],
-      "patched_findings_identical": true
+    "patched_findings_identical": true,
+    "patched_commit": "da0195610f2203ce97af1f43385f0091f040504e"
     },
     "broader_suite": "not independently run; D59 report records 3 failures and 17 errors in full discovery, with environment/baseline causes. No full-suite pass is claimed."
   },
@@ -153,9 +169,10 @@
     "id": "denial-guard-under-conditional-outer-branch",
     "shape": "if (is_privileged) { if (!VerifyCallingPermission(...)) return denial; } GetPasteData(); parcel write",
     "baseline_observed": "suppressed",
-    "frozen_D59_observed": "suppressed",
+    "initial_D59_0_19_4_observed": "suppressed",
+    "followup_D59_0_19_5_observed": "candidate",
     "expected_candidate_behavior": "retain candidate because the outer condition can bypass the only denial exit before the read",
-    "disposition": "actionable non-dominating-guard false suppression; notified D59 developer and root; awaiting follow-up commit",
+    "disposition": "resolved in D59 follow-up 0.19.5; top-level guard requirement added with a regression test",
     "semantic_limit": "This probe reasons about a concrete branch bypass in the synthetic control. It does not establish any real permission helper or product behavior."
   }
 }

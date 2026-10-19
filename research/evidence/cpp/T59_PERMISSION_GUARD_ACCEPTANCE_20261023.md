@@ -2,7 +2,7 @@
 
 Date: 2026-10-23 (Asia/Shanghai)
 
-## Frozen patch reviewed; one precision failure sent for follow-up
+## Independent review of D59 follow-up
 
 T59 prepared an independent acceptance worktree at the D51 frozen scanner commit `c8f83b82291e82b3272c73b943623336a3c836c3` (detector blob `94113fdd45b2273e6ea9dd02c7eeac886b853329`, rule version 0.19.3). The D52 pinned source was fetched as raw bytes from the Git object database, not read from a line-ending-normalized checkout:
 
@@ -11,9 +11,9 @@ T59 prepared an independent acceptance worktree at the D51 frozen scanner commit
 - Raw blob: 6,288 bytes; SHA-256 `d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868`.
 - Exact-unit replay: `blocked`, with D52 candidate `ohknowncve-pasteboard-cve-2025-27247` at line 41, column 1; identity quality is partial and source parse status is partial.
 
-The structured source-local expected matrix is in the companion JSON. It was independently replayed in memory against both the frozen baseline and D59 in a detached test worktree. T59 changed no detector, fixture, or expected-output file.
+The structured source-local expected matrix is in the companion JSON. It was independently replayed in memory against frozen baseline c8 and final D59 commit `da0195610f2203ce97af1f43385f0091f040504e` (0.19.5) in a detached test worktree. T59 changed no detector, fixture, or expected-output file.
 
-| Probe | Frozen 0.19.3 observed | Required after D59 | Meaning |
+| Probe | Frozen 0.19.3 observed | D59 0.19.5 observed | Meaning |
 |---|---|---|---|
 | No permission token in mapped/routed read-and-return path | Candidate | Candidate | Retain positive candidate |
 | Bare permission-like call before read, result ignored | Suppressed | Candidate | Reject token-only suppression |
@@ -22,27 +22,28 @@ The structured source-local expected matrix is in the companion JSON. It was ind
 | Valid-looking denial branch nested under `if (false)` before read | Suppressed | Candidate | Dead branch cannot suppress |
 | Visible denial branch and early return before read | Suppressed | Suppressed | Syntactic negative control only |
 | Visible denial branch and immediate throw before read | Suppressed | Suppressed | Syntactic exit control; catch/unwind behavior is not modeled |
+| Denial guard nested under `if (is_privileged)` before read | Suppressed | Candidate | Outer branch can bypass the denial exit |
 
 The fixture also emits the separate D51 observer candidate `CVE-2025-25212` for every matrix case. It remained present in every probe. Exact pinned-source replay retained the D52 candidate with its original ID, line 41:1 anchor, and source hash.
 
 ## Independent verification
 
-- Frozen D59 commit: `7182aaf7c2334a3cf91dcf9a1016116b4709fccd`, based on c8 detector commit `c8f83b82291e82b3272c73b943623336a3c836c3`; D59 version is 0.19.4.
+- Final D59 commit: `da0195610f2203ce97af1f43385f0091f040504e`, based on c8 detector commit `c8f83b82291e82b3272c73b943623336a3c836c3`; D59 version is 0.19.5. The prior 0.19.4 commit `7182aaf7c2334a3cf91dcf9a1016116b4709fccd` failed the non-dominating conditional-guard probe; the follow-up added a top-level guard restriction and regression control.
 - `python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus` — **PASS, 32/32**.
 - Replayed all 67 C/C++ source units from the D50 saved-parser packet, using raw source Git blobs, against c8 and D59. Both runs are `blocked`, with identical findings: D51 `CVE-2025-25212` at `services/core/src/pasteboard_service.cpp:241:5` and D52 `CVE-2025-27247` at `services/zidl/src/pasteboard_service_stub.cpp:41:1`. Both retain their original per-file SHA-256 values. Parser states remain 57 complete / 10 partial.
-- `git diff --check c8..D59` — **PASS**. The diff has 8 files (237 insertions / 12 deletions): the known-CVE detector, focused regression and corpus checks, two D52 fixture controls with corresponding manifest hash/byte updates, and the D59 evidence packet. No unrelated detector implementation changed.
+- `git diff --check c8..da019561` — **PASS**. The final diff has 8 files (243 insertions / 12 deletions): the known-CVE detector, focused regression and corpus checks, two D52 fixture controls with corresponding manifest hash/byte updates, and the D59 evidence packet. The follow-up delta is limited to top-level guard checking, its regression, and report caveats. No unrelated detector implementation changed.
 - Full test discovery was not independently rerun. D59's report records 3 failures and 17 errors in that wider run with environment/baseline causes; this acceptance does not claim a full-suite pass.
 
-### Supplemental non-dominating-guard failure
+### Supplemental non-dominating-guard follow-up
 
-An additional in-memory probe placed a valid-looking denial branch under `if (is_privileged)` and then performed `GetPasteData()` after the outer conditional. Both c8 and frozen D59 suppress the candidate. The false outer branch bypasses the denial exit, so this is an actionable non-dominating-guard false suppression for candidate retention. T59 sent the exact shape to root and D59 for correction. This case is distinct from the explicitly handled literal `if (false)` adversary.
+An additional in-memory probe placed a valid-looking denial branch under `if (is_privileged)` and then performed `GetPasteData()` after the outer conditional. Baseline c8 and D59 0.19.4 suppressed the candidate, even though the outer false branch bypasses the denial exit. T59 reported this to root and D59. D59 0.19.5 requires the guard to be top-level in the checked method; the exact probe now retains the candidate and is included in D59 regression tests.
 
 ## Acceptance dimensions
 
-- **fix-correctness:** **FAIL pending follow-up**. The required D58/T58 matrix passes, including immediate `return`/`throw` exits as syntactic controls, but the supplemental conditional outer branch still suppresses although it can bypass the denial exit. Exception/catch behavior is also not modeled.
+- **fix-correctness:** **PASS** for the specified matrix and the supplemental conditional-outer-branch adversary on D59 0.19.5. Immediate `return`/`throw` are syntactic exits only; exception/catch behavior is not modeled.
 - **candidate-retention:** **PASS on the exact pinned source**: the historical D52 candidate remains, and the separate D51 sibling candidate remains. This does not offset the supplemental synthetic false suppression described above.
 - **coverage:** **PARTIAL**. The exact source-unit and full 67-unit replay remain blocked; the D50 parser packet has 57 complete and 10 partial units. Product/framework coverage is not established.
-- **scope:** **PASS for frozen commit `7182aaf7`**. The frozen patch changes the D52 matcher, focused controls/corpus, and the two corresponding fixture bindings. T59's evidence files are separate; T59 made no detector or fixture edits. A follow-up patch is pending.
+- **scope:** **PASS for final commit `da019561`**. The final patch changes the D52 matcher, focused controls/corpus, and the two corresponding fixture bindings. T59's evidence files are separate; T59 made no detector or fixture edits.
 
 These are syntactic candidate expectations. They do not prove permission helper semantics, control-flow dominance in general, framework authorization, CVE causality, product inclusion, or runtime vulnerability. D52 remains a pinned-source candidate with full framework/product/CVE conclusions unknown.
 
