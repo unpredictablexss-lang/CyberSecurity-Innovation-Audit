@@ -231,11 +231,16 @@ class CrossFileResolver:
                     if len(params) != arity:
                         continue
                     body = node.child_by_field_name('body')
-                    if (fd is None or body is None or flow_partial
+                    if (fd is None or body is None
                             or node.has_error or body.has_error):
                         incomplete = True
                         continue
                     matches.append((flow, node, params, qname))
+                    # A clean function subtree inside a partial translation
+                    # unit is useful only as a may-summary. Callers must retain
+                    # an unresolved candidate and the unit remains partial.
+                    if flow_partial:
+                        incomplete = True
 
         owner = caller_name.rsplit('::', 1)[0] if '::' in caller_name else ''
         if owner and '::' not in name:
@@ -243,13 +248,18 @@ class CrossFileResolver:
                              if row[3].rsplit('::', 1)[0] == owner]
             if owner_matches:
                 matches = owner_matches
+        if len(matches) == 1 and not incomplete:
+            return tuple(matches), 'unique'
+        if len(matches) == 1 and incomplete:
+            self.limitations.add(
+                'cross-file helper body is syntactically clean inside a partial translation unit; '
+                'only a may-summary is used and call binding remains unknown: ' + name)
+            return tuple(matches), 'partial'
         if incomplete:
             self.limitations.add(
                 'cross-file helper lookup encountered partial definitions; overload/type identity remains unknown: '
                 + name)
             return (), 'partial'
-        if len(matches) == 1:
-            return tuple(matches), 'unique'
         if len(matches) > 1:
             self.limitations.add(
                 'cross-file helper lookup found multiple same-name/arity definitions; call remains unresolved: '
@@ -260,7 +270,7 @@ class CrossFileResolver:
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.20.0'
+    version = '0.21.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -366,6 +376,7 @@ class LocalFlow:
             item[0]: (item[1], item[2], item[3])
             for item in model.copy_calls
         }
+        self.non_escaping_calls = frozenset(model.non_escaping_calls)
         self.fields = dict(model.fields)
         self.non_sensitive_fields = dict(model.non_sensitive_fields)
         self.shadows = set()
@@ -443,7 +454,8 @@ class LocalFlow:
             if root in types:
                 return () # known nonmaterial field (len/iv/index), not whole object taint
             if root in env:
-                self.gaps.add('unknown field/alias propagation')
+                self.gaps.add('unknown field/alias propagation; aggregate object taint is propagated as a may-flow')
+                return env[root]
             return ()
         if n.type=='conditional_expression':
             self.gaps.add('conditional value is may-flow; no path feasibility proof')
@@ -482,6 +494,14 @@ class LocalFlow:
 
     def addstep(self,flows,text):
         return tuple(Flow(f.steps+(text,)) for f in flows)
+
+    @staticmethod
+    def store_value(env, destination, flows):
+        values=tuple(dict.fromkeys(flows))
+        env[destination]=values
+        if '.' in destination:
+            root=destination.split('.',1)[0]
+            env[root]=tuple(dict.fromkeys(tuple(env.get(root,()))+values))
 
     def literal(self,n):
         if n.type=='concatenated_string':
@@ -532,9 +552,10 @@ class LocalFlow:
             if fd is not None and len(parameters)==len(args):
                 matches.append((self,definition,parameters,fn))
         cross_file=False
+        partial_binding=False
         if not local_definitions and self.resolver is not None:
             matches,status=self.resolver.resolve(fn,len(args),fnname,self.u.path)
-            if status in ('ambiguous','partial','budget'):
+            if status in ('ambiguous','budget') or (status == 'partial' and len(matches) != 1):
                 self.gaps.add('cross-file helper call could not be bound uniquely: '+fn)
                 if call_node is not None:
                     self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
@@ -542,6 +563,13 @@ class LocalFlow:
                 return True
             if status == 'unique':
                 cross_file=True
+            elif status == 'partial':
+                cross_file=True
+                partial_binding=True
+                self.gaps.add('cross-file helper body summary is partial evidence; caller candidate is retained: '+fn)
+                if call_node is not None:
+                    self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                                'callee body is inside a partial translation unit')
             else:
                 return False
         elif not local_definitions:
@@ -641,7 +669,7 @@ class LocalFlow:
                     self.addstep(writes,
                                  f'{call_line} {callee_name} may write through argument {index}'))
         for actual,flows in outputs.items():
-            env[actual]=tuple(dict.fromkeys(tuple(env.get(actual,()))+tuple(flows)))
+            self.store_value(env,actual,tuple(env.get(actual,()))+tuple(flows))
         call_flows=self.addstep(tuple(dict.fromkeys(returned)),
                                 f'{call_line} return from {callee_name}')
         if call_node is not None:
@@ -649,10 +677,27 @@ class LocalFlow:
 
         # A body summary that neither reaches a modeled sink nor returns/writes
         # tainted material is not a clean proof: preserve the escape candidate.
-        if (cross_file and not new_callee_findings and not returned and not outputs
-                and call_node is not None):
+        if (cross_file and not partial_binding and not new_callee_findings
+                and not returned and not outputs and call_node is not None):
             self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
                                         'bounded helper body did not establish a sink or a safe value summary')
+        return True
+
+    def unresolved_member_destination(self,node,types=None):
+        if node is None or node.type!='field_expression':
+            return False
+        base=node.child_by_field_name('argument')
+        operator=self.text(node.child_by_field_name('operator'))
+        field=self.text(node.child_by_field_name('field'))
+        if base is None or base.type!='identifier' or not field:
+            return True
+        if operator=='->':
+            return True
+        if operator=='.':
+            root=self.text(base)
+            type_name=(types or {}).get(root)
+            return (not type_name or type_name not in self.fields
+                    or type_name in self.type_conflicts)
         return True
 
     def lvalue(self,node,types=None):
@@ -664,11 +709,14 @@ class LocalFlow:
             base=node.child_by_field_name('argument')
             field=self.text(node.child_by_field_name('field'))
             operator=self.text(node.child_by_field_name('operator'))
-            if (operator=='.' and base is not None and base.type=='identifier'
-                    and types and types.get(self.text(base)) in self.fields
-                    and self.fields.get(types[self.text(base)])==field
-                    and types[self.text(base)] not in self.type_conflicts):
-                return self.text(base)+'.'+field
+            if (operator in ('.','->') and base is not None
+                    and base.type=='identifier' and field):
+                root=self.text(base)
+                if (operator=='.' and types and types.get(root) in self.fields
+                        and self.fields.get(types[root])!=field
+                        and types[root] not in self.type_conflicts):
+                    return ''
+                return root+'.'+field
             return ''
         if node.type in ('pointer_expression','unary_expression'):
             op=self.text(node.child_by_field_name('operator'))
@@ -712,6 +760,11 @@ class LocalFlow:
                 self.gaps.add('same-owner unqualified method call is ambiguous: '+fn)
         if fn in ('strlen','strnlen','strnlen_s','wcslen') and not locally_defined:
             return
+        if (fn in self.non_escaping_calls and not locally_defined
+                and fn not in self.shadows):
+            if any(self.expr(arg,env,types) for arg in args):
+                self.gaps.add('exact source model classifies '+fn+' as cleanup, not an exposure sink')
+            return
         if locally_defined and (fn in self.output_calls or fn in self.copy_calls):
             self.gaps.add('modeled source/transform name has a same-file definition; API identity unresolved: '+fn)
             return
@@ -721,7 +774,7 @@ class LocalFlow:
                 dst=self.lvalue(args[0],types)
                 if dst:
                     source=args[2] if len(args)>2 else args[-1]
-                    env[dst]=self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
+                    self.store_value(env,dst,self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
                 else:
                     self.emit_unresolved_escape(fn,args,env,types,n,fnname,
                                                 'same-file copy-like callee may write sensitive input to an unresolved destination')
@@ -732,7 +785,7 @@ class LocalFlow:
                 dst=self.lvalue(args[0],types)
                 if dst:
                     flows=tuple(flow for arg in args[1:] for flow in self.expr(arg,env,types))
-                    env[dst]=self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
+                    self.store_value(env,dst,self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
                 else:
                     self.emit_unresolved_escape(fn,args,env,types,n,fnname,
                                                 'same-file formatting callee may write sensitive input to an unresolved destination')
@@ -760,7 +813,13 @@ class LocalFlow:
                 self.gaps.add('source API argument count unresolved');return
             if index<len(args):
                 dst=self.lvalue(args[index],types)
-                if dst:env[dst]=(self.source(fn+' output argument '+str(index),n),)
+                if dst:
+                    source=self.source(fn+' output argument '+str(index),n)
+                    self.store_value(env,dst,(source,))
+                    if self.unresolved_member_destination(args[index],types):
+                        self.emit_unresolved_flows(fn,n,fnname,(source,),
+                            'modeled sensitive source writes to a destination whose identity is unresolved',
+                            'destination_binding')
                 else:
                     self.gaps.add('complex source output destination')
                     source=self.source(fn+' output argument '+str(index),n)
@@ -773,7 +832,13 @@ class LocalFlow:
                 self.gaps.add('copy API argument count unresolved');return
             dst=self.lvalue(args[0],types)
             if dst:
-                env[dst]=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
+                flows=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
+                self.store_value(env,dst,flows)
+                if self.unresolved_member_destination(args[0],types) and flows:
+                    self.gaps.add('pointer/member destination retained as a may-flow; object identity and aliasing remain unknown')
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                        'sensitive bytes are copied to a destination whose identity is unresolved (member object binding is unknown)',
+                        'destination_binding')
             else:
                 self.gaps.add('member/pointer output copy unsupported')
                 flows=tuple(dict.fromkeys(flow for value in args
@@ -792,7 +857,13 @@ class LocalFlow:
                 vals=tuple(v for _,ids,_ in slots for i in ids for v in self.expr(operands[i],env,types))
                 dst=self.lvalue(args[0],types)
                 if dst:
-                    env[dst]=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
+                    flows=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
+                    self.store_value(env,dst,flows)
+                    if self.unresolved_member_destination(args[0],types) and flows:
+                        self.gaps.add('pointer/member destination retained as a may-flow; object identity and aliasing remain unknown')
+                        self.emit_unresolved_flows(fn,n,fnname,flows,
+                            'sensitive formatted bytes use a destination whose identity is unresolved (member object binding is unknown)',
+                            'destination_binding')
                 elif vals:
                     self.gaps.add('member/pointer formatting destination identity unresolved')
                     flows=tuple(dict.fromkeys(flow for value in args
@@ -816,8 +887,14 @@ class LocalFlow:
             destination = self.lvalue(args[destination_index], types)
             flows = self.expr(args[source_index], env, types)
             if destination:
-                env[destination] = self.addstep(
+                written=self.addstep(
                     flows, f'{n.start_point[0]+1} {fn} -> {destination}')
+                self.store_value(env,destination,written)
+                if self.unresolved_member_destination(args[destination_index],types) and written:
+                    self.gaps.add('pointer/member destination retained as a may-flow; object identity and aliasing remain unknown')
+                    self.emit_unresolved_flows(fn,n,fnname,written,
+                        'sensitive bytes pass through a modeled encoder to a destination whose identity is unresolved (member object binding is unknown)',
+                        'destination_binding')
             elif flows:
                 self.gaps.add('modeled copy destination identity unresolved: '+fn)
                 self.emit_unresolved_flows(
@@ -944,7 +1021,8 @@ class LocalFlow:
             if destination:
                 op=self.text(node.child_by_field_name('operator'))
                 if op!='=':self.gaps.add('compound assignment semantics incomplete')
-                state.values[destination]=self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}')
+                self.store_value(state.values,destination,
+                    self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}'))
             else:self.gaps.add('pointer/member assignment requires alias proof')
             return
         if node.type=='binary_expression' and self.text(node.child_by_field_name('operator')) in ('&&','||'):

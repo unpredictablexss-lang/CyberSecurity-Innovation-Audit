@@ -27,7 +27,7 @@ class SensitiveTests(unittest.TestCase):
         c=self.context(source,**kwargs)
         return SensitiveExposureDetector(MODEL).detect(c,c.units)
 
-    def analyze_many(self, sources):
+    def analyze_many(self, sources, partial_paths=()):
         git_sources=[]
         for path,source in sources:
             data=source.encode()
@@ -36,7 +36,11 @@ class SensitiveTests(unittest.TestCase):
                 hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(),
                 data))
         units,ast,_=index_sources(tuple(git_sources))
-        units=tuple(sorted(units,key=lambda unit:unit.path))
+        units=tuple(sorted(
+            (replace(unit,parse_status='partial') if unit.path in partial_paths else unit
+             for unit in units), key=lambda unit:unit.path))
+        for path in partial_paths:
+            ast[path]['parse_status']='partial'
         request=ScanRequest('d-interfile',MODEL.repository,MODEL.commit,
                             snapshot_digest(units),'current-component:'+MODEL.repository)
         context=ScanContext(request,units,{'ast':ast})
@@ -146,6 +150,18 @@ class SensitiveTests(unittest.TestCase):
         self.assertEqual(run.status,'blocked')
         self.assertTrue(all(state=='partial' for _,state in run.file_outcomes))
 
+    def test_partial_cross_file_body_adds_may_finding_and_keeps_caller_candidate(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { relay(key); }'),
+            ('logging.cpp','void relay(const char *value) { HILOG_INFO(1,"%{public}s",value); }'),
+        ),partial_paths=('logging.cpp',))
+        self.assertTrue(any(f.rule_id=='data.log.sensitive-value'
+                            and f.file=='logging.cpp' for f in run.findings))
+        self.assertTrue(any(f.rule_id=='data.sensitive.unresolved-escape'
+                            and f.file=='service.cpp' for f in run.findings))
+        self.assertTrue(all(state=='partial' for _,state in run.file_outcomes))
+        self.assertEqual(run.status,'blocked')
+
     def test_cross_file_helper_return_reaches_caller_sink(self):
         run=self.analyze_many((
             ('service.cpp','void Callback(const char *key) { const char *copy = relay(key); HILOG_INFO(1,"%{public}s",copy); }'),
@@ -156,6 +172,31 @@ class SensitiveTests(unittest.TestCase):
         self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
         self.assertIn('call relay argument 0',run.findings[0].message)
         self.assertIn('return from relay',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
+
+    def test_reviewed_cleanup_apis_do_not_emit_escape_candidates(self):
+        source='''void Callback(const char *key) {
+            SoftBusFree((void *)key);
+            memset_s((void *)key, 32, 0, 32);
+        }'''
+        model=replace(MODEL,non_escaping_calls=('SoftBusFree','memset_s'))
+        context=SensitiveTests().context(source)
+        run=SensitiveExposureDetector(model).detect(context,context.units)
+        self.assertEqual(run.findings,())
+        self.assertIn('classifies SoftBusFree as cleanup',
+                      ' '.join(run.limitations))
+
+    def test_member_copy_is_retained_and_flows_through_returned_object(self):
+        run=self.analyze(
+            'struct Box { char *data; }; '
+            'Box *make(const char *value) { Box *box=(Box *)SoftBusCalloc(sizeof(Box)); '
+            'memcpy_s(box->data,64,value,32); return box; } '
+            'void Callback(const char *key) { Box *box=make(key); '
+            'HILOG_INFO(1,"%{public}s",box->data); }')
+        self.assertTrue(any(f.rule_id=='data.sensitive.unresolved-escape'
+                            and 'member object binding is unknown' in f.message for f in run.findings))
+        self.assertTrue(any(f.rule_id=='data.log.sensitive-value'
+                            and 'return from make' in f.message for f in run.findings))
         self.assertEqual(run.status,'blocked')
 
     def test_cross_file_local_sink_name_is_not_credited_without_body_binding(self):

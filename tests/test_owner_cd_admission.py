@@ -27,7 +27,7 @@ class AdmissionBoundaryTests(unittest.TestCase):
         self.assertEqual(metadata['kind'], 'research_candidate')
         self.assertFalse(metadata['default_enabled'])
         detector = build_registry((ident,)).detectors()[0]
-        self.assertEqual(detector.version, '0.20.0')
+        self.assertEqual(detector.version, '0.21.0')
         self.assertNotIn(ident, {row['id'] for row in pending_admissions()})
         automatic = plan_audit(manifest(), approved_metadata())
         automatic_row = next(row for row in automatic['detectors'] if row['id'] == ident)

@@ -24,6 +24,8 @@ class SensitiveSourceModel:
     parameters: tuple = (('core/authentication/src/auth_hichain.c', 'OnSessionKeyReturned', 1),)
     provenance: str = 'Reviewed pinned dsoftbus key declarations; research model, not product policy'
     additional_sinks: tuple = ()
+    # Exact reviewed cleanup APIs consume/clear bytes but are not exposure sinks.
+    non_escaping_calls: tuple = ()
 
 @dataclass(frozen=True)
 class ExposureSinkModel:
@@ -83,7 +85,9 @@ STATUS_RETURN_CALLS = frozenset({
     'AniUtils::GenerateCredentialObj',
 })
 
-DEFAULT_SOURCE = SensitiveSourceModel('openharmony/communication_dsoftbus', DSOFTBUS_COMMIT)
+DEFAULT_SOURCE = SensitiveSourceModel(
+    'openharmony/communication_dsoftbus', DSOFTBUS_COMMIT,
+    non_escaping_calls=('SoftBusFree', 'memset_s'))
 # This exact newer tree was checked against the same source contract: SessionKey.value
 # and AES key fields still contain key bytes; OnSessionKeyReturned arg 1 receives
 # the key; SoftBusGenerateSessionKey writes bytes through arg 0. This adds only
@@ -102,6 +106,7 @@ DSOFTBUS_CURRENT_SOURCE = SensitiveSourceModel(
         'to argument 0. This is a static component model, not product exposure proof.'
     ),
     additional_sinks=DEFAULT_SOURCE.additional_sinks,
+    non_escaping_calls=DEFAULT_SOURCE.non_escaping_calls,
 )
 
 ACCESS_TOKEN_COMMIT = '3be426c558613e7c7af92a591c2bfaeb6af06b60'
