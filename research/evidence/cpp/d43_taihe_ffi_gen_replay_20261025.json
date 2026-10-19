@@ -1,0 +1,459 @@
+{
+  "schema_version": "d43-taihe-ffi-gen-sharedptr-replay-v1",
+  "task": "D43",
+  "base_head": "aacc11729e95d19171fdbf70c30859ce2a05e246",
+  "structured_vibe_prompt": {
+    "role": "A线 C/C++ shared_ptr_race 开发与源码复核负责人",
+    "sustained_goal": "对 A0 固定来源中的共享指针语法候选逐案追踪同一 wrapper 的所有权、读写、同步、构建和线程生命周期；只有存在可证明的产品级同对象未同步并发 root 时才提出规则变化。",
+    "inputs": {
+      "a0_ids": "CR-0197–CR-0213",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "detector": "ohscanner.cpp.shared_ptr_race 0.5.1"
+    },
+    "steps": [
+      "绑定每个 A0 ID 的 commit/tree/blob/SHA 并运行当前生产 CLI，记录解析覆盖、规则版本、位置和耗时。",
+      "核对 author 文件、组件 GN/build target 与 production inclusion；不要将目录名或 shared_ptr 成员直接当成产品漏洞。",
+      "逐个 shared_ptr wrapper 追踪写入/读取/reset/复制、对象别名、锁/原子和调用线程生命周期。",
+      "若根因只在测试或作者占位实现，保留语法候选与产品结论 unknown；若有生产漏检，冻结精确源码后才改 detector 并交独立测试线。",
+      "原始 A0 状态、缺失修复/线程/产品配置证据均保持，不把未命中或完整解析解读为安全。"
+    ],
+    "completion_gate": "17 个来源绑定位置均有可复跑 CLI 映射、build/test-only 证据与同对象同步/线程结论；若规则变化则由独立线复验正例及安全/修复对照；A0 与范围检查通过。",
+    "boundaries": [
+      "不改 A0 状态、公共 API/schema 或 Catalog。",
+      "语法候选不等于数据竞争；完整解析不代表线程/跨模块上下文完整。",
+      "不据零 finding、test 文件名或 build 缺项宣称产品安全。"
+    ]
+  },
+  "source": {
+    "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+    "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+    "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+    "identity_verified_from_local_git_objects": true,
+    "files": [
+      {
+        "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+        "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+        "sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+        "bytes": 7598,
+        "lines": 244
+      },
+      {
+        "path": "test/ra_napi_image/author/include/image_source_taihe.h",
+        "blob": "c6272d8afbb19537b74c2548be62a3764342204d",
+        "sha256": "0d15a3fdbfdb19c9fc0736ca7e0d87a756cbbef2ca230c255d919109cbf87c6c",
+        "bytes": 2617,
+        "lines": 72
+      }
+    ],
+    "build_file": {
+      "path": "BUILD.gn",
+      "blob": "8246cde93862bd16967667b1fd2db6e31ac135b7",
+      "sha256": "3ed91e30bf5e65838f85b8d6c707a8d9162b9dba8958a0e93543b089a615b5d0",
+      "result": "no references to either queued author source; tracked source tree has no BUILD.gn beneath either author directory; root targets package Taihe compiler/runtime outputs"
+    },
+    "context_file": {
+      "path": "test/ra_napi_image/author/src/image_source_taihe.cpp",
+      "blob": "b6e0055d0b4af7d18d923937e89eec72e326f69b",
+      "sha256": "1837d19ce398308557341388a9e3579834c194eb828fad00098d796b7fe54c18",
+      "result": "explicit test-file comment; async worker context can call GetIncrementalPixelMap; imageSourceCrossThreadMutex_ has one declaration and no visible use"
+    }
+  },
+  "cli": {
+    "raw_json": "d43_taihe_ffi_gen_cli_20261025.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse": {
+      "complete": 2
+    },
+    "scope_files": 2,
+    "scope_loc": 316,
+    "finding_count": 16,
+    "elapsed_seconds": 0.013040499998169253,
+    "command": "python -m src.cli ohscan-run --repo-dir <local-bare-source-object-store> --repository openharmony/arkcompiler_taihe_ffi_gen --commit d91f43e80d892bca694c6b0fce8ea27cd644919f --include test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp --include test/ra_napi_image/author/include/image_source_taihe.h --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "queue": {
+    "audited_ids": [
+      "CR-0197",
+      "CR-0198",
+      "CR-0199",
+      "CR-0200",
+      "CR-0201",
+      "CR-0202",
+      "CR-0203",
+      "CR-0204",
+      "CR-0205",
+      "CR-0206",
+      "CR-0207",
+      "CR-0208",
+      "CR-0209",
+      "CR-0210",
+      "CR-0211",
+      "CR-0212",
+      "CR-0213"
+    ],
+    "states_changed": false,
+    "status_counts": {
+      "not_testable": 17,
+      "paused_pending_evidence": 17
+    }
+  },
+  "items": [
+    {
+      "queue_id": "CR-0197",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:79e51c0229cccd3a",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "71",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "PixelMapImpl(std::shared_ptr<OHOS::Media::PixelMap> ptr) : m_pdata(ptr)",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8d6286e5eafb34fd"
+      }
+    },
+    {
+      "queue_id": "CR-0198",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:de54cea01a9c9bbf",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "77",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "if (this->m_pdata != nullptr) {",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:880bc0ba329b194d"
+      }
+    },
+    {
+      "queue_id": "CR-0199",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d425904fa46cf5ba",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "78",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata = nullptr;",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3ad2d1d372fafff8"
+      }
+    },
+    {
+      "queue_id": "CR-0200",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8b7859ed80be46fa",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "93",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->GetImageInfo(imgInfo);",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:26c9c90f2b13cc18"
+      }
+    },
+    {
+      "queue_id": "CR-0201",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:151952632e5f40a0",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "100",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->IsHdr()};",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:bf85e66d6de6c9b6"
+      }
+    },
+    {
+      "queue_id": "CR-0202",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:82d716753c9f0d3e",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "105",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "return this->m_pdata->GetRowBytes();",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:fd51492cdc79af3b"
+      }
+    },
+    {
+      "queue_id": "CR-0203",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:797234d8c528c9ff",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "110",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "return this->m_pdata->GetByteCount();",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:624d7032e82ec827"
+      }
+    },
+    {
+      "queue_id": "CR-0204",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:514e38dbc06c9c99",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "115",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->ReadPixels(buff.size(), buff.data());",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c4b7b7f2942f8f07"
+      }
+    },
+    {
+      "queue_id": "CR-0205",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:9f467dc7ac8c3150",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "121",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->scale(static_cast<float>(x), static_cast<float>(y), OHOS::Media::AntiAliasingOption::NONE);",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:1ea1fecb0e6dc1fb"
+      }
+    },
+    {
+      "queue_id": "CR-0206",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:f58a12a1785b31ae",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "127",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->scale(static_cast<float>(x), static_cast<float>(y),",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:5d42d40f86152d59"
+      }
+    },
+    {
+      "queue_id": "CR-0207",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:91f03e860a807027",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "135",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->crop(rect);",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6bb80129cb32948f"
+      }
+    },
+    {
+      "queue_id": "CR-0208",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:529dcf6d71d50e19",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "141",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata->flip(horizontal, vertical);",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:150c0d2b5aa5e7d8"
+      }
+    },
+    {
+      "queue_id": "CR-0209",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:bda385760db60213",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "147",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata.reset();",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:90e903ce531fb54a"
+      }
+    },
+    {
+      "queue_id": "CR-0210",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a9d8444140e78d1d",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "172",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata = OHOS::Media::ImageSource::CreateImageSource(this->filePath_, opts, errorCode);",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:14c582e97324b03b"
+      }
+    },
+    {
+      "queue_id": "CR-0211",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:80b6d01164f09d57",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "180",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata = OHOS::Media::ImageSource::CreateImageSource(fd, opts, errorCode);",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:dc40f6c2ce9e21a6"
+      }
+    },
+    {
+      "queue_id": "CR-0212",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:3400f98fda9ae2c0",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ani_image/author/src/ohos.multimedia.image.image.impl.cpp",
+      "line": "232",
+      "blob": "a0e7116bdf27039a501afcfe6f4db230747ab5a5",
+      "source_sha256": "51effc15ca86525f989a81241ad5a33bca8cdf7c1cfbf54b0e00ac1d34f033f6",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "this->m_pdata.reset();",
+      "finding": {
+        "matched": true,
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "m_pdata",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:f12d5f19f8387b31"
+      }
+    },
+    {
+      "queue_id": "CR-0213",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:e2cd1413821a7954",
+      "repository": "openharmony/arkcompiler_taihe_ffi_gen",
+      "commit": "d91f43e80d892bca694c6b0fce8ea27cd644919f",
+      "tree": "8c5eecdad09e2fe960ce5f3728959a4726f0a91d",
+      "path": "test/ra_napi_image/author/include/image_source_taihe.h",
+      "line": "57",
+      "blob": "c6272d8afbb19537b74c2548be62a3764342204d",
+      "source_sha256": "0d15a3fdbfdb19c9fc0736ca7e0d87a756cbbef2ca230c255d919109cbf87c6c",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "source_line": "return navIncPixelMap_;",
+      "finding": {
+        "matched": false,
+        "reason": "no_current_finding_at_a0_line"
+      }
+    }
+  ],
+  "assessment": {
+    "classification": "PARTIAL",
+    "summary": "CR-0197–CR-0212 all map to syntax findings on m_pdata in a source file explicitly marked 'This file is a test file.' CR-0213 binds a shared_ptr member in another author header but has no exact current finding. The source objects are under test/.../author and root BUILD.gn contains no references to them or registered test GN target. No concurrent callers, production inclusion, synchronization contract, trusted fixed object, or impact is established.",
+    "same_object_facts": [
+      "CR-0197–CR-0209 refer to PixelMapImpl::m_pdata or ImageSourceImpl::m_pdata in one test implementation file; operations include member initialization, reads through native PixelMap methods, and reset/release.",
+      "CR-0210–CR-0212 map ImageSourceImpl::m_pdata construction/release operations in the same explicit test implementation file.",
+      "CR-0213 line 57 is the const GetIncrementalPixelMap() accessor returning navIncPixelMap_; the associated test implementation's async worker helper invokes this accessor, but the shared object setter/initialization path is not present in the inspected author files.",
+      "Related image_source_taihe.cpp is also explicitly marked as a test file. It declares imageSourceCrossThreadMutex_ exactly once with no visible use, while thread-local path/buffer state is present. No mutex/atomic synchronization around the queued wrappers or target-derived thread overlap was established; external test/build integration remains unknown."
+    ],
+    "limitations": [
+      "production inclusion and target-derived callers unbound",
+      "cross-repository callers, external harness registration, and full framework lifecycle not audited",
+      "no trusted fixed source or safe/fixed control for this component case",
+      "CLI syntax locations do not establish dynamic data races"
+    ]
+  }
+}
