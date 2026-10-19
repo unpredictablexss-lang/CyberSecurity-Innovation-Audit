@@ -260,7 +260,7 @@ D2 的 profile `--verify-only` 会重建当前 checkout/主机上的整个 paylo
 
 ### C12 CFG 元数据消费者缺口
 
-运行时复核发现 `runtime_ir.py` 生成 `loop_backedges`，现有 `test_c12_deep_semantics.py` 只检查配对数量与解析限制；8429480 分析路径未消费该 metadata，循环处理仍用 `graph.cyclic_nodes`。因此只能声称“记录并审计指定 LoopEnd→LoopBegin 配对”，不能声称 metadata 已改善 detector reachability 或 finding。下一轮需单独设计 D3/T3：D3 要么将 backedge 关联接入一个真实 observation 并以正/修/安/unknown 对照证明变化，要么明确维持 instrumentation-only；T3 独立增加可复现的行为断言。没有 observation 层差异则不合并声称检测能力提升。
+基线复核发现 `runtime_ir.py` 生成 `loop_backedges`，但分析器只读 `graph.cyclic_nodes`；单测原先仅检查配对计数，不能证明 observation 使用了回边配对。D3/T3 已完成一次最小行为闭环：发现 IBS5YG fixed 源码把 `NewTypedArraySameType` 创建与 store 同置于完整生成式回边时，会被错误提升成 candidate；未解析 LoopEnd 也可能留下 candidate observation。D3 提交 `bb8887e04f9c1e4a847d19be9036a430b1bff56f` 仅在 `same-type:*` 创建与 candidate sink 同处已验证 backedge 区间时将 observation 降为 `unknown/loop_allocation_identity_unmodeled`；未解析 LoopEnd 只将最近 LoopBegin 到该 LoopEnd 区间内的 candidate 降为 `unknown/unresolved_generated_edge`。区间外 candidate 不变。T3 提交 `52ba181d912dca3dff76ab431ff89adad5b96649` 在 D3 精确 SHA 上独立运行 3/3 通过：parent exit candidate、fixed allocation+sink loop unknown、tuple 消融后 fixed 恢复 candidate、allocation 在环外/sink 在环内的 parent/fixed 控制、独立 safe_same_type matched，以及 unresolved edge fail-closed。此测试表明回边 tuple 对 fixed 的 observation 有因果作用；不表示产品漏洞成立或全局 CFG 精确。
 
 ### 产品证据优先级
 
@@ -273,3 +273,5 @@ D3（开发线）：你负责 C12 loop_backedges 数据流。先核对冻结基�
 
 T3（独立测试线）：独立检查 loop_backedges 的生产与消费语义，不参与 D3 实现。以冻结的正例、修复例、安全/无关例和 unknown 例构造行为级断言，验证完整 LoopEnd→LoopBegin 关联是否改变真实 observation 及证据链；不接受“配对数量正确”作为行为验收。若 D3 选择 instrumentation-only，验收该限制被准确记录且 detector observation 不被错误归因。负例回传 D3 修复后独立复测；只改 T3 allowlist，提交逐例 expected/actual、命令、哈希和 scope check。
 ```
+
+D3/T3 此轮状态：D3/T3 开发/独立测试已完成；D3/T3 分支各自 scope check 相对基线 74971572e3eac6b743c0e91d75c6c45d00c2067c 无违规，git diff --check 通过，T3 在精确 D3 SHA 上通过。下一轮优先推进 G12-PC-1 的 IBS5YG 产品 profile 证据：需产品 owner 提供具体发行版本与源码 pin、GN/build action/args、toolchain/sysroot、完整 include/generated inputs、预处理 TU 与 binary 映射；缺任一项就保持 BLOCKED。真实 holdout PC-2 仍需独立抽样框、两名 reviewer 和一名 adjudicator。
