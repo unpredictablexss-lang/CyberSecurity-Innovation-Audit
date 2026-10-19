@@ -72,6 +72,7 @@
     "product_applicability": "unknown",
     "product_vulnerability": "unknown",
     "runtime_authorization": "unknown",
-    "suppression_semantics": "local syntax shape only; not CFG, dominance, alias, caller, framework, or permission-contract proof"
+    "suppression_semantics": "local syntax shape only; not CFG, dominance, alias, caller, framework, or permission-contract proof",
+    "throw_control_limit": "throw is accepted as a syntactic exit; local catch/unwind semantics are not modeled"
   }
 }
