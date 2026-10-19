@@ -111,6 +111,10 @@ def create_app(settings=None):
                 return JSONResponse({"detail": "request too large"}, status_code=413)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
         response.headers["Cache-Control"] = "no-store"
         return response
 
@@ -148,7 +152,7 @@ def create_app(settings=None):
     @app.get("/api/v1/health")
     def health():
         from .agent import public_status
-        agent = public_status()
+        agent = public_status(settings.data_dir)
         return {
             "status": "ok",
             "version": "0.1.0",

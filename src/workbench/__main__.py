@@ -7,6 +7,7 @@ import signal
 import subprocess
 import sys
 import time
+from .worker_env import worker_child_environment
 
 
 def main():
@@ -32,12 +33,14 @@ def main():
                 [sys.executable, "-m", "src.workbench.worker"],
                 cwd=root,
                 start_new_session=True,
+                env=worker_child_environment(os.environ),
             )
         )
         processes.append(subprocess.Popen(
             [sys.executable, "-m", "src.workbench.operation_worker"], cwd=root, start_new_session=True))
         processes.append(subprocess.Popen(
-            [sys.executable, "-m", "src.workbench.operation_worker", "--validation"], cwd=root, start_new_session=True))
+            [sys.executable, "-m", "src.workbench.operation_worker", "--validation"], cwd=root,
+            start_new_session=True, env=worker_child_environment(os.environ)))
         processes.append(
             subprocess.Popen(
                 [

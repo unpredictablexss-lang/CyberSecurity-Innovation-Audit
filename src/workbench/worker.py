@@ -12,6 +12,7 @@ import time
 from .settings import Settings
 from .store import Store
 from .service import artifact_dir, sha, check_repository
+from .worker_env import remove_agent_provider_environment, worker_child_environment
 
 
 class Worker:
@@ -61,6 +62,7 @@ class Worker:
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     start_new_session=True,
+                    env=worker_child_environment(os.environ),
                 )
                 with self.store.connect() as db:
                     db.execute(
@@ -182,7 +184,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--once", action="store_true", help="drain queue and exit")
     args = parser.parse_args()
-    Worker(Settings.from_env()).run(args.once)
+    settings = Settings.from_env()
+    remove_agent_provider_environment(os.environ)
+    Worker(settings).run(args.once)
 
 
 if __name__ == "__main__":
