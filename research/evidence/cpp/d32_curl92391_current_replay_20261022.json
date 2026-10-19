@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "task": "D32",
+  "date": "2026-10-22",
+  "scanner": {
+    "branch": "codex/a-d32-curl92391-20261022",
+    "head": "385e0266301793a45d9df84f7a18a3f1a3b07efc",
+    "entrypoint": "python -m src.cli ohscan-run",
+    "detector_id": "ohscanner.cpp.resource_lifetime",
+    "detector_version": "0.4.2",
+    "rule_id": "ohcpp-resource-lifetime-recursive-cleanup-candidate-003",
+    "rule_version": "0.4.2",
+    "profile": "light-ast",
+    "scope": ["lib/mime.c"]
+  },
+  "source_store": {
+    "path": "D:/openHarmonyScanner/tmp/curl-upstream-pins-20261019.git",
+    "kind": "preexisting local bare Git object store",
+    "network_fetch_performed": false,
+    "repository": "curl/curl"
+  },
+  "cases": [
+    {
+      "variant": "vulnerable",
+      "commit": "01346829096c61b372692f6dc43ffa778c6caccd",
+      "tree": "6ae23d9333713707a02588b44ed238a50e8b3bde",
+      "file": "lib/mime.c",
+      "blob": "600437576581be08f9026881c39178857a1c5939",
+      "source_sha256": "1f3388f52881524fda0bc11c453aca75adda7d7e77d65393ec558d396dc3483d",
+      "report": "d32_curl92391_vulnerable_20261022.json",
+      "parse_status": "complete",
+      "coverage": {"complete": 1, "partial": 0, "not_analyzed": 0, "failed": 0},
+      "status": "completed",
+      "elapsed_seconds": 0.0817072999998345,
+      "finding_count": 1,
+      "finding": {
+        "file": "lib/mime.c",
+        "line": 1118,
+        "symbol": "curl_mime_free",
+        "rule_id": "ohcpp-resource-lifetime-recursive-cleanup-candidate-003",
+        "candidate_cwe": "CWE-674",
+        "severity": "unassessed",
+        "source_binding_status": "bound"
+      }
+    },
+    {
+      "variant": "fixed",
+      "commit": "d7546809d5bd548b69ec49fca26565c8f6f0d344",
+      "tree": "52a8416729366487cdd3b6012071f5f8370e769f",
+      "file": "lib/mime.c",
+      "blob": "3522679a16e2fa560c581413bf946d38e332bea4",
+      "source_sha256": "ea7f9adccf81b578d97e8b6e115535e043b7f8c589177a2597963a4f12462b81",
+      "report": "d32_curl92391_fixed_20261022.json",
+      "parse_status": "complete",
+      "coverage": {"complete": 1, "partial": 0, "not_analyzed": 0, "failed": 0},
+      "status": "completed",
+      "elapsed_seconds": 0.07751869999992778,
+      "finding_count": 0,
+      "finding": null
+    }
+  ],
+  "regression_controls": {
+    "command": "python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v",
+    "tests_run": 8,
+    "result": "PASS",
+    "classes": [
+      "recursive cleanup positive",
+      "fixed/unrelated/unknown controls",
+      "deterministic output and budget",
+      "hash-bound fixture manifest",
+      "resource exhaustion rule separation",
+      "partial-status preservation"
+    ],
+    "limitation": "Fixture controls are mechanism regressions, not independent real-world safe labels."
+  },
+  "disposition": {
+    "static_pair_regression": "PASS",
+    "product_vulnerability_confirmation": "NOT_ASSESSED",
+    "parser_partial": false,
+    "detector_change_made": false,
+    "a0_ledger_modified": false,
+    "notes": [
+      "Current 0.4.2 detector reproduces the vulnerable candidate and exact fixed-source delta on complete target-file parses.",
+      "No product build, product reachability, attacker control, stack limit, or impact is established by these static runs.",
+      "No real-world safe/unrelated source controls were supplied; the exact fix and synthetic mechanism controls are available."
+    ]
+  }
+}
