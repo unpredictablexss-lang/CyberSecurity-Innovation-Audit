@@ -13,6 +13,8 @@ Date: 2026-10-20 (Asia/Shanghai)
 
 ## Latest wave results
 
+- T58 independently audited mechbody controller IPC candidates CR-0116–CR-0118. The current IPC CLI reproduces all three exact-line candidates with complete parsing of the selected files. Source confirms custom token checks before dispatch, while the token differs from the declared interface descriptor; product-shaped GN targets exist, but product selection, caller reachability/authorization, and security impact remain unknown. Preserve all three original A0 statuses as `not_testable / paused_pending_evidence`; disposition PARTIAL/BLOCK. See [T58 addendum](a_line_parallel_queue_20261020_T58_addendum.md), [audit report](t58_mechbody_controller_ipc_audit_20261029.md), and [verifier](t58_mechbody_controller_ipc_audit_20261029.py).
+
 - D14: no detector change. `pngrutil.c` full translation units remain partial with 72 issues; `png_handle_iCCP` remains partial. The stale zstream ownership transition requires cross-function state modeling; current evidence does not isolate a narrow rule gap.
 - D15: no detector change. Three pairs of residual writes use shared `curIndex`; the `argsSize + flowbufSize` to `int` narrowing and cross-loop cursor invariant are not proven. Vulnerable/fixed CLI output keeps root-specific 6/0 while the six residual findings remain on both sides; safe/unrelated controls are quiet and partial controls remain limited.
 - T11: independently fetched vulnerable/fixed commits and verified tree/blob/file identities. The full-file and fragment outcomes remain blocked/partial; zero findings do not establish a fixed differential.
