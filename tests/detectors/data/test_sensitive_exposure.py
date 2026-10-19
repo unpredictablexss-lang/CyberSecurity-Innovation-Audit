@@ -9,7 +9,7 @@ from src.ohscanner.git_source import GitSource
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.data.models import (
-    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, IOTC_LOCAL_CONTROL_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
+    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, DSOFTBUS_CURRENT_SOURCE, IOTC_LOCAL_CONTROL_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
 from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats, looks_sensitive_name
 
 MODEL=SensitiveSourceModel('fixture/d-sensitive','d'*40,parameters=(('service.cpp','Callback',0),),provenance='Synthetic model for regression only; no real vulnerability')
@@ -65,14 +65,29 @@ class SensitiveTests(unittest.TestCase):
             'interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp',
             'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) { '
             'LOGI(ATM_DOMAIN, ATM_TAG, "TokenID=%{public}u", tokenID); }')
+        dsoftbus_current = analyze(
+            DSOFTBUS_CURRENT_SOURCE.repository, DSOFTBUS_CURRENT_SOURCE.commit,
+            'core/authentication/src/auth_hichain.c',
+            'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t sessionKeyLen) { '
+            'AUTH_LOGI(AUTH_HICHAIN, "key=%{public}s", sessionKey); }')
+        dsoftbus_current_safe = analyze(
+            DSOFTBUS_CURRENT_SOURCE.repository, DSOFTBUS_CURRENT_SOURCE.commit,
+            'core/authentication/src/auth_hichain.c',
+            'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t sessionKeyLen) { '
+            'AUTH_LOGI(AUTH_HICHAIN, "len=%{public}u", sessionKeyLen); }')
         self.assertEqual(len(dsoftbus.findings), 1)
         self.assertEqual(len(access_token.findings), 1)
+        self.assertEqual(len(dsoftbus_current.findings), 1)
+        self.assertEqual(len(dsoftbus_current_safe.findings), 0)
         self.assertEqual(len(dsoftbus.findings[0].source_sha256), 64)
         self.assertEqual(len(access_token.findings[0].source_sha256), 64)
         self.assertNotEqual(dsoftbus.findings[0].source_sha256,
                             access_token.findings[0].source_sha256)
         self.assertTrue(any(model.repository == DEFAULT_SOURCE.repository for model in SUPPORTED_SOURCE_MODELS))
         self.assertTrue(any(model.repository == ACCESS_TOKEN_SOURCE.repository for model in SUPPORTED_SOURCE_MODELS))
+        self.assertTrue(any(model.repository == DSOFTBUS_CURRENT_SOURCE.repository and
+                            model.commit == DSOFTBUS_CURRENT_SOURCE.commit
+                            for model in SUPPORTED_SOURCE_MODELS))
 
         unknown = analyze(DEFAULT_SOURCE.repository, 'f'*40,
                           'core/authentication/src/auth_hichain.c',

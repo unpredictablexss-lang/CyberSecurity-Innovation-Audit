@@ -2,10 +2,11 @@
 from dataclasses import dataclass
 
 SOURCE_MODEL_VERSION = '0.4.0'  # Frozen D3/D4 source semantics; new profiles are append-only.
-SOURCE_PROFILE_CATALOG_VERSION = '0.1.0'
+SOURCE_PROFILE_CATALOG_VERSION = '0.2.0'
 SINK_MODEL_VERSION = '0.8.0'  # Adds reviewed CM_LOG variadic logging macros.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
+DSOFTBUS_CURRENT_COMMIT = '9f922677e147b939d6db899bde181d609d64711b'
 
 @dataclass(frozen=True)
 class SensitiveSourceModel:
@@ -83,6 +84,25 @@ STATUS_RETURN_CALLS = frozenset({
 })
 
 DEFAULT_SOURCE = SensitiveSourceModel('openharmony/communication_dsoftbus', DSOFTBUS_COMMIT)
+# This exact newer tree was checked against the same source contract: SessionKey.value
+# and AES key fields still contain key bytes; OnSessionKeyReturned arg 1 receives
+# the key; SoftBusGenerateSessionKey writes bytes through arg 0. This adds only
+# exact-commit eligibility and does not generalize the profile to other revisions.
+DSOFTBUS_CURRENT_SOURCE = SensitiveSourceModel(
+    'openharmony/communication_dsoftbus', DSOFTBUS_CURRENT_COMMIT,
+    fields=DEFAULT_SOURCE.fields,
+    non_sensitive_fields=DEFAULT_SOURCE.non_sensitive_fields,
+    output_calls=DEFAULT_SOURCE.output_calls,
+    copy_calls=DEFAULT_SOURCE.copy_calls,
+    parameters=DEFAULT_SOURCE.parameters,
+    provenance=(
+        'Exact source contract reviewed at communication_dsoftbus commit 9f922677: '
+        'SessionKey.value and AES key fields are material, OnSessionKeyReturned '
+        'argument 1 carries the session key, and SoftBusGenerateSessionKey writes '
+        'to argument 0. This is a static component model, not product exposure proof.'
+    ),
+    additional_sinks=DEFAULT_SOURCE.additional_sinks,
+)
 
 ACCESS_TOKEN_COMMIT = '3be426c558613e7c7af92a591c2bfaeb6af06b60'
 _ACCESS_TOKEN_FILE = 'interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp'
@@ -127,4 +147,4 @@ IOTC_LOCAL_CONTROL_SOURCE = SensitiveSourceModel(
         ),
     ),
 )
-SUPPORTED_SOURCE_MODELS = (DEFAULT_SOURCE, ACCESS_TOKEN_SOURCE, IOTC_LOCAL_CONTROL_SOURCE)
+SUPPORTED_SOURCE_MODELS = (DEFAULT_SOURCE, DSOFTBUS_CURRENT_SOURCE, ACCESS_TOKEN_SOURCE, IOTC_LOCAL_CONTROL_SOURCE)

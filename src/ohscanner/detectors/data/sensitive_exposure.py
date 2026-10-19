@@ -126,7 +126,7 @@ def formats(value, default_privacy='private'):
 
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.18.0'
+    version = '0.19.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
