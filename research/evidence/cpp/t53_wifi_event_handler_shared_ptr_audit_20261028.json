@@ -1,0 +1,520 @@
+{
+  "schema_version": 1,
+  "task": "T53",
+  "record_ids": [
+    "CR-0317",
+    "CR-0318",
+    "CR-0319",
+    "CR-0320",
+    "CR-0321",
+    "CR-0322",
+    "CR-0323",
+    "CR-0324",
+    "CR-0325",
+    "CR-0326",
+    "CR-0327",
+    "CR-0328",
+    "CR-0329",
+    "CR-0330",
+    "CR-0331",
+    "CR-0332",
+    "CR-0333",
+    "CR-0334"
+  ],
+  "assessment": "PARTIAL/BLOCK",
+  "classification": "all 18 syntax candidates independently reproduce; this is not proof of a data race or security impact",
+  "source": {
+    "repository": "openharmony/communication_wifi",
+    "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+    "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+    "target": {
+      "path": "wifi/utils/src/wifi_event_handler.cpp",
+      "blob": "859972d51001153749e1f3df5f8fc0bb5f5e3b7a",
+      "sha256": "f5b5de6a96ae54bbe3563bc93206fcb625c3f8d19c299d1b6f82fe1df7123f01",
+      "bytes": 13345
+    },
+    "supporting_sources": {
+      "wifi/utils/inc/wifi_event_handler.h": {
+        "blob": "7d4ab575db8af3045d1f8fadd84c4374b3d1d1c9",
+        "sha256": "08bae69ba7c3a58ab378f9e484e8da299c52728c8c31ec8870b166cbafa946ad",
+        "bytes": 2668
+      },
+      "wifi/utils/BUILD.gn": {
+        "blob": "6f3c2902a1fd77edf44af7090aa1dd6491f2ca1a",
+        "sha256": "8f17cdd5f5abff767ca83bfafd5007c38ffbe84286e29c31ceb0440f8ca32a10",
+        "bytes": 4259
+      },
+      "wifi/test/wifi_utils/unittest/BUILD.gn": {
+        "blob": "ba95098073b41458844972f3bd27ccf1d2537ef3",
+        "sha256": "938213151cba433788d00ad20a9a3baeb053bf8a7b7598dc1106597595140eeb",
+        "bytes": 2688
+      },
+      "wifi/test/wifi_utils/unittest/wifi_event_handler_test.cpp": {
+        "blob": "d7a904521f2625cde3bb3edc331f21c9b012ffd9",
+        "sha256": "e512264289d9d2e595a37d90d3895b1c97602c406babf59b37f428292a495a25",
+        "bytes": 2380
+      },
+      "wifi/utils/src/wifi_timer.cpp": {
+        "blob": "5d1a61df7b42a3c432ddc1ba96fef1a1ba65d0ea",
+        "sha256": "a68edd5f1fb7b037beb4dba6dce3ada3aa23e59aee0a22be92152a3b0a2ecd5f",
+        "bytes": 3069
+      },
+      "wifi/base/state_machine/src/handler.cpp": {
+        "blob": "e9dcb3bec4c808e6d4eb0f2474e4196703cdc7f2",
+        "sha256": "d31a1a769a32eed04ba98d7acea530f2cc1e42ed3b8514dc226fffc1a8213c61",
+        "bytes": 8345
+      }
+    }
+  },
+  "scanner": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir <exact-checkout> --repository openharmony/communication_wifi --commit e336c82b3b107d87f68c5e0448cc246b50b53b38 --include wifi/utils/src/wifi_event_handler.cpp --detector ohscanner.cpp.shared_ptr_race",
+    "detector_id": "ohscanner.cpp.shared_ptr_race",
+    "detector_version": "0.5.1",
+    "profile": "light-ast",
+    "run_status": "completed",
+    "snapshot_sha256": "0647e4b488d71e0cbe2cbabcc363c7a14c5f9cf0761f2594f6b92dc350e85616",
+    "selected_files": 1,
+    "selected_bytes": 13345,
+    "scope_loc": 386,
+    "parse_status": {
+      "complete": 1
+    },
+    "finding_count": 18,
+    "elapsed_seconds": 0.0654095000027155
+  },
+  "source_review": {
+    "normal_eventhandler_branch": {
+      "members": [
+        "eventRunner",
+        "eventHandler"
+      ],
+      "constructor": "Create(threadName), then make_shared<EventHandler>(eventRunner);",
+      "destructor": "Stop runner, then reset eventRunner and eventHandler.",
+      "accesses": "PostSyncTask/PostAsyncTask/RemoveAsyncTask perform null checks then invoke methods through eventHandler without a branch-local lock.",
+      "callbacks_and_threads": "PostTask hands callbacks to EventHandler; normal producer/callback overlap and object teardown ordering are not established from this translation unit.",
+      "lock_status": "No explicit lock around normal-branch shared_ptr members. This alone does not prove unsynchronized concurrent access."
+    },
+    "ffrt_branch": "The separate WIFI_FFRT_ENABLE implementation uses eventQueueMutex in constructor, destructor, and event queue operations; GN selects this branch conditionally.",
+    "build": "wifi/utils/BUILD.gn includes this file in install-enabled ohos_shared_library(\"wifi_utils\"); WIFI_FFRT_ENABLE is conditional on wifi_ffrt_enable. Exact product profile/config selection is not bound.",
+    "callers": "Pinned wifi_timer.cpp and base/state_machine handler.cpp use the task-posting API; their ownership/scheduling does not establish same-object overlap with destruction.",
+    "unit_tests": "Pinned wifi_utils unittest target registers wifi_event_handler_test.cpp; its methods exercise posting behavior but do not provide a target-derived concurrent destructor race harness."
+  },
+  "rows": [
+    {
+      "queue_id": "CR-0317",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:7456ba69862143d3",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 242,
+        "column": 9,
+        "symbol": "eventRunner",
+        "line_text": "        eventRunner = AppExecFwk::EventRunner::Create(threadName);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:a8fc574b326487ef",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventRunner",
+        "line": 242,
+        "column": 9,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0318",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:799bcf17541da6c6",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 243,
+        "column": 13,
+        "symbol": "eventRunner",
+        "line_text": "        if (eventRunner) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:0ada707995ee8b21",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventRunner",
+        "line": 243,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0319",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:02705748a6f703ba",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 244,
+        "column": 71,
+        "symbol": "eventRunner",
+        "line_text": "            eventHandler = std::make_shared<AppExecFwk::EventHandler>(eventRunner);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:68b113913f352a0b",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventRunner",
+        "line": 244,
+        "column": 71,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0320",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:42026a22560687e5",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 244,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "            eventHandler = std::make_shared<AppExecFwk::EventHandler>(eventRunner);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7bb242c5d65530c7",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 244,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0321",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:5882ea281c202cd3",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 253,
+        "column": 13,
+        "symbol": "eventRunner",
+        "line_text": "        if (eventRunner) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2c9385dbcc7f77b1",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventRunner",
+        "line": 253,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0322",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:4becf31f3fc48d94",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 254,
+        "column": 13,
+        "symbol": "eventRunner",
+        "line_text": "            eventRunner->Stop();"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:14edf76841b24085",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventRunner",
+        "line": 254,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0323",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:355cfea1077982f4",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 255,
+        "column": 13,
+        "symbol": "eventRunner",
+        "line_text": "            eventRunner.reset();"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4d69ceeb80b97ea7",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventRunner",
+        "line": 255,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0324",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:f124fe1739f58f2f",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 257,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "        if (eventHandler) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:039671201a20a8a0",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 257,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0325",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:e40fc7b9ae15902f",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 258,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "            eventHandler.reset();"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d57187bc21f696e4",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 258,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0326",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:96ba1d4f0835d3c9",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 263,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "        if (eventHandler == nullptr) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:427bae4d36662c16",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 263,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0327",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:4c97293e2640a5dc",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 267,
+        "column": 16,
+        "symbol": "eventHandler",
+        "line_text": "        return eventHandler->PostSyncTask(callback, AppExecFwk::EventHandler::Priority::HIGH);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:0592c5705191914c",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 267,
+        "column": 16,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0328",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:7a7606ce01c7d339",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 271,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "        if (eventHandler == nullptr) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c639453f79a45ebc",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 271,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0329",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:7a9b9d2ada856411",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 275,
+        "column": 16,
+        "symbol": "eventHandler",
+        "line_text": "        return eventHandler->PostTask(callback, delayTime, AppExecFwk::EventHandler::Priority::HIGH);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:89951e84d4d81df2",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 275,
+        "column": 16,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0330",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:723481d567574404",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 279,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "        if (eventHandler == nullptr) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7ffe9742e8b0ed45",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 279,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0331",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:b0a6a70805f2c52b",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 284,
+        "column": 20,
+        "symbol": "eventHandler",
+        "line_text": "            return eventHandler->PostTask(callback, name, delayTime, AppExecFwk::EventHandler::Priority::IMMEDIATE);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:30386b9a97cdf48c",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 284,
+        "column": 20,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0332",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:5a5d4333e10c21c2",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 286,
+        "column": 16,
+        "symbol": "eventHandler",
+        "line_text": "        return eventHandler->PostTask(callback, name, delayTime, AppExecFwk::EventHandler::Priority::HIGH);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2edbccd59e776a43",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 286,
+        "column": 16,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0333",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:a09027944976d0e7",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 290,
+        "column": 13,
+        "symbol": "eventHandler",
+        "line_text": "        if (eventHandler == nullptr) {"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:cf036384f3144508",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 290,
+        "column": 13,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    },
+    {
+      "queue_id": "CR-0334",
+      "original_candidate_id": "ohscanner.cpp.shared_ptr_race:8a027cd1a6ff8e10",
+      "source": {
+        "path": "wifi/utils/src/wifi_event_handler.cpp",
+        "line": 294,
+        "column": 9,
+        "symbol": "eventHandler",
+        "line_text": "        eventHandler->RemoveTask(name);"
+      },
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "current_finding": {
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:dacb98e342262d1a",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "symbol": "eventHandler",
+        "line": 294,
+        "column": 9,
+        "evidence_type": "syntax"
+      },
+      "a0_state_mutated": false
+    }
+  ],
+  "a0_reconciliation": {
+    "queue_rows": 345,
+    "unique_queue_ids": 345,
+    "audited_rows": 18,
+    "cr0335_excluded": true,
+    "original_status_counts": {
+      "not_testable": 18
+    },
+    "queue_status_counts": {
+      "paused_pending_evidence": 18
+    },
+    "original_states_unchanged": true
+  },
+  "limitations": [
+    "No trusted vulnerable/fixed pair or target-derived concurrent harness is bound.",
+    "The applicable product build branch and profile selection are unknown.",
+    "Same-object overlapping public method calls versus destruction, external owner synchronization, and runtime impact are not established.",
+    "A complete parse and 18 reproduced findings are syntax evidence only; they do not confirm a race or prove safety.",
+    "CR-0335 is an IPC detector/source-line case and was intentionally excluded."
+  ]
+}
