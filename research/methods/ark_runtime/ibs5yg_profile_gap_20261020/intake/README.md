@@ -15,7 +15,13 @@ every declared build identity to match and each field value to equal its
 corresponding identity value. The locked-manifest field accepts a 40/64-hex
 immutable commit (optionally prefixed `commit:`) or an HTTPS URI carrying one
 64-hex SHA-256 in its query or fragment. A mutable branch URL by itself is
-rejected.
+rejected. For a URI, the locked-manifest field's evidence path must point to
+the local manifest bytes, and its URI SHA-256 must equal both the evidence
+reference hash and a fresh hash of those bytes. For a commit reference, the
+commit must exist in the local Git object database reachable from the supplied
+evidence root, and `git cat-file commit` bytes must equal the referenced file.
+These checks use no network. An absent local manifest or commit is blocked;
+the checker does not fetch URLs.
 
 Any missing field or evidence item, unsafe/missing path, reparse-point or
 symlink component, unreadable file, incorrect digest, missing issuer, or
@@ -25,7 +31,10 @@ structure is complete it returns
 `admission_ready: false` and exit code 0. Hashing proves only which bytes were
 read. It does not establish that those bytes support the claim, that an issuer
 is genuine or authorized, that custody is valid, or that a product actually
-uses the asserted build.
+uses the asserted build. A URI digest match is only a local byte-identity
+check; it does not prove that the URL is reachable or that the bytes were
+downloaded from it. Local Git object presence likewise does not prove custody
+or product association.
 
 ## Reproduce
 
@@ -47,5 +56,7 @@ The self-test builds temporary synthetic evidence and checks a structurally
 complete control plus missing values, missing issuer, byte tampering, path
 traversal, absolute paths, missing files, identity conflicts, a mutable
 manifest reference, and a symlink or junction escape when the host permits
-creating one. Synthetic success is not
-product evidence and must not change PC-1, PC-3, or admission status.
+creating one. It also rejects URI digests that do not match the referenced
+local bytes, an unresolved URI with no matching local bytes, and commit IDs
+without a locally resolvable matching object. Synthetic success is not product
+evidence and must not change PC-1, PC-3, or admission status.
