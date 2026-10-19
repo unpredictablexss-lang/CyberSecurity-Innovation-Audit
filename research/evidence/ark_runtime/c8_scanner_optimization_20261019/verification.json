@@ -1,0 +1,115 @@
+{
+  "schema": "c8-scanner-optimization-verification-v1",
+  "generated_at": "2026-10-19T11:55:05.466586+08:00",
+  "branch": "codex/c-line-scanner-optimization-20261019",
+  "base_commit": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+  "remote_sync": {
+    "status": "failed",
+    "attempts": 3,
+    "reason": "GitHub HTTPS/443 connection failure",
+    "claim_latest_remote_verified": false
+  },
+  "source_audit_record": {
+    "requested_path": "源码漏洞审查记录_20261018.md",
+    "status": "missing_from_checkout_local_commit_trees_parent_directory_and_pinned_remote_objects",
+    "substitute_inputs": [
+      "research/experiments/ark_runtime/c3_20261017/C3_REVIEW_COUNTEREXAMPLES.json",
+      "research/experiments/ark_runtime/c4_20261018/C4_UNKNOWN_CASES.md",
+      "research/experiments/ark_runtime/c7_historical_replay_20261019/replay_results.json"
+    ]
+  },
+  "version": {
+    "detector": "0.7.0",
+    "model": "0.7.0"
+  },
+  "tests": {
+    "ark_runtime_unittest": {
+      "tests": 116,
+      "skipped": 8,
+      "failed": 0,
+      "status": "passed_with_skips"
+    },
+    "runner_applicability_windows": {
+      "tests": 5,
+      "skipped": 0,
+      "failed": 0,
+      "status": "passed"
+    },
+    "wsl_owner_runner_unittest": {
+      "tests": 19,
+      "skipped": 14,
+      "failed": 0,
+      "status": "passed_with_skips"
+    },
+    "python_compile": {
+      "status": "passed"
+    },
+    "git_diff_check": {
+      "status": "passed"
+    },
+    "docs_context_budget": {
+      "status": "passed"
+    }
+  },
+  "limitations": [
+    "Eight historical/current-component tests are skipped because pinned Ark Git stores are unavailable.",
+    "Fourteen WSL owner-integration tests are skipped because optional web dependencies are unavailable.",
+    "No independent human labels or reliable precision/recall truth set exists.",
+    "No product entry, permission boundary, attacker control, CIA impact, product build, affected version, PoC, fix or CVE closure is established.",
+    "All scanner observations remain candidate/unassessed and validated_vulnerability is zero."
+  ],
+  "files": {
+    "src/ohscanner/detectors/ark_runtime/exception_guard.py": {
+      "sha256": "5bbbb4b043a8de7b331fdca66ab27fd297b5683a95bf11a1d82dbf12188a1a73"
+    },
+    "src/ohscanner/detectors/ark_runtime/model.py": {
+      "sha256": "8d85e8fca11d6bf20cd890a49b00a750bcb885289e6285a8e2188fc6c1f46052"
+    },
+    "src/ohscanner/detectors/ark_runtime/syntax.py": {
+      "sha256": "3de88d5819149d216201c23b534f94078b5890b545623efa7f70970fd589ba42"
+    },
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": {
+      "sha256": "2c01a7fda8abe22533165ed6f3f7a28621e773da9d472d7b30679fd63a52ce05"
+    },
+    "tests/detectors/ark_runtime/test_exception_guard.py": {
+      "sha256": "ab0e4d36d5a94ad04d6a50740e1659a0c8ec5404cf9e52bf5defb2ff5faacd76"
+    },
+    "tests/detectors/ark_runtime/test_parser_owner.py": {
+      "sha256": "4edaaf2b226f9ce4bf8ac2c748b78dfcbbad4446d16bdd32bad3a19da4833b2c"
+    },
+    "tests/detectors/ark_runtime/test_type_origin.py": {
+      "sha256": "20f00c4e70d70a9b518a9da70e065a3bc014070b69de724974b485de223fad9a"
+    },
+    "tests/detectors/ark_runtime/fixtures/EXC01.cpp": {
+      "sha256": "af82d588f543b563e3c60fd4e3f2b061976c445ebdb3271b0fd45007bf0e8604"
+    },
+    "research/deliveries/ark_runtime/C8_SCANNER_OPTIMIZATION_20261019.md": {
+      "sha256": "89db6f3c7febc226cd72473a566d723a5f0e8e8ab42748584b12373f13b9b8c9"
+    },
+    "docs/项目现状与下一步.md": {
+      "sha256": "901f01cce59539d71fb334480a5b7911b2e1d7296cd1b76db3074a1261a74997"
+    }
+  },
+  "artifacts": {
+    "ark_unittest": {
+      "path": "research/evidence/ark_runtime/c8_scanner_optimization_20261019/ark_unittest.txt",
+      "sha256": "bc715f0d22a437b81362a4b792934e8734a636bf8f2e2bba2f36aea0aa1fbf52"
+    },
+    "runner_applicability_unittest": {
+      "path": "research/evidence/ark_runtime/c8_scanner_optimization_20261019/runner_applicability_unittest.txt",
+      "sha256": "f7dc1c65d9bf1c31f1cb9a0be1fc0c0840290cbe7f978a8864c6557dbd2fbb5e"
+    },
+    "wsl_owner_runner_unittest": {
+      "path": "research/evidence/ark_runtime/c8_scanner_optimization_20261019/wsl_owner_runner_unittest.txt",
+      "sha256": "41a031ea7529bb150f75bf8bd7732565f1660e65f6b48b546a7a3057914dd3a6"
+    },
+    "patch_diff_gzip": {
+      "path": "research/evidence/ark_runtime/c8_scanner_optimization_20261019/patch.diff.gz",
+      "sha256": "43838fdb1c10efd5d09236197de56fe819cf47259bcbb31d070461edc28fed42",
+      "uncompressed_sha256": "491bbcf06cc535d10c068209c3291ecf60594cf39c0c96a6682ee8636163f275",
+      "compression": "gzip"
+    }
+  },
+  "verdict": "candidate/unassessed",
+  "validated_vulnerability": 0
+}

@@ -1,0 +1,24 @@
+test_explicit_c_selection_has_identical_cli_and_worker_output (tests.test_owner_integration.ArkRuntimeOwnerParityTests) ... skipped 'optional web dependencies unavailable'
+test_automatic_plan_is_frozen_and_worker_matches_cli (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_c_rejects_duplicate_detector_and_duplicate_path_inputs (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_c_requires_explicit_selection_and_is_not_applicable_to_other_repos (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_changed_branch_after_preview_requires_new_plan (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_client_header_and_cross_origin_still_required_for_plan_preview (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_d_stays_blocked_for_production_selection (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_js_only_auto_selects_script_detector_and_real_eval_candidate (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_legacy_explicit_selection_still_runs_only_requested_ids (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_planning_timeout_does_not_enqueue (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_preview_does_not_enqueue_and_empty_selection_is_not_auto (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_registered_null_rule_requires_explicit_selection (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_report_budget_rejects_before_creating_truncated_artifact (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_tampered_queued_plan_fails_without_published_result (tests.test_owner_integration.OwnerIntegrationTests) ... skipped 'optional web dependencies unavailable'
+test_per_file_failure_is_counted_separately_from_unanalyzed_scope (tests.test_runner_applicability.ApplicabilitySelectionTests) ... ok
+test_scope_selector_cannot_duplicate_an_in_scope_source (tests.test_runner_applicability.ApplicabilitySelectionTests) ... ok
+test_scope_selector_cannot_inject_a_source_outside_runner_input (tests.test_runner_applicability.ApplicabilitySelectionTests) ... ok
+test_scope_selector_limits_coverage_to_declared_applicable_files (tests.test_runner_applicability.ApplicabilitySelectionTests) ... ok
+test_selector_exception_does_not_abort_other_detectors (tests.test_runner_applicability.ApplicabilitySelectionTests) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.010s
+
+OK (skipped=14)

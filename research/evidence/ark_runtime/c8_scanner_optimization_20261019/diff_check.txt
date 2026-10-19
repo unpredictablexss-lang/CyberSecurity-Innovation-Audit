@@ -1,0 +1,8 @@
+warning: in the working copy of 'AGENTS.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/Agent方案与对照实验.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/README.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/开发协作与交付指南.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/架构与公共协议.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/面板功能与验收.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'docs/项目现状与下一步.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'tests/detectors/ark_runtime/test_exception_guard.py', LF will be replaced by CRLF the next time Git touches it
