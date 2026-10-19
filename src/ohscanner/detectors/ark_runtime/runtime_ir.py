@@ -14,6 +14,15 @@ class Instruction:
     problem: str = ''
 
 
+@dataclass(frozen=True)
+class LoopBackedge:
+    begin: int
+    end: int
+    label_identity: str
+    source_start_byte: int
+    source_end_byte: int
+
+
 @dataclass
 class GeneratedGraph:
     instructions: list
@@ -21,6 +30,7 @@ class GeneratedGraph:
     external_labels: frozenset
     limitations: tuple
     cyclic_nodes: frozenset = frozenset()
+    loop_backedges: tuple = ()
 
 
 def cyclic_nodes(instructions):
@@ -151,6 +161,27 @@ def build_graph(fn, budget):
             return -1
         return labels.get(label)
 
+    loop_begins = {}
+    loop_backedges = []
+    for index, inst in enumerate(instructions):
+        if inst.kind == 'LoopBegin' and not inst.problem:
+            label = label_identity(fn, inst.arguments[0])
+            if label is not None and label not in loop_begins:
+                loop_begins[label] = index
+    for index, inst in enumerate(instructions):
+        if inst.kind != 'LoopEnd' or inst.problem:
+            continue
+        label = label_identity(fn, inst.arguments[0]) if inst.arguments else None
+        begin = loop_begins.get(label)
+        if begin is None:
+            limitations.append('loop_backedge_begin_unresolved:' + str(inst.node.start_point[0] + 1))
+            continue
+        target = destination(inst.arguments[0])
+        if target != begin:
+            limitations.append('loop_backedge_target_mismatch:' + str(inst.node.start_point[0] + 1))
+            continue
+        loop_backedges.append(LoopBackedge(
+            begin, index, label, inst.node.start_byte, inst.node.end_byte))
     for index, inst in enumerate(instructions):
         if inst.problem:
             limitations.append(inst.problem + ':' + str(inst.node.start_point[0] + 1))
@@ -170,4 +201,5 @@ def build_graph(fn, budget):
             # Bind does not reconnect a previously terminated block. Only a
             # predecessor edge from a branch/jump reaches a detached label.
             inst.successors.append((index + 1, None))
-    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))), cyclic_nodes(instructions))
+    return GeneratedGraph(instructions, 0, external, tuple(sorted(set(limitations))),
+                          cyclic_nodes(instructions), tuple(loop_backedges))
