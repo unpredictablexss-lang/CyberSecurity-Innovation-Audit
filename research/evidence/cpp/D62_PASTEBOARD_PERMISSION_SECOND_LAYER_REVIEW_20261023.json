@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "task_id": "D62",
+  "date": "2026-10-23",
+  "role": "independent_read_only_second_layer_review",
+  "decision": "narrow",
+  "confidence": {
+    "pinned_source_path_and_local_permission_omission": 0.91,
+    "suitability_for_downstream_source_root_cause_review": 0.84,
+    "product_vulnerability": null
+  },
+  "downstream_model": {
+    "send_candidate": true,
+    "review_scope": "source root cause and exact mapping to historical permission gate and advisory evidence",
+    "required_context": [
+      "D52 exact source commit/tree/blob/hash",
+      "GET_PASTE_DATA to OnGetPasteData to core GetPasteData route",
+      "line 41 is a method-entry anchor",
+      "target parse partial and full replay blocked",
+      "D61 helper-name and permission-token false suppression limits"
+    ],
+    "must_not_conclude": "product vulnerability or affected/fixed device status"
+  },
+  "product_and_cve_status": {
+    "product_fingerprint": null,
+    "component_inclusion_manifest": null,
+    "cve_causality": "unknown",
+    "product_applicability": "unknown",
+    "runtime_authorization": "unknown",
+    "exploitability": "unknown",
+    "device_fixed_status": "unknown",
+    "validated_vulnerability": 0
+  },
+  "frozen_commits": {
+    "D61": "b0ce27a3e3b08f085e46a22468e890ac8808d1c1",
+    "T61": "395742abd129db59508aed6908b040a6463ba759",
+    "D61_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "D60_second_layer": "a9105a4f65cddb0b856242dbdbcb4f76a3741ccf"
+  },
+  "D61_T61_review": {
+    "rule_version": "0.19.6",
+    "focused_tests": 32,
+    "focused_tests_status": "PASS",
+    "raw_source_full_replay_units": 67,
+    "parse_states": {
+      "complete": 57,
+      "partial": 10
+    },
+    "baseline_and_D61_replay_status": "blocked",
+    "findings_identical": true,
+    "D52_target_parse_status": "partial",
+    "D52_line": 41,
+    "D52_line_scope": "OnRemoteRequest opening brace"
+  },
+  "D60_control_retest": {
+    "shape": "if (!CheckBluetoothPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); WriteParcelable();",
+    "execution": "read-only in-memory invocation of frozen D61 detector",
+    "status": "completed",
+    "candidate_retained": true,
+    "assessment": "the exact D60 false suppression is eliminated in D61"
+  },
+  "helper_identity_assessment": {
+    "source_backed_helpers": [
+      {
+        "name": "CheckPastePermission",
+        "source_commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+        "historical_behavior": "focus/default-IME gate and ShareOption handling, including app-id equality for InApp"
+      },
+      {
+        "name": "HasPastePermission",
+        "source_commit": "cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7",
+        "historical_behavior": "caller app/token identity, focus/default-IME gate for HAP callers, and ShareOption handling"
+      },
+      {
+        "name": "VerifyPermission with READ/SECURE identifiers",
+        "source_commit": "721fecac75d9c51b0b145469abc6c9c78c17753e",
+        "historical_behavior": "later READ/SECURE permission checks"
+      }
+    ],
+    "source_support_is_semantic_proof_for_arbitrary_call": false,
+    "D61_resolves_helper_body_or_cross_file_call": false,
+    "T61_helper_controls_integrated_build_replay": false
+  },
+  "additional_read_only_negative_controls": [
+    {
+      "id": "helper_name_but_helper_always_allows",
+      "shape": "CheckPastePermission(...) returns true unconditionally; handler returns on !CheckPastePermission then reads and serializes data",
+      "execution": "read-only in-memory invocation of frozen D61 detector",
+      "status": "completed",
+      "candidate_retained": false,
+      "assessment": "confirmed false suppression; helper name alone is accepted without semantic implementation binding"
+    },
+    {
+      "id": "unrelated_permission_function_with_read_token",
+      "shape": "if (!CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)) return; then unconditional GetPasteData and serialization",
+      "execution": "read-only in-memory invocation of frozen D61 detector",
+      "status": "completed",
+      "candidate_retained": false,
+      "assessment": "confirmed false suppression; permission token and checking function are not bound"
+    }
+  ],
+  "source_identity": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "stub_path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "stub_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "stub_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "core_getter_path": "services/core/src/pasteboard_service.cpp",
+    "core_getter_blob": "c380ac266a85edd818caa811f11b99722d351788",
+    "core_getter_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "route": [
+      "GET_PASTE_DATA maps to OnGetPasteData",
+      "OnRemoteRequest validates interface descriptor and dispatches mapped transaction",
+      "OnGetPasteData calls GetPasteData and writes PasteData to reply",
+      "pinned core GetPasteData performs caller-user clip lookup/copy without visible permission decision"
+    ],
+    "candidate_anchor": "services/zidl/src/pasteboard_service_stub.cpp:41:1",
+    "anchor_scope": "OnRemoteRequest method opening brace, not root statement"
+  },
+  "review_constraints": {
+    "scanner_modified": false,
+    "tests_modified": false,
+    "fixtures_modified": false,
+    "prior_reports_modified": false,
+    "controls_were_in_memory_only": true
+  }
+}
