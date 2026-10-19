@@ -1,0 +1,65 @@
+{
+  "review_id": "T55-D55-BATCH-B-REVISION-ACCEPTANCE-20261021",
+  "review_date": "2026-10-21",
+  "review_checkout": "D:/openHarmonyScanner/worktrees/t51-pasteboard-independent-20261020",
+  "reviewed_commit": "58343c4e6cc59aac0e2e5d61400cff23319756b1",
+  "previous_commit": "55ba5fc0220d9f72443010fd0ad38270d2f22539",
+  "decision": {
+    "artifact_integrity": "PASS_FOR_VERIFIED_CAPTURED_OBJECTS",
+    "batch_b_evidence": "PARTIAL",
+    "known_cve_package": "NOT_READY",
+    "m2": "NOT_MET"
+  },
+  "manifest": {
+    "entries": 8,
+    "unique_ids": 8,
+    "strict_duplicate_key_parse": "PASS",
+    "blocked_headers_file_fields_resolve_to_tracked_basenames": true
+  },
+  "ordinary_capture_checks": {
+    "captured_advisory_entries": 6,
+    "body_raw_hash_and_length_matches": "6/6 PASS",
+    "header_raw_hash_matches": "6/6 PASS",
+    "header_status_and_content_type_match": "6/6 PASS"
+  },
+  "CVE-2026-33636": {
+    "ghsa_page_status": "BLOCKED_NO_BODY_NO_HASH",
+    "mitre_cna_record_status": "CAPTURED_SEPARATE_SOURCE",
+    "cna_record_bytes": 3207,
+    "cna_record_sha256": "6d68fea804893b01cf88c685d260962fe592e78425007565afd47809ae457f4e",
+    "cna_header_bytes": 1015,
+    "cna_header_sha256": "a02c3fe623263540c198c579749677b5058962c689e1c55d3a4936d39a0a645b",
+    "http_status": 200,
+    "content_type": "application/json; charset=utf-8",
+    "parsed_cve_id": "CVE-2026-33636",
+    "parsed_assigner": "GitHub_M",
+    "cna_record_replaces_ghsa_snapshot": false
+  },
+  "CVE-2026-46675": {
+    "ghsa_page_status": "BLOCKED_NO_BODY_NO_HASH",
+    "mitre_lookup_status": "404_CVE_RECORD_DNE_NOT_ADVISORY",
+    "lookup_body_bytes": 84,
+    "lookup_body_sha256": "ff0793bc04d228fac6b8634ea8a29ce08d68067d615654d72b11955d01433b66",
+    "lookup_header_bytes": 1019,
+    "lookup_header_sha256": "bf25c73df5a41722ee30442a532990acada84f82e86446777343d2cd9ebd2a48",
+    "response_is_advisory": false,
+    "proves_ghsa_absent": false
+  },
+  "blocked_ghsa_header_files": {
+    "CVE-2026-33636.headers": {"bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    "CVE-2026-46675.headers": {"bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+  },
+  "unknown_or_limited_scope": [
+    "CVE-2026-67215 and CVE-2026-67216 remain unreviewed GHSA records without structured ranges or identified original vendor/CNA",
+    "CVE-2026-9079 has unusual introduced/fixed 8.21.0 event preserved without interpretation",
+    "CVE-2026-58313 has no exact fixed version/revision"
+  ],
+  "validation": {
+    "all_manifest_body_header_hashes_and_lengths_checked": true,
+    "strict_json_parse": "PASS",
+    "diff_check_from_previous_commit": "PASS_EXIT_0",
+    "scanner_tests_run": false,
+    "accuracy_metrics_computed": false
+  },
+  "boundary": "CNA record and 404 lookup are separate from GHSA page capture state; manifest verification establishes neither product applicability nor M2 completion."
+}
