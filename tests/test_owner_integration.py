@@ -47,7 +47,7 @@ class OwnerIntegrationTests(unittest.TestCase):
         report = service.read_report(self.settings, job)
         self.assertEqual(report['audit_plan'], plan)
         cli = run_fixed_commit_scan(self.repo, 'fixture/sample', self.commit, ('.',),
-                                    None, self.root/'cli.json', self.root/'cli.md')
+                                    None, self.root/'cli.json', self.root/'cli.md', expected_plan=plan)
         self.assertEqual(cli['audit_plan'], plan)
         for a, b in zip(cli['detector_runs'], report['detector_runs']):
             for field in ('tool', 'tool_version', 'status', 'diagnostics', 'parsing'):

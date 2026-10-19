@@ -21,10 +21,55 @@ export function useRepositoryRefs(repositoryId?: string) {
   return { refs, error, loading };
 }
 export function RepositoryField({ repos, onChange, refresh }: { repos: any[]; onChange: () => void; refresh?: () => Promise<void> }) {
-  return <Form.Item name="repository_id" label="审计仓库" rules={[{ required: true, message: "请选择仓库" }]}>
-    <Select showSearch optionFilterProp="label" placeholder="搜索已登记仓库" options={repos.map((r) => ({ value: r.id, label: r.name + " · " + r.path }))}
-      onChange={onChange} onOpenChange={(open) => { if (open && refresh) void refresh().catch(() => {}); }} />
-  </Form.Item>;
+  const [catalog, setCatalog] = useState<any[] | null>(null);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+  const [catalogError, setCatalogError] = useState("");
+  const checkedAt = useRef(0);
+  const loadCatalog = async (force = false) => {
+    if (catalogLoading || (!force && catalog && Date.now() - checkedAt.current < 30000)) return;
+    setCatalogLoading(true);
+    setCatalogError("");
+    try {
+      const result = await api("/repositories/catalog");
+      setCatalog(Array.isArray(result) ? result : []);
+      checkedAt.current = Date.now();
+    } catch (error) {
+      setCatalogError(String(error));
+    } finally {
+      setCatalogLoading(false);
+    }
+  };
+  useEffect(() => { void loadCatalog(); }, []);
+  const available = (catalog || []).filter((item) => item.status === "available");
+  const options = available.map((item) => ({ value: item.id, label: item.display_name || item.name }));
+  return <>
+    <Form.Item name="repository_id" label="审计仓库" rules={[{ required: true, message: "请选择通过目录和 Git 校验的仓库" }]}>
+      <Select
+        showSearch
+        optionFilterProp="label"
+        placeholder={catalogLoading ? "正在核验已登记仓库…" : "搜索可用仓库名称"}
+        options={options}
+        loading={catalogLoading}
+        disabled={catalogLoading || catalog === null}
+        notFoundContent={catalogLoading ? "正在核验…" : catalogError ? "仓库目录核验失败" : "没有通过校验的仓库"}
+        onChange={onChange}
+        onOpenChange={(open) => {
+          if (open) {
+            void loadCatalog();
+            if (refresh) void refresh().catch(() => {});
+          }
+        }}
+      />
+    </Form.Item>
+    {catalogError && <Alert className="section-gap" type="error" showIcon message="仓库目录暂时无法核验" description={catalogError}
+      action={<Button size="small" onClick={() => void loadCatalog(true)}>重试</Button>} />}
+    {!catalogLoading && catalog !== null && !catalogError && available.length === 0 && <Alert className="section-gap" type="warning" showIcon
+      message="尚无通过安全校验的可审计仓库" description="请前往“系统设置 → 仓库与源码管理”，在服务端已批准的源码根目录中发现并登记 Git 仓库。"
+      action={<Button size="small" type="link" onClick={() => go("/settings/sources")}>前往设置</Button>} />}
+    {!catalogLoading && catalog !== null && !catalogError && available.length > 0 && <Text type="secondary">
+      已核验 {available.length} 个可用仓库；选择器仅显示名称，不显示服务器物理路径。当前登记总数 {repos.length}。
+    </Text>}
+  </>;
 }
 export function RefField({ name, label, refs, required = true }: { name: string; label: string; refs: any[]; required?: boolean }) {
   return <Form.Item name={name} label={label} rules={[{ required, message: "请选择或填写版本" }]}>

@@ -16,13 +16,18 @@
 
 ## 运行
 
-Python3.10+、Git、Node22/npm；从已合入统一工作台的 main 开始：
+工作台运行于 Python 3.10+ 的 Linux 环境（Windows 可使用 WSL2），并需要 Git、Node 22/npm。运行数据目录和 OpenHarmony 目标源码根目录均从配置读取，不依赖 `/home/audit` 或某个盘符：
 ```bash
+cp config/workbench.example.json config/workbench.local.json
+# 编辑本机数据目录和已批准的源码根目录
 bash scripts/setup_workbench.sh
 bash scripts/start_workbench.sh --port 8765
 ```
-Windows 浏览器 http://localhost:8765。
-本机负责人入口 /home/audit/ohscanner/app；已有环境可运行 ~/ohscanner/bin/oh start。
+本机浏览器访问 http://localhost:8765。`config/workbench.local.json` 已加入忽略规则，不会进入源码包；也可用 `OHSCANNER_CONFIG` 指定其他配置文件，并用 `OHSCANNER_DATA`、`OHSCANNER_TARGET_ROOTS` 覆盖单项设置。配置内相对路径以配置文件所在目录为基准，`~` 指当前用户主目录。
+
+完整扫描与受限 Worker 目前面向 Linux/WSL；Windows 原生运行及 macOS 尚未验收。迁移到新机器时从 Git 验收提交重新安装 Python 与 npm 依赖，单独迁移已批准的目标源码；不要复制虚拟环境、`node_modules`、数据库或本机绝对路径配置。
+
+本机负责人入口 `/home/audit/ohscanner/app` 和 `~/ohscanner/bin/oh start` 是这台电脑的管理入口，不是部署前提。
 
 Web 与 CLI 共用 src/ohscanner；src/workbench 提供 API/存储/Worker，web 为 React。
 A/B 代码是按模块选择性迁入；五组件候选变化与 229 条 A 诊断均不是漏洞真值。

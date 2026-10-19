@@ -16,7 +16,8 @@ def main():
     resource.setrlimit(resource.RLIMIT_CPU, (30, 35))
     spec = json.loads(sys.stdin.buffer.read(1024 * 1024))
     plan = preview_plan(spec['repo_dir'], spec['repository'], spec['commit'],
-                        spec['includes'], spec['selected_detector_ids'])
+                        spec['includes'], spec['selected_detector_ids'],
+                        spec.get('execution_budget'))
     print(json.dumps(plan, ensure_ascii=False, allow_nan=False))
 
 

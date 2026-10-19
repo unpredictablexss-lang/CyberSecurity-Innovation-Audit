@@ -53,7 +53,7 @@ def metadata_from_detectors(rows, detectors):
     return sorted(result, key=lambda r: r["id"])
 
 
-def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
+def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None, execution_budget=None):
     """Return a JSON-serializable plan. None selects automatically, [] selects none.
 
     No scan is enqueued. suggested_detector_ids are attempts for the existing
@@ -155,6 +155,17 @@ def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
         review.append({"reason": "source_binding_not_independently_verified"})
     empty = not files and not source.unclassified_entries and not source.skipped_entries
     status = "empty_scope" if empty else "ready_with_limitations" if suggested and review else "ready" if suggested else "blocked"
+    if execution_budget is not None:
+        if (not isinstance(execution_budget, dict)
+                or set(execution_budget) != {"timeout_seconds", "memory_mb"}):
+            raise ValueError("invalid execution budget in audit plan")
+        timeout_seconds = execution_budget["timeout_seconds"]
+        memory_mb = execution_budget["memory_mb"]
+        if (isinstance(timeout_seconds, bool) or not isinstance(timeout_seconds, int)
+                or not 1 <= timeout_seconds <= 3600
+                or isinstance(memory_mb, bool) or not isinstance(memory_mb, int)
+                or not 256 <= memory_mb <= 8192):
+            raise ValueError("execution budget is outside allowed limits")
     plan = {
         "plan_schema_version": 1, "planner_version": PLANNER_VERSION,
         "status": status, "selection_mode": "automatic" if chosen is None else "explicit",
@@ -177,5 +188,10 @@ def plan_audit(source: SourceManifest, metadata, *, selected_detector_ids=None):
             "Plan digest is not an execution cache key or a vulnerability verdict.",
         ],
     }
+    if execution_budget is not None:
+        plan["execution_budget"] = {
+            "timeout_seconds": execution_budget["timeout_seconds"],
+            "memory_mb": execution_budget["memory_mb"],
+        }
     plan["plan_sha256"] = canonical_sha256(plan)
     return plan

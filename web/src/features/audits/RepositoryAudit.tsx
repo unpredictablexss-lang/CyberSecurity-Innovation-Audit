@@ -36,8 +36,9 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
       {error && <Alert className="section-gap" type="error" showIcon message={error} />}
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
       <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults }} onValuesChange={invalidate} onFinish={async (values) => {
+        if (!plan?.plan_sha256) { setError("请先预览扫描计划；预览后若修改仓库、版本或范围，需要重新预览。"); return; }
         setBusy(true); setError("");
-        try { const job = await api("/scans", { ...snapshotPayload(values, detectors, explicitIds), ...(plan ? { expected_plan_sha256: plan.plan_sha256 } : {}) }); await refresh(); go("/tasks/" + job.id); }
+        try { const job = await api("/scans", { ...snapshotPayload(values, detectors, explicitIds), expected_plan_sha256: plan.plan_sha256 }); await refresh(); go("/tasks/" + job.id); }
         catch (e) { setError(String(e)); } finally { setBusy(false); }
       }}>
         <RepositoryField repos={repos} refresh={refresh} onChange={() => { form.setFieldValue("revision", undefined); setError(""); invalidate(); }} />
@@ -60,9 +61,9 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
           message="已披露 CVE 规则只用于源码候选筛查"
           description="规则不会自动启用。命中表示固定源码包含已知缺陷形态或受影响组件标记；必须另行核对产品构建、可达路径和影响。没有命中、解析不完整或规则未覆盖均不能证明安全。" />}
         <RuleNotice detectors={detectors} />
-        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览适用规则</Button>
+        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览扫描计划</Button>
         <AuditPlanView plan={plan} />
-        <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length}>冻结版本并开始扫描</Button>
+        <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || !plan?.plan_sha256}>冻结版本并开始扫描</Button>
       </Form>
     </Card></Col><Col xs={24} xl={8}><Card title="本次审计将保存">
       <ol className="audit-checklist"><li>完整 Commit 与 Git Tree</li><li>实际规则与版本</li><li>纳入范围、解析及执行覆盖</li><li>候选、证据义务与报告哈希</li></ol>

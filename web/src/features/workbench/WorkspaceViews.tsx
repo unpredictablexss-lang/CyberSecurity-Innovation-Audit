@@ -120,7 +120,7 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
 export function SettingsView({ repos, detectors, health, refresh, tab }: { repos: any[]; detectors: any[]; health: any; refresh: () => Promise<void>; tab: string }) {
   return <><Header title="系统设置" description="管理当前本地源码、规则能力与运行状态；未接入的配置明确保留限制。" />
     <Tabs activeKey={["sources", "capabilities", "runtime", "agent"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
-      { key: "sources", label: "源码与缓存", children: <><Alert type="info" message="官方清单与镜像身份核验待接入" description="当前登记本地仓库或显式同步 allowlist 源码；不会根据仓库名称冒充官方身份认证。" />
+      { key: "sources", label: "仓库与源码管理", children: <><Alert type="info" message="官方清单与镜像身份核验待接入" description="当前登记本地仓库或显式同步 allowlist 源码；不会根据仓库名称冒充官方身份认证。" />
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
         <OperationWorkspace view="sync" /></> },
       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },

@@ -40,23 +40,96 @@ def engine_fingerprint():
     return digest.hexdigest()
 
 
-def check_repository(settings, path):
+def _inside_any_root(path, roots):
+    return any(path.is_relative_to(root) for root in roots)
+
+
+def _git_metadata_directories(repository, roots):
+    marker = repository / ".git"
+    if marker.is_symlink():
+        raise ValueError("repository Git metadata cannot be a symlink")
+    if marker.is_dir():
+        git_dir = marker.resolve(strict=True)
+    elif marker.is_file():
+        try:
+            content = marker.read_text(encoding="utf-8")[:4096].strip()
+        except (OSError, UnicodeError) as error:
+            raise ValueError("repository Git directory pointer is unreadable") from error
+        if not content.lower().startswith("gitdir:"):
+            raise ValueError("repository Git directory pointer is invalid")
+        target = Path(content.split(":", 1)[1].strip()).expanduser()
+        target = target if target.is_absolute() else repository / target
+        if target.is_symlink():
+            raise ValueError("repository Git directory cannot be a symlink")
+        git_dir = target.resolve(strict=True)
+    else:
+        # A bare repository stores its Git metadata in the repository directory.
+        git_dir = repository
+
+    if not _inside_any_root(git_dir, roots):
+        raise ValueError("repository Git metadata is outside configured target roots")
+
+    common_dir = git_dir
+    common_file = git_dir / "commondir"
+    if common_file.is_symlink():
+        raise ValueError("repository Git common directory cannot be a symlink")
+    if common_file.is_file():
+        try:
+            value = common_file.read_text(encoding="utf-8")[:4096].strip()
+        except (OSError, UnicodeError) as error:
+            raise ValueError("repository Git common directory pointer is unreadable") from error
+        target = Path(value).expanduser()
+        target = target if target.is_absolute() else git_dir / target
+        if target.is_symlink():
+            raise ValueError("repository Git common directory cannot be a symlink")
+        common_dir = target.resolve(strict=True)
+        if not _inside_any_root(common_dir, roots):
+            raise ValueError("repository Git common directory is outside configured target roots")
+
+    for object_dir in {git_dir / "objects", common_dir / "objects"}:
+        if object_dir.is_symlink():
+            raise ValueError("repository Git objects cannot be a symlink")
+        alternates = object_dir / "info" / "alternates"
+        if alternates.is_symlink():
+            raise ValueError("repository Git alternates cannot be a symlink")
+        if not alternates.is_file():
+            continue
+        try:
+            entries = alternates.read_text(encoding="utf-8")[:65536].splitlines()
+        except (OSError, UnicodeError) as error:
+            raise ValueError("repository Git alternates are unreadable") from error
+        if len(entries) > 64:
+            raise ValueError("repository Git alternates exceed the safe limit")
+        for entry in entries:
+            if not entry.strip():
+                continue
+            target = Path(entry.strip()).expanduser()
+            target = target if target.is_absolute() else object_dir / target
+            resolved_target = target.resolve(strict=True)
+            if not _inside_any_root(resolved_target, roots):
+                raise ValueError("repository Git alternate objects are outside configured target roots")
+    return git_dir
+
+
+def check_repository(settings, path, timeout=30):
     raw = Path(path).expanduser()
     if raw.is_symlink():
         raise ValueError("repository cannot be a symlink")
     resolved = raw.resolve(strict=True)
+    roots = tuple(Path(root).resolve(strict=False) for root in settings.target_roots)
     if not any(
         resolved.is_relative_to(root) and resolved != root
-        for root in settings.target_roots
+        for root in roots
     ):
         raise ValueError("repository is outside configured target roots")
-    bare = _git(resolved, "rev-parse", "--is-bare-repository").strip()
+    _git_metadata_directories(resolved, roots)
+    bare = _git(resolved, "rev-parse", "--is-bare-repository", timeout=timeout).strip()
     if bare not in (b"true", b"false"):
         raise ValueError("not a local Git repository")
     if (
         bare == b"false"
         and Path(
-            _git(resolved, "rev-parse", "--show-toplevel").decode().strip()
+            _git(resolved, "rev-parse", "--show-toplevel", timeout=timeout).decode().strip()
         ).resolve()
         != resolved
     ):
@@ -65,14 +138,14 @@ def check_repository(settings, path):
     return resolved
 
 
-def revision(repo, requested):
+def revision(repo, requested, timeout=30):
     if (
         not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,199}", requested)
         or ".." in requested
     ):
         raise ValueError("invalid revision; select a local branch, tag or commit")
     commit = (
-        _git(Path(repo["path"]), "rev-parse", "--verify", requested + "^{commit}")
+        _git(Path(repo["path"]), "rev-parse", "--verify", requested + "^{commit}", timeout=timeout)
         .decode()
         .strip()
     )
@@ -80,14 +153,16 @@ def revision(repo, requested):
     return {"requested_revision": requested, "commit": commit, "git_tree": tree}
 
 
-def revisions(repo):
+def revisions(repo, timeout=30):
     text = _git(
         Path(repo["path"]),
         "for-each-ref",
+        "--count=2000",
         "--format=%(refname) %(objectname)",
         "refs/heads",
         "refs/tags",
         "refs/remotes",
+        timeout=timeout,
     ).decode()
     return [
         {"ref": r.split(" ", 1)[0], "object": r.split(" ", 1)[1]}
@@ -114,7 +189,7 @@ def detector_metadata():
     return result
 
 
-def audit_plan(repo, requested, includes, detector_ids=None):
+def audit_plan(repo, requested, includes, detector_ids=None, timeout_seconds=300, memory_mb=2048):
     if not includes or len(includes) > 100 or len(set(includes)) != len(includes):
         raise ValueError("select 1..100 distinct include paths")
     for path in includes:
@@ -125,7 +200,11 @@ def audit_plan(repo, requested, includes, detector_ids=None):
     fixed = revision(repo, requested)
     request = {"repo_dir": repo["path"], "repository": repo["name"],
                "commit": fixed["commit"], "includes": includes,
-               "selected_detector_ids": detector_ids}
+               "selected_detector_ids": detector_ids,
+               "execution_budget": {
+                   "timeout_seconds": timeout_seconds,
+                   "memory_mb": memory_mb,
+               }}
     try:
         result = subprocess.run(
             [sys.executable, "-m", "src.workbench.plan_child", str(os.getpid())],
@@ -143,7 +222,7 @@ def audit_plan(repo, requested, includes, detector_ids=None):
 
 
 def make_spec(repo, requested, includes, detector_ids, timeout_seconds, memory_mb):
-    fixed, plan = audit_plan(repo, requested, includes, detector_ids)
+    fixed, plan = audit_plan(repo, requested, includes, detector_ids, timeout_seconds, memory_mb)
     ids = list(plan["suggested_detector_ids"]) if detector_ids is None else list(detector_ids)
     if not ids:
         raise ValueError("No applicable approved detector; analysis remains unknown, no scan queued")
