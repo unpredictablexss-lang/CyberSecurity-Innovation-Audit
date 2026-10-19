@@ -23,6 +23,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - T14 accepted the synthetic sink-name regression but marked the exact cJSON finding location PARTIAL: line 861 is an early-exit root-replace branch, while general ADD/COPY duplicate-and-attach paths occur later. Follow-up D18 owns that source-to-root association gap.
 - D18 is implemented at `38dc3be`: the candidate is tied to COPY line 932 and ADD/REPLACE line 950; the early-exit root-replace line 861 is quiet. Exact-source coverage remains PARTIAL/BLOCK because `cJSON.c` parsing is incomplete and no trusted fixed source exists. T15 is independently accepting this change.
 - T15 independently confirmed D18's exact source positions and controls: rule regression PASS, cJSON case PARTIAL, fixed-source comparison BLOCK; 345-row queue and 160-test C++ suite pass.
+- D19 completed no-change review: the existing compare-cost rule still finds cJSON.c:3161, renamed and safe/unrelated controls behave as expected, and the upstream develop patch is only an experimental comparison. The case remains PARTIAL/BLOCK; T16 is independently accepting.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
