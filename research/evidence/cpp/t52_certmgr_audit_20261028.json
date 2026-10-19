@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "audit_id": "T52",
+  "audit_date": "2026-10-28",
+  "repository": "openharmony/security_certificate_manager",
+  "source_commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+  "source_tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+  "source_repo": "D:\\openHarmonyScanner\\openharmony\\.repo\\project-objects\\security_certificate_manager.git",
+  "fixed_source": "not bound for either candidate",
+  "cases": [
+    {
+      "queue_id": "CR-0315",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ef5a04d87049f7c7",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "path": "cmdline/certmgr/src/certmgr_command.cpp",
+      "line": 364,
+      "blob": "46d78a85b7e13b1752201b3f537343d9164f908d",
+      "source_sha256": "27f61990ff04328955bea8ceae9e5a262706e74fc44118cc7951b2425cdfa530",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "detector": "ohscanner.cpp.shared_ptr_race",
+      "detector_version": "0.5.1",
+      "rule": "ohcpp-shared-ptr-race-candidate-001",
+      "cli_json": "research/evidence/cpp/t52_certmgr_cr0315_shared_ptr_cli_20261028.json",
+      "parser_status": {
+        "complete": 1
+      },
+      "coverage_status": "complete",
+      "finding_count": 0,
+      "findings": [],
+      "assessment": "Complete translation-unit parse; zero current findings. This is not a safety conclusion: exact product profile, real invocation reachability, and target thread behavior remain unproven. No trusted fixed source is bound.",
+      "conclusion": "PARTIAL/BLOCK"
+    },
+    {
+      "queue_id": "CR-0316",
+      "candidate_id": "ohscanner.interface.ipc:c065e02b65b40b56",
+      "repository": "openharmony/security_certificate_manager",
+      "commit": "5fcc0b6379567a70176307c281360be2ba281d6b",
+      "tree": "f3e078b356ac0724d8ab267d73ab85e69b9b44ad",
+      "path": "frameworks/cert_manager_standard/main/os_dependency/cm_ipc/src/cm_ipc_dialog_client.cpp",
+      "line": 127,
+      "blob": "88937de7088f08ee85ac8dfdc70990f3b881ee2b",
+      "source_sha256": "dbe4abc0c0402ed6c86862649d710939f110bc9fd6d0311b4020a39870373e87",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "detector": "ohscanner.interface.ipc",
+      "detector_version": "0.12.12",
+      "rule": "ipc.relay.descriptor-boundary",
+      "cli_json": "research/evidence/cpp/t52_certmgr_cr0316_ipc_cli_20261028.json",
+      "parser_status": {
+        "partial": 1
+      },
+      "coverage_status": "partial",
+      "finding_count": 1,
+      "findings": [
+        {
+          "id": "ohscanner.interface.ipc:649bba05eed22163",
+          "line": 127,
+          "rule": "ipc.relay.descriptor-boundary",
+          "message": "AUTH-01 candidate: IPC entry reaches a handler resolved in the scanned sources without interface-descriptor validation: CmDialogCallbackStub::Deliver Entry=CmDialogCallbackStub::OnRemoteRequest [entry-source=frameworks/cert_manager_standard/main/os_dependency/cm_ipc/src/cm_ipc_dialog_client.cpp]; possible consequence (not established): a caller of one interface may reach behaviour reserved for another [boundary_bypass]; path=((122, 'code != CM_UKEY_DIALOG_CALLBACK_CMD => False'),)"
+        }
+      ],
+      "assessment": "Current IPC rule emits a descriptor-boundary candidate at line 127; full-file parser coverage is partial. The method reads an int32 result and calls a client callback; this is a callback stub supplied to the service. Caller authorization, dispatch reachability/product conditions, concrete impact, and trusted fixed source are not established.",
+      "conclusion": "PARTIAL/BLOCK"
+    }
+  ],
+  "context_identities": {
+    "CR-0315": {
+      "cmdline/certmgr/src/certmgr_command.cpp": {
+        "blob": "46d78a85b7e13b1752201b3f537343d9164f908d",
+        "sha256": "27f61990ff04328955bea8ceae9e5a262706e74fc44118cc7951b2425cdfa530",
+        "bytes": 20941
+      },
+      "cmdline/certmgr/BUILD.gn": {
+        "blob": "c3eb0b1916be046dc92222ced6b26a76766a81d3",
+        "sha256": "cbe4b33a7ef59578d5b3efbc94674de51b3e23601bb94414c525a37956efceee",
+        "bytes": 1675
+      }
+    },
+    "CR-0316": {
+      "frameworks/cert_manager_standard/main/os_dependency/cm_ipc/src/cm_ipc_dialog_client.cpp": {
+        "blob": "88937de7088f08ee85ac8dfdc70990f3b881ee2b",
+        "sha256": "dbe4abc0c0402ed6c86862649d710939f110bc9fd6d0311b4020a39870373e87",
+        "bytes": 12895
+      },
+      "frameworks/cert_manager_standard/main/os_dependency/BUILD.gn": {
+        "blob": "740b8d41ccfb2bc5f3dafa3e3d0baac2156bf61d",
+        "sha256": "b6567151339fdb70af94dff22d92b45dddbfa1619066aaad687c234e0e4225ad",
+        "bytes": 2779
+      },
+      "frameworks/cert_manager_standard/main/os_dependency/cm_ipc/include/cm_ipc_client.h": {
+        "blob": "4e21482e9e08c8b85e2d2b772d9968b6a75b886d",
+        "sha256": "265ec13ec1a2a83eef33ccdf62b42b233ed3b40b41aac88b495ffe5a9165879b",
+        "bytes": 4530
+      },
+      "frameworks/cert_manager_standard/main/os_dependency/cm_ipc/src/cm_ipc_client.c": {
+        "blob": "5a62cd7007f3522e1057914c1935bb7373f7869d",
+        "sha256": "2eed0d445f0ef02f6d15f8b16a4c01741d8d542c2111ec8ee06c403685c567b1",
+        "bytes": 49430
+      },
+      "interfaces/innerkits/cert_manager_standard/main/include/cert_manager_api.h": {
+        "blob": "e6a2aebce54842f9a1fcb0abb57bc2706a4ec92c",
+        "sha256": "940d209d6aad572158cb2d752e9893ff44d05654d3301cc653891d32cc67972e",
+        "bytes": 6417
+      },
+      "interfaces/innerkits/cert_manager_standard/source/cert_manager_api.c": {
+        "blob": "7403665a09d84dc2c6ac78dde2045b61a964e010",
+        "sha256": "c3852e78f9608274363a6972bcdcc03288ac473c185b6e724768a95bb4526b33",
+        "bytes": 26741
+      },
+      "services/cert_manager_standard/cert_manager_service/main/os_dependency/sa/cm_sa.cpp": {
+        "blob": "e50fe36ece07f2fb45dbb87f4125a79ee7eaf674",
+        "sha256": "4e42a327e34be5025c297ec54c2524ca2fcbc645902f72e45b6b02de2d469677",
+        "bytes": 16938
+      }
+    }
+  },
+  "a0_reconciliation": {
+    "queue_csv": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+    "total_rows": 345,
+    "unique_ids": 345,
+    "original_status_counts": {
+      "not_reproduced": 9,
+      "not_testable": 336
+    },
+    "selected_rows_preserve_original_status_and_queue_status": true
+  },
+  "scope": "Static independent replay and source-context review only; no detector, test, fixture, or A0 queue mutation."
+}
