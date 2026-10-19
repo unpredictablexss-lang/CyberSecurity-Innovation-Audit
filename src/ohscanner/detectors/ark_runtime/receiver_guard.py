@@ -9,6 +9,7 @@ from collections import deque
 from dataclasses import dataclass
 
 from .analysis import Observation
+from .cross_helper import binding_matches, build_identity_helpers, unwrap_identity_expression
 from .model import OWNER, AnalysisBudget
 from .runtime_ir import build_graph
 from .syntax import parse_functions, walk
@@ -24,12 +25,11 @@ class ReceiverGuardResult:
     model_digest: str = ''
 
 
-def _same_binding(fn, expression, binding):
-    return (expression is not None and expression.type == 'identifier'
-            and fn.resolve(fn.text(expression), expression) == binding)
+def _same_binding(fn, expression, binding, identity_helpers=()):
+    return binding_matches(fn, expression, binding, identity_helpers)
 
 
-def _typed_array_guard(fn, instruction, receiver):
+def _typed_array_guard(fn, instruction, receiver, identity_helpers=()):
     if instruction.kind != 'BRANCH' or not instruction.arguments:
         return False
     condition = instruction.arguments[0]
@@ -39,7 +39,7 @@ def _typed_array_guard(fn, instruction, receiver):
         args = fn.arguments(call)
         if len(args) != 1:
             continue
-        if fn.call_name(call) == 'IsTypedArray' and _same_binding(fn, args[0], receiver):
+        if fn.call_name(call) == 'IsTypedArray' and _same_binding(fn, args[0], receiver, identity_helpers):
             return True
         if args[0].type != 'identifier':
             continue
@@ -51,13 +51,15 @@ def _typed_array_guard(fn, instruction, receiver):
             if node.type != 'call_expression' or fn.call_name(node) != 'GetObjectType':
                 continue
             outer_args = fn.arguments(node)
-            if len(outer_args) != 1 or outer_args[0].type != 'call_expression':
+            if len(outer_args) != 1:
                 continue
-            load = outer_args[0]
+            load, _ = unwrap_identity_expression(fn, outer_args[0], identity_helpers)
+            if load is None or load.type != 'call_expression':
+                continue
             if fn.call_name(load) != 'LoadHClass':
                 continue
             load_args = fn.arguments(load)
-            if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver)
+            if (len(load_args) == 1 and _same_binding(fn, load_args[0], receiver, identity_helpers)
                     and type_binding.name):
                 parent = node.parent
                 while parent is not None and parent.type not in ('init_declarator', 'assignment_expression'):
@@ -73,13 +75,13 @@ def _typed_array_guard(fn, instruction, receiver):
     return False
 
 
-def _sink_receiver(fn, instruction, sink_name, receiver):
+def _sink_receiver(fn, instruction, sink_name, receiver, identity_helpers=()):
     found = []
     for node in walk(instruction.node):
         if node.type != 'call_expression' or fn.call_name(node) != sink_name:
             continue
         args = fn.arguments(node)
-        if len(args) == 1 and _same_binding(fn, args[0], receiver):
+        if len(args) == 1 and _same_binding(fn, args[0], receiver, identity_helpers):
             found.append(node)
     return found
 
@@ -118,7 +120,7 @@ def _reachable_without_successful_guard(graph, sink_index, matching_guards, budg
     return False, steps
 
 
-def analyze_receiver_guard(unit, *, caller_name=None,
+def analyze_receiver_guard(unit, *, caller_name=None, identity_helpers=None,
                            caller_types=('GateRef', 'GateRef', 'GateRef', 'Variable*', 'Label*', 'Label*'),
                            sink_name='GetViewedArrayBuffer', budget=None):
     budget = budget or AnalysisBudget()
@@ -130,6 +132,7 @@ def analyze_receiver_guard(unit, *, caller_name=None,
     except (ValueError, RuntimeError) as error:
         return ReceiverGuardResult('failed', 'failed',
                                    limitations=('parser_failure:' + type(error).__name__,))
+    identity_helpers = build_identity_helpers(functions) if identity_helpers is None else tuple(identity_helpers)
     if caller_name is None:
         applicable = [fn.qualified_name for fn in functions
                       if fn.qualified_name.startswith(OWNER + '::')
@@ -138,7 +141,8 @@ def analyze_receiver_guard(unit, *, caller_name=None,
         if not applicable:
             return ReceiverGuardResult('completed', 'complete')
         results = [analyze_receiver_guard(unit, caller_name=name, caller_types=caller_types,
-                                          sink_name=sink_name, budget=budget) for name in applicable]
+                                          sink_name=sink_name, budget=budget,
+                                          identity_helpers=identity_helpers) for name in applicable]
         observations = tuple(item for result in results for item in result.observations)
         limitations = tuple(sorted({item for result in results for item in result.limitations}))
         steps = sum(result.steps for result in results)
@@ -167,12 +171,12 @@ def analyze_receiver_guard(unit, *, caller_name=None,
     observations, limitations, total_steps = [], [], 0
     for receiver in candidates:
         sinks = [(index, node) for index, instruction in enumerate(graph.instructions)
-                 for node in _sink_receiver(fn, instruction, sink_name, receiver)]
+                 for node in _sink_receiver(fn, instruction, sink_name, receiver, identity_helpers)]
         if not sinks:
             continue
         guards = {index for index, instruction in enumerate(graph.instructions)
                   if instruction.kind == 'BRANCH'
-                  and _typed_array_guard(fn, instruction, receiver)}
+                  and _typed_array_guard(fn, instruction, receiver, identity_helpers)}
         if not guards:
             for index, node in sinks:
                 observations.append(Observation('unknown', node.start_point[0] + 1,

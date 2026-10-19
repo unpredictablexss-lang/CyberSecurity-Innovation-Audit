@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass, replace
 from hashlib import sha256
 from time import perf_counter
 
+from .cross_helper import build_identity_helpers
 from .model import AnalysisBudget, RuntimeTypeModel, OWNER
 from .runtime_ir import build_graph
 from .syntax import parse_functions, walk
@@ -108,6 +109,7 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
     actual_partial = tree.root_node.has_error
     if actual_partial and not research_partial:
         return AnalysisResult('limited', 'not_analyzed', limitations=('actual_parse_is_partial',))
+    identity_helpers = build_identity_helpers(functions)
     targets = [f for f in functions if f.qualified_name in model.callers
                or has_type_origin_flow(f, model)]
     if not targets:
@@ -213,7 +215,8 @@ def analyze_unit(unit, *, model=None, budget=None, research_partial=False):
                                   tuple(sorted(set(limitations + [str(error)]))), total_steps, model.digest)
         limitations.extend(graph.limitations)
         evaluator = OriginEvaluator(fn, model,
-            ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes))
+            ((graph.instructions[i].node.start_byte, graph.instructions[i].node.end_byte) for i in graph.cyclic_nodes),
+            identity_helpers)
         host_problems = [(inst, evaluator.unsupported_cpp_effect(inst)) for inst in graph.instructions]
         host_problems = [(inst, problem) for inst, problem in host_problems if problem]
         generated_control = False

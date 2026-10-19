@@ -1,6 +1,7 @@
 """Local definition identities and provenance, evaluated on generated paths."""
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from .syntax import compact, name_node, walk
+from .cross_helper import in_cyclic_region, unwrap_identity_expression
 from .model import NAMESPACE, OWNER
 
 
@@ -39,8 +40,9 @@ class OriginState:
 
 
 class OriginEvaluator:
-    def __init__(self, fn, model, cyclic_ranges=()):
+    def __init__(self, fn, model, cyclic_ranges=(), identity_helpers=()):
         self.fn, self.model = fn, model
+        self.identity_helpers = tuple(identity_helpers)
         self.cyclic_ranges = tuple(cyclic_ranges)
 
     @staticmethod
@@ -238,6 +240,8 @@ class OriginEvaluator:
         base = name.removeprefix('this->')
         if self._logic_and_chain(node) or self._copy_buffer_runtime_call(node) or self._copy_buffer_runtime_id(node):
             return True
+        if any(helper.matches(fn, node) for helper in self.identity_helpers):
+            return True
         if fn.resolve(base, node):
             return False
         if (base in dict(self.model.reviewed_graph_read_overloads)
@@ -347,8 +351,13 @@ class OriginEvaluator:
         if node is None:
             return UNKNOWN
         fn = self.fn
-        if node.type in ('parenthesized_expression', 'pointer_expression'):
-            return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
+        root, hops = unwrap_identity_expression(fn, node, self.identity_helpers)
+        if root is not None and root is not node:
+            value = self.value(root, state)
+            if any(item.startswith('identity_helper:') for item in hops) and value.kind != 'unknown':
+                detail = '+'.join(item for item in (value.detail, 'cross_helper_identity') if item)
+                return replace(value, detail=detail)
+            return value
         if node.type == 'identifier':
             binding = fn.resolve(fn.text(node), node)
             return state.values.get(binding.identity, UNKNOWN) if binding else UNKNOWN
@@ -413,6 +422,10 @@ class OriginEvaluator:
                     val = Value('builder', binding.identity, detail=(typ if '::' in typ else NAMESPACE + '::' + typ))
                 else:
                     val = self.value(child.child_by_field_name('value'), state)
+                if (val.kind in ('object', 'type', 'hclass')
+                        and in_cyclic_region(node, self.cyclic_ranges)):
+                    detail = '+'.join(item for item in (val.detail, 'loop_backedge_rebinding') if item)
+                    val = replace(val, may_differ=True, detail=detail)
                 state.values[binding.identity] = val
         elif node.type == 'assignment_expression':
             # A graph expression at one lexical site can produce a different
@@ -423,8 +436,13 @@ class OriginEvaluator:
                 binding = fn.resolve(fn.text(left), left)
                 if binding:
                     operator = node.child_by_field_name('operator')
-                    state.values[binding.identity] = (self.value(node.child_by_field_name('right'), state)
-                                                      if fn.text(operator) == '=' else UNKNOWN)
+                    val = (self.value(node.child_by_field_name('right'), state)
+                           if fn.text(operator) == '=' else UNKNOWN)
+                    if (val.kind in ('object', 'type', 'hclass')
+                            and in_cyclic_region(node, self.cyclic_ranges)):
+                        detail = '+'.join(item for item in (val.detail, 'loop_backedge_rebinding') if item)
+                        val = replace(val, may_differ=True, detail=detail)
+                    state.values[binding.identity] = val
 
     def store_arguments(self, node, state):
         fn, model = self.fn, self.model

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import re
 
 from .analysis import Observation
+from .cross_helper import build_identity_helpers, unwrap_identity_expression
 from .syntax import name_node, parse_functions, walk
 
 
@@ -210,7 +211,7 @@ def _context_thread(fn, source_call):
     return None
 
 
-def _callback_result_source(fn, node, effect_calls):
+def _callback_result_source(fn, node, effect_calls, identity_helpers=()):
     """Return (binding, value, direct_spec, nested_source) for bounded flows."""
     if node.type == "init_declarator":
         declarator = node.child_by_field_name("declarator")
@@ -229,7 +230,11 @@ def _callback_result_source(fn, node, effect_calls):
     if ident is None or ident.type != "identifier" or value is None:
         return None
 
-    source_calls = [item for item in walk(value)
+    raw_value = value
+    value, _ = unwrap_identity_expression(fn, raw_value, identity_helpers)
+    if value is None:
+        value = raw_value
+    source_calls = [item for item in walk(raw_value)
                     if item.type == "call_expression"
                     and any(fn.call_name(item) == spec[0]
                             and len(fn.arguments(item)) == spec[1]
@@ -600,7 +605,7 @@ def _include_unit(source_units, unit):
                         for item in units) else units + (unit,)
 
 
-def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_methods):
+def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_methods, identity_helpers=()):
     sensitive_bindings = set()
     for call in function_nodes:
         if call.type != "call_expression":
@@ -620,7 +625,7 @@ def _unknown_result_wrapper_sources(fn, function_nodes, effect_calls, sensitive_
     for node in function_nodes:
         if node.type not in ("init_declarator", "assignment_expression"):
             continue
-        source = _callback_result_source(fn, node, effect_calls)
+        source = _callback_result_source(fn, node, effect_calls, identity_helpers)
         if source is None:
             continue
         ident, binding, value, direct_spec, source_present = source
@@ -723,6 +728,7 @@ def analyze_runtime_exception_propagation(
         _include_unit(source_units, unit), effect_calls, guards, macro_contracts,
         parsed_functions=functions, parsed_path=unit.path)
 
+    identity_helpers = build_identity_helpers(functions)
     owners = _verified_generated_branch_owners(_include_unit(source_units, unit))
     generated_applicable, observations, limitations = (
         _analyze_generated_callback_paths(unit, owners))
@@ -733,12 +739,12 @@ def analyze_runtime_exception_propagation(
             continue
         function_nodes = tuple(walk(fn.body))
         has_source = any(
-            (source := _callback_result_source(fn, node, effective_calls)) is not None
+            (source := _callback_result_source(fn, node, effective_calls, identity_helpers)) is not None
             and source[4]
             for node in function_nodes
         )
         unknown_wrappers = _unknown_result_wrapper_sources(
-            fn, function_nodes, effective_calls, sensitive_methods)
+            fn, function_nodes, effective_calls, sensitive_methods, identity_helpers)
         if not has_source and not unknown_wrappers:
             continue
         if unknown_wrappers:
@@ -749,7 +755,7 @@ def analyze_runtime_exception_propagation(
             return RuntimeExceptionResult("limited", "partial", tuple(observations),
                                           tuple(sorted(set(limitations + ["instruction_budget_exhausted"]))), steps)
         for node in function_nodes:
-            source = _callback_result_source(fn, node, effective_calls)
+            source = _callback_result_source(fn, node, effective_calls, identity_helpers)
             if source is None:
                 continue
             ident, binding, value, source_spec, nested_source = source

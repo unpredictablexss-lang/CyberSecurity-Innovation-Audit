@@ -57,7 +57,7 @@ def _width(type_text):
     return None
 
 
-def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line):
+def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line, aliases=None):
     # Keep offsets stable while ignoring braces and parentheses in comments and
     # literals. The production AST completeness gate is checked before this
     # lexically bounded scan; this code does not claim full C++ syntax coverage.
@@ -86,8 +86,11 @@ def _loop_uses_allocated_copy(source, factor_names, allocation_names, body_line)
             break
         header = source[opening + 1:closing]
         cursor = closing + 1
+        expanded_factors = set(factor_names)
+        for name in factor_names:
+            expanded_factors |= _related_names(name, aliases or {})
         if not any(re.search(r'\b' + re.escape(name) + r'\b', header)
-                   for name in factor_names):
+                   for name in expanded_factors):
             continue
         body_open = masked.find('{', closing + 1)
         next_loop = loop_pattern.search(masked, closing + 1)
@@ -148,6 +151,83 @@ def _balanced_delimiter(source, opening, left='(', right=')'):
     return None
 
 
+def _full_parenthesized(expression):
+    if not (expression.startswith('(') and expression.endswith(')')):
+        return False
+    depth = 0
+    for index, char in enumerate(expression):
+        if char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+            if depth == 0 and index != len(expression) - 1:
+                return False
+    return depth == 0
+
+
+def _strip_identity_text_layers(expression, helper_names=()):
+    """Strip only syntax-transparent casts/parentheses and exact 1:1 helpers."""
+    current = expression.strip()
+    helper_pattern = re.compile(r'(?P<name>[A-Za-z_]\w*)\s*\(\s*(?P<arg>[^;()]*)\s*\)')
+    for _ in range(16):
+        previous = current
+        while _full_parenthesized(current):
+            current = current[1:-1].strip()
+        cast = re.fullmatch(
+            r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*[^>]+\s*>\s*\(\s*(?P<arg>[^;()]*)\s*\)',
+            current)
+        if cast:
+            current = cast.group('arg').strip()
+            continue
+        c_cast = re.fullmatch(r'\(\s*[A-Za-z_:][\w:\s*]*\s*\)\s*(?P<arg>[^;()]+)', current)
+        if c_cast:
+            current = c_cast.group('arg').strip()
+            continue
+        helper = helper_pattern.fullmatch(current)
+        if helper and helper.group('name') in helper_names:
+            current = helper.group('arg').strip()
+            continue
+        if current == previous:
+            break
+    return current
+
+
+def _operand_identity_name(expression, helper_names=()):
+    normalized = _strip_identity_text_layers(expression, helper_names)
+    return normalized if re.fullmatch(r'[A-Za-z_]\w*', normalized) else None
+
+
+def _alias_roots(source, helper_names=()):
+    aliases = {}
+    masked = _mask_cpp_noncode(source)
+    pattern = re.compile(r'\b(?:[A-Za-z_:][\w:\s*<>]*\s+)?(?P<name>\w+)\s*=\s*(?P<expr>[^;]+);')
+    for match in pattern.finditer(masked):
+        root = _operand_identity_name(match.group('expr'), helper_names)
+        if root and root != match.group('name'):
+            aliases[match.group('name')] = root
+    changed = True
+    while changed:
+        changed = False
+        for name, root in list(aliases.items()):
+            next_root = aliases.get(root, root)
+            if next_root != root:
+                aliases[name] = next_root
+                changed = True
+    return aliases
+
+
+def _related_names(name, aliases):
+    root = aliases.get(name, name)
+    return {item for item, source in aliases.items() if source == root} | {root}
+
+
+def _expand_alias_text(source, aliases):
+    if not aliases:
+        return source
+    pattern = re.compile(r'\b(?:' + '|'.join(re.escape(item) for item in sorted(aliases)) + r')\b')
+    return pattern.sub(lambda match: aliases.get(match.group(0), match.group(0)), source)
+
+
 def _split_product(expression):
     masked = _mask_cpp_noncode(expression)
     depth = 0
@@ -161,22 +241,25 @@ def _split_product(expression):
     return None
 
 
-def _operand_width(expression, type_map):
+def _operand_width(expression, type_map, aliases=None, helper_names=()):
+    aliases = aliases or {}
     expression = expression.strip()
-    cast = re.fullmatch(r'static_cast\s*<\s*([^>]+)\s*>\s*\(\s*(\w+)\s*\)', expression)
+    cast = re.fullmatch(
+        r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*([^>]+)\s*>\s*'
+        r'\(\s*([\w:]+)\s*\)', expression)
+    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*([\w:]+)', expression)
+    root = _operand_identity_name(expression, helper_names)
+    if root is None:
+        return None, None
+    source_width = type_map.get(root, type_map.get(next((k for k, v in aliases.items() if v == root), root)))
     if cast:
-        return type_map.get(cast.group(2)), _width(cast.group(1))
-    c_cast = re.fullmatch(r'\(\s*([\w:]+)\s*\)\s*(\w+)', expression)
+        return source_width, _width(cast.group(1))
     if c_cast:
-        return type_map.get(c_cast.group(2)), _width(c_cast.group(1))
-    ident = re.fullmatch(r'\w+', expression)
-    if ident:
-        width = type_map.get(expression)
-        return width, width
-    return None, None
+        return source_width, _width(c_cast.group(1))
+    return source_width, source_width
 
 
-def _text_allocations(source, size_name):
+def _text_allocations(source, size_name, aliases=None):
     masked = _mask_cpp_noncode(source)
     names, sites = set(), []
     for allocator in _ALLOCATORS:
@@ -196,7 +279,9 @@ def _text_allocations(source, size_name):
             if closing is None:
                 continue
             args = source[opening + 1:closing]
-            if not re.search(r'\b' + re.escape(size_name) + r'\b', args):
+            size_names = _related_names(size_name, aliases or {})
+            if not any(re.search(r'\b' + re.escape(name) + r'\b', args)
+                       for name in size_names):
                 continue
             prefix = masked[max(masked.rfind(';', 0, match.start()),
                                 masked.rfind('{', 0, match.start()),
@@ -218,6 +303,14 @@ def _text_allocations(source, size_name):
     return names, sites
 
 
+def _index_text_identity_helpers(text):
+    pattern = re.compile(
+        r'\b(?P<type>[A-Za-z_:][\w:\s*<>]*)\s+(?P<name>[A-Za-z_]\w*)\s*'
+        r'\(\s*(?P<ptype>[A-Za-z_:][\w:\s*<>]*)\s+(?P<param>\w+)\s*\)\s*'
+        r'\{\s*return\s+(?P=param)\s*;\s*\}')
+    return {match.group('name') for match in pattern.finditer(_mask_cpp_noncode(text))}
+
+
 def analyze_size_flows(source, *, functions=None, parse_complete=None):
     """Return bounded textual flows within lexically delimited C++ functions.
 
@@ -229,6 +322,8 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
     if parse_complete is False:
         return (), ('actual_parse_is_partial',)
     text = data.decode('utf-8')
+    identity_helper_names = _index_text_identity_helpers(text)
+    aliases = _alias_roots(text, identity_helper_names)
     masked = _mask_cpp_noncode(text)
     function_pattern = re.compile(
         r'\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*'
@@ -276,21 +371,21 @@ def analyze_size_flows(source, *, functions=None, parse_complete=None):
             if product is None or result_type is None:
                 continue
             left, right = product
-            left_source, left_op = _operand_width(left, type_map)
-            right_source, right_op = _operand_width(right, type_map)
+            left_source, left_op = _operand_width(left, type_map, aliases, identity_helper_names)
+            right_source, right_op = _operand_width(right, type_map, aliases, identity_helper_names)
             if None in (left_source, right_source, left_op, right_op):
                 continue
-            factor_names = tuple(match.group(1) for operand in (left, right)
-                                 if (match := re.search(r'(\w+)\s*\)?\s*$', operand)))
+            factor_names = tuple(name for operand in (left, right)
+                                 if (name := _operand_identity_name(operand, identity_helper_names)))
             if len(factor_names) != 2:
                 continue
             operation_width = max(32, left_op, right_op)
             may_overflow = operation_width < left_source + right_source
             result_name = declaration.group('name')
-            allocated, allocation_lines = _text_allocations(body, result_name)
+            allocated, allocation_lines = _text_allocations(body, result_name, aliases)
             if not allocated:
                 continue
-            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line)
+            loop_line = _loop_uses_allocated_copy(body, factor_names, allocated, body_line, aliases)
             if loop_line is None:
                 continue
             expression_start = declaration.start('expr')
@@ -403,6 +498,8 @@ def analyze_length_narrowing_flows(source):
     memory-safety impact.
     """
     text = source.decode('utf-8') if isinstance(source, bytes) else source
+    identity_helper_names = _index_text_identity_helpers(text)
+    aliases = _alias_roots(text, identity_helper_names)
     candidates, limitations, applicable = [], [], False
     signed_types = r'(?:int32_t|std::int32_t|signed\s+int|int)'
     for name, body, body_line, body_byte in _bounded_function_regions(text):
@@ -415,12 +512,15 @@ def analyze_length_narrowing_flows(source):
         for declaration in declarations:
             signed_found = True
             result_name = declaration.group('name')
+            related = _related_names(result_name, aliases)
+            name_pattern = '(?:' + '|'.join(re.escape(item) for item in sorted(related)) + ')'
             conversion = re.search(
-                r'\b' + re.escape(result_name) + r'\s*=\s*(?:'
-                r'static_cast\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
+                r'\b(?P<name>' + name_pattern + r')\s*=\s*(?:'
+                r'(?:static_cast|reinterpret_cast|const_cast|dynamic_cast)\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
+                r'\(\s*(?:std::)?int32_t\s*\)\s*[^;]+|'
                 r'base::NumberHelper::DoubleInRangeInt32\s*\([^;]+\))\s*;', body)
             allocation = re.search(
-                r'\bAllocateTypedArray\s*\([^;]*\b' + re.escape(result_name) + r'\b[^;]*\)', body)
+                r'\bAllocateTypedArray\s*\([^;]*\b(?:' + name_pattern + r')\b[^;]*\)', body)
             if conversion is None or allocation is None:
                 continue
             expression = conversion.group(0)
@@ -478,8 +578,11 @@ class IndexBoundsCandidate:
 def analyze_index_bounds_flows(source):
     """Find 32-bit index arithmetic reaching DataView/Atomics buffer access."""
     text = source.decode('utf-8') if isinstance(source, bytes) else source
+    identity_helper_names = _index_text_identity_helpers(text)
+    aliases = _alias_roots(text, identity_helper_names)
     candidates, limitations, applicable = [], [], False
     for name, body, body_line, body_byte in _bounded_function_regions(text):
+        body_for_aliases = _expand_alias_text(body, aliases)
         semantic_name = any(token in name for token in ('DataView', 'Atomic', 'ValidateAtomicAccess'))
         buffer_flow = any(token in body for token in (
             'GetValueFromBuffer', 'SetValueInBuffer', 'GetDataPointFromBuffer', 'ValidateAtomicAccess'))
@@ -495,7 +598,7 @@ def analyze_index_bounds_flows(source):
         arithmetic = re.search(
             r'(?:Int32Add\s*\([^;]+\)|static_cast\s*<\s*uint32_t\s*>\s*\([^;]+\)\s*\+\s*\w+|'
             r'\buint32_t\s+\w+\s*=\s*[^;]*\+)', body)
-        bounds = any(token in body for token in (
+        bounds = any(token in body or token in body_for_aliases for token in (
             'Int32GreaterThan', 'getIndex +elementSize >', 'index * elementSize + offset',
             'index + elementSize >', 'index) + elementSize >'))
         if narrow and arithmetic and bounds:
