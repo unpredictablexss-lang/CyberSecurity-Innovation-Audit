@@ -1,8 +1,8 @@
 # T61 independent acceptance: libpng CVE-2026-33416 and CVE-2026-46675
 
-Date: 2026-10-30  
-Baseline: `dac497e85b55baf9279368469047fc142b325ea6`  
-Detector: `ohscanner.cpp.resource_lifetime` `0.4.2`  
+Date: 2026-10-30
+Baseline: `dac497e85b55baf9279368469047fc142b325ea6`
+Detector: `ohscanner.cpp.resource_lifetime` `0.4.2`
 Disposition: **both cases remain PARTIAL/BLOCK**.
 
 ## Source identities and controls
@@ -41,4 +41,3 @@ Reproduce the evidence checks with:
 ```powershell
 python research/evidence/cpp/verify_t61_libpng_acceptance_20261030.py
 ```
-
