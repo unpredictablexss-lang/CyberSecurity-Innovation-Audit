@@ -102,9 +102,9 @@
     "Same-product-profile fixed build and revalidation"
   ],
   "recommended_next_check": [
-    "D1 should add the semantically equivalent NotEqual plus inverted-edge form while keeping unsupported negation/macro/nested control structures unknown.",
-    "T1 should rerun the exact 40-case source replay and independent C12/C10/known-case/C11 regression on the updated D1 commit.",
-    "Keep product vulnerability and product safety unknown until product build, reachability, and impact evidence close."
+    "Preserve the exact source identities and candidate envelope for any future replay; do not infer product applicability from detector regression.",
+    "For product attribution, bind the upstream source pair to one shipped product build and prove reachable entry, attacker control, trigger, and impact.",
+    "Keep product vulnerability and product safety unknown until those independent evidence gates close."
   ],
   "confidence": "medium",
   "limitations": [
@@ -115,7 +115,7 @@
   ],
   "detector_replay": {
     "t1_commit": "23824fd0eaa8d228fed7c71cb7b7b1eba10236a1",
-    "status": "counterexample_open",
+    "status": "source_replay_and_independent_regression_passed_product_applicability_unknown",
     "raw_parent": "candidate emitted at pinned source line 1053",
     "raw_fixed": "no same-rule candidate; fixed-control limitation retained; not a safety verdict",
     "wrong_blob_or_revision": "rejected without candidate",
@@ -126,6 +126,19 @@
       "failure": "NotEqual(value, ExceptionConstant) with inverted success/exception IfTrue/IfFalse routes is semantically equivalent to the parent pattern but is missed by current D1 matcher"
     },
     "semantic_basis": "T1 verified ICmp EQ/NE mapping, Branch/IfTrue/IfFalse construction, and ReplaceHirWithIfBranch success/exception wiring in pinned compiler source.",
-    "scope_check": "c_t1 against baseline 8358d0d27a134cc3737cc4cd218560bde36b4443 passed with zero violations"
+    "scope_check": "c_t1 against baseline 8358d0d27a134cc3737cc4cd218560bde36b4443 passed with zero violations",
+    "d1_fix_commit": "3e97ad8223d31765cb435a5306a2e645c08276b9",
+    "d1_overlay_after_fix": {
+      "tests": 40,
+      "subtests": 12,
+      "status": "passed"
+    },
+    "t1_independent_commit": "59cf0c8cadfeb3c49a7150d9ff55b074e1b66abb",
+    "t1_independent_retest": {
+      "tests": 42,
+      "status": "passed",
+      "scope_check": "c_t1 against baseline 8358d0d27a134cc3737cc4cd218560bde36b4443 passed"
+    },
+    "counterexample_resolution": "D1 now recognizes only the semantically equivalent NotEqual comparison with exception routed via IfFalse; wrong polarity stays partial/unknown."
   }
 }
