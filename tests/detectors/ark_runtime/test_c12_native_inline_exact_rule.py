@@ -294,7 +294,10 @@ class NativeInlineExactRuleTests(unittest.TestCase):
             "  StateDepend exception(ifTrue, builder_.DependRelay(ifTrue, depend));",
             "StateDepend success(ifTrue, builder_.DependRelay(ifTrue, depend));\n"
             "  StateDepend exception(ifFalse, builder_.DependRelay(ifFalse, depend));")
-        self.assertFalse(has_candidate(result(unit(helper, PATH))))
+        run = result(unit(helper, PATH))
+        self.assertFalse(has_candidate(run))
+        self.assertEqual(run.file_outcome, "partial")
+        self.assertIn("native_inline_guard_branch_relation_unknown", run.limitations)
 
     def test_partial_parse_preserves_candidate_and_unknown_parse_obligation(self):
         sample = source(parse_status="partial")
