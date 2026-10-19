@@ -37,13 +37,14 @@ def main() -> int:
             row["sha256"] for row in record["candidates"] if row["file"] == path
         )
     with args.queue_csv.open(encoding="utf-8-sig", newline="") as stream:
-        rows = {row["review_id"]: row for row in csv.DictReader(stream)}
+        rows = {row["original_review_id"]: row for row in csv.DictReader(stream)}
     for candidate in record["candidates"]:
         row = rows[candidate["review_id"]]
-        assert row["library"] == "global_i18n"
-        assert row["file"] == candidate["file"]
+        assert row["repository"] == "openharmony/global_i18n"
+        assert row["path"] == candidate["file"]
         assert row["line"] == str(candidate["line"])
-        assert row["final_status"] == candidate["original_status"] == "not_testable"
+        assert row["original_status"] == candidate["original_status"] == "not_testable"
+        assert row["queue_status"] == "paused_pending_evidence"
     for run in record["runs"]:
         cli = json.loads((args.evidence_dir / run["cli_json"]).read_text(encoding="utf-8"))
         assert cli["commit"] == record["commit"] and cli["git_tree"] == record["tree"]
