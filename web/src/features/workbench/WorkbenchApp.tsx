@@ -39,7 +39,7 @@ function Workspace() {
   const operationMatch = path.match(/^\/tasks\/operations\/([A-Za-z0-9_-]+)$/);
   const taskMatch = path.match(/^\/tasks\/([A-Za-z0-9_-]+)$/);
   if (operationMatch) content = <OperationWorkspace key={path} view="queue" operationId={operationMatch[1]} />;
-  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} />;
+  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} sourceFile={route.query.get("source_file") || undefined} sourceLine={Number(route.query.get("source_line")) || undefined} />;
   else if (path === "/audits/repository") content = <RepositoryAudit repos={repos} detectors={detectors} refresh={refresh} />;
   else if (path === "/audits/time") content = <OperationWorkspace key={path} view="date" />;
   else if (path === "/audits/versions") content = <OperationWorkspace key={route.canonical} view="branches" context={context} />;
@@ -103,11 +103,11 @@ function Workspace() {
         {error && <Alert className="section-gap" type="error" showIcon message={error} description="数据刷新失败，当前视图可能保留上次成功结果。" />}
         {health && !health.worker_running && <Alert className="section-gap" type="warning" message="扫描 Worker 未运行，排队任务将等待启动。" />}
         {content}
-      </Layout.Content><Layout.Footer className="footer">OHScanner · 候选 / 覆盖 / 证据分别记录 · 采用 MiSans VF Web 字体，网络不可用时系统回退</Layout.Footer>
+      </Layout.Content><Layout.Footer className="footer">OHScanner · 候选 / 覆盖 / 证据分别记录 · 采用内嵌 MiSans VF Web 字体与系统回退</Layout.Footer>
     </Layout>
   </Layout>;
 }
 export default function WorkbenchApp() {
   return <ConfigProvider locale={zhCN} theme={{ token: { colorPrimary: "#315fea", colorBgLayout: "#f4f6fa", colorText: "#243450", colorTextSecondary: "#7889a4", colorBorder: "#e2e8f0", borderRadius: 8, fontSize: 13, controlHeight: 32,
-    fontFamily: '"MiSans VF", "MiSans", "MiSans L3", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif' }, components: { Card: { bodyPadding: 20, headerHeight: 52, headerFontSize: 14 }, Table: { cellPaddingBlock: 11, cellPaddingInline: 14, fontSize: 12 }, Menu: { itemHeight: 38, itemMarginBlock: 2, iconSize: 15 } } }}><Workspace /></ConfigProvider>;
+    fontFamily: '"MiSans VF", "MiSans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' }, components: { Card: { bodyPadding: 20, headerHeight: 52, headerFontSize: 14 }, Table: { cellPaddingBlock: 11, cellPaddingInline: 14, fontSize: 12 }, Menu: { itemHeight: 38, itemMarginBlock: 2, iconSize: 15 } } }}><Workspace /></ConfigProvider>;
 }

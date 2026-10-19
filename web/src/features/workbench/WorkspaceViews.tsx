@@ -7,6 +7,7 @@ import Capabilities from "../../pages/Capabilities";
 import Cases from "../../pages/Cases";
 import JobDetail from "../../pages/JobDetail";
 import OperationWorkspace from "../audits/OperationWorkspace";
+import AgentProviderSettings from "./AgentProviderSettings";
 import { SourceContext } from "../audits/OperationForms";
 import { jobDetailPath, retainRiskSource } from "./navigation";
 const { Text, Paragraph } = Typography;
@@ -39,14 +40,54 @@ export function RiskCenter({ jobs }: { jobs: any[] }) {
 export function Investigations({ context = {} }: { context?: SourceContext }) {
   const [agentStatus, setAgentStatus] = useState<any>(null);
   useEffect(() => { void api("/agent/status").then(setAgentStatus).catch(() => setAgentStatus(null)); }, []);
+  const providerCheck = agentStatus?.last_provider_check;
+  const connectionSummary = providerCheck
+    ? "最近通过无源码探测：" + providerCheck.checked_at + " · " + providerCheck.duration_ms + " ms · 输入 " + (providerCheck.input_tokens ?? "unknown") + " / 输出 " + (providerCheck.output_tokens ?? "unknown") + " tokens。该探测只证明 API 连通和最小结构化输出。"
+    : "配置完成不代表接口已连通。";
   return <><Header title="智能调查" description="围绕候选组织案例与只读调查，保留反证和仍未知的证据义务。" />
     {agentStatus ? <Alert className="section-gap" type={agentStatus.configured ? "info" : "warning"} showIcon
-      message={agentStatus.configured ? "受限 Agent 已配置" : "真实模型未配置"}
-      description={agentStatus.configured ? "服务目标 " + agentStatus.endpoint_host + " · 模型 " + agentStatus.model + "。调用仍需在候选工具页逐次同意源码外发。" :
-        "人工案例与固定只读工具可用。配置后才可调用真实模型；模型费用/效果尚未实测，且不会自动确认漏洞。"} /> :
+      message={agentStatus.configured ? (providerCheck ? "模型配置已保存，最近连通性探测通过" : "模型配置已保存，连通性尚未验证") : "真实模型未配置"}
+      description={agentStatus.configured ? connectionSummary + " 服务目标 " + agentStatus.endpoint_host + " · 模型 " + agentStatus.model + " · 预览策略 " + (agentStatus.consent_preview_version || "unknown") + " · 脱敏策略 " + (agentStatus.redaction_policy_version || "unknown") + "。调用仍需在候选工具页逐次同意源码外发。" :
+        "预览策略 " + (agentStatus.consent_preview_version || "unknown") + " · 脱敏策略 " + (agentStatus.redaction_policy_version || "unknown") + "。人工案例与固定只读工具可用。配置后才可调用真实模型；模型费用/效果尚未实测，且不会自动确认漏洞。"} /> :
       <Alert className="section-gap" type="warning" showIcon message="模型配置状态暂不可用" description="可继续使用人工案例和确定性只读工具。" />}
-    <Tabs className="section-gap" defaultActiveKey={context.candidate_id ? "tools" : "cases"} items={[{ key: "cases", label: "调查案例", children: <Cases embedded /> },
-      { key: "tools", label: "只读调查步骤", children: <OperationWorkspace view="investigate" context={context} /> }]} /></>;
+    <Tabs className="section-gap" defaultActiveKey={context.candidate_id ? "tools" : "cases"} items={[
+      { key: "cases", label: "调查案例", children: <Cases embedded /> },
+      { key: "tools", label: "只读调查步骤", children: <OperationWorkspace view="investigate" context={context} /> },
+      { key: "agent", label: "Agent 调查任务", children: <OperationWorkspace view="agent" context={context} /> },
+      { key: "experiments", label: "R0 / R1 / R2 实验记录", children: <AgentExperimentHistory /> },
+    ]} /></>;
+}
+function AgentExperimentHistory() {
+  const [summary, setSummary] = useState<any>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let live = true;
+    void api("/agent/evaluation-summary")
+      .then((value) => { if (live) { setSummary(value); setError(""); } })
+      .catch((reason) => { if (live) setError(String(reason)); });
+    return () => { live = false; };
+  }, []);
+  const baselines = summary?.r0_baseline_reviews || [];
+  return <Card title="静态人工基线与模型实验">
+    <Alert className="section-gap" type="info" showIcon
+      message="R0 是人工静态复核记录；记录存在不等于漏洞确认或产品真值。"
+      description={summary?.limitation || "R1/R2 的反馈只衡量复核体验与引用质量，不代表漏洞精确率、召回率或独立真值。"} />
+    {error && <Alert className="section-gap" type="error" showIcon message={error} />}
+    <Table<any> className="section-gap" rowKey="id" dataSource={baselines}
+      columns={[
+        { title: "实验", dataIndex: "experiment_id" },
+        { title: "仓库 / 固定版本", render: (_, row) => <><Text>{row.repository}</Text><div className="muted"><Hash value={row.commit} /></div></> },
+        { title: "候选", render: (_, row) => <><Text>{row.detector_id} · {row.detector_version}</Text><div className="muted"><Hash value={row.candidate_id} /></div></> },
+        { title: "复核人 / 范围", render: (_, row) => <>{row.reviewer}<div><Tag>静态人工 R0</Tag></div></> },
+        { title: "处置 / 漏洞状态", render: (_, row) => <>{row.disposition}<div><Tag color={row.vulnerability_state === "confirmed" ? "red" : "default"}>{row.vulnerability_state || "unknown"}</Tag></div></> },
+        { title: "证据义务", render: (_, row) => (row.obligations_reviewed ?? row.obligation_reviews?.length ?? 0) + " 项" },
+        { title: "记录哈希", dataIndex: "record_sha256", render: (value) => <Hash value={value} /> },
+        { title: "记录时间", dataIndex: "created_at", render: (value) => value ? new Date(value).toLocaleString() : "未知" },
+      ]}
+      expandable={{ expandedRowRender: (row) => <><Paragraph>{row.notes || "无复核备注"}</Paragraph><Paragraph type="secondary">validated_vulnerability={row.validated_vulnerability ?? 0} · R0 只表示静态人工研判，不是产品漏洞确认。</Paragraph></> }}
+      locale={{ emptyText: <Empty description="尚无 R0 基线记录；完成一次静态人工复核后会显示在这里。" /> }}
+    />
+  </Card>;
 }
 export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
   const reports = jobs.filter((j) => j.report_sha256);
@@ -78,19 +119,20 @@ export function ReportCenter({ jobs, cases }: { jobs: any[]; cases: any[] }) {
 }
 export function SettingsView({ repos, detectors, health, refresh, tab }: { repos: any[]; detectors: any[]; health: any; refresh: () => Promise<void>; tab: string }) {
   return <><Header title="系统设置" description="管理当前本地源码、规则能力与运行状态；未接入的配置明确保留限制。" />
-    <Tabs activeKey={["sources", "capabilities", "runtime"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
+    <Tabs activeKey={["sources", "capabilities", "runtime", "agent"].includes(tab) ? tab : "sources"} onChange={(key) => go("/settings/" + key)} items={[
       { key: "sources", label: "源码与缓存", children: <><Alert type="info" message="官方清单与镜像身份核验待接入" description="当前登记本地仓库或显式同步 allowlist 源码；不会根据仓库名称冒充官方身份认证。" />
         <Repositories repos={repos} roots={health?.target_roots || []} refresh={refresh} embedded />
         <OperationWorkspace view="sync" /></> },
       { key: "capabilities", label: "语言与规则", children: <Capabilities detectors={detectors} embedded /> },
-      { key: "runtime", label: "Worker 与模型", children: <Card title="当前服务状态">
+      { key: "agent", label: "Agent / LLM", children: <AgentProviderSettings /> },
+      { key: "runtime", label: "Worker 状态", children: <Card title="当前服务状态">
         <Descriptions column={1} items={[
           { key: "health", label: "API", children: health?.status || "未知" },
           { key: "worker", label: "扫描 Worker", children: health ? health.worker_running ? "运行中" : "未运行" : "未知" },
           { key: "concurrency", label: "扫描并发上限", children: health?.limits?.concurrent_scans ?? "未知" },
           { key: "agent", label: "真实模型", children: health?.capabilities?.agent ? "服务宣告可用，需专项验收" : "未连接；只读调查可单独使用" },
           { key: "validation", label: "产品运行时验证", children: health?.capabilities?.runtime_validation ? "服务宣告可用，需核对证据" : "未验收；组件 Harness 单独记录" },
-        ]} /><Paragraph type="secondary">此处为服务只读状态；没有提供虚构的模型连接、Worker 扩容或配置保存按钮。</Paragraph>
+        ]} /><Paragraph type="secondary">模型服务凭据和连接测试位于“Agent / LLM”设置页；此处仅展示 Worker 运行状态。</Paragraph>
         <Button onClick={() => go("/operations")}>兼容高级操作入口</Button>
       </Card> },
     ]} />

@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Checkbox,
+  Collapse,
   Col,
   ConfigProvider,
   Descriptions,
@@ -46,8 +47,9 @@ import AuditPlanView from "../features/audits/AuditPlanView";
 import SourceEvidence from "../SourceEvidence";
 import CandidateActions from "../features/workbench/CandidateActions";
 import { requestGate } from "../features/audits/model";
+import { disclosureReviewed, disclosureSelectionMatches } from "../features/audits/egressDisclosure.js";
 const { Text, Title, Paragraph } = Typography;
-export default function JobDetail({ id, initialTab = "findings", candidateId }: { id: string; initialTab?: string; candidateId?: string }) {
+export default function JobDetail({ id, initialTab = "findings", candidateId, sourceFile, sourceLine }: { id: string; initialTab?: string; candidateId?: string; sourceFile?: string; sourceLine?: number }) {
   const [job, setJob] = useState<any>(null);
   const [report, setReport] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -66,6 +68,15 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
   const candidateAutoOpened = useRef<string | null>(null);
   const [source, setSource] = useState<any>(null);
   const [selected, setSelected] = useState<React.Key[]>([]);
+  const [batchOpen, setBatchOpen] = useState(false);
+  const [batchBusy, setBatchBusy] = useState(false);
+  const [batchPreview, setBatchPreview] = useState<any>(null);
+  const [batchDisclosureOpened, setBatchDisclosureOpened] = useState<string[]>([]);
+  const [batchSubmissionApproved, setBatchSubmissionApproved] = useState(false);
+  const [batchCandidateIds, setBatchCandidateIds] = useState<string[]>([]);
+  const batchPreviewCandidateIds = (batchPreview?.candidates || []).map((item: any) => String(item.candidate_id));
+  const batchPreviewMatchesSelection = disclosureSelectionMatches(batchCandidateIds, batchPreviewCandidateIds);
+  const batchDisclosureReviewed = batchPreviewMatchesSelection && disclosureReviewed(batchDisclosureOpened, batchCandidateIds);
   const [caseOpen, setCaseOpen] = useState(false);
   const [caseForm] = Form.useForm();
   const [reviewForm] = Form.useForm();
@@ -159,11 +170,64 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
     }
   }
   useEffect(() => {
+    if (!report || initialTab !== "source" || !sourceFile) return;
+    const allowed = report._workbench?.source_inventory?.some((item: any) => item.file === sourceFile);
+    if (!allowed) {
+      setError("引用源码不在本次扫描的固定源码清单中");
+      return;
+    }
+    let live = true;
+    api("/scans/" + id + "/source?file=" + encodeURIComponent(sourceFile))
+      .then((value) => { if (live) setSource(value); })
+      .catch((e) => { if (live) setError(String(e)); });
+    return () => { live = false; };
+  }, [id, report?.snapshot_sha256, initialTab, sourceFile]);
+  useEffect(() => {
     if (job && candidateId && candidateAutoOpened.current !== candidateId) {
       candidateAutoOpened.current = candidateId;
       void open({ id: candidateId });
     }
   }, [job?.id, candidateId]);
+  async function previewAgentBatch() {
+    const candidateIds = selected.map(String);
+    if (!candidateIds.length || candidateIds.length > 5) return;
+    setBatchCandidateIds(candidateIds);
+    setBatchPreview(null);
+    setBatchDisclosureOpened([]);
+    setBatchSubmissionApproved(false);
+    setBatchOpen(true);
+    setBatchBusy(true);
+    try {
+      const preview = await api("/operations/agent-investigations/batch/preview", {
+        job_id: id, candidate_ids: candidateIds, mode: "tool_agent",
+      });
+      setBatchPreview(preview);
+    } catch (e) {
+      message.error(String(e));
+      setBatchOpen(false);
+    } finally {
+      setBatchBusy(false);
+    }
+  }
+  async function enqueueAgentBatch() {
+    if (!batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved) return;
+    setBatchBusy(true);
+    try {
+      const result = await api("/operations/agent-investigations/batch", {
+        job_id: id, candidate_ids: batchCandidateIds, mode: "tool_agent",
+        source_submission_approved: true, consent_sha256: batchPreview.consent_sha256,
+        consent_nonce: batchPreview.consent_nonce,
+      });
+      setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false);
+      setSelected([]);
+      message.success("已原子创建 " + result.created_count + " 个独立 Agent 候选调查任务");
+      if (result.operations?.[0]?.id) go("/tasks/operations/" + result.operations[0].id);
+    } catch (e) {
+      message.error(String(e));
+    } finally {
+      setBatchBusy(false);
+    }
+  }
   async function action(name: string) {
     try {
       const j = await api("/scans/" + id + "/" + name, {});
@@ -325,6 +389,13 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                       onClick={() => setCaseOpen(true)}
                     >
                       关联调查案例（{selected.length}）
+                    </Button>
+                    <Button
+                      type="primary"
+                      disabled={!selected.length || selected.length > 5 || !job?.report_sha256}
+                      onClick={() => void previewAgentBatch()}
+                    >
+                      批量 Agent 调查（{selected.length}/5）
                     </Button>
                   </Space>
                   <Table<any>
@@ -545,6 +616,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                 <>
                   <Select
                     showSearch
+                    value={source?.file}
                     style={{ width: "100%" }}
                     placeholder="选择本次纳入的源码"
                     options={report._workbench.source_inventory.map(
@@ -561,7 +633,7 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
                         .catch((e) => setError(String(e)))
                     }
                   />
-                  {source && <CodeView source={source} />}
+                  {source && <CodeView source={source} line={sourceLine || 1} />}
                 </>
               ) : (
                 <Empty description="无已验证源码清单" />
@@ -768,6 +840,58 @@ export default function JobDetail({ id, initialTab = "findings", candidateId }: 
           </>
         )}
       </Drawer>
+      <Modal
+        title="批量 Agent 源码外发预览"
+        open={batchOpen}
+        width={900}
+        confirmLoading={batchBusy}
+        okText="批准并创建逐候选任务"
+        cancelText="取消"
+        okButtonProps={{ disabled: !batchPreview || !batchDisclosureReviewed || !batchSubmissionApproved }}
+        onOk={() => void enqueueAgentBatch()}
+        onCancel={() => { setBatchOpen(false); setBatchDisclosureOpened([]); setBatchSubmissionApproved(false); }}
+      >
+        {batchBusy && !batchPreview ? <Spin /> : batchPreview ? <>
+          <Alert type="warning" showIcon message="确认后将为每条候选分别创建一个 Agent 任务；此操作会把下列源码上下文发送给所示模型端点。模型结论仍是候选，需人工审核。" />
+          <Descriptions className="section-gap" bordered size="small" column={2}>
+            <Descriptions.Item label="模型端点">{batchPreview.provider?.endpoint_host || "未显示"}</Descriptions.Item>
+            <Descriptions.Item label="候选数">{batchPreview.candidate_count}</Descriptions.Item>
+            <Descriptions.Item label="最大模型调用">{batchPreview.aggregate_budget?.max_model_calls}</Descriptions.Item>
+            <Descriptions.Item label="最大结构化修复调用">{batchPreview.aggregate_budget?.max_validation_repair_calls}</Descriptions.Item>
+            <Descriptions.Item label="最大输入 Token">{batchPreview.aggregate_budget?.max_total_input_tokens}</Descriptions.Item>
+            <Descriptions.Item label="最大输出 Token">{batchPreview.aggregate_budget?.max_total_output_tokens}</Descriptions.Item>
+            <Descriptions.Item label="顺序执行最坏耗时（秒）">{batchPreview.aggregate_budget?.max_wall_seconds_sequential}</Descriptions.Item>
+            <Descriptions.Item label="整批预算费用最高估算（非硬上限）">{batchPreview.aggregate_budget_cost_estimate
+              ? <Space wrap><Text>≤ {batchPreview.aggregate_budget_cost_estimate.currency} {batchPreview.aggregate_budget_cost_estimate.maximum_usd}；{batchPreview.aggregate_budget_cost_estimate.candidate_or_arm_count} 个任务；峰值费率且输入按未命中计算</Text><a href={batchPreview.aggregate_budget_cost_estimate.rate_source_url} target="_blank" rel="noreferrer">费率来源</a></Space>
+              : "unknown（该 Provider / 模型没有匹配的已知费率）"}</Descriptions.Item>
+          </Descriptions>
+          <Text type="secondary">预览指纹：{batchPreview.consent_sha256}</Text>
+          {batchPreview.candidates?.map((item: any) => <Card key={item.candidate_id} size="small" className="section-gap" title={item.file + ":" + (item.line ?? "?")}>
+            <Text code>{item.candidate_id}</Text>
+            <Text type="secondary">源码 SHA-256：{item.preview?.binding?.source_sha256}；UTF-8 字节：{item.preview?.initial_context_utf8_bytes}；脱敏类别：{(item.preview?.sensitive_redactions || []).join(", ") || "无"}</Text>
+            <Collapse activeKey={batchDisclosureOpened.includes(String(item.candidate_id)) ? [String(item.candidate_id)] : []}
+              onChange={(keys) => {
+                const opened = Array.isArray(keys) ? keys.map(String) : [String(keys)];
+                const next = batchDisclosureOpened.filter((key) => key !== String(item.candidate_id));
+                if (opened.includes(String(item.candidate_id))) next.push(String(item.candidate_id));
+                setBatchDisclosureOpened(next);
+                if (!disclosureReviewed(next, batchCandidateIds)) setBatchSubmissionApproved(false);
+              }}
+              items={[{ key: String(item.candidate_id), label: "展开该候选实际发送的完整上下文与工具范围", children: <>
+                <Text strong>发送给模型的完整初始上下文（JSON）</Text>
+                <pre className="raw">{JSON.stringify(item.preview?.initial_context || {}, null, 2)}</pre>
+                <Paragraph className="section-gap" type="secondary">可能追加的只读工具数据范围：{(item.preview?.additional_tool_data_scope || []).join(" ") || "无"}</Paragraph>
+              </> }]} />
+          </Card>)}
+          <ul>{batchPreview.disclosure?.map((line: string) => <li key={line}>{line}</li>)}</ul>
+          {!batchPreviewMatchesSelection && <Alert className="section-gap" type="error" showIcon message="预览候选与所选候选不一致，不能授权批量发送。请关闭并重新生成预览。" />}
+          <Checkbox checked={batchSubmissionApproved}
+            disabled={!batchDisclosureReviewed}
+            onChange={(event) => setBatchSubmissionApproved(event.target.checked)}>
+            我已逐条展开并检查所有候选的完整外发上下文与工具范围，允许按此预览向模型发送
+          </Checkbox>
+        </> : <Text>正在生成预览…</Text>}
+      </Modal>
       <Modal
         open={caseOpen}
         title="建立调查案例"
