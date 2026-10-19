@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "task_id": "D66",
+  "date": "2026-10-23",
+  "role": "independent_read_only_second_layer_review",
+  "decision": "narrow",
+  "confidence": {
+    "pinned_source_path_and_candidate_identity": 0.92,
+    "T65_tested_observation_behavior": 0.88,
+    "metadata_accuracy_outside_tested_cases": null,
+    "product_vulnerability": null
+  },
+  "downstream_model": {
+    "send_candidate": true,
+    "candidate_scope": "pinned-source candidate only; permission_guard remains unknown",
+    "review_question": "Review the D52 old source path and complete authorization boundary, including core getter, framework policy, and exact advisory/fix mapping.",
+    "required_context": [
+      "D52 exact commit/tree/blob/hash",
+      "GET_PASTE_DATA to OnGetPasteData to GetPasteData source route",
+      "line 41 is the OnRemoteRequest opening brace",
+      "D65 observation is handler-body lexical metadata only",
+      "T65 replay is blocked with 57 complete and 10 partial units"
+    ],
+    "must_not_conclude": "product vulnerability, affected/fixed device status, or confirmed CVE causality"
+  },
+  "product_and_cve_status": {
+    "product_fingerprint": null,
+    "component_inclusion_manifest": null,
+    "cve_causality": "unknown",
+    "product_applicability": "unknown",
+    "framework_authorization": "unknown",
+    "runtime_reachability": "unknown",
+    "exploitability": "unknown",
+    "device_fixed_status": "unknown",
+    "validated_vulnerability": 0
+  },
+  "frozen_commits": {
+    "D65": "dd7881d81e49d333ac2bd52062706ed06c5694c5",
+    "T65": "64fc40db3b42bdca54d9dbeba4c4ac7efe48a3a3",
+    "D64_base": "594abe600d731c72e760e730526dadb8931a9985"
+  },
+  "T65_acceptance": {
+    "focused_tests": 32,
+    "focused_status": "PASS",
+    "matrix_cases": 22,
+    "D51_and_D52_retained_in_all_cases": true,
+    "D52_permission_guard_status": "unknown",
+    "full_replay_units": 67,
+    "parser_states": {
+      "complete": 57,
+      "partial": 10
+    },
+    "full_replay_status": "blocked",
+    "D52_stub_parse": "partial",
+    "D52_core_parse": "partial",
+    "evidence_completeness": "partial",
+    "scope": "PASS_REPORTED_BY_T65"
+  },
+  "observation_metadata_assessment": {
+    "scanned_scope": "masked OnGetPasteData handler body only",
+    "observation_status_remains_unknown": true,
+    "D52_exact_handler_state": "absent",
+    "absent_meaning": "No current regex-recognized call/token was observed in this handler body; it does not mean no authorization exists elsewhere or under an unrecognized form.",
+    "observed_unresolved_meaning": "A recognized lexical pattern was found; it does not establish permission semantics or effective denial.",
+    "unresolved_control_flow_meaning": "At least one recognized match is at nonzero lexical brace depth; not a CFG classification.",
+    "body_relative_span": true,
+    "absolute_file_offset": false,
+    "snippet_limit_chars": 120,
+    "emitted_match_limit": 8,
+    "per_record_token_limit": null,
+    "total_description_limit": null,
+    "authorization_inference": false
+  },
+  "independent_metadata_probes": [
+    {
+      "id": "nested_unbraced_if",
+      "input": "if (is_privileged) if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return denied; GetPasteData();",
+      "observed_state": "observed_unresolved",
+      "observed_span": "handler_body[24:68]",
+      "assessment": "unbraced nested control is not identified by brace-depth classifier"
+    },
+    {
+      "id": "nested_parenthesized_call",
+      "input": "if (!CheckPermission(GetPermissionType(PERMISSION_READ_PASTEBOARD))) return denied; GetPasteData();",
+      "observed_snippet": "CheckPermission(GetPermissionType(PERMISSION_READ_PASTEBOARD)",
+      "assessment": "regex stops at an inner close parenthesis and emits a partial call span"
+    },
+    {
+      "id": "large_identifier_list",
+      "input_shape": "one permission call with 3000 distinct identifier arguments",
+      "observed_description_chars": 23110,
+      "observed_snippet_chars": 120,
+      "last_identifier_in_token_field": "ARG2999",
+      "assessment": "snippet and emitted record counts are capped, token field and total description are not"
+    }
+  ],
+  "source_identity": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "stub_path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "stub_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "stub_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "core_getter_path": "services/core/src/pasteboard_service.cpp",
+    "core_getter_blob": "c380ac266a85edd818caa811f11b99722d351788",
+    "core_getter_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "candidate": {
+      "symbol": "CVE-2025-27247",
+      "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+      "file": "services/zidl/src/pasteboard_service_stub.cpp",
+      "line": 41,
+      "column": 1,
+      "line_scope": "OnRemoteRequest method opening brace",
+      "handler_observation": "absent",
+      "permission_guard_obligation": "unknown"
+    }
+  },
+  "recommended_metadata_limits": {
+    "max_records": 8,
+    "max_tokens_per_record": 16,
+    "max_token_field_chars": 512,
+    "max_total_description_chars": 4096,
+    "truncation_flags": [
+      "tokens_truncated",
+      "payload_truncated"
+    ],
+    "control_flow_label_basis": "lexical brace depth only, explicitly named as such"
+  },
+  "review_constraints": {
+    "scanner_modified": false,
+    "tests_modified": false,
+    "fixtures_modified": false,
+    "prior_reports_modified": false,
+    "additional_probes_read_only": true
+  }
+}
