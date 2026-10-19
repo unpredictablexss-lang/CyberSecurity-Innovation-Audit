@@ -1,0 +1,96 @@
+{
+  "audit": "T77 independent acceptance of D77",
+  "status": "accepted_with_limitations",
+  "frozen_d77_commit": "a99334031575a184840fff9ed9a486237543fd64",
+  "d77_parent_commit": "88b357fa0f7d4906e3baff9392c6b27126c88d40",
+  "d77_worktree": "D:/openHarmonyScanner/worktrees/d76-samgr-profile-policy-20261020/worktrees/d77-pasteboard-adversarial-20261020",
+  "artifacts": {
+    "report": "research/evidence/cpp/D77_PASTEBOARD_ADVERSARIAL_20261020.md",
+    "evidence_json": "research/evidence/cpp/D77_PASTEBOARD_ADVERSARIAL_20261020.json",
+    "reproduction_script": "research/evidence/cpp/D77_pasteboard_adversarial_replay.py"
+  },
+  "checks": [
+    {
+      "id": "T77-01",
+      "name": "frozen_identity",
+      "status": "passed",
+      "evidence": "D77 worktree HEAD equals a99334031575a184840fff9ed9a486237543fd64, whose parent is D76 88b357fa0f7d4906e3baff9392c6b27126c88d40; author worktree was clean."
+    },
+    {
+      "id": "T77-02",
+      "name": "source_commit_tree_blob_sha256",
+      "status": "passed",
+      "evidence": "Independent GitCode bare clones resolved D52 dd22c7cb5e5f207a6c38c50f45b7369ee8575840 to tree e374a0d61c9ec664ddd29fc17002797828c480ee and SAMgr 08e2a552b839ea7727251cb9b749a5c1dd9cfeff to tree b7a89e95be788f2f2372258e341f7be842c7826d. Recomputed D77 source identities for 12 D52 files and two SAMgr files match its JSON; D52 stub/core and SAMgr stub blob/SHA values match frozen prior evidence. startup_init and AccessToken commit/tree pairs also independently resolved. D74/T74/D75/D76/T76 commit objects resolve in the audit repository."
+    },
+    {
+      "id": "T77-03",
+      "name": "line_references_and_semantics",
+      "status": "passed",
+      "evidence": "Independent source reads confirmed GET_PASTE_DATA=0 and stub dispatch to OnGetPasteData; OnRemoteRequest line 41 is the method opening, not a guard; OnGetPasteData invokes GetPasteData; core selects/copies clips_[caller OS user] and maps IPC caller UID through OsAccountManager. The cited lines support a user-partitioned, source-only observation, not an unrestricted or cross-user read claim."
+    },
+    {
+      "id": "T77-04",
+      "name": "positive_negative_controls",
+      "status": "passed_with_source_only_controls",
+      "evidence": "The route is a positive path control. Descriptor mismatch, invalid OS-user mapping, and absent clip are negative controls for dispatch/identity/data presence, not permission controls; D77 labels them accordingly. Exact-revision whole-tree helper search yields only declarations, definitions and helper delegation, with no GET route call site. No runtime permission test is claimed."
+    },
+    {
+      "id": "T77-05",
+      "name": "strict_json_duplicate_key_check",
+      "status": "passed",
+      "evidence": "Parsed the frozen D77 JSON using an object_pairs_hook that rejects duplicate keys. Independently replayed evidence JSON parses and is structurally identical to the frozen JSON."
+    },
+    {
+      "id": "T77-06",
+      "name": "independent_reproduction",
+      "status": "passed",
+      "evidence": "Ran D77_pasteboard_adversarial_replay.py against independent D52 and SAMgr bare clones. Exit code was 0; it reported tree_matches=true for both repos, 12 D52 files, two SAMgr files, five permission-helper hits, 29 Penglai-mode source hits and nine key get/check/load-route hits. Full generated JSON equaled the frozen JSON."
+    },
+    {
+      "id": "T77-07",
+      "name": "conclusion_scope",
+      "status": "passed_with_limitations",
+      "evidence": "D77 retains one narrow historical source observation and explicitly leaves product applicability, installed profile, build flags, effective SAMgr policy, method-level authorization, attacker reachability and CVE causality unknown. The new SUPPORT_PENGLAI_MODE branches are guarded by the compile-time macro and isPengLai_ runtime flag; their GetSystemAbilityInner, CheckSystemAbilityInner and LoadSACheck placements are confirmed at lines 650-653, 688-691 and 780-783. This adds a possible SA-acquisition gate but does not establish the D52 product's flags/runtime state or a per-call Pasteboard check."
+    },
+    {
+      "id": "T77-08",
+      "name": "scope_and_diff_hygiene",
+      "status": "passed",
+      "evidence": "The staged diff contains only the T77 report, matrix and result JSON; git diff --cached --check passed. Replay clones and output are untracked scratch artifacts and are not included in the commit."
+    }
+  ],
+  "source_pins": {
+    "D52": {
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "files_replayed": 12,
+      "stub_blob_oid": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "stub_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "core_blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+      "core_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+    },
+    "SAMgr": {
+      "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+      "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+      "files_replayed": 2,
+      "stub_blob_oid": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+      "stub_sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433"
+    },
+    "startup_init": {
+      "commit": "e06651300f349e728c76edda806dbf6496fd620d",
+      "tree": "b77ef22dfc6fa75db5f3707970db9d908a1b6302"
+    },
+    "security_access_token": {
+      "commit": "c53a55c371d88c46b0785cc4adb444876e6a9628",
+      "tree": "4942df10e6ed926dab1106e5752cf294305240d6"
+    }
+  },
+  "differences": [],
+  "feedback_to_d77": [
+    "No correction required. Preserve the explicit condition that the Penglai branch requires SUPPORT_PENGLAI_MODE at build time and isPengLai_ at runtime; product applicability remains unknown."
+  ],
+  "limitations": [
+    "No D52 product build or device runtime was available, so D77 remains source-only and cannot decide whether Penglai or SELinux acquisition policy is active in a target image.",
+    "The source controls are static references; no unit or device tests were run."
+  ]
+}
