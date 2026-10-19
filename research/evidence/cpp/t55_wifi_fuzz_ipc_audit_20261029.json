@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "audit": "T55",
+  "date": "2026-10-29",
+  "conclusion": "PARTIAL/BLOCK",
+  "repository": "openharmony/communication_wifi",
+  "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+  "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+  "detector": "ohscanner.interface.ipc",
+  "current_detector_version": "0.12.12",
+  "profile": "light-ast",
+  "build_profile": "none",
+  "scope": "Four A0 fuzz harness source files, each replayed individually through current production IPC CLI.",
+  "result_summary": {
+    "rows": 4,
+    "exact_source_bindings": 4,
+    "individual_cli_runs": 4,
+    "complete_parses": 4,
+    "partial_parses": 0,
+    "diagnostics": 0,
+    "a0_statuses_changed": false
+  },
+  "rows": [
+    {
+      "a0_id": "CR-0337",
+      "candidate_id": "ohscanner.interface.ipc:ce7547e65dd0c666",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "path": "wifi/test/fuzztest/wifi_sta/wifidevicestub_fuzzer/wifidevicestub_fuzzer.cpp",
+      "line": 118,
+      "blob": "988a6424a18cf2d7f24592ccdc667d264921dd3b",
+      "source_sha256": "d86c855dd10f3de73bde744ed047792477eade8aaf8f667345f50e0ac1d01054",
+      "bound_line_text": "        if (!Init()) {",
+      "current_cli": {
+        "detector": "ohscanner.interface.ipc",
+        "version": "0.12.12",
+        "status": "completed",
+        "diagnostics": 0,
+        "parse_status": "complete",
+        "parse_coverage": {
+          "complete": 1
+        },
+        "snapshot_sha256": "d3b0b7c307bfcab778a462ca803d3515065cf2bd46fac240f0df88b594f6bfcb",
+        "report_json": "t55_cr0337_cli_20261029.json",
+        "report_json_sha256": "fa05e3bc13d46a78c37ef5bd0b53099bc79909b076c82ae405b2590309caef3d",
+        "report_markdown": "t55_cr0337_cli_20261029.md",
+        "report_markdown_sha256": "bd4614a61e7535cd3e15826555384b7d717cc1be847e47b7441c64eb48114df2"
+      },
+      "category": "test_fuzz_harness_not_product_entry"
+    },
+    {
+      "a0_id": "CR-0338",
+      "candidate_id": "ohscanner.interface.ipc:0f6b200fb33154cc",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "path": "wifi/test/fuzztest/wifi_sta/wifihotspotstub_fuzzer/wifihotspotstub_fuzzer.cpp",
+      "line": 73,
+      "blob": "13f3fb531bff0a9be8fdd3a3b16adf9187a2d40e",
+      "source_sha256": "fe1d3be9c326d58d1f41619fa62d754a75e125f133ca9d02dc178968fef885b6",
+      "bound_line_text": "        if (!Init()) {",
+      "current_cli": {
+        "detector": "ohscanner.interface.ipc",
+        "version": "0.12.12",
+        "status": "completed",
+        "diagnostics": 0,
+        "parse_status": "complete",
+        "parse_coverage": {
+          "complete": 1
+        },
+        "snapshot_sha256": "0247c8474ba1ddadae5ac05bbc188100c1ffdc346f88cd9c8a7cc7d09593b237",
+        "report_json": "t55_cr0338_cli_20261029.json",
+        "report_json_sha256": "2ad7f69768410b6b20b203bbf7ce8db77577b1addfca1afd859a70f8117f5849",
+        "report_markdown": "t55_cr0338_cli_20261029.md",
+        "report_markdown_sha256": "dd74c406b5c5fcaab0a41c22d0721f438551535506fc9e728952b521afed2728"
+      },
+      "category": "test_fuzz_harness_not_product_entry"
+    },
+    {
+      "a0_id": "CR-0339",
+      "candidate_id": "ohscanner.interface.ipc:3ce2033070003f96",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "path": "wifi/test/fuzztest/wifi_sta/wifip2pstub_fuzzer/wifip2pstub_fuzzer.cpp",
+      "line": 65,
+      "blob": "9b805531566fe9e62828f63f5f5a1a0736c64116",
+      "source_sha256": "0bf839a6cc92ff07174b53f1c56e22bd2aee412054604431f1769654547351ce",
+      "bound_line_text": "        if (!Init()) {",
+      "current_cli": {
+        "detector": "ohscanner.interface.ipc",
+        "version": "0.12.12",
+        "status": "completed",
+        "diagnostics": 0,
+        "parse_status": "complete",
+        "parse_coverage": {
+          "complete": 1
+        },
+        "snapshot_sha256": "babf0b83cc5beb38a9939f12827fdbe1e5ec1194d90abc3c68d0ca9c4bd47273",
+        "report_json": "t55_cr0339_cli_20261029.json",
+        "report_json_sha256": "8d7dbbb63cffd67c5d046c9ded749a545997f41e5efb85c8a1798a82a19f370f",
+        "report_markdown": "t55_cr0339_cli_20261029.md",
+        "report_markdown_sha256": "9ed3873f4ffb31680b7fa95eafc4742f99b8b04546b24cc3e1f3089363a4bc61"
+      },
+      "category": "test_fuzz_harness_not_product_entry"
+    },
+    {
+      "a0_id": "CR-0340",
+      "candidate_id": "ohscanner.interface.ipc:3a907e23a757ce26",
+      "original_status": "not_testable",
+      "queue_status": "paused_pending_evidence",
+      "repository": "openharmony/communication_wifi",
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "path": "wifi/test/fuzztest/wifi_sta/wifiscanstub_fuzzer/wifiscanstub_fuzzer.cpp",
+      "line": 67,
+      "blob": "a4aeaf1f0be564e983789516004c5792034f0e12",
+      "source_sha256": "2790fa0df0be218bbf9ea5b8f9fb4a463f396835086afff9689ef68bab483441",
+      "bound_line_text": "        if (!Init()) {",
+      "current_cli": {
+        "detector": "ohscanner.interface.ipc",
+        "version": "0.12.12",
+        "status": "completed",
+        "diagnostics": 0,
+        "parse_status": "complete",
+        "parse_coverage": {
+          "complete": 1
+        },
+        "snapshot_sha256": "5dfd8edb724e74eaa42436a48966f0f44d9a6b81353cb902b7aa0ce018e43643",
+        "report_json": "t55_cr0340_cli_20261029.json",
+        "report_json_sha256": "b9f65cb627ebe661a42fa0dc28f30ab3d8268de64e38c5ab71a939f115ceeeb9",
+        "report_markdown": "t55_cr0340_cli_20261029.md",
+        "report_markdown_sha256": "72367260037bebb983d4201b57a9fbf7906e46acc70d660509aee3649264d9b8"
+      },
+      "category": "test_fuzz_harness_not_product_entry"
+    }
+  ],
+  "gn_and_source_context": {
+    "wifi_sta_fuzz_group": {
+      "path": "wifi/test/fuzztest/wifi_sta/BUILD.gn",
+      "testonly": true,
+      "targets": [
+        "WifiDeviceStubFuzzTest",
+        "WifiHotSpotStubFuzzTest",
+        "WifiP2pStubFuzzTest",
+        "WifiScanStubFuzzTest"
+      ],
+      "registration": "Each target is listed in the testonly=true wifi_sta fuzztest group."
+    },
+    "per_target": {
+      "CR-0337": {
+        "target": "WifiDeviceStubFuzzTest",
+        "fuzzer_constructs": "WifiDeviceServiceImpl and WifiDeviceMgrServiceImpl singleton; calls OnRemoteRequest on service Stub.",
+        "gn_dependency": "wifi_device_service_impl",
+        "production_target": "wifi_device_ability install_enable=true depends on wifi_device_service_impl; shared source set includes wifi_device_stub.cpp and wifi_device_service_impl.cpp."
+      },
+      "CR-0338": {
+        "target": "WifiHotSpotStubFuzzTest",
+        "fuzzer_constructs": "WifiHotspotServiceImpl and WifiHotspotMgrServiceImpl singleton; helper OnRemoteRequest invokes service object.",
+        "gn_dependency": "wifi_hotspot_service_impl",
+        "production_target": "wifi_hotspot_ability install_enable=true depends on wifi_hotspot_service_impl."
+      },
+      "CR-0339": {
+        "target": "WifiP2pStubFuzzTest",
+        "fuzzer_constructs": "WifiP2pServiceImpl singleton; helper OnRemoteRequest invokes it.",
+        "gn_dependency": "wifi_p2p_service_impl",
+        "production_target": "wifi_p2p_ability install_enable=true under wifi_feature_with_p2p and depends on wifi_p2p_service_impl."
+      },
+      "CR-0340": {
+        "target": "WifiScanStubFuzzTest",
+        "fuzzer_constructs": "WifiScanServiceImpl and WifiScanMgrServiceImpl singleton; helper OnRemoteRequest invokes service object.",
+        "gn_dependency": "wifi_scan_service_impl",
+        "production_target": "wifi_scan_ability install_enable=true depends on wifi_scan_service_impl."
+      }
+    },
+    "qualification": "Fuzz harnesses call genuine service implementation/Stub code and are useful input-path/source evidence. The targets themselves are testonly and excluded from product IPC root discovery; this does not establish the same input entry, fuzz identity, build profile, or caller policy in a product image."
+  },
+  "context_source_bindings": [
+    {
+      "path": "wifi/test/fuzztest/wifi_sta/BUILD.gn",
+      "blob": "a206fcabb9f80b71298cfac8f2fee52d4d6dd2a2",
+      "sha256": "cdf85403356468e71cd69831f7ebce9e51f10e77c6739c0d8b6bec714b7016fd"
+    },
+    {
+      "path": "wifi/test/fuzztest/wifi_sta/wifidevicestub_fuzzer/BUILD.gn",
+      "blob": "9f677ca7dad872b4a4a6559143c85af80ea2ce8a",
+      "sha256": "9f31be9bcbcb038f8b1dd071aea9f039d3ecc1367270217351c678ef412dd89c"
+    },
+    {
+      "path": "wifi/test/fuzztest/wifi_sta/wifihotspotstub_fuzzer/BUILD.gn",
+      "blob": "cfee20375db5481186aa302486d46fd285c6a315",
+      "sha256": "616df3d3bb7b9bd1f329538666e3d328e37f562d774d89caff3b457ea8a7a028"
+    },
+    {
+      "path": "wifi/test/fuzztest/wifi_sta/wifip2pstub_fuzzer/BUILD.gn",
+      "blob": "8eddbc726071b9f5f9d3148729f4cd9b9a4b2686",
+      "sha256": "1b379629ad32538c15e019f818938d9f7ff44e145ce855fd8eb3eae4ced60ea4"
+    },
+    {
+      "path": "wifi/test/fuzztest/wifi_sta/wifiscanstub_fuzzer/BUILD.gn",
+      "blob": "391e42092a5f4442054d169d20a73bb3874f7939",
+      "sha256": "0a88c12af3b45a8f893372e20a374c5828a8d212322ec31c85d914bf2cb6d137"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/BUILD.gn",
+      "blob": "7eb6036c72f4b69ac99eaedbaff8c7dc54d6a658",
+      "sha256": "7164a945e00eea8efc25ca0de358952408cf5a5b9eed2de9c95289b1201ebe01"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_service_impl.cpp",
+      "blob": "e87d25c4d79a7d40d16e73a908883c3076db182a",
+      "sha256": "ceddcfaa19da3573b94652b98490aa40558ac902b9cae97148fbf8d810bccd4e"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_sta_sa/wifi_device_stub.cpp",
+      "blob": "fc32789e244b4caf80aba734bb51404096f93770",
+      "sha256": "b03d7cd9c03d30724f9a87fefdbe1cfb0f572bd2887a30b6c0db6769488a2823"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_ap_sa/wifi_hotspot_service_impl.cpp",
+      "blob": "6f917ff3bd7e6c8778cf024b220e621995c3ae0b",
+      "sha256": "7761bfe74be643523d5f0a8933510ed02c237c346e0287088cf2083e7ef1dd4e"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_p2p_sa/wifi_p2p_service_impl.cpp",
+      "blob": "602a596464fe06acf2f9999ff24cdd2bf54d4b72",
+      "sha256": "f978af905c433d350ed874e501cfd6fce7647dfe4d80565c7fe981fe6361aafd"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_p2p_sa/wifi_p2p_stub.cpp",
+      "blob": "999444d76a52b9d7428b2f9b6bf89ba08a97e421",
+      "sha256": "1fabaea9f159456d10bab3abea9a3bb160f8216de34d1620170bd949755df81a"
+    },
+    {
+      "path": "wifi/services/wifi_standard/wifi_framework/wifi_manage/wifi_scan_sa/wifi_scan_service_impl.cpp",
+      "blob": "b682429b71ec184f1479d1820b0815424787fb7e",
+      "sha256": "251f259b9a7ff1507cd04933d407c70b1258e3c741a4e3bfabe266714d7bea9b"
+    }
+  ],
+  "limitations": [
+    "Zero current CLI findings are not a safety result.",
+    "The original A0 candidate at Init() in harness wrapper methods is not reproduced as a product IPC entry by current CLI.",
+    "Fuzz invocation is source evidence only, not product vulnerability confirmation.",
+    "No target-derived product profile, external caller principal, authorization policy or fixed source was bound.",
+    "Parser complete applies to each selected source file only; it does not resolve product build, dispatch reachability, authorization or impact."
+  ],
+  "commands": [
+    "For each row independently: python -m src.cli.main ohscan-run --repo-dir D:\\Temp\\t54_wifi_cr0336_source_20261027 --repository openharmony/communication_wifi --commit e336c82b3b107d87f68c5e0448cc246b50b53b38 --include <row.path> --detector ohscanner.interface.ipc --json-out <row-json> --md-out <row-md>",
+    "python research/evidence/cpp/verify_t55_wifi_fuzz_ipc_audit_20261029.py",
+    "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "python scripts/check_change_scope.py --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp"
+  ]
+}
