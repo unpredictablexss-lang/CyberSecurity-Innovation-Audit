@@ -246,3 +246,7 @@ D23 replayed the shared_ptr_race detector on the exact header and a bounded thre
 T23 independently replayed D23's exact header-only and three-file scopes from the pinned project object. The existing detector mechanism regression passes its 39 focused tests and T23 outputs match D23; the A0 supervisor race case remains PARTIAL because the three-file scope contains one parser-partial callsite and no cross-thread same-object race is established. CR-0001–CR-0004 remain `not_testable / paused_pending_evidence`. See [the T23 addendum](a_line_parallel_queue_20261020_T23_addendum.md), [acceptance report](t23_supervisor_race_acceptance_20261020.md), and [verifier](verify_t23_supervisor_race_acceptance.py).
 
 D24 assessed CR-0005–CR-0012 against the exact DataShare object and current CLI adapter. No production-path generic rule change was justified; all eight queue states remain `not_testable / paused_pending_evidence`. See the [D24 addendum](a_line_parallel_queue_20261020_D24_addendum.md), [source-bound replay report](d24_datashare_race_20261020.md), and [verifier](verify_d24_datashare_race.py).
+
+### T26 — CR-0019 DataShare descriptor candidate
+
+See [T26 independent audit addendum](a_line_parallel_queue_20261020_T26_addendum.md). T26 independently bound the frozen CR-0019 source and replayed the current IPC detector. A source-level interface-token mismatch candidate is present; runtime reachability, sender token, product authorization, build and impact remain unverified. Original A0 states are unchanged (`not_testable / paused_pending_evidence`).
