@@ -112,6 +112,75 @@ class D2SemanticsTests(unittest.TestCase):
                     self.assertTrue(sidecar['detectors'][SensitiveExposureDetector.detector_id]
                                     ['evidence_obligations'])
 
+    def test_cm_log_macro_family_models_format_operands_and_same_file_shadow(self):
+        public = support.SensitiveTests().analyze(
+            'void Callback(SessionKey *s){CM_LOG_E("%s",s->value);}')
+        self.assertEqual(len(public.findings), 1)
+        self.assertEqual(public.findings[0].rule_id, 'data.log.sensitive-value')
+        self.assertIn('CM_LOG_E', public.findings[0].message)
+        self.assertIn('public operand', public.findings[0].message)
+
+        private = support.SensitiveTests().analyze(
+            'void Callback(SessionKey *s){CM_LOG_W("%{private}s",s->value);}')
+        self.assertEqual(len(private.findings), 1)
+        self.assertEqual(private.findings[0].rule_id, 'data.log.sensitive-value')
+        self.assertTrue(any(item.kind == 'format_resolution'
+                            for item in private.findings[0].evidence_obligations))
+        self.assertIn('formatting prevents privacy-slot resolution', private.findings[0].message)
+
+        debug = support.SensitiveTests().analyze(
+            'void Callback(SessionKey *s){CM_LOG_D("%s",s->value);}')
+        self.assertEqual(len(debug.findings), 1)
+        self.assertEqual(debug.findings[0].rule_id, 'data.log.sensitive-value')
+        self.assertTrue(any(item.kind == 'runtime_log_visibility'
+                            for item in debug.findings[0].evidence_obligations))
+
+        metadata = support.SensitiveTests().analyze(
+            'void Callback(SessionKey *s){CM_LOG_I("%{public}u",s->len);}')
+        self.assertEqual(metadata.findings, ())
+
+        shadowed = support.SensitiveTests().analyze(
+            'void CM_LOG_E(const char *message) { } '
+            'void Callback(SessionKey *s){CM_LOG_E(s->value);}')
+        self.assertEqual(shadowed.findings, ())
+        self.assertTrue(any('visible empty body' in item
+                            for item in shadowed.limitations))
+
+    def test_object_property_escape_keeps_candidate_but_not_status_taint(self):
+        source = (
+            'struct Env { int Object_SetPropertyByName_Ref(const char *, const char *); }; '
+            'void Callback(SessionKey *s, Env *env){ '
+            'int status = env->Object_SetPropertyByName_Ref("credential", s->value); '
+            'CM_LOG_E("%d", status); }')
+        run = support.SensitiveTests().analyze(source)
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].rule_id, 'data.sensitive.unresolved-escape')
+        self.assertIn('Object_SetPropertyByName_Ref', run.findings[0].message)
+        self.assertNotIn('CM_LOG_E', run.findings[0].message)
+
+    def test_modeled_status_return_does_not_retaint_logged_status(self):
+        source = (
+            'void Callback(SessionKey *s){ '
+            'int status = AniUtils::GenerateCredentialObj(env, s->value); '
+            'CM_LOG_E("%d", status); }')
+        run = support.SensitiveTests().analyze(source)
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].rule_id, 'data.sensitive.unresolved-escape')
+        self.assertIn('GenerateCredentialObj', run.findings[0].message)
+        self.assertNotIn('CM_LOG_E', run.findings[0].message)
+
+    def test_same_owner_unqualified_method_uses_its_body_before_tainting_return(self):
+        source = (
+            'struct SessionKey { const char *value; }; '
+            'class Builder { public: int helper(const char *); int run(SessionKey *); }; '
+            'int Builder::helper(const char *secret) { return 0; } '
+            'int Builder::run(SessionKey *s) { int status = helper(s->value); '
+            'CM_LOG_E("%d", status); return status; }')
+        run = support.SensitiveTests().analyze(source)
+        self.assertEqual(run.findings, ())
+        self.assertFalse(any('same-owner unqualified method call is ambiguous'
+                             in item for item in run.limitations))
+
     def test_unrelated_member_write_does_not_create_sensitive_candidate(self):
         source=('struct State { char *out; }; '
                 'void Callback(State *state){const char *ordinary="safe";memcpy_s(state->out,64,ordinary,32);}')

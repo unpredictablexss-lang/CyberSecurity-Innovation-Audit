@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 SOURCE_MODEL_VERSION = '0.4.0'  # Frozen D3/D4 source semantics; new profiles are append-only.
 SOURCE_PROFILE_CATALOG_VERSION = '0.1.0'
-SINK_MODEL_VERSION = '0.7.0'  # Adds public OH_LOG macros and direct message output APIs.
+SINK_MODEL_VERSION = '0.8.0'  # Adds reviewed CM_LOG variadic logging macros.
 
 DSOFTBUS_COMMIT = '0e0c18c4a10b8fe2410d2097c38fd9f7a6ab8132'
 
@@ -31,6 +31,7 @@ class ExposureSinkModel:
     default_private: bool = True
     # Optional exact source paths for ambiguous short macro names such as LOGI.
     files: tuple = ()
+    supports_privacy_markers: bool = True
 
 _SOFTBUS_LOG_FAMILIES = ('AUTH', 'TRANS', 'COMM', 'LNN', 'CONN', 'DISC')
 _SOFTBUS_GUARD_LEVELS = {
@@ -64,8 +65,22 @@ SINKS = (
     tuple(ExposureSinkModel('HILOG_COMM_' + level, 0) for level in
           ('INFO', 'WARN', 'ERROR', 'FATAL')) +
     tuple(ExposureSinkModel('HiLog' + level.title(), 1) for level in
-          ('debug', 'info', 'warn', 'error', 'fatal')))
+          ('debug', 'info', 'warn', 'error', 'fatal')) +
+    tuple(ExposureSinkModel('CM_LOG_' + level, 0, default_private=level == 'D',
+                           supports_privacy_markers=False) for level in 'IWED'))
 
+
+# These JS/ANI APIs return status values; some also populate an output object.
+# The call-site remains an unresolved escape candidate; only the status value
+# itself is prevented from inheriting the secret argument's taint.
+STATUS_RETURN_CALLS = frozenset({
+    'napi_set_named_property',
+    'napi_set_property',
+    'napi_define_properties',
+    'env->Object_SetPropertyByName_Ref',
+    'env->Object_SetPropertyByName_Int',
+    'AniUtils::GenerateCredentialObj',
+})
 
 DEFAULT_SOURCE = SensitiveSourceModel('openharmony/communication_dsoftbus', DSOFTBUS_COMMIT)
 
