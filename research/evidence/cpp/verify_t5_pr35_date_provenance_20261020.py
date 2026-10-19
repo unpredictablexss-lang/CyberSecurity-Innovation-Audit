@@ -40,6 +40,14 @@ def git(root: pathlib.Path, *args: str) -> str:
     ).strip()
 
 
+def git_file_sha256(root: pathlib.Path, commit: str, rel: str) -> str:
+    content = subprocess.check_output(
+        ["git", "-C", str(root), "show", f"{commit}:{rel}"],
+        stderr=subprocess.STDOUT,
+    )
+    return hashlib.sha256(content).hexdigest()
+
+
 def sha256(path: pathlib.Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -90,7 +98,27 @@ def main() -> int:
         else:
             try:
                 actual_head = git(source, "rev-parse", "HEAD")
-                if actual_head != task["origin_head"]:
+                if item["task_id"] == "T56" and source.resolve() == pathlib.Path(task["origin_worktree"]).resolve():
+                    # T56's origin is the integration checkout itself. It can advance
+                    # after T5 is cherry-picked, so require ancestry plus an exact
+                    # baseline blob and current-file hash check for every indexed file.
+                    ancestor = subprocess.run(
+                        ["git", "-C", str(source), "merge-base", "--is-ancestor", task["origin_head"], actual_head],
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                    )
+                    if ancestor.returncode != 0:
+                        errors.append(
+                            f"integration-origin HEAD is not a descendant of recorded T56 origin head for {rel}: {actual_head}"
+                        )
+                    try:
+                        baseline_sha = git_file_sha256(source, task["origin_head"], rel)
+                        if baseline_sha != item["sha256"]:
+                            errors.append(f"recorded T56 origin-head blob SHA-256 mismatch: {rel}")
+                    except subprocess.CalledProcessError as exc:
+                        errors.append(f"cannot read T56 artifact at recorded origin head for {rel}: {exc}")
+                elif actual_head != task["origin_head"]:
                     errors.append(f"origin worktree HEAD changed for {item['task_id']}: {actual_head}")
             except subprocess.CalledProcessError as exc:
                 errors.append(f"origin worktree is not a readable Git checkout for {item['task_id']}: {exc}")
