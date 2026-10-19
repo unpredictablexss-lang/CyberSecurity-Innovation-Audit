@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "change_request_id": "A-RES-01",
-  "source": "self-authored synthetic controls; recursive-cleanup callback-cycle cases are D3 generic controls",
+  "source": "self-authored synthetic controls; D3 callback cleanup, recursive compare-cost, and recursive tree-amplification controls",
   "cases": [
     {
       "fixture": "positive_double_free.cpp",
@@ -68,6 +68,52 @@
       "expected_max": 0,
       "sha256": "9762a7c66ca9a5ec8c89814d8924a885e10fa9f63becbcef4212e406a63dade6",
       "byte_length": 267
+    },
+    {
+      "fixture": "positive_recursive_compare_cost.c",
+      "category": "positive",
+      "expected_rule": "recursive_compare_cost",
+      "expected_min": 1,
+      "sha256": "c2713c9eae8f450fb9f9885b1381fef585f0e45babd39f015d8666114f911011",
+      "byte_length": 868
+    },
+    {
+      "fixture": "safe_recursive_compare_cost.c",
+      "category": "unrelated",
+      "expected_max": 0,
+      "sha256": "7f7c503d12a204caffa6e76a5d44745e2cdfcb94b917d632f4d59250d7fbdfcf",
+      "byte_length": 550
+    },
+    {
+      "fixture": "positive_recursive_tree_amplification.c",
+      "category": "positive",
+      "expected_rule": "tree_amplification",
+      "expected_min": 1,
+      "sha256": "963e43af30e6c363788f69ec2ff16339568a6daa0cc3946c8e42f9f806404d51",
+      "byte_length": 1016
+    },
+    {
+      "fixture": "positive_recursive_tree_patch.c",
+      "category": "positive",
+      "expected_rule": "tree_amplification",
+      "expected_min": 1,
+      "sha256": "0f303e3378ca7d311fc27af0f84cba6e211f8823a5896a6578c0749a421e4039",
+      "byte_length": 738
+    },
+    {
+      "fixture": "positive_recursive_tree_release.c",
+      "category": "unknown",
+      "expected_max": 0,
+      "expected_status": "blocked",
+      "sha256": "f5223b2501ba360be2317063dd0c87f855a18b950d60e8689128a5a1d76eba25",
+      "byte_length": 289
+    },
+    {
+      "fixture": "unrelated_recursive_tree_cleanup.c",
+      "category": "unrelated",
+      "expected_max": 0,
+      "sha256": "0af7cbf64412eed50eda11a03aa2bac9f74deaf53f3d99be4d2258489f3efe6b",
+      "byte_length": 404
     }
   ]
 }

@@ -1,6 +1,6 @@
 # A-RES-01 C/C++ resource lifetime specification
 
-更新：2026-10-19。`ohscanner.cpp.resource_lifetime` 0.2.0 是队友 A 的局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector，并增加 0.2.0 的 CWE-674 registered-callback recursive-cleanup 候选规则。默认 `candidate/unassessed`。
+更新：2026-10-19。`ohscanner.cpp.resource_lifetime` 0.3.0 是局部 Alloc/Acquire、Release、Alias、Null/Realloc 状态机研究 Detector，并包含三类 CWE-674 resource exhaustion 候选：registered-callback recursive cleanup、patch-driven tree amplification 和 recursive compare cost。默认 `candidate/unassessed`。默认 `candidate/unassessed`。
 
 ## 触发
 
@@ -9,6 +9,9 @@
 - `p2=p` 的局部 alias 跟随同一资源状态。
 - `p=nullptr` 或重新分配使旧状态失效。
 - A-RES-01 规则 `ohcpp-resource-lifetime-recursive-cleanup-candidate-003`：同一 translation unit 内，函数指针成员已绑定到本地实现、调用点回到资源释放器，且迭代子对象清理链可再次触发该回调时，提出 CWE-674 候选。能看到回调解绑或简单显式深度上限时抑制候选。
+
+- 规则 `ohcpp-resource-exhaustion-tree-amplification-candidate-004` 要求跨选定源码绑定递归子树释放、完整源码中深拷贝后附加到树、以及迭代输入循环调用对应 mutator；候选保留 partial identity，不证明实际树增长或调用输入可控。
+- 规则 `ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005` 要求同一函数递归比较、两个方向的兄弟遍历及每项查找；只保留 bounded local shape，partial TU 命中会保留但整个运行仍 blocked。
 
 ## 排除和 unknown
 
@@ -19,7 +22,7 @@
 
 ## Controls
 
-`tests/detectors/fixtures/cpp_resource_lifetime/manifest.json` 绑定 positive double-free、alias UAF、fixed null/realloc、unrelated 和 unknown controls。`tests/detectors/test_cpp_resource_lifetime_detector.py` 固定 source hash、identity、determinism、budget 和四类控制。
+`tests/detectors/fixtures/cpp_resource_lifetime/manifest.json` 绑定 positive double-free、alias UAF、fixed null/realloc、unrelated 和 unknown controls。`tests/detectors/test_cpp_resource_lifetime_detector.py` 固定 source hash、identity、determinism、budget 和四类控制及 D3 的 compare/tree amplification positive 与 safe/unrelated controls。
 
 ## PoC
 

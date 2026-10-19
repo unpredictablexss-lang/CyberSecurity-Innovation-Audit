@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.2.0")
+        self.assertEqual(self.detector.version, "0.3.0")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,7 +69,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.2.0")
+                self.assertEqual(finding.rule_version, "0.3.0")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:
@@ -93,6 +93,36 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         self.assertEqual(len(recursive), 1)
         self.assertEqual(recursive[0].candidate_cwe, "CWE-674")
         self.assertEqual(recursive[0].consequence_cwe, "CWE-674")
+
+    def test_recursive_compare_cost_candidate_preserves_partial_status(self) -> None:
+        run, _ = self.run_case("positive_recursive_compare_cost.c", "partial")
+        candidates = [finding for finding in run.findings if finding.rule_id == "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005"]
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0].candidate_cwe, "CWE-407")
+        self.assertEqual(run.status, "blocked")
+
+        safe, _ = self.run_case("safe_recursive_compare_cost.c")
+        self.assertFalse(any(f.rule_id == "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005" for f in safe.findings))
+
+    def test_recursive_tree_amplification_candidate_is_separate(self) -> None:
+        release = make_unit(ROOT / "positive_recursive_tree_release.c", "partial")
+        patch = make_unit(ROOT / "positive_recursive_tree_patch.c")
+        units = tuple(sorted((release, patch), key=lambda item: item.path))
+        run = self.detector.detect(context_for(*units), units)
+        candidates = [finding for finding in run.findings if finding.rule_id == "ohcpp-resource-exhaustion-tree-amplification-candidate-004"]
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0].candidate_cwe, "CWE-674")
+        self.assertEqual(candidates[0].identity_quality, "partial")
+        self.assertEqual(run.status, "blocked")
+
+        unrelated, _ = self.run_case("unrelated_recursive_tree_cleanup.c")
+        self.assertFalse(any(f.rule_id == "ohcpp-resource-exhaustion-tree-amplification-candidate-004" for f in unrelated.findings))
+
+    def test_tree_amplification_and_compare_keep_distinct_rules(self) -> None:
+        self.assertNotEqual(
+            "ohcpp-resource-exhaustion-tree-amplification-candidate-004",
+            "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005",
+        )
 
     def test_deterministic_output_and_budget(self) -> None:
         first, unit = self.run_case("positive_alias_uaf.cpp")

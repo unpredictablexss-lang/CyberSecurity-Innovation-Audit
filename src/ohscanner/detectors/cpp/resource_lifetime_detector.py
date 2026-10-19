@@ -14,6 +14,7 @@ from src.ohscanner.contracts import (
     SourceUnit,
 )
 from .memory_safety import (
+    FunctionShape,
     MAX_TOTAL_BYTES,
     MAX_UNIT_BYTES,
     balanced_end,
@@ -26,7 +27,9 @@ from .memory_safety import (
 RULE_DOUBLE_FREE = "ohcpp-resource-lifetime-double-free-candidate-001"
 RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
 RULE_RECURSIVE_CLEANUP = "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"
-RULE_VERSION = "0.2.0"
+RULE_RECURSIVE_TREE_AMPLIFICATION = "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
+RULE_RECURSIVE_COMPARE_COST = "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005"
+RULE_VERSION = "0.3.0"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -171,6 +174,216 @@ _CALLBACK_INVOKE_RE = re.compile(r"(?:->|\.)\s*(?P<field>[A-Za-z_]\w*)\s*\(")
 _CALLBACK_ASSIGN_RE = re.compile(
     r"(?:->|\.)\s*(?P<field>[A-Za-z_]\w*)\s*=\s*(?P<target>[A-Za-z_]\w*)\b"
 )
+_DECORATED_FUNCTION_RE = re.compile(
+    r"^\s*[A-Z_][A-Z0-9_]*\s*\([^()\n]*\)\s*"
+    r"(?P<name>[A-Za-z_]\w*)\s*\((?P<params>[^;{}]*)\)\s*\{",
+    re.MULTILINE,
+)
+
+
+def _named_function_shapes(masked: str) -> Tuple[FunctionShape, ...]:
+    """Augment local function shapes for C APIs wrapped in export macros."""
+    by_name: Dict[str, FunctionShape] = {}
+    for function in function_shapes(masked):
+        previous = by_name.get(function.name)
+        if previous is None or len(function.text) > len(previous.text):
+            by_name[function.name] = function
+    for match in _DECORATED_FUNCTION_RE.finditer(masked):
+        body_start = match.end() - 1
+        body_end = balanced_end(masked, body_start)
+        if body_end is None:
+            continue
+        name = match.group("name")
+        start = max(0, masked.rfind("\n", 0, match.start()) + 1)
+        function = FunctionShape(name, start, body_end, body_start, body_end, masked[start:body_end])
+        previous = by_name.get(name)
+        if previous is None or len(function.text) > len(previous.text):
+            by_name[name] = function
+    return tuple(sorted(by_name.values(), key=lambda item: (item.start, item.name)))
+
+
+def _resource_exhaustion_finding(
+    unit: SourceUnit, position: int, rule_id: str, cwe: str, symbol: str, root: str
+) -> DetectorFinding:
+    if rule_id == RULE_RECURSIVE_TREE_AMPLIFICATION:
+        obligations = (
+            EvidenceObligation("recursive_destructor_binding", "Bind cleanup to a recursive child-resource release implementation.", "unknown"),
+            EvidenceObligation("tree_amplification", "Prove repeated input operations increase reachable tree size without a sufficient bound.", "unknown"),
+            EvidenceObligation("attacker_control", "Establish attacker control over copy/patch contents and repetition count.", "missing"),
+            EvidenceObligation("trigger_conditions", "Reproduce stack exhaustion in an isolated target.", "missing"),
+        )
+        message = f"Candidate only: `{symbol}` deep-copies and attaches tree data that can reach recursive cleanup in `{root}`. Repetition, depth limits, and input control remain unknown."
+        impact = "availability_or_memory_safety"
+    else:
+        obligations = (
+            EvidenceObligation("recursive_compare_shape", "Verify recursive comparison is reached from both directional sibling loops.", "unknown"),
+            EvidenceObligation("lookup_cost", "Verify the per-element lookup helper is linear in sibling count.", "unknown"),
+            EvidenceObligation("input_shape", "Establish attacker control over nested object width and depth.", "missing"),
+            EvidenceObligation("trigger_conditions", "Measure the isolated comparison cost on a bounded input family.", "missing"),
+        )
+        message = f"Candidate only: `{symbol}` recursively compares both directions while each sibling loop performs a lookup; nested input may multiply the work. Cost growth and attacker control remain unknown."
+        impact = "availability"
+    line, column = line_column(unit.text, position)
+    return DetectorFinding(
+        file=unit.path,
+        line=line,
+        column=column,
+        rule_id=rule_id,
+        message=message,
+        evidence_type="syntax",
+        candidate_cwe=cwe,
+        symbol=symbol,
+        evidence_obligations=obligations,
+        consequence_impact=impact,
+        consequence_cwe=cwe,
+        source_sha256=unit.sha256,
+        rule_version=RULE_VERSION,
+        rule_lineage_id=RULE_LINEAGE_ID,
+        identity_quality="partial",
+    )
+
+
+def _loop_regions(body: str, offset: int) -> List[Tuple[str, str, int, int]]:
+    """Return (iterator, sequence, start, end) for simple loops and ForEach macros."""
+    regions: List[Tuple[str, str, int, int]] = []
+    patterns = (
+        re.compile(r"\b[A-Za-z_]\w*ForEach\s*\(\s*(?P<item>\w+)\s*,\s*(?P<seq>\w+)\s*\)\s*\{"),
+        re.compile(r"\bfor\s*\(\s*[^;]*?\b(?P<item>\w+)\s*=\s*[^;]+;[^)]*\)\s*\{"),
+    )
+    for pattern in patterns:
+        for match in pattern.finditer(body):
+            brace = match.end() - 1
+            end = balanced_end(body, brace)
+            if end is None:
+                continue
+            sequence = match.groupdict().get("seq") or ""
+            regions.append((match.group("item"), sequence, offset + brace, offset + end))
+    return sorted(set(regions), key=lambda item: item[2])
+
+
+def _recursive_compare_candidates(unit: SourceUnit, masked: str) -> List[DetectorFinding]:
+    findings: List[DetectorFinding] = []
+    for function in _named_function_shapes(masked):
+        body = masked[function.body_start:function.body_end]
+        loop_matches = _loop_regions(body, function.body_start)
+        qualifying: List[Tuple[int, str, str]] = []
+        for iterator, sequence, start, end in loop_matches:
+            loop_body = masked[start:end]
+            assignments: Dict[str, Set[str]] = {}
+            assignment_re = re.compile(
+                r"(?P<result>[A-Za-z_]\w*)\s*=\s*(?P<lookup>[A-Za-z_]\w*)\s*\((?P<args>[^;]*?)\)\s*;"
+            )
+            for assignment in assignment_re.finditer(loop_body):
+                args = assignment.group("args")
+                if re.search(rf"\b{re.escape(iterator)}\s*(?:->|\.)\s*[A-Za-z_]\w*", args):
+                    assignments.setdefault(assignment.group("result"), set()).add(assignment.group("lookup"))
+            for call in re.finditer(rf"\b{re.escape(function.name)}\s*\((?P<args>[^;]*)\)", loop_body):
+                args = call.group("args")
+                for result, helpers in assignments.items():
+                    if re.search(rf"\b{re.escape(iterator)}\b", args) and re.search(rf"\b{re.escape(result)}\b", args):
+                        qualifying.append((start + call.start(), iterator, sequence or next(iter(helpers))))
+                        break
+        if len({item[1] for item in qualifying}) < 2 or len(qualifying) < 2:
+            continue
+        # Require the two loops to compare distinct sibling sequences and use
+        # helper lookups, avoiding a generic-recursion warning.
+        if len({item[2] for item in qualifying}) < 2:
+            continue
+        position = min(item[0] for item in qualifying)
+        findings.append(_resource_exhaustion_finding(
+            unit, position, RULE_RECURSIVE_COMPARE_COST, "CWE-407", function.name, "the compared structure"
+        ))
+    return _stable_unique(findings)
+
+
+def _recursive_destructors(units: Sequence[SourceUnit]) -> Set[str]:
+    result: Set[str] = set()
+    for unit in units:
+        if unit.language not in ("c", "cpp"):
+            continue
+        masked = mask_comments_and_literals(unit.text)
+        for function in _named_function_shapes(masked):
+            body = masked[function.body_start:function.body_end]
+            child_recursion = bool(
+                re.search(rf"\b{re.escape(function.name)}\s*\([^;]*?(?:->|\.)\s*child\b", body)
+            )
+            releases = bool(re.search(r"\b(?:free|[A-Za-z_]\w*(?:free|destroy|release|delete|dealloc))\s*\(|\bdelete\b", body, re.IGNORECASE))
+            if child_recursion and releases:
+                result.add(function.name)
+    return result
+
+
+def _while_regions(body: str) -> List[Tuple[str, int, int]]:
+    result: List[Tuple[str, int, int]] = []
+    pattern = re.compile(r"\bwhile\s*\(\s*(?P<item>[A-Za-z_]\w*)\s*(?:!=|)\s*(?:NULL|nullptr|0)\s*\)\s*\{")
+    for match in pattern.finditer(body):
+        brace = match.end() - 1
+        end = balanced_end(body, brace)
+        if end is not None:
+            result.append((match.group("item"), brace, end))
+    return result
+
+
+def _tree_amplification_candidates(units: Sequence[SourceUnit]) -> List[DetectorFinding]:
+    recursive_destructors = _recursive_destructors(units)
+    if not recursive_destructors:
+        return []
+    functions_by_unit: Dict[str, Tuple[FunctionShape, ...]] = {}
+    for unit in units:
+        if unit.language in ("c", "cpp"):
+            functions_by_unit[unit.path] = _named_function_shapes(mask_comments_and_literals(unit.text))
+    repeated_mutators: Set[str] = set()
+    for unit in units:
+        masked = mask_comments_and_literals(unit.text)
+        for function in functions_by_unit.get(unit.path, ()):
+            body = masked[function.body_start:function.body_end]
+            for item, start, end in _while_regions(body):
+                loop = body[start:end]
+                if not re.search(rf"\b{re.escape(item)}\s*=\s*{re.escape(item)}\s*(?:->|\.)\s*next\b", loop):
+                    continue
+                for call in re.finditer(r"\b([A-Za-z_]\w*)\s*\([^;]*\)", loop):
+                    repeated_mutators.add(call.group(1))
+    if not repeated_mutators:
+        return []
+
+    findings: List[DetectorFinding] = []
+    for unit in units:
+        if unit.language not in ("c", "cpp") or unit.parse_status != "complete":
+            continue
+        masked = mask_comments_and_literals(unit.text)
+        for function in functions_by_unit.get(unit.path, ()):
+            if function.name not in repeated_mutators:
+                continue
+            body = masked[function.body_start:function.body_end]
+            copy_assignments = list(re.finditer(
+                r"(?P<value>[A-Za-z_]\w*)\s*=\s*(?P<copy>[A-Za-z_]\w*)\s*\((?P<args>[^;]*,\s*(?:1|true)\s*)\)\s*;",
+                body,
+                re.IGNORECASE,
+            ))
+            if not copy_assignments:
+                continue
+            for copied in copy_assignments:
+                value = copied.group("value")
+                attached = re.search(
+                    rf"\b\w*(?:add|insert|append|attach|adopt|splice)\w*\s*\([^;]*\b{re.escape(value)}\b[^;]*\)",
+                    body,
+                    re.IGNORECASE,
+                )
+                released = any(re.search(rf"\b{re.escape(name)}\s*\(\s*{re.escape(value)}\b", body) for name in recursive_destructors)
+                if attached is None or not released:
+                    continue
+                if re.search(r"\b(?:max|maximum|limit|budget|node_count|depth)\b[^;{}]*(?:>|>=|==)", body, re.IGNORECASE):
+                    continue
+                findings.append(_resource_exhaustion_finding(
+                    unit,
+                    function.body_start + copied.start(),
+                    RULE_RECURSIVE_TREE_AMPLIFICATION,
+                    "CWE-674",
+                    function.name,
+                    ", ".join(sorted(recursive_destructors)),
+                ))
+                break
+    return _stable_unique(findings)
 
 
 def _recursive_cleanup_candidates(
@@ -325,13 +538,16 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
     findings: List[DetectorFinding] = []
     limitations: List[str] = []
     if unit.parse_status != "complete":
-        return findings, [f"{unit.path}: parse_status={unit.parse_status}; resource lifetime remains unknown."], False
+        if len(unit.text.encode("utf-8")) <= MAX_UNIT_BYTES:
+            findings.extend(_recursive_compare_candidates(unit, mask_comments_and_literals(unit.text)))
+        return findings, [f"{unit.path}: parse_status={unit.parse_status}; only bounded local complexity patterns are retained, semantic coverage remains unknown."], False
     if len(unit.text.encode("utf-8")) > MAX_UNIT_BYTES:
         return findings, [f"{unit.path}: source exceeds the 1MiB per-unit fail-closed budget."], False
 
     masked = mask_comments_and_literals(unit.text)
     functions = function_shapes(masked)
     findings.extend(_recursive_cleanup_candidates(unit, masked, functions))
+    findings.extend(_recursive_compare_candidates(unit, masked))
     for function in functions:
         states: Dict[str, str] = {}
         aliases: Dict[str, str] = {}
@@ -427,6 +643,12 @@ class CppResourceLifetimeDetector:
                 analyzed_files.append(unit.path)
             else:
                 complete = False
+                # Partial translation units may still yield explicitly bounded
+                # local candidates. Record them as inspected so the runner can
+                # retain those candidates while keeping the run blocked.
+                if unit.parse_status == "partial":
+                    analyzed_files.append(unit.path)
+        findings.extend(_tree_amplification_candidates(ordered))
         return DetectorRun(
             self.detector_id,
             self.version,
