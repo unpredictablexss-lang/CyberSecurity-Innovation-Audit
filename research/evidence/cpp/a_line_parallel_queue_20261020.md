@@ -26,6 +26,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D19 completed no-change review: the existing compare-cost rule still finds cJSON.c:3161, renamed and safe/unrelated controls behave as expected, and the upstream develop patch is only an experimental comparison. The case remains PARTIAL/BLOCK; T16 is independently accepting.
 - T16 independently accepted the D19 rule regression and verified upstream cJSON commit/tree/blob/SHA via the OpenHarmony project-object mirror. The CVE case remains PARTIAL and a trusted released fixed comparison remains BLOCK.
 - D18/T15 completed root-path binding and independent acceptance; D19/T16 completed compare-cost replay with no rule change. Both cJSON cases remain unresolved for full-source parser or trusted fixed-source evidence.
+- D20 completed no-change source analysis for libpng CVE-2026-33416: all four vulnerable/fixed target slices remain partial, so cross-file member alias and call-order evidence is not parser-supported. No rule was changed; the case remains PARTIAL/BLOCK.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -197,6 +198,8 @@ Steps: clean independent checkout; verify source identities and source-range ext
 Done when: report each rule regression and CVE disposition separately as PASS/PARTIAL/BLOCK/N/A, reconcile all changed source identities, and preserve 345 queue IDs/statuses.
 Boundaries: no detector/test/fixture edits; no acceptance from developer statements alone; no fixed PASS without a trusted exact fix and sufficient parsing.
 ```
+
+T17 is queued after D21 freezes. D20 is evidence-only and its no-change result has been committed as `fcbc7c7`.
 
 ## Stage goal
 
