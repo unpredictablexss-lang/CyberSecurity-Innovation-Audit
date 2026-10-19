@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T63",
+  "date": "2026-10-20",
+  "phase": "independent-acceptance-complete",
+  "frozen_patch": {
+    "commit": "c2447a0449ba90622ee77ddc5434e282f28fb7db",
+    "parent": "b0ce27a3e3b08f085e46a22468e890ac8808d1c1",
+    "detector": "ohscanner.known_disclosed_cves@0.19.7",
+    "detector_blob": "2837afbfa811cecfbe04360e8534c93d735bff9d",
+    "independent_worktree": "D:/openHarmonyScanner/worktrees/t63-d63-resolved-guard-acceptance-20261023"
+  },
+  "pinned_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "stub": {
+      "path": "services/zidl/src/pasteboard_service_stub.cpp",
+      "blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+      "bytes": 6288,
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "parse": "partial"
+    },
+    "core": {
+      "path": "services/core/src/pasteboard_service.cpp",
+      "blob": "c380ac266a85edd818caa811f11b99722d351788",
+      "bytes": 17335,
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "parse": "partial"
+    }
+  },
+  "matrix": [
+    {
+      "case": "CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD) inline denial",
+      "result": "candidate retained"
+    },
+    {
+      "case": "same-name CheckPastePermission returns true unconditionally",
+      "result": "candidate retained"
+    },
+    {
+      "case": "same-name CheckPastePermission delegates CheckBluetoothPermission with READ_PASTEBOARD, then false/true",
+      "result": "candidate retained"
+    },
+    {
+      "case": "same-unit permissionMap[PERMISSION_READ_PASTEBOARD] denial helper, false then true, caller denial-return before read",
+      "result": "D52 syntactically suppressed"
+    },
+    {
+      "case": "same-unit permissionMap[SECURE_PASTE_PERMISSION] denial helper, false then true, caller denial-return before read",
+      "result": "D52 syntactically suppressed"
+    },
+    {
+      "case": "same-unit untrustedState[PERMISSION_READ_PASTEBOARD] denial helper",
+      "result": "D52 suppressed; UNEXPECTED false suppression"
+    },
+    {
+      "case": "same-unit bluetoothResult[PERMISSION_READ_PASTEBOARD] denial helper",
+      "result": "D52 suppressed; UNEXPECTED false suppression"
+    },
+    {
+      "case": "same-unit permissionMap[PERMISSION_NETWORK] helper",
+      "result": "candidate retained"
+    },
+    {
+      "case": "D61 direct inline matching READ_PASTEBOARD / SECURE_PASTE / CheckPermission guards",
+      "result": "candidate retained; D61 suppression behavior removed in 0.19.7"
+    },
+    {
+      "case": "unrelated Bluetooth, network, generic permission controls",
+      "result": "candidate retained"
+    },
+    {
+      "case": "ignored permission result before read",
+      "result": "candidate retained"
+    },
+    {
+      "case": "matching check after read / after parcel write",
+      "result": "candidate retained"
+    },
+    {
+      "case": "literal-dead nested guard / guard under outer conditional / mixed predicate",
+      "result": "candidate retained"
+    },
+    {
+      "case": "source-map helper under dead / outer conditional / after write",
+      "result": "candidate retained"
+    },
+    {
+      "case": "immediate throw from accepted source-map helper",
+      "result": "D52 syntactically suppressed"
+    }
+  ],
+  "identity_and_replay": {
+    "synthetic_multi_finding_cases": "CVE-2025-25212 remained in all 18 synthetic cases; D52 suppressed only by accepted map controls and the two arbitrary-state adversaries.",
+    "full_replay": {
+      "units": 67,
+      "parser_states": {
+        "complete": 57,
+        "partial": 10
+      },
+      "status": "blocked",
+      "findings": [
+        {
+          "symbol": "CVE-2025-25212",
+          "file": "services/core/src/pasteboard_service.cpp",
+          "line": 241,
+          "column": 5,
+          "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+        },
+        {
+          "symbol": "CVE-2025-27247",
+          "file": "services/zidl/src/pasteboard_service_stub.cpp",
+          "line": 41,
+          "column": 1,
+          "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+        }
+      ],
+      "comparison": "same D51/D52 candidate identities, anchors and hashes as D61"
+    }
+  },
+  "validation": {
+    "focused_command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "focused": "PASS 32/32",
+    "exact_D50_raw_git_replay": "PASS; 67 blobs; 57 complete / 10 partial; blocked; two findings identical to D61",
+    "D63_json_duplicate_key_check": "PASS",
+    "git_diff_check": "PASS",
+    "diff_base": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "changed_paths": 12,
+    "insertions": 542,
+    "deletions": 12,
+    "unrelated_detector_implementation": false
+  },
+  "verdict": {
+    "fix_correctness": "PARTIAL; suppression is acceptable only as the tested syntax shape. Overall guard correctness fails because any arbitrary indexed state identifier with an allowlisted token suppresses; inner state/API identity is not resolved.",
+    "candidate_retention": "PASS for pinned D51/D52 identities and ineffective/dead/order controls. D61 matching direct inline guards now retain candidates; this changed behavior is recorded.",
+    "coverage": "PARTIAL; replay blocked, 57 complete and 10 partial source units.",
+    "scope": "PASS; implementation changes are in known-CVE detector; other paths are focused tests/corpus, fixture binding, and evidence packets."
+  },
+  "limits": [
+    "The positive map helper is an in-memory same-unit syntax control, not proof of a platform permission contract.",
+    "The detector allowlists helper names and token spellings but not the indexed map/state object's declaration or provenance.",
+    "No complete CFG, macro/overload/cross-file resolution, framework ACL, product inclusion, runtime authorization, CVE causality, or vulnerability conclusion is established.",
+    "D52 remains a pinned-source candidate; product/framework/CVE conclusion is unknown."
+  ]
+}
+
