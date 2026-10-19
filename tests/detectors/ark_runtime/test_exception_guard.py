@@ -16,7 +16,7 @@ from src.ohscanner.detectors.ark_runtime.model import (
 )
 from src.ohscanner.fixture import snapshot_digest
 from src.parser.ast import parse_source
-from .support import unit, wrap, PREFIX
+from .support import case, unit, wrap, PREFIX
 
 
 class ExceptionGuardSyntheticTests(unittest.TestCase):
@@ -105,6 +105,123 @@ class ExceptionGuardSyntheticTests(unittest.TestCase):
         result = analyze_exception_guard(source, budget=AnalysisBudget(max_steps=0))
         self.assertNotEqual(result.file_outcome, 'complete')
         self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
+
+
+    def test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown(self):
+        source = case('EXC01')
+        controls = (
+            ('Positive', ('NewTypedArray', 4), ('LoadHClass',), (), 'candidate', 'complete'),
+            ('Fixed', ('NewTypedArray', 4), ('LoadHClass',), (), 'matched', 'complete'),
+            ('Safe', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'matched', 'complete'),
+            ('Unrelated', ('NewTypedArray', 4), ('CopyTypedArrayBuffer',), (), None, 'complete'),
+            ('Unknown', ('NewTypedArraySameType', 4), ('CopyTypedArrayBuffer',), (), 'unknown', 'partial'),
+        )
+        for name, creator, effects, throwing, expected, outcome in controls:
+            with self.subTest(control=name):
+                result = analyze_exception_guard(
+                    source, caller_names=(OWNER + '::' + name,),
+                    creator_specs=(creator,), effect_names=effects,
+                    throwing_names=throwing)
+                kinds = [item.kind for item in result.observations]
+                if expected is None:
+                    self.assertEqual(kinds, [])
+                elif expected == 'unknown':
+                    self.assertIn('unknown', kinds)
+                else:
+                    self.assertEqual(kinds, [expected])
+                self.assertEqual(result.file_outcome, outcome)
+
+    def test_guard_before_effect_is_matched_and_guard_after_effect_is_candidate(self):
+        before = unit(wrap(PREFIX +
+            'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label exit(GetEnvironment());\n'
+            'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+            'Bind(&exception); result->WriteVariable(Exception()); Jump(&exit);\n'
+            'Bind(&normal); GateRef klass = GetObjectType(LoadHClass(glue, output)); Jump(&exit);\n'
+            'Bind(&exit);'))
+        after = unit(wrap(PREFIX +
+            'GateRef klass = GetObjectType(LoadHClass(glue, output));\n'
+            'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label exit(GetEnvironment());\n'
+            'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+            'Bind(&exception); result->WriteVariable(Exception()); Jump(&exit);\n'
+            'Bind(&normal); Jump(&exit);\n'
+            'Bind(&exit);'))
+        self.assertEqual([item.kind for item in analyze_exception_guard(before).observations], ['matched'])
+        self.assertEqual([item.kind for item in analyze_exception_guard(after).observations], ['candidate'])
+
+    def test_potential_throw_helper_requires_guard_before_external_effect(self):
+        body = PREFIX + 'MaybeRaise(glue);\nresult->WriteVariable(output);'
+        result = analyze_exception_guard(
+            unit(wrap(body)), creator_specs=(), effect_names=('WriteVariable',),
+            throwing_names=('MaybeRaise',))
+        self.assertEqual([item.kind for item in result.observations], ['candidate'])
+
+        fixed = PREFIX + (
+            'MaybeRaise(glue);\n'
+            'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label exit(GetEnvironment());\n'
+            'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+            'Bind(&exception); result->WriteVariable(Exception()); Jump(&exit);\n'
+            'Bind(&normal); result->WriteVariable(output); Jump(&exit);\n'
+            'Bind(&exit);')
+        result = analyze_exception_guard(
+            unit(wrap(fixed)), creator_specs=(), effect_names=('WriteVariable',),
+            throwing_names=('MaybeRaise',))
+        self.assertEqual([item.kind for item in result.observations], ['matched'])
+
+    def test_unknown_effect_fails_closed_for_potential_throw_helper(self):
+        body = PREFIX + 'MaybeRaise(glue);\nUnreviewedOperation(glue);\nresult->WriteVariable(output);'
+        result = analyze_exception_guard(
+            unit(wrap(body)), creator_specs=(), effect_names=('WriteVariable',),
+            throwing_names=('MaybeRaise',))
+        self.assertEqual([item.kind for item in result.observations], ['unknown'])
+        self.assertIn('unmodeled_effect_before_exception_guard', result.limitations)
+
+    def test_branch_and_loop_paths_keep_local_candidate_or_guard_match(self):
+        branch = unit(wrap(PREFIX +
+            'Label guarded(GetEnvironment()); Label unguarded(GetEnvironment()); Label exit(GetEnvironment());\n'
+            'BRANCH(count, &guarded, &unguarded);\n'
+            'Bind(&guarded); Label exception(GetEnvironment()); Label normal(GetEnvironment());\n'
+            'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+            'Bind(&exception); result->WriteVariable(Exception()); Jump(&exit);\n'
+            'Bind(&normal); GateRef klass = GetObjectType(LoadHClass(glue, output)); Jump(&exit);\n'
+            'Bind(&unguarded); GateRef other = GetObjectType(LoadHClass(glue, output)); Jump(&exit);\n'
+            'Bind(&exit);'))
+        self.assertEqual([item.kind for item in analyze_exception_guard(branch).observations], ['candidate'])
+
+        loop = unit(wrap(PREFIX +
+            'Label loop(GetEnvironment()); Label body(GetEnvironment()); Label done(GetEnvironment());\n'
+            'Label exception(GetEnvironment()); Label normal(GetEnvironment());\n'
+            'LoopBegin(&loop); BRANCH(count, &body, &done);\n'
+            'Bind(&body); BRANCH(HasPendingException(glue), &exception, &normal);\n'
+            'Bind(&exception); result->WriteVariable(Exception()); Jump(&done);\n'
+            'Bind(&normal); GateRef klass = GetObjectType(LoadHClass(glue, output)); Jump(&loop);\n'
+            'Bind(&done);'))
+        self.assertEqual([item.kind for item in analyze_exception_guard(loop).observations], ['matched'])
+
+    def test_zero_length_return_path_is_unknown_not_safe(self):
+        source = case('EXC01')
+        result = analyze_exception_guard(
+            source, caller_names=(OWNER + '::Unknown',),
+            creator_specs=(('NewTypedArraySameType', 4),),
+            effect_names=('CopyTypedArrayBuffer',))
+        self.assertIn('unknown', [item.kind for item in result.observations])
+        self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
+        self.assertEqual(result.file_outcome, 'partial')
+
+    def test_historical_missing_guard_mechanism_regression(self):
+        for caller in ('Filter', 'Map'):
+            with self.subTest(caller=caller):
+                body = PREFIX + 'GateRef klass = GetObjectType(LoadHClass(glue, output));'
+                source = unit(wrap(body).replace('::Filter(', '::' + caller + '('))
+                result = analyze_exception_guard(source, caller_names=(OWNER + '::' + caller,))
+                self.assertEqual([item.kind for item in result.observations], ['candidate'])
+                fixed = unit(wrap(PREFIX +
+                    'Label exception(GetEnvironment()); Label normal(GetEnvironment()); Label exit(GetEnvironment());\n'
+                    'BRANCH(HasPendingException(glue), &exception, &normal);\n'
+                    'Bind(&exception); result->WriteVariable(Exception()); Jump(&exit);\n'
+                    'Bind(&normal); GateRef klass = GetObjectType(LoadHClass(glue, output)); Jump(&exit);\n'
+                    'Bind(&exit);').replace('::Filter(', '::' + caller + '('))
+                fixed_result = analyze_exception_guard(fixed, caller_names=(OWNER + '::' + caller,))
+                self.assertEqual([item.kind for item in fixed_result.observations], ['matched'])
 
 
 @unittest.skipUnless(os.environ.get('OHSCANNER_ARK_REPO'),

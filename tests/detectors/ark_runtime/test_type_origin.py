@@ -78,7 +78,8 @@ class TypeOriginTests(unittest.TestCase):
                     'GateRef replacement = builder.NewTypedArray(glue, input, inputTag, count);\n'
                     'StoreTypedArrayElement(glue, replacement, count, input, inputTag);')
         result = analyze_unit(unit(code))
-        self.assertFalse(any(o.kind == 'candidate' for o in result.observations))
+        self.assertEqual({o.kind for o in result.observations}, {'unknown'})
+        self.assertFalse(any(o.kind in ('candidate', 'matched') for o in result.observations))
         self.assertIn('unresolved_local_observations', result.limitations)
 
     def test_unknown_escape_invalidates_same_object_guarantee(self):
@@ -110,7 +111,7 @@ class TypeOriginTests(unittest.TestCase):
     def test_conditional_compilation_needs_build_context(self):
         code = '#ifdef UNKNOWN_BUILD\n' + case('C03').text + '\n#endif\n'
         result = analyze_unit(unit(code))
-        self.assertFalse(any(o.kind == 'candidate' for o in result.observations))
+        self.assertFalse(any(o.kind in ('candidate', 'matched') for o in result.observations))
         self.assertIn('target_conditional_compilation_unresolved', result.limitations)
 
     def test_unresolved_receiver_is_unknown_not_silently_matched(self):
@@ -120,8 +121,42 @@ class TypeOriginTests(unittest.TestCase):
     def test_unmodeled_lambda_is_not_expanded_as_current_function(self):
         code = wrap(PREFIX + 'auto later = [&]() { StoreTypedArrayElement(glue, output, count, input, inputTag); };\nlater();')
         result = analyze_unit(unit(code))
-        self.assertTrue(any(o.kind == 'unknown' for o in result.observations))
-        self.assertFalse(any(o.kind == 'candidate' for o in result.observations))
+        self.assertEqual({o.kind for o in result.observations}, {'unknown'})
+        self.assertTrue(any(item.startswith('unmodeled_lambda_or_escape') for item in result.limitations))
+        self.assertFalse(any(o.kind in ('candidate', 'matched') for o in result.observations))
+
+    def test_fixed_explicit_assignment_transfer_keeps_proven_origin(self):
+        code = wrap(PREFIX + 'GateRef tag = GetObjectType(LoadHClass(output));\n'
+                    'GateRef copied = tag;\n'
+                    'StoreTypedArrayElement(glue, output, count, input, copied);')
+        self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['matched'])
+
+    def test_fixed_C3_effect_counterexamples_are_unknown(self):
+        expressions = (
+            'tag++;',
+            '++tag;',
+            'GateRef scratch = Int32Add((tag = inputTag), Int32(0));',
+            'GateRef scratch = Int32Add((output = input), Int32(0));',
+            'GateRef other = GetObjectType(LoadHClass(output)), changed = (tag = inputTag);',
+            'Label write(GetEnvironment()); BRANCH((tag = inputTag), &write, exit); Bind(&write);',
+        )
+        for expression in expressions:
+            with self.subTest(expression=expression):
+                code = wrap(PREFIX + 'GateRef tag = inputTag;\n' + expression + '\n'
+                            'StoreTypedArrayElement(glue, output, count, input, tag);')
+                self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['unknown'])
+
+    def test_unknown_compound_transform_discards_old_origin(self):
+        code = wrap(PREFIX + 'GateRef tag = inputTag;\n'
+                    'tag = Int32And(tag, Int32(1));\n'
+                    'StoreTypedArrayElement(glue, output, count, input, tag);')
+        self.assertEqual([o.kind for o in analyze_unit(unit(code)).observations], ['unknown'])
+
+    def test_safe_control_is_not_a_security_verdict(self):
+        code = wrap(PREFIX + 'GateRef tag = inputTag;')
+        result = analyze_unit(unit(code))
+        self.assertFalse(any(o.kind in ('candidate', 'confirmed', 'reportable')
+                             for o in result.observations))
 
 
 if __name__ == '__main__':

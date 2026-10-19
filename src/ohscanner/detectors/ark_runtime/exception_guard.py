@@ -1,4 +1,9 @@
-"""Conservative exception-path check for generated TypedArray allocation results."""
+"""Conservative pending-exception ordering checks for generated Ark IR.
+
+The analyzer only proves local source/graph order for explicitly modeled
+allocation or potentially throwing operations and result/external effects.
+Unknown calls, unresolved paths, and same-instruction ordering fail closed.
+"""
 from collections import deque
 from dataclasses import dataclass
 
@@ -18,6 +23,24 @@ class ExceptionGuardResult:
     model_digest: str = ''
 
 
+_CREATOR_TYPES = (
+    "NewObjectStubBuilder",
+    "panda::ecmascript::kungfu::NewObjectStubBuilder",
+)
+_LOCAL_VALUE_CALLS = {
+    "BRANCH", "Bind", "Jump", "LoopBegin", "LoopEnd",
+    "GetObjectType", "Exception", "GetEnvironment",
+    "Int32", "Int64", "IntPtr", "Boolean", "True", "False", "Hole", "Undefined",
+    "Int32Add", "Int64Add", "Int64Sub", "Int32LessThan", "Int64LessThan",
+    "Int32Equal", "Int64Equal", "Equal",
+}
+_DEFAULT_EFFECT_NAMES = ("LoadHClass", "StoreTypedArrayElement", "CopyTypedArrayBuffer")
+
+
+def _short_name(name):
+    return name.rsplit("::", 1)[-1]
+
+
 def _creator_assignment(fn, instruction, creator_name, creator_arity):
     for node in walk(instruction.node):
         if node.type != "call_expression":
@@ -34,12 +57,12 @@ def _creator_assignment(fn, instruction, creator_name, creator_arity):
         if receiver is None or receiver.type != "identifier":
             continue
         builder = fn.resolve(fn.text(receiver), node)
-        if builder is None or builder.type_name not in ("NewObjectStubBuilder", "panda::ecmascript::kungfu::NewObjectStubBuilder"):
+        if builder is None or builder.type_name not in _CREATOR_TYPES:
             continue
         parent = node.parent
         while parent is not None and parent.type != "init_declarator":
             parent = parent.parent
-        if parent is None:
+        if parent is None or parent.child_by_field_name("value") != node:
             continue
         declarator = parent.child_by_field_name("declarator")
         ident = name_node(declarator)
@@ -50,16 +73,24 @@ def _creator_assignment(fn, instruction, creator_name, creator_arity):
             yield binding
 
 
+def _refers_to_binding(fn, node, binding):
+    if binding is None:
+        return True
+    return any(
+        child.type == "identifier" and fn.resolve(fn.text(child), child) == binding
+        for child in walk(node)
+    )
+
+
 def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, object_index):
     for node in walk(instruction.node):
         if node.type != "call_expression" or fn.call_name(node) != sink_name:
             continue
         args = fn.arguments(node)
-        refers_to_object = any(
+        if not any(
             arg.type == "identifier" and fn.resolve(fn.text(arg), arg) == binding
             for arg in args
-        )
-        if not refers_to_object:
+        ):
             continue
         valid = fn.resolve(sink_name, node) is None
         valid = valid and len(args) == sink_arity and max(glue_index, object_index) < len(args)
@@ -74,9 +105,6 @@ def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, o
                 valid = (glue_binding is not None and glue_binding.name == "glue"
                          and glue_binding.parameter and glue_binding.type_name == "GateRef")
         if valid:
-            # Only accept the exact reviewed wrapper chain. A surrounding or
-            # argument-nested call could have effects that happen in the same IR
-            # instruction, so the inter-instruction effect walk cannot see it.
             calls = [child for child in walk(instruction.node) if child.type == "call_expression"]
             wrappers = [call for call in calls if fn.call_name(call) == "GetObjectType"]
             sinks = [call for call in calls if fn.call_name(call) == sink_name]
@@ -86,6 +114,60 @@ def _critical_use(fn, instruction, binding, sink_name, sink_arity, glue_index, o
                 and fn.resolve("GetObjectType", wrappers[0]) is None
             )
         return node, valid
+    return None
+
+
+def _field_name(fn, call):
+    callee = call.child_by_field_name("function")
+    if callee is None or callee.type != "field_expression":
+        return fn.call_name(call)
+    return fn.text(callee.child_by_field_name("field"))
+
+
+def _effect_use(fn, instruction, binding, effect_names, sink_name, sink_arity,
+                sink_glue_arg, sink_object_arg):
+    calls = [node for node in walk(instruction.node) if node.type == "call_expression"]
+    for name in effect_names:
+        if name == sink_name and binding is not None:
+            result = _critical_use(
+                fn, instruction, binding, sink_name, sink_arity,
+                sink_glue_arg, sink_object_arg,
+            )
+            if result is not None:
+                return result
+            if any(fn.call_name(call) == sink_name for call in calls):
+                return next(call for call in calls if fn.call_name(call) == sink_name), False
+        for call in calls:
+            call_name = fn.call_name(call)
+            field = _field_name(fn, call)
+            nested_names = {fn.call_name(child) for child in walk(call)
+                            if child.type == "call_expression"}
+            match = (
+                _short_name(call_name) == name
+                or field == name
+                or name in nested_names
+                or (call_name == "CallNGCRuntime"
+                    and any(name in fn.text(arg) for arg in fn.arguments(call)))
+            )
+            if not match or not _refers_to_binding(fn, call, binding):
+                continue
+            containers = [
+                item for item in calls
+                if item != call and call in tuple(walk(item))
+            ]
+            selected = max(containers, key=lambda item: item.end_byte - item.start_byte) if containers else call
+            selected_calls = {
+                item for item in calls
+                if item == selected or item in tuple(walk(selected))
+            }
+            extra_calls = [item for item in calls if item not in selected_calls]
+            wrapper_names = {name, "Exception", "CallNGCRuntime", "RTSTUB_ID"}
+            nested_ok = all(
+                _short_name(fn.call_name(item)) in wrapper_names
+                for item in selected_calls if item != selected
+            )
+            valid = not extra_calls and nested_ok
+            return selected, valid
     return None
 
 
@@ -146,65 +228,191 @@ def _known_exception_result_write(fn, instruction):
         and binding.type_name == "Variable*"
     )
 
-def _trace_use(fn, graph, start, sink_index, budget):
+
+def _throwing_call(fn, instruction, throwing_names):
+    matches = []
+    for call in _calls_in_instruction(instruction):
+        names = {_short_name(fn.call_name(call)), _field_name(fn, call)}
+        names.update(_short_name(fn.call_name(child))
+                     for child in walk(call) if child.type == "call_expression")
+        if names.intersection(throwing_names):
+            matches.append(call)
+    return matches
+
+
+def _all_calls_local_or_throwing(fn, instruction, throwing_names):
+    for call in _calls_in_instruction(instruction):
+        name = _short_name(fn.call_name(call))
+        if name in {"BRANCH", "Bind", "Jump", "LoopBegin", "LoopEnd"}:
+            continue
+        names = {name, _field_name(fn, call)}
+        names.update(_short_name(fn.call_name(child))
+                     for child in walk(call) if child.type == "call_expression")
+        if names.intersection(throwing_names):
+            continue
+        if not names.intersection(_LOCAL_VALUE_CALLS):
+            return False
+    return True
+
+
+def _maybe_throw_states(state):
+    if state == "pending":
+        return ("pending",)
+    return ("clear", "pending")
+
+
+def _trace_obligation(fn, graph, start, binding, effect_names, sink_name, sink_arity,
+                      sink_glue_arg, sink_object_arg, throwing_names, budget):
+    """Return local outcomes for one throwing operation.
+
+    States are: clear (guard proved no pending exception), pending (exception
+    may be pending before an effect), and guarded (the pending branch was
+    explicitly handled before continuing).
+    """
     queue = deque()
+    start_line = graph.instructions[start].node.start_point[0] + 1
     for target, _ in graph.instructions[start].successors:
         if target is not None and target >= 0:
-            queue.append((target, True, (graph.instructions[start].node.start_point[0] + 1,)))
-            queue.append((target, False, (graph.instructions[start].node.start_point[0] + 1,)))
-    seen, candidates, matched, unknown, steps = set(), [], [], [], 0
+            queue.append((target, "pending", (start_line,)))
+            queue.append((target, "clear", (start_line,)))
+    seen = set()
+    outcomes = {"candidate": [], "matched": [], "unknown": [], "unrelated": []}
+    steps = 0
     while queue:
-        index, pending, path = queue.popleft()
+        index, state, path = queue.popleft()
         if index < 0 or index >= len(graph.instructions):
             continue
-        key = (index, pending)
+        key = (index, state)
         if key in seen:
             continue
+        if len(seen) >= budget.max_states:
+            outcomes["unknown"].append(("exception_path_state_budget_exhausted", ()))
+            break
         seen.add(key)
         steps += 1
         if steps > budget.max_steps:
-            return "unknown", (), "exception_path_budget_exhausted", steps
+            outcomes["unknown"].append(("exception_path_budget_exhausted", ()))
+            break
         instruction = graph.instructions[index]
         line = instruction.node.start_point[0] + 1
+        column = instruction.node.start_point[1] + 1
         next_path = path + (line,)
-        if index == sink_index:
-            if pending:
-                candidates.append(next_path)
-            else:
-                matched.append(next_path)
-            continue
         if instruction.kind == "unknown" or instruction.problem:
-            unknown.append(next_path)
+            outcomes["unknown"].append(
+                (instruction.problem or "unmodeled_generated_instruction", next_path))
+            continue
+        effect = _effect_use(
+            fn, instruction, binding, effect_names, sink_name, sink_arity,
+            sink_glue_arg, sink_object_arg,
+        )
+        if effect is not None:
+            effect_node, signature_ok = effect
+            if not signature_ok:
+                reason = ("load_hclass_signature_or_binding_mismatch"
+                          if effect_node is not None
+                          and fn.call_name(effect_node) == sink_name
+                          else "effect_signature_or_same_instruction_order_unknown")
+                outcomes["unknown"].append((reason, next_path))
+                continue
+            effect_line = effect_node.start_point[0] + 1
+            effect_column = effect_node.start_point[1] + 1
+            if state == "pending":
+                outcomes["candidate"].append((next_path, effect_line, effect_column))
+            else:
+                outcomes["matched"].append((next_path, effect_line, effect_column))
+            continue
+        if instruction.kind == "return":
+            outcomes["unknown"].append(
+                ("result_return_before_modeled_effect_order_unknown", next_path))
             continue
         if _has_pending_exception(fn, instruction):
             for target, truth in instruction.successors:
-                if target is not None and target >= 0:
-                    queue.append((target, bool(truth), next_path))
+                if target is None or target < 0:
+                    # Reviewed guard exits terminate this local obligation.
+                    continue
+                elif truth is True and state == "pending":
+                    queue.append((target, "guarded", next_path))
+                elif truth is False and state in ("pending", "clear", "guarded"):
+                    queue.append((target, "clear", next_path))
             continue
-        if instruction.kind in ("declaration", "expression", "BRANCH"):
-            calls = _calls_in_instruction(instruction)
-            if calls and not _known_exception_result_write(fn, instruction):
-                unknown.append(next_path)
+        calls = _calls_in_instruction(instruction)
+        if calls and _known_exception_result_write(fn, instruction):
+            for target, _ in instruction.successors:
+                if target is not None and target >= 0:
+                    queue.append((target, state, next_path))
+                elif state == "pending":
+                    outcomes["unknown"].append(("effect_after_external_label_unresolved", next_path))
+            continue
+        if calls and not _all_calls_local_or_throwing(fn, instruction, throwing_names):
+            outcomes["unknown"].append(
+                ("unmodeled_effect_before_exception_guard", next_path))
+            continue
+        throwing = _throwing_call(fn, instruction, throwing_names)
+        if instruction.kind == "BRANCH":
+            condition = instruction.arguments[0] if instruction.arguments else None
+            condition_calls = [child for child in walk(condition) if child.type == "call_expression"] if condition is not None else []
+            for call in condition_calls:
+                names = {_short_name(fn.call_name(call)), _field_name(fn, call)}
+                names.update(_short_name(fn.call_name(child))
+                             for child in walk(call) if child.type == "call_expression")
+                if names.intersection(throwing_names) or not names.intersection(_LOCAL_VALUE_CALLS):
+                    outcomes["unknown"].append(("throwing_condition_order_unknown", next_path))
+                    break
+            else:
+                next_states = _maybe_throw_states(state) if throwing else (state,)
+                for target, _ in instruction.successors:
+                    if target is not None and target >= 0:
+                        for next_state in next_states:
+                            queue.append((target, next_state, next_path))
+                    elif state == "pending":
+                        outcomes["unknown"].append(("effect_after_external_label_unresolved", next_path))
                 continue
+            continue
+        next_states = _maybe_throw_states(state) if throwing else (state,)
         for target, _ in instruction.successors:
             if target is not None and target >= 0:
-                queue.append((target, pending, next_path))
-    if unknown:
-        return "unknown", tuple(unknown), "unmodeled_effect_before_exception_guard", steps
-    if candidates:
-        return "candidate", tuple(candidates), "", steps
-    if matched:
-        return "matched", tuple(matched), "", steps
-    return "unknown", (), "exception_guard_sink_path_unresolved", steps
+                for next_state in next_states:
+                    queue.append((target, next_state, next_path))
+            elif state == "pending":
+                outcomes["unknown"].append(
+                    ("effect_after_external_label_unresolved", next_path))
+    return outcomes, steps
 
 
-def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity=4,
+def _observation(kind, source_line, outcome, fn, reason):
+    path, line, column = outcome
+    return Observation(
+        kind, line, column, reason, token_line=source_line,
+        path=path, symbol=fn.qualified_name,
+        region_start_byte=fn.node.start_byte, region_end_byte=fn.node.end_byte,
+    )
+
+
+def _unknown_observation(source_line, item, fn, fallback_reason):
+    reason, path = item
+    line = path[-1] if path else source_line
+    return Observation(
+        "unknown", line, 1, reason or fallback_reason, token_line=source_line,
+        path=path, symbol=fn.qualified_name,
+        region_start_byte=fn.node.start_byte, region_end_byte=fn.node.end_byte,
+    )
+
+
+def analyze_exception_guard(unit, *, creator_name=None, creator_arity=None,
                             sink_name="LoadHClass", sink_arity=2, sink_glue_arg=0,
                             sink_object_arg=1,
                             caller_names=(OWNER + "::Filter",),
                             caller_types=("GateRef", "GateRef", "GateRef", "Variable*", "Label*", "Label*"),
+                            creator_specs=None, effect_names=None, throwing_names=(),
                             budget=None):
     budget = budget or AnalysisBudget()
+    if creator_specs is None:
+        if creator_name is not None:
+            creator_specs = ((creator_name, creator_arity),)
+        else:
+            creator_specs = (("NewTypedArray", 4), ("NewTypedArraySameType", 4))
+    effect_names = tuple(effect_names or (sink_name,))
+    throwing_names = tuple(throwing_names)
     if unit.parse_status not in ("complete", "partial"):
         return ExceptionGuardResult("limited", "not_analyzed",
                                     limitations=("source_parse_unavailable",))
@@ -223,89 +431,119 @@ def analyze_exception_guard(unit, *, creator_name="NewTypedArray", creator_arity
     found_callers = {fn.qualified_name for fn in owner_functions}
     for expected in caller_names:
         if expected not in found_callers:
-            limitations.append("expected_exception_guard_caller_missing:" + expected.rsplit("::", 1)[-1])
+            limitations.append(
+                "expected_exception_guard_caller_missing:" + expected.rsplit("::", 1)[-1])
     for fn in owner_functions:
         parent = fn.node.parent
         conditional = False
         while parent is not None:
-            conditional |= parent.type in ("preproc_if", "preproc_ifdef", "preproc_else", "preproc_elif")
+            conditional |= parent.type in (
+                "preproc_if", "preproc_ifdef", "preproc_else", "preproc_elif")
             parent = parent.parent
         if conditional:
-            limitations.append("exception_guard_caller_conditional_compilation_unresolved:" + fn.qualified_name.rsplit("::", 1)[-1])
+            limitations.append(
+                "exception_guard_caller_conditional_compilation_unresolved:"
+                + fn.qualified_name.rsplit("::", 1)[-1])
             continue
         if fn.node.has_error:
-            limitations.append("exception_guard_caller_parse_error:" + fn.qualified_name.rsplit("::", 1)[-1])
+            limitations.append(
+                "exception_guard_caller_parse_error:" + fn.qualified_name.rsplit("::", 1)[-1])
             continue
         if tuple(fn.parameter_types) != caller_types:
-            limitations.append("exception_guard_caller_signature_mismatch:" + fn.qualified_name.rsplit("::", 1)[-1])
+            limitations.append(
+                "exception_guard_caller_signature_mismatch:"
+                + fn.qualified_name.rsplit("::", 1)[-1])
             continue
-        creator_instructions = []
         try:
             graph = build_graph(fn, budget)
         except ValueError as error:
             limitations.append(str(error))
             continue
+        obligations = []
         for index, instruction in enumerate(graph.instructions):
-            for binding in _creator_assignment(fn, instruction, creator_name, creator_arity):
-                creator_instructions.append((index, binding, instruction.node.start_point[0] + 1))
-        for start, binding, creation_line in creator_instructions:
-            reassigned = any(
-                index != start and _writes_binding(fn, instruction, binding)
-                for index, instruction in enumerate(graph.instructions)
-            )
-            uses = [(index, _critical_use(fn, instruction, binding, sink_name, sink_arity, sink_glue_arg, sink_object_arg))
+            for creator, arity in creator_specs:
+                for binding in _creator_assignment(fn, instruction, creator, arity):
+                    same_instruction_effect = _effect_use(
+                        fn, instruction, binding, effect_names, sink_name, sink_arity,
+                        sink_glue_arg, sink_object_arg)
+                    source_line = instruction.node.start_point[0] + 1
+                    if same_instruction_effect is not None:
+                        finding = _unknown_observation(
+                            source_line,
+                            ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
+                            fn, "throw_and_effect_order_unresolved_same_instruction")
+                        findings.append(finding)
+                        limitations.append(finding.reason)
+                        continue
+                    obligations.append(
+                        ("allocation", index, source_line, binding, creator))
+            if throwing_names and _throwing_call(fn, instruction, throwing_names):
+                if _effect_use(fn, instruction, None, effect_names, sink_name,
+                               sink_arity, sink_glue_arg, sink_object_arg) is not None:
+                    source_line = instruction.node.start_point[0] + 1
+                    finding = _unknown_observation(
+                        source_line,
+                        ("throw_and_effect_order_unresolved_same_instruction", (source_line,)),
+                        fn, "throw_and_effect_order_unresolved_same_instruction")
+                    findings.append(finding)
+                    limitations.append(finding.reason)
+                    continue
+                obligations.append(
+                    ("helper", index, instruction.node.start_point[0] + 1, None, "helper"))
+        for kind, start, source_line, binding, creator in obligations:
+            if kind == "allocation" and any(
+                    index != start and _writes_binding(fn, instruction, binding)
+                    for index, instruction in enumerate(graph.instructions)):
+                effect = next((
+                    (index, _effect_use(fn, instruction, binding, effect_names, sink_name,
+                                        sink_arity, sink_glue_arg, sink_object_arg))
                     for index, instruction in enumerate(graph.instructions)
-                    if index > start]
-            uses = [(index, result) for index, result in uses if result is not None]
-            if not uses:
+                    if index > start and _effect_use(
+                        fn, instruction, binding, effect_names, sink_name,
+                        sink_arity, sink_glue_arg, sink_object_arg) is not None
+                ), None)
+                if effect is not None:
+                    node, _ = effect[1]
+                    findings.append(Observation(
+                        "unknown", node.start_point[0] + 1, node.start_point[1] + 1,
+                        "allocation_result_gate_ref_reassigned", token_line=source_line,
+                        symbol=fn.qualified_name, region_start_byte=fn.node.start_byte,
+                        region_end_byte=fn.node.end_byte))
+                    limitations.append("allocation_result_gate_ref_reassigned")
                 continue
-            # Report against the first sensitive object-header read. Control
-            # flow is walked from the allocation site to that read.
-            sink_index, (sink_node, signature_ok) = uses[0]
-            if reassigned:
-                limitation = "allocation_result_gate_ref_reassigned"
-                findings.append(Observation("unknown", sink_node.start_point[0] + 1,
-                                            sink_node.start_point[1] + 1, limitation,
-                                            token_line=creation_line, symbol=fn.qualified_name,
-                                            region_start_byte=fn.node.start_byte,
-                                            region_end_byte=fn.node.end_byte))
-                limitations.append(limitation)
-                continue
-            if not signature_ok:
-                limitation = "load_hclass_signature_or_binding_mismatch"
-                findings.append(Observation("unknown", sink_node.start_point[0] + 1,
-                                            sink_node.start_point[1] + 1, limitation,
-                                            token_line=creation_line, symbol=fn.qualified_name,
-                                            region_start_byte=fn.node.start_byte,
-                                            region_end_byte=fn.node.end_byte))
-                limitations.append(limitation)
-                continue
-            status, paths, limitation, used_steps = _trace_use(
-                fn, graph, start, sink_index, budget)
+            outcomes, used_steps = _trace_obligation(
+                fn, graph, start, binding, effect_names, sink_name, sink_arity,
+                sink_glue_arg, sink_object_arg, throwing_names, budget)
             steps += used_steps
-            line = sink_node.start_point[0] + 1
-            kind = status
-            reason = (
+            candidate_reason = (
                 "allocation_result_hclass_read_on_pending_exception_path"
-                if status == "candidate" else
-                "pending_exception_check_guards_allocation_result_use"
-                if status == "matched" else limitation
+                if kind == "allocation" and effect_names == (sink_name,)
+                else "pending_exception_guard_missing_before_result_or_external_effect"
             )
-            findings.append(Observation(kind, line, sink_node.start_point[1] + 1,
-                                        reason, token_line=creation_line,
-                                        path=paths[0] if paths else (),
-                                        symbol=fn.qualified_name,
-                                        region_start_byte=fn.node.start_byte,
-                                        region_end_byte=fn.node.end_byte))
-            if limitation:
-                limitations.append(limitation)
+            matched_reason = (
+                "pending_exception_check_guards_allocation_result_use"
+                if kind == "allocation" and effect_names == (sink_name,)
+                else "pending_exception_check_precedes_result_or_external_effect"
+            )
+            if outcomes["candidate"]:
+                findings.append(_observation(
+                    "candidate", source_line, outcomes["candidate"][0], fn, candidate_reason))
+            elif outcomes["matched"]:
+                findings.append(_observation(
+                    "matched", source_line, outcomes["matched"][0], fn, matched_reason))
+            for item in sorted(set(outcomes["unknown"]), key=lambda value: (value[1], value[0])):
+                finding = _unknown_observation(
+                    source_line, item, fn, "exception_guard_sink_path_unresolved")
+                findings.append(finding)
+                limitations.append(finding.reason)
     if not findings:
-        return ExceptionGuardResult("limited" if limitations else "completed",
-                                    "partial" if limitations else "complete", (),
-                                    tuple(sorted(set(limitations))), steps)
+        return ExceptionGuardResult(
+            "limited" if limitations else "completed",
+            "partial" if limitations else "complete", (),
+            tuple(sorted(set(limitations))), steps)
     if any(item.kind == "unknown" for item in findings):
         limitations.append("exception_path_not_fully_modeled")
     outcome = "partial" if limitations or unit.parse_status != "complete" else "complete"
-    return ExceptionGuardResult("limited" if outcome != "complete" else "completed",
-                                outcome, tuple(findings),
-                                tuple(sorted(set(limitations))), steps)
+    return ExceptionGuardResult(
+        "limited" if outcome != "complete" else "completed",
+        outcome, tuple(findings), tuple(sorted(set(limitations))), steps)

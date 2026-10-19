@@ -10,7 +10,7 @@ import json
 DETECTOR_ID = 'ohscanner.ark.runtime.type_safety'
 RULE_ID = 'ark.runtime.typedarray-store-type-origin'
 EXCEPTION_GUARD_RULE_ID = 'ark.runtime.typedarray-allocation-exception-guard'
-VERSION = '0.6.2'
+VERSION = '0.7.0'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
 CALLER = OWNER + '::Filter'
@@ -19,7 +19,7 @@ CALLER = OWNER + '::Filter'
 @dataclass(frozen=True)
 class RuntimeTypeModel:
     """Explicitly versioned assumptions; no historical labels are consumed."""
-    version: str = '0.6.2'
+    version: str = '0.7.0'
     source_repository: str = 'openharmony/arkcompiler_ets_runtime'
     effect_summary_revision: str = 'a0e30483ab3e4aead67ecfb5c708489915e447f9'
     target_bindings: tuple = (

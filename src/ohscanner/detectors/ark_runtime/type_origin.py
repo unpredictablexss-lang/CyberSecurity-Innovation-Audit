@@ -14,6 +14,7 @@ class Value:
     may_differ: bool = False
     detail: str = ''
     valid: bool = True
+    stale_reason: str = ''
 
 
 UNKNOWN = Value()
@@ -70,8 +71,8 @@ class OriginEvaluator:
             return False
         source = self.value(args[source_index], state)
         token = self.value(args[type_index], state)
-        return (source.kind == 'object' and token.kind == 'type' and token.valid
-                and token.origin == source.identity)
+        return (source.kind == 'object' and source.identity not in state.invalidated
+                and token.kind == 'type' and token.valid and token.origin == source.identity)
 
     def _logic_and_chain(self, node):
         if node is None or node.type != 'call_expression':
@@ -161,34 +162,46 @@ class OriginEvaluator:
                         return 'unreviewed_host_constructor_arity'
         return ''
 
+    def invalidate(self, state, call, may_rebind=True):
+        arguments = list(self.fn.arguments(call))
+        callee = call.child_by_field_name('function')
+        if callee and callee.type == 'field_expression':
+            arguments.append(callee.child_by_field_name('argument'))
+        # A verified by-value call or a no-argument unknown call can invalidate
+        # current type observations without rebinding local object identities.
+        rebind = arguments if may_rebind else []
+        self._invalidate(state, call.start_point[0] + 1, self.fn.call_name(call), rebind,
+                         invalidate_objects=may_rebind and bool(arguments))
+
     def initial(self):
         return OriginState({b.identity: Value('object', b.identity, origin_line=self.fn.node.start_point[0] + 1)
                             for b in self.fn.bindings if b.parameter and b.type_name == 'GateRef'})
 
-    def invalidate(self, state, call, may_rebind=True):
-        """Forget old observations, not object aliases; fresh reads are distinct facts.
-
-        An unmodelled call may reach aliases or globals. Invalidating only its
-        syntactically explicit arguments is unsound without an effect summary.
-        This finite abstraction converges in loops and never revalidates a copy
-        of an old token when a later read observes the same object.
-        """
+    def _invalidate(self, state, line, detail, rebind=(), invalidate_objects=True,
+                    invalidate_types=True):
+        """Forget origin facts that an unmodelled effect may have overwritten."""
         from dataclasses import replace
-        state.invalidated |= frozenset(v.identity for v in state.values.values() if v.kind == 'object')
-        state.values = {key: replace(value, valid=False) if value.kind in ('type', 'hclass') else value
-                        for key, value in state.values.items()}
+        if invalidate_objects:
+            state.invalidated |= frozenset(v.identity for v in state.values.values() if v.kind == 'object')
+        if invalidate_types:
+            stale_reason = ('modelled_creation_dispatch'
+                            if detail == 'modelled_creation_dispatch' else 'unmodeled_effect')
+            state.values = {
+                key: (replace(value, valid=False,
+                              stale_reason=('unmodeled_effect'
+                                            if value.stale_reason == 'unmodeled_effect'
+                                            else stale_reason))
+                      if value.kind in ('type', 'hclass') else value)
+                for key, value in state.values.items()
+            }
         state.equivalent = frozenset()
         state.predicates = frozenset()
-        state.effects |= frozenset(((call.start_point[0] + 1, self.fn.call_name(call)),))
+        state.effects |= frozenset(((line, detail),))
         # Without the C++ callee declaration, GateRef arguments could be bound
         # by non-const reference. Retain aliases of the old object but forget
         # the passed lvalue's current binding; a later read cannot silently
         # equate it to a pre-call alias.
-        arguments = list(self.fn.arguments(call)) if may_rebind else []
-        callee = call.child_by_field_name('function')
-        if may_rebind and callee and callee.type == 'field_expression':
-            arguments.append(callee.child_by_field_name('argument'))
-        for argument in arguments:
+        for argument in rebind:
             while argument and argument.type in ('pointer_expression', 'parenthesized_expression'):
                 argument = argument.named_children[-1] if argument.named_children else None
             if argument and argument.type == 'identifier':
@@ -273,13 +286,19 @@ class OriginEvaluator:
         if instruction.kind not in ('BRANCH', 'declaration', 'expression'):
             return
         node = instruction.arguments[0] if instruction.kind == 'BRANCH' else instruction.node
+        effect = self.unsupported_cpp_effect(instruction)
+        if effect:
+            self._invalidate(state, instruction.node.start_point[0] + 1, effect)
+            return
         for call in walk(node):
             if call.type == 'call_expression':
                 if self.creation_call(call, state):
                     # NewTypedArray may dispatch species code. Its four GateRef
                     # parameters are passed by value, but old runtime type
                     # observations and guards cannot survive that dispatch.
-                    self.invalidate(state, call, may_rebind=False)
+                    self._invalidate(state, call.start_point[0] + 1,
+                                     'modelled_creation_dispatch', invalidate_objects=False,
+                                     invalidate_types=True)
                 elif self.same_type_creation_call(call, state):
                     # This exact helper maps the exemplar's JSType to its
                     # intrinsic constructor; it does not use species dispatch.
@@ -291,8 +310,10 @@ class OriginEvaluator:
         if node is None:
             return UNKNOWN
         fn = self.fn
-        if node.type in ('parenthesized_expression', 'pointer_expression'):
+        if node.type == 'parenthesized_expression':
             return self.value(node.named_children[-1], state) if node.named_children else UNKNOWN
+        if node.type in ('assignment_expression', 'comma_expression', 'pointer_expression'):
+            return UNKNOWN
         if node.type == 'identifier':
             binding = fn.resolve(fn.text(node), node)
             return state.values.get(binding.identity, UNKNOWN) if binding else UNKNOWN
@@ -311,7 +332,8 @@ class OriginEvaluator:
         if name in ('LoadHClass', 'this->LoadHClass') and len(args) == 1:
             obj = self.value(args[0], state)
             if obj.kind == 'object':
-                return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1)
+                return Value('hclass', origin=obj.identity, origin_line=node.start_point[0] + 1,
+                             valid=obj.valid and obj.identity not in state.invalidated)
         receiver = node.child_by_field_name('function')
         if receiver and receiver.type == 'field_expression':
             field = fn.text(receiver.child_by_field_name('field'))
@@ -328,8 +350,8 @@ class OriginEvaluator:
             if field == name and builder.kind == 'builder' and builder.detail == owner and len(args) == arity:
                 source = self.value(args[source_index], state)
                 token = self.value(args[type_index], state)
-                if (source.kind == 'object' and token.kind == 'type' and token.valid
-                        and token.origin == source.identity):
+                if (source.kind == 'object' and source.identity not in state.invalidated
+                        and token.kind == 'type' and token.valid and token.origin == source.identity):
                     return Value('object', f'same-type:{node.start_byte}', origin=source.identity,
                                  origin_line=source.origin_line, creation_line=node.start_point[0] + 1,
                                  may_differ=False)
@@ -389,13 +411,17 @@ class OriginEvaluator:
         if target.kind != 'object' or token.kind != 'type':
             return ('unknown', target, token, 'unresolved_target_or_type_origin')
         guarantee = (self.token_key(token), target.identity)
-        same_type_origin = (target.origin == token.origin and not target.may_differ
-                            and target.origin not in state.invalidated)
-        if guarantee in state.equivalent or (token.origin == target.identity and token.valid) or same_type_origin:
+        target_live = target.identity not in state.invalidated
+        source_live = target.origin not in state.invalidated
+        same_type_origin = (target_live and source_live and token.valid
+                            and target.origin == token.origin and not target.may_differ)
+        same_creation_origin = (target_live and token.valid and token.origin == target.identity)
+        if guarantee in state.equivalent or same_creation_origin or same_type_origin:
             return ('matched', target, token, 'target_origin_or_proved_type_equality')
         if target.identity in state.invalidated:
             return ('unknown', target, token, 'creation_relationship_invalidated_by_call')
-        if target.may_differ and target.creation_line and token.origin != target.identity:
+        if (target.may_differ and target.creation_line and token.origin != target.identity
+                and (token.valid or token.stale_reason == 'modelled_creation_dispatch')):
             # The captured SSA token's origin remains known even if it no
             # longer describes its source object's current type. This is only
             # a distinct-origin candidate, not a proved numeric type mismatch.
