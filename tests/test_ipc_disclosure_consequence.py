@@ -74,6 +74,7 @@ class ConsequenceCatalogueTests(unittest.TestCase):
                 self.assertEqual(impact, "information_disclosure")
                 self.assertEqual(cwe, "CWE-200")
                 self.assertEqual(basis, "GetPasteData")
+                self.assertEqual(consequence_for(rule, ("GetAppRunningStateByBundleName",)), ("information_disclosure", "CWE-200", "GetAppRunningStateByBundleName"))
 
     def test_a_non_read_call_falls_back_to_the_rule_baseline(self):
         impact, cwe, _basis = consequence_for("ipc.auth.missing", ("Install",))
@@ -94,7 +95,7 @@ class ConsequenceCatalogueTests(unittest.TestCase):
         # The catalogue must be explicit, not inferred; a typo would silently
         # disable the dimension for one API.
         self.assertTrue(DISCLOSURE_CALLS)
-        for name in ("GetPasteData", "ReadFile", "ReadUserData", "GetPermissionUsedRecordsAsync"):
+        for name in ("GetPasteData", "ReadFile", "ReadUserData", "GetPermissionUsedRecordsAsync", "GetAppRunningStateByBundleName"):
             self.assertIn(name, DISCLOSURE_CALLS)
 
 

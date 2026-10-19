@@ -23,6 +23,45 @@ class IpcIntegrationSafetyTests(unittest.TestCase):
         self.assertEqual(IpcInterfaceDetector().policy.service_account_roles, ())
         self.assertFalse(any(s.startswith("Service-account role credited:") for s in run.limitations))
 
+    def test_access_token_role_is_limited_to_reviewed_repo_and_operation(self):
+        text = """
+static const int32_t ACCESSTOKEN_UID = 3020;
+class PrivacyManagerStub {
+public:
+ bool IsAccessTokenCalling() const;
+ int RemovePermissionUsedRecords();
+ int StartAbility();
+ void RemoveInner(MessageParcel &data, MessageParcel &reply);
+ void StartInner(MessageParcel &data, MessageParcel &reply);
+};
+bool PrivacyManagerStub::IsAccessTokenCalling() const {
+ return IPCSkeleton::GetCallingUid() == ACCESSTOKEN_UID;
+}
+void PrivacyManagerStub::RemoveInner(MessageParcel &data, MessageParcel &reply) {
+ if (!IsAccessTokenCalling()) { reply.WriteInt32(-1); return; }
+ this->RemovePermissionUsedRecords();
+}
+void PrivacyManagerStub::StartInner(MessageParcel &data, MessageParcel &reply) {
+ if (!IsAccessTokenCalling()) { reply.WriteInt32(-1); return; }
+ this->StartAbility();
+}
+"""
+        product = context(text, "privacy_manager_stub.cpp",
+                          "openharmony/security_access_token")
+        product_run = IpcInterfaceDetector().detect(product, product.units)
+        product_missing = {f.symbol for f in product_run.findings
+                           if f.rule_id == "ipc.auth.missing"}
+        self.assertNotIn("PrivacyManagerStub::RemoveInner", product_missing)
+        self.assertTrue(any(s.startswith("Service-account role credited:")
+                            for s in product_run.limitations))
+        # A repo string does not make the same account a global trust rule.
+        unrelated = context(text, "privacy_manager_stub.cpp", "fixture/unrelated")
+        unrelated_run = IpcInterfaceDetector().detect(unrelated, unrelated.units)
+        self.assertIn("ipc.auth.missing", {f.rule_id for f in unrelated_run.findings})
+        # Even inside the reviewed repository, the role answers only for the
+        # explicitly listed privacy operation, not a different sensitive call.
+        self.assertIn("PrivacyManagerStub::StartInner", product_missing)
+
     def test_onehop_reject_branch_effect_is_not_a_guard(self):
         fixed = (BASE / "onehop_guard_fixed.cpp").read_text()
         positive = fixed.replace("if (!IsSACalling()) {", "if (!IsSACalling()) { StartAbility();")
@@ -68,3 +107,17 @@ public:
             walk = Interpreter(ctx.units, IpcPolicy(), ctx.request)
         self.assertEqual(walk.account_roles, {"FIXTURE_UID": role})
         self.assertEqual(walk.account_accepts, {"<fixture-only>": frozenset({"TestCall"})})
+
+    def test_repository_scope_on_explicit_account_policy_is_enforced(self):
+        role = ServiceAccountRole(
+            "FIXTURE_UID", "4096", "<fixture-only>", ("TestCall",),
+            "synthetic repository-scoped test policy", repository="fixture/trusted")
+        effective = IpcPolicy(service_account_roles=(role,))
+        unrelated = context("int ordinary() { return 0; }", repository="fixture/unrelated")
+        trusted = context("int ordinary() { return 0; }", repository="fixture/trusted")
+        with patch("src.ohscanner.detectors.interface.analysis.merge_policy",
+                   return_value=effective):
+            unrelated_walk = Interpreter(unrelated.units, IpcPolicy(), unrelated.request)
+            trusted_walk = Interpreter(trusted.units, IpcPolicy(), trusted.request)
+        self.assertEqual(unrelated_walk.account_roles, {})
+        self.assertEqual(trusted_walk.account_roles, {"FIXTURE_UID": role})

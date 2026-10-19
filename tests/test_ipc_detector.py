@@ -8,14 +8,15 @@ from src.ohscanner.contracts import SourceUnit, ScanContext, ScanRequest
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.interface.detector import IpcInterfaceDetector
+from src.ohscanner.detectors.interface.m2_adapter import M2IpcInterfaceDetector
 from src.ohscanner.detectors.interface.models import IpcPolicy, ServiceAccountRole
 
 BASE=Path(__file__).parent/'fixtures/ipc'
 
-def context(text, path='sample.cpp'):
+def context(text, path='sample.cpp', repository='fixture/ipc'):
     index=parse_source(text,language='cpp')
     unit=SourceUnit(path,'cpp',text,hashlib.sha256(text.encode()).hexdigest(),index.parse_status)
-    request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:fixture/ipc')
+    request=ScanRequest('ipc-test',repository,'synthetic-ipc-v1',snapshot_digest((unit,)),'current-component:'+repository)
     return ScanContext(request,(unit,),{'ast':{path:index.to_dict()}})
 
 def parses_raw(text, grammar):
@@ -23,6 +24,19 @@ def parses_raw(text, grammar):
     here: it normalizes first, so it can only state the after condition."""
     from tree_sitter import Language, Parser
     return not Parser(Language(grammar)).parse(text).root_node.has_error
+
+def context_sources(items):
+    units=[]
+    ast={}
+    for path,text in sorted(items):
+        parsed=parse_source(text,language='cpp')
+        unit=SourceUnit(path,'cpp',text,hashlib.sha256(text.encode()).hexdigest(),
+                        parsed.parse_status)
+        units.append(unit)
+        ast[path]=parsed.to_dict()
+    request=ScanRequest('ipc-test','fixture/ipc','synthetic-ipc-multifile-v1',
+                        snapshot_digest(tuple(units)),'current-component:fixture/ipc')
+    return ScanContext(request,tuple(units),{'ast':ast})
 
 def fixture_account_policy():
     return IpcPolicy(service_account_roles=(ServiceAccountRole(
@@ -32,6 +46,14 @@ def fixture_account_policy():
     ),))
 
 class IpcDetectorTests(unittest.TestCase):
+    def test_auth07_does_not_assume_unauthorized_effect(self):
+        text=(BASE / "auth07" / "denial_transport_success_positive.cpp").read_text()
+        run=IpcInterfaceDetector().detect(context(text),context(text).units)
+        finding=next(item for item in run.findings
+                     if item.rule_id == "ipc.auth.denial-transport-success")
+        self.assertIsNone(finding.consequence_impact)
+        self.assertIsNone(finding.consequence_cwe)
+
     def test_synthetic_semantic_matrix(self):
         for item in json.loads((BASE/'manifest.json').read_text()):
             with self.subTest(sample=item['sample_id']):
@@ -43,6 +65,56 @@ class IpcDetectorTests(unittest.TestCase):
                     self.assertIn(item['expected_rule'],rules)
                 else:
                     self.assertEqual(rules,set())
+
+    def test_fuzz_wrapper_name_alone_is_not_an_ipc_entry(self):
+        # Fuzz drivers often expose a free OnRemoteRequest with only the input
+        # parcel. Name plus Parcel must not create an IPC root.
+        text = """
+#include "common_types.h"
+int OnRemoteRequest(uint32_t code, MessageParcel &data) {
+    StartAbility();
+    return 0;
+}
+"""
+        text += """
+class FuzzWrapper {
+public:
+    int OnRemoteRequest(uint32_t code, MessageParcel &data) {
+        StartAbility();
+        return 0;
+    }
+};
+"""
+        ctx = context(text, "services/ability/test/fuzztest/ability_fuzzer.cpp")
+        run = IpcInterfaceDetector().detect(ctx, ctx.units)
+        self.assertEqual(run.findings, ())
+
+    def test_findings_bind_entry_source_and_test_build_membership(self):
+
+        text=(BASE/'auth_positive.cpp').read_text()
+        product=context(text,'services/ability/ability_stub.cpp')
+        product_findings=IpcInterfaceDetector().detect(product,product.units).findings
+        self.assertTrue(product_findings)
+        self.assertTrue(all('[entry-source=services/ability/ability_stub.cpp]' in f.message
+                            for f in product_findings))
+        self.assertFalse(any(o.kind=='entry_build_membership'
+                             for f in product_findings for o in f.evidence_obligations))
+
+        harness=context(text,'services/ability/test/fuzztest/ability_stub_fuzzer.cpp')
+        harness_run=IpcInterfaceDetector().detect(harness,harness.units)
+        self.assertFalse(harness_run.findings)
+        self.assertTrue(any('Excluded 1 test/fuzz/mock entry root' in note
+                            for note in harness_run.limitations))
+
+        # Exact path components prevent incidental names from being mistaken
+        # for test-only build evidence.
+        from src.ohscanner.detectors.interface.detector import _test_source_path
+        self.assertFalse(_test_source_path('services/contest/mockery/ability_stub.cpp'))
+        self.assertTrue(_test_source_path(r'services\ability\tests\ability_stub.cpp'))
+
+        fixed=context((BASE/'auth_fixed.cpp').read_text(),
+                      'services/ability/test/fuzztest/ability_stub_fuzzer.cpp')
+        self.assertFalse(IpcInterfaceDetector().detect(fixed,fixed.units).findings)
 
     def test_contract_bridge_and_obligations(self):
         ctx=context((BASE/'auth_positive.cpp').read_text())
@@ -70,7 +142,41 @@ class IpcDetectorTests(unittest.TestCase):
         ctx=context((BASE/'auth_fixed.cpp').read_text())
         policy=IpcPolicy(expected_permissions=(('StartAbility','"ohos.permission.OTHER"'),))
         run=IpcInterfaceDetector(policy).detect(ctx,ctx.units)
-        self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
+        mismatch = next(f for f in run.findings if f.rule_id == 'ipc.auth.missing')
+        self.assertIn('permission mismatch', mismatch.message)
+        self.assertIn('ohos.permission.OTHER', mismatch.message)
+        self.assertEqual(sum(f.rule_id == 'ipc.auth.missing' for f in run.findings), 1)
+
+    def test_a_correct_expected_permission_is_a_safe_control(self):
+        ctx=context((BASE/'auth_fixed.cpp').read_text())
+        policy=IpcPolicy(expected_permissions=(('StartAbility','"ohos.permission.TEST"'),))
+        run=IpcInterfaceDetector(policy).detect(ctx,ctx.units)
+        self.assertNotIn('ipc.auth.missing',{f.rule_id for f in run.findings})
+
+    def test_reviewed_telephony_permission_contract_is_component_qualified(self):
+        expected = {(repo, method): permission
+                    for repo, method, permission in IpcPolicy().repository_expected_permissions}
+        self.assertEqual(expected[('openharmony/telephony_call_manager',
+                                   'CallManagerService::SetCameraZoom')],
+                         'OHOS_PERMISSION_SET_TELEPHONY_STATE')
+        self.assertEqual(expected[('openharmony/telephony_call_manager',
+                                   'CallManagerService::GetImsConfig')],
+                         'OHOS_PERMISSION_GET_TELEPHONY_STATE')
+        self.assertFalse(IpcPolicy().expected_permissions)
+
+    def test_disclosed_permission_contract_is_repository_scoped(self):
+        from src.ohscanner.detectors.interface.analysis import Interpreter
+        source = "class CallManagerService {};"
+
+        same = context(source, repository='openharmony/telephony_call_manager')
+        foreign = context(source, repository='example/forked_component')
+        method = 'CallManagerService::GetImsConfig'
+        expected = 'OHOS_PERMISSION_GET_TELEPHONY_STATE'
+        same_interpreter = Interpreter(same.units, IpcPolicy(), same.request)
+        foreign_interpreter = Interpreter(foreign.units, IpcPolicy(), foreign.request)
+        self.assertEqual(same_interpreter.expected_permission('GetImsConfig', method),
+                         expected)
+        self.assertIsNone(foreign_interpreter.expected_permission('GetImsConfig', method))
 
     def test_format_models_preserve_original_offsets(self):
         from src.ohscanner.detectors.interface.analysis import normalize_syntax
@@ -168,6 +274,38 @@ class IpcDetectorTests(unittest.TestCase):
         self.assertTrue(any(d.rule_id=='ipc.auth.missing' for d in reports[0].diagnostics))
         # runner.py:253 turns a blocked run with inspected files into 'partial'.
         self.assertEqual(sidecar['detectors']['ohscanner.interface.ipc']['status'],'partial')
+
+    def test_partial_source_candidate_keeps_its_parse_obligation_in_public_adapter(self):
+        """A useful partial-tree finding must still reach review as a candidate.
+
+        The default catalog uses the owner M2 adapter, which records file-level
+        partial coverage while retaining findings from syntax it did inspect.
+        This is an evidence-preservation contract, not a claim that parsing the
+        intact function proves the rest of the file was understood.
+        """
+        ctx=context((BASE/'auth_positive.cpp').read_text()+'\nint broken( {')
+        run=M2IpcInterfaceDetector().detect(ctx,ctx.units)
+
+        self.assertEqual(run.status,'completed')
+        self.assertEqual(run.file_outcomes,((ctx.units[0].path,'partial'),))
+        candidates=[finding for finding in run.findings
+                    if finding.rule_id=='ipc.auth.missing']
+        self.assertTrue(candidates)
+        self.assertTrue(all(any(item.kind=='parse_completeness_impact'
+                                for item in finding.evidence_obligations)
+                            for finding in candidates))
+        self.assertTrue(all(any(item.status=='unknown'
+                                for item in finding.evidence_obligations)
+                            for finding in candidates))
+
+        registry=DetectorRegistry()
+        registry.register(M2IpcInterfaceDetector())
+        reports,_=run_all_with_coverage(ctx,registry)
+        public_candidates=[item for item in reports[0].diagnostics
+                           if item.rule_id=='ipc.auth.missing']
+        self.assertTrue(public_candidates)
+        self.assertTrue(all(item.confidence=='unassessed'
+                            for item in public_candidates))
 
     def test_uid_cannot_substitute_for_access_token(self):
         ctx=context((BASE/'auth_fixed.cpp').read_text().replace('GetCallingTokenID()','GetCallingUid()'))
@@ -370,5 +508,43 @@ class IpcDetectorTests(unittest.TestCase):
         self.assertIn('<caller-account:access-token-service> is accepted for '
                       'GetRemoteHapTokenInfo, DeleteRemoteHapTokenInfo, '
                       'UpdateRemoteHapTokenInfo and for nothing else',credited[0])
+
+    def test_member_delegation_chain_credits_only_source_bound_terminal_guard(self):
+        header=(BASE/'member_delegation'/'service.h').read_text()
+        fixed=(BASE/'member_delegation'/'service.cpp').read_text()
+        guard_start=fixed.index('    if (!PermissionVerification::GetInstance()->IsSACall()) {')
+        guard_end=fixed.index('    }',guard_start)+len('    }')
+        guard_end=fixed.index(chr(10),guard_end)+1
+        vulnerable=fixed[:guard_start]+fixed[guard_end:]
+        delegated='    return appMgrServiceInner_->GetAppRunningStateByBundleName(bundleName);'
+        unrelated=fixed.replace(delegated,'    StartAbility();'+chr(10)+delegated)
+        reset=fixed.replace('    if (!IsReady()) {',
+                            '    IPCSkeleton::ResetCallingIdentity();'+chr(10)
+                            +'    if (!IsReady()) {')
+        self.assertNotEqual(vulnerable,fixed)
+        for name,source,expected in (
+            ('vulnerable',vulnerable,True),
+            ('fixed',fixed,False),
+            ('unrelated-effect-before-delegate',unrelated,True),
+            ('caller-identity-reset-before-delegate',reset,True),
+        ):
+            with self.subTest(case=name):
+                ctx=context_sources((('service.h',header),('service.cpp',source)))
+                run=IpcInterfaceDetector().detect(ctx,ctx.units)
+                auth02={f.rule_id for f in run.findings if f.rule_id=='ipc.auth.missing'}
+                self.assertEqual(bool(auth02),expected)
+                data04 = {f.rule_id for f in run.findings if f.rule_id == 'ipc.data.sensitive-flow'}
+                self.assertEqual(bool(data04), expected)
+                if not expected:
+                    note=next((item for item in run.limitations
+                               if item.startswith('Cross-TU one-hop guard credited:')), '')
+                    self.assertIn('AppMgrServiceInner::GetAppRunningStateByBundleName',note)
+                    self.assertIn('in AppMgrServiceInner::GetAppRunningStateByBundleName',note)
+                    self.assertIn('admits <sa-caller>',note)
+        # Without the class field declaration in the scanned units, the same
+        # spelling is insufficient to resolve the delegate or inherit its guard.
+        ctx=context_sources((('service.cpp',fixed),))
+        run=IpcInterfaceDetector().detect(ctx,ctx.units)
+        self.assertIn('ipc.auth.missing',{f.rule_id for f in run.findings})
 
 if __name__=='__main__':unittest.main()

@@ -17,7 +17,10 @@
     "file": "guard_fallthrough_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "guard_fallthrough_positive with the fall-through replaced by a return in the failure branch, and no other change (budget 1, measured). The guard now dominates the call, both candidates are suppressed, and the run is clean. The pair isolates domination from presence: the permission check is present in both files and only its control-flow role changed."
+    "notes": "guard_fallthrough_positive with the fall-through replaced by a return in the failure branch, and no other change (budget 1, measured). The guard now dominates the call, both candidates are suppressed, and the run is clean. The pair isolates domination from presence: the permission check is present in both files and only its control-flow role changed.",
+    "control_rules": [
+      "ipc.auth.guard-coverage"
+    ]
   },
   {
     "sample_id": "guard_fallthrough_unmodelled_safe",
@@ -27,6 +30,9 @@
     "file": "guard_fallthrough_unmodelled_safe.cpp",
     "split": "design",
     "variant": "safe",
-    "notes": "The non-dominating guard is kept exactly as it is, and the operation it fails to protect is swapped for one that is not on the reviewed sensitive set (budget 1). Nothing is raised, which shows the candidates in the positive come from the sensitive operation being reachable past a non-dominating guard, not from the guard shape alone."
+    "notes": "The non-dominating guard is kept exactly as it is, and the operation it fails to protect is swapped for one that is not on the reviewed sensitive set (budget 1). Nothing is raised, which shows the candidates in the positive come from the sensitive operation being reachable past a non-dominating guard, not from the guard shape alone.",
+    "control_rules": [
+      "ipc.auth.guard-coverage"
+    ]
   }
 ]

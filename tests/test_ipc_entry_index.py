@@ -308,6 +308,19 @@ int SvcStub::Get(int32_t persistentId, sptr<IRemoteObject> &object) {
 
 
 class EntryIndexTests(unittest.TestCase):
+    def test_class_static_constant_is_indexed_for_source_bound_account_evidence(self):
+        header = unit("privacy_manager_stub.h", """
+class PrivacyManagerStub {
+public:
+    static const int32_t ACCESSTOKEN_UID = 3020;
+};
+""")
+        definition = build(header).define_constant("ACCESSTOKEN_UID",
+                                                  "privacy_manager_stub.cpp")
+        self.assertIsNotNone(definition)
+        self.assertEqual(definition.value, "3020")
+        self.assertEqual(definition.file, "privacy_manager_stub.h")
+
     # -- 1. switch/return dispatcher with an enum transaction -----------------
     def test_switch_case_return_binds_handler_and_resolves_enum(self):
         index = build(unit("foo.cpp", SWITCH_ENUM))

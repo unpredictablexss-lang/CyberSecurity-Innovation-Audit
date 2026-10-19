@@ -15,7 +15,10 @@
     "expected_rule": null,
     "file": "relay_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
   },
   {
     "sample_id": "relay_read_only_positive",
@@ -42,7 +45,10 @@
     "expected_rule": null,
     "file": "auth_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "auth_ignored_positive",
@@ -69,7 +75,10 @@
     "expected_rule": null,
     "file": "identity_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.service-identity"
+    ]
   },
   {
     "sample_id": "request_identity_positive",
@@ -96,7 +105,10 @@
     "expected_rule": null,
     "file": "coverage_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.guard-coverage"
+    ]
   },
   {
     "sample_id": "coverage_late_positive",
@@ -123,7 +135,10 @@
     "expected_rule": null,
     "file": "parcel_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.parcel.copy-range"
+    ]
   },
   {
     "sample_id": "parcel_unrelated_bound_positive",
@@ -150,7 +165,10 @@
     "expected_rule": null,
     "file": "capability_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
   },
   {
     "sample_id": "capability_null_safe",
@@ -159,7 +177,10 @@
     "expected_rule": null,
     "file": "capability_null_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
   },
   {
     "sample_id": "owner_positive",
@@ -177,7 +198,10 @@
     "expected_rule": null,
     "file": "owner_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.object-owner"
+    ]
   },
   {
     "sample_id": "helper_fixed",
@@ -186,7 +210,10 @@
     "expected_rule": null,
     "file": "helper_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "helper_positive",
@@ -204,7 +231,10 @@
     "expected_rule": null,
     "file": "comments_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "dead_path_safe",
@@ -213,7 +243,10 @@
     "expected_rule": null,
     "file": "dead_path_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "wrong_parcel_positive",
@@ -259,7 +292,10 @@
     "file": "denied_complement_positive.cpp",
     "split": "design",
     "variant": "safe",
-    "notes": "VerifyAccessToken has a reviewed binary PERMISSION_GRANTED/PERMISSION_DENIED result domain; complement is valid for this API only."
+    "notes": "VerifyAccessToken has a reviewed binary PERMISSION_GRANTED/PERMISSION_DENIED result domain; complement is valid for this API only.",
+    "control_rules": [
+      "ipc.auth.guard-coverage"
+    ]
   },
   {
     "sample_id": "descriptor_interface_fixed",
@@ -268,7 +304,10 @@
     "expected_rule": null,
     "file": "descriptor_interface_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
   },
   {
     "sample_id": "descriptor_no_prefix_fixed",
@@ -277,7 +316,10 @@
     "expected_rule": null,
     "file": "descriptor_no_prefix_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
   },
   {
     "sample_id": "descriptor_inherited_fixed",
@@ -286,7 +328,10 @@
     "expected_rule": null,
     "file": "descriptor_inherited_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
   },
   {
     "sample_id": "descriptor_wrong_interface_positive",
@@ -367,7 +412,10 @@
     "expected_rule": null,
     "file": "relay_inner_guard_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
   },
   {
     "sample_id": "relay_inner_local_guard_fixed",
@@ -376,7 +424,10 @@
     "expected_rule": null,
     "file": "relay_inner_local_guard_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.relay.descriptor-boundary"
+    ]
   },
   {
     "sample_id": "relay_inner_no_guard_positive",
@@ -439,7 +490,10 @@
     "expected_rule": null,
     "file": "helper_preproc_guard_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.missing"
+    ]
   },
   {
     "sample_id": "helper_preproc_unguarded_positive",
@@ -494,7 +548,10 @@
     "file": "onehop_guard_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "The handler's unqualified call is defined by the concrete service one class hop away, whose opening gate rejects every caller that is not a system-ability caller. The export is not an unguarded one."
+    "notes": "The handler's unqualified call is defined by the concrete service one class hop away, whose opening gate rejects every caller that is not a system-ability caller. The export is not an unguarded one.",
+    "control_rules": [
+      "ipc.capability.export"
+    ]
   },
   {
     "sample_id": "onehop_unguarded_positive",
@@ -623,7 +680,10 @@
     "expected_rule": null,
     "file": "parcel_bounds_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.parcel.bounds"
+    ]
   },
   {
     "sample_id": "parcel_bounds_unknown_safe",
@@ -632,7 +692,10 @@
     "expected_rule": null,
     "file": "parcel_bounds_unknown_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.parcel.bounds"
+    ]
   },
   {
     "sample_id": "parcel_write_bounds_positive",
@@ -650,7 +713,10 @@
     "expected_rule": null,
     "file": "parcel_write_bounds_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.parcel.write-bounds"
+    ]
   },
   {
     "sample_id": "parcel_lifecycle_positive",
@@ -668,7 +734,10 @@
     "expected_rule": null,
     "file": "parcel_lifecycle_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.parcel.lifecycle"
+    ]
   },
   {
     "sample_id": "parcel_lifecycle_safe",
@@ -677,7 +746,10 @@
     "expected_rule": null,
     "file": "parcel_lifecycle_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.parcel.lifecycle"
+    ]
   },
   {
     "sample_id": "auth_flow_positive",
@@ -695,7 +767,10 @@
     "expected_rule": null,
     "file": "auth_flow_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.flow"
+    ]
   },
   {
     "sample_id": "sensitive_flow_positive",
@@ -713,7 +788,10 @@
     "expected_rule": null,
     "file": "sensitive_flow_fixed.cpp",
     "split": "design",
-    "variant": "fixed"
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.data.sensitive-flow"
+    ]
   },
   {
     "sample_id": "sensitive_flow_safe",
@@ -722,7 +800,10 @@
     "expected_rule": null,
     "file": "sensitive_flow_safe.cpp",
     "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.data.sensitive-flow"
+    ]
   },
   {
     "sample_id": "auth_flow_safe",
@@ -731,33 +812,9 @@
     "expected_rule": null,
     "file": "auth_flow_safe.cpp",
     "split": "design",
-    "variant": "safe"
-  },
-  {
-    "sample_id": "parcel_fd_backing_positive",
-    "data_origin": "synthetic",
-    "family": "DATA-02",
-    "expected_rule": "ipc.parcel.fd-backing-size",
-    "file": "fd_backing_positive.cpp",
-    "split": "design",
-    "variant": "positive"
-  },
-  {
-    "sample_id": "parcel_fd_backing_fixed",
-    "data_origin": "synthetic",
-    "family": "DATA-02",
-    "expected_rule": null,
-    "file": "fd_backing_fixed.cpp",
-    "split": "design",
-    "variant": "fixed"
-  },
-  {
-    "sample_id": "parcel_fd_backing_safe",
-    "data_origin": "synthetic",
-    "family": "DATA-02",
-    "expected_rule": null,
-    "file": "fd_backing_safe.cpp",
-    "split": "design",
-    "variant": "safe"
+    "variant": "safe",
+    "control_rules": [
+      "ipc.auth.flow"
+    ]
   }
 ]

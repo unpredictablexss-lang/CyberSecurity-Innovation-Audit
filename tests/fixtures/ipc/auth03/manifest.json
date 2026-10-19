@@ -17,7 +17,10 @@
     "file": "caller_class_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "caller_class_positive plus one line: a named caller-role predicate (IPCSkeleton::IsSystemAppCalling) rejects callers outside the class before the operation. The pair differs in exactly that line, so the suppressed candidate is attributable to the caller-class fact and not to a widened guard set."
+    "notes": "caller_class_positive plus one line: a named caller-role predicate (IPCSkeleton::IsSystemAppCalling) rejects callers outside the class before the operation. The pair differs in exactly that line, so the suppressed candidate is attributable to the caller-class fact and not to a widened guard set.",
+    "control_rules": [
+      "ipc.auth.caller-class"
+    ]
   },
   {
     "sample_id": "caller_class_unreviewed_name_safe",
@@ -27,7 +30,10 @@
     "file": "caller_class_unreviewed_name_safe.cpp",
     "split": "design",
     "variant": "safe",
-    "notes": "A look-alike permission-usage query (GetPermissionUsageSummary) at the same site. The rule is scoped to a reviewed set of names rather than to a call shape, so a sibling API that is not on that set raises nothing."
+    "notes": "A look-alike permission-usage query (GetPermissionUsageSummary) at the same site. The rule is scoped to a reviewed set of names rather than to a call shape, so a sibling API that is not on that set raises nothing.",
+    "control_rules": [
+      "ipc.auth.caller-class"
+    ]
   },
   {
     "sample_id": "identity_domain_positive",
@@ -47,6 +53,22 @@
     "file": "identity_domain_fixed.cpp",
     "split": "design",
     "variant": "fixed",
-    "notes": "identity_domain_positive with the submitted identity changed from IPCSkeleton::GetCallingUid() to IPCSkeleton::GetCallingTokenID() -- the remediation the rule names, and no other line changes."
+    "notes": "identity_domain_positive with the submitted identity changed from IPCSkeleton::GetCallingUid() to IPCSkeleton::GetCallingTokenID() -- the remediation the rule names, and no other line changes.",
+    "control_rules": [
+      "ipc.auth.identity-domain"
+    ]
+  },
+  {
+    "sample_id": "request_identity_fixed",
+    "data_origin": "synthetic",
+    "family": "AUTH-03",
+    "expected_rule": null,
+    "file": "request_identity_fixed.cpp",
+    "split": "design",
+    "variant": "fixed",
+    "control_rules": [
+      "ipc.auth.request-identity"
+    ],
+    "notes": "request_identity_positive with the principal changed from a Parcel-supplied token to the IPC caller TokenID; the candidate rule must be suppressed."
   }
 ]

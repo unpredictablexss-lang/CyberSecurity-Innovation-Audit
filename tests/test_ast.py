@@ -60,6 +60,21 @@ class AstIndexTests(unittest.TestCase):
         self.assertEqual(len(add_calls), 1)
         self.assertEqual(add_calls[0].arguments, ["1", "2"])
 
+    def test_member_pointer_dispatch_is_normalized_without_losing_source_spans(self) -> None:
+        code = """struct Stub {
+    int dispatch() {
+        return (this->*handler)(7);
+    }
+};
+"""
+        index = parse_source(code, language="cpp")
+        self.assertEqual(index.parse_status, "complete")
+        dispatch = next(function for function in index.functions if function.name == "dispatch")
+        self.assertEqual(dispatch.start_line, 2)
+        self.assertEqual(dispatch.end_line, 4)
+        self.assertEqual(len(index.calls), 1)
+        self.assertEqual(index.calls[0].line, 3)
+
     def test_rejects_unknown_language(self) -> None:
         with self.assertRaises(ValueError):
             parse_source("int x;", language="rust")
