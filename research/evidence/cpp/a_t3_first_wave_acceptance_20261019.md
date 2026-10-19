@@ -20,7 +20,7 @@ Date: 2026-10-19 (Asia/Shanghai)
 
 | Work | Disposition | Independent evidence and remaining limit |
 |---|---|---|
-| D1 Contacts `PortraitFileName` path traversal | **PARTIAL / BLOCK** | Detector unit controls pass and the available checkout replay produces three candidates. The checkout bytes hash `c9d1f03d…` does not equal the pinned A0 Git object SHA-256 `70bb1da2…`; exact source object was unavailable. Parsing was explicitly set to partial, so this does not validate the exact vulnerable object or a safe negative. No trusted fixed Contacts source is bound, and Catalog remains owner-controlled; production CLI integration has not been demonstrated. Line 793's `DeleteFile(filePath)` candidate also depends on unverified bucket-field validation semantics. |
+| D1 Contacts `PortraitFileName` path traversal | **PARTIAL** | Initial first-wave replay used a checkout copy, not the exact pinned source. A subsequent T3 follow-up retrieved the specified A0 blob from the OpenHarmony project-object archive, verified its commit/tree/blob/SHA-256, and reproduced three candidates on those exact bytes. Parsing remains explicitly partial; no trusted fixed source is bound; Catalog is not registered and production CLI integration has not been demonstrated. The candidate at `DeleteFile(filePath)` also depends on bucket-field validation semantics. |
 | D2 CVE-2025-0587 | **PARTIAL** | Exact pinned vulnerable/fixed commits and complete parsing independently replayed at 1/0. Candidate aligns with the narrowing operation. A separately bound safe/unrelated control is absent, so not PASS. |
 | D2 CVE-2025-23420 | **PARTIAL** | Exact pinned vulnerable/fixed commits and complete parsing independently replayed at 5/0. Candidate locations align with the changed element accesses. Separately bound safe/unrelated controls are absent, so not PASS. |
 | D2 libtiff CVE-2025-9900 | **PARTIAL** | Frozen evidence reports exact commits and scope but 0/0 with both files partial. This remains unknown, not a safe result. |
@@ -33,15 +33,15 @@ Date: 2026-10-19 (Asia/Shanghai)
 
 ## Minimal follow-up items
 
-1. Provide and hash-verify the exact Contacts commit/tree/blob bytes; rerun the candidate rule on those bytes with an independently established parser result. Obtain a trusted fixed source or keep fixed comparison BLOCK.
+1. Improve parser coverage for the exact A0 Contacts source, review the `DeleteFile(filePath)` bucket inputs, and obtain a trusted fixed source or retain BLOCK for the fixed comparison.
 2. Owner review and, if accepted, Catalog registration for the Contacts rule; then run the production `ohscan-run` path and recheck scope.
 3. Bind safe/unrelated controls to the D2 historical cases before upgrading their status from PARTIAL.
 4. Recover the vulnerable full web_webview translation unit and establish adequate parsing before a differential verdict.
 5. Keep T1's missing dsoftbus object pair and all partial/N/A cases in the validation queue; do not translate zero findings under partial coverage into safe.
 
-## D3 incremental audit queue
+## D3 incremental audit queue (completed)
 
-D3 has not been frozen at the time of this report. When root supplies its frozen SHA, independently replay only the D3 delta in a separate validation checkout: curl CVE-2026-92391 vulnerable/fixed pair, libpng 33416 and 46675 with their exact source/fix-parent identities and parser statuses, and cJSON 67215/67216 with safe/unrelated controls where no trusted fix exists. Reconfirm rule identity, finding locations, source hashes, parse coverage, candidate status semantics, and C++ scope. Keep unavailable source, incomplete parsing, or absent fixed objects as BLOCK/PARTIAL.
+This was the first-wave handoff checklist. D3 and T2 were independently replayed below after their frozen commits were provided. Remaining partial/blocked cases and their minimum follow-up actions are listed in the consolidated section.
 
 ## Second-wave independent acceptance (D3 and T2)
 
@@ -71,7 +71,7 @@ Independently ran `python research/deliveries/cpp/a0_triage_20261019/verify_tria
 
 ## Consolidated first + second wave decision
 
-**PARTIAL overall.** First-wave results remain: D1 Contacts PARTIAL/BLOCK; D2 CVE-2025-0587 and CVE-2025-23420 PARTIAL (complete vulnerable/fixed differentials, but no separately bound safe/unrelated controls); libtiff PARTIAL; web_webview BLOCK; and T1's 13-row matrix PASS as an evidence/status inventory (3 BLOCK, 8 PARTIAL, 2 N/A). Second wave adds a passing static curl differential and a passing T2 queue-integrity audit. The remaining libpng and cJSON cases stay PARTIAL/BLOCK. All source-only results remain candidate evidence, not product vulnerability or safety determinations.
+**PARTIAL overall.** First-wave results remain: D1 Contacts PARTIAL (exact A0 source confirmed; parse partial and fixed source/Catalog/CLI integration remain); D2 CVE-2025-0587 and CVE-2025-23420 PARTIAL (complete vulnerable/fixed differentials, but no separately bound safe/unrelated controls); libtiff PARTIAL; web_webview BLOCK; and T1's 13-row matrix PASS as an evidence/status inventory (3 BLOCK, 8 PARTIAL, 2 N/A). Second wave adds a passing static curl differential and a passing T2 queue-integrity audit. The remaining libpng and cJSON cases stay PARTIAL/BLOCK. All source-only results remain candidate evidence, not product vulnerability or safety determinations.
 
 ## Minimum remaining work
 
@@ -81,3 +81,14 @@ Independently ran `python research/deliveries/cpp/a0_triage_20261019/verify_tria
 4. libpng 46675/33416: establish adequate parser coverage and source-to-product provenance before claiming more than PARTIAL.
 5. cJSON 67215/67216: model their distinct root causes with separate rule identities and positive plus safe/unrelated controls; do not use the callback-cycle rule as coverage.
 6. Keep dsoftbus exact-object absence, N/A exclusions, and all 345 A0 queue entries in the task tree with their current status semantics.
+
+## Contacts exact-source identity follow-up
+
+Root supplied the read-only project-object archive `D:\openHarmonyScanner\openharmony\.repo\project-objects\applications_contacts_data.git` for a follow-up to D1. From that archive, T3 independently verified:
+
+- Commit `b02aadfc2d801ee30573fcb2d13490298e146fea` tree is `ef183625ccbc842f47b076eb75e68b665d7c21c6`.
+- `dataBusiness/contacts/src/contacts_data_ability.cpp` at that commit is blob `32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6`, 80,944 bytes, SHA-256 `70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383`.
+- Independently extracted the blob byte-for-byte to a temporary file and ran `direct_replay.py <temp-file> --parse-status partial`. Detector `ohscanner.cpp.path_traversal` 0.1.0 returned `blocked`/`partial` and three candidates at lines 789, 790 and 794 under rule `ohcpp-path-traversal-source-to-file-sink-candidate-001`; all diagnostics carry the exact source hash above and `identity_quality=partial`.
+- The older cited commit `341cc3bf41b48e9a5f278dd088f40a2041d2f1c9` resolves to tree `2054824c04bb403eeea128a9262edfb3001efa4f` and this path resolves to blob `c93e950725adc93276916b3c96c5ac7a5bb5b6b7`, which is different from A0's specified blob. Thus the exact A0 source identity is now **confirmed against b02aadf**, and the earlier `341cc3` identity should not be used as that A0 binding.
+
+**Updated D1 disposition: PARTIAL, not identity-blocked.** Exact vulnerable source binding and candidate reproduction now pass. Parser status is still partial, so neither a safe negative nor complete analysis is established. There is still no independently verified fixed Contacts object, no Catalog registration, and no production CLI replay. The T1 13-row artifact remains an unchanged *before* baseline at PR #30 base: its original Contacts row saying that the baseline had no registered detector and could not run the intended production path remains historically accurate.
