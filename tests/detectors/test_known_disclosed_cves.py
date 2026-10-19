@@ -465,6 +465,7 @@ class KnownDisclosedCveTests(unittest.TestCase):
             if (observers->size() >= MAX_OBSERVERS_PER_PID) return;
             observers->insert(observer);
         }
+        bool CheckPastePermission() { if (permissionMap[PERMISSION_READ_PASTEBOARD] != PERMISSION_GRANTED) return false; return true; }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
         int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"""
@@ -485,8 +486,10 @@ class KnownDisclosedCveTests(unittest.TestCase):
         valid = "int OnGetPasteData(){ if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         valid_status = "int OnGetPasteData(){ if (CheckPermission(PERMISSION_READ_PASTEBOARD) != PERMISSION_GRANTED) { return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
         valid_throw = "int OnGetPasteData(){ if (VerifyPermission(PERMISSION_READ_PASTEBOARD) == PERMISSION_DENIED) throw NoPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"
-        valid_paste_helper = "int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
-        valid_has_paste_helper = "int OnGetPasteData(){ if (!HasPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_paste_helper = "bool CheckPastePermission(){ if (permissionMap[PERMISSION_READ_PASTEBOARD] != PERMISSION_GRANTED) return false; return true; } int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        valid_has_paste_helper = "bool HasPastePermission(){ if (permissionMap[SECURE_PASTE_PERMISSION] == PERMISSION_DENIED) return false; return true; } int OnGetPasteData(){ if (!HasPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        unconditional_true_helper = "bool CheckPastePermission(){ return true; } int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_helper_with_read_identity = "bool CheckPastePermission(){ if (!CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)) return false; return true; } int OnGetPasteData(){ if (!CheckPastePermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         valid_secure_permission = "int OnGetPasteData(){ if (VerifyPermission(SECURE_PASTE_PERMISSION) != PERMISSION_GRANTED) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         valid_read_permission = "int OnGetPasteData(){ if (!CheckPermission(READ_PASTEBOARD_PERMISSION)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         ignored = "int OnGetPasteData(){ VerifyPermission(PERMISSION_READ_PASTEBOARD); GetPasteData(); reply.WriteParcelable(data); return 0; }"
@@ -496,6 +499,7 @@ class KnownDisclosedCveTests(unittest.TestCase):
         after_serialization = "int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; return 0; }"
         dead_nested = "int OnGetPasteData(){ if (false) { if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; } GetPasteData(); reply.WriteParcelable(data); return 0; }"
         bluetooth_permission = "int OnGetPasteData(){ if (!CheckBluetoothPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
+        bluetooth_with_read_identity = "int OnGetPasteData(){ if (!CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         unrelated_permission = "int OnGetPasteData(){ if (!VerifyCallingPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
         generic_permission = "int OnGetPasteData(){ if (!CheckPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data); return 0; }"
 
@@ -503,11 +507,13 @@ class KnownDisclosedCveTests(unittest.TestCase):
             findings = self.run_source(prefix + body, "pasteboard_service_stub.cpp").findings
             return "CVE-2025-27247" in {item.symbol for item in findings}
 
-        for guarded in (valid, valid_status, valid_throw, valid_paste_helper, valid_has_paste_helper,
-                        valid_secure_permission, valid_read_permission):
+        for guarded in (valid_paste_helper, valid_has_paste_helper):
             self.assertFalse(has_candidate(guarded), "a pre-read denial with an immediate exit is a syntactic suppression control")
-        for ineffective in (handler, ignored, mixed_condition, conditional_guard, after_read, after_serialization, dead_nested,
-                            bluetooth_permission, unrelated_permission, generic_permission):
+        for ineffective in (valid, valid_status, valid_throw, valid_secure_permission, valid_read_permission,
+                            unconditional_true_helper, bluetooth_helper_with_read_identity,
+                            handler, ignored, mixed_condition, conditional_guard,
+                            after_read, after_serialization, dead_nested, bluetooth_permission,
+                            bluetooth_with_read_identity, unrelated_permission, generic_permission):
             with self.subTest(handler=ineffective):
                 self.assertTrue(has_candidate(ineffective), "ineffective or unreachable token must retain the candidate")
 

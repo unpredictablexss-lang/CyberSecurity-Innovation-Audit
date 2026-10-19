@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.6"
+VERSION = "0.19.7"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -90,15 +90,57 @@ def _is_permission_denial_condition(condition: str) -> bool:
     suffix = re.sub(r"\s+", "", condition[closing + 1:]).upper()
     return (negated and not suffix) or (not negated and suffix in ("!=PERMISSION_GRANTED", "==PERMISSION_DENIED"))
 
-def _is_pasteboard_read_denial_condition(condition: str) -> bool:
+def _bool_helper_body(text: str, name: str):
+    """Resolve a bool helper definition in this source unit, not a call site."""
+    pattern = re.compile(
+        rf"(?:^|[;{{}}])\s*bool\s+(?:(?:[A-Za-z_]\w*)::)*{re.escape(name)}"
+        rf"\s*\([^;{{}}]*\)\s*\{{"
+    )
+    for match in pattern.finditer(text):
+        opening = text.find("{", match.start())
+        closing = _matching_delimiter(text, opening, "{", "}")
+        if closing is not None:
+            return match.start(), text[opening + 1:closing]
+    return None
+
+def _source_resolved_pasteboard_helper(text: str, condition: str) -> bool:
+    """Accept only an in-unit bool helper with an explicit read-denial contract.
+
+    The accepted contract is deliberately narrow: a top-level permission check
+    names a Pasteboard read permission, returns false immediately on denial,
+    then the helper's remaining body is exactly `return true;`.
+    """
+    condition = condition.strip()
     if not _is_permission_denial_condition(condition):
         return False
-    paste_permissions = r"(?<![A-Za-z0-9_])(?:PERMISSION_)?(?:READ_PASTEBOARD|SECURE_PASTE)(?:_PERMISSION)?(?![A-Za-z0-9_])"
-    paste_helpers = r"\b(?:CheckPastePermission|HasPastePermission)\s*\("
-    return bool(re.search(paste_permissions, condition, re.I)
-                or re.search(paste_helpers, condition, re.I))
+    call = re.fullmatch(r"!\s*(CheckPastePermission|HasPastePermission)\s*\([^()]*\)", condition, re.I)
+    if not call:
+        return False
+    resolved = _bool_helper_body(text, call.group(1))
+    if not resolved:
+        return False
+    _, body = resolved
+    leading = len(body) - len(body.lstrip())
+    for start, helper_condition, statement_start, statement_end in _if_statements(body):
+        if start != leading or not _top_level_at(body, start):
+            continue
+        read_token = r"(?:PERMISSION_)?(?:READ_PASTEBOARD|SECURE_PASTE)(?:_PERMISSION)?"
+        direct_read_state = re.fullmatch(
+            rf"\s*[A-Za-z_]\w*\s*\[\s*{read_token}\s*\]\s*(?:!=\s*PERMISSION_GRANTED|==\s*PERMISSION_DENIED)\s*",
+            helper_condition, re.I,
+        )
+        if not direct_read_state:
+            continue
+        branch = body[statement_start:statement_end].lstrip()
+        if branch.startswith("{"):
+            branch = branch[1:].lstrip()
+        if not re.match(r"return\s+(?:false|0)\b", branch, re.I):
+            continue
+        if re.fullmatch(r"\s*return\s+true\s*;\s*", body[statement_end:], re.I):
+            return True
+    return False
 
-def _pasteboard_permission_denial_before(text: str, read_position: int) -> bool:
+def _pasteboard_permission_denial_before(text: str, read_position: int, source_text: str | None = None) -> bool:
     """Recognize only a local denial condition with an immediate exit before the read.
 
     This intentionally narrow syntax check does not prove reachability, dominance,
@@ -111,7 +153,7 @@ def _pasteboard_permission_denial_before(text: str, read_position: int) -> bool:
     )
     for start, condition, statement_start, statement_end in statements:
         if (statement_end > read_position or not _top_level_at(text, start)
-                or not _is_pasteboard_read_denial_condition(condition)):
+                or not _source_resolved_pasteboard_helper(source_text or text, condition)):
             continue
         if any(dead_start < start < dead_end for dead_start, dead_end in dead_ranges):
             continue
@@ -798,8 +840,8 @@ def _scan(unit: SourceUnit, curl_version=None):
         reads_and_returns = "GetPasteData" in hb and "WriteParcelable" in hb
         route_pos = db.find("it->second")
         read_pos = hb.find("GetPasteData")
-        guarded = ((route_pos >= 0 and _pasteboard_permission_denial_before(db, route_pos))
-                   or (read_pos >= 0 and _pasteboard_permission_denial_before(hb, read_pos)))
+        guarded = ((route_pos >= 0 and _pasteboard_permission_denial_before(db, route_pos, s))
+                   or (read_pos >= 0 and _pasteboard_permission_denial_before(hb, read_pos, s)))
         if mapped and routed and reads_and_returns and not guarded:
             out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-27247", "CVE-2025-27247", "Binder GET_PASTE_DATA dispatch returns paste data without a visible permission check in the dispatch or handler.", "CWE-862"))
     # CVE-2026-27648: Flowbuffer decoding must bound both the byte range in

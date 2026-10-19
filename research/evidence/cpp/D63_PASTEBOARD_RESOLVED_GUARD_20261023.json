@@ -1,0 +1,74 @@
+{
+  "task": "D63",
+  "detector": "ohscanner.known_disclosed_cves",
+  "version": "0.19.7",
+  "base_commit": "b0ce27a3e3b08f085e46a22468e890ac8808d1c1",
+  "root_cause_evidence": {
+    "D62": "a9105a4f65cddb0b856242dbdbcb4f76a3741ccf",
+    "T59_mismatch": "d17f582b0317bddf0c353f77969eaff6c4e80429"
+  },
+  "candidate_identity": "CVE-2025-27247",
+  "candidate_classification": "source-only candidate; CVE causality, product identity, product inclusion, runtime reachability, and vulnerability status unknown",
+  "guard_contract": {
+    "caller_helper_names": [
+      "CheckPastePermission",
+      "HasPastePermission"
+    ],
+    "definition_scope": "same source unit; exact bool helper definition",
+    "accepted_body_shape": "leading top-level direct permission-state comparison indexed by recognized READ_PASTEBOARD or SECURE_PASTE token; denial branch returns false or 0; remaining success tail is exactly return true",
+    "caller_shape": "complete denial condition with immediate return or throw before the route/read",
+    "ambiguous_result": "retain candidate"
+  },
+  "probes": [
+    {
+      "shape": "same-name helper returns true unconditionally",
+      "expected": "candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "CheckPastePermission delegates to CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD)",
+      "expected": "candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "top-level CheckBluetoothPermission(PERMISSION_READ_PASTEBOARD) guard",
+      "expected": "candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "top-level Bluetooth/network or generic permission guard",
+      "expected": "candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "same-unit direct READ_PASTEBOARD or SECURE_PASTE state helper with denial return and true success tail",
+      "expected": "syntactic suppression control",
+      "result": "passed"
+    },
+    {
+      "shape": "D59/D61 dead, nested bypass, mixed condition, post-read, and post-serialization controls",
+      "expected": "candidate retained",
+      "result": "passed"
+    },
+    {
+      "shape": "sibling CVE identities and corpus positive/fixed controls",
+      "expected": "unchanged detector behavior except corrected Pasteboard guard cases",
+      "result": "passed"
+    }
+  ],
+  "validation": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "tests": 32,
+    "passed": 32,
+    "failed": 0,
+    "diff_check": "passed",
+    "independent_T63_review": "pending"
+  },
+  "limitations": [
+    "The direct permission-map syntax is not proof of an API or permission contract.",
+    "Aliases, macros, map provenance, overloads, and cross-file helper contracts are unresolved.",
+    "This is not complete CFG or dominance analysis; loops and goto can change reachability.",
+    "Exception, catch, and unwind behavior are not modeled.",
+    "The candidate is source-only; product and runtime status remain unknown."
+  ]
+}
