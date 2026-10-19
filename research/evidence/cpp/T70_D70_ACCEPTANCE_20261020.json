@@ -1,0 +1,101 @@
+{
+  "task": "T70",
+  "reviewed_commit": "f628c90901d71510e60869c027e4c7903d2d4de6",
+  "base_commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
+  "verdicts": {
+    "aggregate_state_after_cap": "pass",
+    "caps_and_omission_counts": "pass",
+    "guard_unknown_and_candidate_retention": "pass",
+    "exact_source_replay_and_route_identity": "pass",
+    "coverage": "partial_as_reported",
+    "scope": "pass"
+  },
+  "aggregate_probes": {
+    "eight_top_level_plus_ninth_unbraced_nested": {
+      "status": "unknown",
+      "state": "unresolved_control_flow",
+      "total_matches": 9,
+      "records": 8,
+      "omitted": 1,
+      "observations_truncated": true
+    },
+    "eight_top_level_plus_ninth_braced_nested": {
+      "status": "unknown",
+      "state": "unresolved_control_flow",
+      "total_matches": 9,
+      "records": 8,
+      "omitted": 1,
+      "observations_truncated": true
+    },
+    "eight_top_level_only": {
+      "status": "unknown",
+      "state": "observed_unresolved",
+      "total_matches": 8,
+      "records": 8,
+      "omitted": 0
+    },
+    "routed_D52_candidate_retained": true,
+    "permission_guard_unknown": true,
+    "permission_guard_observation_unknown": true
+  },
+  "preserved_caps": {
+    "max_observation_records": 8,
+    "max_tokens_per_observation": 16,
+    "max_token_characters": 48,
+    "max_snippet_characters": 120,
+    "max_serialized_description_characters": 4096,
+    "twelve_calls": {"matches":12,"records":8,"omitted":4,"truncation_marked":true},
+    "three_thousand_identifiers": {"tokens":16,"tokens_omitted":2986,"tokens_truncated":true},
+    "long_payload": {"serialized_characters":4094,"payload_truncated":true,"snippet_max":120}
+  },
+  "source_replay": {
+    "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "source_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "source_files_verified": 68,
+    "sha256_or_blob_oid_mismatches": 0,
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "direct_detector_replay": {"status":"blocked","findings":2,"detector_version":"0.19.11"},
+    "parse_status": {"complete":59,"partial":8,"not_run":1},
+    "detector_coverage": {"applicable_cpp":67,"complete":0,"partial":67,"validated_vulnerabilities":0},
+    "raw_report_sha256": "cd6472d26e136b366aec2bb6872ffd870694e60dbbf023ca411fb232ae4db3c6"
+  },
+  "candidate_identity_comparison_to_D68": [
+    {
+      "cve": "CVE-2025-25212",
+      "file": "services/core/src/pasteboard_service.cpp",
+      "line": 241,
+      "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+      "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "legacy_diagnostic_id": "ohscanner.known_disclosed_cves:fc93dad6ce585acb",
+      "occurrence_id_D68": "ohocc:v1:9e899e2962afdcf8b25bc1f0ed4a241c45dc1807e6450d58cc9d18e217b4b607",
+      "occurrence_id_D70": "ohocc:v1:7296605006992137633e0ce1e55f7644bb6559f6d8c017c139959e5b4d3242ba"
+    },
+    {
+      "cve": "CVE-2025-27247",
+      "file": "services/zidl/src/pasteboard_service_stub.cpp",
+      "line": 41,
+      "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+      "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+      "legacy_diagnostic_id": "ohscanner.known_disclosed_cves:a18878f42bf7e7af",
+      "occurrence_id_D68": "ohocc:v1:2b6b636768acb58721a6ae1d672ebcf92a1be743f5c8a83b22d88479420fe842",
+      "occurrence_id_D70": "ohocc:v1:f38eb6d610850a4262b0abf76d166da40a449660309eee1dbde3da5ed8711c2c"
+    }
+  ],
+  "occurrence_id_drift": {
+    "expected": true,
+    "only_identity_basis_fields_changed": ["detector_version", "rule_version"],
+    "stable_identity_record_unchanged": true,
+    "legacy_diagnostic_ids_unchanged": true
+  },
+  "validation": {
+    "focused_tests_passed": 33,
+    "focused_tests_failed": 0,
+    "raw_report_digest_matches_summary": true,
+    "diff_check": "passed"
+  },
+  "limitations": [
+    "Guard observations remain syntax-only and do not prove authorization or dominance.",
+    "Parser coverage is partial; the TypeScript frontend did not run.",
+    "Product applicability, CVE causality, reachability, exploitability, and safety remain unknown."
+  ]
+}
