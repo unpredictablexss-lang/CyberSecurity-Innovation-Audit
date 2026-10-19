@@ -1,0 +1,321 @@
+{
+  "controls": [
+    {
+      "finding_id": "IAO7GO",
+      "control_id": "C10-IAO7GO-POSITIVE-001",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_positive.cpp",
+      "source_sha256": "d9c0f04a1072642932ab9e726a2bcc73a4e32e61067fcef4c0aba5aec1daf5e3",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+      "rule_version": "1.0.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "candidate_count": 1,
+        "unknown_count": 0,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "local_sentinel_comparison_does_not_prove_exception_propagation"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "control_id": "C10-IAO7GO-FIXED-001",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_fixed.cpp",
+      "source_sha256": "7dcf033b834e59b5fc56084066a55822737e36fafd98dda4fc8c793044d5d109",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+      "rule_version": "1.0.0",
+      "expected_disposition": "fixed_control_no_same_root_candidate_not_safety",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "complete",
+        "status": "completed",
+        "limitations": [
+          "fixed_pending_exception_check_control_not_security_verdict"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "control_id": "C10-IAO7GO-SAFE-001",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_safe.cpp",
+      "source_sha256": "3c2c9890359f09585173c76acc3e28e325daeae78e102faa69e8e99a26d21c82",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+      "rule_version": "1.0.0",
+      "expected_disposition": "safe_local_control_not_security_verdict",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "complete",
+        "status": "completed",
+        "limitations": [
+          "fixed_pending_exception_check_control_not_security_verdict"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "control_id": "C10-IAO7GO-UNRELATED-001",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unrelated.cpp",
+      "source_sha256": "d9985611d05f4ab046c4a88d5ce646dfc0c63ad30739585ae8bef9f235c9e7d6",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+      "rule_version": "1.0.0",
+      "expected_disposition": "not_analyzed",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "not_analyzed",
+        "status": "limited",
+        "limitations": [
+          "reflect_apply_inline_site_not_applicable"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IAO7GO",
+      "control_id": "C10-IAO7GO-UNKNOWN-001",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unknown.cpp",
+      "source_sha256": "67fed71404991c2443aa088637f545199a0729a926bfc4036540ea342fafad2f",
+      "rule_id": "ark.runtime.native-inline-pending-exception-propagation",
+      "rule_version": "1.0.0",
+      "expected_disposition": "explicit_unknown",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "pending_exception_helper_summary_missing:TryInlineReflectApply"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7W51D",
+      "control_id": "C10-I7W51D-POSITIVE-001",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_positive.cpp",
+      "source_sha256": "e70de1e5a0121cd0960d7c8615dbb2b4c837150b4177cc97e8746a9d6261f32b",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "rule_version": "1.0.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "candidate_count": 1,
+        "unknown_count": 0,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "bounded_length_conversion_model_no_product_impact"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7W51D",
+      "control_id": "C10-I7W51D-FIXED-001",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_fixed.cpp",
+      "source_sha256": "65807fb2ecc5ccc52664dc23c99cce034d4c71d4c8a40973c1facc2f59d6f9d3",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "rule_version": "1.0.0",
+      "expected_disposition": "fixed_control_no_same_root_candidate_rangeerror_is_not_safety",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "complete",
+        "status": "completed",
+        "limitations": [
+          "no_local_length_narrowing_candidate"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7W51D",
+      "control_id": "C10-I7W51D-SAFE-001",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_safe.cpp",
+      "source_sha256": "6159c2d8a405a5c5a2d37fe23cd4e234ab2fc7f9adfd37c6fc9d75adf341df6f",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "rule_version": "1.0.0",
+      "expected_disposition": "safe_local_control_not_security_verdict",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "complete",
+        "status": "completed",
+        "limitations": [
+          "no_local_length_narrowing_candidate"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7W51D",
+      "control_id": "C10-I7W51D-UNRELATED-001",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unrelated.cpp",
+      "source_sha256": "a1664e750864e43e825c8f97b0f40c254230c7be5556bc9f724e8c1b71dd6f48",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "rule_version": "1.0.0",
+      "expected_disposition": "not_analyzed",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "not_analyzed",
+        "status": "limited",
+        "limitations": [
+          "not_applicable_to_typedarray_length_allocation"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "I7W51D",
+      "control_id": "C10-I7W51D-UNKNOWN-001",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unknown.cpp",
+      "source_sha256": "bcdb40ce35d980b8aeaf3e08549ff65d6ccf3f9263da4a96f5e3efd37aeee03f",
+      "rule_id": "ark.runtime.typedarray-length-signed-to-unsigned-narrowing",
+      "rule_version": "1.0.0",
+      "expected_disposition": "explicit_unknown",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "typedarray_length_conversion_semantics_unmodeled:TypedArrayHelper::TypedArrayConstructor"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "control_id": "C10-IB8BCA-POSITIVE-001",
+      "control_kind": "positive",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_positive.cpp",
+      "source_sha256": "6ca87013a00d7dad01d99f84c3b6726ae81c6eb363b0dc0302214e79eabeb395",
+      "rule_id": "ark.runtime.dataview-index-width-bounds",
+      "rule_version": "1.0.0",
+      "expected_disposition": "candidate",
+      "actual": {
+        "candidate_count": 1,
+        "unknown_count": 0,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "bounded_index_width_model_no_general_bounds_proof"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "control_id": "C10-IB8BCA-FIXED-001",
+      "control_kind": "fixed",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_fixed.cpp",
+      "source_sha256": "152edf1aeb2db8b27a1019d2b52d2ecb87b70768679aabcc7efd9749945d05ca",
+      "rule_id": "ark.runtime.dataview-index-width-bounds",
+      "rule_version": "1.0.0",
+      "expected_disposition": "fixed_control_explicit_unknown_not_safety",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 1,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "index_width_bounds_arithmetic_not_fully_proven:DataViewGet"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "control_id": "C10-IB8BCA-SAFE-001",
+      "control_kind": "safe",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_safe.cpp",
+      "source_sha256": "f35701e9356bdfd4449cb6f5cf7f5f19e186f52a01a72b51716b170bdd37006f",
+      "rule_id": "ark.runtime.dataview-index-width-bounds",
+      "rule_version": "1.0.0",
+      "expected_disposition": "safe_local_control_not_security_verdict",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "complete",
+        "status": "completed",
+        "limitations": [
+          "no_local_dataview_index_width_candidate"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "control_id": "C10-IB8BCA-UNRELATED-001",
+      "control_kind": "unrelated",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unrelated.cpp",
+      "source_sha256": "4d12305cedc03fcd9b62fb9a7aef8919235d0229ee85e9f42505ebca26445e1f",
+      "rule_id": "ark.runtime.dataview-index-width-bounds",
+      "rule_version": "1.0.0",
+      "expected_disposition": "not_analyzed",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 0,
+        "file_outcome": "not_analyzed",
+        "status": "limited",
+        "limitations": [
+          "not_applicable_to_dataview_or_atomics_index_bounds"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    },
+    {
+      "finding_id": "IB8BCA",
+      "control_id": "C10-IB8BCA-UNKNOWN-001",
+      "control_kind": "unknown",
+      "fixture": "tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unknown.cpp",
+      "source_sha256": "10c67a56459b23edf785a36c6ce6f0b6b4c293f2fadab6fc88ce36c624a06e47",
+      "rule_id": "ark.runtime.dataview-index-width-bounds",
+      "rule_version": "1.0.0",
+      "expected_disposition": "explicit_unknown",
+      "actual": {
+        "candidate_count": 0,
+        "unknown_count": 1,
+        "file_outcome": "partial",
+        "status": "limited",
+        "limitations": [
+          "dataview_atomic_index_bounds_semantics_unmodeled:DataViewUnknown"
+        ]
+      },
+      "assertion_status": "pass",
+      "security_claim": "not_asserted"
+    }
+  ],
+  "all_assertions_pass": true,
+  "classification_rule": "fixed and safe controls prove only local rule boundaries; RangeError, zero findings and fixed behavior are never product safety"
+}

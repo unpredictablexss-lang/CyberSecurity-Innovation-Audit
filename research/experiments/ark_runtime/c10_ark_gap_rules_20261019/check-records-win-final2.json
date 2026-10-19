@@ -1,0 +1,143 @@
+{
+  "environment_mode": "inherited environment plus explicit overrides; full environment not persisted to avoid secret duplication",
+  "python_executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "env_overrides": {
+    "PYTHONPYCACHEPREFIX": "C:\\Users\\work_work\\AppData\\Local\\Temp\\ohscanner-c10-gap-pycache",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "relevant_inherited_env": {
+    "PYTHONPATH": null,
+    "TEMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp",
+    "TMP": "C:\\Users\\WORK_W~1\\AppData\\Local\\Temp"
+  },
+  "environment_keys_sha256": "6bb0eb568dc23f6f229310f45ca48ab5fd1902ce5c62a68237cc05b8087460a4",
+  "records": [
+    {
+      "name": "ark_discover",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/detectors/ark_runtime",
+        "-t",
+        ".",
+        "-v"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "started_utc": "2026-10-19T08:55:13.587257+00:00",
+      "finished_utc": "2026-10-19T08:55:14.303092+00:00",
+      "exit_code": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\ark_discover.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\ark_discover.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "09b56130f077c7f4b0ccf1c44cee0db3144b74e04a0a1e0a9f6a8cccc2b953ea",
+      "summary": {
+        "tests_run": 170,
+        "skipped": 3,
+        "failure_or_error_headers": 0,
+        "status": "pass"
+      }
+    },
+    {
+      "name": "gap_focused",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.ark_runtime.test_c10_ark_gap_rules"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "started_utc": "2026-10-19T08:55:14.307090+00:00",
+      "finished_utc": "2026-10-19T08:55:14.666015+00:00",
+      "exit_code": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\gap_focused.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\gap_focused.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "884f8b88b55368728a20241ab96f666b148504030978fd3df38f961ef25a6125",
+      "summary": {
+        "tests_run": 19,
+        "skipped": 0,
+        "failure_or_error_headers": 0,
+        "status": "pass"
+      }
+    },
+    {
+      "name": "known_cves",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.test_known_disclosed_cves"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "started_utc": "2026-10-19T08:55:14.667258+00:00",
+      "finished_utc": "2026-10-19T08:55:15.360597+00:00",
+      "exit_code": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\known_cves.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\known_cves.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "2054945d3f1d19da57e296bdfac8574d853614d84a331b9af08c68908ae10e24",
+      "summary": {
+        "tests_run": 21,
+        "skipped": 0,
+        "failure_or_error_headers": 0,
+        "status": "pass"
+      }
+    },
+    {
+      "name": "compileall",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-B",
+        "-m",
+        "compileall",
+        "-q",
+        "src",
+        "tests"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "started_utc": "2026-10-19T08:55:15.364069+00:00",
+      "finished_utc": "2026-10-19T08:55:15.601358+00:00",
+      "exit_code": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\compileall.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\compileall.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": {
+        "tests_run": null,
+        "skipped": 0,
+        "failure_or_error_headers": 0,
+        "status": "pass"
+      }
+    },
+    {
+      "name": "git_diff_check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+      "started_utc": "2026-10-19T08:55:15.603738+00:00",
+      "finished_utc": "2026-10-19T08:55:15.656437+00:00",
+      "exit_code": 0,
+      "stdout_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\git_diff_check.stdout.txt",
+      "stderr_path": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\experiments\\ark_runtime\\c10_ark_gap_rules_20261019\\logs-win-final2\\git_diff_check.stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "70e513f4893c7ce4c5b03950e7731a25d562d107b01eaffc5040bcadccbd256d",
+      "summary": {
+        "tests_run": null,
+        "skipped": 0,
+        "failure_or_error_headers": 0,
+        "status": "pass"
+      }
+    }
+  ]
+}

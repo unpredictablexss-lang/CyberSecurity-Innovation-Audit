@@ -1,0 +1,126 @@
+{
+  "schema": "ohscanner.known-cve-migration-artifact-hashes/1",
+  "algorithm": "sha256",
+  "artifacts": {
+    "capture_run.py": {
+      "length": 1154,
+      "sha256": "82105f68427c1aa26228ab18902fef614663e42dafc6da1230d75030cdc0e3f3"
+    },
+    "control_matrix.json": {
+      "length": 31870,
+      "sha256": "88cf3ccf546fe8cf408205126d3e134288da81a57343d0169cfcfcbe52252614"
+    },
+    "cve_disposition_summary.md": {
+      "length": 3748,
+      "sha256": "99950ea3a718f3025d86e407ff4b8fd614fa011ff5f1f69c325ca9ecc3de949d"
+    },
+    "dispositions.md": {
+      "length": 8722,
+      "sha256": "414a094ae95a9805784a8dc05e80869b60cfed41e60efd1f5f5c261fbb69fb40"
+    },
+    "limitations.md": {
+      "length": 1364,
+      "sha256": "a1ac741516220c6f232a4dcc230be0428274a7a32e931e2b90af42081884fd34"
+    },
+    "migration.diff": {
+      "length": 4033,
+      "sha256": "038f64ec354b39c64912a380e7720fb0b883949c58b4b8dc3b98b89f8a7044c3"
+    },
+    "migration_baseline_known_cves_run.json": {
+      "length": 748,
+      "sha256": "7090d162a4cace8e117f07f475890f2c736b646b96483a8b31892f76c7e0405f"
+    },
+    "migration_baseline_known_cves_stderr.txt": {
+      "length": 5825,
+      "sha256": "6e4318d6f97253af92614c4bf89e94f7cc2d8adecdbfdbe04417714f8a6ad711"
+    },
+    "migration_baseline_known_cves_stdout.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "migration_compileall_path_length_failure_run.json": {
+      "length": 698,
+      "sha256": "79565fc2313a27ea3af26326b287cc09accf516f7219392607179e7ceb1518a3"
+    },
+    "migration_compileall_path_length_failure_stderr.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "migration_compileall_path_length_failure_stdout.txt": {
+      "length": 430,
+      "sha256": "07c484d5a9a442a67e5be7b72a5f2c7117874a4316438ced06e7ff4ae0027009"
+    },
+    "migration_compileall_prefix_length_failure_run.json": {
+      "length": 698,
+      "sha256": "e9744d964a2e32126409c89509f5cc38f3c191f588c1bfc599a178044f4bb30f"
+    },
+    "migration_compileall_prefix_length_failure_stderr.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "migration_compileall_prefix_length_failure_stdout.txt": {
+      "length": 430,
+      "sha256": "b3efad5c2d72a5f7bb5735cd7af8478a88ce2e538369f8e9d64a45b20cc11972"
+    },
+    "migration_compileall_run.json": {
+      "length": 577,
+      "sha256": "82ef2d3ff482327a5c09998bb2978a23019ec7bb6d313540bf767edc885707c7"
+    },
+    "migration_compileall_stderr.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "migration_compileall_stdout.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "migration_git_diff_check_run.json": {
+      "length": 574,
+      "sha256": "9c69c005aed7ef3455a498962e8ade81f93a4d16d3107fcf2f0e0485fa4e3702"
+    },
+    "migration_git_diff_check_stderr.txt": {
+      "length": 286,
+      "sha256": "ddc4a1e99ffbfbe7a3742a809f302da19e1c87091f7df26e2829369710d626b9"
+    },
+    "migration_git_diff_check_stdout.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "migration_known_cves_after_fix_run.json": {
+      "length": 751,
+      "sha256": "0f395d7bfe3055f96f0a0b8bb5b295a9ebf56d2876a9c8c94d0faf95646a44fb"
+    },
+    "migration_known_cves_after_fix_stderr.txt": {
+      "length": 4111,
+      "sha256": "88a111618a8aa315e61c339fb97ead61de7fa052737f7465e87d2f89e954a96e"
+    },
+    "migration_known_cves_after_fix_stdout.txt": {
+      "length": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "minimal.patch": {
+      "length": 4033,
+      "sha256": "038f64ec354b39c64912a380e7720fb0b883949c58b4b8dc3b98b89f8a7044c3"
+    },
+    "next_minimal_slice.md": {
+      "length": 725,
+      "sha256": "38beaf4c4e2d432c7faabb7ea25071f4a44e524628c0de5a96c925fe14cd95b8"
+    },
+    "preserved_ark_dirty_state.json": {
+      "length": 124118,
+      "sha256": "abb29e31906ca8e319ea950cb59b04035f1ccb7d79c5e9ed0a5bd315ec3471d1"
+    },
+    "README.md": {
+      "length": 1678,
+      "sha256": "51153bdc0757380773c5968f6e9f640b1f7be207926f0a97b5e3295817439e65"
+    },
+    "run_manifest.json": {
+      "length": 134539,
+      "sha256": "5b2ceb92947329125c9cd7108189345f2c90c2614d6fc6cc306c59a3a8ba4f48"
+    },
+    "source_identity.json": {
+      "length": 5958,
+      "sha256": "711297f9a21056684a6bf127ab1a46213d47cecccb78bac050f419832a2859e1"
+    }
+  }
+}

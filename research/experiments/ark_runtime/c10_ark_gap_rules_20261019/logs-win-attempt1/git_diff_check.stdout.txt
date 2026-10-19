@@ -1,0 +1,1 @@
+src/ohscanner/detectors/ark_runtime/detector.py:254: new blank line at EOF.

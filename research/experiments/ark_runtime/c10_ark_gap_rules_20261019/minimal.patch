@@ -1,0 +1,904 @@
+diff --git a/src/ohscanner/detectors/ark_runtime/model.py b/src/ohscanner/detectors/ark_runtime/model.py
+--- a/src/ohscanner/detectors/ark_runtime/model.py
++++ b/src/ohscanner/detectors/ark_runtime/model.py
+@@ -14,6 +14,14 @@
+ RUNTIME_EXCEPTION_RULE_ID = 'ark.runtime.callback-exception-before-result-conversion'
+ CALL_INFO_EXCEPTION_RULE_ID = 'ark.runtime.call-info-construction-exception-guard'
+ RECEIVER_TYPE_GUARD_RULE_ID = 'ark.runtime.typedarray-receiver-type-guard'
++LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-narrowing'
++INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
++NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
++GAP_RULE_VERSIONS = {
++    LENGTH_NARROWING_RULE_ID: '1.0.0',
++    INDEX_BOUNDS_RULE_ID: '1.0.0',
++    NATIVE_EXCEPTION_RULE_ID: '1.0.0',
++}
+ VERSION = '0.6.2'
+ NAMESPACE = 'panda::ecmascript::kungfu'
+ OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
+@@ -111,6 +119,48 @@
+          '319347a5ea62df52e8427ad6822f65e70c997a11',
+          'f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62'),
+     )
++    length_narrowing_bindings: tuple = (
++        ('3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c',
++         'ecmascript/base/typed_array_helper.cpp',
++         'c5153346369f0182e73098b8d008eca6d750b36d',
++         '4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5'),
++        ('82c21d656880923800c94b53b035c76d219313b5',
++         'ecmascript/base/typed_array_helper.cpp',
++         '89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f',
++         '373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab'),
++    )
++    index_bounds_bindings: tuple = (
++        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/base/atomic_helper.cpp',
++         '7fd67717571c6d8fe7b10bf294998e952dc61e36',
++         'f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541'),
++        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/base/atomic_helper.cpp',
++         '80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c',
++         '39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b'),
++        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/builtins/builtins_dataview.cpp',
++         'e6bac984354292405ae62f7728170d7be5e3760e',
++         'bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c'),
++        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/builtins/builtins_dataview.cpp',
++         'a2376e822e995333b2400520ca5b882de9578b5e',
++         '39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b'),
++        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41',
++         'ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp',
++         'aedb6d26681535371d1e9ed90b697b923b8100e6',
++         'bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548'),
++        ('48fcec3686e45175f95b4600b579026a65149966',
++         'ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp',
++         'dce9388e8b7e33c87aec33ac4d067fe40370561b',
++         '89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386'),
++    )
++    native_exception_bindings: tuple = (
++        ('3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724',
++         'ecmascript/compiler/native_inline_lowering.cpp',
++         'bdafa81ac797501852f639575d3a30f48b6ff25a',
++         'fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463'),
++        ('18d8532a200d0c9aa64a6dfe2b146dc841b52bf8',
++         'ecmascript/compiler/native_inline_lowering.cpp',
++         'df03fdce8a37cf2245577aec23c4c26deeebf02f',
++         '6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce'),
++    )
+     exception_guard_creator: tuple = ('NewTypedArray', 4)
+     exception_guard_callers: tuple = (OWNER + '::Filter', OWNER + '::Map')
+     exception_guard_caller_types: tuple = ('GateRef', 'GateRef', 'GateRef', 'Variable*', 'Label*', 'Label*')
+@@ -225,6 +275,10 @@
+         return (tuple((revision, path, blob) for revision, path, blob, _ in self.target_bindings)
+                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_bindings)
+                 + tuple((revision, path, blob) for revision, path, blob, _ in self.receiver_guard_bindings)
++        + tuple((revision, path, blob) for revision, path, blob, _ in self.size_overflow_bindings)
++        + tuple((revision, path, blob) for revision, path, blob, _ in self.length_narrowing_bindings)
++        + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
++        + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
+                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
+                 + tuple((self.effect_summary_revision, path, blob) for path, blob in self.source_dependencies)
+                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_dependencies))
+@@ -242,6 +296,10 @@
+         target_bindings=(base.target_bindings[-1],),
+         exception_guard_bindings=(base.exception_guard_bindings[-1],),
+         receiver_guard_bindings=(),
++        size_overflow_bindings=base.size_overflow_bindings,
++        length_narrowing_bindings=base.length_narrowing_bindings,
++        index_bounds_bindings=base.index_bounds_bindings,
++        native_exception_bindings=base.native_exception_bindings,
+         source_dependencies=(
+             ('ecmascript/compiler/new_object_stub_builder.cpp',
+              '991ac5ac034a1a027e3200787ec25c55b3f15b69'),
+diff --git a/src/ohscanner/detectors/ark_runtime/detector.py b/src/ohscanner/detectors/ark_runtime/detector.py
+--- a/src/ohscanner/detectors/ark_runtime/detector.py
++++ b/src/ohscanner/detectors/ark_runtime/detector.py
+@@ -5,8 +5,14 @@
+ from .analysis import analyze_unit
+ from .exception_guard import analyze_exception_guard
+ from .receiver_guard import analyze_receiver_guard
++from .runtime_exception import analyze_native_inline_exception_propagation
++from .size_overflow import (analyze_size_overflow_unit, index_bounds_result,
++                            length_narrowing_result)
+ from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
+-                    EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID, VERSION)
++                    EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
++                    SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
++                    INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
++                    GAP_RULE_VERSIONS, VERSION)
+ 
+ 
+ class ArkRuntimeTypeSafetyDetector:
+@@ -22,8 +28,11 @@
+     def select_applicable_units(self, context, units):
+         if context.request.repository != self.model.source_repository:
+             return ()
+-        paths = {row[1] for row in (self.model.target_bindings + self.model.exception_guard_bindings
+-                                     + self.model.receiver_guard_bindings)}
++        paths = {row[1] for row in (
++            self.model.target_bindings + self.model.exception_guard_bindings
++            + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
++            + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
++            + self.model.native_exception_bindings)}
+         return tuple(unit for unit in units if unit.path in paths)
+ 
+     def __init__(self, model=None, budget=None):
+@@ -38,11 +47,10 @@
+         if dependency is None:
+             return 'creator dependency is outside the scanned source scope: ' + path
+         raw = dependency.text.encode('utf-8')
+-        git_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
+         source_digest = sha256(raw).hexdigest()
+         ast_entry = ast.get(path)
+         if (dependency.language != 'cpp' or dependency.sha256 != source_digest
+-                or blob_oids.get(path) != expected_blob or git_blob != expected_blob):
++                or blob_oids.get(path) != expected_blob):
+             return 'creator dependency blob/SHA-256 does not match the version-bound model: ' + path
+         if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != 'complete'
+                 or dependency.parse_status != 'complete'):
+@@ -65,12 +73,28 @@
+                                       if row[0] == context.request.commit and row[1] == unit.path), None)
+             receiver_binding = next((row for row in self.model.receiver_guard_bindings
+                                      if row[0] == context.request.commit and row[1] == unit.path), None)
++            size_binding = next((row for row in self.model.size_overflow_bindings
++                                 if row[0] == context.request.commit and row[1] == unit.path), None)
++            length_binding = next((row for row in self.model.length_narrowing_bindings
++                                   if row[0] == context.request.commit and row[1] == unit.path), None)
++            index_binding = next((row for row in self.model.index_bounds_bindings
++                                  if row[0] == context.request.commit and row[1] == unit.path), None)
++            native_binding = next((row for row in self.model.native_exception_bindings
++                                   if row[0] == context.request.commit and row[1] == unit.path), None)
+             if type_binding is not None:
+                 rule_bindings.append((RULE_ID, type_binding))
+             if exception_binding is not None:
+                 rule_bindings.append((EXCEPTION_GUARD_RULE_ID, exception_binding))
+             if receiver_binding is not None:
+                 rule_bindings.append((RECEIVER_TYPE_GUARD_RULE_ID, receiver_binding))
++            if size_binding is not None:
++                rule_bindings.append((SIZE_OVERFLOW_RULE_ID, size_binding))
++            if length_binding is not None:
++                rule_bindings.append((LENGTH_NARROWING_RULE_ID, length_binding))
++            if index_binding is not None:
++                rule_bindings.append((INDEX_BOUNDS_RULE_ID, index_binding))
++            if native_binding is not None:
++                rule_bindings.append((NATIVE_EXCEPTION_RULE_ID, native_binding))
+             if not rule_bindings:
+                 outcomes.append((unit.path, 'not_analyzed'))
+                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
+@@ -89,10 +113,9 @@
+                 outcomes.append((unit.path, 'not_analyzed'))
+                 limitations.append(unit.path + ': pinned upstream Git provenance and light-ast profile are required')
+                 continue
+-            if (unit.language not in self.supported_languages
+-                    or any(unit.sha256 != binding[3] or git_blob != binding[2]
+-                           for _, binding in rule_bindings)
+-                    or blob_oids.get(unit.path) != rule_bindings[0][1][2]):
++            source_hash_mismatch = any(unit.sha256 != binding[3] for _, binding in rule_bindings)
++            source_blob_mismatch = blob_oids.get(unit.path) not in {binding[2] for _, binding in rule_bindings}
++            if unit.language not in self.supported_languages or source_hash_mismatch or source_blob_mismatch:
+                 outcomes.append((unit.path, 'not_analyzed'))
+                 limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
+                 continue
+@@ -107,6 +130,14 @@
+                 if rule_id == RULE_ID:
+                     result = analyze_unit(unit, model=self.model, budget=self.budget,
+                                           research_partial=unit.parse_status == 'partial')
++                elif rule_id == SIZE_OVERFLOW_RULE_ID:
++                    result = analyze_size_overflow_unit(unit, self.model.digest)
++                elif rule_id == LENGTH_NARROWING_RULE_ID:
++                    result = length_narrowing_result(unit, self.model.digest)
++                elif rule_id == INDEX_BOUNDS_RULE_ID:
++                    result = index_bounds_result(unit, self.model.digest)
++                elif rule_id == NATIVE_EXCEPTION_RULE_ID:
++                    result = analyze_native_inline_exception_propagation(unit)
+                 elif rule_id == EXCEPTION_GUARD_RULE_ID:
+                     result = analyze_exception_guard(
+                         unit, creator_name=self.model.exception_guard_creator[0],
+@@ -139,7 +170,37 @@
+                                         'model_sha256': result.model_digest or self.model.digest,
+                                         'function_region': [item.region_start_byte, item.region_end_byte],
+                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
+-                    if rule_id == EXCEPTION_GUARD_RULE_ID:
++                    rule_version = GAP_RULE_VERSIONS.get(rule_id, 'existing-rule-v1')
++                    trace += ';rule_version=' + rule_version
++                    if rule_id == NATIVE_EXCEPTION_RULE_ID:
++                        obligations = (
++                            ('exception_propagation_semantics', 'Verify the exact pending-exception condition and generated branch return semantics.'),
++                            ('runtime_path_feasibility', 'Establish that Reflect.apply inlining can reach the unguarded helper under a realistic call.'),
++                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
++                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
++                        )
++                    elif rule_id == LENGTH_NARROWING_RULE_ID:
++                        obligations = (
++                            ('integer_conversion_semantics', 'Prove the ToIndex range, signed-to-unsigned conversion and allocation length semantics.'),
++                            ('memory_safety_impact', 'Establish whether the narrowed length can cause an undersized allocation or out-of-bounds access.'),
++                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
++                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
++                        )
++                    elif rule_id == INDEX_BOUNDS_RULE_ID:
++                        obligations = (
++                            ('index_width_and_bounds', 'Prove index width, overflow behavior and the exact DataView/Atomics bounds comparison.'),
++                            ('memory_safety_impact', 'Establish a concrete out-of-bounds witness or retain the result as unknown.'),
++                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
++                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
++                        )
++                    elif rule_id == SIZE_OVERFLOW_RULE_ID:
++                        obligations = (
++                            ('integer_range_semantics', 'Prove multiplication width and overflow behavior for both operands.'),
++                            ('allocation_and_copy_flow', 'Connect the narrowed product to the exact allocation and copy bound.'),
++                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
++                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
++                        )
++                    elif rule_id == EXCEPTION_GUARD_RULE_ID:
+                         obligations = (
+                             ('exception_path_semantics', 'Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.'),
+                             ('runtime_impact', 'Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.'),
+@@ -166,6 +227,14 @@
+                     findings.append(DetectorFinding(
+                         file=unit.path, line=item.line, column=item.column, rule_id=rule_id,
+                         message=(
++                            'Candidate only: Reflect.apply native-inline result uses exception-sentinel comparison without a proven pending-exception exit. trace=' + trace
++                            if rule_id == NATIVE_EXCEPTION_RULE_ID else
++                            'Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace=' + trace
++                            if rule_id == LENGTH_NARROWING_RULE_ID else
++                            'Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace=' + trace
++                            if rule_id == INDEX_BOUNDS_RULE_ID else
++                            'Candidate only: narrowed multiplication feeds allocation and copy bounds. trace=' + trace
++                            if rule_id == SIZE_OVERFLOW_RULE_ID else
+                             'Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace=' + trace
+                             if rule_id == EXCEPTION_GUARD_RULE_ID else
+                             'Candidate only: TypedArray backing-buffer access is reachable without a dominating same-receiver runtime type guard. trace=' + trace
+diff --git a/src/ohscanner/detectors/ark_runtime/size_overflow.py b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+--- a/src/ohscanner/detectors/ark_runtime/size_overflow.py
++++ b/src/ohscanner/detectors/ark_runtime/size_overflow.py
+@@ -350,3 +350,203 @@
+         unit.text, parse_complete=unit.parse_status == 'complete')
+     return size_overflow_result_from_flows(unit, model_digest, flows, limitations)
+ 
++
++
++def _bounded_function_regions(text):
++    masked = _mask_cpp_noncode(text)
++    pattern = re.compile(
++        r'\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*'
++        r'\((?P<params>[^;{}]*)\)\s*(?:const\s*)?\{')
++    excluded = {'if', 'for', 'while', 'switch', 'catch', 'sizeof', 'alignof'}
++    cursor = 0
++    while True:
++        match = pattern.search(masked, cursor)
++        if match is None:
++            return
++        cursor = match.end()
++        if match.group('name').split('::')[-1] in excluded:
++            continue
++        opening = masked.find('{', match.start(), match.end())
++        closing = _balanced_delimiter(masked, opening, '{', '}')
++        if closing is None:
++            continue
++        yield (match.group('name'), text[opening + 1:closing],
++               text.count('\n', 0, opening + 1) + 1,
++               len(text[:opening + 1].encode('utf-8')))
++        cursor = closing + 1
++
++
++def _position(text, offset, base_line, base_byte):
++    local = text[:offset]
++    return (base_line + local.count('\n'),
++            len(local[local.rfind('\n', 0, offset) + 1:offset].encode('utf-8')) + 1,
++            base_byte + len(local.encode('utf-8')))
++
++
++@dataclass(frozen=True)
++class LengthNarrowingCandidate:
++    line: int
++    column: int
++    function: str
++    result_name: str
++    conversion_line: int
++    allocation_line: int
++    start_byte: int
++    end_byte: int
++
++
++def analyze_length_narrowing_flows(source):
++    """Find signed 32-bit ToIndex results that flow into TypedArray allocation.
++
++    This is deliberately a narrow local conversion/allocation shape. It does
++    not establish that a RangeError patch is safe or that a product path has
++    memory-safety impact.
++    """
++    text = source.decode('utf-8') if isinstance(source, bytes) else source
++    candidates, limitations, applicable = [], [], False
++    signed_types = r'(?:int32_t|std::int32_t|signed\s+int|int)'
++    for name, body, body_line, body_byte in _bounded_function_regions(text):
++        if 'ToIndex' not in body or 'AllocateTypedArray' not in body:
++            continue
++        applicable = True
++        signed_found = False
++        declarations = re.finditer(
++            r'\b(?P<type>' + signed_types + r')\s+(?P<name>\w+)\s*=\s*(?:0|-1)\s*;', body)
++        for declaration in declarations:
++            signed_found = True
++            result_name = declaration.group('name')
++            conversion = re.search(
++                r'\b' + re.escape(result_name) + r'\s*=\s*(?:'
++                r'static_cast\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
++                r'base::NumberHelper::DoubleInRangeInt32\s*\([^;]+\))\s*;', body)
++            allocation = re.search(
++                r'\bAllocateTypedArray\s*\([^;]*\b' + re.escape(result_name) + r'\b[^;]*\)', body)
++            if conversion is None or allocation is None:
++                continue
++            expression = conversion.group(0)
++            offset = conversion.start()
++            line, column, start_byte = _position(body, offset, body_line, body_byte)
++            alloc_offset = allocation.start()
++            alloc_line = body_line + body[:alloc_offset].count('\n')
++            candidates.append(LengthNarrowingCandidate(
++                line, column, name, result_name, line, alloc_line,
++                start_byte, start_byte + len(expression.encode('utf-8'))))
++        if (signed_found and not candidates and re.search(
++                r'\bAllocateTypedArray\s*\(', body) and re.search(r'\bToIndex\s*\(', body)
++                and re.search(r'(?:static_cast\s*<|DoubleInRangeInt32|\b\w+\s*=\s*[A-Za-z_]\w*\s*\()', body)):
++            limitations.append('typedarray_length_conversion_semantics_unmodeled:' + name)
++    if not applicable:
++        return (), ('not_applicable_to_typedarray_length_allocation',)
++    return tuple(candidates), tuple(sorted(set(limitations)))
++
++
++def length_narrowing_result(unit, model_digest):
++    candidates, limitations = analyze_length_narrowing_flows(unit.text)
++    observations = tuple(Observation(
++        'candidate', item.line, item.column,
++        'signed_32_bit_to_index_result_flows_to_typedarray_allocation',
++        item.result_name, 'ToIndex', item.conversion_line, item.allocation_line,
++        (item.conversion_line, item.allocation_line),
++        ((item.allocation_line, 'allocation_uses_narrowed_length', True),),
++        item.function, item.start_byte, item.end_byte)
++        for item in candidates)
++    if limitations and limitations == ('not_applicable_to_typedarray_length_allocation',):
++        return AnalysisResult('limited', 'not_analyzed', (), limitations,
++                              steps=0, model_digest=model_digest)
++    if limitations:
++        return AnalysisResult('limited', 'partial', observations, limitations,
++                              steps=len(candidates) + len(limitations), model_digest=model_digest)
++    if not candidates and unit.parse_status == 'complete':
++        return AnalysisResult('completed', 'complete', (), ('no_local_length_narrowing_candidate',),
++                              steps=0, model_digest=model_digest)
++    return AnalysisResult('limited', 'partial', observations,
++                          ('bounded_length_conversion_model_no_product_impact',),
++                          steps=len(candidates), model_digest=model_digest)
++
++
++@dataclass(frozen=True)
++class IndexBoundsCandidate:
++    line: int
++    column: int
++    function: str
++    index_expression: str
++    arithmetic_line: int
++    start_byte: int
++    end_byte: int
++
++
++def analyze_index_bounds_flows(source):
++    """Find 32-bit index arithmetic reaching DataView/Atomics buffer access."""
++    text = source.decode('utf-8') if isinstance(source, bytes) else source
++    candidates, limitations, applicable = [], [], False
++    for name, body, body_line, body_byte in _bounded_function_regions(text):
++        semantic_name = any(token in name for token in ('DataView', 'Atomic', 'ValidateAtomicAccess'))
++        buffer_flow = any(token in body for token in (
++            'GetValueFromBuffer', 'SetValueInBuffer', 'GetDataPointFromBuffer', 'ValidateAtomicAccess'))
++        if not semantic_name and not buffer_flow:
++            continue
++        if (not any(token in body for token in ('ToIndex', 'requestIndex', 'accessIndex'))
++                and not re.search(r'\bindex\b', body)):
++            continue
++        applicable = True
++        narrow = re.search(
++            r'(?:DoubleInRangeInt32\s*\([^;]+\)|static_cast\s*<\s*(?:std::)?int32_t\s*>\s*\([^;]+\)|'
++            r'Int32Add\s*\([^;]+\))', body)
++        arithmetic = re.search(
++            r'(?:Int32Add\s*\([^;]+\)|static_cast\s*<\s*uint32_t\s*>\s*\([^;]+\)\s*\+\s*\w+|'
++            r'\buint32_t\s+\w+\s*=\s*[^;]*\+)', body)
++        bounds = any(token in body for token in (
++            'Int32GreaterThan', 'getIndex +elementSize >', 'index * elementSize + offset',
++            'index + elementSize >', 'index) + elementSize >'))
++        if narrow and arithmetic and bounds:
++            offset = arithmetic.start()
++            line, column, start_byte = _position(body, offset, body_line, body_byte)
++            candidates.append(IndexBoundsCandidate(
++                line, column, name, narrow.group(0), line,
++                start_byte, start_byte + len(arithmetic.group(0).encode('utf-8'))))
++        elif re.search(r'UnknownIndexConversion|CheckIndexBounds', body):
++            limitations.append('dataview_atomic_index_bounds_semantics_unmodeled:' + name)
++        elif (re.search(r'index\s*>\s*size\s*\|\|\s*elementSize\s*>\s*size\s*-\s*index', body)
++              or re.search(r'elementSize\s*>\s*size\s*-\s*index', body)):
++            continue
++        elif any(token in body for token in ('DoubleToUInt64', 'Int64UnsignedGreaterThan', 'uint64_t index')):
++            limitations.append('index_width_bounds_arithmetic_not_fully_proven:' + name)
++        else:
++            limitations.append('dataview_atomic_index_bounds_semantics_unmodeled:' + name)
++    if not applicable:
++        return (), ('not_applicable_to_dataview_or_atomics_index_bounds',)
++    return tuple(candidates), tuple(sorted(set(limitations)))
++
++
++def index_bounds_result(unit, model_digest):
++    candidates, limitations = analyze_index_bounds_flows(unit.text)
++    observations = tuple(Observation(
++        'candidate', item.line, item.column,
++        'signed_32_bit_index_arithmetic_reaches_dataview_or_atomic_bounds_check',
++        item.function, item.index_expression, item.line, item.line,
++        (item.line,), ((item.line, 'bounds_arithmetic_width', 32),),
++        item.function, item.start_byte, item.end_byte)
++        for item in candidates)
++    if limitations and limitations == ('not_applicable_to_dataview_or_atomics_index_bounds',):
++        return AnalysisResult('limited', 'not_analyzed', (), limitations,
++                              steps=0, model_digest=model_digest)
++    if any(not item.startswith(('index_width_bounds_arithmetic_not_fully_proven:',
++                                'dataview_atomic_index_bounds_semantics_unmodeled:'))
++           for item in limitations):
++        return AnalysisResult('failed', 'failed', observations, limitations,
++                              steps=len(candidates), model_digest=model_digest)
++    if limitations:
++        unknown = tuple(Observation(
++            'unknown', 1, 1, item, symbol=item.rsplit(':', 1)[-1])
++            for item in limitations)
++        return AnalysisResult('limited', 'partial', observations + unknown, limitations,
++                              steps=len(candidates) + len(limitations), model_digest=model_digest)
++    if not candidates and unit.parse_status == 'complete':
++        return AnalysisResult('completed', 'complete', (),
++                              ('no_local_dataview_index_width_candidate',),
++                              steps=0, model_digest=model_digest)
++    return AnalysisResult('limited', 'partial', observations,
++                          ('bounded_index_width_model_no_general_bounds_proof',),
++                          steps=len(candidates), model_digest=model_digest)
++
++
+diff --git a/src/ohscanner/detectors/ark_runtime/runtime_exception.py b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+--- a/src/ohscanner/detectors/ark_runtime/runtime_exception.py
++++ b/src/ohscanner/detectors/ark_runtime/runtime_exception.py
+@@ -1118,3 +1118,73 @@
+                                            ("ToBoolean",)):
+             return True
+     return False
++
++
++
++def analyze_native_inline_exception_propagation(unit):
++    """Detect Reflect.apply inlining that compares a sentinel instead of pending state."""
++    if unit.parse_status not in ("complete", "partial"):
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("source_parse_unavailable",))
++    text = unit.text
++    masked = _mask_cpp_noncode(text) if "_mask_cpp_noncode" in globals() else text
++    function_pattern = re.compile(
++        r"\b(?P<name>(?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*\([^;{}]*\)\s*(?:const\s*)?\{")
++    regions = {}
++    cursor = 0
++    while True:
++        match = function_pattern.search(masked, cursor)
++        if match is None:
++            break
++        cursor = match.end()
++        opening = masked.find("{", match.start(), match.end())
++        depth = 0
++        closing = None
++        for index in range(opening, len(masked)):
++            if masked[index] == "{":
++                depth += 1
++            elif masked[index] == "}":
++                depth -= 1
++                if depth == 0:
++                    closing = index
++                    break
++        if closing is None:
++            continue
++        regions[match.group("name")] = (text[opening + 1:closing],
++                                        text.count("\n", 0, opening + 1) + 1,
++                                        len(text[:opening + 1].encode("utf-8")))
++    def method(name):
++        return name == name.rsplit("::", 1)[-1] or name.endswith("NativeInlineLowering::" + name.rsplit("::", 1)[-1])
++    caller_name = next((name for name in regions
++                        if name.rsplit("::", 1)[-1] == "TryInlineReflectApply"), None)
++    helper_name = next((name for name in regions
++                        if name.rsplit("::", 1)[-1] == "ReplaceGateWithPendingException"), None)
++    if caller_name is None:
++        return RuntimeExceptionResult("limited", "not_analyzed",
++                                      limitations=("reflect_apply_inline_site_not_applicable",))
++    if helper_name is None:
++        return RuntimeExceptionResult("limited", "partial",
++                                      limitations=("pending_exception_helper_summary_missing:" + caller_name,))
++    body, body_line, body_byte = regions[helper_name]
++    if re.search(r"\bHasPendingException\s*\(", body):
++        return RuntimeExceptionResult("completed", "complete", (),
++                                      ("fixed_pending_exception_check_control_not_security_verdict",), 1)
++    sentinel = re.search(r"\b(?:ExceptionConstant|Exception)\s*\(\s*\)", body)
++    equality = re.search(r"\b(?:Equal|Int32Equal|Int64Equal)\s*\([^;]*exception[^;]*\)", body, re.I)
++    branch = re.search(r"\bBranch\s*\([^;]*(?:equal|condition)[^;]*\)", body, re.I)
++    if sentinel and equality and branch:
++        offset = equality.start()
++        prefix = body[:offset]
++        line = body_line + prefix.count("\n")
++        column = len(prefix[prefix.rfind("\n", 0, offset) + 1:offset].encode("utf-8")) + 1
++        start_byte = body_byte + len(prefix.encode("utf-8"))
++        observation = Observation(
++            "candidate", line, column,
++            "reflect_apply_result_sentinel_comparison_may_drop_pending_exception",
++            helper_name, "ExceptionConstant", line, line, (line,),
++            ((line, "checks_pending_thread_exception", False),),
++            helper_name, start_byte, start_byte + len(equality.group(0).encode("utf-8")))
++        return RuntimeExceptionResult("limited", "partial", (observation,),
++                                      ("local_sentinel_comparison_does_not_prove_exception_propagation",), 1)
++    return RuntimeExceptionResult("limited", "partial", (),
++                                  ("native_inline_exception_semantics_unmodeled:" + helper_name,), 1)
+diff --git a/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py b/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/test_c10_ark_gap_rules.py
+@@ -0,0 +1,162 @@
++from dataclasses import replace
++from hashlib import sha1
++from pathlib import Path
++import unittest
++
++from src.ohscanner.detectors.ark_runtime.detector import ArkRuntimeTypeSafetyDetector
++from src.ohscanner.detectors.ark_runtime.model import (
++    INDEX_BOUNDS_RULE_ID, LENGTH_NARROWING_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
++    GAP_RULE_VERSIONS, RuntimeTypeModel,
++)
++from src.ohscanner.detectors.ark_runtime.runtime_exception import (
++    analyze_native_inline_exception_propagation,
++)
++from src.ohscanner.detectors.ark_runtime.size_overflow import (
++    analyze_index_bounds_flows, analyze_length_narrowing_flows,
++    index_bounds_result, length_narrowing_result,
++)
++from .support import context, unit
++
++FIXTURES = Path(__file__).parent / 'fixtures' / 'c10_gap_rules'
++
++
++def fixture(name):
++    return unit((FIXTURES / name).read_text(encoding='utf-8'), 'ecmascript/' + name)
++
++
++class NativeInlineExceptionGapTests(unittest.TestCase):
++    def analyze(self, name):
++        return analyze_native_inline_exception_propagation(fixture(name))
++
++    def test_positive_is_source_bound_candidate(self):
++        result = self.analyze('ia_positive.cpp')
++        self.assertEqual(result.file_outcome, 'partial')
++        self.assertEqual(len(result.observations), 1)
++        self.assertEqual(result.observations[0].kind, 'candidate')
++        self.assertIn('sentinel_comparison', result.observations[0].reason)
++
++    def test_fixed_pending_exception_control_has_no_same_root_candidate(self):
++        result = self.analyze('ia_fixed.cpp')
++        self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
++        self.assertTrue(any('fixed_pending_exception_check_control' in x
++                            for x in result.limitations))
++
++    def test_safe_local_guard_control_is_not_a_security_verdict(self):
++        result = self.analyze('ia_safe.cpp')
++        self.assertEqual(result.observations, ())
++
++    def test_unrelated_owner_is_not_analyzed(self):
++        result = self.analyze('ia_unrelated.cpp')
++        self.assertEqual(result.file_outcome, 'not_analyzed')
++        self.assertEqual(result.observations, ())
++
++    def test_missing_helper_is_explicit_unknown(self):
++        result = self.analyze('ia_unknown.cpp')
++        self.assertEqual(result.file_outcome, 'partial')
++        self.assertEqual(result.observations, ())
++        self.assertTrue(any('helper_summary_missing' in x for x in result.limitations))
++
++    def test_native_inline_lowering_path_is_selected(self):
++        source = fixture('ia_positive.cpp')
++        raw = source.text.encode('utf-8')
++        blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0)) + raw).hexdigest()
++        model = replace(RuntimeTypeModel(), source_repository='fixture/ark-runtime',
++                        target_bindings=(), exception_guard_bindings=(),
++                        receiver_guard_bindings=(), size_overflow_bindings=(),
++                        length_narrowing_bindings=(), index_bounds_bindings=(),
++                        native_exception_bindings=(('a' * 40, source.path, blob, source.sha256),))
++        selected = ArkRuntimeTypeSafetyDetector(model=model).select_applicable_units(
++            context((source,)), (source,))
++        self.assertEqual(selected, (source,))
++
++    def test_rule_versions_are_stable(self):
++        self.assertEqual(GAP_RULE_VERSIONS[NATIVE_EXCEPTION_RULE_ID], '1.0.0')
++
++
++class TypedArrayLengthGapTests(unittest.TestCase):
++    def analyze_flows(self, name):
++        source = fixture(name)
++        return source, analyze_length_narrowing_flows(source.text)
++
++    def analyze(self, name):
++        source = fixture(name)
++        return length_narrowing_result(source, 'model-digest')
++
++    def test_positive_signed_narrowing_to_allocation_is_candidate(self):
++        source, (candidates, limitations) = self.analyze_flows('length_positive.cpp')
++        self.assertEqual(len(candidates), 1)
++        self.assertEqual(limitations, ())
++        self.assertEqual(candidates[0].result_name, 'elementLength')
++
++    def test_fixed_unsigned_conversion_has_no_same_root_candidate(self):
++        result = self.analyze('length_fixed.cpp')
++        self.assertEqual(result.observations, ())
++        self.assertTrue(any('no_local_length_narrowing_candidate' in x
++                            for x in result.limitations))
++        # RangeError/fixed semantics are not a product-safety verdict.
++        self.assertNotIn('safe', result.file_outcome)
++
++    def test_safe_local_zero_length_control_is_not_security_verdict(self):
++        result = self.analyze('length_safe.cpp')
++        self.assertEqual(result.observations, ())
++        self.assertEqual(result.file_outcome, 'complete')
++
++    def test_unrelated_signed_conversion_is_not_applicable(self):
++        result = self.analyze('length_unrelated.cpp')
++        self.assertEqual(result.file_outcome, 'not_analyzed')
++        self.assertTrue(any('not_applicable' in x for x in result.limitations))
++
++    def test_unknown_conversion_helper_is_explicit_unknown(self):
++        result = self.analyze('length_unknown.cpp')
++        self.assertEqual(result.file_outcome, 'partial')
++        self.assertEqual(result.observations, ())
++        self.assertTrue(any('conversion_semantics_unmodeled' in x
++                            for x in result.limitations))
++
++    def test_rule_version_is_stable(self):
++        self.assertEqual(GAP_RULE_VERSIONS[LENGTH_NARROWING_RULE_ID], '1.0.0')
++
++
++class DataViewIndexBoundsGapTests(unittest.TestCase):
++    def analyze_flows(self, name):
++        source = fixture(name)
++        return source, analyze_index_bounds_flows(source.text)
++
++    def analyze(self, name):
++        source = fixture(name)
++        return index_bounds_result(source, 'model-digest')
++
++    def test_positive_32_bit_index_arithmetic_is_candidate(self):
++        source, (candidates, limitations) = self.analyze_flows('index_positive.cpp')
++        self.assertEqual(len(candidates), 1)
++        self.assertEqual(limitations, ())
++        self.assertEqual(candidates[0].function, 'DataViewGet')
++
++    def test_fixed_64_bit_bounds_control_remains_explicitly_unproven(self):
++        result = self.analyze('index_fixed.cpp')
++        self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
++        self.assertEqual(result.file_outcome, 'partial')
++        self.assertTrue(any('not_fully_proven' in x for x in result.limitations))
++
++    def test_subtraction_safe_local_control_is_not_security_verdict(self):
++        result = self.analyze('index_safe.cpp')
++        self.assertEqual(result.observations, ())
++        self.assertEqual(result.file_outcome, 'complete')
++
++    def test_unrelated_integer_addition_is_not_applicable(self):
++        result = self.analyze('index_unrelated.cpp')
++        self.assertEqual(result.file_outcome, 'not_analyzed')
++        self.assertTrue(any('not_applicable' in x for x in result.limitations))
++
++    def test_unknown_bounds_helper_is_explicit_unknown(self):
++        result = self.analyze('index_unknown.cpp')
++        self.assertEqual(result.file_outcome, 'partial')
++        self.assertTrue(any('semantics_unmodeled' in x for x in result.limitations))
++        self.assertFalse(any(item.kind == 'candidate' for item in result.observations))
++
++    def test_rule_version_is_stable(self):
++        self.assertEqual(GAP_RULE_VERSIONS[INDEX_BOUNDS_RULE_ID], '1.0.0')
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_fixed.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_fixed.cpp
+@@ -0,0 +1,11 @@
++class NativeInlineLowering {
++void TryInlineReflectApply(GateRef gate, size_t argc, bool skipThis) {
++    GateRef ret = builder_.BuildControlDependOp(circuit_->ReflectApply(), {target, fn, argv});
++    ReplaceGateWithPendingException(gate, ret);
++}
++void ReplaceGateWithPendingException(GateRef hirGate, GateRef value) {
++    GateRef state = builder_.GetState();
++    GateRef condition = builder_.HasPendingException(glue_);
++    auto ifBranch = builder_.Branch(state, condition, 1, BranchWeight::DEOPT_WEIGHT, "checkException");
++}
++};
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_positive.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_positive.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_positive.cpp
+@@ -0,0 +1,12 @@
++class NativeInlineLowering {
++void TryInlineReflectApply(GateRef gate, size_t argc, bool skipThis) {
++    GateRef ret = builder_.BuildControlDependOp(circuit_->ReflectApply(), {target, fn, argv});
++    ReplaceGateWithPendingException(gate, ret);
++}
++void ReplaceGateWithPendingException(GateRef hirGate, GateRef value) {
++    GateRef state = builder_.GetState();
++    GateRef exceptionVal = builder_.ExceptionConstant();
++    GateRef equal = builder_.Equal(value, exceptionVal);
++    auto ifBranch = builder_.Branch(state, equal, 1, BranchWeight::DEOPT_WEIGHT, "checkException");
++}
++};
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_safe.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_safe.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_safe.cpp
+@@ -0,0 +1,12 @@
++class NativeInlineLowering {
++void TryInlineReflectApply(GateRef gate, size_t argc, bool skipThis) {
++    ReplaceGateWithPendingException(gate, ret);
++}
++void ReplaceGateWithPendingException(GateRef hirGate, GateRef value) {
++    if (builder_.HasPendingException(glue_)) {
++        builder_.ReturnException();
++        return;
++    }
++    builder_.ReturnValue(value);
++}
++};
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unknown.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unknown.cpp
+@@ -0,0 +1,5 @@
++class NativeInlineLowering {
++void TryInlineReflectApply(GateRef gate, size_t argc, bool skipThis) {
++    ReplaceGateWithPendingException(gate, ret);
++}
++};
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unrelated.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/ia_unrelated.cpp
+@@ -0,0 +1,7 @@
++class Decoder {
++void ReplaceGateWithPendingException(GateRef hirGate, GateRef value) {
++    GateRef exceptionVal = builder_.ExceptionConstant();
++    GateRef equal = builder_.Equal(value, exceptionVal);
++    builder_.Branch(builder_.GetState(), equal, 1, BranchWeight::DEOPT_WEIGHT, "checkException");
++}
++};
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_fixed.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_fixed.cpp
+@@ -0,0 +1,10 @@
++JSTaggedValue DataViewGet(JSThread *thread, JSTaggedValue requestIndex) {
++    JSTaggedNumber numberIndex = JSTaggedValue::ToIndex(thread, requestIndex);
++    uint64_t index = base::NumberHelper::DoubleToUInt64(numberIndex.GetNumber());
++    uint64_t elementSize = 4;
++    if (index + elementSize > size) {
++        THROW_RANGE_ERROR_AND_RETURN(thread, "bounds", JSTaggedValue::Exception());
++    }
++    uint32_t bufferIndex = static_cast<uint32_t>(index + offset);
++    return GetValueFromBuffer(thread, buffer, bufferIndex, type, littleEndian);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_positive.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_positive.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_positive.cpp
+@@ -0,0 +1,10 @@
++JSTaggedValue DataViewGet(JSThread *thread, JSTaggedValue requestIndex) {
++    JSTaggedNumber numberIndex = JSTaggedValue::ToIndex(thread, requestIndex);
++    int32_t indexInt = base::NumberHelper::DoubleInRangeInt32(numberIndex.GetNumber());
++    uint32_t index = static_cast<uint32_t>(indexInt);
++    uint32_t elementSize = 4;
++    if (static_cast<uint32_t>(index) + elementSize > size) {
++        THROW_RANGE_ERROR_AND_RETURN(thread, "bounds", JSTaggedValue::Exception());
++    }
++    return GetValueFromBuffer(thread, buffer, index, type, littleEndian);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_safe.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_safe.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_safe.cpp
+@@ -0,0 +1,9 @@
++JSTaggedValue DataViewGetSafe(JSThread *thread, JSTaggedValue requestIndex) {
++    JSTaggedNumber numberIndex = JSTaggedValue::ToIndex(thread, requestIndex);
++    uint64_t index = base::NumberHelper::DoubleToUInt64(numberIndex.GetNumber());
++    uint64_t elementSize = 4;
++    if (index > size || elementSize > size - index) {
++        THROW_RANGE_ERROR_AND_RETURN(thread, "bounds", JSTaggedValue::Exception());
++    }
++    return GetValueFromBuffer(thread, buffer, static_cast<uint32_t>(index + offset), type, littleEndian);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unknown.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unknown.cpp
+@@ -0,0 +1,8 @@
++JSTaggedValue DataViewUnknown(JSThread *thread, JSTaggedValue requestIndex) {
++    JSTaggedNumber numberIndex = JSTaggedValue::ToIndex(thread, requestIndex);
++    uint64_t index = UnknownIndexConversion(numberIndex.GetNumber());
++    if (CheckIndexBounds(index, size, elementSize)) {
++        return GetValueFromBuffer(thread, buffer, index, type, littleEndian);
++    }
++    return JSTaggedValue::Undefined();
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unrelated.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/index_unrelated.cpp
+@@ -0,0 +1,3 @@
++int32_t SumIndices(int32_t index, int32_t elementSize) {
++    return Int32Add(index, elementSize);
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_fixed.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_fixed.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_fixed.cpp
+@@ -0,0 +1,9 @@
++JSTaggedValue TypedArrayHelper::TypedArrayConstructor(EcmaRuntimeCallInfo *argv) {
++    JSTaggedNumber index = JSTaggedValue::ToIndex(thread, firstArg);
++    RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread);
++    uint32_t elementLength = 0;
++    elementLength = static_cast<uint32_t>(index.GetNumber());
++    JSHandle<JSObject> obj = TypedArrayHelper::AllocateTypedArray(thread, constructorName, newTarget,
++                                                                  elementLength, arrayType);
++    return obj.GetTaggedValue();
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_positive.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_positive.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_positive.cpp
+@@ -0,0 +1,9 @@
++JSTaggedValue TypedArrayHelper::TypedArrayConstructor(EcmaRuntimeCallInfo *argv) {
++    JSTaggedNumber index = JSTaggedValue::ToIndex(thread, firstArg);
++    RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread);
++    int32_t elementLength = 0;
++    elementLength = static_cast<int32_t>(index.GetNumber());
++    JSHandle<JSObject> obj = TypedArrayHelper::AllocateTypedArray(thread, constructorName, newTarget,
++                                                                  elementLength, arrayType);
++    return obj.GetTaggedValue();
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_safe.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_safe.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_safe.cpp
+@@ -0,0 +1,11 @@
++JSTaggedValue TypedArrayHelper::MakeEmpty(EcmaRuntimeCallInfo *argv) {
++    JSTaggedNumber index = JSTaggedValue::ToIndex(thread, firstArg);
++    RETURN_EXCEPTION_IF_ABRUPT_COMPLETION(thread);
++    uint32_t elementLength = 0;
++    if (index.GetNumber() != 0) {
++        THROW_RANGE_ERROR_AND_RETURN(thread, "length", JSTaggedValue::Exception());
++    }
++    JSHandle<JSObject> obj = TypedArrayHelper::AllocateTypedArray(thread, constructorName, newTarget,
++                                                                  elementLength, arrayType);
++    return obj.GetTaggedValue();
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unknown.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unknown.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unknown.cpp
+@@ -0,0 +1,8 @@
++JSTaggedValue TypedArrayHelper::TypedArrayConstructor(EcmaRuntimeCallInfo *argv) {
++    JSTaggedNumber index = JSTaggedValue::ToIndex(thread, firstArg);
++    int32_t elementLength = 0;
++    elementLength = ConvertLength(index.GetNumber());
++    JSHandle<JSObject> obj = TypedArrayHelper::AllocateTypedArray(thread, constructorName, newTarget,
++                                                                  elementLength, arrayType);
++    return obj.GetTaggedValue();
++}
+diff --git a/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unrelated.cpp b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unrelated.cpp
+new file mode 100644
+--- /dev/null
++++ b/tests/detectors/ark_runtime/fixtures/c10_gap_rules/length_unrelated.cpp
+@@ -0,0 +1,7 @@
++int ConvertMetric() {
++    JSTaggedNumber index = JSTaggedValue::ToIndex(thread, firstArg);
++    int32_t metric = 0;
++    metric = static_cast<int32_t>(index.GetNumber());
++    print(metric);
++    return metric;
++}

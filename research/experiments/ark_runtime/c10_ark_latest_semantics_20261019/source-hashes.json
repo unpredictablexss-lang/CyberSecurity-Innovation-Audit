@@ -1,0 +1,145 @@
+{
+  "schema": "c10-ark-latest-semantics-source-hashes/v1",
+  "generated_at": "2026-10-19T08:20:01.122651+00:00",
+  "checkout": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "baseline": {
+    "commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+    "expected_commit": "09ba5aba03c7c7d6787bace349b8fc0a6b0a5457",
+    "tree": "d15b91627c94d9c3043d7d58d47fcf9af7e42454",
+    "remote": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "pinned_sources": {
+    "c_line_review_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+    "c_line_review_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+    "runtime_exception_evidence_source": {
+      "path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\exception-guard\\src\\ohscanner\\detectors\\ark_runtime\\runtime_exception.py",
+      "git_blob_sha1": "b2f1cc42f449d6f4c77020b003a1f7c0cbdd0e86",
+      "sha256": "96d56b4b3c9bd3f579c9b0dd2f29259526546fdfaf411dfc0152f194bdadf1fd",
+      "patch": "runtime_exception_block_2.patch + runtime_exception_generated_integration.patch"
+    }
+  },
+  "changed_sources": [
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/analysis.py",
+      "git_blob_sha1": "91819405ad8681e6db7ef0956c40348ce1df6dd5",
+      "sha256": "ad6e2854293d72d869fc74cccdd9816b06c7d940cbaf0507e2ede1b3d6dec340",
+      "tracked_in_baseline": true
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/type_origin.py",
+      "git_blob_sha1": "9da75f14f5cb1baa4670526183e88f8cd243b6f2",
+      "sha256": "36ecc62b2e8c960bba5c4528e09a1d79b00ab699c375cf4d181f51df366611c9",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "src/ohscanner/detectors/ark_runtime/runtime_exception.py",
+      "git_blob_sha1": "43fb617bf345fa55a949f55ae146127cd03ca490",
+      "sha256": "2ae943563892b8662d84f1060e2ac720a4e24dfbb497d3ca546f1dae08405370",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/test_c10_known_case_controls.py",
+      "git_blob_sha1": "940aa930ade371181774257d90449663f7cd019c",
+      "sha256": "7a67ba01151bc604b78da2c63c7407fa8a86ed628e0fb682296d1ee9475cdb4a",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_parent.cpp",
+      "git_blob_sha1": "40c8c8295b24e4890fdc60d6c343ba88a8e67ef5",
+      "sha256": "a6064216d117975ec936b52f10a5b8b2fec1132e60aec8dd6d91992918cdd047",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_fixed.cpp",
+      "git_blob_sha1": "060e274c256c26d61df04868164d93c98ae22ed2",
+      "sha256": "303f63d41ea9fd01990c0781cc2f93fdcf981f33cdc1f1f5283da6bbe954156c",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_parent.cpp",
+      "git_blob_sha1": "f3f5c26798d9bc28d4f34c393eec933524554282",
+      "sha256": "83bfca0e7495fc94f3fd93a3d36fe9834261ed61e9d040dc01db578c0dea0eab",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_fixed.cpp",
+      "git_blob_sha1": "11157343c01fa04e0af928e6a968fa82c6ca948f",
+      "sha256": "c5ebba6c1a1a84b2b85770da45983ca392a2f9c5ed9abcb1bb4b36b63231d799",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/safe_same_type.cpp",
+      "git_blob_sha1": "5299d2bfd62d33309c432d60bc26a3f7823cbd2e",
+      "sha256": "3251ceb73ea351238988247aecb80c69579b589aa502658f3ad83ce5df47b6ae",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/unrelated.cpp",
+      "git_blob_sha1": "696209c435eae3b2888b0638d2bdc75ada698ba5",
+      "sha256": "14638294932509da4e92b19cf087578179a12e4c2984b26ae3bc89fb311d7c2f",
+      "tracked_in_baseline": false
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/unknown_effect.cpp",
+      "git_blob_sha1": "34f5a66dd458cf4926b4886d01a0227e212c97d1",
+      "sha256": "2de487836c14955d3e2bbba05a75dce8ef6dad54b2ede7b83d7c27174e769cf2",
+      "tracked_in_baseline": false
+    }
+  ],
+  "c10_fixture_matrix": [
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_parent.cpp",
+      "expected_local_evidence": "candidate",
+      "git_blob_sha1": "40c8c8295b24e4890fdc60d6c343ba88a8e67ef5",
+      "sha256": "a6064216d117975ec936b52f10a5b8b2fec1132e60aec8dd6d91992918cdd047",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/cve_2025_24304_fixed.cpp",
+      "expected_local_evidence": "matched",
+      "git_blob_sha1": "060e274c256c26d61df04868164d93c98ae22ed2",
+      "sha256": "303f63d41ea9fd01990c0781cc2f93fdcf981f33cdc1f1f5283da6bbe954156c",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_parent.cpp",
+      "expected_local_evidence": "candidate",
+      "git_blob_sha1": "f3f5c26798d9bc28d4f34c393eec933524554282",
+      "sha256": "83bfca0e7495fc94f3fd93a3d36fe9834261ed61e9d040dc01db578c0dea0eab",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/ibs5yg_fixed.cpp",
+      "expected_local_evidence": "matched",
+      "git_blob_sha1": "11157343c01fa04e0af928e6a968fa82c6ca948f",
+      "sha256": "c5ebba6c1a1a84b2b85770da45983ca392a2f9c5ed9abcb1bb4b36b63231d799",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/safe_same_type.cpp",
+      "expected_local_evidence": "matched",
+      "git_blob_sha1": "5299d2bfd62d33309c432d60bc26a3f7823cbd2e",
+      "sha256": "3251ceb73ea351238988247aecb80c69579b589aa502658f3ad83ce5df47b6ae",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/unrelated.cpp",
+      "expected_local_evidence": "not_analyzed",
+      "git_blob_sha1": "696209c435eae3b2888b0638d2bdc75ada698ba5",
+      "sha256": "14638294932509da4e92b19cf087578179a12e4c2984b26ae3bc89fb311d7c2f",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    },
+    {
+      "path": "tests/detectors/ark_runtime/fixtures/c10_semantics/unknown_effect.cpp",
+      "expected_local_evidence": "unknown",
+      "git_blob_sha1": "34f5a66dd458cf4926b4886d01a0227e212c97d1",
+      "sha256": "2de487836c14955d3e2bbba05a75dce8ef6dad54b2ede7b83d7c27174e769cf2",
+      "note": "Self-authored source-bound control; not a product vulnerability label or safe verdict."
+    }
+  ],
+  "dirty_repair_preservation": [
+    "receiver_guard.py integration repair remains dirty and untouched by C10 changes",
+    "runtime_ir.py, syntax.py, size_overflow.py, receiver_guard.py pre-existing dirty repair files are preserved",
+    "tests/detectors/test_known_disclosed_cves.py pre-existing dirty change is preserved and excluded from C10 minimal patch"
+  ]
+}

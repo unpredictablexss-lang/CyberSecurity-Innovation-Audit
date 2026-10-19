@@ -1,0 +1,301 @@
+{
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "detector_version": "0.6.2",
+  "local_pinned_repository": "E:\\网安\\_oh_targets\\arkcompiler_ets_runtime",
+  "method": "production ArkRuntimeTypeSafetyDetector with pinned commit/path, verified shared Git blob OID, source SHA-256, complete light-ast facts",
+  "model_digest": "75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b",
+  "model_version": "0.8.10",
+  "records": [
+    {
+      "candidate_reasons": [
+        "Candidate only: Reflect.apply native-inline result uses exception-sentinel comparison without a proven pending-exception exit. trace={\"constraints\": [[1053, \"checks_pending_thread_exception\", false]], \"creation_line\": 1053, \"function_region\": [46621, 46647], \"generated_path\": [1053], \"model_sha256\": \"75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b\", \"target\": \"NativeInlineLowering::ReplaceGateWithPendingException\", \"token_line\": 1053, \"token_origin\": \"ExceptionConstant\", \"unreviewed_effect_sites\": []};rule_version=1.0.0"
+      ],
+      "commit": "3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724",
+      "detector_status": "blocked",
+      "diagnostic_count": 1,
+      "file_outcomes": [
+        [
+          "ecmascript/compiler/native_inline_lowering.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IAO7GO",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/compiler/native_inline_lowering.cpp: local_sentinel_comparison_does_not_prove_exception_propagation"
+      ],
+      "parse_status": "complete",
+      "role": "vulnerable",
+      "rule_ids": [
+        "ark.runtime.native-inline-pending-exception-propagation"
+      ],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "bdafa81ac797501852f639575d3a30f48b6ff25a",
+        "path": "ecmascript/compiler/native_inline_lowering.cpp",
+        "sha256": "fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463"
+      }
+    },
+    {
+      "candidate_reasons": [],
+      "commit": "18d8532a200d0c9aa64a6dfe2b146dc841b52bf8",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "file_outcomes": [
+        [
+          "ecmascript/compiler/native_inline_lowering.cpp",
+          "complete"
+        ]
+      ],
+      "finding_id": "IAO7GO",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/compiler/native_inline_lowering.cpp: fixed_pending_exception_check_control_not_security_verdict"
+      ],
+      "parse_status": "complete",
+      "role": "fixed",
+      "rule_ids": [],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "df03fdce8a37cf2245577aec23c4c26deeebf02f",
+        "path": "ecmascript/compiler/native_inline_lowering.cpp",
+        "sha256": "6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce"
+      }
+    },
+    {
+      "candidate_reasons": [
+        "Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace={\"constraints\": [[66, \"allocation_uses_narrowed_length\", true]], \"creation_line\": 66, \"function_region\": [2871, 2927], \"generated_path\": [64, 66], \"model_sha256\": \"75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b\", \"target\": \"elementLength\", \"token_line\": 64, \"token_origin\": \"ToIndex\", \"unreviewed_effect_sites\": []};rule_version=1.0.0"
+      ],
+      "commit": "3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c",
+      "detector_status": "blocked",
+      "diagnostic_count": 1,
+      "file_outcomes": [
+        [
+          "ecmascript/base/typed_array_helper.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "I7W51D",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/base/typed_array_helper.cpp: bounded_length_conversion_model_no_product_impact"
+      ],
+      "parse_status": "complete",
+      "role": "vulnerable",
+      "rule_ids": [
+        "ark.runtime.typedarray-length-signed-to-unsigned-narrowing"
+      ],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "c5153346369f0182e73098b8d008eca6d750b36d",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "sha256": "4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5"
+      }
+    },
+    {
+      "candidate_reasons": [],
+      "commit": "82c21d656880923800c94b53b035c76d219313b5",
+      "detector_status": "completed",
+      "diagnostic_count": 0,
+      "file_outcomes": [
+        [
+          "ecmascript/base/typed_array_helper.cpp",
+          "complete"
+        ]
+      ],
+      "finding_id": "I7W51D",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/base/typed_array_helper.cpp: no_local_length_narrowing_candidate"
+      ],
+      "parse_status": "complete",
+      "role": "fixed",
+      "rule_ids": [],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f",
+        "path": "ecmascript/base/typed_array_helper.cpp",
+        "sha256": "373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab"
+      }
+    },
+    {
+      "candidate_reasons": [],
+      "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "file_outcomes": [
+        [
+          "ecmascript/base/atomic_helper.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IB8BCA",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/base/atomic_helper.cpp: dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicLoad",
+        "ecmascript/base/atomic_helper.cpp: dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicStore",
+        "ecmascript/base/atomic_helper.cpp: dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::ValidateAtomicAccess"
+      ],
+      "parse_status": "complete",
+      "role": "vulnerable",
+      "rule_ids": [],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "7fd67717571c6d8fe7b10bf294998e952dc61e36",
+        "path": "ecmascript/base/atomic_helper.cpp",
+        "sha256": "f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541"
+      }
+    },
+    {
+      "candidate_reasons": [],
+      "commit": "48fcec3686e45175f95b4600b579026a65149966",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "file_outcomes": [
+        [
+          "ecmascript/base/atomic_helper.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IB8BCA",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/base/atomic_helper.cpp: dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicLoad",
+        "ecmascript/base/atomic_helper.cpp: dataview_atomic_index_bounds_semantics_unmodeled:AtomicHelper::AtomicStore",
+        "ecmascript/base/atomic_helper.cpp: index_width_bounds_arithmetic_not_fully_proven:AtomicHelper::ValidateAtomicAccess"
+      ],
+      "parse_status": "complete",
+      "role": "fixed",
+      "rule_ids": [],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c",
+        "path": "ecmascript/base/atomic_helper.cpp",
+        "sha256": "39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b"
+      }
+    },
+    {
+      "candidate_reasons": [
+        "Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace={\"constraints\": [[394, \"bounds_arithmetic_width\", 32]], \"creation_line\": 394, \"function_region\": [16352, 16382], \"generated_path\": [394], \"model_sha256\": \"75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b\", \"target\": \"BuiltinsDataView::GetViewValue\", \"token_line\": 394, \"token_origin\": \"DoubleInRangeInt32(numberIndex.GetNumber())\", \"unreviewed_effect_sites\": []};rule_version=1.0.0",
+        "Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace={\"constraints\": [[455, \"bounds_arithmetic_width\", 32]], \"creation_line\": 455, \"function_region\": [19578, 19620], \"generated_path\": [455], \"model_sha256\": \"75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b\", \"target\": \"BuiltinsDataView::SetViewValue\", \"token_line\": 455, \"token_origin\": \"DoubleInRangeInt32(numberIndex.GetNumber())\", \"unreviewed_effect_sites\": []};rule_version=1.0.0"
+      ],
+      "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+      "detector_status": "blocked",
+      "diagnostic_count": 2,
+      "file_outcomes": [
+        [
+          "ecmascript/builtins/builtins_dataview.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IB8BCA",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor"
+      ],
+      "parse_status": "complete",
+      "role": "vulnerable",
+      "rule_ids": [
+        "ark.runtime.dataview-index-width-bounds"
+      ],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "e6bac984354292405ae62f7728170d7be5e3760e",
+        "path": "ecmascript/builtins/builtins_dataview.cpp",
+        "sha256": "bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c"
+      }
+    },
+    {
+      "candidate_reasons": [],
+      "commit": "48fcec3686e45175f95b4600b579026a65149966",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "file_outcomes": [
+        [
+          "ecmascript/builtins/builtins_dataview.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IB8BCA",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::DataViewConstructor",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::GetViewValue",
+        "ecmascript/builtins/builtins_dataview.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataView::SetViewValue"
+      ],
+      "parse_status": "complete",
+      "role": "fixed",
+      "rule_ids": [],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "a2376e822e995333b2400520ca5b882de9578b5e",
+        "path": "ecmascript/builtins/builtins_dataview.cpp",
+        "sha256": "39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b"
+      }
+    },
+    {
+      "candidate_reasons": [
+        "Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace={\"constraints\": [[75, \"bounds_arithmetic_width\", 32]], \"creation_line\": 75, \"function_region\": [3265, 3322], \"generated_path\": [75], \"model_sha256\": \"75f0c2759095653bbd345362f04cedc363a6063755fc26cf07f3cc0a6ff8327b\", \"target\": \"BuiltinsDataViewStubBuilder::SetTypedValue\", \"token_line\": 75, \"token_origin\": \"Int32Add(index, elementSize), size), slowPath, &setValue)\", \"unreviewed_effect_sites\": []};rule_version=1.0.0"
+      ],
+      "commit": "d62f6de64daa7e11a7936a6153748a7c5fae9e41",
+      "detector_status": "blocked",
+      "diagnostic_count": 1,
+      "file_outcomes": [
+        [
+          "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IB8BCA",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp: bounded_index_width_model_no_general_bounds_proof"
+      ],
+      "parse_status": "complete",
+      "role": "vulnerable",
+      "rule_ids": [
+        "ark.runtime.dataview-index-width-bounds"
+      ],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "aedb6d26681535371d1e9ed90b697b923b8100e6",
+        "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+        "sha256": "bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548"
+      }
+    },
+    {
+      "candidate_reasons": [],
+      "commit": "48fcec3686e45175f95b4600b579026a65149966",
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "file_outcomes": [
+        [
+          "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+          "partial"
+        ]
+      ],
+      "finding_id": "IB8BCA",
+      "limitations": [
+        "Narrow local syntax/IR model; no whole-program type or exploitability proof.",
+        "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp: index_width_bounds_arithmetic_not_fully_proven:BuiltinsDataViewStubBuilder::SetTypedValue"
+      ],
+      "parse_status": "complete",
+      "role": "fixed",
+      "rule_ids": [],
+      "tree_role_source_identity": {
+        "git_blob_sha1": "dce9388e8b7e33c87aec33ac4d067fe40370561b",
+        "path": "ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp",
+        "sha256": "89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386"
+      }
+    }
+  ],
+  "repository": "openharmony/arkcompiler_ets_runtime",
+  "summary": {
+    "I7W51D": {
+      "fixed_candidate_count": 0,
+      "same_root_1_to_0": true,
+      "vulnerable_candidate_count": 1
+    },
+    "IAO7GO": {
+      "fixed_candidate_count": 0,
+      "same_root_1_to_0": true,
+      "vulnerable_candidate_count": 1
+    },
+    "IB8BCA": {
+      "fixed_candidate_count": 0,
+      "same_root_1_to_0": true,
+      "vulnerable_candidate_count": 3
+    }
+  }
+}

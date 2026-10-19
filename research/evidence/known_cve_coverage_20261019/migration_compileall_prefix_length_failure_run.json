@@ -1,0 +1,21 @@
+{
+  "name": "migration_compileall",
+  "argv": [
+    "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-m",
+    "compileall",
+    "-q",
+    "src",
+    "tests"
+  ],
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019",
+  "environment": {
+    "PYTHONPYCACHEPREFIX": "E:\\网安\\CyberSecurity-Innovation-Audit-c-line-static-20261019\\research\\evidence\\known_cve_coverage_20261019\\pycache"
+  },
+  "exit_code": 1,
+  "duration_seconds": 0.107472,
+  "stdout_file": "migration_compileall_stdout.txt",
+  "stderr_file": "migration_compileall_stderr.txt",
+  "stdout_bytes": 430,
+  "stderr_bytes": 0
+}
