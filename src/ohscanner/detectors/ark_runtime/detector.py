@@ -5,8 +5,14 @@ from src.ohscanner.contracts import DetectorRun, DetectorFinding, EvidenceObliga
 from .analysis import analyze_unit
 from .exception_guard import analyze_exception_guard
 from .receiver_guard import analyze_receiver_guard
+from .runtime_exception import analyze_native_inline_exception_propagation
+from .size_overflow import (analyze_size_overflow_unit, index_bounds_result,
+                            length_narrowing_result)
 from .model import (AnalysisBudget, RuntimeTypeModel, DETECTOR_ID, RULE_ID,
-                    EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID, VERSION)
+                    EXCEPTION_GUARD_RULE_ID, RECEIVER_TYPE_GUARD_RULE_ID,
+                    SIZE_OVERFLOW_RULE_ID, LENGTH_NARROWING_RULE_ID,
+                    INDEX_BOUNDS_RULE_ID, NATIVE_EXCEPTION_RULE_ID,
+                    GAP_RULE_VERSIONS, VERSION)
 
 
 class ArkRuntimeTypeSafetyDetector:
@@ -22,8 +28,11 @@ class ArkRuntimeTypeSafetyDetector:
     def select_applicable_units(self, context, units):
         if context.request.repository != self.model.source_repository:
             return ()
-        paths = {row[1] for row in (self.model.target_bindings + self.model.exception_guard_bindings
-                                     + self.model.receiver_guard_bindings)}
+        paths = {row[1] for row in (
+            self.model.target_bindings + self.model.exception_guard_bindings
+            + self.model.receiver_guard_bindings + self.model.size_overflow_bindings
+            + self.model.length_narrowing_bindings + self.model.index_bounds_bindings
+            + self.model.native_exception_bindings)}
         return tuple(unit for unit in units if unit.path in paths)
 
     def __init__(self, model=None, budget=None):
@@ -38,11 +47,10 @@ class ArkRuntimeTypeSafetyDetector:
         if dependency is None:
             return 'creator dependency is outside the scanned source scope: ' + path
         raw = dependency.text.encode('utf-8')
-        git_blob = sha1(b'blob ' + str(len(raw)).encode('ascii') + bytes((0,)) + raw).hexdigest()
         source_digest = sha256(raw).hexdigest()
         ast_entry = ast.get(path)
         if (dependency.language != 'cpp' or dependency.sha256 != source_digest
-                or blob_oids.get(path) != expected_blob or git_blob != expected_blob):
+                or blob_oids.get(path) != expected_blob):
             return 'creator dependency blob/SHA-256 does not match the version-bound model: ' + path
         if (not isinstance(ast_entry, dict) or ast_entry.get('parse_status') != 'complete'
                 or dependency.parse_status != 'complete'):
@@ -65,12 +73,28 @@ class ArkRuntimeTypeSafetyDetector:
                                       if row[0] == context.request.commit and row[1] == unit.path), None)
             receiver_binding = next((row for row in self.model.receiver_guard_bindings
                                      if row[0] == context.request.commit and row[1] == unit.path), None)
+            size_binding = next((row for row in self.model.size_overflow_bindings
+                                 if row[0] == context.request.commit and row[1] == unit.path), None)
+            length_binding = next((row for row in self.model.length_narrowing_bindings
+                                   if row[0] == context.request.commit and row[1] == unit.path), None)
+            index_binding = next((row for row in self.model.index_bounds_bindings
+                                  if row[0] == context.request.commit and row[1] == unit.path), None)
+            native_binding = next((row for row in self.model.native_exception_bindings
+                                   if row[0] == context.request.commit and row[1] == unit.path), None)
             if type_binding is not None:
                 rule_bindings.append((RULE_ID, type_binding))
             if exception_binding is not None:
                 rule_bindings.append((EXCEPTION_GUARD_RULE_ID, exception_binding))
             if receiver_binding is not None:
                 rule_bindings.append((RECEIVER_TYPE_GUARD_RULE_ID, receiver_binding))
+            if size_binding is not None:
+                rule_bindings.append((SIZE_OVERFLOW_RULE_ID, size_binding))
+            if length_binding is not None:
+                rule_bindings.append((LENGTH_NARROWING_RULE_ID, length_binding))
+            if index_binding is not None:
+                rule_bindings.append((INDEX_BOUNDS_RULE_ID, index_binding))
+            if native_binding is not None:
+                rule_bindings.append((NATIVE_EXCEPTION_RULE_ID, native_binding))
             if not rule_bindings:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': exact upstream repository/commit/path is not in the reviewed model')
@@ -89,10 +113,9 @@ class ArkRuntimeTypeSafetyDetector:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': pinned upstream Git provenance and light-ast profile are required')
                 continue
-            if (unit.language not in self.supported_languages
-                    or any(unit.sha256 != binding[3] or git_blob != binding[2]
-                           for _, binding in rule_bindings)
-                    or blob_oids.get(unit.path) != rule_bindings[0][1][2]):
+            source_hash_mismatch = any(unit.sha256 != binding[3] for _, binding in rule_bindings)
+            source_blob_mismatch = blob_oids.get(unit.path) not in {binding[2] for _, binding in rule_bindings}
+            if unit.language not in self.supported_languages or source_hash_mismatch or source_blob_mismatch:
                 outcomes.append((unit.path, 'not_analyzed'))
                 limitations.append(unit.path + ': target source blob/SHA-256 does not match the version-bound model')
                 continue
@@ -107,6 +130,14 @@ class ArkRuntimeTypeSafetyDetector:
                 if rule_id == RULE_ID:
                     result = analyze_unit(unit, model=self.model, budget=self.budget,
                                           research_partial=unit.parse_status == 'partial')
+                elif rule_id == SIZE_OVERFLOW_RULE_ID:
+                    result = analyze_size_overflow_unit(unit, self.model.digest)
+                elif rule_id == LENGTH_NARROWING_RULE_ID:
+                    result = length_narrowing_result(unit, self.model.digest)
+                elif rule_id == INDEX_BOUNDS_RULE_ID:
+                    result = index_bounds_result(unit, self.model.digest)
+                elif rule_id == NATIVE_EXCEPTION_RULE_ID:
+                    result = analyze_native_inline_exception_propagation(unit)
                 elif rule_id == EXCEPTION_GUARD_RULE_ID:
                     result = analyze_exception_guard(
                         unit, creator_name=self.model.exception_guard_creator[0],
@@ -139,7 +170,37 @@ class ArkRuntimeTypeSafetyDetector:
                                         'model_sha256': result.model_digest or self.model.digest,
                                         'function_region': [item.region_start_byte, item.region_end_byte],
                                         'unreviewed_effect_sites': item.effect_sites}, sort_keys=True)
-                    if rule_id == EXCEPTION_GUARD_RULE_ID:
+                    rule_version = GAP_RULE_VERSIONS.get(rule_id, 'existing-rule-v1')
+                    trace += ';rule_version=' + rule_version
+                    if rule_id == NATIVE_EXCEPTION_RULE_ID:
+                        obligations = (
+                            ('exception_propagation_semantics', 'Verify the exact pending-exception condition and generated branch return semantics.'),
+                            ('runtime_path_feasibility', 'Establish that Reflect.apply inlining can reach the unguarded helper under a realistic call.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == LENGTH_NARROWING_RULE_ID:
+                        obligations = (
+                            ('integer_conversion_semantics', 'Prove the ToIndex range, signed-to-unsigned conversion and allocation length semantics.'),
+                            ('memory_safety_impact', 'Establish whether the narrowed length can cause an undersized allocation or out-of-bounds access.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == INDEX_BOUNDS_RULE_ID:
+                        obligations = (
+                            ('index_width_and_bounds', 'Prove index width, overflow behavior and the exact DataView/Atomics bounds comparison.'),
+                            ('memory_safety_impact', 'Establish a concrete out-of-bounds witness or retain the result as unknown.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == SIZE_OVERFLOW_RULE_ID:
+                        obligations = (
+                            ('integer_range_semantics', 'Prove multiplication width and overflow behavior for both operands.'),
+                            ('allocation_and_copy_flow', 'Connect the narrowed product to the exact allocation and copy bound.'),
+                            ('product_binding', 'Bind the exact source revision and build configuration to an affected shipped product.'),
+                            ('isolated_validation', 'Reproduce and revalidate the fix only in an authorized isolated environment.'),
+                        )
+                    elif rule_id == EXCEPTION_GUARD_RULE_ID:
                         obligations = (
                             ('exception_path_semantics', 'Verify the builder allocation path can leave a pending exception and the sensitive result use executes before the exception return.'),
                             ('runtime_impact', 'Establish whether the path causes a product crash, corruption or security impact under a reachable runtime condition.'),
@@ -166,6 +227,14 @@ class ArkRuntimeTypeSafetyDetector:
                     findings.append(DetectorFinding(
                         file=unit.path, line=item.line, column=item.column, rule_id=rule_id,
                         message=(
+                            'Candidate only: Reflect.apply native-inline result uses exception-sentinel comparison without a proven pending-exception exit. trace=' + trace
+                            if rule_id == NATIVE_EXCEPTION_RULE_ID else
+                            'Candidate only: signed 32-bit ToIndex result narrows a TypedArray allocation length. trace=' + trace
+                            if rule_id == LENGTH_NARROWING_RULE_ID else
+                            'Candidate only: 32-bit DataView/Atomics index arithmetic reaches a local bounds check. trace=' + trace
+                            if rule_id == INDEX_BOUNDS_RULE_ID else
+                            'Candidate only: narrowed multiplication feeds allocation and copy bounds. trace=' + trace
+                            if rule_id == SIZE_OVERFLOW_RULE_ID else
                             'Candidate only: allocation result header is read on a path where the allocation may leave a pending exception. trace=' + trace
                             if rule_id == EXCEPTION_GUARD_RULE_ID else
                             'Candidate only: TypedArray backing-buffer access is reachable without a dominating same-receiver runtime type guard. trace=' + trace

@@ -66,7 +66,12 @@ def has_type_origin_flow(function, model):
             callee = node.child_by_field_name('function')
             if callee and callee.type == 'field_expression':
                 creates_typed_array = True
-        elif name == property_name and len(args) == property_arity:
+        elif name == model.same_type_creator[1] and len(args) == model.same_type_creator[2]:
+            callee = node.child_by_field_name('function')
+            if callee and callee.type == 'field_expression':
+                creates_typed_array = True
+        elif ((name == model.store_name and len(args) == len(model.store_types))
+              or (name == property_name and len(args) == property_arity)):
             stores_typed_array_element = True
     return creates_typed_array and stores_typed_array_element
 

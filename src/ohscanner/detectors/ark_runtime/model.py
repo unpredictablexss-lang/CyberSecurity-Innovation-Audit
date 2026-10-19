@@ -14,6 +14,14 @@ SIZE_OVERFLOW_RULE_ID = 'ark.runtime.typedarray-buffer-size-multiplication-overf
 RUNTIME_EXCEPTION_RULE_ID = 'ark.runtime.callback-exception-before-result-conversion'
 CALL_INFO_EXCEPTION_RULE_ID = 'ark.runtime.call-info-construction-exception-guard'
 RECEIVER_TYPE_GUARD_RULE_ID = 'ark.runtime.typedarray-receiver-type-guard'
+LENGTH_NARROWING_RULE_ID = 'ark.runtime.typedarray-length-signed-to-unsigned-narrowing'
+INDEX_BOUNDS_RULE_ID = 'ark.runtime.dataview-index-width-bounds'
+NATIVE_EXCEPTION_RULE_ID = 'ark.runtime.native-inline-pending-exception-propagation'
+GAP_RULE_VERSIONS = {
+    LENGTH_NARROWING_RULE_ID: '1.0.0',
+    INDEX_BOUNDS_RULE_ID: '1.0.0',
+    NATIVE_EXCEPTION_RULE_ID: '1.0.0',
+}
 VERSION = '0.6.2'
 NAMESPACE = 'panda::ecmascript::kungfu'
 OWNER = NAMESPACE + '::BuiltinsTypedArrayStubBuilder'
@@ -110,6 +118,48 @@ class RuntimeTypeModel:
          'ecmascript/base/typed_array_helper.cpp',
          '319347a5ea62df52e8427ad6822f65e70c997a11',
          'f698f40394524b5b95a1bbef4fe8b1ccef05e52226d9d1f30ef54decca711a62'),
+    )
+    length_narrowing_bindings: tuple = (
+        ('3c1a50cfb1206ce63afcd2d0ef2b1e81668f2e3c',
+         'ecmascript/base/typed_array_helper.cpp',
+         'c5153346369f0182e73098b8d008eca6d750b36d',
+         '4be243a68180be845defbcc01b259070db68b18da8500d245eea4929e7b9eca5'),
+        ('82c21d656880923800c94b53b035c76d219313b5',
+         'ecmascript/base/typed_array_helper.cpp',
+         '89ffed8b3ff112a271c8a074967b7b5e8ebe2f6f',
+         '373f5babdd5dd2f93d01512901d02e6b39d6b57c636e72b07b8d80d27eb509ab'),
+    )
+    index_bounds_bindings: tuple = (
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/base/atomic_helper.cpp',
+         '7fd67717571c6d8fe7b10bf294998e952dc61e36',
+         'f4890391896239c845bbcaee489d83c85eb5a64e37d563b91ed6e3908c62a541'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/base/atomic_helper.cpp',
+         '80d7ad14e70825ef2daf7b3f2fc956a891bf8b2c',
+         '39521f4c6fa6b4b65d8b3daacd80f6e051b5a01c5aa814c9ac2ffc432529b36b'),
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41', 'ecmascript/builtins/builtins_dataview.cpp',
+         'e6bac984354292405ae62f7728170d7be5e3760e',
+         'bc01e0f8b8a2a5ab30d1478587b45a14aa8130d3d53dfb32b9513ff4d73bc38c'),
+        ('48fcec3686e45175f95b4600b579026a65149966', 'ecmascript/builtins/builtins_dataview.cpp',
+         'a2376e822e995333b2400520ca5b882de9578b5e',
+         '39b1ed79451980ad85e1176805deaf6c6315bca09d7676ea5c63f5ff1c4bd65b'),
+        ('d62f6de64daa7e11a7936a6153748a7c5fae9e41',
+         'ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp',
+         'aedb6d26681535371d1e9ed90b697b923b8100e6',
+         'bd55a638db7292305dd7b564c5767657e105a48f064c66809934f5e3e6a5f548'),
+        ('48fcec3686e45175f95b4600b579026a65149966',
+         'ecmascript/compiler/builtins/builtins_dataview_stub_builder.cpp',
+         'dce9388e8b7e33c87aec33ac4d067fe40370561b',
+         '89fd548588f59a5f0756868957ff011609264b7d10437a8636c3f3262da1d386'),
+    )
+    native_exception_bindings: tuple = (
+        ('3fc1d0b960e0b1bb5bfe1aad8066bb8c9aa99724',
+         'ecmascript/compiler/native_inline_lowering.cpp',
+         'bdafa81ac797501852f639575d3a30f48b6ff25a',
+         'fcf0b9c6371ed348f433f637130fef7ae886d7cc1d241bb072fc37e252f33463'),
+        ('18d8532a200d0c9aa64a6dfe2b146dc841b52bf8',
+         'ecmascript/compiler/native_inline_lowering.cpp',
+         'df03fdce8a37cf2245577aec23c4c26deeebf02f',
+         '6e5a248ec9b82a4955232845f08f02383d6b941caca2c80f0317f4ccba7d33ce'),
     )
     exception_guard_creator: tuple = ('NewTypedArray', 4)
     exception_guard_callers: tuple = (OWNER + '::Filter', OWNER + '::Map')
@@ -225,6 +275,10 @@ class RuntimeTypeModel:
         return (tuple((revision, path, blob) for revision, path, blob, _ in self.target_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.receiver_guard_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.size_overflow_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.length_narrowing_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.index_bounds_bindings)
+        + tuple((revision, path, blob) for revision, path, blob, _ in self.native_exception_bindings)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.api_overload_evidence)
                 + tuple((self.effect_summary_revision, path, blob) for path, blob in self.source_dependencies)
                 + tuple((revision, path, blob) for revision, path, blob, _ in self.exception_guard_dependencies))
@@ -242,6 +296,10 @@ def c_line_static_model():
         target_bindings=(base.target_bindings[-1],),
         exception_guard_bindings=(base.exception_guard_bindings[-1],),
         receiver_guard_bindings=(),
+        size_overflow_bindings=base.size_overflow_bindings,
+        length_narrowing_bindings=base.length_narrowing_bindings,
+        index_bounds_bindings=base.index_bounds_bindings,
+        native_exception_bindings=base.native_exception_bindings,
         source_dependencies=(
             ('ecmascript/compiler/new_object_stub_builder.cpp',
              '991ac5ac034a1a027e3200787ec25c55b3f15b69'),
