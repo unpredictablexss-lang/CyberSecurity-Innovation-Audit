@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "task": "T12 independent A-line queue and change-scope acceptance",
+  "date": "2026-10-20",
+  "checkout": "D:/openHarmonyScanner/worktrees/a-t12-queue-acceptance-20261020",
+  "branch": "codex/a-t12-queue-acceptance-20261020",
+  "baseline_commit": "54f68b995",
+  "integration_parent": "ff27d408a",
+  "development_ancestry": "8ec5f56a12e90bba56953b39eb17faa20e154da9",
+  "independent_test_only": true,
+  "dispositions": {
+    "overall": "PARTIAL",
+    "updated_case_counts": {"PASS": 3, "PARTIAL": 8, "BLOCK": 0, "N/A": 2},
+    "changed_case_results": [
+      {
+        "case": "libpng CVE-2026-46675",
+        "status": "PARTIAL/BLOCK",
+        "source_identity": {
+          "repository": "pnggroup/libpng",
+          "vulnerable": {"commit": "c3e304954a9cfd154bc0dfbfea2b01cd61d6546d", "tree": "e01f5780f93eaa6d74cca003bb39b427c8f1e910", "path": "pngrutil.c", "blob": "a4eda54c8cb3d36cf1651dba159067b65030e3aa", "sha256": "b328fb05352226866b1e44c8cdd3e03df35413f1f38f4d81ba51afe4f2333a5e", "bytes": 153112},
+          "fixed": {"commit": "aa77ef38c17ab2fc1b41bec09fb973c6a386641d", "tree": "4c64b5f18cef7d129adee3b403fc4be93f82e30d", "path": "pngrutil.c", "blob": "482f0ae8dfd4793e7a4f266b609bc5c8b9e9334a", "sha256": "a1d62bc61c118b225c60549ea8de3065ae84642af56dd3776bf4692fb0f6aa5e", "bytes": 152477},
+          "verified_by": "T11 direct fetch + git show + git ls-tree; independently repeated tree and ls-tree checks against the T11 Git object store; local SHA-256 recomputed from both external cached files"
+        },
+        "replay": {
+          "detector": "ohscanner.cpp.resource_lifetime",
+          "version": "0.4.0",
+          "method": "direct detector invocation on exact SHA-256-verified bytes; not pinned-Git ohscan-run",
+          "vulnerable": {"parse": "partial", "issues": 72, "status": "blocked", "findings": 0},
+          "fixed": {"parse": "partial", "issues": 72, "status": "blocked", "findings": 0},
+          "function_fragments_per_variant": 7,
+          "complete_fragments_per_variant": 6,
+          "partial_fragment": "png_handle_iCCP",
+          "fragment_findings": 0,
+          "result": "zero findings on both sides do not establish a fixed differential"
+        },
+        "source_record_discrepancy": "D13 and D14 historical report text/JSON initially said the tree was unavailable. T11 supplied verified tree identities; D13 full-file JSON and D13 prose now contain them at integration commit 54f68b995. D14's older JSON still records null tree, so use the T11 identity package as the later correction; bytes/blob/hash still match."
+      },
+      {
+        "case": "OpenHarmony-TPC/chromium_src web_webview CVE-2026-27648",
+        "status": "PARTIAL",
+        "source_identity": {
+          "vulnerable": {"commit": "769110ddf1c14355c89f34b974ab9e6cf58c0c6c", "tree": "a8d7d7f9fd5d81a7cc37128ab59ce88118397890", "snapshot_sha256": "d1c3f958bb100dd931fbc0efd3482319bd47098305c8d255f94b73dbce4e844d"},
+          "fixed": {"commit": "f550e8e59c57afe4e02b130ec3373b1011843617", "tree": "ec7324dc445a30d96db9e9d0f753a12eef3bec12", "snapshot_sha256": "4795c9a3cb8f719ae546628cead78c203ce17bed5d3ead25d281d080b4d1d30c"},
+          "scope": ["flowbuffer_functions.cc", "safe.cpp", "unrelated.cpp", "renamed.cpp", "partial.cpp"]
+        },
+        "replay": {
+          "detector": "ohscanner.cpp.bounds",
+          "version": "0.3.0",
+          "vulnerable": {"status": "completed_with_limitations", "diagnostics": 13, "patched_root_sites": 6, "ordinary_loop_residuals": 6, "renamed_positive": 1},
+          "fixed": {"status": "completed_with_limitations", "diagnostics": 7, "patched_root_sites": 0, "ordinary_loop_residuals": 6, "renamed_positive": 1},
+          "parsing": {"complete": 4, "partial": 1},
+          "controls": {"safe": "quiet", "unrelated": "quiet", "partial": "partial/limited"},
+          "result": "fragment-level root differential reproduces; residuals remain unresolved on both variants; full translation units remain partial"
+        }
+      },
+      {
+        "case": "libpng CVE-2026-33416",
+        "status": "PARTIAL/BLOCK",
+        "source_identity": "D13/D14 source packages preserve the existing upstream commit and file hashes; T12 fragment replay reran all four target files for vulnerable and fixed inputs.",
+        "replay": {"detector": "ohscanner.cpp.resource_lifetime 0.4.0", "vulnerable_fragments": 4, "fixed_fragments": 4, "findings": 0, "whole_and_target_fragment_parsing": "partial", "interpretation": "not a successful vulnerable/fixed differential"}
+      }
+    ],
+    "unchanged_cases": [
+      {"case": "libtiff CVE-2025-9900", "status": "PARTIAL"},
+      {"case": "curl CVE-2026-92391", "status": "PASS"},
+      {"case": "cJSON CVE-2026-67216 compare cost", "status": "PARTIAL/BLOCK"},
+      {"case": "cJSON CVE-2026-67215 tree amplification", "status": "PARTIAL/BLOCK"},
+      {"case": "OpenHarmony CVE-2025-26690", "status": "PARTIAL"},
+      {"case": "OpenHarmony CVE-2025-0587", "status": "PASS"},
+      {"case": "OpenHarmony CVE-2025-23420", "status": "PASS"},
+      {"case": "Contacts PortraitFileName traversal", "status": "PARTIAL/BLOCK"},
+      {"case": "OpenHarmony CVE-2025-20042", "status": "N/A"},
+      {"case": "OpenHarmony CVE-2025-21098", "status": "N/A"}
+    ]
+  },
+  "queue_345": {
+    "command": "python research/deliveries/cpp/a0_triage_20261019/verify_triage.py",
+    "overall_ok": true,
+    "source_hash_manifest_entries": 97,
+    "queue_rows": 345,
+    "unique_queue_ids": 345,
+    "original_status_counts": {"not_reproduced": 9, "not_testable": 336},
+    "queue_status_counts": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331},
+    "ids_and_statuses_preserved": true
+  },
+  "change_scope": {
+    "command": "python -m scripts.check_change_scope --base 8ec5f56a12e90bba56953b39eb17faa20e154da9 --lane cpp",
+    "violations": 0
+  },
+  "focused_verification": [
+    {"command": "python research/evidence/cpp/d13_libpng46675_fullfile_replay_20261020.py", "result": "vulnerable/fixed bytes verified; each partial with 72 issues, blocked, 0 findings"},
+    {"command": "python research/evidence/cpp/d12_libpng_function_fragments_20261020.py [D13/D14 exact source arguments] --output D:/openHarmonyScanner/tmp/t12-d13-fragments-20261020.json", "result": "replayed 4+4 CVE-2026-33416 fragments and 7+7 CVE-2026-46675 fragments; zero findings; target/whole parsing remains partial"},
+    {"command": "two pinned-source ohscan-run replays for D15 vulnerable/fixed commits, same five-file scope, ohscanner.cpp.bounds", "result": "13 and 7 diagnostics, reproducing 6/0 patched-root and 6/6 residual findings; 4 complete and 1 partial input each"},
+    {"command": "python -m unittest tests.detectors.test_cpp_resource_lifetime_detector -v", "result": "8 passed"},
+    {"command": "python -m unittest tests.detectors.test_cpp_memory_safety_detectors -v", "result": "20 passed"}
+  ],
+  "diff_check": {"command": "git diff --check", "result": "clean"},
+  "limitations": [
+    "No full translation-unit PASS for libpng 46675 or web_webview; zero findings under partial parse is inconclusive.",
+    "No product build/call path/trigger feasibility established by these source-only replays.",
+    "The original 345 queue states remain as recorded; the queue is not a finding validation set.",
+    "D14's older standalone replay JSON still says fixed tree unavailable; T11 is the verified later source of the corrected tree IDs."
+  ]
+}
