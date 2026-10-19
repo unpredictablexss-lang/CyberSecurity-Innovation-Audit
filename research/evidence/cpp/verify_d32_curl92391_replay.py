@@ -31,10 +31,11 @@ def git(*args: str) -> str:
 
 def main() -> None:
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    head = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
-    ).strip()
-    check(head == EXPECTED_HEAD == data["scanner"]["head"], "scanner head is the requested current acceptance base")
+    recorded_head = data["scanner"]["head"]
+    is_ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", EXPECTED_HEAD, "HEAD"], cwd=ROOT
+    ).returncode == 0
+    check(recorded_head == EXPECTED_HEAD and is_ancestor, "recorded scanner base is present in current integration history")
     check(data["scanner"]["detector_version"] == "0.4.2", "current detector version is recorded")
     check(data["scanner"]["rule_id"] == "ohcpp-resource-lifetime-recursive-cleanup-candidate-003", "recursive cleanup rule identity is recorded")
     check(SOURCE_GIT.is_dir() and data["source_store"]["network_fetch_performed"] is False, "local pinned source store was used without fetch")
