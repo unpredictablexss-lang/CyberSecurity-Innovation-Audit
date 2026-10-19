@@ -6,6 +6,8 @@
 
 本计划基于已 fetch 的 C 优化分支快照 `origin/codex/c-line-known-vuln-optimization-20261019`，HEAD `842948084660207fd64399cfd598ed93e5593dcc`。文档在该分支隔离 worktree 中新增；没有改生产 detector、测试代码、公共接口或 PR 状态。
 
+最新仓库复核：`git fetch --prune` 成功，`origin/main` 为 `db77164fdc2af0da02e4d3efc056d84694fd68e8`；当前 C 线负责人分支 HEAD `0df31457cba5a6f308318879673bb63ccc448e4f` 以该 main commit 为 merge-base，领先 43 个提交，未落后 main。C detector、G12-PC task tree 和这组交付只存在于 C topic branch，尚未进入 main；因此继续以 C topic branch 的 task tree/ownership 作为 C 线工作真源，不把 main 中没有这些路径误判成任务完成或删除。专用 C source ref 仍停在 `842948084660207fd64399cfd598ed93e5593dcc`。本次复核没有发现可闭合 PC-1/PC-3 的产品工件。
+
 本轮核对的状态来源和边界：
 
 - `docs/项目现状与下一步.md` 记录 Ark Runtime 静态候选已接第一方 Catalog，Detector `0.6.2` / model `0.8.13`，默认关闭；C1 两文件 Runner 重放为 partial/blocked、0 diagnostics。单测 146 passed / 3 skipped 是开发控制，不是独立准确率证据。
@@ -291,6 +293,7 @@ D4 提交 `fc3d2d4b52acc43949a540a4cccc96a2c67f5248` 的证据矩阵 `evidence_m
 #### IBS5YG 第二层逐候选审查
 
 负责人基于本地对象库固定的 parent/fix 与共享依赖完成第二层审查，记录于 `IBS5YG_L2_REVIEW_20261020.json`。结论为 source-level `static_root_cause=supported`、`decision=candidate_supported`、fixed comparison `same_root_cause_fixed`。新增的 `TypedArraySpeciesCreate` 源码证据表明，用户 callback 可在输出创建前安装 receiver constructor；species 路径只要求结果为 TypedArray、长度不小于请求且 ContentType 相同，并未要求元素类型相同。具体静态候选：Int32Array Filter callback 安装 species，返回 Uint8Array(3)；parent 的结果写回仍传源 Int32 `jsType`。index 2 通过目标长度检查后，按 Int32 算出偏移 8 并写 4 字节。目标 ByteArray 只有 3 字节数据区，8 字节对齐后的对象分配仍被越过 4 字节。该源级 OOB candidate 的数据流、species 长度/ContentType 条件和对象尺寸均由 pinned source 支持；实际生成 stub 执行、ASan/runtime 结果仍待验证。fixed 在写入前改用新目标 HClass 类型。官方 Gitee API/Git independent source review 核验 parent/fixed commit/tree/parent、merged PR !11196、closed IBS5YG issue，并对 8 组文件内容逐字节匹配；独立审计还确认 fixed commit 是审计时官方 master `d1a58d…` 的祖先，目标调用点仍采用目标 newArray 的类型。fixed commit 自带 `typedarrayfilter.ts` 回归输入覆盖跨元素类型 species 场景，但仅打印 `success`，不检查结果、内存边界或 sanitizer，也未证明具体 Filter stub 路径；测试未运行。source authenticity 已独立验证，本地 bare store 历史 custody 与产品 binding 仍未知。当前没有 pinned build/runtime/ASan 复现，且完整编译路径、产品适用性、入口/攻击者控制、CIA 影响、本地对象库 custody 和 IBS5YG profile 仍未闭合；不据此宣称产品漏洞。下一步对 pinned parent/fixed 构建执行上述 exact-length species 场景和内存边界验证，再做同 profile 回归。
+固定提交的测试与最窄候选触发序列还需区分：官方 `typedarrayfilter.ts` 在调用 `Filter` 前更改 receiver 原型；窄候选是在 Filter callback 执行期间安装 `constructor/species`，然后验证具体 fast Filter 写回路径。前者可能触发慢路径，当前源码测试没有证明该 fast stub 被执行。因此它是相关的跨元素类型输入回归，不是该精确候选的动态触发证明；详见 L2 JSON 的 `trigger_path_relation`。
 
 ## 下一轮 IBS5YG 任务队列：产品画像闭环 D5/T5
 

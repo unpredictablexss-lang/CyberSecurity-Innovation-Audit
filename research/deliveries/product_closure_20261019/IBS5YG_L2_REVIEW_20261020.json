@@ -384,10 +384,11 @@
     "blob": "ef25a446c3d91d3019a7fa09d6a9702fe8e670e6",
     "sha256": "510e8e96f06d585a98db5e6f32568568f5e7f1c6b87f379329032f779ebb3037",
     "bytes": 781,
-    "scenario": "Float32Array(3924) receiver; replace __proto__ with Uint8ClampedArray(3594); call a.filter(Array, a). Array callback results are truthy, so expected species result length is 3924 and species constructor resolves to Uint8ClampedArray.",
+    "scenario": "Before Filter, replace the Float32Array(3924) receiver's __proto__ with a Uint8ClampedArray(3594) instance, then call a.filter(Array, a). Array callback results are truthy, so source-level expected species result length is 3924 and species constructor resolves to Uint8ClampedArray.",
     "assertion": "prints success only; does not assert result type, length, values, memory bounds, sanitizer outcome, or exact Filter stub/path",
     "review_status": "source-reviewed-not-run",
-    "interpretation": "Related fixed regression coverage for cross-element-type species input; it is not a dynamic proof of the parent out-of-bounds write or product impact."
+    "trigger_path_relation": "The regression changes the prototype before Filter entry. The narrow static candidate changes/installs constructor/species from within a callback after Filter entry. These are distinct trigger sequences; the pre-call prototype mutation may select the slow path, and the test does not establish that it executes the candidate fast Filter stub.",
+    "interpretation": "Related fixed regression input for cross-element-type species behavior; it is not a dynamic proof of the parent out-of-bounds write, exact candidate path, or product impact."
   },
   "safe_unrelated_comparison": [],
   "entry_attacker_trigger_impact": {
