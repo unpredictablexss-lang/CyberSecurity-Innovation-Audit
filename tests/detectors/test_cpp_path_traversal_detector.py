@@ -52,6 +52,16 @@ class CppPathTraversalDetectorTests(unittest.TestCase):
         unit = make_unit(FIXTURES / name, parse_status)
         return self.detector.detect(make_context(unit), (unit,)), unit
 
+    def run_text(self, name: str, text: str):
+        unit = SourceUnit(
+            path="tests/detectors/fixtures/cpp_path_traversal/" + name,
+            language="cpp",
+            text=text,
+            sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+            parse_status="complete",
+        )
+        return self.detector.detect(make_context(unit), (unit,)), unit
+
     def test_identity_and_positive_file_operation_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.path_traversal")
         self.assertEqual(self.detector.version, RULE_VERSION)
@@ -160,6 +170,89 @@ class CppPathTraversalDetectorTests(unittest.TestCase):
         self.assertEqual(failed_closed.findings, ())
         self.assertIn("RuntimeError", " ".join(failed_closed.limitations))
 
+
+    def test_contacts_exact_excerpt_directly_hits_reviewed_member_delete(self) -> None:
+        run, unit = self.run_fixture("contacts_exact_excerpt.cpp")
+        self.assertEqual(run.status, "blocked")
+        delete_findings = [item for item in run.findings if item.symbol == "DeleteFile"]
+        self.assertTrue(delete_findings, "the exact excerpt must directly produce DeleteFile candidates")
+        self.assertEqual(len(delete_findings), 3)
+        for finding in delete_findings:
+            self.assertEqual(finding.file, unit.path)
+            self.assertEqual(finding.rule_id, RULE_ID)
+            self.assertEqual(finding.candidate_cwe, "CWE-22")
+            self.assertEqual(finding.source_sha256, unit.sha256)
+
+    def test_reviewed_member_delete_fixed_basename_canonical_and_allowlist(self) -> None:
+        prefix = (
+            "struct DataShareValuesBucket { std::string GetString(const std::string &) const; };\n"
+            "struct FileUtils { void DeleteFile(const std::string &); };\n"
+        )
+        cases = {
+            "member_fixed_basename.cpp": prefix + (
+                "void f(DataShareValuesBucket &value) { auto input = value.GetString(\"field\"); "
+                "std::string name = std::filesystem::path(input).filename(); "
+                "FileUtils fileUtils; fileUtils.DeleteFile(name); }\n"
+            ),
+            "member_fixed_canonical_containment.cpp": prefix + (
+                "void f(DataShareValuesBucket &value, const std::string &root) { "
+                "auto input = value.GetString(\"field\"); "
+                "auto rootCanon = std::filesystem::canonical(root); "
+                "auto candidate = std::filesystem::canonical(root / input); "
+                "auto rel = candidate.lexically_relative(rootCanon); "
+                "if (rel.empty() || *rel.begin() == \"..\") { return; } "
+                "FileUtils fileUtils; fileUtils.DeleteFile(candidate); }\n"
+            ),
+            "member_fixed_literal_allowlist.cpp": prefix + (
+                "void f(DataShareValuesBucket &value) { auto input = value.GetString(\"field\"); "
+                "if (input != \"a.txt\" && input != \"b.txt\") { return; } "
+                "FileUtils fileUtils; fileUtils.DeleteFile(input); }\n"
+            ),
+        }
+        for name, text in cases.items():
+            run, _ = self.run_text(name, text)
+            self.assertEqual(run.status, "completed", name)
+            self.assertEqual(run.findings, (), name)
+
+    def test_reviewed_member_delete_no_source_and_unrelated_do_not_false_positive(self) -> None:
+        prefix = (
+            "struct DataShareValuesBucket { std::string GetString(const std::string &) const; };\n"
+            "struct FileUtils { void DeleteFile(const std::string &); };\n"
+        )
+        no_source = prefix + (
+            "void f(const std::string &path) { FileUtils fileUtils; fileUtils.DeleteFile(path); }\n"
+        )
+        run, _ = self.run_text("member_no_source.cpp", no_source)
+        self.assertEqual(run.status, "completed")
+        self.assertEqual(run.findings, ())
+        unrelated, _ = self.run_fixture("unrelated_same_api_name.cpp")
+        self.assertEqual(unrelated.status, "completed")
+        self.assertEqual(unrelated.findings, ())
+
+    def test_reviewed_member_delete_unknown_shapes_fail_closed_without_findings(self) -> None:
+        prefix = (
+            "struct DataShareValuesBucket { std::string GetString(const std::string &) const; };\n"
+            "struct FileUtils { void DeleteFile(const std::string &); };\n"
+        )
+        cases = {
+            "member_unknown_receiver.cpp": prefix + (
+                "void f(DataShareValuesBucket &value) { auto input = value.GetString(\"field\"); "
+                "Storage storage; storage.DeleteFile(input); }\n"
+            ),
+            "member_multi_arg.cpp": prefix + (
+                "void f(DataShareValuesBucket &value) { auto input = value.GetString(\"field\"); "
+                "FileUtils fileUtils; fileUtils.DeleteFile(input, true); }\n"
+            ),
+            "member_unknown_static.cpp": prefix + (
+                "void f(DataShareValuesBucket &value) { auto input = value.GetString(\"field\"); "
+                "DeleteFile(input); }\n"
+            ),
+        }
+        for name, text in cases.items():
+            run, _ = self.run_text(name, text)
+            self.assertEqual(run.status, "blocked", name)
+            self.assertEqual(run.findings, (), name)
+            self.assertTrue(any("unresolved external call" in item for item in run.limitations), name)
 
 if __name__ == "__main__":
     unittest.main()

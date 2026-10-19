@@ -52,6 +52,8 @@ _SAFE_FILENAME = re.compile(
     r"\s*\.\s*filename\s*\(\s*\)"
 )
 _CANONICAL = re.compile(r"(?:weakly_)?canonical\s*\(")
+_REVIEWED_FILE_DELETE = "DeleteFile"
+_REVIEWED_FILE_DELETE_RECEIVER = re.compile(r"(?P<receiver>[A-Za-z_]\w*)\s*(?:\.|->)\s*$")
 _SINK_CALLS = {
     "open": (0,),
     "openat": (1,),
@@ -109,6 +111,31 @@ class _CallSite:
     start: int
     args: Tuple[str, ...]
     assigned_to: str = ""
+
+
+def _call_arguments(function: "_Function", masked: str, match: re.Match[str]) -> Tuple[str, ...]:
+    open_pos = function.body_start + 1 + match.end() - 1
+    depth = 1
+    cursor = open_pos + 1
+    while cursor < function.body_end - 1 and depth:
+        if masked[cursor] == "(":
+            depth += 1
+        elif masked[cursor] == ")":
+            depth -= 1
+        cursor += 1
+    return () if depth else _split_args(masked[open_pos + 1:cursor - 1])
+
+
+def _reviewed_member_file_delete(
+    function: "_Function", masked: str, match: re.Match[str]
+) -> Tuple[int, str] | None:
+    absolute = function.body_start + 1 + match.start()
+    prefix = masked[max(function.body_start + 1, absolute - 96):absolute]
+    receiver = _REVIEWED_FILE_DELETE_RECEIVER.search(prefix)
+    if not receiver or receiver.group("receiver").lower() != "fileutils":
+        return None
+    args = _call_arguments(function, masked, match)
+    return (absolute, args[0]) if len(args) == 1 and args[0].strip() else None
 
 
 def _split_args(value: str) -> Tuple[str, ...]:
@@ -470,7 +497,8 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
                 continue
             args = _split_args(masked[open_pos + 1:cursor - 1])
             if any(_identifiers(arg) & flow for arg in args):
-                unresolved_path_calls.add(name)
+                if name != _REVIEWED_FILE_DELETE or not _reviewed_member_file_delete(function, masked, call):
+                    unresolved_path_calls.add(name)
         # Member calls are excluded: project methods named open/remove/unlink
         # are not silently treated as libc sinks.
         for match in _CALL.finditer(function.body):
@@ -508,6 +536,32 @@ def _analyze_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], b
                 if not safe:
                     findings.append(_finding(unit, absolute, name))
                 sinks.append((function, absolute, name, ",".join(sorted(path_vars))))
+
+        # The reviewed project file-delete wrapper is a member call. Accept
+        # only the exact `fileUtils.DeleteFile(path)` shape; unknown receivers,
+        # arities and static/wrapper overloads remain unresolved rather than
+        # being guessed as equivalent to libc deletion semantics.
+        for match in _ANY_CALL.finditer(function.body):
+            if match.group("name") != _REVIEWED_FILE_DELETE:
+                continue
+            parsed = _reviewed_member_file_delete(function, masked, match)
+            if parsed is None:
+                if any(_identifiers(arg) & flow for arg in _call_arguments(function, masked, match)):
+                    unresolved_path_calls.add(_REVIEWED_FILE_DELETE)
+                continue
+            absolute, path_arg = parsed
+            path_vars = _identifiers(path_arg) & flow
+            if not path_vars:
+                continue
+            original_body = unit.text[function.body_start + 1:function.body_end - 1]
+            sink_offset = absolute - function.body_start - 1
+            safe = all(
+                _safe_path_value(function, variable, flow, original_body, sink_offset)
+                for variable in path_vars
+            )
+            if not safe:
+                findings.append(_finding(unit, absolute, _REVIEWED_FILE_DELETE))
+            sinks.append((function, absolute, _REVIEWED_FILE_DELETE, ",".join(sorted(path_vars))))
 
     has_source = bool(sources or any(receivers.values()))
     if unresolved_path_calls:
@@ -567,3 +621,4 @@ class CppPathTraversalDetector:
             analyzed_files=tuple(analyzed), findings=_stable_findings(findings),
             limitations=tuple(sorted(set(limitations))),
         )
+
