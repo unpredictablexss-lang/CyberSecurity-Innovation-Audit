@@ -14,6 +14,15 @@ export function approvedDetectorIds(detectors, explicitIds = []) {
   if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
   return ids;
 }
+export function researchDetectorIds(detectors) {
+  const candidates = detectors.filter((d) => d.kind === "research_candidate" &&
+    typeof d.id === "string" && typeof d.version === "string" && d.version.length &&
+    Array.isArray(d.supported_languages) && d.supported_languages.length);
+  const ids = candidates.map((d) => d.id).sort();
+  if (!ids.length) throw new Error("当前没有可用于全规则研究的已批准规则。");
+  if (new Set(ids).size !== ids.length) throw new Error("规则配置出现重复身份，请刷新能力配置。");
+  return ids;
+}
 export function includePaths(value = ".") {
   const paths = String(value).split(/[\n,]/).map((p) => p.trim()).filter(Boolean);
   if (!paths.length || paths.length > 100) throw new Error("请填写 1–100 个纳入路径。");
@@ -31,12 +40,13 @@ function common(values, detectors, explicitIds = []) {
       !Number.isInteger(memory) || memory < 256 || memory > 8192)
     throw new Error("执行预算超出允许范围。");
   return { repository_id: values.repository_id, include_paths: includePaths(values.include_text),
-    detector_ids: approvedDetectorIds(detectors, explicitIds), timeout_seconds: timeout, memory_mb: memory };
+    detector_ids: values.full_rules_research ? researchDetectorIds(detectors) : approvedDetectorIds(detectors, explicitIds),
+    timeout_seconds: timeout, memory_mb: memory };
 }
 export function snapshotPayload(values, detectors, explicitIds = []) {
   if (!values.revision?.trim()) throw new Error("请选择或填写分支、Tag 或完整 Commit。");
   const { detector_ids, ...payload } = common(values, detectors, explicitIds);
-  return { ...payload, ...(explicitIds.length ? { detector_ids } : {}), revision: values.revision.trim() };
+  return { ...payload, ...(explicitIds.length || values.full_rules_research ? { detector_ids } : {}), revision: values.revision.trim() };
 }
 export function planPayload(values, detectors, explicitIds = []) {
   const { timeout_seconds, memory_mb, ...payload } = snapshotPayload(values, detectors, explicitIds);
@@ -50,8 +60,8 @@ export function datePreviewPayload(values) {
   new Intl.DateTimeFormat("en", { timeZone: timezone });
   return { repository_id, branch, start, end, timezone };
 }
-export function operationPayload(kind, values, detectors) {
-  const payload = common(values, detectors);
+export function operationPayload(kind, values, detectors, explicitIds = []) {
+  const payload = common(values, detectors, explicitIds);
   if (kind === "date") return { ...payload, ...datePreviewPayload(values) };
   if (kind === "branches") {
     if (!values.baseline_ref || !values.endpoint_ref) throw new Error("请填写两个版本。");

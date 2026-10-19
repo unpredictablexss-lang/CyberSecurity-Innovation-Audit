@@ -1,0 +1,28 @@
+{
+  "schema_version": "ohscanner.a-unsafe-literal-format-replay-audit-v1",
+  "status": "passed",
+  "verifier_sha256": "ca029baa5c0d377d25ffb5f5bb1c53731bf5c47cc6e20cafd57b7586001a95e2",
+  "replay_report_sha256": "b237ca73e49d51f9e0bfea18879240b94cb57941aeb6c92f0777e2e19ffea03f",
+  "candidate_results_sha256": "e6473b915a82f751e517c1953014f19a1963ad5b8891d7aaee6923b715756f25",
+  "method": "second local replay harness against raw candidate CSV, result JSON, pinned scan detector, exact source hashes, and current detector",
+  "external_independent_reviewer": "not_performed",
+  "counts": {
+    "raw_candidate_rows": 14,
+    "report_rows_matched": 14,
+    "unique_source_files": 7,
+    "source_hashes_matched": 7,
+    "baseline_reproduced": 14,
+    "literal_arms_suppressed": 8,
+    "macro_or_dynamic_arms_retained": 6
+  },
+  "source_run_signature": "1696df82f39e2564e0821c0ad2e837a00c6d83f9276bf5e0c38a3bd1f511700b",
+  "pinned_scan_detector": {
+    "version": "0.1.0",
+    "source_sha256": "cd4825a5387c5fd2415a7b5ac8d6fc7989a2222bd7f699507e63ad4c4b443e52"
+  },
+  "current_detector": {
+    "version": "0.4.0",
+    "source_sha256": "8d155c46244981c8c914650f5c762b9c6689d9a023fdc98bf2e1599df9d7cc74"
+  },
+  "scope_limit": "This verifies replay identity and reported dispositions only; it does not assign vulnerability/safety labels or measure overall accuracy."
+}
