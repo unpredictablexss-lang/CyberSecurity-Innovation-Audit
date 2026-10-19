@@ -1,0 +1,42 @@
+{
+  "independence_attestations": {
+    "independent_review": true,
+    "model_outputs_not_seen": true,
+    "other_review_not_seen": true,
+    "parent_fixed_pairing_not_seen": true,
+    "scanner_outputs_not_seen": true,
+    "truth_not_seen": true
+  },
+  "labels": [
+    {
+      "case_pseudonym": "1b494e96a3802f02",
+      "confidence": "low",
+      "evidence": [
+        "line 1"
+      ],
+      "label": "unknown",
+      "rationale": "self-test reviewer B deliberately different classification"
+    },
+    {
+      "case_pseudonym": "9913c5093cca2bd9",
+      "confidence": "low",
+      "evidence": [
+        "line 1"
+      ],
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer B deliberately different classification"
+    },
+    {
+      "case_pseudonym": "c1ef9844318f8019",
+      "confidence": "low",
+      "evidence": [
+        "line 1"
+      ],
+      "label": "not_vulnerable_shape",
+      "rationale": "self-test reviewer B deliberately different classification"
+    }
+  ],
+  "packet_sha256": "6250e8f499aab27bd8f01bd5779e59539b5e8c2bfbda1c389b73f1d77f8da6e1",
+  "reviewer_id": "B",
+  "schema": "ohscanner.ark-holdout-review/v2"
+}

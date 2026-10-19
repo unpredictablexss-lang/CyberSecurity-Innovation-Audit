@@ -1,0 +1,119 @@
+{
+  "case_count": 3,
+  "case_pseudonyms": [
+    "1b494e96a3802f02",
+    "9913c5093cca2bd9",
+    "c1ef9844318f8019"
+  ],
+  "development_leakage_ledger_file_sha256": "523a3932df49e29d0d366e118da3a3883dc82efe5f1573f30111bf1a1d978b3f",
+  "development_leakage_ledger_payload_sha256": "bcd1226bc36885d5f52d1b2d13b78eef7e2db91ccdb04fb46f0fa129e0955a90",
+  "execution_mode": "pipeline_self_test",
+  "metric_gate": {
+    "required_conditions": [
+      "protocol_file_hash_verified",
+      "truth_commitment_verified",
+      "truth_status_reliable_independent_human_adjudicated",
+      "model_generated_false",
+      "development_overlap_false",
+      "reviewer_independence_attested",
+      "adjudication_complete",
+      "source_identity_complete",
+      "case_set_exact",
+      "no_unknown_labels"
+    ]
+  },
+  "packet_payload_sha256": {
+    "A": "e894b3e490c626db3f275c53ceef6e6b79328f10ac7cb28f45b83796a0f5b284",
+    "B": "6250e8f499aab27bd8f01bd5779e59539b5e8c2bfbda1c389b73f1d77f8da6e1"
+  },
+  "payload_sha256": "245f914175f4f13001b3f210d692987efad58cca66e560eab770afc3b19b6bb7",
+  "protocol_file_sha256": "aec442d34e799f800fb1c265b1f4bc960424884be37eecc0774a708ce1fcd6ca",
+  "public_case_rows": [
+    {
+      "blob": "synthetic-blob-1",
+      "case_commitment_sha256": "5bcd6fd9d25e5bc7f38e50afbb5251f2930deebb02b87b561ecb5bc8f31f2f65",
+      "case_pseudonym": "1b494e96a3802f02",
+      "commit": "synthetic-commit-1",
+      "development_leakage_match": false,
+      "development_overlap": false,
+      "family_id": "family-1",
+      "family_split": "holdout",
+      "parser_identity": "tree-sitter-cpp-selftest",
+      "repository": "synthetic://local",
+      "sampling_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
+      "selection_rule_id": "selftest-stratified",
+      "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+      "source_bytes": 28,
+      "source_sha256": "cd210a3192acf1614b030482fd496ef245f872e26580a85bf7a63adcc25ae6e6",
+      "tree": "synthetic-tree-1"
+    },
+    {
+      "blob": "synthetic-blob-2",
+      "case_commitment_sha256": "60a416d6e95a010a2ea2c73b3d6554328eec0f2ede6ae97e40f8b2e68fc19986",
+      "case_pseudonym": "9913c5093cca2bd9",
+      "commit": "synthetic-commit-2",
+      "development_leakage_match": false,
+      "development_overlap": false,
+      "family_id": "family-2",
+      "family_split": "holdout",
+      "parser_identity": "tree-sitter-cpp-selftest",
+      "repository": "synthetic://local",
+      "sampling_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
+      "selection_rule_id": "selftest-stratified",
+      "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+      "source_bytes": 32,
+      "source_sha256": "18db728f3c4a1721d1239562c73cef02ad833ff35e679f5b0ec9913e2dab1320",
+      "tree": "synthetic-tree-2"
+    },
+    {
+      "blob": "synthetic-blob-3",
+      "case_commitment_sha256": "9c75f17f50cccf6b044dd032ec07521ee6c068120e3412464c36c5b40cbe8d46",
+      "case_pseudonym": "c1ef9844318f8019",
+      "commit": "synthetic-commit-3",
+      "development_leakage_match": false,
+      "development_overlap": false,
+      "family_id": "family-3",
+      "family_split": "holdout",
+      "parser_identity": "tree-sitter-cpp-selftest",
+      "repository": "synthetic://local",
+      "sampling_frame_sha256": "cc157c9a2b718e1a80c7e2b88c3beac7f4c0765b457ec90ad0361fde012b29fd",
+      "selection_rule_id": "selftest-stratified",
+      "snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000003",
+      "source_bytes": 32,
+      "source_sha256": "dc75c72ade668073a92a6578cbfd3f934b565d74cf1b54595016a8937cd3a37e",
+      "tree": "synthetic-tree-3"
+    }
+  ],
+  "review_protocol": {
+    "adjudicator_attestations": [
+      "truth_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_adjudication"
+    ],
+    "adjudicator_count": 1,
+    "adjudicators": 1,
+    "allowed_labels": [
+      "not_vulnerable_shape",
+      "unknown",
+      "vulnerable_shape"
+    ],
+    "reviewer_attestations": [
+      "truth_not_seen",
+      "other_review_not_seen",
+      "scanner_outputs_not_seen",
+      "model_outputs_not_seen",
+      "parent_fixed_pairing_not_seen",
+      "independent_review"
+    ],
+    "reviewer_count": 2,
+    "reviewer_independence_required": true,
+    "reviewers": 2
+  },
+  "schema": "ohscanner.ark-holdout-freeze/v2",
+  "status": "FROZEN_PIPELINE_ONLY",
+  "truth_commitment_scheme": "hmac-sha256-custodian-secret-v1",
+  "truth_commitment_sha256": "4644cc9e38f4ee1bb0dc5dd01e1398ca0ce82afcf3bfb22bb557ddab62a87b2f",
+  "truth_status": "pipeline_self_test_not_reliable"
+}

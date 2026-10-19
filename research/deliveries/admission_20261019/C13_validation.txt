@@ -1,0 +1,29 @@
+C13 HOLDOUT-PRODUCT-GATE minimal sustainable slice
+branch=codex/c13-holdout-product-gate-20261019
+baseline=842948084660207fd64399cfd598ed93e5593dcc
+
+Exact validation:
+- py_compile: exit 0, expected 0, PASS
+- product_gate_generator: exit 0, expected 0, PASS
+- development_leakage_ledger_generator: exit 0, expected 0, PASS
+- schema_validation: exit 0, expected 0, PASS
+- holdout_selftest: exit 0, expected 0, PASS
+- holdout_unit_tests: exit 0, expected 0, PASS
+- focused_scanner_regression: exit 0, expected 0, PASS
+- synthetic_score: exit 3, expected 3, PASS
+- json_parse: exit 0, expected 0, PASS
+- git_diff_check: exit 0, expected 0, PASS
+- secret_ignore_check: exit 0, expected 0, PASS
+
+Exact tests:
+- research.evaluation.ark_runtime_holdout_20261019.test_holdout_pipeline: 7 tests, OK
+- tests.detectors.ark_runtime.test_c12_deep_semantics + tests.detectors.ark_runtime.test_c11_alias_cross_helper + tests.detectors.test_known_case_corpus: 31 tests, OK
+
+Evidence boundary:
+- Synthetic score status=NOT_RUN; precision/recall/f1=null.
+- Real holdout remains FROZEN_NOT_EXECUTED; no independent human truth exists.
+- Product gate remains BLOCKED / NOT_ADMITTED; all 16 Ark product rows remain candidate/unassessed.
+- Missing entry, permission, trigger, CIA, authorized isolated PoC and fixed-product revalidation are explicit unknown/not_run.
+- No dynamic product validation and no Precision/Recall/FP/FN claim.
+
+See C13_validation_raw.txt for command output.

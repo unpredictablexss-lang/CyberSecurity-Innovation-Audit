@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.ark-holdout-development-leakage-ledger/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "generated_at",
+    "protocol_file_sha256",
+    "selection_frame_sha256",
+    "development_artifact_roots",
+    "excluded_case_ids",
+    "excluded_sources",
+    "excluded_source_sha256",
+    "case_set_commitment_sha256",
+    "coverage",
+    "payload_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "ohscanner.ark-holdout-development-leakage-ledger/v1"},
+    "status": {"const": "COMPLETE_LOCAL_DEVELOPMENT_ARTIFACTS"},
+    "generated_at": {"type": "string", "minLength": 1},
+    "protocol_file_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "selection_frame_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "development_artifact_roots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "excluded_case_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "excluded_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["reason", "repository_path", "source_identity", "bytes", "sha256"],
+        "properties": {
+          "reason": {"type": "string", "minLength": 1},
+          "repository_path": {"type": "string", "minLength": 1},
+          "source_identity": {"type": "object"},
+          "bytes": {"type": "integer", "minimum": 0},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "excluded_source_sha256": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "case_set_commitment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "coverage": {
+      "type": "object",
+      "required": ["roots_complete", "known_case_manifest_sha256", "product_gate_payload_sha256", "limitations"],
+      "properties": {
+        "roots_complete": {"const": true},
+        "known_case_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "product_gate_payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

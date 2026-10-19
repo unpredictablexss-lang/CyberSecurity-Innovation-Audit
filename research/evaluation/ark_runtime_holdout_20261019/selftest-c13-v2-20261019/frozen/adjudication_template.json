@@ -1,0 +1,18 @@
+{
+  "attestation_required": {
+    "independent_adjudication": true,
+    "model_outputs_not_seen": true,
+    "parent_fixed_pairing_not_seen": true,
+    "scanner_outputs_not_seen": true,
+    "truth_not_seen": true
+  },
+  "decisions": [],
+  "freeze_payload_sha256": "392fe6a5ff463ac7462a96427efa8766ad018631acd6112957f56d649aba2215",
+  "required_fields": [
+    "case_pseudonym",
+    "decision",
+    "rationale",
+    "evidence"
+  ],
+  "schema": "ohscanner.ark-holdout-adjudication-submission/v2"
+}

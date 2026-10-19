@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ohscanner.c13-candidate-product-gate-audit/v1",
+  "type": "object",
+  "required": ["schema", "status", "decision", "promotion_policy", "reviewed_case_dispositions", "ark_product_candidates", "global_blockers", "payload_sha256"],
+  "properties": {
+    "schema": {"const": "ohscanner.c13-candidate-product-gate-audit/v1"},
+    "status": {"const": "BLOCKED"},
+    "decision": {"const": "NOT_ADMITTED"},
+    "promotion_policy": {
+      "type": "object",
+      "required": ["default", "confirmed_reportable_requires", "promoted_to_confirmed_reportable"],
+      "properties": {
+        "default": {"const": "candidate/unassessed"},
+        "confirmed_reportable_requires": {"type": "array", "minItems": 7},
+        "promoted_to_confirmed_reportable": {"type": "array", "maxItems": 0}
+      },
+      "additionalProperties": false
+    },
+    "reviewed_case_dispositions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["identity", "evidence_classification", "product_gate"],
+        "properties": {
+          "identity": {"type": "string", "minLength": 1},
+          "evidence_classification": {"enum": ["candidate/unassessed", "not-applicable"]},
+          "product_gate": {
+            "type": "object",
+            "required": ["admission", "real_entry_point", "permission_or_trust_boundary", "trigger_conditions", "reachable_sensitive_operation", "concrete_cia_impact", "authorized_isolated_poc", "fixed_product_revalidation"],
+            "properties": {
+              "admission": {"enum": ["NOT_ADMITTED", "NOT_APPLICABLE"]},
+              "real_entry_point": {"enum": ["unknown", "partial", "not_applicable"]},
+              "permission_or_trust_boundary": {"enum": ["unknown", "partial", "not_applicable"]},
+              "trigger_conditions": {"enum": ["unknown", "partial", "not_applicable"]},
+              "reachable_sensitive_operation": {"enum": ["unknown", "partial", "not_applicable"]},
+              "concrete_cia_impact": {"enum": ["unknown", "partial", "not_applicable"]},
+              "authorized_isolated_poc": {"enum": ["not_run", "not_applicable"]},
+              "fixed_product_revalidation": {"enum": ["not_run", "not_applicable"]}
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "ark_product_candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["case_id", "evidence_classification", "admission", "real_entry_point", "permission_or_trust_boundary", "trigger_conditions", "reachable_sensitive_operation", "concrete_cia_impact", "authorized_isolated_poc", "fixed_product_revalidation"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "evidence_classification": {"const": "candidate/unassessed"},
+          "admission": {"const": "NOT_ADMITTED"},
+          "real_entry_point": {"enum": ["unknown", "partial"]},
+          "permission_or_trust_boundary": {"enum": ["unknown", "partial"]},
+          "trigger_conditions": {"enum": ["unknown", "partial"]},
+          "reachable_sensitive_operation": {"enum": ["unknown", "partial"]},
+          "concrete_cia_impact": {"enum": ["unknown", "partial"]},
+          "authorized_isolated_poc": {"const": "not_run"},
+          "fixed_product_revalidation": {"const": "not_run"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "global_blockers": {"type": "array", "minItems": 1},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": true
+}

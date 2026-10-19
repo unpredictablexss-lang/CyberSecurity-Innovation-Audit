@@ -1,0 +1,21 @@
+{
+  "decisions": [
+    {
+      "case_pseudonym": "1b494e96a3802f02",
+      "decision": "vulnerable_shape",
+      "evidence": [
+        "line 1"
+      ],
+      "rationale": "self-test independent adjudicator source shape decision"
+    }
+  ],
+  "freeze_payload_sha256": "392fe6a5ff463ac7462a96427efa8766ad018631acd6112957f56d649aba2215",
+  "independence_attestations": {
+    "independent_adjudication": true,
+    "model_outputs_not_seen": true,
+    "parent_fixed_pairing_not_seen": true,
+    "scanner_outputs_not_seen": true,
+    "truth_not_seen": true
+  },
+  "schema": "ohscanner.ark-holdout-adjudication-submission/v2"
+}

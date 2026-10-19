@@ -1,0 +1,23 @@
+{
+  "development_artifacts_used": false,
+  "execution_mode": "pipeline_self_test",
+  "labels": {
+    "SYNTHETIC-1": {
+      "label": "vulnerable_shape",
+      "model_generated": false
+    },
+    "SYNTHETIC-2": {
+      "label": "not_vulnerable_shape",
+      "model_generated": false
+    },
+    "SYNTHETIC-3": {
+      "label": "not_vulnerable_shape",
+      "model_generated": false
+    }
+  },
+  "model_generated": false,
+  "model_outputs_used": false,
+  "scanner_outputs_used": false,
+  "schema": "ohscanner.ark-holdout-truth/v2",
+  "truth_status": "pipeline_self_test_not_reliable"
+}
