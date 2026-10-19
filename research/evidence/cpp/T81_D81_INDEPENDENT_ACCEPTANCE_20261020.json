@@ -1,0 +1,47 @@
+{
+  "schema": "ohscanner.t81.d81_independent_acceptance/v1",
+  "date": "2026-10-20",
+  "decision": "ACCEPTED_WITH_LIMITATIONS",
+  "reviewed_commit": "c9c29b3d307f4f87c4705befd5b8afe56f087876",
+  "reviewed_tree": "60f129a152f5713cf9d7cec410bdc82be02621d1",
+  "independent_worktree": "D:/openHarmonyScanner/worktrees/t81-d81-independent-acceptance-20261020",
+  "checks": {
+    "replay_command": "python scripts/research/build_d81_product_inventory.py",
+    "replay_passed": true,
+    "raw_d53_git_blobs_checked": 31,
+    "raw_d53_git_blob_mismatches": 0,
+    "four_repo_head_tree_pins_passed": true,
+    "historical_d52_source_identity_assertions_passed": true,
+    "strict_json_parse_passed": true,
+    "diff_check_passed": true,
+    "json_matches_frozen_commit_after_replay": true
+  },
+  "review_findings": {
+    "hihope_entries_are_product_definitions_only": true,
+    "build_whitelists_are_metadata_not_build_provenance": true,
+    "source_only_rk3568_is_not_claimed_as_product_build": true,
+    "historical_d52_to_current_repo_migration_unverified": true,
+    "no_specific_product_or_installed_build_identity_established": true
+  },
+  "scope_limit": {
+    "script_checks_openharmony807_top_level_entries": true,
+    "script_checks_named_top_level_output_directories": [
+      "out",
+      "output",
+      "outputs",
+      "images",
+      "image",
+      "device",
+      "flash"
+    ],
+    "recursive_search_of_logs_repos_scan_results": false,
+    "all_filesystem_layers_proven_free_of_build_artifacts": false,
+    "accepted_claim": "No concrete product build identity or artifact was identified in frozen D53/T53 evidence and D81's documented top-level snapshot inspection.",
+    "rejected_claim": "The entire OpenHarmony807 snapshot was exhaustively searched and contains no build artifact."
+  },
+  "limitations": [
+    "D81 does not recursively inventory arbitrary descendants of D:/OpenHarmony807; its absence conclusion must remain bounded to frozen evidence and documented top-level inspection.",
+    "No product build, image, installed device, or external evidence source was available to establish D52 historical-source applicability."
+  ],
+  "report": "research/evidence/cpp/T81_D81_INDEPENDENT_ACCEPTANCE_20261020.md"
+}
