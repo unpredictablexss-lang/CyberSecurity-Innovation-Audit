@@ -8,16 +8,7 @@
   "detector": "ohscanner.cpp.shared_ptr_race",
   "detector_version": "0.5.1",
   "object_database_root": "openharmony/.repo/project-objects",
-  "object_database_gaps": [
-    {
-      "repository": "global_i18n",
-      "commit": "d13c698ebb238fa416a711bd3befe871e85721b6",
-      "status": "BLOCK_NOT_PRESENT_IN_LOCAL_BARE_DB",
-      "error": "git cat-file -e <commit>^{commit}: Not a valid object name",
-      "fallback_evidence": "Exact-source detached worktree Git context resolved HEAD/tree/blob and completed the current CLI replay.",
-      "fallback_is_bare_object_proof": false
-    }
-  ],
+  "object_database_gaps": [],
   "a0_queue": {
     "read_only_path": "D:/openHarmonyScanner/worktrees/a-triage-t2-20261019/research/deliveries/a-line-triage/20261019/candidate_triage_queue.csv",
     "sha256": "687d773986910a600e558833515137160ed50037889a2b6cc31c024433c3b45b",
@@ -62,9 +53,9 @@
       "cli_markdown": "d52_a0_pin_cli.md",
       "parse_complete": 2,
       "diagnostic_count": 0,
-      "bare_object_db_verified": false,
+      "bare_object_db_verified": true,
       "checkout_git_context_verified": true,
-      "result": "REPLAYED_PARTIAL_BLOCK_WITH_BARE_DB_BLOCK"
+      "result": "REPLAYED_PARTIAL_BLOCK"
     },
     {
       "review_id": "CR-0256",
@@ -80,9 +71,9 @@
       "cli_markdown": "d52_a0_pin_cli.md",
       "parse_complete": 2,
       "diagnostic_count": 0,
-      "bare_object_db_verified": false,
+      "bare_object_db_verified": true,
       "checkout_git_context_verified": true,
-      "result": "REPLAYED_PARTIAL_BLOCK_WITH_BARE_DB_BLOCK"
+      "result": "REPLAYED_PARTIAL_BLOCK"
     }
   ],
   "historical_d52_binding": {

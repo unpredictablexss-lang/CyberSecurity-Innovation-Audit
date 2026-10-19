@@ -134,7 +134,14 @@ def main() -> int:
         assert all(item["status"] == "complete" for item in run["parsing"])
 
     print("PASS T4: D51 A0 commit/tree/blob/SHA-256 verified from local bare object DB")
-    print("BLOCK T4: D52 exact A0 commit absent from local bare object DB; checkout Git context independently resolves commit/tree/blob/SHA-256")
+    if subprocess.run(
+        ["git", "--git-dir", str(args.object_db_root / "global_i18n.git"), "cat-file", "-e",
+         f"{CASES['CR-0255']['commit']}^{{commit}}"],
+        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False,
+    ).returncode == 0:
+        print("PASS T4: D52 exact A0 commit/tree/blob/SHA-256 verified from local bare object DB")
+    else:
+        print("BLOCK T4: D52 exact A0 commit absent from local bare object DB; checkout Git context independently resolves commit/tree/blob/SHA-256")
     print("PASS T4: exact-A0 current shared_ptr_race CLI replays complete with 0 diagnostics")
     print("PASS T4: A0 queue has 345 unique IDs; original status distribution is 336 not_testable / 9 not_reproduced")
     print("LIMIT T4: queue_status column absent; 345-row paired queue-state preservation cannot be independently verified from this CSV")
