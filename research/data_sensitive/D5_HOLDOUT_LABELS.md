@@ -25,3 +25,8 @@ Precision, recall, TP, FP, FN, and TN are not estimable. No recall claim is
 made. A future holdout must freeze detector and model hashes first, then be
 reviewed by a person who did not tune the rule; missing or ambiguous evidence
 must be labeled `unknown` rather than forced into a binary class.
+
+
+## Current-version note (2026-10-19)
+
+D41 is frozen against detector 0.17.0 and cannot be used as an independent accuracy result for 0.21.0. D47 freezes the current detector/model source hashes at code commit 1f170e0810405974d613bd43e1a5d62817d215a6 and repeats four already-used development profiles for stability/performance only. D47 does not create independent labels. The next valid holdout must use source snapshots not used in D development, keep the scanner/model frozen during review, and have an independent reviewer assign line-bound labels before the prediction key is revealed.
