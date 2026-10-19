@@ -19,7 +19,7 @@ from .memory_safety import line_column, mask_comments_and_literals
 
 
 RULE_ID = "ohcpp-path-traversal-source-to-file-sink-candidate-001"
-RULE_VERSION = "0.2.0"
+RULE_VERSION = "0.3.0"
 RULE_LINEAGE_ID = "A-PATH-01:source-to-file-sink"
 MAX_UNIT_BYTES = 1024 * 1024
 MAX_TOTAL_BYTES = 32 * 1024 * 1024
@@ -125,30 +125,32 @@ def _guarded_call(code: str, call: re.Match[str], args: Sequence[str]) -> bool:
     return bool(guarded and any(re.search(r"\b" + re.escape(name) + r"\b", condition) for name in names))
 
 
-def _rejects_path_separators(code: str, names: Set[str]) -> Set[str]:
-    """Recognize a narrow early-exit check rejecting slash-bearing components.
+def _separator_reject_guards(code: str) -> List[Tuple[str, int]]:
+    """Return exact receiver and end offset for narrow separator reject guards.
 
     This is deliberately lexical: only a direct find/find_first_of test in an
-    if condition followed by return/throw is accepted. It does not model
-    encoding, Unicode separators, symlinks, or validation in other functions.
+    if condition followed by return/throw is accepted. The returned offset
+    allows each sink to require the guard to precede the operation. It does not
+    model encoding, Unicode separators, symlinks, or validation in other functions.
+    Conditions must contain only the checked receiver and a positive
+    found-separator comparison, so unrelated boolean terms cannot sanitize it.
     """
-    safe: Set[str] = set()
+    guards: List[Tuple[str, int]] = []
     for match in re.finditer(r"if\s*\((?P<condition>[^{}]*)\)\s*\{?\s*(?:return\b|throw\b)", code):
-        condition = match.group("condition")
-        if not re.search(r"[\"'][^\"']*(?:/|\\\\)[^\"']*[\"']", condition):
-            continue
-        found_on_left = re.search(
-            r"(?:find_first_of|find)\s*\([^)]*\)\s*!=\s*(?:std\s*::\s*string\s*::\s*)?npos",
+        condition = match.group("condition").strip()
+        condition = condition.removeprefix("(").removesuffix(")").strip()
+        comparison = re.fullmatch(
+            r"(?:(?P<receiver>[A-Za-z_]\w*)\s*\.\s*(?:find_first_of|find)\s*\(\s*(?P<chars>[\"'][^\"']*[\"'])\s*\)\s*!=\s*(?:std\s*::\s*string\s*::\s*)?npos|"
+            r"(?:std\s*::\s*string\s*::\s*)?npos\s*!=\s*(?P<receiver2>[A-Za-z_]\w*)\s*\.\s*(?:find_first_of|find)\s*\(\s*(?P<chars2>[\"'][^\"']*[\"'])\s*\))",
             condition,
         )
-        found_on_right = re.search(
-            r"(?:std\s*::\s*string\s*::\s*)?npos\s*!=\s*(?:[A-Za-z_]\w*\s*\.\s*)?(?:find_first_of|find)\s*\(",
-            condition,
-        )
-        if not (found_on_left or found_on_right):
+        if not comparison:
             continue
-        safe.update(name for name in names if re.search(r"\b" + re.escape(name) + r"\s*\.\s*(?:find_first_of|find)", condition))
-    return safe
+        chars = comparison.group("chars") or comparison.group("chars2") or ""
+        if not re.search(r"(?:/|\\\\)", chars):
+            continue
+        guards.append((comparison.group("receiver") or comparison.group("receiver2"), match.end()))
+    return guards
 
 
 def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], str]:
@@ -228,9 +230,6 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], st
         # a local string is extracted from a map value with std::get_if.
         if re.search(r"\.\s*Get\s*\(", code) and re.search(r"get_if\s*<\s*std\s*::\s*string\s*>", code):
             tainted.update(re.findall(r"\b([A-Za-z_]\w*)\s*=\s*\*\s*[A-Za-z_]\w*\s*;", code))
-        # An explicit direct component check can remove that value from this
-        # bounded flow only when it rejects both path separator spellings.
-        tainted.difference_update(_rejects_path_separators(body, tainted))
         # Apply exact local interprocedural summaries at calls in this function.
         for call in _CALL_RE.finditer(code):
             callee = re.sub(r"\s*::\s*", "::", call.group("callee"))
@@ -242,7 +241,6 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], st
                 if index < len(args):
                     actual = re.fullmatch(r"\s*&?\s*([A-Za-z_]\w*)\s*", args[index])
                     if actual: tainted.add(actual.group(1))
-        tainted.difference_update(_rejects_path_separators(body, tainted))
         if not tainted:
             continue
         safe = _safe_transforms(code, tainted)
@@ -271,6 +269,9 @@ def _detect_unit(unit: SourceUnit) -> Tuple[List[DetectorFinding], List[str], st
                 continue
             first = re.fullmatch(r"\s*(?:&\s*)?([A-Za-z_]\w*)\s*(?:\.c_str\s*\(\))?\s*", args[0])
             if not first or first.group(1) not in path_vars:
+                continue
+            if any(receiver == first.group(1) and guard_end < call.start()
+                   for receiver, guard_end in _separator_reject_guards(body)):
                 continue
             absolute = start + call.start()
             line, column = line_column(unit.text, absolute)

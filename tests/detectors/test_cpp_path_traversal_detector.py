@@ -135,6 +135,36 @@ class CppPathTraversalDetectorTests(unittest.TestCase):
         run = self.detector.detect(_context(unit), (unit,))
         self.assertEqual(len(run.findings), 2)
 
+    def test_late_separator_guard_does_not_suppress_earlier_sink(self) -> None:
+        source = SOURCE_AND_FILE_FLOW.replace(
+            'void OpenPath(const std::string &path) { open(path.c_str(), O_RDONLY); }',
+            'void OpenPath(const std::string &path) { open(path.c_str(), O_RDONLY); if (path.find_first_of("/\\\\") != std::string::npos) return; }'
+        )
+        unit = _unit(source, "late_guard.cpp")
+        run = self.detector.detect(_context(unit), (unit,))
+        self.assertEqual(len(run.findings), 2)
+
+    def test_unrelated_receiver_boolean_condition_does_not_sanitize_path(self) -> None:
+        source = SOURCE_AND_FILE_FLOW.replace(
+            'void OpenPath(const std::string &path) { open(path.c_str(), O_RDONLY); }',
+            'void OpenPath(const std::string &path) { if (other.find_first_of("/\\\\") != std::string::npos || path.empty()) return; open(path.c_str(), O_RDONLY); }'
+        )
+        unit = _unit(source, "unrelated_receiver.cpp")
+        run = self.detector.detect(_context(unit), (unit,))
+        self.assertEqual(len(run.findings), 2)
+
+    def test_guard_suppresses_only_later_sink_in_same_function(self) -> None:
+        source = SOURCE_AND_FILE_FLOW.replace(
+            'OpenPath(sourcePath);\n    RemovePath(sourcePath);',
+            'unlink(sourcePath.c_str());\n'
+            '    if (sourcePath.find_first_of("/\\\\") != std::string::npos) return;\n'
+            '    open(sourcePath.c_str(), O_RDONLY);'
+        )
+        unit = _unit(source, "two_sinks.cpp")
+        run = self.detector.detect(_context(unit), (unit,))
+        self.assertEqual(len(run.findings), 1)
+        self.assertEqual(run.findings[0].symbol, "Handle")
+
 
 if __name__ == "__main__":
     unittest.main()
