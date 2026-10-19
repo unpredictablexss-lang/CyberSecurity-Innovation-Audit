@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "task_id": "T58",
+  "date": "2026-10-20",
+  "role": "independent_frozen_rule_replay",
+  "verdict": "current-rule-candidate-reproduced",
+  "modified_scanner_code": false,
+  "modified_rules": false,
+  "modified_tests_or_fixtures": false,
+  "modified_prior_reports": false,
+  "component": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "source_identity_verified_from_git_objects": true
+  },
+  "target_source": {
+    "path": "services/zidl/src/pasteboard_service_stub.cpp",
+    "git_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+    "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "saved_d50_parse_status": "partial",
+    "saved_d50_parse_issue": "syntax error at line 58"
+  },
+  "rule_regression": {
+    "baseline": {
+      "version": "0.18.0",
+      "checkout_commit": "842948084660207fd64399cfd598ed93e5593dcc",
+      "detector_blob": "1a0a01624f7e6cf8abd1755c511ab26f149b6214"
+    },
+    "frozen_current": {
+      "version": "0.19.3",
+      "checkout_commit": "c8f83b82291e82b3272c73b943623336a3c836c3",
+      "detector_blob": "94113fdd45b2273e6ea9dd02c7eeac886b853329"
+    },
+    "d52_matcher_changed": false,
+    "d52_candidate_identity_unchanged": true,
+    "d51_anchor_moved": {
+      "from": "services/core/src/pasteboard_service.cpp:222:1",
+      "to": "services/core/src/pasteboard_service.cpp:241:5"
+    },
+    "d52_anchor": "services/zidl/src/pasteboard_service_stub.cpp:41:1",
+    "d52_rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+    "d52_symbol": "CVE-2025-27247"
+  },
+  "saved_state_full_component_replay": {
+    "input_units": 67,
+    "saved_parse_counts": {
+      "complete": 57,
+      "partial": 10,
+      "failed": 0,
+      "not_run": 0
+    },
+    "both_versions_run_status": "blocked",
+    "analyzed_units": 67,
+    "diagnostic_count": 2,
+    "d52_findings": [
+      {
+        "version": "0.18.0",
+        "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "column": 1,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      },
+      {
+        "version": "0.19.3",
+        "rule_id": "ohknowncve-pasteboard-cve-2025-27247",
+        "symbol": "CVE-2025-27247",
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "line": 41,
+        "column": 1,
+        "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868"
+      }
+    ],
+    "d51_findings": [
+      {
+        "version": "0.18.0",
+        "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 222,
+        "column": 1,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      },
+      {
+        "version": "0.19.3",
+        "rule_id": "ohknowncve-pasteboard-cve-2025-25212",
+        "file": "services/core/src/pasteboard_service.cpp",
+        "line": 241,
+        "column": 5,
+        "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      }
+    ]
+  },
+  "fresh_parser_full_component_replay": {
+    "both_versions_d52_candidate_reproduced": true,
+    "full_runner_status": "completed_with_limitations",
+    "detector_status": "blocked",
+    "detector_coverage": "partial",
+    "all_source_parser_counts": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "selected_source_files": 68
+  },
+  "focused_partial_stub_replay": {
+    "parse_status_input": "partial",
+    "versions": ["0.18.0", "0.19.3"],
+    "status": "blocked",
+    "d52_candidate_identity_same": true,
+    "remaining_file_coverage": "unknown"
+  },
+  "controls": [
+    {
+      "id": "exact_unguarded_route",
+      "expected": "candidate",
+      "both_versions_actual": "candidate",
+      "scope": "mapped GET_PASTE_DATA, routed OnGetPasteData, GetPasteData call, and WriteParcelable"
+    },
+    {
+      "id": "syntactic_deny_branch_before_read",
+      "in_memory_source_mutation": "if (!VerifyCallingPermission(PERMISSION_READ_PASTEBOARD)) return ERR_NO_PERMISSION; before GetPasteData",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "Syntactic branch-shape control only; helper implementation and real permission contract are unavailable"
+    },
+    {
+      "id": "ignored_permission_result_before_read",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "Permission token suppresses despite no checked return value or denial branch"
+    },
+    {
+      "id": "permission_after_read",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "False-suppression counterexample; matcher does not enforce check-before-read ordering"
+    },
+    {
+      "id": "permission_after_serialization",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "False-suppression counterexample after data parcel write"
+    },
+    {
+      "id": "permission_in_unreachable_branch",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "False-suppression counterexample; branch reachability not checked"
+    },
+    {
+      "id": "permission_in_core_getter_only",
+      "both_versions_actual": "candidate_remains",
+      "interpretation": "Rule scans only OnRemoteRequest and OnGetPasteData; cross-file gate not followed"
+    },
+    {
+      "id": "permission_in_external_helper_only",
+      "both_versions_actual": "candidate_remains",
+      "interpretation": "Helper outside the two checked method bodies is not followed"
+    },
+    {
+      "id": "different_get_selector",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "D52 selector token is part of the lexical signature"
+    },
+    {
+      "id": "renamed_handler_without_read_return",
+      "both_versions_actual": "no_D52_candidate",
+      "interpretation": "D52 handler name/read/serialization shape is part of the lexical signature"
+    },
+    {
+      "id": "existing_positive_fixture",
+      "both_versions_actual": "D52_candidate_present",
+      "caveat": "Fixture also exercises D51 observer signature; not an independent holdout"
+    },
+    {
+      "id": "existing_safe_fixed_unrelated_fixtures",
+      "both_versions_actual": "no_D52_candidate",
+      "caveat": "Scoped regression fixtures only; do not establish general rule precision"
+    }
+  ],
+  "source_case": {
+    "in_component_route_observed": true,
+    "reported_location_scope": "OnRemoteRequest method opening brace, not the authorization omission or data-copy/write statement",
+    "stub_maps_and_dispatches_get_paste_data": true,
+    "handler_reads_and_serializes_paste_data": true,
+    "core_getter_local_permission_decision_visible": false,
+    "full_framework_authorization_boundary": "UNKNOWN"
+  },
+  "coverage": {
+    "whole_component": "blocked_partial",
+    "exact_target_file": "partial",
+    "rule_guard_region": ["OnRemoteRequest", "OnGetPasteData"],
+    "not_modeled": [
+      "PasteboardService::GetPasteData in cross-file matcher logic",
+      "helpers outside the two checked stub methods",
+      "inherited IPC/SystemAbility enforcement",
+      "service ACL and product policy",
+      "attacker reachability and runtime impact"
+    ],
+    "holdout_labels_available": false
+  },
+  "product_and_cve": {
+    "product_build_identity": "UNKNOWN",
+    "component_inclusion": "UNKNOWN",
+    "product_vulnerability": "UNKNOWN",
+    "cve_root_cause_mapping": "UNKNOWN",
+    "runtime_impact": "NOT_VALIDATED",
+    "validated_vulnerability": 0
+  },
+  "scope_review": {
+    "scanner_or_rule_changes": false,
+    "test_or_fixture_changes": false,
+    "prior_report_changes": false,
+    "evidence_only_outputs": [
+      "research/evidence/cpp/T58_PASTEBOARD_RULE_REPLAY_20261020.md",
+      "research/evidence/cpp/T58_PASTEBOARD_RULE_REPLAY_20261020.json"
+    ],
+    "automated_d_lane_scope_check": "N/A: frozen ownership.json has no D lane; manually scope-reviewed evidence destination"
+  },
+  "d58_comparison": {
+    "reviewed_frozen_d58": true,
+    "independent_replay_matches_d58_claims": true,
+    "d58_frozen_commit": "8eb43e33a10e88cc02341df3e9bb91f93d1dc862",
+    "notes": "D58 uses the same scoped interpretation: its early-return case is a syntactic guard-shape control only; actual helper semantics and permission enforcement remain unknown."
+  },
+  "commands": [
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard rev-parse HEAD",
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard cat-file -p dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard ls-tree dd22c7cb5e5f207a6c38c50f45b7369ee8575840 services/zidl/src/pasteboard_service_stub.cpp",
+    "git -C D:/OpenHarmony807/repos/miscservices_pasteboard cat-file blob dd22c7cb5e5f207a6c38c50f45b7369ee8575840:services/zidl/src/pasteboard_service_stub.cpp",
+    "Independent in-memory ScanContext replay using source blobs from the pinned Git tree; saved D50 parser state map; detector source at 842948084660207fd64399cfd598ed93e5593dcc and c8f83b82291e82b3272c73b943623336a3c836c3",
+    "Independent in-memory mutations against the exact stub: bounded-denial branch, ignored call, post-read, post-serialization, unreachable branch, helper-only, selector sibling, and handler sibling"
+  ]
+}
