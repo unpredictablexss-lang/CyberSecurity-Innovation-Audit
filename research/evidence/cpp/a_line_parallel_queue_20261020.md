@@ -21,6 +21,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D17 found no trusted merged/released cJSON fixed source: 67215 remains unpatched in checked master/develop; 67216 has an unmerged develop candidate that is not a fixed release.
 - T13 verified the first five queued IDs and eight source objects. All five remain `not_testable / queued_first_batch`; no original queue IDs or states changed.
 - T14 accepted the synthetic sink-name regression but marked the exact cJSON finding location PARTIAL: line 861 is an early-exit root-replace branch, while general ADD/COPY duplicate-and-attach paths occur later. Follow-up D18 owns that source-to-root association gap.
+- D18 is implemented at `38dc3be`: the candidate is tied to COPY line 932 and ADD/REPLACE line 950; the early-exit root-replace line 861 is quiet. Exact-source coverage remains PARTIAL/BLOCK because `cJSON.c` parsing is incomplete and no trusted fixed source exists. T15 is independently accepting this change.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
