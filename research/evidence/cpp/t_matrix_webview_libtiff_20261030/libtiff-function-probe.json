@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "task": "D21 libtiff CVE-2025-9900 bounds gap assessment",
+  "base_commit": "b276ca10fcae03e7e9b5ab7e7ceabcd883d42b4e",
+  "disposition": "PARTIAL",
+  "detector_change": false,
+  "source_repository_declared": "libtiff/libtiff",
+  "scope": [
+    "libtiff/tif_getimage.c",
+    "libtiff/tiffio.h"
+  ],
+  "whole_translation_unit_cli": {
+    "tool": "ohscanner.cpp.bounds",
+    "version": "0.3.0",
+    "profile": "light-ast",
+    "selected_files": 2,
+    "vulnerable": {
+      "parse": "partial",
+      "detector_status": "blocked",
+      "findings": 0
+    },
+    "fixed": {
+      "parse": "partial",
+      "detector_status": "blocked",
+      "findings": 0
+    },
+    "interpretation": "unknown due to parser partial; not safe and not a fixed differential pass"
+  },
+  "function_fragment_probe": {
+    "vulnerable": {
+      "commit": "9dff73bebc5661f2dace6f16e14cf9e857172f4e",
+      "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a",
+      "path": "libtiff/tif_getimage.c",
+      "blob": "6c7b5031a1937bb48cc79808a59618d8a4f6237e",
+      "file_sha256": "cf39474735eba839a097a540fbc3f5f17791d6f7496a1800e04dbefc0e7d13e3",
+      "bytes": 105147,
+      "header": {
+        "path": "libtiff/tiffio.h",
+        "blob": "225f3c1bfeabae2b31a5f35fbfd12d14b570dcd8",
+        "sha256": "70119b9db897a364821a108ff0adc09f26c20ad9b6d9e943eb376ee3edb6166f",
+        "tree": "986499c84247e9a1f49560128bbe7580d8ebea1a"
+      },
+      "function": {
+        "name": "TIFFReadRGBAImageOriented",
+        "original_start_line": 610,
+        "original_end_line": 631,
+        "function_slice_sha256": "fdae36a9e7a21e00392236fda8715cb7dded4a1276210d7d37fe565f0d12b8e9",
+        "function_parse": "complete",
+        "function_and_exact_field_declaration_parse": "complete",
+        "parse_issues": [],
+        "standalone_type_shim": "typedef unsigned int uint32_t; (platform alias shim for system stdint.h)"
+      },
+      "detector": {
+        "id": "ohscanner.cpp.bounds",
+        "version": "0.3.0",
+        "status": "completed",
+        "findings": [
+          {
+            "rule_id": "ohcpp-memory-bounds-pointer-offset-candidate-004",
+            "rule_version": "0.1.0",
+            "local_line": 50,
+            "original_function_line": 621,
+            "symbol": "raster",
+            "source_sha256": "6302a9c9f11f62a244fd3d765f39f1cac87855423cc59d01f51a5e3cc9ce1d06"
+          }
+        ]
+      },
+      "whole_file_parse": "partial",
+      "whole_file_parse_issue_count": 6
+    },
+    "fixed": {
+      "commit": "3e0dcf0ec651638b2bd849b2e6f3124b36890d99",
+      "tree": "77361ef7262189e16a2010b5c333f6b275d17f09",
+      "path": "libtiff/tif_getimage.c",
+      "blob": "2774caa0eef24bce2a619d2686a23d59fb5ef9db",
+      "file_sha256": "de1bb87b9c2882c73f1045d9510e30d997afb48c52179a62b647aed4c6cee7d8",
+      "bytes": 106010,
+      "header": {
+        "path": "libtiff/tiffio.h",
+        "blob": "6a7ab2f5b7f6697020dfbcac57f8c2617c4b1074",
+        "sha256": "7923903a85c15c047a22bfe52ef1901939d6a7e656c75b814fcb86c6179b120c",
+        "tree": "77361ef7262189e16a2010b5c333f6b275d17f09"
+      },
+      "function": {
+        "name": "TIFFReadRGBAImageOriented",
+        "original_start_line": 626,
+        "original_end_line": 645,
+        "function_slice_sha256": "51617edc21ee5637de99c242a834eebc1341f28315d4ae74a279b775ddd13486",
+        "function_parse": "complete",
+        "function_and_exact_field_declaration_parse": "complete",
+        "parse_issues": [],
+        "standalone_type_shim": "typedef unsigned int uint32_t; (platform alias shim for system stdint.h)"
+      },
+      "detector": {
+        "id": "ohscanner.cpp.bounds",
+        "version": "0.3.0",
+        "status": "completed",
+        "findings": []
+      },
+      "whole_file_parse": "partial",
+      "whole_file_parse_issue_count": 6
+    }
+  },
+  "decision": "No-change: current D7 pointer-offset rule already detects the exact vulnerable root on a complete local function plus exact TIFFRGBAImage field declaration; the exact fixed function is quiet. Whole translation units remain partial, so case remains PARTIAL.",
+  "limitations": [
+    "Function fragment is a bounded source slice, not a full-file CLI analysis.",
+    "uint32_t is represented by a standalone underlying-type shim because the actual typedef is from system stdint.h.",
+    "No product build, runtime reachability, caller input control, raster capacity, or impact was established."
+  ],
+  "replay_commands": [
+    "python -m src.cli ohscan-run --repo-dir <repo> --repository libtiff/libtiff --commit 9dff73bebc5661f2dace6f16e14cf9e857172f4e --include libtiff/tif_getimage.c --include libtiff/tiffio.h --detector ohscanner.cpp.bounds",
+    "python -m src.cli ohscan-run --repo-dir <repo> --repository libtiff/libtiff --commit 3e0dcf0ec651638b2bd849b2e6f3124b36890d99 --include libtiff/tif_getimage.c --include libtiff/tiffio.h --detector ohscanner.cpp.bounds",
+    "python research/evidence/cpp/d21_libtiff_9900_20261020/replay.py --repo-dir <repo> --output-dir <output-dir>"
+  ]
+}
