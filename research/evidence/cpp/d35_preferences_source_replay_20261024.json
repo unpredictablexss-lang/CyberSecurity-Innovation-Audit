@@ -1,0 +1,716 @@
+{
+  "schema_version": "d35-preferences-fuzz-source-replay-v1",
+  "task": "D35",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+      "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+      "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf"
+    }
+  },
+  "build_target": {
+    "file": {
+      "path": "test/native/fuzztest/dbpreferences_fuzzer/BUILD.gn",
+      "blob": "b9a2eacecbc180514c963e59d3f9365068ae20e5",
+      "sha256": "2f3268757bbe0e66f9cb1eac4b6fc5c6f2be0a1f063931052969bd840b3c217e"
+    },
+    "target": "ohos_fuzztest(DBPreferencesFuzzTest)",
+    "test_group": "group(fuzztest) [testonly = true]",
+    "harness_entry": "LLVMFuzzerTestOneInput",
+    "production_evidence": false
+  },
+  "queue": {
+    "csv": "D:\\openHarmonyScanner\\worktrees\\a-d35-preferences-fuzz-replay-20261024\\research\\deliveries\\cpp\\a0_triage_20261019\\queue.csv",
+    "json": "D:\\openHarmonyScanner\\worktrees\\a-d35-preferences-fuzz-replay-20261024\\research\\deliveries\\cpp\\a0_triage_20261019\\queue.json",
+    "total_rows": 345,
+    "audited_ids": [
+      "CR-0022",
+      "CR-0023",
+      "CR-0024",
+      "CR-0025",
+      "CR-0026",
+      "CR-0027",
+      "CR-0028",
+      "CR-0029",
+      "CR-0030",
+      "CR-0031",
+      "CR-0032",
+      "CR-0033",
+      "CR-0034",
+      "CR-0035",
+      "CR-0036",
+      "CR-0037",
+      "CR-0038",
+      "CR-0039",
+      "CR-0040"
+    ],
+    "a0_status_unchanged": true
+  },
+  "cli": {
+    "raw": "d35_preferences_fuzz_20261024.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 1,
+    "scope_loc": 144,
+    "parse": {
+      "complete": 1
+    },
+    "findings": 19,
+    "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-source-checkout> --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "items": [
+    {
+      "queue_id": "CR-0022",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6865dec2e2f3cb53",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 43
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 43,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:81b94b63ab56506c",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0023",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:325abf25b06a4bba",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 48
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 48,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2b48e26f0f1f8db2",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0024",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d532e632aa287f97",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 50
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 50,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d52382ce60e23dd3",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0025",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:02527e382bee583e",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 65
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 65,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:e018ece329b53813",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0026",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c66fe4e97e268674",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 66
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 66,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:32b09d121dae57aa",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0027",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:688f26cd50ff6e74",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 74
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 74,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c4eb1d6fb40d59b5",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0028",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:4e315d4b4e371f5a",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 75
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 75,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2542a26133b617e1",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0029",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:050f6d4b24abc1b5",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 83
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 83,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:d4db1a1b8ac8e87a",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0030",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ebd54f03aa0ada18",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 84
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 84,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:cc5e3053794992ec",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0031",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a5781585e98a08c7",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 92
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 92,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4eb09648862c68a8",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0032",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:aa0e0664b5c21ef1",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 93
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 93,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3e5cce5d642651d1",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0033",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:afbd3cfde08e4a96",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 101
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 101,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:50c93b4762a41541",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0034",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:d04688459c701bf8",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 102
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 102,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2b77a33d55a575fc",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0035",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ac0f84941d2c483d",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 110
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 110,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:ca194fbf605dc358",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0036",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:1fa003373b2e8ee5",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 111
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 111,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:279a12bd13cd499c",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0037",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a77f0203668313a3",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 112
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 112,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2939e3de23a444ef",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0038",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ad23bb0eb7c6c778",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 121
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 121,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b662b450001c19f4",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0039",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:f8f2f590e64fd6f4",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 122
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 122,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:204b5bc0a8b23f85",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0040",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:67a5782421a8b1f8",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferences_fuzzer/dbpreferences_fuzzer.cpp",
+        "blob": "4cf33a525d98b18bda1f36d7ec0cf27cdb4a41b6",
+        "sha256": "39d4429ccf1ef4cacf946597de5f5b789bb826427b7901e820d97e3859ec6bbf",
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 123
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 123,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b8d0819e33221773",
+        "stable_finding_identity": null,
+        "stable_identity_status": "unknown",
+        "occurrence_finding_identity": null,
+        "occurrence_identity_status": "unknown"
+      },
+      "disposition": "PARTIAL",
+      "reason": "The source is part of an ohos_fuzztest test harness; syntax candidates are not production vulnerability evidence. Runtime race, production reachability, product build and impact are unverified.",
+      "queue_preserved": true
+    }
+  ],
+  "overall_disposition": "PARTIAL",
+  "detector_change": "none; all 19 source locations replay and the audited source is test-only harness code",
+  "queue_states_changed": false
+}
