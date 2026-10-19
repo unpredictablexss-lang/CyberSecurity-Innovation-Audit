@@ -45,6 +45,27 @@
         "tests/test_audit_plan*.py",
         "research/deliveries/platform/**"
       ]
+    },
+    "c_d1": {
+      "allowed": [
+        "src/ohscanner/detectors/ark_runtime/**"
+      ]
+    },
+    "c_t1": {
+      "allowed": [
+        "tests/detectors/ark_runtime/**"
+      ]
+    },
+    "c_d2": {
+      "allowed": [
+        "research/methods/ark_runtime/build_profile_20261019/**"
+      ]
+    },
+    "c_t2": {
+      "allowed": [
+        "research/evaluation/ark_runtime_holdout_20261019/holdout_pipeline.py",
+        "research/evaluation/ark_runtime_holdout_20261019/selftest/fail-closed-review-20261020/**"
+      ]
     }
   },
   "shared_owner_only": [
