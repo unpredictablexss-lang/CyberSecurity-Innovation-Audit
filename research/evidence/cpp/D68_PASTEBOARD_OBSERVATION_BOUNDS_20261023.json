@@ -1,0 +1,87 @@
+{
+  "task": "D68",
+  "detector": "ohscanner.known_disclosed_cves",
+  "version": "0.19.10",
+  "base_commit": "dd7881d81e49d333ac2bd52062706ed06c5694c5",
+  "D50_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "declared_files": 68,
+    "c_cpp_files": 67,
+    "typescript_boundary_files": 1,
+    "all_c_cpp_sha256_match_D50": true,
+    "D52_stub_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "D52_core_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+  },
+  "observation_limits": {
+    "max_records": 8,
+    "max_tokens_per_record": 16,
+    "max_snippet_characters": 120,
+    "max_description_characters": 4096,
+    "balanced_call_spans": true,
+    "unbraced_nested_control": "unresolved_control_flow",
+    "payload_truncation_marked": true,
+    "permission_guard_semantics": "unknown"
+  },
+  "constructive_probes": {
+    "identifiers_in_one_call": 3000,
+    "guard_calls_in_record_cap_probe": 12,
+    "nested_call_span": "passed",
+    "unbraced_nested_if": "passed; unresolved_control_flow",
+    "all_bounds_and_truncation_counts": "passed"
+  },
+  "focused_validation": {
+    "command": "python -m unittest tests.detectors.test_known_disclosed_cves tests.detectors.test_known_case_corpus",
+    "tests": 33,
+    "passed": 33,
+    "failed": 0,
+    "diff_check": "passed"
+  },
+  "raw_replay": {
+    "report": "research/evidence/cpp/D68_PASTEBOARD_RAW67_REPLAY_20261023.json",
+    "sha256": "491c63b8a5cf68497722c0c3f8c444857678c28848c07d0a9133538faaf5e13d",
+    "environment": {
+      "python": "3.13.9",
+      "tree_sitter": "0.26.0",
+      "tree_sitter_c": "0.24.2",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_typescript": "unavailable"
+    },
+    "parse_status": {
+      "complete": 59,
+      "partial": 8,
+      "not_run": 1
+    },
+    "detector_applicable_scope_cpp": 67,
+    "detector_status": "blocked",
+    "findings": 2,
+    "D50_parse_status": {
+      "complete": 57,
+      "partial": 10,
+      "not_run": 1
+    },
+    "partial_to_complete_observations": [
+      {
+        "file": "services/zidl/src/pasteboard_observer_stub.cpp",
+        "D50_issue": "error at line 46",
+        "D68_status": "complete"
+      },
+      {
+        "file": "services/zidl/src/pasteboard_service_stub.cpp",
+        "D50_issue": "error at line 58",
+        "D68_status": "complete"
+      }
+    ],
+    "interpretation": "exact source replay in a different runtime and detector revision; not a historical D50 environment rerun and not evidence that historical coverage improved"
+  },
+  "D52_candidate": {
+    "symbol": "CVE-2025-27247",
+    "file": "services/zidl/src/pasteboard_service_stub.cpp",
+    "line": 41,
+    "source_sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "permission_guard": "unknown",
+    "candidate_retained": true
+  },
+  "T68_acceptance": "pending"
+}

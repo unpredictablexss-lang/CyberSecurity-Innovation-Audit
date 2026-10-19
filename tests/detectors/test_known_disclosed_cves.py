@@ -1,11 +1,12 @@
 from __future__ import annotations
 import hashlib
+import json
 import subprocess
 import unittest
 from pathlib import Path
 from src.ohscanner.contracts import ScanContext, ScanRequest, SourceUnit
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
-from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector
+from src.ohscanner.detectors.known_cves import KnownDisclosedCveDetector, _pasteboard_guard_observation
 from src.ohscanner.fixture import snapshot_digest
 
 PINNED_HEAD = "db77164fdc2af0da02e4d3efc056d84694fd68e8"
@@ -534,14 +535,59 @@ class KnownDisclosedCveTests(unittest.TestCase):
                         if item.kind == "permission_guard_observation")
 
         absent_observation = observation_for(handler)
-        self.assertIn("state=absent", absent_observation)
+        self.assertEqual("absent", json.loads(absent_observation)["state"])
         visible_observation = observation_for(bluetooth_with_read_identity)
-        self.assertIn("state=observed_unresolved", visible_observation)
+        self.assertEqual("observed_unresolved", json.loads(visible_observation)["state"])
         self.assertIn("PERMISSION_READ_PASTEBOARD", visible_observation)
-        self.assertIn("span=handler_body[", visible_observation)
+        self.assertIn('"start":', visible_observation)
         nested_observation = observation_for(conditional_guard)
-        self.assertIn("state=unresolved_control_flow", nested_observation)
+        self.assertEqual("unresolved_control_flow", json.loads(nested_observation)["state"])
         self.assertIn("PERMISSION_READ_PASTEBOARD", nested_observation)
+
+    def test_pasteboard_guard_observation_is_bounded_and_balanced(self):
+        giant_call = "CheckPermission(" + ",".join(f"ARG{i}" for i in range(3000)) + ")"
+        giant = _pasteboard_guard_observation(f"if ({giant_call}) return denied;")
+        giant_payload = json.loads(giant.description)
+        self.assertLessEqual(len(giant.description), 4096)
+        self.assertLessEqual(len(giant_payload["observations"]), 8)
+        self.assertGreaterEqual(giant_payload["total_matches"], 1)
+        record = giant_payload["observations"][0]
+        self.assertLessEqual(len(record["tokens"]), 16)
+        self.assertLessEqual(len(record["snippet"]), 120)
+        self.assertTrue(record["tokens_truncated"])
+        self.assertGreater(record["tokens_omitted_count"], 0)
+
+        many_calls = _pasteboard_guard_observation(
+            " ".join("VerifyPermission(PERMISSION_READ_PASTEBOARD);" for _ in range(12))
+        )
+        many_payload = json.loads(many_calls.description)
+        self.assertLessEqual(len(many_calls.description), 4096)
+        self.assertEqual(12, many_payload["total_matches"])
+        self.assertEqual(8, len(many_payload["observations"]))
+        self.assertTrue(many_payload["observations_truncated"])
+        self.assertEqual(4, many_payload["observations_omitted_count"])
+
+        long_tokens = [f"ARG{i}" + "X" * 44 for i in range(16)]
+        long_call = "CheckPermission(" + ",".join(long_tokens) + ")"
+        oversized_description = _pasteboard_guard_observation(" ".join(long_call + ";" for _ in range(8))).description
+        oversized_payload = json.loads(oversized_description)
+        self.assertLessEqual(len(oversized_description), 4096)
+        self.assertTrue(oversized_payload["payload_truncated"])
+        self.assertGreater(oversized_payload["payload_over_limit_characters"], 0)
+        self.assertTrue(any(record["tokens_truncated"] for record in oversized_payload["observations"]))
+
+        nested_call = "CheckPermission(GetPermissionType(PERMISSION_READ_PASTEBOARD))"
+        nested = _pasteboard_guard_observation(f"if (!{nested_call}) return denied;")
+        nested_payload = json.loads(nested.description)
+        nested_record = nested_payload["observations"][0]
+        self.assertEqual("permission_call", nested_record["kind"])
+        self.assertEqual(nested_call, nested_record["snippet"])
+        self.assertEqual(len(nested_call), nested_record["end"] - nested_record["start"])
+
+        unbraced = _pasteboard_guard_observation(
+            "if (is_privileged) if (!VerifyPermission(PERMISSION_READ_PASTEBOARD)) return denied; GetPasteData();"
+        )
+        self.assertEqual("unresolved_control_flow", json.loads(unbraced.description)["state"])
 
     def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
         helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {

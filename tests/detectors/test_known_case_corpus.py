@@ -51,7 +51,7 @@ class KnownCaseCorpusTests(unittest.TestCase):
         )
 
     def test_manifest_is_28_way_source_bound_disposition_corpus(self):
-        self.assertEqual("0.19.9", VERSION)
+        self.assertEqual("0.19.10", VERSION)
         self.assertEqual(28, len(MANIFEST["cases"]))
         self.assertEqual(
             {"public_cve": 17, "local_dangerous_shape": 5, "manual_candidate": 4, "exclusion": 2},

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 import re
 from typing import List, Tuple
 from src.ohscanner.contracts import DetectorFinding, DetectorRun, EvidenceObligation, ScanContext, SourceUnit
@@ -6,7 +7,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.9"
+VERSION = "0.19.10"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -194,38 +195,167 @@ def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: 
         source_sha256=unit.sha256, rule_version=VERSION, rule_lineage_id=LINEAGE,
         symbol_identity=cve, identity_quality="partial")
 
-def _pasteboard_guard_observation(handler_body: str) -> EvidenceObligation:
-    """Record visible guard-like syntax without inferring permission semantics."""
-    guard_like = re.compile(
-        r"\b(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|HasPastePermission)"
-        r"\s*\([^;{}]*?\)|\b(?:PERMISSION_[A-Z0-9_]+|READ_PASTEBOARD(?:_PERMISSION)?|"
-        r"SECURE_PASTE(?:_PERMISSION)?)\b",
-        re.I,
-    )
-    matches = list(guard_like.finditer(handler_body))
-    if not matches:
-        return EvidenceObligation(
-            "permission_guard_observation",
-            "state=absent; scope=OnGetPasteData body; no permission-like call or token was observed",
-            "unknown",
-        )
+def _statement_end(text: str, start: int, depth: int = 0):
+    """Conservatively bound a statement for unbraced control-flow observation."""
+    if depth > 32:
+        return None
+    while start < len(text) and text[start].isspace():
+        start += 1
+    control = re.match(r"(?:if|for|while|switch|catch)\s*\(", text[start:])
+    if control:
+        opening = start + control.end() - 1
+        closing = _matching_delimiter(text, opening, "(", ")")
+        if closing is None:
+            return None
+        body_start = closing + 1
+        while body_start < len(text) and text[body_start].isspace():
+            body_start += 1
+        body_end = _statement_end(text, body_start, depth + 1)
+        if body_end is None:
+            return None
+        if text[start: start + control.end()].lstrip().startswith("if"):
+            else_match = re.match(r"\s*else\b", text[body_end:])
+            if else_match:
+                else_start = body_end + else_match.end()
+                alternative_end = _statement_end(text, else_start, depth + 1)
+                return alternative_end
+        return body_end
+    if start >= len(text):
+        return None
+    if text[start] == "{":
+        closing = _matching_delimiter(text, start, "{", "}")
+        return closing + 1 if closing is not None else None
+    paren = bracket = 0
+    for index in range(start, len(text)):
+        char = text[index]
+        if char == "(": paren += 1
+        elif char == ")": paren = max(0, paren - 1)
+        elif char == "[": bracket += 1
+        elif char == "]": bracket = max(0, bracket - 1)
+        elif char == ";" and paren == bracket == 0:
+            return index + 1
+        elif char == "}" and paren == bracket == 0:
+            return index
+    return None
 
-    unresolved_flow = any(not _top_level_at(handler_body, match.start()) for match in matches)
-    state = "unresolved_control_flow" if unresolved_flow else "observed_unresolved"
-    records = []
-    for match in matches[:8]:
-        snippet = re.sub(r"\s+", " ", match.group(0)).strip()[:120]
-        tokens = sorted({token.upper() for token in re.findall(r"\b[A-Za-z_]\w*\b", match.group(0))})
-        records.append(
-            f"span=handler_body[{match.start()}:{match.end()}]; token={'|'.join(tokens) or 'none'}; snippet={snippet}"
-        )
-    if len(matches) > 8:
-        records.append(f"additional_matches={len(matches) - 8}")
-    return EvidenceObligation(
-        "permission_guard_observation",
-        f"state={state}; observations=" + " || ".join(records),
-        "unknown",
+def _inside_unbraced_control(text: str, position: int) -> bool:
+    controls = re.finditer(r"\b(?:if|for|while|switch|catch)\s*\(", text[:position])
+    for control in controls:
+        opening = text.find("(", control.start())
+        closing = _matching_delimiter(text, opening, "(", ")")
+        if closing is None:
+            return True
+        body_start = closing + 1
+        while body_start < len(text) and text[body_start].isspace():
+            body_start += 1
+        if body_start >= position:
+            continue
+        if text[body_start] == "{":
+            block_end = _matching_delimiter(text, body_start, "{", "}")
+            if block_end is None:
+                return True
+            continue
+        end = _statement_end(text, body_start)
+        if end is None or position < end:
+            return True
+    return False
+
+def _pasteboard_guard_observation(handler_body: str) -> EvidenceObligation:
+    """Emit a bounded lexical observation only; never infer guard semantics."""
+    call_start = re.compile(r"\b(?:Check\w*Permission|Verify\w*Permission|Enforce\w*Permission|HasPastePermission)\s*\(", re.I)
+    token_pattern = re.compile(r"\b(?:PERMISSION_[A-Z0-9_]+|READ_PASTEBOARD(?:_PERMISSION)?|SECURE_PASTE(?:_PERMISSION)?)\b", re.I)
+    candidates = []
+    cursor = 0
+    total_matches = 0
+    unresolved_flow = False
+    while cursor < len(handler_body):
+        call = call_start.search(handler_body, cursor)
+        token = token_pattern.search(handler_body, cursor)
+        if call is None and token is None:
+            break
+        if token is None or (call is not None and call.start() <= token.start()):
+            start = call.start()
+            opening = handler_body.find("(", call.start())
+            closing = _matching_delimiter(handler_body, opening, "(", ")")
+            if closing is None:
+                end = len(handler_body)
+                unresolved_flow = True
+            else:
+                end = closing + 1
+            kind = "permission_call"
+        else:
+            start, end, kind = token.start(), token.end(), "permission_token"
+        match_text = handler_body[start:end]
+        total_matches += 1
+        if total_matches <= 8 and (not _top_level_at(handler_body, start) or _inside_unbraced_control(handler_body, start)):
+            unresolved_flow = True
+        if len(candidates) < 8:
+            raw_tokens = sorted({item.upper() for item in re.findall(r"\b[A-Za-z_]\w*\b", match_text)})
+            token_limit = 16
+            selected = raw_tokens[:token_limit]
+            token_chars_truncated = 0
+            bounded_tokens = []
+            for item in selected:
+                bounded = item[:48]
+                token_chars_truncated += len(item) - len(bounded)
+                bounded_tokens.append(bounded)
+            candidates.append({
+                "start": start,
+                "end": end,
+                "kind": kind,
+                "tokens": bounded_tokens,
+                "tokens_truncated": len(raw_tokens) > len(selected) or token_chars_truncated > 0,
+                "tokens_omitted_count": max(0, len(raw_tokens) - len(selected)),
+                "token_chars_truncated": token_chars_truncated,
+                "snippet": re.sub(r"\s+", " ", match_text).strip()[:120],
+            })
+        cursor = max(end, start + 1)
+
+    state = "absent" if total_matches == 0 else (
+        "unresolved_control_flow" if unresolved_flow else "observed_unresolved"
     )
+    data = {
+        "state": state,
+        "total_matches": total_matches,
+        "observations_truncated": total_matches > len(candidates),
+        "observations_omitted_count": max(0, total_matches - len(candidates)),
+        "payload_truncated": False,
+        "payload_over_limit_characters": 0,
+        "observations": candidates,
+    }
+    description = json.dumps(data, separators=(",", ":"), ensure_ascii=True)
+    data["payload_over_limit_characters"] = max(0, len(description) - 4096)
+    if data["payload_over_limit_characters"]:
+        data["payload_truncated"] = True
+        description = json.dumps(data, separators=(",", ":"), ensure_ascii=True)
+    # Keep the serialized evidence under a hard cap even for pathological identifiers.
+    while len(description) > 4096 and candidates:
+        largest = max(candidates, key=lambda record: len(record["tokens"]))
+        if largest["tokens"]:
+            largest["tokens"].pop()
+            largest["tokens_truncated"] = True
+            largest["tokens_omitted_count"] += 1
+            data["payload_truncated"] = True
+        elif largest["snippet"]:
+            largest["snippet"] = largest["snippet"][:max(0, len(largest["snippet"]) - 16)]
+            data["payload_truncated"] = True
+        else:
+            candidates.remove(largest)
+            data["observations_omitted_count"] += 1
+            data["observations_truncated"] = True
+            data["payload_truncated"] = True
+        description = json.dumps(data, separators=(",", ":"), ensure_ascii=True)
+    if len(description) > 4096:
+        description = json.dumps({
+            "state": state,
+            "total_matches": total_matches,
+            "observations_truncated": True,
+            "observations_omitted_count": total_matches,
+            "payload_truncated": True,
+            "payload_over_limit_characters": max(1, len(description) - 4096),
+            "observations": [],
+        }, separators=(",", ":"), ensure_ascii=True)
+    return EvidenceObligation("permission_guard_observation", description, "unknown")
 
 def _curl_version(units):
     """Return one source-declared libcurl version; disagreement stays unknown."""
