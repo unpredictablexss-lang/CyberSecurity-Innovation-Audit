@@ -561,7 +561,15 @@
       }
     },
     "missing_side_paths": 2,
-    "blocked_expected_paths": 0
+    "blocked_expected_paths": 0,
+    "blockers": {
+      "missing_commit_sides": 0,
+      "missing_or_wrong_type_commit_objects": 0,
+      "missing_trees": 0,
+      "ancestry_failures": 0,
+      "ancestry_errors": 0,
+      "ancestry_unknown": 0
+    }
   },
   "portfolio_status": "PC-1 IN_PROGRESS_BLOCKED; product build/preprocess profiles remain BLOCKED and 0/16 complete"
 }

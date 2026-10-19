@@ -75,9 +75,24 @@ def summarize(evidence: list[dict[str, Any]], unresolved_cases: list[dict[str, A
     by_field = {field: dict(counts) for field in ("tree", "recorded_git_blob_oid", "recorded_source_sha256", "recorded_bytes")}
     missing_side_paths = 0
     blocked_paths = 0
+    blockers = {
+        "missing_commit_sides": 0,
+        "missing_or_wrong_type_commit_objects": 0,
+        "missing_trees": 0,
+        "ancestry_failures": 0,
+        "ancestry_errors": 0,
+        "ancestry_unknown": 0,
+    }
     for case in evidence:
         for side in ("parent", "fixed"):
             side_data = case.get(side) or {}
+            side_status = side_data.get("status")
+            if side_status == "UNKNOWN":
+                blockers["missing_commit_sides"] += 1
+            elif side_status == "BLOCKED_OBJECT_MISSING_OR_WRONG_TYPE":
+                blockers["missing_or_wrong_type_commit_objects"] += 1
+            elif side_status == "BLOCKED_TREE_MISSING":
+                blockers["missing_trees"] += 1
             tree_state = side_data.get("tree_check")
             if tree_state in counts:
                 counts[tree_state] += 1
@@ -92,6 +107,13 @@ def summarize(evidence: list[dict[str, Any]], unresolved_cases: list[dict[str, A
                     if field in by_field and state in counts:
                         counts[state] += 1
                         by_field[field][state] += 1
+        ancestry = case.get("parent_is_ancestor_of_fixed")
+        if ancestry == "FAIL":
+            blockers["ancestry_failures"] += 1
+        elif ancestry == "BLOCKED_ERROR":
+            blockers["ancestry_errors"] += 1
+        elif ancestry != "PASS":
+            blockers["ancestry_unknown"] += 1
     return {
         "anchored_cases": len(evidence),
         "unanchored_cases": len(unresolved_cases),
@@ -99,11 +121,15 @@ def summarize(evidence: list[dict[str, Any]], unresolved_cases: list[dict[str, A
         "checks_by_field": by_field,
         "missing_side_paths": missing_side_paths,
         "blocked_expected_paths": blocked_paths,
+        "blockers": blockers,
     }
 
 
 def has_verification_failure(summary: dict[str, Any]) -> bool:
-    return bool(summary["recorded_identity_checks"]["MISMATCH"] or summary["blocked_expected_paths"])
+    blockers = summary["blockers"]
+    return bool(summary["recorded_identity_checks"]["MISMATCH"]
+                or summary["blocked_expected_paths"]
+                or any(blockers.values()))
 
 
 def self_test() -> None:
@@ -120,8 +146,18 @@ def self_test() -> None:
     assert summary["recorded_identity_checks"] == {"MATCH": 1, "NOT_RECORDED": 2, "MISMATCH": 2}
     assert summary["missing_side_paths"] == 1
     assert has_verification_failure(summary), "recorded mismatch must fail the verification gate"
-    clean_summary = summarize([{"parent": {"tree_check": "MATCH", "files": []}, "fixed": {"tree_check": "NOT_RECORDED", "files": []}}], [])
+    clean_summary = summarize([{"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+                                "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+                                "parent_is_ancestor_of_fixed": "PASS"}], [])
     assert not has_verification_failure(clean_summary), "NOT_RECORDED alone must not be treated as mismatch"
+    blocked_mutations = [
+        {"parent": {"status": "BLOCKED_OBJECT_MISSING_OR_WRONG_TYPE", "files": []}, "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []}, "parent_is_ancestor_of_fixed": "PASS"},
+        {"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []}, "fixed": {"status": "BLOCKED_TREE_MISSING", "tree_check": "NOT_RECORDED", "files": []}, "parent_is_ancestor_of_fixed": "PASS"},
+        {"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []}, "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []}, "parent_is_ancestor_of_fixed": "FAIL"},
+        {"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []}, "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []}, "parent_is_ancestor_of_fixed": "BLOCKED_ERROR"},
+    ]
+    for mutation in blocked_mutations:
+        assert has_verification_failure(summarize([mutation], [])), f"must fail closed for mutation {mutation}"
 
 
 def validate_store(git_dir: Path) -> dict[str, Any]:
@@ -269,10 +305,11 @@ def main() -> int:
         encoded = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
         summary = result["summary"]
         checks = summary["recorded_identity_checks"]
-        print("cases: anchored={anchored_cases} unanchored={unanchored_cases}; identity checks: MATCH={MATCH} NOT_RECORDED={NOT_RECORDED} MISMATCH={MISMATCH}; missing-side paths={missing_side_paths}; blocked expected paths={blocked_expected_paths}".format(
-            **summary, **checks))
+        blockers = summary["blockers"]
+        print("cases: anchored={anchored_cases} unanchored={unanchored_cases}; identity checks: MATCH={MATCH} NOT_RECORDED={NOT_RECORDED} MISMATCH={MISMATCH}; missing-side paths={missing_side_paths}; blocked expected paths={blocked_expected_paths}; blockers: missing commit sides={missing_commit_sides}, missing/wrong-type commit objects={missing_or_wrong_type_commit_objects}, missing trees={missing_trees}, ancestry FAIL={ancestry_failures}, ancestry BLOCKED_ERROR={ancestry_errors}, ancestry UNKNOWN={ancestry_unknown}".format(
+            **summary, **checks, **blockers))
         if has_verification_failure(summary):
-            print("FAIL: at least one recorded identity mismatched or an expected path could not be read", file=sys.stderr)
+            print("FAIL: recorded mismatch or blocked/failed source identity check", file=sys.stderr)
             return 2
         if args.verify_only:
             saved = OUTPUT_PATH.read_text(encoding="utf-8")

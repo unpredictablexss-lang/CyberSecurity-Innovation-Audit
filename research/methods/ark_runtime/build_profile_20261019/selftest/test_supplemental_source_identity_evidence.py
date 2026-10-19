@@ -41,8 +41,40 @@ class SupplementalEvidenceSummaryTests(unittest.TestCase):
         summary = MODULE.summarize([{
             "parent": {"tree_check": "NOT_RECORDED", "files": []},
             "fixed": {"tree_check": "NOT_RECORDED", "files": []},
+            "parent_is_ancestor_of_fixed": "PASS",
         }], [])
         self.assertFalse(MODULE.has_verification_failure(summary))
+
+    def test_blocked_objects_trees_and_ancestry_failures_are_counted_and_block(self) -> None:
+        mutations = [
+            ({"parent": {"status": "BLOCKED_OBJECT_MISSING_OR_WRONG_TYPE", "files": []},
+              "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+              "parent_is_ancestor_of_fixed": "PASS"}, "missing_or_wrong_type_commit_objects"),
+            ({"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+              "fixed": {"status": "BLOCKED_TREE_MISSING", "tree_check": "NOT_RECORDED", "files": []},
+              "parent_is_ancestor_of_fixed": "PASS"}, "missing_trees"),
+            ({"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+              "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+              "parent_is_ancestor_of_fixed": "FAIL"}, "ancestry_failures"),
+            ({"parent": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+              "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+              "parent_is_ancestor_of_fixed": "BLOCKED_ERROR"}, "ancestry_errors"),
+        ]
+        for mutation, counter in mutations:
+            with self.subTest(counter=counter):
+                summary = MODULE.summarize([mutation], [])
+                self.assertEqual(summary["blockers"][counter], 1)
+                self.assertTrue(MODULE.has_verification_failure(summary))
+
+    def test_missing_commit_side_and_unknown_ancestry_are_blockers(self) -> None:
+        summary = MODULE.summarize([{
+            "parent": {"status": "UNKNOWN", "files": []},
+            "fixed": {"status": "OBJECTS_RECOMPUTED", "tree_check": "NOT_RECORDED", "files": []},
+            "parent_is_ancestor_of_fixed": "UNKNOWN",
+        }], [])
+        self.assertEqual(summary["blockers"]["missing_commit_sides"], 1)
+        self.assertEqual(summary["blockers"]["ancestry_unknown"], 1)
+        self.assertTrue(MODULE.has_verification_failure(summary))
 
     def test_builtin_negative_validation(self) -> None:
         MODULE.self_test()
