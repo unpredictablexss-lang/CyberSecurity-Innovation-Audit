@@ -1,0 +1,57 @@
+{
+  "schema": "a-line-independent-source-audit-v1",
+  "audit_id": "T28-DATASHARE-IPC-CR0016-0018-20261020",
+  "lane": "independent test/evidence",
+  "scanner_baseline": "a950a2662a4e131b31ca28c0b7f8937b7140a034",
+  "queue": {
+    "path": "research/deliveries/cpp/a0_triage_20261019/queue.csv",
+    "total_rows": 345,
+    "preserved_statuses": true
+  },
+  "source": {
+    "repository": "openharmony/distributeddatamgr_data_share",
+    "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+    "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+    "source_object_database": "D:/openHarmonyScanner/openharmony/.repo/project-objects/distributeddatamgr_data_share.git",
+    "files": [
+      {"path":"frameworks/native/provider/src/datashare_stub.cpp","blob":"cb62502d82c0534a6b9466f7a5d0a9e122d85693","sha256":"cc742b1811c6c6ce2c351e27619a74ec1e5f472502a7a712c50d49fbaeed667a","bytes":26370},
+      {"path":"frameworks/native/provider/include/datashare_stub.h","blob":"f92ca998da87ea88c0b7cf063116b9c0e06f137e","sha256":"482a483a2453a22c0455d70b7d4ca3bef5e7fcfe78e62b38bd565c173fca446f","bytes":5607},
+      {"path":"interfaces/inner_api/permission/include/data_share_permission.h","blob":"89ab59a91eb878cea31ce65c28f079cd60fd19e4","sha256":"5249cc1e779dc38ca8bb7ed27f9a47e69c64ab0382629d5ba20e110bca4a639b","bytes":4749},
+      {"path":"frameworks/native/permission/src/data_share_permission.cpp","blob":"9cf04c3a33931b5e715616da2600ea702c0f8fe5","sha256":"a99ee576b31602a962c04e7090d94db2a3360ebd69baa0f947790715882d65b2","bytes":16955}
+    ]
+  },
+  "cli": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir research/evidence/cpp/.t28_datashare_source_repo --repository openharmony/distributeddatamgr_data_share --commit 560c5cdadf08b4beeb691e93d70ff32cc2dca8bd --include frameworks/native/provider/src/datashare_stub.cpp --detector ohscanner.interface.ipc --json-out research/evidence/cpp/a_t28_datashare_cr0016_0018_cli_20261020.json --md-out research/evidence/cpp/a_t28_datashare_cr0016_0018_cli_20261020.md",
+    "detector": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "selected_files": 1,
+    "parse_status": {"complete": 0, "partial": 1},
+    "execution_status": "completed_with_limitations",
+    "finding_count": 3,
+    "validated_vulnerability_count": 0,
+    "result_json": "research/evidence/cpp/a_t28_datashare_cr0016_0018_cli_20261020.json"
+  },
+  "rows": [
+    {"id":"CR-0016","location":"frameworks/native/provider/src/datashare_stub.cpp:204","rule":"ipc.auth.missing","current_finding_id":"ohscanner.interface.ipc:c9ce14225a9f7473","original_status":"not_testable","queue_status":"queued_first_batch","disposition":"PARTIAL/BLOCK","reason":"OpenFileInner calls virtual OpenFile after input checks; this bounded scan cannot establish caller authorization, concrete provider behavior, product reachability, or parse-complete coverage."},
+    {"id":"CR-0017","location":"frameworks/native/provider/src/datashare_stub.cpp:221","rule":"ipc.capability.export","current_finding_id":"ohscanner.interface.ipc:e6519a0563067672","original_status":"not_testable","queue_status":"queued_first_batch","disposition":"PARTIAL/BLOCK","reason":"Mapped transaction handler writes an FD to the reply; source does not prove product reachability or caller authorization policy."},
+    {"id":"CR-0018","location":"frameworks/native/provider/src/datashare_stub.cpp:243","rule":"ipc.capability.export","current_finding_id":"ohscanner.interface.ipc:c7071a32568a80bb","original_status":"not_testable","queue_status":"queued_first_batch","disposition":"PARTIAL/BLOCK","reason":"Mapped transaction handler writes an FD to the reply; source does not prove product reachability or caller authorization policy."}
+  ],
+  "source_findings": {
+    "dispatch": "DataShareStub constructor maps CMD_OPEN_FILE, CMD_OPEN_FILE_WITH_ERR_CODE and CMD_OPEN_RAW_FILE to member handlers; OnRemoteRequest validates interface token, dispatches the mapped function and returns its result.",
+    "authorization": "VerifyPermissionAndUri and DataSharePermission::VerifyPermission exist, but no source proof establishes guard dominance over all three candidate paths. Provider-specific virtual implementations and product policy are unbound.",
+    "capability_export": "CmdOpenFile and CmdOpenFileWithErrCode write successful file descriptors into the IPC reply; OpenRawFile serializes an FD value, though that path is outside these three frozen IDs.",
+    "product_reachability": "unknown",
+    "caller_policy": "unknown",
+    "impact": "unknown",
+    "fixed_source": "not_bound"
+  },
+  "verification": {
+    "source_hashes_and_queue_identity": "passed",
+    "exact_cli_candidates": "passed",
+    "partial_not_pass": "passed",
+    "a0_queue_preserved": "passed",
+    "change_scope": "passed",
+    "a0_overall_ok": true,
+    "scope_violations": 0
+  }
+}
