@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "audit": "T10 independent Samgr source-flow and permission-context review",
+  "date": "2026-10-20",
+  "role": "independent_test_only",
+  "base_commit": "9d10a523f1a47f6971b35cd010b24dfe3835fc05",
+  "modified_detector_tests_fixtures_or_queue": false,
+  "source": {
+    "repository": "openharmony/systemabilitymgr_samgr",
+    "project_object_mirror": "D:/openHarmonyScanner/openharmony/.repo/project-objects/systemabilitymgr_samgr.git",
+    "commit": "08e2a552b839ea7727251cb9b749a5c1dd9cfeff",
+    "commit_type": "commit",
+    "tree": "b7a89e95be788f2f2372258e341f7be842c7826d",
+    "tree_type": "tree",
+    "file": "services/samgr/native/source/system_ability_manager_stub.cpp",
+    "blob": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
+    "blob_type": "blob",
+    "bytes": 78212,
+    "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
+    "commit_tree_blob_and_hash_verified": true
+  },
+  "scan_context": {
+    "original_detector": "ohscanner.interface.ipc",
+    "original_rule": "ipc.capability.export",
+    "detector_version": "0.5.0",
+    "profile": "light-ast",
+    "source_parse_status": "partial",
+    "source_analysis_status": "partial",
+    "source_analysis_reason": "detector_model_incomplete",
+    "product_build_profile": "none",
+    "target_derived_harness_recorded": false,
+    "original_disposition": "not_reproduced",
+    "original_queue_status": "queued_not_reproduced"
+  },
+  "cases": [
+    {
+      "queue_id": "CR-0219",
+      "candidate_id": "ohscanner.interface.ipc:04a66a31ff68330e",
+      "original_line": 464,
+      "source_range": [422, 470],
+      "method": "CheckRemtSystemAbilityInner",
+      "transaction_map_lines": [155, 156],
+      "transaction": "CHECK_REMOTE_SYSTEM_ABILITY_TRANSACTION",
+      "input_and_output": "MessageParcel reads SA id and device id; transforms device id; returns the resolved IRemoteObject.",
+      "authorization": ["OnRemoteRequest interface-token gate", "CanRequest native-token gate", "CheckGetRemoteSAPermission before lookup"],
+      "fd_flow_found": false,
+      "status": "PARTIAL",
+      "minimum_missing_evidence": "Product build flags and SELinux policy, caller SID reachability, and actual SA/device exposure."
+    },
+    {
+      "queue_id": "CR-0220",
+      "candidate_id": "ohscanner.interface.ipc:d25bf1cd70fc1a15",
+      "original_line": 551,
+      "source_range": [512, 565],
+      "method": "CheckSystemAbilityImmeInner",
+      "transaction_map_lines": [159, 160],
+      "transaction": "CHECK_SYSTEM_ABILITY_IMMEDIATELY_TRANSACTION",
+      "input_and_output": "MessageParcel reads SA id and isExist; returns CheckSystemAbility object and bool.",
+      "authorization": ["OnRemoteRequest interface-token gate", "CanRequest native-token gate", "CheckGetSAPermission before lookup"],
+      "fd_flow_found": false,
+      "status": "PARTIAL",
+      "minimum_missing_evidence": "Product token/caller policy, SELinux mapping, and specific SA exposure."
+    },
+    {
+      "queue_id": "CR-0221",
+      "candidate_id": "ohscanner.interface.ipc:38dbb42209c3b6bc",
+      "original_line": 668,
+      "source_range": [638, 674],
+      "method": "GetSystemAbilityInner",
+      "transaction_map_lines": [143, 144],
+      "transaction": "GET_SYSTEM_ABILITY_TRANSACTION",
+      "input_and_output": "MessageParcel reads SA id; returns GetSystemAbility object.",
+      "authorization": ["OnRemoteRequest interface-token gate", "CheckGetSAPermission before lookup; no local CanRequest check in this method"],
+      "fd_flow_found": false,
+      "status": "PARTIAL",
+      "minimum_missing_evidence": "Whether WITH_SELINUX is enabled, effective caller SID rules, and SA service-label exposure."
+    },
+    {
+      "queue_id": "CR-0222",
+      "candidate_id": "ohscanner.interface.ipc:f4b4ee6abf220a93",
+      "original_line": 706,
+      "source_range": [676, 712],
+      "method": "CheckSystemAbilityInner",
+      "transaction_map_lines": [145, 146],
+      "transaction": "CHECK_SYSTEM_ABILITY_TRANSACTION",
+      "input_and_output": "MessageParcel reads SA id; returns CheckSystemAbility object.",
+      "authorization": ["OnRemoteRequest interface-token gate", "CheckGetSAPermission before lookup; no local CanRequest check in this method"],
+      "fd_flow_found": false,
+      "status": "PARTIAL",
+      "minimum_missing_evidence": "Whether WITH_SELINUX is enabled, effective caller SID rules, and SA service-label exposure."
+    },
+    {
+      "queue_id": "CR-0223",
+      "candidate_id": "ohscanner.interface.ipc:a89d4fbb76239732",
+      "original_line": 1485,
+      "source_range": [1458, 1492],
+      "method": "GetExtensionRunningSaListInner",
+      "transaction_map_lines": [213, 214],
+      "transaction": "GET_EXTERNSION_SA_LIST_TRANSCATION",
+      "input_and_output": "MessageParcel reads extension string; returns result, size, and each matching IRemoteObject.",
+      "authorization": ["OnRemoteRequest interface-token gate", "CanRequest native-token gate"],
+      "notable_adjacent_code": "GetRunningSaExtensionInfoListInner at lines 1494-1499 calls CheckPermission(ohos.permission.ACCESS_EXT_SYSTEM_ABILITY); this method body has no corresponding named permission check.",
+      "fd_flow_found": false,
+      "status": "PARTIAL",
+      "minimum_missing_evidence": "API contract, intended caller/extension access policy, native-token provisioning, and product exposure; adjacent-method difference alone does not prove a bypass."
+    }
+  ],
+  "cross_cutting": {
+    "interface_token_proves_caller_authorization": false,
+    "check_get_permission_without_selinux_returns_true": true,
+    "exports_are_remote_object_capabilities": true,
+    "fd_flow_found_in_reviewed_methods": false,
+    "independent_holdout_claim": false,
+    "null_dereference_cli_applicability": "N/A: original IPC capability-export rule is not a null-dereference rule; running that CLI would not test the original obligations."
+  },
+  "queue_preservation": {
+    "ids": ["CR-0219", "CR-0220", "CR-0221", "CR-0222", "CR-0223"],
+    "original_status_each": "not_reproduced",
+    "queue_status_each": "queued_not_reproduced",
+    "status_changed": false,
+    "case_disposition_each": "PARTIAL"
+  },
+  "queue_verification": {
+    "command": "python -m research.deliveries.cpp.a0_triage_20261019.verify_triage",
+    "overall_ok": true,
+    "candidate_count": 345,
+    "queue_rows": 345,
+    "unique_ids": 345,
+    "original_status_counts": {"not_reproduced": 9, "not_testable": 336},
+    "queue_status_counts": {"queued_not_reproduced": 9, "queued_first_batch": 5, "paused_pending_evidence": 331}
+  },
+  "next_steps": {
+    "test_line": "Bind product build/SELinux flags, service registration, caller SID policy, native-token provisioning and actual SA/extension exposure; map caller to transaction to parcel selectors to returned object methods; run a target-derived harness under the target policy.",
+    "development_line": "Complete IPC detector modeling for transaction registration, interface token, caller guards and returned-object flow. Only add a generic rule if independent evidence demonstrates unauthorized export or a sound missing-authorization condition; preserve unknown/partial and add permission-mode controls. Catalog wiring requires separate owner approval."
+  },
+  "scope": {
+    "changed_files": [
+      "research/evidence/cpp/a_t10_samgr_queue_replay_20261020.md",
+      "research/evidence/cpp/a_t10_samgr_queue_replay_20261020.json"
+    ],
+    "detector_tests_fixtures_queue_changed": false,
+    "lane": "cpp"
+  }
+}
