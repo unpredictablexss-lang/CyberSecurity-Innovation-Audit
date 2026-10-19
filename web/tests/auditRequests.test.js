@@ -51,7 +51,7 @@ test("late ref or preview responses cannot restore invalidated form input", asyn
 });
 
 test("plan preview sends source selection only, with no browser-chosen rule list", () => {
-  assert.deepEqual(planPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"] });
+  assert.deepEqual(planPayload(values, detectors), { repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], timeout_seconds: 60, memory_mb: 512 });
 });
 
 test("explicit-only research rules are not silently requested by normal UI flows", () => {
@@ -66,7 +66,7 @@ test("D sensitive exposure rule stays off by default and is sent only after expl
   assert.deepEqual(approvedDetectorIds([...detectors, d], [id]), [id, "test.cpp"]);
   assert.deepEqual(snapshotPayload(values, [...detectors, d], [id]).detector_ids, [id, "test.cpp"]);
   assert.deepEqual(planPayload(values, [...detectors, d], [id]), {
-    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: [id, "test.cpp"]
+    repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"], detector_ids: [id, "test.cpp"], timeout_seconds: 60, memory_mb: 512
   });
   assert.throws(() => approvedDetectorIds([...detectors, d], ["test.example"]), /实验规则/);
 });

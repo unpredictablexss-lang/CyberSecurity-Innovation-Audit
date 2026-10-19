@@ -149,6 +149,17 @@ class WorkbenchTests(unittest.TestCase):
             400,
         )
 
+    def test_local_api_responses_disallow_embedding_and_unused_browser_capabilities(self):
+        response = self.client.get("/api/v1/health")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers["x-frame-options"], "DENY")
+        self.assertEqual(response.headers["referrer-policy"], "no-referrer")
+        self.assertEqual(response.headers["permissions-policy"],
+                         "camera=(), microphone=(), geolocation=()")
+        self.assertEqual(response.headers["cross-origin-resource-policy"], "same-origin")
+        self.assertEqual(response.headers["x-content-type-options"], "nosniff")
+        self.assertEqual(response.headers["cache-control"], "no-store")
+
     def test_repository_outside_roots(self):
         r = self.client.post(
             "/api/v1/repositories",
@@ -440,6 +451,86 @@ class WorkbenchTests(unittest.TestCase):
             self.assertEqual(response.status_code, 409, response.text)
         report = service.read_report(self.settings, job)
         self.assertEqual(report["validated_vulnerability"], 0)
+
+    def test_case_confirmation_requires_bound_gate_and_latest_human_decision(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "human confirmation gate",
+            "links": [{"job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        evidence = self.client.post(
+            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/evidence",
+            headers=HEADERS,
+            json={"file": candidate["file"], "start_line": candidate["line"],
+                  "end_line": candidate["line"], "note": "human-reviewed source evidence"},
+        )
+        self.assertEqual(evidence.status_code, 201, evidence.text)
+
+        ops = self.app.state.operations
+        validation = ops.create("validation", {"case_id": case["id"]})
+        claimed = ops.claim(validation=True)
+        self.assertEqual(claimed["id"], validation["id"])
+        ops.finish(validation["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "verified",
+        }, state="completed_with_limitations")
+
+        payload = {
+            "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
+            "notes": "Source and runtime evidence reviewed; residual scope documented.",
+            "evidence_ids": [evidence.json()["id"]],
+            "validation_operation_ids": [validation["id"]],
+            "remaining_unknowns": ["Other callers are outside this case."],
+        }
+        accepted = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
+                                    headers=HEADERS, json=payload)
+        self.assertEqual(accepted.status_code, 201, accepted.text)
+        report = self.client.get(f"/api/v1/cases/{case['id']}/report.json")
+        self.assertEqual(report.status_code, 200, report.text)
+        self.assertEqual(report.json()["validated_vulnerability"], 1)
+        self.assertEqual(report.json()["validation_basis"]["validation_operation_id"], validation["id"])
+        validation_summary = next(x for x in report.json()["operations"] if x["id"] == validation["id"])
+        self.assertEqual(validation_summary["reachability_status"], "verified")
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.md").status_code, 200)
+        self.assertEqual(service.read_report(self.settings, job)["validated_vulnerability"], 0)
+
+        payload.update(outcome="candidate", notes="New human review reopens the case.",
+                       validation_operation_ids=[])
+        reopened = self.client.post(f"/api/v1/cases/{case['id']}/assessments",
+                                    headers=HEADERS, json=payload)
+        self.assertEqual(reopened.status_code, 201, reopened.text)
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+                         ["validated_vulnerability"], 0)
+
+    def test_case_confirmation_rejects_unverified_product_reachability(self):
+        job = self.completed()
+        candidate = service.findings(service.read_report(self.settings, job))[0]
+        case = self.client.post("/api/v1/cases", headers=HEADERS, json={
+            "title": "unverified reachability", "links": [{
+                "job_id": job["id"], "candidate_id": candidate["id"], "rationale": "test"}],
+        }).json()
+        evidence = self.client.post(
+            f"/api/v1/scans/{job['id']}/findings/{candidate['id']}/evidence",
+            headers=HEADERS,
+            json={"file": candidate["file"], "start_line": candidate["line"],
+                  "end_line": candidate["line"], "note": "source evidence"},
+        )
+        ops = self.app.state.operations
+        validation = ops.create("validation", {"case_id": case["id"]})
+        self.assertEqual(ops.claim(validation=True)["id"], validation["id"])
+        ops.finish(validation["id"], {
+            "status": "completed_with_limitations", "validation_gate": "passed",
+            "case_id": case["id"], "reachability_status": "unknown",
+        }, state="completed_with_limitations")
+        rejected = self.client.post(f"/api/v1/cases/{case['id']}/assessments", headers=HEADERS, json={
+            "outcome": "confirmed", "reviewer_kind": "human", "reviewer": "reviewer:test",
+            "notes": "Attempted without product reachability", "evidence_ids": [evidence.json()["id"]],
+            "validation_operation_ids": [validation["id"]], "remaining_unknowns": ["scope"],
+        })
+        self.assertEqual(rejected.status_code, 409, rejected.text)
+        self.assertEqual(self.client.get(f"/api/v1/cases/{case['id']}/report.json").json()
+                         ["validated_vulnerability"], 0)
 
     def test_case_links_require_existing_run_candidates(self):
         job = self.completed()

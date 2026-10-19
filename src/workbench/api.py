@@ -13,6 +13,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from .settings import Settings
 from .store import Store, TERMINAL
 from . import service
+from .repository_management import discover_repositories, repository_catalog
 
 
 class StrictModel(BaseModel):
@@ -33,6 +34,8 @@ class AuditPlanInput(StrictModel):
         default_factory=lambda: ["."], min_length=1, max_length=100
     )
     detector_ids: list[str] | None = Field(default=None, max_length=16)
+    timeout_seconds: int = Field(default=300, ge=1, le=3600)
+    memory_mb: int = Field(default=2048, ge=256, le=8192)
 
 
 class ScanInput(AuditPlanInput):
@@ -111,6 +114,10 @@ def create_app(settings=None):
                 return JSONResponse({"detail": "request too large"}, status_code=413)
         response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
         response.headers["Cache-Control"] = "no-store"
         return response
 
@@ -148,7 +155,7 @@ def create_app(settings=None):
     @app.get("/api/v1/health")
     def health():
         from .agent import public_status
-        agent = public_status()
+        agent = public_status(settings.data_dir)
         return {
             "status": "ok",
             "version": "0.1.0",
@@ -190,6 +197,14 @@ def create_app(settings=None):
     def repositories():
         return store.repositories()
 
+    @app.get("/api/v1/repositories/catalog")
+    def repository_catalog_route():
+        return repository_catalog(settings, store)
+
+    @app.get("/api/v1/repositories/discover")
+    def repository_discover(root_index: int):
+        return discover_repositories(settings, store, root_index)
+
     @app.post("/api/v1/repositories", status_code=201)
     def register(body: RepositoryInput):
         path = service.check_repository(settings, body.path)
@@ -209,7 +224,10 @@ def create_app(settings=None):
     def audit_plan(body: AuditPlanInput):
         repo = store.repository(body.repository_id)
         service.check_repository(settings, repo["path"])
-        _, plan = service.audit_plan(repo, body.revision, body.include_paths, body.detector_ids)
+        _, plan = service.audit_plan(
+            repo, body.revision, body.include_paths, body.detector_ids,
+            body.timeout_seconds, body.memory_mb,
+        )
         return plan
 
     @app.post("/api/v1/scans", status_code=201)

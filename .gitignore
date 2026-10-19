@@ -242,6 +242,7 @@ outputs/reports/workbench/
 
 # Independent workbench Python environment in each development lane
 .venv-web/
+config/workbench.local.json
 
 # Local review artifacts and dependency links are not source deliverables.
 /outputs/review/

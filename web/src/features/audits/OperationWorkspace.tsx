@@ -5,6 +5,7 @@ import { go, Hash, Header, State } from "../../components";
 import { refreshSelectedOperation } from "../../pages/operationSelection";
 import { AgentInvestigationForm, ComparisonForm, InvestigationForm, SyncForm, ValidationForm, SourceContext } from "./OperationForms";
 import AgentAssessment from "./AgentAssessment";
+import AgentBlindReview from "./AgentBlindReview";
 const { Text } = Typography;
 export type OperationView = "all" | "date" | "branches" | "matrix" | "validation" | "investigate" | "agent" | "sync" | "queue";
 const kinds: Record<string, string> = { source_sync: "源码同步", revision_range: "固定区间", branch_comparison: "跨版本比较", version_matrix: "版本矩阵", validation: "隔离验证", investigation: "只读调查", agent_investigation: "LLM Agent 调查", candidate_review_batch: "候选复核队列" };
@@ -74,8 +75,22 @@ export default function OperationWorkspace({ view = "all", operationId, context 
     <Header title={headings[view][0]} description={headings[view][1]} />
     {error && <Alert className="section-gap" type="error" showIcon message={error} />}
     {view === "all" ? <Tabs items={forms} /> : view === "branches" ? <Tabs items={[forms[3], forms[4]]} /> : view === "investigate" ? <Tabs items={[forms[6], forms[7]]} /> : forms.find((f) => f.key === view)?.children}
+    {(view === "agent" || view === "investigate") && agentEvaluation && <Card className="section-gap" size="small" title="Agent execution reliability (latest 200 operations)">
+      <Alert type="info" showIcon message="These are persisted task, schema validation, bounded repair/tool-call, and provider usage metrics. They do not establish semantic support, vulnerability accuracy, or ground truth." description={agentEvaluation.execution_limitation} />
+      <Table<any> className="section-gap" size="small" rowKey={(row) => [row.mode, row.model, row.prompt_version, row.tool_policy_version].join("|")}
+        dataSource={agentEvaluation.execution_groups || []} pagination={false} scroll={{ x: 1050 }} columns={[
+          { title: "Mode / model", render: (_, row) => <>{row.mode}<div className="muted">{row.model}</div></> },
+          { title: "Prompt / tool version", render: (_, row) => <>{row.prompt_version}<div className="muted">{row.tool_policy_version}</div></> },
+          { title: "Operations / results", render: (_, row) => [row.operation_count, row.result_count].join(" / ") },
+          { title: "Task states", render: (_, row) => Object.entries(row.status_counts || {}).map(([name, count]) => String(name) + ": " + String(count)).join("; ") },
+          { title: "Schema accepted / rejected / unknown", render: (_, row) => [row.schema_validation.accepted, row.schema_validation.rejected, row.schema_validation.unknown].join(" / ") },
+          { title: "Repair operations / attempts", render: (_, row) => [row.repair_operation_count, row.repair_attempts].join(" / ") },
+          { title: "Tools completed / rejected / unknown", render: (_, row) => [row.tool_calls.completed, row.tool_calls.rejected, row.tool_calls.unknown_status].join(" / ") },
+          { title: "Usage complete / partial / unknown", render: (_, row) => [row.usage.complete, row.usage.incomplete, row.usage.unknown].join(" / ") },
+        ]} locale={{ emptyText: "No Agent execution records" }} />
+    </Card>}
     {(view === "agent" || view === "investigate") && agentEvaluation && <Card className="section-gap" size="small" title="Agent 人工反馈评测">
-      <Alert type="info" showIcon message="仅统计人工对 Agent 分诊的自报反馈，不代表漏洞准确率、Precision 或 Recall。" description={agentEvaluation.limitation} />
+      <Alert type="info" showIcon message="仅统计人工对 Agent 分诊的反馈，不代表漏洞准确率、Precision 或 Recall。" description={agentEvaluation.limitation + " 逐条主张支持度是人工语义评价；没有填写的主张显示为未复核。"} />
       <Table<any> className="section-gap" size="small" rowKey={(row) => [row.experiment_id, row.mode, row.model, row.prompt_version, row.tool_policy_version].join("|")}
         dataSource={agentEvaluation.groups} pagination={false} scroll={{ x: 900 }} columns={[
           { title: "模式 / 模型", render: (_, row) => <>{row.mode}<div className="muted">{row.model}</div></> },
@@ -83,16 +98,18 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           { title: "操作 / 候选 / 评价", render: (_, row) => `${row.operation_count} / ${row.candidate_count} / ${row.review_count}` },
           { title: "有用 / 部分 / 无用 / 风险", render: (_, row) => [row.usefulness.useful, row.usefulness.partially_useful, row.usefulness.not_useful, row.usefulness.unsafe].join(" / ") },
           { title: "引文准 / 有错 / 多错 / 未核", render: (_, row) => [row.citation_accuracy.all_accurate, row.citation_accuracy.some_incorrect, row.citation_accuracy.mostly_incorrect, row.citation_accuracy.not_checked].join(" / ") },
+          { title: "主张支持 / 部分 / 不支持 / 未知 / 未复核", render: (_, row) => [row.claim_support.supported, row.claim_support.partially_supported, row.claim_support.unsupported, row.claim_support.unverifiable, row.claim_support.not_reviewed].join(" / ") },
           { title: "人工复核中位秒数", dataIndex: "median_elapsed_seconds", render: (value) => value ?? "unknown" },
         ]} locale={{ emptyText: "尚无人工反馈；该表不包含漏洞真值标签。" }} />
     </Card>}
     {view === "agent" && agentEvaluation?.r0_baseline_reviews?.length > 0 && <Card className="section-gap" size="small" title="R0 静态人工基线记录">
       <Alert type="info" showIcon message="先于模型运行的静态分诊记录；仅为人工意见，不是漏洞真值。" />
       <Table<any> className="section-gap" size="small" rowKey="id" dataSource={agentEvaluation.r0_baseline_reviews}
-        pagination={{ pageSize: 5 }} scroll={{ x: 850 }} columns={[
+        pagination={{ pageSize: 5 }} scroll={{ x: 1050 }} columns={[
           { title: "实验批次", dataIndex: "experiment_id" },
           { title: "固定候选", render: (_, row) => <><Text>{row.repository}</Text><div className="muted">{row.commit.slice(0, 12)} · {row.candidate_id.slice(0, 12)}</div></> },
           { title: "静态分诊", dataIndex: "disposition" },
+          { title: "逐项基线（支持 / 反向 / 未决）", render: (_, row) => { const counts = { evidence_found: 0, contrary_evidence: 0, unresolved: 0 }; for (const review of row.obligation_reviews || []) { if (review.disposition in counts) counts[review.disposition as keyof typeof counts] += 1; } return String(row.obligations_reviewed ?? 0) + " 项：" + counts.evidence_found + " / " + counts.contrary_evidence + " / " + counts.unresolved + (row.obligations_truncated ? "（仅前 40 项）" : ""); } },
           { title: "复核人 / 秒", render: (_, row) => `${row.reviewer} / ${row.elapsed_seconds ?? "unknown"}` },
           { title: "记录哈希", dataIndex: "record_sha256", render: (value) => <Hash value={value} /> },
         ]} />
@@ -108,7 +125,8 @@ export default function OperationWorkspace({ view = "all", operationId, context 
           { title: "R1 评价 / 引文 / 中位秒", render: (_, row) => `${row.single_shot.review_count} / ${row.single_shot.citation_accuracy.all_accurate}·${row.single_shot.citation_accuracy.some_incorrect + row.single_shot.citation_accuracy.mostly_incorrect} / ${row.single_shot.median_elapsed_seconds ?? "unknown"}` },
           { title: "R2 评价 / 引文 / 中位秒", render: (_, row) => `${row.tool_agent.review_count} / ${row.tool_agent.citation_accuracy.all_accurate}·${row.tool_agent.citation_accuracy.some_incorrect + row.tool_agent.citation_accuracy.mostly_incorrect} / ${row.tool_agent.median_elapsed_seconds ?? "unknown"}` },
         ]} />
-    </Card>}    {view === "matrix" && <Alert className="section-gap" type="info" showIcon message="影响与修复仍需独立证据" description="当前矩阵只记录候选观察。补丁生成、补丁应用和修复后产品验证尚未接入；不会用候选消失自动判定已修复。" />}
+    </Card>}    {view === "agent" && <AgentBlindReview operations={rows} />}
+    {view === "matrix" && <Alert className="section-gap" type="info" showIcon message="影响与修复仍需独立证据" description="当前矩阵只记录候选观察。补丁生成、补丁应用和修复后产品验证尚未接入；不会用候选消失自动判定已修复。" />}
     <Card className="section-gap" title="操作任务" extra={<Button onClick={() => void refresh().catch((e) => setError(String(e)))}>刷新操作</Button>}>
       <Alert className="section-gap" type={reviewQueue.queued_candidates ? "warning" : "info"} showIcon
         message={`Agent 候选复核队列：${reviewQueue.queued_batches || 0} 个批次、${reviewQueue.queued_candidates || 0} 个候选排队；${reviewQueue.running_candidates || 0} 个候选处理中`}
@@ -126,6 +144,7 @@ export default function OperationWorkspace({ view = "all", operationId, context 
       <Space wrap><State value={selected.status} /><Text>{kinds[selected.kind] || selected.kind}</Text><Button size="small" onClick={() => go("/tasks/operations/" + selected.id)}>任务中心打开</Button>
         {selected.result_sha256 && <><Text>Result SHA-256</Text><Hash value={selected.result_sha256} /></>}</Space>
       {selected.error && <Alert className="section-gap" type="error" message={selected.error} />}
+      {selected.kind === "agent_investigation" && !selected.result_sha256 && ["failed", "interrupted", "timed_out", "cancelled"].includes(selected.status) && <Alert className="section-gap" type="warning" showIcon message="本次调查没有可复核结果；候选仍为 unknown" description="任务结束不代表候选是误报或安全。若 Worker 在 Provider 已处理请求后、结果落盘前退出，上游调用和费用仍可能发生。重试前请核对执行事件及 Provider 账单，再重新预览并单独批准新任务。" />}
       {selected.spec?.scan_ids && <Space wrap className="section-gap">端点扫描：{selected.spec.scan_ids.map((id: string) => <Button key={id} size="small" onClick={() => go("/tasks/" + id)}>{id.slice(0, 12)}</Button>)}</Space>}
       {selected.kind === "agent_investigation" && selected.result ? <AgentAssessment result={selected.result} reviews={selected.agent_reviews || []}
         onSubmit={async (review: any) => { await api("/operations/" + selected.id + "/agent-reviews", review); await show(selected.id); }} /> : <pre className="json-view">{JSON.stringify(selected.result || selected.spec, null, 2)}</pre>}

@@ -14,6 +14,7 @@ from .settings import Settings
 from .store import Store
 from .operations_store import Operations
 from .worker import Worker
+from .worker_env import remove_agent_provider_environment, worker_child_environment
 
 
 class OperationWorker:
@@ -34,7 +35,9 @@ class OperationWorker:
                     "--child", task["id"], "--parent", str(os.getpid())],
                     cwd=Path(__file__).resolve().parents[2], stdout=log, stderr=subprocess.STDOUT,
                     stdin=subprocess.DEVNULL, start_new_session=True,
-                    env={**os.environ, "OHSCANNER_DATA": str(self.settings.data_dir),
+                    env={**worker_child_environment(os.environ,
+                            allow_agent_provider=(not self.validation and task.get("kind") == "agent_investigation")),
+                         "OHSCANNER_DATA": str(self.settings.data_dir),
                          "OHSCANNER_TARGET_ROOTS": os.pathsep.join(map(str, self.settings.target_roots))})
                 while proc.poll() is None:
                     if self.ops.get(task["id"])["cancel_requested"]:
@@ -101,6 +104,8 @@ def main():
         store = Store(settings.data_dir)
         ops = Operations(store)
         task = ops.get(args.child)
+        if task.get("kind") != "agent_investigation":
+            remove_agent_provider_environment(os.environ)
         memory = task["spec"].get("memory_mb", 2048) * 1024 * 1024
         resource.setrlimit(resource.RLIMIT_AS, (memory, memory))
         resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024 * 1024,) * 2)
@@ -108,6 +113,8 @@ def main():
         result = execute(settings, store, ops, task)
         (ops.directory(args.child) / "child-result.json").write_text(json.dumps(result, ensure_ascii=False))
     else:
+        if args.validation:
+            remove_agent_provider_environment(os.environ)
         OperationWorker(settings, args.validation).run(args.once)
 
 

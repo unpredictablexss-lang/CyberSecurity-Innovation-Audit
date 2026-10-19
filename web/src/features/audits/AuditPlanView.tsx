@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Collapse, Table, Typography } from "antd";
+import { Alert, Collapse, Descriptions, Table, Typography } from "antd";
 export default function AuditPlanView({ plan }: { plan: any }) {
   if (!plan) return null;
   const decisions: Record<string, string> = { planned: "计划尝试", skipped: "跳过", blocked: "条件不足" };
@@ -9,8 +9,19 @@ export default function AuditPlanView({ plan }: { plan: any }) {
     admission_not_approved: "尚未准入：真实证据或执行条件不足",
     required_facts_unavailable: "所需程序事实不足",
   };
+  const source = plan.source || {};
+  const budget = plan.execution_budget || {};
+  const languageSummary = Object.entries(plan.languages || {}).map(([language, count]) => language + ": " + count).join("；") || "未识别到受支持源码";
   return <div className="section-gap">
-    <Alert showIcon type={plan.suggested_detector_ids.length ? "info" : "warning"}
+    <Descriptions size="small" bordered column={1} items={[
+      { key: "repository", label: "登记仓库名称", children: <>{source.repository || "未知"} <Typography.Text type="secondary">（本机登记标签，不代表官方身份核验）</Typography.Text></> },
+      { key: "commit", label: "固定 Commit", children: <Typography.Text code copyable>{source.commit || "unknown"}</Typography.Text> },
+      { key: "tree", label: "Git Tree", children: <Typography.Text code copyable>{source.git_tree || "unknown"}</Typography.Text> },
+      { key: "scope", label: "纳入路径", children: (source.include_paths || []).join("、") || "未知" },
+      { key: "files", label: "已识别源码", children: (source.files || []).length + " 个文件；语言：" + languageSummary + "；解析不完整：" + (plan.parse_limitations || []).length + " 个文件" },
+      { key: "budget", label: "执行预算", children: (budget.timeout_seconds ?? "未知") + " 秒超时 · " + (budget.memory_mb ?? "未知") + " MiB 内存上限" },
+    ]} />
+    <Alert className="section-gap" showIcon type={plan.suggested_detector_ids.length ? "info" : "warning"}
       message={`规则计划：${plan.suggested_detector_ids.length} 项计划尝试，${plan.detectors.filter((d: any) => d.admission).length} 项尚未准入，${plan.parse_limitations.length} 个文件解析不完整`}
       description={`固定版本 ${plan.source.commit.slice(0, 12)}；仅计划尝试，实际执行和覆盖以扫描报告为准。`} />
     <Collapse items={[{ key: "plan", label: "查看规则版本与跳过原因", children: <>

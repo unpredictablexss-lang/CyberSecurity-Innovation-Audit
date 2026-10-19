@@ -34,12 +34,13 @@ function Workspace() {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [rawRoute, route.canonical]);
   const path = route.path;
+  const provider = health?.capabilities?.agent_provider;
   const context = { job_id: route.query.get("job_id") || undefined, candidate_id: route.query.get("candidate_id") || undefined, repository_id: route.query.get("repository_id") || undefined };
   let content: React.ReactNode;
   const operationMatch = path.match(/^\/tasks\/operations\/([A-Za-z0-9_-]+)$/);
   const taskMatch = path.match(/^\/tasks\/([A-Za-z0-9_-]+)$/);
   if (operationMatch) content = <OperationWorkspace key={path} view="queue" operationId={operationMatch[1]} />;
-  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} />;
+  else if (taskMatch) content = <JobDetail key={path + route.query.get("tab")} id={taskMatch[1]} initialTab={detailTab(route.query.get("tab"))} candidateId={route.query.get("candidate_id") || undefined} sourceFile={route.query.get("source_file") || undefined} sourceLine={Number(route.query.get("source_line")) || undefined} />;
   else if (path === "/audits/repository") content = <RepositoryAudit repos={repos} detectors={detectors} refresh={refresh} />;
   else if (path === "/audits/time") content = <OperationWorkspace key={path} view="date" />;
   else if (path === "/audits/versions") content = <OperationWorkspace key={route.canonical} view="branches" context={context} />;
@@ -54,7 +55,7 @@ function Workspace() {
   else if (path === "/overview") content = <>
     <Header title="总览" description="统一管理固定源码审计、风险调查与验证工作。" extra={<Button type="primary" icon={<PlusOutlined />} onClick={() => go("/audits/repository")}>新建审计</Button>} />
     <Row gutter={[16, 16]} className="overview-metrics">{[
-      { label: "已登记仓库", value: repos.length, note: "本地 Git 对象；官方身份待核验" },
+      { label: "仓库登记记录", value: repos.length, note: "本地登记数；可用状态需核验；官方身份待核验" },
       { label: "执行中 / 排队", value: jobs.filter((j) => !terminal.has(j.status)).length, note: "当前任务列表 · 单扫描 Worker" },
       { label: "已保存扫描", value: jobs.filter((j) => j.report_sha256).length, note: "当前列表 · 绑定固定源码" },
       { label: "调查案例", value: cases.length, note: "人工关联，不代表已确认漏洞" },
@@ -65,7 +66,7 @@ function Workspace() {
         <div><span>C/C++ 自研检测</span><Text strong>{detectors.filter((d) => d.kind === "research_candidate" && d.supported_languages?.some((l: string) => ["c", "cpp", "c++"].includes(l.toLowerCase()))).length ? "已接入研究规则" : "以规则清单为准"}</Text></div>
         <div><span>IPC / 接口分析</span><Text strong>{detectors.some((d) => d.id === "ohscanner.interface.ipc") ? "有界候选分析" : "以规则清单为准"}</Text></div>
         <div><span>ArkTS / ETS / JS / TS</span><Text type="secondary">有界语法候选；ETS 限制见覆盖</Text></div>
-        <div><span>模型辅助调查</span><Text type="secondary">未连接</Text></div>
+        <div><span>模型辅助调查</span><Text type="secondary">{health?.capabilities?.agent ? (provider?.last_provider_check ? "已配置，连通性探测通过" : "已配置，连通性待验证") : "未配置"}</Text></div>
       </div><div className="coverage-note">实际解析覆盖见各任务报告；未分析、部分解析和证据不足保留 unknown。</div></Card></Col></Row>
     <div className="audit-shortcuts section-gap"><Text type="secondary">新建审计</Text>{auditLinks.map((entry) => <Button key={entry.path} onClick={() => go(entry.path)}>{entry.title} →</Button>)}</div>
     <Row gutter={[18, 18]} className="section-gap"><Col xs={24} xl={14}><Card title="证据工作流"><div className="workflow">{["固定源码", "静态候选", "补齐证据", "受控验证"].map((s, i) => <div key={s}><span>0{i + 1}</span><strong>{s}</strong></div>)}</div></Card></Col>

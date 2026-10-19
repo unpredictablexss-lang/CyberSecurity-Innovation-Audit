@@ -31,8 +31,9 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
       {error && <Alert className="section-gap" type="error" showIcon message={error} />}
       {refsError && <Alert className="section-gap" type="warning" message={refsError} />}
       <Form name="repository-audit" form={form} layout="vertical" initialValues={{ ...auditDefaults }} onValuesChange={invalidate} onFinish={async (values) => {
+        if (!plan?.plan_sha256) { setError("请先预览扫描计划；预览后若修改仓库、版本或范围，需要重新预览。"); return; }
         setBusy(true); setError("");
-        try { const job = await api("/scans", { ...snapshotPayload(values, detectors, explicitIds), ...(plan ? { expected_plan_sha256: plan.plan_sha256 } : {}) }); await refresh(); go("/tasks/" + job.id); }
+        try { const job = await api("/scans", { ...snapshotPayload(values, detectors, explicitIds), expected_plan_sha256: plan.plan_sha256 }); await refresh(); go("/tasks/" + job.id); }
         catch (e) { setError(String(e)); } finally { setBusy(false); }
       }}>
         <RepositoryField repos={repos} refresh={refresh} onChange={() => { form.setFieldValue("revision", undefined); setError(""); invalidate(); }} />
@@ -44,9 +45,9 @@ export default function RepositoryAudit({ repos, detectors, refresh }: AuditProp
           }}>D 敏感数据到日志（固定版本候选；partial / blocked 表示未知）</Checkbox>
         </Form.Item>}
         <RuleNotice detectors={detectors} />
-        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览适用规则</Button>
+        <Button className="section-gap" onClick={() => void preview()} loading={planning} disabled={!ready || busy || !repos.length}>预览扫描计划</Button>
         <AuditPlanView plan={plan} />
-        <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length}>冻结版本并开始扫描</Button>
+        <Button aria-label="冻结版本并开始扫描" className="section-gap" type="primary" htmlType="submit" size="large" loading={busy} disabled={!ready || !repos.length || !plan?.plan_sha256}>冻结版本并开始扫描</Button>
       </Form>
     </Card></Col><Col xs={24} xl={8}><Card title="本次审计将保存">
       <ol className="audit-checklist"><li>完整 Commit 与 Git Tree</li><li>实际规则与版本</li><li>纳入范围、解析及执行覆盖</li><li>候选、证据义务与报告哈希</li></ol>

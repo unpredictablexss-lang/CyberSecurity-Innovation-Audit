@@ -39,8 +39,7 @@ export function snapshotPayload(values, detectors, explicitIds = []) {
   return { ...payload, ...(explicitIds.length ? { detector_ids } : {}), revision: values.revision.trim() };
 }
 export function planPayload(values, detectors, explicitIds = []) {
-  const { timeout_seconds, memory_mb, ...payload } = snapshotPayload(values, detectors, explicitIds);
-  return payload;
+  return snapshotPayload(values, detectors, explicitIds);
 }
 export function datePreviewPayload(values) {
   const { repository_id, branch, start, end, timezone } = values;

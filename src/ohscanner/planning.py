@@ -25,18 +25,19 @@ def approved_metadata():
     return metadata_from_detectors(rows, instances) + pending_admissions()
 
 
-def plan_context(context, tree, inventory, sources, selected_detector_ids=None):
+def plan_context(context, tree, inventory, sources, selected_detector_ids=None, execution_budget=None):
     manifest = manifest_from_context(context, tree, inventory, sources)
     return plan_audit(manifest, approved_metadata(),
-                      selected_detector_ids=selected_detector_ids)
+                      selected_detector_ids=selected_detector_ids,
+                      execution_budget=execution_budget)
 
 
-def preview_plan(repo_dir, repository, commit, includes, selected_detector_ids=None):
+def preview_plan(repo_dir, repository, commit, includes, selected_detector_ids=None, execution_budget=None):
     if selected_detector_ids:
         build_registry(tuple(selected_detector_ids))
     context, tree, inventory, _, sources = prepare_git_context(
         Path(repo_dir), repository, commit, tuple(includes))
-    plan = plan_context(context, tree, inventory, sources, selected_detector_ids)
+    plan = plan_context(context, tree, inventory, sources, selected_detector_ids, execution_budget)
     pinned2, tree2, sources2, inventory2 = load_git_sources(Path(repo_dir), commit, tuple(includes))
     signature = lambda rows: tuple((s.path, s.language, s.oid, s.data) for s in rows)
     if (pinned2 != context.request.commit or tree2 != tree or inventory2 != inventory
