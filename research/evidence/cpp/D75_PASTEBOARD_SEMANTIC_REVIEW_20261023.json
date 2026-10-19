@@ -1,0 +1,83 @@
+{
+  "task": "D75",
+  "review_type": "downstream_semantic_source_review",
+  "reviewed": {
+    "D74_commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7",
+    "T74_commit": "fb45fcc4d61d1ce3a56eff8386b83f9f3a652ec7",
+    "D52_historical_repository": "openharmony/miscservices_pasteboard",
+    "D52_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "D52_tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "current_repository": "openharmony/distributeddatamgr_pasteboard",
+    "current_commit": "e73747b227104e6743e957ce31040edf58507221",
+    "current_tree": "4128cdf9ad11d393c30f2839f43419e97a5a466d"
+  },
+  "judgment": {
+    "source_candidate": "retain_narrow_source_only",
+    "confirmed": "Pinned D52 component GET_PASTE_DATA route has no visible in-component caller read-permission predicate before the core data lookup/copy.",
+    "external_authorization": "unknown",
+    "system_wide_absence_of_authorization": "not_supported_by_evidence",
+    "product_applicability": "unknown",
+    "attacker_reachability": "unknown",
+    "CVE_causality": "unknown",
+    "product_safety": "unknown"
+  },
+  "D52_candidate": {
+    "label": "CVE-2025-27247",
+    "file": "services/zidl/src/pasteboard_service_stub.cpp",
+    "line": 41,
+    "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+    "anchor_meaning": "OnRemoteRequest method entry; not a proven vulnerable operation",
+    "route": ["GET_PASTE_DATA code 0", "stub registration/dispatch", "OnGetPasteData", "core PasteboardService::GetPasteData", "response serialization"],
+    "local_read_gate_visible": false,
+    "confidence_scope": "Pinned component source only"
+  },
+  "old_helpers": {
+    "CheckSelfPermission": {
+      "returns_true": true,
+      "blob_oid": "5e7bf43287374eb21a8200400cbe350e8d234368",
+      "sha256": "b1241967b47b12ffbcc980c4f9514e32406d04b0652ff66fa7f88e4bd29f5761",
+      "route_callsite_found": false
+    },
+    "CheckCallingPermission": {
+      "delegates_to_MockPermission_VerifyPermission": true,
+      "route_callsite_found": false
+    },
+    "MockPermission_VerifyPermission": {
+      "returns_true": true,
+      "blob_oid": "d4528b45a88c695c0381ed30d65fa551529c2f92",
+      "sha256": "e21db508f8b5c0646f7b1fe5665dd9befe0584096386cce7ea5c6bda1206ec3e"
+    },
+    "build_file_observation": "services/BUILD.gn lists mock_permission.cpp and pasteboard_permission.cpp in the pasteboard_service shared library sources; no route invocation or product image mapping follows from that list."
+  },
+  "current_snapshot_separate": {
+    "has_service_side_caller_token_gate_before_GetData": true,
+    "checks": ["READ_PASTEBOARD", "SECURE_PASTE"],
+    "allow_exceptions": ["native token", "shell token", "eligible Ctrl+V path", "legacy SDK version below threshold", "developer-mode test-server bypass in GetPasteDataInner"],
+    "invalid_sdk_version": "denied",
+    "historical_D52_inference": "none",
+    "product_build_inference": "none"
+  },
+  "external_authorization_that_could_change_effective_result": [
+    "System Ability Manager ACL or Binder/platform framework enforcement",
+    "installed SA profile and its image packaging/mapping",
+    "product-specific caller permission policy"
+  ],
+  "minimum_evidence_required": {
+    "effective_system_authorization": [
+      "Installed historical SA profile for target image and build/install mapping from profile/3701.xml.",
+      "SAMgr/IPC ACL enforcement implementation and effective policy for the Pasteboard SA.",
+      "Platform AccessTokenKit/permission policy and any generated IPC hook code used by the image."
+    ],
+    "product_applicability_and_CVE_assessment": [
+      "Product fingerprint/version and manifest/build provenance tying the image to the D52 component commit and policy artifacts.",
+      "Authorized and unauthorized caller runtime tests on that exact image."
+    ]
+  },
+  "downstream_model_instructions": [
+    "Retain only the narrow missing-local-read-check source observation.",
+    "Keep D52 and the current repository snapshot strictly separate.",
+    "Do not interpret CheckSelfPermission or MockPermission true implementations as proof of a reachable read-route bypass; neither helper has a call site in the pinned component route.",
+    "Do not infer absence of external authorization, product applicability, attacker reachability, CVE causality, or product safety."
+  ],
+  "scope": "Review evidence only; no scanner, product source, test, fixture, or D74/T74 report modification."
+}
