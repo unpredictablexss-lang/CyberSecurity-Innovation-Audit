@@ -103,9 +103,11 @@ def main() -> int:
     print(json.dumps(result, indent=2, sort_keys=True))
     expected_rule = "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
     matches = [item for item in findings if item["rule_id"] == expected_rule
-               and item["symbol"] == "apply_patch" and item["line"] == 861]
-    if len(matches) != 1 or run.status != "blocked":
-        raise SystemExit("expected source candidate or blocked partial coverage missing")
+               and item["symbol"] == "apply_patch" and item["line"] in (932, 950)]
+    root_replace_matches = [item for item in findings if item["rule_id"] == expected_rule
+                            and item["symbol"] == "apply_patch" and item["line"] == 861]
+    if len(matches) != 2 or root_replace_matches or run.status != "blocked":
+        raise SystemExit("expected COPY/ADD-REPLACE source candidates, quiet root replacement, or blocked partial coverage missing")
     return 0
 
 

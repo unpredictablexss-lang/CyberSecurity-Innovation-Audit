@@ -101,6 +101,14 @@
       "byte_length": 738
     },
     {
+      "fixture": "positive_recursive_tree_json_patch.c",
+      "category": "positive",
+      "expected_rule": "tree_amplification",
+      "expected_min": 2,
+      "sha256": "ede69b5286bbfde55a22385dbb48755a44e69d0ffa07c1167b2139db80e72158",
+      "byte_length": 1253
+    },
+    {
       "fixture": "positive_recursive_tree_release.c",
       "category": "unknown",
       "expected_max": 0,

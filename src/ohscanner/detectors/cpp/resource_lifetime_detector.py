@@ -29,7 +29,7 @@ RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
 RULE_RECURSIVE_CLEANUP = "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"
 RULE_RECURSIVE_TREE_AMPLIFICATION = "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
 RULE_RECURSIVE_COMPARE_COST = "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005"
-RULE_VERSION = "0.4.1"
+RULE_VERSION = "0.4.2"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -395,9 +395,18 @@ def _tree_amplification_candidates(units: Sequence[SourceUnit]) -> List[Detector
                 continue
             for copied in copy_assignments:
                 value = copied.group("value")
+                # Keep the source location tied to a duplicate that can fall
+                # through from its own lexical branch to the later attach.
+                # This is intentionally a bounded block check, not a CFG:
+                # parser output gives us balanced function/block spans, but
+                # does not prove arbitrary branch feasibility or dominance.
+                branch_end = _innermost_block_end(body, copied.start())
+                if branch_end is None or _has_direct_cleanup_exit(body, copied.end(), branch_end):
+                    continue
+                attach_start = copied.end() if branch_end == len(body) else branch_end
                 attached = re.search(
                     rf"\b\w*(?:add|insert|append|attach|adopt|splice)\w*\s*\([^;]*\b{re.escape(value)}\b[^;]*\)",
-                    body,
+                    body[attach_start:],
                     re.IGNORECASE,
                 )
                 released = any(re.search(rf"\b{re.escape(name)}\s*\(\s*{re.escape(value)}\b", body) for name in recursive_destructors)
@@ -413,8 +422,36 @@ def _tree_amplification_candidates(units: Sequence[SourceUnit]) -> List[Detector
                     function.name,
                     ", ".join(sorted(recursive_destructors)),
                 ))
-                break
     return _stable_unique(findings)
+
+
+def _innermost_block_end(body: str, position: int) -> Optional[int]:
+    """Return the close of the innermost balanced block containing position."""
+    stack: List[int] = []
+    containing: List[Tuple[int, int]] = []
+    for index, char in enumerate(body):
+        if char == "{":
+            stack.append(index)
+        elif char == "}" and stack:
+            start = stack.pop()
+            if start != 0 and start < position < index:
+                containing.append((start, index))
+    return max(containing, key=lambda pair: pair[0])[1] if containing else len(body)
+
+
+def _has_direct_cleanup_exit(body: str, start: int, end: int) -> bool:
+    """Detect a cleanup goto at the selected block's direct brace depth."""
+    depth = 0
+    segment = body[start:end]
+    for match in re.finditer(r"[{}]|\bgoto\s+cleanup\s*;", segment):
+        token = match.group(0)
+        if token == "{":
+            depth += 1
+        elif token == "}":
+            depth = max(0, depth - 1)
+        elif depth == 0:
+            return True
+    return False
 
 
 def _recursive_cleanup_candidates(
