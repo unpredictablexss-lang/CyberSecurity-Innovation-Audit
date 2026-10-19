@@ -8,7 +8,7 @@ The historical D52 snapshot is formally in the Git object ancestry of the curren
 
 D52's historical candidate points at `services/zidl/src/pasteboard_service_stub.cpp` line 41, the opening brace of `PasteboardServiceStub::OnRemoteRequest`. In that snapshot the `GET_PASTE_DATA` transaction dispatches to `OnGetPasteData`, then calls the core `GetPasteData(PasteData&)`. That getter obtains the current user's clip and copies it to the output without a permission check. The D52 location is therefore a coarse method-level candidate; the missing guard is in the core getter, not established by the brace at line 41.
 
-The first verified permission gate in this source lineage is earlier than the 2024 `VerifyPermission` change: commit `cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7` (2022-08-30) adds `HasPastePermission` to the getter. The v4.1 tag has this older helper. Commit `721fecac75d9c51b0b145469abc6c9c78c17753e` (2024-03-23, !586) later introduces the `VerifyPermission` form and its default-IME exception. Consequently, !586 is a later permission implementation change, not the first-ever gate.
+In the checked complete GitCode mirror refs, the earliest verified source-side read gate is the 2022 change titled `剪贴板数据范围限制在应用内`: commit `e13a4ad3b72be7650ccb75de560790c04fa84795` (author date 2022-08-15; commit date 2022-08-27). Its parent is `9fd07a8a7c5b9ef2087a551e90efadf838078b04`, and it adds `CheckPastePermission` before the getter copies the clip into its result. The same tree and patch also appear under commit `ae45d0c8e1a489defb8135041436c3e428436e05` on a parallel parent; both are reachable in the checked release refs. This gate checks focus/default-IME eligibility and the app's `ShareOption`, including an app-id match for `InApp`. Commit `cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7` (2022-08-30) later changes the helper to `HasPastePermission` and adjusts the logic. The v4.1 and later checked release tags contain the gated source. Commit `721fecac75d9c51b0b145469abc6c9c78c17753e` (2024-03-23, !586) later introduces the `VerifyPermission` form and its default-IME exception; it is a later permission implementation change. This is the earliest gate found by the specified `--all --reverse -S'CheckPastePermission'` history query on the fetched mirror refs, not a claim that no earlier gate could exist outside those refs.
 
 The official June 2025 security bulletin maps CVE-2025-27247 to “剪切板模块权限绕过漏洞”, names `OpenHarmony-v5.0.3-Release` as affected, and links the fix to PR !1106 / the `5.0.3.x` patch line. The PR's source change removes the `IsDefaultIME` privilege allowance from `VerifyPermission`; the 5.0.3 release branch backport is `7ea520735f926b1f4720390e3d56f353642dbfa7`. The corresponding upstream change is `f27fb584ee3dd14ec38b66d64e50cd7e70325bca`. The upstream fix is an ancestor of current `e737`.
 
@@ -24,7 +24,8 @@ A separate `67ebf975e802cd1f7c25c9d225537fc10dabb987` change adds a local-caller
 |---|---|---|
 | D52 source snapshot | commit `dd22c7cb5e5f207a6c38c50f45b7369ee8575840`; tree `e374a0d61c9ec664ddd29fc17002797828c480ee`; stub blob `3dbc3150ada27a765938f06ea6e8cfd0a2d7146b`; core getter blob `c380ac266a85edd818caa811f11b99722d351788` | Commit object and tree verified in both official mirrors; old source calls core getter without a gate |
 | Current official master snapshot | commit `e73747b227104e6743e957ce31040edf58507221`; tree `4128cdf9ad11d393c30f2839f43419e97a5a466d`; core blob `fa6a08cdbaa18f34dcb6632babc70f22a700c860` | `dd22` and `f27` are ancestors; current core path checks `VerifyPermission` |
-| First verified source gate | `cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7` | Adds `HasPastePermission` in core getter; v4.1 tag includes it |
+| Earliest verified gate in fetched refs | `e13a4ad3b72be7650ccb75de560790c04fa84795`; same tree `a4969d1d7e4186603696c1de7cba2b9f686f7b3d`; parent `9fd07a8a7c5b9ef2087a551e90efadf838078b04`; parallel same-tree commit `ae45d0c8e1a489defb8135041436c3e428436e05` | Adds `CheckPastePermission` in core getter before result copy; v4.1 and subsequent checked release tags contain it |
+| Helper evolution | `cedbaeb9f55f524fb93c9d76ec06a4dc7b213ba7` | Later changes the getter helper to `HasPastePermission`; not the first source-side read gate |
 | Later verifier change | `721fecac75d9c51b0b145469abc6c9c78c17753e` | !586; later `VerifyPermission` implementation, including default-IME exception |
 | CVE upstream source fix | `f27fb584ee3dd14ec38b66d64e50cd7e70325bca`; tree `1fc6df6efc5a5f9c9b072a570c6486f62c0478cd` | Removes default-IME privilege allowance; ancestor of current master |
 | 5.0.3 backport | `7ea520735f926b1f4720390e3d56f353642dbfa7`; tree `69a592799ce6ed3877fe5a571aebcda90d355864` | Contained by official `OpenHarmony-v5.0.3-Release` tag |
@@ -48,7 +49,7 @@ These are repository tag contents, not a claim about every vendor image carrying
 
 ## Reproduction
 
-All repositories below were fetched independently as full mirrors; neither the shallow OpenHarmony807 checkout nor scanner source files were changed.
+All repositories below were fetched independently as full mirrors; neither the shallow OpenHarmony807 checkout nor scanner source files were changed. To scope “earliest gate” to the refs actually inspected, the source search used `git log --all --reverse -S'CheckPastePermission' -- services/core/src/pasteboard_service.cpp` and confirmed both same-tree commit copies and their release-tag reachability.
 
 ```powershell
 git clone --mirror https://gitcode.com/openharmony/miscservices_pasteboard.git miscservices_pasteboard.git
@@ -60,6 +61,8 @@ git --git-dir=distributeddatamgr_pasteboard.git rev-list --count --all
 git --git-dir=distributeddatamgr_pasteboard.git cat-file -p dd22c7cb5e5f207a6c38c50f45b7369ee8575840
 git --git-dir=distributeddatamgr_pasteboard.git merge-base --is-ancestor dd22c7cb5e5f207a6c38c50f45b7369ee8575840 e73747b227104e6743e957ce31040edf58507221
 git --git-dir=distributeddatamgr_pasteboard.git merge-base --is-ancestor f27fb584ee3dd14ec38b66d64e50cd7e70325bca e73747b227104e6743e957ce31040edf58507221
+git --git-dir=distributeddatamgr_pasteboard.git log --all --reverse -S'CheckPastePermission' --format='%H %ad %s' --date=iso-strict -- services/core/src/pasteboard_service.cpp
+git --git-dir=distributeddatamgr_pasteboard.git show e13a4ad3b72be7650ccb75de560790c04fa84795 -- services/core/src/pasteboard_service.cpp
 git --git-dir=distributeddatamgr_pasteboard.git diff a8427a6b548db7a0f64f5d3f297f755ec4db804c^1 a8427a6b548db7a0f64f5d3f297f755ec4db804c --name-status
 git --git-dir=distributeddatamgr_pasteboard.git show e73747b227104e6743e957ce31040edf58507221:services/core/src/pasteboard_service.cpp
 
