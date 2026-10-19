@@ -1,5 +1,14 @@
 {
-  "audit": "D76 SAMgr profile and service-token policy source trace",
+  "audit": "D76/D78 SAMgr profile and service-token policy source trace",
+  "follow_up": {
+    "id": "D78",
+    "base_commit": "88b357fa0f7d4906e3baff9392c6b27126c88d40",
+    "discovery_leads": [
+      "D77 a99334031575a184840fff9ed9a486237543fd64",
+      "T77 7f456a2457a931bbfee50abeadc9c006ef8aabbc"
+    ],
+    "verification": "Lead reports motivated this follow-up; all PengLai statements below were independently traced to the pinned SAMgr source commit/tree and file blobs recorded in repositories.samgr.evidence."
+  },
   "manifest_snapshot": {
     "path": "openharmony-manifest-current-20261018.xml",
     "sha256": "52f528dada321a140a29be2d55ef9053fda818cbdca93758425f1a25f6286d55",
@@ -628,6 +637,162 @@
           ]
         },
         {
+          "path": "services/samgr/native/BUILD.gn",
+          "blob_oid": "634ccf9fa9db2303540f70e054eb53322975f4d2",
+          "sha256": "db62ae68ece3a940bbc1d4fab18914841ba5c7b68e52212fbb0be9a6ca1f4416",
+          "matched_line_numbers": [
+            161,
+            162
+          ],
+          "excerpts": [
+            {
+              "start_line": 159,
+              "end_line": 164,
+              "text": "159:     }\n160: \n161:     if (support_penglai_mode) {\n162:       defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n163:     }\n164: "
+            },
+            {
+              "start_line": 160,
+              "end_line": 165,
+              "text": "160: \n161:     if (support_penglai_mode) {\n162:       defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n163:     }\n164: \n165:     if (samgr_support_multi_instance) {"
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/source/system_ability_manager_util.cpp",
+          "blob_oid": "8bd0a03ca884c7b399f727946dbdc260defbf56b",
+          "sha256": "a3dc40aa8a27213deebff50f8f44c1f8233b04f6b082808c7a29abe783b87eb8",
+          "matched_line_numbers": [
+            44,
+            45,
+            46,
+            63,
+            64,
+            117,
+            294,
+            297,
+            332,
+            334,
+            335,
+            338,
+            340,
+            345,
+            349,
+            353,
+            355,
+            360,
+            361,
+            363,
+            395
+          ],
+          "excerpts": [
+            {
+              "start_line": 42,
+              "end_line": 48,
+              "text": "42: #ifdef SUPPORT_PENGLAI_MODE\n43: using PenglaiFunc = bool (*)(const int32_t, const int32_t);\n44: constexpr const char* PENGLAI_SO_PATH = \"libpenglai_client.z.so\";\n45: constexpr const char* PENGLAI_SYM = \"IsLaunchAllowedByUid\";\n46: void* SamgrUtil::penglaiFunc_ = InitPenglaiFunc();\n47: #endif\n48: constexpr int32_t MAX_NAME_SIZE = 200;"
+            },
+            {
+              "start_line": 43,
+              "end_line": 49,
+              "text": "43: using PenglaiFunc = bool (*)(const int32_t, const int32_t);\n44: constexpr const char* PENGLAI_SO_PATH = \"libpenglai_client.z.so\";\n45: constexpr const char* PENGLAI_SYM = \"IsLaunchAllowedByUid\";\n46: void* SamgrUtil::penglaiFunc_ = InitPenglaiFunc();\n47: #endif\n48: constexpr int32_t MAX_NAME_SIZE = 200;\n49: constexpr int32_t SPLIT_NAME_VECTOR_SIZE = 2;"
+            },
+            {
+              "start_line": 44,
+              "end_line": 50,
+              "text": "44: constexpr const char* PENGLAI_SO_PATH = \"libpenglai_client.z.so\";\n45: constexpr const char* PENGLAI_SYM = \"IsLaunchAllowedByUid\";\n46: void* SamgrUtil::penglaiFunc_ = InitPenglaiFunc();\n47: #endif\n48: constexpr int32_t MAX_NAME_SIZE = 200;\n49: constexpr int32_t SPLIT_NAME_VECTOR_SIZE = 2;\n50: constexpr int32_t UID_ROOT = 0;"
+            },
+            {
+              "start_line": 61,
+              "end_line": 67,
+              "text": "61: constexpr const char* EVENT_EXTRA_DATA_ID = \"extraDataId\";\n62: constexpr const char* MODULE_UPDATE_PARAM = \"persist.samgr.moduleupdate\";\n63: constexpr const char* PENG_LAI_PARAM = \"ohos.boot.minisys.mode\";\n64: constexpr const char* PENG_LAI = \"penglai\";\n65: constexpr const char* PENGLAI_PATH = \"profile/penglai\";\n66: constexpr const char* LOGGER_TRANSPROC_PATH = \"/proc/transaction_proc\";\n67: constexpr const char* SET_PRIOR_PARAM = \"const.samgr.setprior.support\";"
+            },
+            {
+              "start_line": 62,
+              "end_line": 68,
+              "text": "62: constexpr const char* MODULE_UPDATE_PARAM = \"persist.samgr.moduleupdate\";\n63: constexpr const char* PENG_LAI_PARAM = \"ohos.boot.minisys.mode\";\n64: constexpr const char* PENG_LAI = \"penglai\";\n65: constexpr const char* PENGLAI_PATH = \"profile/penglai\";\n66: constexpr const char* LOGGER_TRANSPROC_PATH = \"/proc/transaction_proc\";\n67: constexpr const char* SET_PRIOR_PARAM = \"const.samgr.setprior.support\";\n68: constexpr const char* SET_DEATH_PRIOR_PARAM = \"const.samgr.setdeathprior.support\";"
+            },
+            {
+              "start_line": 115,
+              "end_line": 121,
+              "text": "115: bool SamgrUtil::CheckDistributedPermission()\n116: {\n117:     auto callingUid = IPCSkeleton::GetCallingUid();\n118:     if (callingUid != UID_ROOT && callingUid != UID_SYSTEM) {\n119:         return false;\n120:     }\n121:     return true;"
+            },
+            {
+              "start_line": 292,
+              "end_line": 298,
+              "text": "292: }\n293: \n294: bool SamgrUtil::CheckPengLai()\n295: {\n296:     std::string defaultValue = \"\";\n297:     std::string paramValue = system::GetParameter(PENG_LAI_PARAM, defaultValue);\n298:     return paramValue == PENG_LAI;"
+            },
+            {
+              "start_line": 295,
+              "end_line": 301,
+              "text": "295: {\n296:     std::string defaultValue = \"\";\n297:     std::string paramValue = system::GetParameter(PENG_LAI_PARAM, defaultValue);\n298:     return paramValue == PENG_LAI;\n299: }\n300: \n301: bool SamgrUtil::CheckSystemProcessStarted(const std::u16string& procName)"
+            },
+            {
+              "start_line": 330,
+              "end_line": 336,
+              "text": "330: \n331: #ifdef SUPPORT_PENGLAI_MODE\n332: void* SamgrUtil::InitPenglaiFunc()\n333: {\n334:     if (!CheckPengLai()) {\n335:         HILOGI(\"InitPenglaiFunc not penglai\");\n336:         return nullptr;"
+            },
+            {
+              "start_line": 332,
+              "end_line": 338,
+              "text": "332: void* SamgrUtil::InitPenglaiFunc()\n333: {\n334:     if (!CheckPengLai()) {\n335:         HILOGI(\"InitPenglaiFunc not penglai\");\n336:         return nullptr;\n337:     }\n338:     DlHandle handle = dlopen(PENGLAI_SO_PATH, RTLD_NOW);"
+            },
+            {
+              "start_line": 333,
+              "end_line": 339,
+              "text": "333: {\n334:     if (!CheckPengLai()) {\n335:         HILOGI(\"InitPenglaiFunc not penglai\");\n336:         return nullptr;\n337:     }\n338:     DlHandle handle = dlopen(PENGLAI_SO_PATH, RTLD_NOW);\n339:     if (handle == nullptr) {"
+            },
+            {
+              "start_line": 336,
+              "end_line": 342,
+              "text": "336:         return nullptr;\n337:     }\n338:     DlHandle handle = dlopen(PENGLAI_SO_PATH, RTLD_NOW);\n339:     if (handle == nullptr) {\n340:         HILOGE(\"InitPenglaiFunc dlopen %{public}s so failed.\", PENGLAI_SO_PATH);\n341:         return nullptr;\n342:     }"
+            },
+            {
+              "start_line": 338,
+              "end_line": 344,
+              "text": "338:     DlHandle handle = dlopen(PENGLAI_SO_PATH, RTLD_NOW);\n339:     if (handle == nullptr) {\n340:         HILOGE(\"InitPenglaiFunc dlopen %{public}s so failed.\", PENGLAI_SO_PATH);\n341:         return nullptr;\n342:     }\n343:     void* func = dlsym(handle, PENGLAI_SYM);\n344:     if (func == nullptr) {"
+            },
+            {
+              "start_line": 343,
+              "end_line": 349,
+              "text": "343:     void* func = dlsym(handle, PENGLAI_SYM);\n344:     if (func == nullptr) {\n345:         HILOGE(\"InitPenglaiFunc dlsym %{public}s symbol failed.\", PENGLAI_SYM);\n346:         dlclose(handle);\n347:         return nullptr;\n348:     }\n349:     HILOGI(\"InitPenglaiFunc success.\");"
+            },
+            {
+              "start_line": 347,
+              "end_line": 353,
+              "text": "347:         return nullptr;\n348:     }\n349:     HILOGI(\"InitPenglaiFunc success.\");\n350:     return func;\n351: }\n352: \n353: bool SamgrUtil::CheckPengLaiPermission(int32_t systemAbilityId)"
+            },
+            {
+              "start_line": 351,
+              "end_line": 357,
+              "text": "351: }\n352: \n353: bool SamgrUtil::CheckPengLaiPermission(int32_t systemAbilityId)\n354: {\n355:     auto callingUid = IPCSkeleton::GetCallingUid();\n356: \n357:     if (penglaiFunc_ == nullptr) {"
+            },
+            {
+              "start_line": 353,
+              "end_line": 359,
+              "text": "353: bool SamgrUtil::CheckPengLaiPermission(int32_t systemAbilityId)\n354: {\n355:     auto callingUid = IPCSkeleton::GetCallingUid();\n356: \n357:     if (penglaiFunc_ == nullptr) {\n358:         return true;\n359:     }"
+            },
+            {
+              "start_line": 358,
+              "end_line": 364,
+              "text": "358:         return true;\n359:     }\n360:     PenglaiFunc IsLaunchAllowedByUid = (PenglaiFunc)penglaiFunc_;\n361:     bool isAllow = IsLaunchAllowedByUid(callingUid, systemAbilityId);\n362:     if (!isAllow) {\n363:         HILOGE(\"IsLaunchAllowedByUid failed. callingUid:%{public}d, SA:%{public}d\", callingUid, systemAbilityId);\n364:         return false;"
+            },
+            {
+              "start_line": 359,
+              "end_line": 365,
+              "text": "359:     }\n360:     PenglaiFunc IsLaunchAllowedByUid = (PenglaiFunc)penglaiFunc_;\n361:     bool isAllow = IsLaunchAllowedByUid(callingUid, systemAbilityId);\n362:     if (!isAllow) {\n363:         HILOGE(\"IsLaunchAllowedByUid failed. callingUid:%{public}d, SA:%{public}d\", callingUid, systemAbilityId);\n364:         return false;\n365:     }"
+            },
+            {
+              "start_line": 361,
+              "end_line": 367,
+              "text": "361:     bool isAllow = IsLaunchAllowedByUid(callingUid, systemAbilityId);\n362:     if (!isAllow) {\n363:         HILOGE(\"IsLaunchAllowedByUid failed. callingUid:%{public}d, SA:%{public}d\", callingUid, systemAbilityId);\n364:         return false;\n365:     }\n366:     HILOGD(\"CheckPengLaiPerm suc. cUid:%{public}d,SA:%{public}d\", callingUid, systemAbilityId);\n367:     return isAllow;"
+            },
+            {
+              "start_line": 393,
+              "end_line": 399,
+              "text": "393:     GetFilesFromPath(path, fileNamesMap);\n394: \n395:     if (SamgrUtil::CheckPengLai()) {\n396:         HILOGI(\"GetFilesByPriority penglai!\");\n397:         GetFilesFromPath(PENGLAI_PATH, fileNamesMap);\n398:     }\n399: "
+            }
+          ]
+        },
+        {
           "path": "services/samgr/native/source/system_ability_manager_stub.cpp",
           "blob_oid": "ae84d998c4d90c8c08d692b9020404593b58a0cc",
           "sha256": "e82aa966b6c70278c64683b3bc4c0b236cf7550da3e65aeafc12acfa5f718433",
@@ -635,19 +800,30 @@
             47,
             52,
             53,
+            128,
+            191,
+            194,
             319,
             424,
+            439,
+            440,
             475,
+            526,
+            527,
             533,
             593,
             638,
             646,
+            651,
+            652,
             658,
             659,
             665,
             670,
             676,
             684,
+            689,
+            690,
             696,
             697,
             703,
@@ -655,8 +831,12 @@
             716,
             748,
             773,
+            781,
+            782,
             788,
             808,
+            852,
+            853,
             1019,
             1055,
             1100,
@@ -678,8 +858,14 @@
             1496,
             1535,
             1573,
+            1670,
+            1671,
             1677,
+            1713,
+            1714,
             1720,
+            1756,
+            1757,
             1763,
             1797,
             1842,
@@ -704,6 +890,21 @@
               "text": "51:         auto callingSid = OHOS::IPCSkeleton::GetCallingSid();\n52:         auto ret = selinuxChecker_->GetServiceCheck(callingSid, std::to_string(said)) == 0;\n53:         HILOG_SE_DEBUG(LOG_CORE, \"GetServiceCheck callingSid:%{public}s,SA:%{public}d,ret:%{public}s,spend:%{public}\"\n54:             PRId64 \"ms\", callingSid.c_str(), said, ret == true ? \"suc\" : \"fail\", OHOS::GetTickCount() - begin);\n55:         return  ret;\n56: #else\n57:         return true; // if not support selinux, not check selinux permission"
             },
             {
+              "start_line": 126,
+              "end_line": 132,
+              "text": "126: \n127: #ifdef SUPPORT_PENGLAI_MODE\n128: void SystemAbilityManagerStub::SetPengLai(bool isPengLai)\n129: {\n130:     isPengLai_ = isPengLai;\n131:     HILOGI(\"SAMStub: SetPengLai isPengLai_ = %{public}d\", isPengLai_);\n132: }"
+            },
+            {
+              "start_line": 189,
+              "end_line": 195,
+              "text": "189: }\n190: \n191: SystemAbilityManagerStub::SystemAbilityManagerStub()\n192: {\n193: #ifdef SUPPORT_PENGLAI_MODE\n194:     SetPengLai(SamgrUtil::CheckPengLai());\n195: #endif"
+            },
+            {
+              "start_line": 192,
+              "end_line": 198,
+              "text": "192: {\n193: #ifdef SUPPORT_PENGLAI_MODE\n194:     SetPengLai(SamgrUtil::CheckPengLai());\n195: #endif\n196:     SetSupportPrior(SamgrUtil::CheckSupportSetPrior());\n197:     SetAbilityFuncMap();\n198:     SetProcessFuncMap();"
+            },
+            {
               "start_line": 317,
               "end_line": 323,
               "text": "317: int32_t SystemAbilityManagerStub::ListSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n318: {\n319:     if (!CanRequest()) {\n320:         HILOGE(\"ListSystemAbilityInner PERMISSION DENIED!\");\n321:         return ERR_PERMISSION_DENIED;\n322:     }\n323: "
@@ -714,9 +915,29 @@
               "text": "422: int32_t SystemAbilityManagerStub::CheckRemtSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n423: {\n424:     if (!CanRequest()) {\n425:         HILOGE(\"CheckRemoteSystemAbilityInner PERMISSION DENIED!\");\n426:         return ERR_PERMISSION_DENIED;\n427:     }\n428:     int32_t systemAbilityId = -1;"
             },
             {
+              "start_line": 437,
+              "end_line": 443,
+              "text": "437: \n438: #ifdef SUPPORT_PENGLAI_MODE\n439:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n440:         HILOGW(\"CheckRemt CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n441:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n442:         return ERR_PERMISSION_DENIED;\n443:     }"
+            },
+            {
+              "start_line": 438,
+              "end_line": 444,
+              "text": "438: #ifdef SUPPORT_PENGLAI_MODE\n439:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n440:         HILOGW(\"CheckRemt CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n441:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n442:         return ERR_PERMISSION_DENIED;\n443:     }\n444: #endif"
+            },
+            {
               "start_line": 473,
               "end_line": 479,
               "text": "473: int32_t SystemAbilityManagerStub::AddOndemandSystemAbilityInner(MessageParcel& data, MessageParcel& reply)\n474: {\n475:     if (!CanRequest()) {\n476:         HILOGE(\"AddOndemandSystemAbilityInner PERMISSION DENIED!\");\n477:         return ERR_PERMISSION_DENIED;\n478:     }\n479:     int32_t systemAbilityId = -1;"
+            },
+            {
+              "start_line": 524,
+              "end_line": 530,
+              "text": "524: \n525: #ifdef SUPPORT_PENGLAI_MODE\n526:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n527:         HILOGW(\"CheckSAImme CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n528:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n529:         return ERR_PERMISSION_DENIED;\n530:     }"
+            },
+            {
+              "start_line": 525,
+              "end_line": 531,
+              "text": "525: #ifdef SUPPORT_PENGLAI_MODE\n526:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n527:         HILOGW(\"CheckSAImme CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n528:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n529:         return ERR_PERMISSION_DENIED;\n530:     }\n531: #endif"
             },
             {
               "start_line": 531,
@@ -737,6 +958,16 @@
               "start_line": 644,
               "end_line": 650,
               "text": "644:     }\n645:     if (!CheckInputSysAbilityId(systemAbilityId)) {\n646:         HILOGW(\"GetSystemAbilityInner read SAId failed!\");\n647:         return ERR_NULL_OBJECT;\n648:     }\n649: \n650: #ifdef SUPPORT_PENGLAI_MODE"
+            },
+            {
+              "start_line": 649,
+              "end_line": 655,
+              "text": "649: \n650: #ifdef SUPPORT_PENGLAI_MODE\n651:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n652:         HILOGW(\"GetSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n653:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n654:         return ERR_PERMISSION_DENIED;\n655:     }"
+            },
+            {
+              "start_line": 650,
+              "end_line": 656,
+              "text": "650: #ifdef SUPPORT_PENGLAI_MODE\n651:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n652:         HILOGW(\"GetSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n653:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n654:         return ERR_PERMISSION_DENIED;\n655:     }\n656: #endif"
             },
             {
               "start_line": 656,
@@ -767,6 +998,16 @@
               "start_line": 682,
               "end_line": 688,
               "text": "682:     }\n683:     if (!CheckInputSysAbilityId(systemAbilityId)) {\n684:         HILOGW(\"CheckSystemAbilityInner read SAId failed!\");\n685:         return ERR_NULL_OBJECT;\n686:     }\n687: \n688: #ifdef SUPPORT_PENGLAI_MODE"
+            },
+            {
+              "start_line": 687,
+              "end_line": 693,
+              "text": "687: \n688: #ifdef SUPPORT_PENGLAI_MODE\n689:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n690:         HILOGW(\"CheckSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n691:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n692:         return ERR_PERMISSION_DENIED;\n693:     }"
+            },
+            {
+              "start_line": 688,
+              "end_line": 694,
+              "text": "688: #ifdef SUPPORT_PENGLAI_MODE\n689:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n690:         HILOGW(\"CheckSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n691:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n692:         return ERR_PERMISSION_DENIED;\n693:     }\n694: #endif"
             },
             {
               "start_line": 694,
@@ -804,6 +1045,16 @@
               "text": "771: }\n772: \n773: int32_t SystemAbilityManagerStub::LoadSACheck(int32_t systemAbilityId)\n774: {\n775:     if (!CheckInputSysAbilityId(systemAbilityId)) {\n776:         HILOGW(\"LoadSystemAbilityInner check SAId failed!\");\n777:         return ERR_INVALID_VALUE;"
             },
             {
+              "start_line": 779,
+              "end_line": 785,
+              "text": "779: \n780: #ifdef SUPPORT_PENGLAI_MODE\n781:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n782:         HILOGW(\"LoadSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n783:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n784:         return ERR_PERMISSION_DENIED;\n785:     }"
+            },
+            {
+              "start_line": 780,
+              "end_line": 786,
+              "text": "780: #ifdef SUPPORT_PENGLAI_MODE\n781:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n782:         HILOGW(\"LoadSA CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n783:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n784:         return ERR_PERMISSION_DENIED;\n785:     }\n786: #endif"
+            },
+            {
               "start_line": 786,
               "end_line": 792,
               "text": "786: #endif\n787: \n788:     if (!CheckGetSAPermission(systemAbilityId)) {\n789:         HILOGE(\"LoadSystemAbilityInner selinux permission denied!SA:%{public}d,callSid:%{public}s\",\n790:             systemAbilityId, OHOS::IPCSkeleton::GetCallingSid().c_str());\n791:         return ERR_PERMISSION_DENIED;\n792:     }"
@@ -812,6 +1063,16 @@
               "start_line": 806,
               "end_line": 812,
               "text": "806:             return ERR_INVALID_VALUE;\n807:         }\n808:         int32_t checkRet = LoadSACheck(systemAbilityId);\n809:         if (checkRet != ERR_OK) {\n810:             return checkRet;\n811:         }\n812:         sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            },
+            {
+              "start_line": 850,
+              "end_line": 856,
+              "text": "850: \n851: #ifdef SUPPORT_PENGLAI_MODE\n852:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n853:         HILOGW(\"LoadRemote CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n854:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n855:         return ERR_PERMISSION_DENIED;\n856:     }"
+            },
+            {
+              "start_line": 851,
+              "end_line": 857,
+              "text": "851: #ifdef SUPPORT_PENGLAI_MODE\n852:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n853:         HILOGW(\"LoadRemote CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n854:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n855:         return ERR_PERMISSION_DENIED;\n856:     }\n857: #endif"
             },
             {
               "start_line": 1017,
@@ -919,14 +1180,44 @@
               "text": "1571: int32_t SystemAbilityManagerStub::GetLocalAbilityManagerProxyInner(MessageParcel& data, MessageParcel& reply)\n1572: {\n1573:     if (!CheckPermission(PERMISSION_SVC)) {\n1574:         HILOGE(\"GetLocalSystemAbilityProxyInner permission denied! CallSid:%{public}s\",\n1575:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1576:         return ERR_PERMISSION_DENIED;\n1577:     }"
             },
             {
+              "start_line": 1668,
+              "end_line": 1674,
+              "text": "1668: \n1669: #ifdef SUPPORT_PENGLAI_MODE\n1670:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n1671:         HILOGW(\"GetSAWithUserId CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n1672:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n1673:         return ERR_PERMISSION_DENIED;\n1674:     }"
+            },
+            {
+              "start_line": 1669,
+              "end_line": 1675,
+              "text": "1669: #ifdef SUPPORT_PENGLAI_MODE\n1670:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n1671:         HILOGW(\"GetSAWithUserId CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n1672:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n1673:         return ERR_PERMISSION_DENIED;\n1674:     }\n1675: #endif"
+            },
+            {
               "start_line": 1675,
               "end_line": 1681,
               "text": "1675: #endif\n1676: \n1677:     if (!CheckGetSAPermission(systemAbilityId)) {\n1678:         HILOGE(\"GetSystemAbilityWithUserIdInner selinux permission denied! \"\n1679:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1680:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1681:         return ERR_PERMISSION_DENIED;"
             },
             {
+              "start_line": 1711,
+              "end_line": 1717,
+              "text": "1711: \n1712: #ifdef SUPPORT_PENGLAI_MODE\n1713:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n1714:         HILOGW(\"CheckSAWithUserId CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n1715:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n1716:         return ERR_PERMISSION_DENIED;\n1717:     }"
+            },
+            {
+              "start_line": 1712,
+              "end_line": 1718,
+              "text": "1712: #ifdef SUPPORT_PENGLAI_MODE\n1713:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n1714:         HILOGW(\"CheckSAWithUserId CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n1715:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n1716:         return ERR_PERMISSION_DENIED;\n1717:     }\n1718: #endif"
+            },
+            {
               "start_line": 1718,
               "end_line": 1724,
               "text": "1718: #endif\n1719: \n1720:     if (!CheckGetSAPermission(systemAbilityId)) {\n1721:         HILOGD(\"CheckSystemAbilityWithUserIdInner selinux permission denied! \"\n1722:             \"SA:%{public}d,callSid:%{public}s\", systemAbilityId,\n1723:             OHOS::IPCSkeleton::GetCallingSid().c_str());\n1724:         return ERR_PERMISSION_DENIED;"
+            },
+            {
+              "start_line": 1754,
+              "end_line": 1760,
+              "text": "1754: \n1755: #ifdef SUPPORT_PENGLAI_MODE\n1756:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n1757:         HILOGW(\"CheckSAByUserId CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n1758:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n1759:         return ERR_PERMISSION_DENIED;\n1760:     }"
+            },
+            {
+              "start_line": 1755,
+              "end_line": 1761,
+              "text": "1755: #ifdef SUPPORT_PENGLAI_MODE\n1756:     if (isPengLai_ && !SamgrUtil::CheckPengLaiPermission(systemAbilityId)) {\n1757:         HILOGW(\"CheckSAByUserId CheckPengLaiPermission denied! SA:%{public}d,callUid:%{public}d\",\n1758:             systemAbilityId, OHOS::IPCSkeleton::GetCallingUid());\n1759:         return ERR_PERMISSION_DENIED;\n1760:     }\n1761: #endif"
             },
             {
               "start_line": 1761,
@@ -957,6 +1248,270 @@
               "start_line": 2025,
               "end_line": 2031,
               "text": "2025: int32_t SystemAbilityManagerStub::UnSubscribeSystemProcessWithUserIdInner(MessageParcel& data, MessageParcel& reply)\n2026: {\n2027:     if (!CanRequest()) {\n2028:         HILOGE(\"UnSubscribeSystemProcessWithUserIdInner PERMISSION DENIED!\");\n2029:         return ERR_PERMISSION_DENIED;\n2030:     }\n2031:     sptr<IRemoteObject> remoteObject = data.ReadRemoteObject();"
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/include/system_ability_manager_stub.h",
+          "blob_oid": "5340b6d55274b1f2d2bb3a4ac2291d7419ed9f3b",
+          "sha256": "c38fbc0c6eb4c66cca0ec460674549fe7aa10c3ab46dcb0c5a624bad690e6581",
+          "matched_line_numbers": [
+            336,
+            337
+          ],
+          "excerpts": [
+            {
+              "start_line": 334,
+              "end_line": 339,
+              "text": "334:     void SetSupportPrior(bool isSupport);\n335: #ifdef SUPPORT_PENGLAI_MODE\n336:     void SetPengLai(bool isPengLai);\n337:     bool isPengLai_ = false;\n338: #endif\n339:     void SetAbilityFuncMap();"
+            },
+            {
+              "start_line": 335,
+              "end_line": 340,
+              "text": "335: #ifdef SUPPORT_PENGLAI_MODE\n336:     void SetPengLai(bool isPengLai);\n337:     bool isPengLai_ = false;\n338: #endif\n339:     void SetAbilityFuncMap();\n340:     void SetProcessFuncMap();"
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/test/unittest/src/system_ability_mgr_stub_test.cpp",
+          "blob_oid": "687bba89668dd39d8c3730166b748b1ef8c7f133",
+          "sha256": "049c32f12375444929e24723c56e6d365add6a7f03c529c8c4add02aaa8c9925",
+          "matched_line_numbers": [
+            1245,
+            1250,
+            1268,
+            1273,
+            1421,
+            1426,
+            1444,
+            1449,
+            1482,
+            1487,
+            1505,
+            1510,
+            1543,
+            1548,
+            1566,
+            1571
+          ],
+          "excerpts": [
+            {
+              "start_line": 1244,
+              "end_line": 1259,
+              "text": "1244: /**\n1245:  * @tc.name: CheckRemtSystemAbilityInner005\n1246:  * @tc.desc: test CheckRemtSystemAbilityInner, penglai mode permission check failed!\n1247:  * @tc.type: FUNC\n1248:  */\n1249: #ifdef SUPPORT_PENGLAI_MODE\n1250: HWTEST_F(SystemAbilityMgrStubTest, CheckRemtSystemAbilityInner005, TestSize.Level3)\n1251: {\n1252:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1253:     EXPECT_TRUE(saMgr != nullptr);\n1254:     MessageParcel data;\n1255:     MessageParcel reply;\n1256:     data.WriteInt32(SAID);\n1257:     saMgr->SetPengLai(true);\n1258:     // set permission denied\n1259:     SetPenglaiPerm(false);"
+            },
+            {
+              "start_line": 1249,
+              "end_line": 1264,
+              "text": "1249: #ifdef SUPPORT_PENGLAI_MODE\n1250: HWTEST_F(SystemAbilityMgrStubTest, CheckRemtSystemAbilityInner005, TestSize.Level3)\n1251: {\n1252:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1253:     EXPECT_TRUE(saMgr != nullptr);\n1254:     MessageParcel data;\n1255:     MessageParcel reply;\n1256:     data.WriteInt32(SAID);\n1257:     saMgr->SetPengLai(true);\n1258:     // set permission denied\n1259:     SetPenglaiPerm(false);\n1260:     int32_t result = saMgr->CheckRemtSystemAbilityInner(data, reply);\n1261:     EXPECT_EQ(result, ERR_PERMISSION_DENIED);\n1262:     UnSetPenglaiPerm();\n1263:     saMgr->SetPengLai(false);\n1264: }"
+            },
+            {
+              "start_line": 1267,
+              "end_line": 1282,
+              "text": "1267: /**\n1268:  * @tc.name: CheckRemtSystemAbilityInner006\n1269:  * @tc.desc: test CheckSystemAbilityImmeInner, penglai mode permission check success!\n1270:  * @tc.type: FUNC\n1271:  */\n1272: #ifdef SUPPORT_PENGLAI_MODE\n1273: HWTEST_F(SystemAbilityMgrStubTest, CheckRemtSystemAbilityInner006, TestSize.Level3)\n1274: {\n1275:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1276:     EXPECT_TRUE(saMgr != nullptr);\n1277:     MessageParcel data;\n1278:     MessageParcel reply;\n1279:     data.WriteInt32(SAID);\n1280:     saMgr->SetPengLai(true);\n1281:     // set permission true\n1282:     SetPenglaiPerm(true);"
+            },
+            {
+              "start_line": 1272,
+              "end_line": 1287,
+              "text": "1272: #ifdef SUPPORT_PENGLAI_MODE\n1273: HWTEST_F(SystemAbilityMgrStubTest, CheckRemtSystemAbilityInner006, TestSize.Level3)\n1274: {\n1275:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1276:     EXPECT_TRUE(saMgr != nullptr);\n1277:     MessageParcel data;\n1278:     MessageParcel reply;\n1279:     data.WriteInt32(SAID);\n1280:     saMgr->SetPengLai(true);\n1281:     // set permission true\n1282:     SetPenglaiPerm(true);\n1283:     int32_t result = saMgr->CheckRemtSystemAbilityInner(data, reply);\n1284:     EXPECT_NE(result, ERR_PERMISSION_DENIED);\n1285:     UnSetPenglaiPerm();\n1286:     saMgr->SetPengLai(false);\n1287: }"
+            },
+            {
+              "start_line": 1420,
+              "end_line": 1435,
+              "text": "1420: /**\n1421:  * @tc.name: CheckSystemAbilityImmeInner004\n1422:  * @tc.desc: test CheckSystemAbilityImmeInner, penglai mode permission check failed!\n1423:  * @tc.type: FUNC\n1424:  */\n1425: #ifdef SUPPORT_PENGLAI_MODE\n1426: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityImmeInner004, TestSize.Level3)\n1427: {\n1428:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1429:     EXPECT_TRUE(saMgr != nullptr);\n1430:     MessageParcel data;\n1431:     MessageParcel reply;\n1432:     data.WriteInt32(SAID);\n1433:     saMgr->SetPengLai(true);\n1434:     // set permission denied\n1435:     SetPenglaiPerm(false);"
+            },
+            {
+              "start_line": 1425,
+              "end_line": 1440,
+              "text": "1425: #ifdef SUPPORT_PENGLAI_MODE\n1426: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityImmeInner004, TestSize.Level3)\n1427: {\n1428:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1429:     EXPECT_TRUE(saMgr != nullptr);\n1430:     MessageParcel data;\n1431:     MessageParcel reply;\n1432:     data.WriteInt32(SAID);\n1433:     saMgr->SetPengLai(true);\n1434:     // set permission denied\n1435:     SetPenglaiPerm(false);\n1436:     int32_t result = saMgr->CheckSystemAbilityImmeInner(data, reply);\n1437:     EXPECT_EQ(result, ERR_PERMISSION_DENIED);\n1438:     UnSetPenglaiPerm();\n1439:     saMgr->SetPengLai(false);\n1440: }"
+            },
+            {
+              "start_line": 1443,
+              "end_line": 1458,
+              "text": "1443: /**\n1444:  * @tc.name: CheckSystemAbilityImmeInner005\n1445:  * @tc.desc: test CheckSystemAbilityImmeInner, penglai mode permission check success!\n1446:  * @tc.type: FUNC\n1447:  */\n1448: #ifdef SUPPORT_PENGLAI_MODE\n1449: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityImmeInner005, TestSize.Level3)\n1450: {\n1451:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1452:     EXPECT_TRUE(saMgr != nullptr);\n1453:     MessageParcel data;\n1454:     MessageParcel reply;\n1455:     data.WriteInt32(SAID);\n1456:     saMgr->SetPengLai(true);\n1457:     // set permission true\n1458:     SetPenglaiPerm(true);"
+            },
+            {
+              "start_line": 1448,
+              "end_line": 1463,
+              "text": "1448: #ifdef SUPPORT_PENGLAI_MODE\n1449: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityImmeInner005, TestSize.Level3)\n1450: {\n1451:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1452:     EXPECT_TRUE(saMgr != nullptr);\n1453:     MessageParcel data;\n1454:     MessageParcel reply;\n1455:     data.WriteInt32(SAID);\n1456:     saMgr->SetPengLai(true);\n1457:     // set permission true\n1458:     SetPenglaiPerm(true);\n1459:     int32_t result = saMgr->CheckSystemAbilityImmeInner(data, reply);\n1460:     EXPECT_NE(result, ERR_PERMISSION_DENIED);\n1461:     UnSetPenglaiPerm();\n1462:     saMgr->SetPengLai(false);\n1463: }"
+            },
+            {
+              "start_line": 1481,
+              "end_line": 1496,
+              "text": "1481: /**\n1482:  * @tc.name: GetSystemAbilityInner002\n1483:  * @tc.desc: test GetSystemAbilityInner, penglai mode permission check failed!\n1484:  * @tc.type: FUNC\n1485:  */\n1486: #ifdef SUPPORT_PENGLAI_MODE\n1487: HWTEST_F(SystemAbilityMgrStubTest, GetSystemAbilityInner002, TestSize.Level3)\n1488: {\n1489:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1490:     EXPECT_TRUE(saMgr != nullptr);\n1491:     MessageParcel data;\n1492:     MessageParcel reply;\n1493:     data.WriteInt32(SAID);\n1494:     saMgr->SetPengLai(true);\n1495:     // set permission denied\n1496:     SetPenglaiPerm(false);"
+            },
+            {
+              "start_line": 1486,
+              "end_line": 1501,
+              "text": "1486: #ifdef SUPPORT_PENGLAI_MODE\n1487: HWTEST_F(SystemAbilityMgrStubTest, GetSystemAbilityInner002, TestSize.Level3)\n1488: {\n1489:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1490:     EXPECT_TRUE(saMgr != nullptr);\n1491:     MessageParcel data;\n1492:     MessageParcel reply;\n1493:     data.WriteInt32(SAID);\n1494:     saMgr->SetPengLai(true);\n1495:     // set permission denied\n1496:     SetPenglaiPerm(false);\n1497:     int32_t result = saMgr->GetSystemAbilityInner(data, reply);\n1498:     EXPECT_EQ(result, ERR_PERMISSION_DENIED);\n1499:     UnSetPenglaiPerm();\n1500:     saMgr->SetPengLai(false);\n1501: }"
+            },
+            {
+              "start_line": 1504,
+              "end_line": 1519,
+              "text": "1504: /**\n1505:  * @tc.name: GetSystemAbilityInner003\n1506:  * @tc.desc: test GetSystemAbilityInner, penglai mode permission check success!\n1507:  * @tc.type: FUNC\n1508:  */\n1509: #ifdef SUPPORT_PENGLAI_MODE\n1510: HWTEST_F(SystemAbilityMgrStubTest, GetSystemAbilityInner003, TestSize.Level3)\n1511: {\n1512:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1513:     EXPECT_TRUE(saMgr != nullptr);\n1514:     MessageParcel data;\n1515:     MessageParcel reply;\n1516:     data.WriteInt32(SAID);\n1517:     saMgr->SetPengLai(true);\n1518:     // set permission true\n1519:     SetPenglaiPerm(true);"
+            },
+            {
+              "start_line": 1509,
+              "end_line": 1524,
+              "text": "1509: #ifdef SUPPORT_PENGLAI_MODE\n1510: HWTEST_F(SystemAbilityMgrStubTest, GetSystemAbilityInner003, TestSize.Level3)\n1511: {\n1512:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1513:     EXPECT_TRUE(saMgr != nullptr);\n1514:     MessageParcel data;\n1515:     MessageParcel reply;\n1516:     data.WriteInt32(SAID);\n1517:     saMgr->SetPengLai(true);\n1518:     // set permission true\n1519:     SetPenglaiPerm(true);\n1520:     int32_t result = saMgr->GetSystemAbilityInner(data, reply);\n1521:     EXPECT_NE(result, ERR_PERMISSION_DENIED);\n1522:     UnSetPenglaiPerm();\n1523:     saMgr->SetPengLai(false);\n1524: }"
+            },
+            {
+              "start_line": 1542,
+              "end_line": 1557,
+              "text": "1542: /**\n1543:  * @tc.name: CheckSystemAbilityInner002\n1544:  * @tc.desc: test CheckSystemAbilityInner, penglai mode permission check failed!\n1545:  * @tc.type: FUNC\n1546:  */\n1547: #ifdef SUPPORT_PENGLAI_MODE\n1548: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityInner002, TestSize.Level3)\n1549: {\n1550:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1551:     EXPECT_TRUE(saMgr != nullptr);\n1552:     MessageParcel data;\n1553:     MessageParcel reply;\n1554:     data.WriteInt32(SAID);\n1555:     saMgr->SetPengLai(true);\n1556:     // set permission denied\n1557:     SetPenglaiPerm(false);"
+            },
+            {
+              "start_line": 1547,
+              "end_line": 1562,
+              "text": "1547: #ifdef SUPPORT_PENGLAI_MODE\n1548: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityInner002, TestSize.Level3)\n1549: {\n1550:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1551:     EXPECT_TRUE(saMgr != nullptr);\n1552:     MessageParcel data;\n1553:     MessageParcel reply;\n1554:     data.WriteInt32(SAID);\n1555:     saMgr->SetPengLai(true);\n1556:     // set permission denied\n1557:     SetPenglaiPerm(false);\n1558:     int32_t result = saMgr->CheckSystemAbilityInner(data, reply);\n1559:     EXPECT_EQ(result, ERR_PERMISSION_DENIED);\n1560:     UnSetPenglaiPerm();\n1561:     saMgr->SetPengLai(false);\n1562: }"
+            },
+            {
+              "start_line": 1565,
+              "end_line": 1580,
+              "text": "1565: /**\n1566:  * @tc.name: CheckSystemAbilityInner003\n1567:  * @tc.desc: test CheckSystemAbilityInner, penglai mode permission check succes!\n1568:  * @tc.type: FUNC\n1569:  */\n1570: #ifdef SUPPORT_PENGLAI_MODE\n1571: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityInner003, TestSize.Level3)\n1572: {\n1573:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1574:     EXPECT_TRUE(saMgr != nullptr);\n1575:     MessageParcel data;\n1576:     MessageParcel reply;\n1577:     data.WriteInt32(SAID);\n1578:     saMgr->SetPengLai(true);\n1579:     // set permission true\n1580:     SetPenglaiPerm(true);"
+            },
+            {
+              "start_line": 1570,
+              "end_line": 1585,
+              "text": "1570: #ifdef SUPPORT_PENGLAI_MODE\n1571: HWTEST_F(SystemAbilityMgrStubTest, CheckSystemAbilityInner003, TestSize.Level3)\n1572: {\n1573:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n1574:     EXPECT_TRUE(saMgr != nullptr);\n1575:     MessageParcel data;\n1576:     MessageParcel reply;\n1577:     data.WriteInt32(SAID);\n1578:     saMgr->SetPengLai(true);\n1579:     // set permission true\n1580:     SetPenglaiPerm(true);\n1581:     int32_t result = saMgr->CheckSystemAbilityInner(data, reply);\n1582:     EXPECT_NE(result, ERR_PERMISSION_DENIED);\n1583:     UnSetPenglaiPerm();\n1584:     saMgr->SetPengLai(false);\n1585: }"
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/test/unittest/src/system_ability_mgr_stub_load_test.cpp",
+          "blob_oid": "112662041b7a99672777bece2d79c9c67aad62f2",
+          "sha256": "3841edb37576efd66c340488f07ead73d00dec29a93690a3a6f673ff8be13cf0",
+          "matched_line_numbers": [
+            334,
+            339,
+            357,
+            362
+          ],
+          "excerpts": [
+            {
+              "start_line": 333,
+              "end_line": 348,
+              "text": "333: /**\n334:  * @tc.name: LoadRemoteSystemAbilityInner006\n335:  * @tc.desc: test LoadRemoteSystemAbilityInner, penglai mode permission check failed!\n336:  * @tc.type: FUNC\n337:  */\n338: #ifdef SUPPORT_PENGLAI_MODE\n339: HWTEST_F(SystemAbilityMgrStubTest, LoadRemoteSystemAbilityInner006, TestSize.Level3)\n340: {\n341:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n342:     EXPECT_TRUE(saMgr != nullptr);\n343:     MessageParcel data;\n344:     MessageParcel reply;\n345:     data.WriteInt32(SAID);\n346:     saMgr->SetPengLai(true);\n347:     // set permission denied\n348:     SetPenglaiPerm(false);"
+            },
+            {
+              "start_line": 338,
+              "end_line": 353,
+              "text": "338: #ifdef SUPPORT_PENGLAI_MODE\n339: HWTEST_F(SystemAbilityMgrStubTest, LoadRemoteSystemAbilityInner006, TestSize.Level3)\n340: {\n341:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n342:     EXPECT_TRUE(saMgr != nullptr);\n343:     MessageParcel data;\n344:     MessageParcel reply;\n345:     data.WriteInt32(SAID);\n346:     saMgr->SetPengLai(true);\n347:     // set permission denied\n348:     SetPenglaiPerm(false);\n349:     int32_t result = saMgr->LoadRemoteSystemAbilityInner(data, reply);\n350:     EXPECT_EQ(result, ERR_PERMISSION_DENIED);\n351:     UnSetPenglaiPerm();\n352:     saMgr->SetPengLai(false);\n353: }"
+            },
+            {
+              "start_line": 356,
+              "end_line": 371,
+              "text": "356: /**\n357:  * @tc.name: LoadRemoteSystemAbilityInner007\n358:  * @tc.desc: test LoadRemoteSystemAbilityInner, penglai mode permission check success!\n359:  * @tc.type: FUNC\n360:  */\n361: #ifdef SUPPORT_PENGLAI_MODE\n362: HWTEST_F(SystemAbilityMgrStubTest, LoadRemoteSystemAbilityInner007, TestSize.Level3)\n363: {\n364:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n365:     EXPECT_TRUE(saMgr != nullptr);\n366:     MessageParcel data;\n367:     MessageParcel reply;\n368:     data.WriteInt32(SAID);\n369:     saMgr->SetPengLai(true);\n370:     // set permission true\n371:     SetPenglaiPerm(true);"
+            },
+            {
+              "start_line": 361,
+              "end_line": 376,
+              "text": "361: #ifdef SUPPORT_PENGLAI_MODE\n362: HWTEST_F(SystemAbilityMgrStubTest, LoadRemoteSystemAbilityInner007, TestSize.Level3)\n363: {\n364:     sptr<SystemAbilityManager> saMgr = SystemAbilityManager::GetInstance();\n365:     EXPECT_TRUE(saMgr != nullptr);\n366:     MessageParcel data;\n367:     MessageParcel reply;\n368:     data.WriteInt32(SAID);\n369:     saMgr->SetPengLai(true);\n370:     // set permission true\n371:     SetPenglaiPerm(true);\n372:     int32_t result = saMgr->LoadRemoteSystemAbilityInner(data, reply);\n373:     EXPECT_NE(result, ERR_PERMISSION_DENIED);\n374:     UnSetPenglaiPerm();\n375:     saMgr->SetPengLai(false);\n376: }"
+            }
+          ]
+        },
+        {
+          "path": "services/samgr/native/test/unittest/BUILD.gn",
+          "blob_oid": "7ea5ea8d8217d4084a7093e0a4f5877e0f820b41",
+          "sha256": "df4e7b05517781f92b551f5bde8798f22a18bb1b335f13695312ee8c2a545149",
+          "matched_line_numbers": [
+            170,
+            171,
+            321,
+            322,
+            442,
+            443,
+            563,
+            564,
+            685,
+            686,
+            904,
+            905,
+            999,
+            1000,
+            1334,
+            1335
+          ],
+          "excerpts": [
+            {
+              "start_line": 168,
+              "end_line": 173,
+              "text": "168:   }\n169: \n170:   if (support_penglai_mode) {\n171:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n172:   }\n173:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 169,
+              "end_line": 174,
+              "text": "169: \n170:   if (support_penglai_mode) {\n171:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n172:   }\n173:   if (samgr_support_multi_instance) {\n174:     sources += ["
+            },
+            {
+              "start_line": 319,
+              "end_line": 324,
+              "text": "319:     defines += [ \"SUPPORT_DEVICE_MANAGER\" ]\n320:   }\n321:   if (support_penglai_mode) {\n322:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n323:   }\n324:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 320,
+              "end_line": 325,
+              "text": "320:   }\n321:   if (support_penglai_mode) {\n322:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n323:   }\n324:   if (samgr_support_multi_instance) {\n325:     sources += ["
+            },
+            {
+              "start_line": 440,
+              "end_line": 445,
+              "text": "440:     defines += [ \"SAMGR_ENABLE_DELAY_DBINDER\" ]\n441:   }\n442:   if (support_penglai_mode) {\n443:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n444:   }\n445:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 441,
+              "end_line": 446,
+              "text": "441:   }\n442:   if (support_penglai_mode) {\n443:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n444:   }\n445:   if (samgr_support_multi_instance) {\n446:     sources += ["
+            },
+            {
+              "start_line": 561,
+              "end_line": 566,
+              "text": "561:   }\n562: \n563:   if (support_penglai_mode) {\n564:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n565:   }\n566:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 562,
+              "end_line": 567,
+              "text": "562: \n563:   if (support_penglai_mode) {\n564:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n565:   }\n566:   if (samgr_support_multi_instance) {\n567:     sources += ["
+            },
+            {
+              "start_line": 683,
+              "end_line": 688,
+              "text": "683:   }\n684: \n685:   if (support_penglai_mode) {\n686:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n687:   }\n688:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 684,
+              "end_line": 689,
+              "text": "684: \n685:   if (support_penglai_mode) {\n686:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n687:   }\n688:   if (samgr_support_multi_instance) {\n689:     sources += ["
+            },
+            {
+              "start_line": 902,
+              "end_line": 907,
+              "text": "902:   }\n903: \n904:   if (support_penglai_mode) {\n905:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n906:   }\n907:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 903,
+              "end_line": 908,
+              "text": "903: \n904:   if (support_penglai_mode) {\n905:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n906:   }\n907:   if (samgr_support_multi_instance) {\n908:     sources += ["
+            },
+            {
+              "start_line": 997,
+              "end_line": 1002,
+              "text": "997:     defines += [ \"SUPPORT_ACCESS_TOKEN\" ]\n998:   }\n999:   if (support_penglai_mode) {\n1000:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n1001:   }\n1002:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 998,
+              "end_line": 1003,
+              "text": "998:   }\n999:   if (support_penglai_mode) {\n1000:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n1001:   }\n1002:   if (samgr_support_multi_instance) {\n1003:     sources += ["
+            },
+            {
+              "start_line": 1332,
+              "end_line": 1337,
+              "text": "1332:     \"qos_manager:concurrent_task_client\",\n1333:   ]\n1334:   if (support_penglai_mode) {\n1335:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n1336:   }\n1337:   if (samgr_support_multi_instance) {"
+            },
+            {
+              "start_line": 1333,
+              "end_line": 1338,
+              "text": "1333:   ]\n1334:   if (support_penglai_mode) {\n1335:     defines += [ \"SUPPORT_PENGLAI_MODE\" ]\n1336:   }\n1337:   if (samgr_support_multi_instance) {\n1338:     sources += ["
             }
           ]
         },
@@ -1681,6 +2236,54 @@
       "source": "D52 historical etc/init/pasteboardservice.cfg",
       "expectation": "Pinned component cfg contains neither permission nor permission_acls; installed-profile mapping remains unknown.",
       "execution": "source-bound config inspection; not proof of product merged config"
+    },
+    {
+      "id": "penglai-build-flag-off",
+      "source": "samgr services/samgr/native/BUILD.gn:161-163",
+      "condition": "support_penglai_mode=false; SUPPORT_PENGLAI_MODE is not defined for the SAMgr target.",
+      "expected_gate": "CheckPengLaiPermission call sites and isPengLai_ state are compiled out; this PengLai gate cannot deny SA acquisition in this build configuration.",
+      "execution": "GN/source conditional evaluation; no product build executed"
+    },
+    {
+      "id": "penglai-build-flag-on-runtime-false",
+      "source": "samgr services/samgr/native/source/system_ability_manager_util.cpp:294-299; system_ability_manager_stub.cpp:191-195",
+      "condition": "SUPPORT_PENGLAI_MODE defined and ohos.boot.minisys.mode is not exactly penglai (missing parameter defaults to empty).",
+      "expected_gate": "constructor sets isPengLai_=false; guarded acquisition checks are bypassed.",
+      "execution": "source-bound truth-table control; device parameter not read"
+    },
+    {
+      "id": "penglai-build-flag-on-runtime-true-check-allow",
+      "source": "samgr services/samgr/native/source/system_ability_manager_util.cpp:331-368; system_ability_manager_stub.cpp:638-669",
+      "condition": "Macro enabled, parameter equals penglai, checker function resolved, IsLaunchAllowedByUid(callingUid, saId) returns true.",
+      "expected_gate": "isPengLai_=true; GetSystemAbilityInner passes the PengLai check and proceeds to the existing SELinux check and proxy return.",
+      "execution": "source-bound control; dynamic library/runtime checker not executed"
+    },
+    {
+      "id": "penglai-build-flag-on-runtime-true-check-deny",
+      "source": "samgr services/samgr/native/source/system_ability_manager_util.cpp:353-367; system_ability_manager_stub.cpp:638-655",
+      "condition": "Macro enabled, parameter equals penglai, checker function resolved, IsLaunchAllowedByUid(callingUid, saId) returns false.",
+      "expected_gate": "GetSystemAbilityInner returns ERR_PERMISSION_DENIED before GetSystemAbility and WriteRemoteObject; analogous checks exist in CheckSystemAbilityInner and LoadSACheck.",
+      "execution": "source-bound control; dynamic library/runtime checker not executed"
+    },
+    {
+      "id": "penglai-missing-library-fail-open",
+      "source": "samgr services/samgr/native/source/system_ability_manager_util.cpp:332-368",
+      "condition": "Macro enabled and runtime PengLai mode true, but library or symbol resolution leaves penglaiFunc_ null.",
+      "expected_gate": "CheckPengLaiPermission returns true when the function pointer is null; this gate does not deny.",
+      "execution": "source-bound negative control; dynamic library load not executed"
+    },
+    {
+      "id": "penglai-handler-unit-test-source-controls",
+      "source": "samgr native unit tests for CheckRemote/CheckSystemAbility/GetSystemAbility/LoadRemoteSystemAbility handlers",
+      "expectation": "Under SUPPORT_PENGLAI_MODE, tests set runtime mode true and inject a denying checker expecting ERR_PERMISSION_DENIED, then an allowing checker expecting a non-denied result; test BUILD.gn defines the macro only when support_penglai_mode is enabled.",
+      "execution": "test source inspected; binaries were not built or run"
+    },
+    {
+      "id": "returned-sa-method-boundary",
+      "source": "samgr services/samgr/native/source/system_ability_manager_stub.cpp:638-669; D52 Pasteboard route in historical repository",
+      "condition": "SAMgr returns an IRemoteObject to the caller and that object is subsequently invoked through Binder.",
+      "expected_gate": "The shown PengLai checks run in SAMgr acquisition/loading handlers. They are not re-run by the returned object's later method transaction; per-method authorization remains unknown and must be established at that object's service boundary.",
+      "execution": "source-bound call-boundary control; no Binder runtime test executed"
     }
   ],
   "interpretation": {
@@ -1688,6 +2291,7 @@
     "init_service_cfg_fields": "Distinct init service cfg fields are parsed into permission/perms and permission_acls/acls arrays, then passed as inputs to native service AccessToken creation and SetSelfTokenID.",
     "acl_limit": "AccessToken code uses native ACL entries to include permissions despite an APL available-level threshold. This is token construction policy, not a per-caller service ACL. Runtime product effects depend on AccessToken implementation/policy and build.",
     "samgr_query_gate": "SAMgr Get/Check/Load SA operations conditionally call SELinux ServiceChecker with IPC caller SID and SA id; WITH_SELINUX absent returns true. This gates acquiring/returning an SA proxy, not each subsequent binder method call to the SA.",
+    "samgr_penglai_gate": "When SUPPORT_PENGLAI_MODE is compiled in, the stub snapshots whether ohos.boot.minisys.mode equals penglai into isPengLai_. In that runtime mode, acquisition/loading handlers check IsLaunchAllowedByUid(callingUid, saId) through libpenglai_client.z.so; a resolved checker denial returns ERR_PERMISSION_DENIED before returning/loading the SA. If the macro is off, runtime mode is false, or the checker function pointer is unresolved, this gate is absent or fails open. It controls SAMgr acquisition/loading paths, not later Binder calls on a returned SA object.",
     "D52_boundary": "D52 profile/3701.xml is XML and its component init cfg path names pasteboard_service.xml. The current SAMgr JSON parser cannot parse that XML. No D52 product manifest/build rule evidence resolves the XML install filename mapping or binds this pinned SAMgr/init/AccessToken revisions to D52 product."
   }
 }
