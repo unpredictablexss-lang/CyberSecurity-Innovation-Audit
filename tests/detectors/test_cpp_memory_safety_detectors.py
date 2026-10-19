@@ -50,7 +50,7 @@ void positive(char *src, unsigned int n) {
 """)
         run = self.detector.detect(context_for(source), (source,))
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.bounds")
-        self.assertEqual(self.detector.version, "0.2.0")
+        self.assertEqual(self.detector.version, "0.3.0")
         self.assertEqual(run.status, "completed")
         self.assertEqual(len(run.findings), 2)
         self.assertEqual({item.rule_id for item in run.findings}, {
@@ -59,7 +59,7 @@ void positive(char *src, unsigned int n) {
         })
         for finding in run.findings:
             self.assertEqual(finding.source_sha256, source.sha256)
-            self.assertEqual(finding.rule_version, "0.2.0")
+            self.assertEqual(finding.rule_version, "0.3.0")
             self.assertEqual(finding.rule_lineage_id, "A-BOF-01:ohcpp-memory-bounds-candidate")
             self.assertEqual(finding.identity_quality, "partial")
             self.assertGreaterEqual(len(finding.evidence_obligations), 7)
@@ -84,6 +84,73 @@ void exact(char *src) {
         run = self.detector.detect(context_for(fixed, exact), (fixed, exact))
         self.assertEqual(run.status, "completed")
         self.assertEqual(run.findings, ())
+
+    def test_dynamic_vector_same_loop_capacity_and_controls(self) -> None:
+        vulnerable = unit("positive/vector_loop.cpp", """
+#include <vector>
+void vulnerable(int capacity) {
+    std::vector<int> values(capacity);
+    int cursor = 0;
+    while (cursor < 1) { values[cursor] = 1; ++cursor; }
+}
+""")
+        fixed = unit("fixed/vector_capacity_guard.cpp", """
+#include <vector>
+void fixed(int capacity) {
+    std::vector<int> values(capacity);
+    int cursor = 0;
+    while (cursor < capacity) { values[cursor] = 1; ++cursor; }
+}
+""")
+        safe = unit("safe/vector_size_loop.cpp", """
+#include <vector>
+#include <cstddef>
+void safe(std::vector<int>& values) {
+    for (std::size_t cursor = 0; cursor < values.size(); ++cursor) values[cursor] = 1;
+}
+""")
+        safe_if = unit("safe/vector_same_branch.cpp", """
+#include <vector>
+void safe_if(std::vector<int>& values, int cursor) {
+    if (cursor >= 0 && static_cast<std::size_t>(cursor) < values.size()) values[cursor] = 1;
+}
+""")
+        unrelated = unit("unrelated/fixed_array.cpp", """
+void unrelated(int cursor) { int values[8]{}; if (cursor >= 0 && cursor < 8) values[cursor] = 1; }
+""")
+        renamed = unit("positive/renamed_vector.cpp", """
+#include <vector>
+void renamed(std::vector<int>& renamed_items, int renamed_cursor) {
+    while (renamed_cursor < 2) { renamed_items[renamed_cursor] = 1; ++renamed_cursor; }
+}
+""")
+        mutation_controls = unit("unknown/vector_mutation.cpp", """
+#include <vector>
+void changed_index(std::vector<int>& values, int cursor) {
+    if (cursor >= 0 && cursor < values.size()) { cursor = -1; values[cursor] = 1; }
+}
+void changed_vector(std::vector<int>& values, int cursor) {
+    if (cursor >= 0 && cursor < values.size()) { values.clear(); values[cursor] = 1; }
+}
+""")
+        run = self.detector.detect(
+            context_for(vulnerable, fixed, safe, safe_if, unrelated, renamed, mutation_controls),
+            (vulnerable, fixed, safe, safe_if, unrelated, renamed, mutation_controls),
+        )
+        vector_findings = [item for item in run.findings if item.rule_id == "ohcpp-memory-bounds-vector-index-candidate-005"]
+        self.assertEqual(run.status, "completed")
+        self.assertEqual({item.file for item in vector_findings}, {
+            "positive/vector_loop.cpp", "positive/renamed_vector.cpp", "unknown/vector_mutation.cpp",
+        })
+        self.assertTrue(all(item.rule_version == "0.1.0" for item in vector_findings))
+
+        partial = unit("unknown/partial_vector.cpp", """
+#include <vector>
+void partial(std::vector<int>& values, int cursor) { values[cursor] = 1;
+""", "partial")
+        blocked = self.detector.detect(context_for(partial), (partial,))
+        self.assertEqual(blocked.status, "blocked")
+        self.assertEqual(blocked.findings, ())
 
     def test_direct_sort_element_access_without_stability_guard_is_candidate(self) -> None:
         source = unit("positive/sort_element_access.cpp", """

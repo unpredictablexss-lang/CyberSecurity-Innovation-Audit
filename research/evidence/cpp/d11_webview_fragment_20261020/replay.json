@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "case_id": "web_webview-CVE-2026-27648-D11",
+  "base_commit": "983afb846ceaa34daf690c39e4918703c4ac99a7",
+  "source_identity_manifest": "source-identities.json",
+  "source_identity_manifest_sha256": "f5ac70473d6904ec81b5f078671ed2693196f205335729f678ef6ab6637e78b5",
+  "pre_change_bounds_detector_blob": "cc3d7a32a254eae463224a52903c93e80fa33b71",
+  "current_bounds_detector_sha256": "0b36bb73284d99d87f9fb311b1de505e87fdd6a3fbd7acf347246d16249bf0e5",
+  "detector": {
+    "id": "ohscanner.cpp.bounds",
+    "version": "0.3.0",
+    "new_rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+    "new_rule_version": "0.1.0",
+    "scope": "Only syntactically declared std::vector dynamic subscripts; suppresses only an exact same-loop vector size/constructor-capacity bound with local nonnegative index evidence."
+  },
+  "baseline_cli": {
+    "vulnerable": {
+      "detector_version": "0.2.0",
+      "status": "blocked",
+      "diagnostic_count": 0,
+      "parse_status": {
+        "complete": 4,
+        "partial": 1
+      },
+      "report": "baseline-vulnerable.json"
+    },
+    "fixed": {
+      "detector_version": "0.2.0",
+      "status": "blocked",
+      "diagnostic_count": 0,
+      "parse_status": {
+        "complete": 4,
+        "partial": 1
+      },
+      "report": "baseline-fixed.json"
+    }
+  },
+  "fragment_cli": {
+    "commands": [
+      "python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d11-webview-flowbuffer-fragments-20261020-v2 --repository OpenHarmony-TPC/chromium_src --commit 769110ddf1c14355c89f34b974ab9e6cf58c0c6c --include flowbuffer_functions.cc --include safe.cpp --include unrelated.cpp --include renamed.cpp --include partial.cpp --detector ohscanner.cpp.bounds --json-out research/evidence/cpp/d11_webview_fragment_20261020/current-vulnerable.json --md-out research/evidence/cpp/d11_webview_fragment_20261020/current-vulnerable.md",
+      "python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/d11-webview-flowbuffer-fragments-20261020-v2 --repository OpenHarmony-TPC/chromium_src --commit f550e8e59c57afe4e02b130ec3373b1011843617 --include flowbuffer_functions.cc --include safe.cpp --include unrelated.cpp --include renamed.cpp --include partial.cpp --detector ohscanner.cpp.bounds --json-out research/evidence/cpp/d11_webview_fragment_20261020/current-fixed.json --md-out research/evidence/cpp/d11_webview_fragment_20261020/current-fixed.md"
+    ],
+    "vulnerable": {
+      "synthetic_commit": "769110ddf1c14355c89f34b974ab9e6cf58c0c6c",
+      "status": "blocked",
+      "parse_status": {
+        "complete": 4,
+        "partial": 1
+      },
+      "elapsed_seconds": 0.012505599996075034,
+      "diagnostic_count_all_files": 13,
+      "flowbuffer_root_specific": [
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 85,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 87,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 96,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 98,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 140,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 142,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        }
+      ],
+      "ordinary_argument_loop_residual": [
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 116,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 118,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 126,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 127,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 131,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 133,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "70e2cf35f6b143a7fdbf2e6c9a571817545ef9c9efe0199aa1e7c5e6e4afb973"
+        }
+      ],
+      "controls": {
+        "safe.cpp": [],
+        "unrelated.cpp": [],
+        "renamed.cpp": [
+          {
+            "file": "renamed.cpp",
+            "line": 3,
+            "symbol": "renamed_items",
+            "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+            "rule_version": "0.1.0",
+            "source_sha256": "ecdb5a977f92cae786120a60d24d6bb5a6731dc2df9deb20a015b24d9c4d45da"
+          }
+        ],
+        "partial.cpp": []
+      }
+    },
+    "fixed": {
+      "synthetic_commit": "f550e8e59c57afe4e02b130ec3373b1011843617",
+      "status": "blocked",
+      "parse_status": {
+        "complete": 4,
+        "partial": 1
+      },
+      "elapsed_seconds": 0.014239299998735078,
+      "diagnostic_count_all_files": 7,
+      "flowbuffer_root_specific": [],
+      "ordinary_argument_loop_residual": [
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 122,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 124,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 132,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 133,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 137,
+          "symbol": "dataList",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+        },
+        {
+          "file": "flowbuffer_functions.cc",
+          "line": 139,
+          "symbol": "dataSize",
+          "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+          "rule_version": "0.1.0",
+          "source_sha256": "6d8f1982dae51a633959ba7a7cdeb78c6f1f29d85571ed98e7ffc0c789556e74"
+        }
+      ],
+      "controls": {
+        "safe.cpp": [],
+        "unrelated.cpp": [],
+        "renamed.cpp": [
+          {
+            "file": "renamed.cpp",
+            "line": 3,
+            "symbol": "renamed_items",
+            "rule_id": "ohcpp-memory-bounds-vector-index-candidate-005",
+            "rule_version": "0.1.0",
+            "source_sha256": "ecdb5a977f92cae786120a60d24d6bb5a6731dc2df9deb20a015b24d9c4d45da"
+          }
+        ],
+        "partial.cpp": []
+      }
+    },
+    "reports": [
+      "current-vulnerable.json",
+      "current-vulnerable.md",
+      "current-fixed.json",
+      "current-fixed.md"
+    ]
+  },
+  "full_translation_unit_cli": {
+    "commands": [
+      "python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/web-webview-flowbuf-full-tu-m2-20261019 --repository OpenHarmony-TPC/chromium_src --commit a15cbf4ef20673cfcf1856bf40a723b3ce026564 --include arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc --detector ohscanner.cpp.bounds --json-out research/evidence/cpp/d11_webview_fragment_20261020/current-full-vulnerable.json --md-out research/evidence/cpp/d11_webview_fragment_20261020/current-full-vulnerable.md",
+      "python -m src.cli ohscan-run --repo-dir D:/openHarmonyScanner/tmp/web-webview-flowbuf-full-tu-m2-20261019 --repository OpenHarmony-TPC/chromium_src --commit fa0d92ccbf47b7cdc7efb727c79cbdfc168469eb --include arkweb/ohos_nweb/src/cef_delegate/nweb_handler_delegate.cc --detector ohscanner.cpp.bounds --json-out research/evidence/cpp/d11_webview_fragment_20261020/current-full-fixed.json --md-out research/evidence/cpp/d11_webview_fragment_20261020/current-full-fixed.md"
+    ],
+    "vulnerable": {
+      "synthetic_commit": "a15cbf4ef20673cfcf1856bf40a723b3ce026564",
+      "source_sha256": "aa401c305ed30b70007917d97b726986a26aff2d00fb49649466533f4a48a920",
+      "parse_status": {
+        "partial": 1
+      },
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "elapsed_seconds": 3.0799987143836915e-05
+    },
+    "fixed": {
+      "synthetic_commit": "fa0d92ccbf47b7cdc7efb727c79cbdfc168469eb",
+      "source_sha256": "332a66637fef9c669fdb85dd74c9be861fb01adb8fa8a95871e1a407e9210483",
+      "parse_status": {
+        "partial": 1
+      },
+      "detector_status": "blocked",
+      "diagnostic_count": 0,
+      "elapsed_seconds": 2.7700007194653153e-05
+    },
+    "reports": [
+      "current-full-vulnerable.json",
+      "current-full-vulnerable.md",
+      "current-full-fixed.json",
+      "current-full-fixed.md"
+    ]
+  },
+  "t7_v0_3_6_reconciliation": {
+    "diagnostic_map": "D:/openHarmonyScanner/CyberSecurity-Innovation-Audit/research/evidence/cpp/web_webview_cve_2026_27648_20261019/root-cause-diagnostic-map-v036.json",
+    "diagnostic_map_sha256": "a78a9de64f2d5376a89271125e7d5ff4fc8ecd2dea4871dd6364c3e8b1c4be00",
+    "result": "T7's 12/6 function-fragment counts divide into six patched-loop findings on vulnerable / zero at those fixed sites plus six ordinary argument-loop findings on each side. D11 reproduces this division using the current integration lineage as a separately versioned candidate-005 rule. The residuals remain candidates because constructor-size and signed narrowing/cross-loop invariants are not fully proven."
+  },
+  "disposition": "PARTIAL: root-specific complete-function fragment differential passes with controls; full translation units remain partial/blocked; residual ordinary-loop candidates remain unresolved; no product build/reachability/impact validation."
+}
