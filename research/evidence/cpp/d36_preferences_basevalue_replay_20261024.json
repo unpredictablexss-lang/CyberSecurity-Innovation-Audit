@@ -1,0 +1,868 @@
+{
+  "schema_version": "d36-preferences-basevalue-source-replay-v1",
+  "task": "D36",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+      "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+      "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+      "bytes": 6273
+    }
+  },
+  "build_target": {
+    "file": {
+      "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/BUILD.gn",
+      "blob": "73d07d85f4e438fcc125f2661b645d11cfc6a2d1",
+      "sha256": "82db6683a383051fd7c6c61e2be5db028254162d3e140d678545227e448a3435",
+      "bytes": 2098
+    },
+    "target": "ohos_fuzztest(DBPreferencesBaseValueFuzzTest)",
+    "test_group": "group(\"fuzztest\") [testonly = true]",
+    "harness_entry": "LLVMFuzzerTestOneInput",
+    "production_evidence": false
+  },
+  "queue": {
+    "total_rows": 345,
+    "audited_ids": [
+      "CR-0041",
+      "CR-0042",
+      "CR-0043",
+      "CR-0044",
+      "CR-0045",
+      "CR-0046",
+      "CR-0047",
+      "CR-0048",
+      "CR-0049",
+      "CR-0050",
+      "CR-0051",
+      "CR-0052",
+      "CR-0053",
+      "CR-0054",
+      "CR-0055",
+      "CR-0056",
+      "CR-0057",
+      "CR-0058",
+      "CR-0059",
+      "CR-0060",
+      "CR-0061",
+      "CR-0062",
+      "CR-0063",
+      "CR-0064",
+      "CR-0065"
+    ],
+    "a0_status_unchanged": true
+  },
+  "cli": {
+    "raw": "d36_preferences_basevalue_20261024.json",
+    "detector": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "scope_files": 1,
+    "scope_loc": 197,
+    "parse": {
+      "complete": 1
+    },
+    "findings": 25,
+    "command": "python -m src.cli.main ohscan-run --repo-dir <pinned-source-checkout> --repository openharmony/distributeddatamgr_preferences --commit bff9efd79afc0d7d1ed22a63ff355f1600404596 --include test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp --detector ohscanner.cpp.shared_ptr_race"
+  },
+  "items": [
+    {
+      "queue_id": "CR-0041",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:964bc87c9c4540f3",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 43
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 43,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:abafc0cf534dc9f0"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0042",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:c27fd388f6a49b7a",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 48
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 48,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:7de1213d1b4cbd3b"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0043",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:73ab53a71a79a3f0",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 50
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 50,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:1264523de9a020ee"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0044",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:48a8a4d8566cb324",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 65
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 65,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:fd0fd674561cf922"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0045",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:274cea0c97569289",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 66
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 66,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2105e37a2882421d"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0046",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:791bea3d471cf083",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 74
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 74,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3e8d27b94cc67067"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0047",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:b3088e44cfcd052d",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 75
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 75,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:66b58c6b4c6f509a"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0048",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:aaa6aa4c3a14b093",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 83
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 83,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:50356a2718ca501b"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0049",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ad2df47c9ada52d8",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 91
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 91,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:0a61a252c43a4f07"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0050",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:2888fdb7365feef5",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 92
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 92,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:01acdd2965f09e82"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0051",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:1e9d931ae01e4d50",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 100
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 100,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2271fd072f2cefa8"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0052",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:a8d109c4edaba172",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 108
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 108,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:4867519167b97757"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0053",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:8f572cbc0739cfb8",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 109
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 109,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:1c47d957b61a3515"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0054",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:1eed7d607fd4af14",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 117
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 117,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:8d60010de9096b54"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0055",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6001f4e81297b5e2",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 125
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 125,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:984c2ffc07b2b150"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0056",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:0d8f8dece9e595d2",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 126
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 126,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:2467860e57fbfc90"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0057",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:044e7cbaecd3dabc",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 134
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 134,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:582e769ca656b3a3"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0058",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:2168c6995cf0b94c",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 142
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 142,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6171295dd0f01591"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0059",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:37680088f94c1d10",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 143
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 143,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:3ac2aa6616eb7889"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0060",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:479724925ebff504",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 151
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 151,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:504769b5a4023bd4"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0061",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:7e803cf79b038a2c",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 159
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 159,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:b65071d4d7df3291"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0062",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:6fa29fd6235661bc",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 160
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 160,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c9a4b43195bdcb83"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0063",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:5e8d1eb688cf47aa",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 168
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 168,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:14f006b7a111abbc"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0064",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:5efa96fe311ce299",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 176
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 176,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:6f39050de2ebb61d"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    },
+    {
+      "queue_id": "CR-0065",
+      "candidate_id": "ohscanner.cpp.shared_ptr_race:ce6bf7208be55243",
+      "source": {
+        "path": "test/native/fuzztest/dbpreferencesbasevalue_fuzzer/dbpreferencesbasevalue_fuzzer.cpp",
+        "blob": "37345f46187665a0a0de293ba31a446acb1616d3",
+        "sha256": "2351f76128395a0da41b96719836465505060cf46949ac89677deae5dc316651",
+        "bytes": 6273,
+        "repository": "openharmony/distributeddatamgr_preferences",
+        "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+        "tree": "7761d9e273ae7007046ae115797f255e554523ae",
+        "line": 177
+      },
+      "original_a0": {
+        "original_status": "not_testable",
+        "queue_status": "paused_pending_evidence"
+      },
+      "replay": {
+        "detector": "ohscanner.cpp.shared_ptr_race",
+        "version": "0.5.1",
+        "parse_status": "complete",
+        "coverage": "syntax_candidate",
+        "finding_line": 177,
+        "symbol": "preferences_",
+        "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+        "diagnostic_id": "ohscanner.cpp.shared_ptr_race:c547ce1294f31248"
+      },
+      "disposition": "PARTIAL",
+      "reason": "Exact BUILD target is ohos_fuzztest in a testonly group; this establishes a fuzz harness, not a product race. The harness uses shared Preferences state, but scanner syntax candidates do not establish concurrent overlapping accesses, shipped reachability, or CIA impact.",
+      "queue_preserved": true
+    }
+  ],
+  "overall_disposition": "PARTIAL",
+  "detector_change": "none; all 25 exact A0 lines replay; findings are confined to a test-only fuzz harness and do not establish product races",
+  "queue_states_changed": false,
+  "structured_vibe_prompt": {
+    "role": "A 线 Preferences shared_ptr_race 开发线负责人",
+    "sustained_goal": "持续区分 test-only fuzz harness 语法候选与生产可达并发根因，防止重复行误当独立漏洞并保持来源可复现。",
+    "input": "D36 exact source identity and CLI replay; CR-0022–CR-0065 family evidence.",
+    "steps": [
+      "Inspect production call paths and BUILD inclusion separate from fuzz targets.",
+      "Trace same-object shared_ptr copies, actual dereferences/writes, locks/atomics, and thread creation/join or task dispatch.",
+      "Only change shared_ptr_race when a production-source missed root cause is demonstrated with source, safe, unrelated, renamed, and partial controls.",
+      "Bind all results to commit/tree/blob/SHA and retain A0 rows unchanged."
+    ],
+    "completion_gate": "Independent reproduction on exact source; product target/reachability and concurrent same-object unsynchronized access established before labeling product vulnerability; otherwise report PARTIAL/BLOCK with precise missing evidence.",
+    "boundaries": [
+      "No CVE/repository/name/hash hardcoding.",
+      "No promotion of syntax findings to vulnerabilities.",
+      "No A0 status edits or shared API/Catalog changes."
+    ]
+  }
+}
