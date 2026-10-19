@@ -83,6 +83,14 @@
   ],
   "D79_replay": {
     "result": "pass",
+    "source_repository_worktree": "D:/OpenHarmony807/repos/miscservices_pasteboard",
+    "source_repository_git_directory": "D:/OpenHarmony807/repos/miscservices_pasteboard/.git",
+    "reproduction_command": "python D:/openHarmonyScanner/worktrees/d79-candidate-coverage-crosswalk-20261026/research/evidence/cpp/D79_d52_parse_coverage_replay.py --d50 D:/openHarmonyScanner/worktrees/d79-candidate-coverage-crosswalk-20261026/research/data_sensitive/D50_COMPONENT_CVE_REPLAY/pasteboard.json --d67 D:/openHarmonyScanner/worktrees/d67-pasteboard-parse-coverage-20261023/research/evidence/cpp/D67_PASTEBOARD_PARSE_AUDIT_20261023.json --d68 D:/openHarmonyScanner/worktrees/d74-pasteboard-cross-layer-trace-20261023/research/evidence/cpp/D68_PASTEBOARD_RAW67_REPLAY_20261023.json --d74 D:/openHarmonyScanner/worktrees/d74-pasteboard-cross-layer-trace-20261023/research/evidence/cpp/D74_PASTEBOARD_SOURCE_TRACE_20261020.json --expected D:/openHarmonyScanner/worktrees/d79-candidate-coverage-crosswalk-20261026/research/evidence/cpp/D79_D52_GET_PASTE_DATA_PARSE_COVERAGE_20261026.json --d52-git-dir D:/OpenHarmony807/repos/miscservices_pasteboard/.git",
+    "observed_stdout": [
+      "D79 replay PASS: 6 route rows; four evidence input hashes and Git snapshots verified; six raw source blobs verified.",
+      "Negative control PASS: appended whitespace to D50 bytes changes SHA-256 and is rejected by the bound-input check.",
+      "D50 stub.cpp ERROR:58 intersects the actual member-pointer dispatch expression; verdict remains source-only."
+    ],
     "command_scope": "six route rows, four upstream evidence files, six raw D52 source blobs",
     "verified_evidence_files": [
       {"id": "D50", "commit": "0f4560c4712dbf914d762948e2220942f16324ad", "tree": "92c00c127523253d298498bf06f4e5361df214c2", "path": "research/data_sensitive/D50_COMPONENT_CVE_REPLAY/pasteboard.json", "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4"},

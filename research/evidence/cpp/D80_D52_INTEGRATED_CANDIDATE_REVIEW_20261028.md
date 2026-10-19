@@ -39,7 +39,9 @@ These later framework sources increase the list of plausible external policy pat
 
 ## D79/T79 integrity and replay
 
-I reran the D79 replay against the frozen input paths. It passed all six route rows; checked the local SHA-256 and Git commit/tree bytes for D50, D67, D68, and D74; recomputed all six raw source blob IDs/SHA-256 values from the D52 Git objects; and rejected the whitespace-mutated D50 negative control. T79's accepted revision also records duplicate-JSON-key rejection and the initial D79 defect (a whitespace mutation had passed before input binding was added). The accepted revision is D79 `ab6bf538e81a06ef85a9353a8b8aa4ab9704d65a`, tree `24981ee9f31d2be1e244c422ebaacbffb8a74a9b`; T79 is `982c7c592f3716c0ffc942ec6cf289499cc6085f`, tree `77b46baedf5f12c97da551289415334714be640b`. Exact D79/T79 artifact SHA-256 values and all upstream pins are recorded in the companion JSON.
+I reran the D79 replay against the frozen input paths using the source repository Git directory `D:/OpenHarmony807/repos/miscservices_pasteboard/.git`. It passed all six route rows; checked the local SHA-256 and Git commit/tree bytes for D50, D67, D68, and D74; recomputed all six raw source blob IDs/SHA-256 values from the D52 Git objects; and rejected the whitespace-mutated D50 negative control. The exact invocation is recorded in the companion JSON so T80 can independently repeat it if that object store is available on its host. T79's accepted revision also records duplicate-JSON-key rejection and the initial D79 defect (a whitespace mutation had passed before input binding was added). The accepted revision is D79 `ab6bf538e81a06ef85a9353a8b8aa4ab9704d65a`, tree `24981ee9f31d2be1e244c422ebaacbffb8a74a9b`; T79 is `982c7c592f3716c0ffc942ec6cf289499cc6085f`, tree `77b46baedf5f12c97da551289415334714be640b`. Exact D79/T79 artifact SHA-256 values and all upstream pins are recorded in the companion JSON.
+
+The D80 cross-reference inventory contains 13 upstream evidence artifacts with 26 Markdown/JSON report files. The recorded commit/tree and each report's local SHA-256/Git blob were independently checked before D80 was frozen.
 
 ## Minimum missing evidence
 
