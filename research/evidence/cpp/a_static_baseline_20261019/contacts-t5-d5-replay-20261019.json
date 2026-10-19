@@ -1,0 +1,56 @@
+{
+  "schema": "contacts-t5-d5-independent-replay-v1",
+  "review_date": "2026-10-19",
+  "upstream_d5_commit": "21ba7dcc2df6f7882afde344d5d7d7506f833239",
+  "t5_checkout_head": "1ce57530fe4a68fe738caebd2963a32a4be8f075",
+  "base_head_before_cherry_pick": "fb4d467f36208113f36561b61fc6739dcebc89f2",
+  "detector_file": "src/ohscanner/detectors/cpp/path_traversal_detector.py",
+  "detector_sha256": "bf39dde2e7b3d04009cd44ac76fa129f4a9b40e70f01154e30f299906196ade8",
+  "rule_id": "ohcpp-path-traversal-source-to-file-sink-candidate-001",
+  "rule_version": "0.2.0",
+  "focused_test_command": "python -m unittest tests.detectors.test_cpp_path_traversal_detector -v",
+  "focused_tests": {"passed": 9, "failed": 0},
+  "guard_probe_command": "python research/evidence/cpp/a_static_baseline_20261019/contacts-t5-guard-order-probe-20261019.py",
+  "exact_source": {
+    "repository": "openharmony/applications_contacts_data",
+    "commit": "b02aadfc2d801ee30573fcb2d13490298e146fea",
+    "tree": "ef183625ccbc842f47b076eb75e68b665d7c21c6",
+    "path": "dataBusiness/contacts/src/contacts_data_ability.cpp",
+    "blob": "32c6a26a9a6c1f4ec3172f45bc3dbe4d3668abe6",
+    "bytes": 80944,
+    "sha256": "70bb1da2cb107649dd2bb39358aeb56983f613ee0bdd6216d805bbd39c8df383",
+    "provenance": "official GitHub fetch at exact commit plus local .repo project-object verification; exact bytes read from preserved temp snapshot"
+  },
+  "exact_replay": {
+    "command": "python - (inline independent direct-detector harness; script text preserved in T5 Markdown)",
+    "profile": "light-ast",
+    "parse_status": "complete",
+    "parse_issues": 0,
+    "functions": 57,
+    "calls": 525,
+    "run_status": "completed",
+    "file_outcome": "complete",
+    "findings": [
+      {"line": 789, "column": 19, "symbol": "HandleContactPortrait", "identity_quality": "complete", "rule_version": "0.2.0", "finding_key": "7a1e14e6656d15a3ae1532122fff7bd51b27652d458d3066cd404d6bb8e8e9cf"},
+      {"line": 790, "column": 19, "symbol": "HandleContactPortrait", "identity_quality": "complete", "rule_version": "0.2.0", "finding_key": "5d739813e4f40cfa2a91ea629ea842aa05ca0eb03d292df1406ea4972545701a"},
+      {"line": 794, "column": 15, "symbol": "HandleContactPortrait", "identity_quality": "complete", "rule_version": "0.2.0", "finding_key": "1b9259406adc8cfea406caaa071734268f8404d5f386cea8fd763debf8523999"}
+    ],
+    "catalog_production_cli": "BLOCK: owner-controlled Catalog does not register D5 detector in this T5 checkout; this run directly invoked the detector API against the exact source unit."
+  },
+  "guard_semantics_probes": [
+    {"id": "reject_found_before_both_sinks", "position": "before open and unlink", "expected_findings": 0, "actual_findings": 0, "result": "PASS for this synthetic safe shape"},
+    {"id": "reject_found_between_sinks", "position": "after open, before unlink", "expected_findings": 1, "actual_findings": 0, "result": "FAIL: prior unguarded open is suppressed"},
+    {"id": "reject_found_after_both_sinks", "position": "after both sinks", "expected_findings": 2, "actual_findings": 0, "result": "FAIL: both earlier unguarded sinks are suppressed"},
+    {"id": "reversed_guard_before_sinks", "position": "before open and unlink", "expected_findings": 2, "actual_findings": 2, "result": "PASS: reverse polarity does not suppress candidates"},
+    {"id": "guard_other_tainted_parameter", "position": "before sinks; other != sink path parameter", "expected_findings": 2, "actual_findings": 2, "result": "PASS for this synthetic variable-binding shape; both findings are OpenPath sinks on path"}
+  ],
+  "overall_disposition": "BLOCK",
+  "reason": "D5 focused tests and exact source replay pass, but the guard helper treats a function-wide string check as sanitizing that tainted variable for every sink regardless of source order. Late checks can suppress earlier unguarded sinks. This is a soundness/coverage defect blocking independent acceptance.",
+  "minimum_followup": [
+    "D5 fix must bind each validation predicate to the exact path component/derived value and prove the rejecting branch dominates the specific sink.",
+    "Re-run all 9 focused tests and the positive/reversed/late guard probes on the new immutable D5 fix commit.",
+    "Repeat exact A0 source identity/hash/parser/findings replay; keep Catalog production CLI as BLOCK until owner integration.",
+    "Keep A0 case PARTIAL/BLOCK pending exact fixed source and product reachability evidence."
+  ]
+}
+
