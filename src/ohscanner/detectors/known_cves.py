@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.19.0"
+VERSION = "0.19.1"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -29,11 +29,124 @@ def _body(text: str, name: str):
                 if depth == 0: return opening, text[opening + 1:i]
     return None
 
-def _has_observer_quota(text: str) -> bool:
-    """Recognize a local hard count comparison, not an arbitrary limit token."""
-    count = r"(?:\w*(?:observer|listener)\w*(?:count|size|quota|limit|number)|(?:all)?count|size\s*\(\s*\))"
+def _observer_quota_comparison(text: str):
+    """Find observer count-at-cap comparisons; callers must prove refusal flow."""
+    count = r"(?:\w*(?:observer|listener)\w*(?:count|size|quota|limit|number)|(?:all)?count|(?:observer|listener)\w*quota|size\s*\(\s*\))"
     limit = r"(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|(?:max|limit|quota)\w*|\d+"
-    return bool(re.search(rf"\b{count}\s*(?:>=|>)\s*{limit}\b", text, re.I))
+    return re.search(rf"\b{count}(?:\s*\[[^\]]*\])?\s*(>=|>)\s*({limit})\b", text, re.I)
+
+def _if_guard_exits(text: str, condition_pattern: str) -> bool:
+    """Only accept a quota condition whose true branch exits this function."""
+    for m in re.finditer(r"\bif\s*\(", text):
+        opening = m.end() - 1
+        depth, end = 1, opening + 1
+        while end < len(text) and depth:
+            depth += (text[end] == "(") - (text[end] == ")")
+            end += 1
+        if depth or not re.search(condition_pattern, text[opening + 1:end - 1]):
+            continue
+        branch_start = end
+        while branch_start < len(text) and text[branch_start].isspace():
+            branch_start += 1
+        if branch_start < len(text) and text[branch_start] == "{":
+            depth = 1
+            branch_end = branch_start + 1
+            while branch_end < len(text) and depth:
+                depth += (text[branch_end] == "{") - (text[branch_end] == "}")
+                branch_end += 1
+            branch = text[branch_start + 1:branch_end - 1] if depth == 0 else ""
+        else:
+            tail = text[branch_start:]
+            stmt = re.match(r"\s*(return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)", tail)
+            branch = stmt.group(1) if stmt else ""
+        if re.fullmatch(r"\s*(?:return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)\s*", branch):
+            return True
+    return False
+
+def _helper_rejects_at_quota(text: str, name: str) -> bool:
+    """Prove a small boolean helper rejects at-cap, preserving unknown otherwise."""
+    helper = _body(text, name)
+    if not helper:
+        return False
+    body = helper[1]
+    comparison = _observer_quota_comparison(body)
+    if not comparison:
+        return False
+    # Recognize only explicit if/return boolean helpers; do not infer ternaries
+    # or arbitrary return-value semantics.
+    cap_true, cap_false = _quota_boolean_return(body, comparison.group(0))
+    return cap_true or cap_false
+
+def _quota_boolean_return(body: str, comparison: str):
+    cap_true = cap_false = False
+    for m in re.finditer(r"\bif\s*\(", body):
+        opening = m.end() - 1
+        depth, end = 1, opening + 1
+        while end < len(body) and depth:
+            depth += (body[end] == "(") - (body[end] == ")")
+            end += 1
+        if depth or comparison not in body[opening + 1:end - 1]:
+            continue
+        branch_start = end
+        while branch_start < len(body) and body[branch_start].isspace():
+            branch_start += 1
+        branch = body[branch_start:]
+        if branch.startswith("{"):
+            brace = branch_start + 1
+            brace_depth = 1
+            while brace < len(body) and brace_depth:
+                brace_depth += (body[brace] == "{") - (body[brace] == "}")
+                brace += 1
+            branch = body[branch_start + 1:brace - 1] if brace_depth == 0 else ""
+        else:
+            statement = re.match(r"\s*return\s+(true|false)\s*;", branch, re.I)
+            branch = statement.group(0) if statement else ""
+        cap_true |= bool(re.fullmatch(r"\s*return\s+true\s*;\s*", branch, re.I))
+        cap_false |= bool(re.fullmatch(r"\s*return\s+false\s*;\s*", branch, re.I))
+    return cap_true, cap_false
+
+def _has_observer_quota(text: str) -> bool:
+    comparison = _observer_quota_comparison(text)
+    if not comparison:
+        return False
+    return _if_guard_exits(text, re.escape(comparison.group(0)))
+
+def _has_guarded_quota_helper(text: str, before_insert: str) -> bool:
+    for m in re.finditer(r"\bif\s*\(", before_insert):
+        opening = m.end() - 1
+        depth, end = 1, opening + 1
+        while end < len(before_insert) and depth:
+            depth += (before_insert[end] == "(") - (before_insert[end] == ")")
+            end += 1
+        if depth:
+            continue
+        condition = before_insert[opening + 1:end - 1].strip()
+        call = re.fullmatch(r"(!)?\s*([A-Za-z_]\w*)\s*\(.*\)", condition, re.S)
+        if not call:
+            continue
+        name, negated = call.group(2), bool(call.group(1))
+        helper = _body(text, name)
+        if not helper or not _helper_rejects_at_quota(text, name):
+            continue
+        branch_start = end
+        while branch_start < len(before_insert) and before_insert[branch_start].isspace():
+            branch_start += 1
+        if branch_start < len(before_insert) and before_insert[branch_start] == "{":
+            depth, branch_end = 1, branch_start + 1
+            while branch_end < len(before_insert) and depth:
+                depth += (before_insert[branch_end] == "{") - (before_insert[branch_end] == "}")
+                branch_end += 1
+            branch = before_insert[branch_start + 1:branch_end - 1] if depth == 0 else ""
+        else:
+            stmt = re.match(r"\s*(return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)", before_insert[branch_start:])
+            branch = stmt.group(1) if stmt else ""
+        if not re.fullmatch(r"\s*(?:return\b[^;]*;|throw\b[^;]*;|goto\b[^;]*;)\s*", branch):
+            continue
+        comparison = _observer_quota_comparison(helper[1])
+        cap_true, cap_false = _quota_boolean_return(helper[1], comparison.group(0))
+        if (cap_true and not negated) or (cap_false and negated):
+            return True
+    return False
 
 def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: str, impact: str = "availability_or_memory_safety"):
     line, col = line_column(unit.text, pos)
@@ -528,13 +641,7 @@ def _scan(unit: SourceUnit, curl_version=None):
             r"\b([A-Za-z_]\w*)\s*(?:->|\.)\s*(?:insert|emplace_back|push_back)\s*\(\s*observer\b",
             b,
         )
-        helper_quota = False
-        if observer_insert:
-            for call in re.finditer(r"\b([A-Za-z_]\w*)\s*\(", b[:observer_insert.start()]):
-                helper = _body(s, call.group(1))
-                if helper and _has_observer_quota(helper[1]):
-                    helper_quota = True
-                    break
+        helper_quota = observer_insert and _has_guarded_quota_helper(s, b[:observer_insert.start()])
         if map_access and observer_insert and not _has_observer_quota(b) and not helper_quota:
             out.append(_finding(
                 unit, pos + 1 + observer_insert.start(),

@@ -478,13 +478,30 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
 
     def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
-        helper_quota = """bool CanRegisterObserver(ObserverSet *observers) {
-            return observers->size() >= MAX_OBSERVERS_PER_PID ? false : true;
+        helper_quota = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return true;
+            return false;
         }
         void AddPasteboardChangedObserver(Observer *observer) {
             auto it = observerMap_.find(GetUserId());
             auto observers = it->second;
-            if (!CanRegisterObserver(observers)) return;
+            if (IsObserverQuotaExceeded(observers)) return;
+            observers->insert(observer);
+        }"""
+        ignored_helper = """bool IsObserverQuotaExceeded(ObserverSet *observers) {
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return true;
+            return false;
+        }
+        void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            IsObserverQuotaExceeded(observers);
+            observers->insert(observer);
+        }"""
+        nonblocking_guard = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) { LogQuota(); }
             observers->insert(observer);
         }"""
         unrelated = """void AddHistoryRecord(Record *record) {
@@ -492,6 +509,8 @@ class KnownDisclosedCveTests(unittest.TestCase):
             historyMap_.insert(record);
         }"""
         self.assertNotIn("CVE-2025-25212", {f.symbol for f in self.run_source(helper_quota, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(ignored_helper, "pasteboard_service.cpp").findings})
+        self.assertIn("CVE-2025-25212", {f.symbol for f in self.run_source(nonblocking_guard, "pasteboard_service.cpp").findings})
         self.assertNotIn("CVE-2025-25212", {f.symbol for f in self.run_source(unrelated, "other.cpp").findings})
 
     def test_pasteboard_partial_parse_keeps_bound_observer_candidate_blocked(self):

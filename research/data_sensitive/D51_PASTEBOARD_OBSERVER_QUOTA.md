@@ -4,11 +4,11 @@ Date: 2026-10-20 (Asia/Shanghai)
 
 ## Result
 
-D51 refined `ohscanner.known_disclosed_cves` from 0.18.0 to 0.19.0. The fixed vulnerable-source replay now reports the candidate on the repeated set insertion itself (`observers->insert(observer)`, line 241, column 5), instead of the method opening at line 222. The detector requires the named observer registry map and insertion of the observer into a set-like collection, and it suppresses a finding when a direct count bound or a same-file helper body exposes a hard observer limit. It no longer treats the mere presence of a caller identity accessor as evidence of a quota.
+D51 refined `ohscanner.known_disclosed_cves` from 0.18.0 to 0.19.1. The fixed vulnerable-source replay now reports the candidate on the repeated set insertion itself (`observers->insert(observer)`, line 241, column 5), instead of the method opening at line 222. The detector requires the named observer registry map and insertion of the observer into a set-like collection, and it suppresses a finding when a direct count bound or a same-file helper body exposes a hard observer limit. It no longer treats the mere presence of a caller identity accessor as evidence of a quota.
 
 The exact vulnerable snapshot shows `observerMap_` keyed by the account `userId` returned from `GetUserId()` / `IPCSkeleton::GetCallingUid()`. Its map value is a `std::set` ordered by the remote observer object's pointer. Re-registering the identical Binder observer deduplicates, but this is not a bound on distinct observer objects. The file contains single-observer removal and remove-all-for-user methods; no automatic cleanup for observer death was found in the inspected source. The ZIDL handler maps `ADD_OBSERVER`, reads and casts a remote object, then calls the registration method directly. Service ACLs and product caller reachability remain unknown.
 
-The official OpenHarmony 5.0.3 branch has a strong fixed-mechanism control in merged PR !1539 (`836cf699...`): observer entries are keyed by `(userId, callingPid)` and the implementation enforces `MAX_OBSERVER_COUNT = 10` before insertion. That revision refactors the API to `AddObserver`, so its zero-hit under the old function signature is not treated as proof that the lexical rule detects the fix. A same-shape unit control confirms direct hard quotas and same-file quota helpers suppress the candidate.
+The official OpenHarmony 5.0.3 branch has a strong fixed-mechanism control in merged PR !1539 (`836cf699...`): observer entries are keyed by `(userId, callingPid)` and the implementation enforces `MAX_OBSERVER_COUNT = 10` before insertion. That revision refactors the API to `AddObserver`, so its zero-hit under the old function signature is not treated as proof that the lexical rule detects the fix. A same-shape unit control confirms that a direct quota suppresses only when its at-cap branch exits before insertion. A same-file boolean helper suppresses only when its quota result is consumed by an exiting caller guard. Log-only quota branches and ignored helper returns retain the candidate.
 
 The official CVE record describes a local denial of service by improper input on OpenHarmony v5.0.3 and prior. It does not identify this exact source line. The source/fix pair supports a component-source candidate for second-layer review, not confirmed CVE causality or product impact.
 
@@ -18,17 +18,17 @@ Vulnerable source: official Gitee `openharmony/miscservices_pasteboard`, commit 
 
 Fixed-mechanism source: official Gitee `openharmony/distributeddatamgr_pasteboard`, `OpenHarmony-5.0.3-Release`, merged PR [!1539](https://gitee.com/openharmony/distributeddatamgr_pasteboard/pulls/1539), commit `836cf6990579451d6521e9177d749660b07ad34e`, tree `8db5ac5a62c018c80818c85482e4914a836a4765`, same relative source path, blob `af95e87bed596cc9f159bbf020536ea361835977`, SHA-256 `e8202191adf1d660a7a6c3149481013747e1a40b6bb166aa5947fb28b67ad3d4`.
 
-D50's historical 0.16.0 output and a frozen 0.18.0 replay both place the candidate at line 222. D51's 0.19.0 single-source replay binds the same source hash and places one candidate at line 241. The isolated replay is one source unit only and explicitly supplies `parse_status=partial` as a conservative source-only input (not a new parser result). The D50 component scan stays partial/blocked, and no post-change full component scan is claimed. The fixed source one-file replay has zero findings but is marked partial and is non-diagnostic for rule sensitivity because its API/function name changed.
+D50's historical 0.16.0 output and a frozen 0.18.0 replay both place the candidate at line 222. D51's 0.19.1 single-source replay binds the same source hash and places one candidate at line 241. The isolated replay is one source unit only and explicitly supplies `parse_status=partial` as a conservative source-only input (not a new parser result). The D50 component scan stays partial/blocked, and no post-change full component scan is claimed. The fixed source one-file replay has zero findings but is marked partial and is non-diagnostic for rule sensitivity because its API/function name changed.
 
 ## Controls and coverage
 
 - Exact vulnerable source: one candidate at the repeated set insertion.
 - Exact fixed source: source contains the per-process aggregate count and limit of 10; method was refactored, so the old signature does not match.
-- Same-shape hard quota: no candidate.
-- Same-file helper with a visible hard quota: no candidate.
+- Same-shape hard quota: no candidate when the at-cap branch exits before insertion; a log-only branch keeps the candidate.
+- Same-file boolean helper: no candidate when the result controls an exiting guard; an ignored helper result keeps the candidate.
 - Set deduplication: retained as an informative positive; deduplicating identical object references does not cap distinct references.
 - Removal/lifecycle: explicit remove and remove-all exist; no complete or automatic caller-death cleanup proof was established.
-- Unrelated map growth: no candidate.
+- Unrelated map growth: no candidate.\n- Quota flow negatives: both a log-only quota `if` followed by insertion and an ignored hard-quota helper result followed by insertion retain the candidate.
 - Partial parse: candidate is retained and the run remains blocked.
 
 The CVE record at [NVD](https://nvd.nist.gov/vuln/detail/cve-2025-25212) cites the official [OpenHarmony July 2025 disclosure](https://gitee.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-07.md). Findings remain candidates with `product_vulnerability_confirmed=false`.
@@ -57,8 +57,8 @@ git diff --check
 
 ## Verification
 
-- `python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q` — 31 passed.
-- `git diff --check` — passed.
+- `python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q` — 31 passed after the control-flow amendment.
+- `git diff --check` — passed after the D51 amendment.
 - Scope verifier: N/A because frozen `ownership.json` has no D lane. Changed paths were manually checked against the task-authorized D51 surfaces; no ownership policy or checker changes were made.
 
 Machine-readable source identities, candidate packet, controls, limits, and commands are in [D51_PASTEBOARD_OBSERVER_QUOTA.json](D51_PASTEBOARD_OBSERVER_QUOTA.json).
