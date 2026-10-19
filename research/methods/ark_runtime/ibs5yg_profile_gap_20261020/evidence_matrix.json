@@ -1,0 +1,314 @@
+{
+  "schema": "ohscanner.ark-runtime.ibs5yg-product-profile-gap/v1",
+  "status": "BLOCKED",
+  "assessment_date": "2026-10-20",
+  "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+  "profile_scope": "Determine whether currently local material closes a product build/preprocess profile for IBS5YG. This assessment does not establish a product vulnerability or safety conclusion.",
+  "frozen_source_pair": {
+    "repository": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+    "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+    "parent": {
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "parents": [
+        "112f6e8e73756ef46c7577d5fa40993184c3d2cc",
+        "c6f95de1f50cde79e9fb690e77e256fbc7ed8b6d"
+      ],
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "bytes": 150433,
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422"
+    },
+    "fixed": {
+      "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "parents": [
+        "2ea501258ab4155826b64f01b499b43d1911e0e2"
+      ],
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "bytes": 150509,
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e"
+    },
+    "local_object_checks": {
+      "store_path": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git",
+      "store_origin_self_reported": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+      "store_config_sha256": "bee95c4597b94d56a108b95a2a6bb41fc7f95fb84f8986b37588a52ac8eee370",
+      "commit_tree_parent_checks": "PASS",
+      "path_blob_oid_checks": "PASS",
+      "raw_byte_length_and_sha256_checks": "PASS",
+      "parent_is_ancestor_of_fixed": true,
+      "pair_vs_5_0_2_sort_component_commit_1b23531531e768398682582969c2a9f17e72cafe": {
+        "parent_is_ancestor": false,
+        "fixed_is_ancestor": false,
+        "interpretation": "The IBS5YG pair is not the pinned Ark Runtime component revision in the local 5.0.2 Sort validation."
+      },
+      "custody_and_acquisition": "NOT_INDEPENDENTLY_VERIFIED; the bare store's origin URL is local configuration, not independent proof of acquisition, custody, or server authenticity."
+    }
+  },
+  "evidence_matrix": [
+    {
+      "id": "S1-frozen-source-identity",
+      "claim": "The frozen IBS5YG parent/fix source pair is internally and locally object-verifiable.",
+      "result": "PASS_FOR_SOURCE_IDENTITY_ONLY",
+      "evidence": [
+        {
+          "path": "D:/openHarmonyScanner/worktrees/c-d4-ibs5yg-profile-gap-20261020/research/methods/ark_runtime/build_profile_20261019/ark_parent_fix_build_profile_manifest.v1.json",
+          "sha256": "e45469a0f6abfed30797fb58c2cb5b0154b4125c66f82620b52ae88489a27e42",
+          "object_identity": "case entry ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG; records source commits, trees, path, blobs, lengths and SHA-256",
+          "direct_claim": "The stored identity fields and expected object IDs for the frozen source pair.",
+          "limitation": "The manifest's own status says source identity is recorded; the external bare store is used for object verification. Neither establishes that a product contains either revision."
+        },
+        {
+          "path": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git/config",
+          "sha256": "bee95c4597b94d56a108b95a2a6bb41fc7f95fb84f8986b37588a52ac8eee370",
+          "object_identity": "Bare Git config reports remote.origin.url=https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+          "direct_claim": "The local store's configured remote URL and object lookup source used by this audit.",
+          "limitation": "Self-reported config does not independently attest acquisition, custody, or remote authenticity."
+        }
+      ],
+      "reproducible_commands": [
+        "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git show -s --format='%H%n%T%n%P%n%s' 2ea501258ab4155826b64f01b499b43d1911e0e2",
+        "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git show -s --format='%H%n%T%n%P%n%s' 919e4fbb011f610427e788889083fa8e28d2f951",
+        "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git rev-parse 2ea501258ab4155826b64f01b499b43d1911e0e2:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git rev-parse 919e4fbb011f610427e788889083fa8e28d2f951:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "git --git-dir=D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git merge-base --is-ancestor 2ea501258ab4155826b64f01b499b43d1911e0e2 919e4fbb011f610427e788889083fa8e28d2f951"
+      ]
+    },
+    {
+      "id": "P1-IBS5YG-build-profile-manifest",
+      "claim": "The current registered IBS5YG product build/preprocess profile is incomplete.",
+      "result": "FAIL_TO_CLOSE_PROFILE",
+      "evidence": [
+        {
+          "path": "D:/openHarmonyScanner/worktrees/c-d4-ibs5yg-profile-gap-20261020/research/methods/ark_runtime/build_profile_20261019/ark_parent_fix_build_profile_manifest.v1.json",
+          "sha256": "e45469a0f6abfed30797fb58c2cb5b0154b4125c66f82620b52ae88489a27e42",
+          "object_identity": "case entry ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+          "direct_claim": "build_profile.status=BLOCKED; args_gn, compile_commands_json, include_closure, product_target, product compiler/linker/sysroot are null; product_manifest_locked=false; preprocessing status=NOT_RUN with no outputs or translation_unit; product_association is unknown.",
+          "limitation": "This is the project evidence ledger and accurately identifies gaps; it cannot supply missing product artifacts."
+        },
+        {
+          "path": "D:/openHarmonyScanner/worktrees/c-d4-ibs5yg-profile-gap-20261020/research/deliveries/product_closure_20261019/product_closure_matrix.json",
+          "sha256": "ce906ce1a222674b83508d0954b298f5991f56494a1d718bceafd8a9ed398c1b",
+          "object_identity": "case entry ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+          "direct_claim": "The product association text explicitly distinguishes C1's partial profile at Ark Runtime commit a65a2853ccae13da167d9aa4720ab8b11ec16656 from the IBS5YG pair and records the pair's source SHA values as different from the C1 target source SHA.",
+          "limitation": "The referenced C1 actions are for another source identity; they cannot establish IBS5YG macros/build behavior or close this profile."
+        }
+      ]
+    },
+    {
+      "id": "P2-unrelated-5_0_2-sort-attempt-excluded",
+      "claim": "The args.gn and 5.0.2 build artifacts in the inspected ark-runtime-isolated-validation-20261018 output belong to a different Sort/CVE-2025-23420 experiment and cannot be reused as IBS5YG profile evidence.",
+      "result": "EXCLUDED_FROM_IBS5YG_PROFILE",
+      "evidence": [
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/README.md",
+          "sha256": "09fb420dadc72d2d33c2e3802b6cd0efe00103a5ab9c495f87e3730929239cc6",
+          "object_identity": "ark-runtime-isolated-validation-v1; identifies JSArray::SortElementsByObject / CVE-2025-23420, source pair aeee3fd12c03193545edea4b8e0fdfa3d9a03d11 to 1b23531531e768398682582969c2a9f17e72cafe",
+          "direct_claim": "This is a Sort validation attempt, not an IBS5YG TypedArray Filter build. It states that no product binary/image or runtime execution was produced and that the host tools target is not the rk3568 device image.",
+          "limitation": "README is an experiment report; it is not a successful build record."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/validation.json",
+          "sha256": "b00296c6db01ab7a4a421ea1bd56e6a1f6c08098dc017f4f61cabb05f19e5d26",
+          "object_identity": "candidate_identity arkcompiler_ets_runtime-jsarray-sort-oob-2025-02 / CVE-2025-23420",
+          "direct_claim": "Records the local trial's runtime component revision as the Sort fixed cherry-pick 1b23531531e768398682582969c2a9f17e72cafe, target attempt rk3568, build target ark_js_host_linux_tools_packages, and product correspondence unknown.",
+          "limitation": "The validation record is explicitly NOT_VERIFIED and does not bind to the IBS5YG pair."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/.repo/manifests/default.xml",
+          "sha256": "60635d8fa500595e692f0546604785e4e5e12ab3b5620b6bd9d449d00f533213",
+          "object_identity": "manifest default revision OpenHarmony-5.0.2-Release",
+          "direct_claim": "The local isolated tree used a 5.0.2 release manifest reference.",
+          "limitation": "It identifies the unrelated Sort experiment's source tree; it does not specify an IBS5YG product profile."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/.repo/manifests/ohos/ohos.xml",
+          "sha256": "9c36f1157a018f90231fba240ed99adbfb76c461f278512d9104655b3ecaa337",
+          "object_identity": "included OHOS 5.0.2 manifest file",
+          "direct_claim": "Part of the cached 5.0.2 manifest material for the Sort validation tree.",
+          "limitation": "No IBS5YG pair/component relationship is established by this unrelated manifest."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/.repo/project.list",
+          "sha256": "aa516f988ec7b1303c0bb8be1f5f90f85799858f14bd2cc043e1e002172cf428",
+          "object_identity": "repo checkout project inventory",
+          "direct_claim": "Records the project set materialized for the unrelated 5.0.2 attempt.",
+          "limitation": "Project inventory alone is not a successful product build or source-to-binary map."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/args.gn",
+          "sha256": "84fac8ced2c9ed71285eb04dad37d05acd65d4273bd32254d061f1979f50c262",
+          "object_identity": "generated args file; product_name=rk3568, target_cpu=arm, is_debug=true, is_asan=true",
+          "direct_claim": "These are the recorded GN arguments in the Sort trial's rk3568 output directory.",
+          "limitation": "The file is from the unrelated Sort attempt, and does not itself prove a successful GN action, compiled target, IBS5YG source revision, toolchain, or product binary."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/build-fixed-host.log",
+          "sha256": "272c9fd8ec31014fd810839486a6d1f0bb89693433a96f3684e897269b2c48b5",
+          "object_identity": "fixed Sort host build log",
+          "direct_claim": "The log reports Ubuntu 24.04.4 outside the branch-supported Ubuntu 18.04/20.04/22.04 set and a build loader failure due to missing jinja2 before Ark Runtime compilation.",
+          "limitation": "This is a failed host-tools build attempt for Sort; it is not an IBS5YG target build."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/build-fixed-rk3568-hihope.log",
+          "sha256": "ae9182ae2d773988bac89ec28c77d8bc74da1701e1f6f75c79cf0f60f8d375de",
+          "object_identity": "fixed Sort rk3568/hihope build attempt log",
+          "direct_claim": "The log ends in a preloader parts.json component lookup failure (ability_base); it does not evidence a completed Ark Runtime compile.",
+          "limitation": "Unrelated case and failed build stage."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/build-fixed-first.log",
+          "sha256": "f4e88f03ba99e06f08b36d0616cbed931e5b2657e1e50e35dbc312d08c6ed37b",
+          "object_identity": "first fixed Sort build attempt log",
+          "direct_claim": "The log is listed by the Sort validation record as failing before Ark Runtime compilation during SDK/dependency loading.",
+          "limitation": "Unrelated case and unsuccessful attempt."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/prebuilts-download.log",
+          "sha256": "1f8262e9f56c78a431bd87a924828c00fc2f04fb83d5fe32c72dba0a45b66a39",
+          "object_identity": "Sort experiment prebuilt tools download log",
+          "direct_claim": "Some prebuilt download/extraction was attempted for the Sort experiment.",
+          "limitation": "Downloaded tools do not establish the product compiler/linker/sysroot used for IBS5YG and do not mean the Ark Runtime compiled."
+        },
+        {
+          "path": "D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/arkcompiler/ets_runtime/.git/HEAD",
+          "sha256": "5d7e5f360a9497f19514b003734cf72f3bc4b4007cc58228c1ddd333e6f1ddb5",
+          "object_identity": "materialized runtime checkout HEAD contains 1b23531531e768398682582969c2a9f17e72cafe",
+          "direct_claim": "The local materialized runtime checkout points at the Sort cherry-pick recorded in validation.json.",
+          "limitation": "Its .git/config is not readable through this host path, so the checkout is not used for independent object verification; the separate bare object store shows this commit's parent is aeee3fd12c03193545edea4b8e0fdfa3d9a03d11 and both IBS5YG commits are not its ancestors."
+        }
+      ],
+      "reproducible_commands": [
+        "Get-Content D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/args.gn",
+        "Test-Path D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/build.ninja",
+        "Test-Path D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568/compile_commands.json",
+        "Get-ChildItem D:/openHarmonyScanner/outputs/ark-runtime-isolated-validation-20261018/openharmony-5.0.2/out/rk3568 -Recurse -File | Where-Object { $_.Extension -in @('.i','.ii','.o','.a','.so','.elf','.img','.bin','.abc') } | Measure-Object"
+      ],
+      "observed_result": {
+        "args_gn": true,
+        "build_ninja": false,
+        "compile_commands_json": false,
+        "preprocessed_tu_for_ibs5yg": false,
+        "compiled_artifact_count_under_rk3568_out": 0,
+        "runtime_binary_or_image_sha256": null
+      }
+    },
+    {
+      "id": "P3-other-c1-profile-excluded",
+      "claim": "The C1 partial hihope/rk3568 profile mentioned in the case matrix does not match the IBS5YG source identity.",
+      "result": "EXCLUDED_FROM_IBS5YG_PROFILE",
+      "evidence": [
+        {
+          "path": "D:/openHarmonyScanner/worktrees/c-d4-ibs5yg-profile-gap-20261020/research/deliveries/product_closure_20261019/product_closure_matrix.json",
+          "sha256": "ce906ce1a222674b83508d0954b298f5991f56494a1d718bceafd8a9ed398c1b",
+          "object_identity": "IBS5YG product_association field",
+          "direct_claim": "The referenced C1 component source is a65a2853ccae13da167d9aa4720ab8b11ec16656 with source SHA-256 76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c; IBS5YG parent/fixed source SHA-256 values are 847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422 and 8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e. The matrix says C1's two ARM actions were preprocessed for that other source and the isolated Ninja target failed at a Musl notice write before compiling the object.",
+          "limitation": "This source matrix is sufficient to reject cross-source transfer; it is not a fresh independent audit of all C1 build artifacts."
+        }
+      ]
+    }
+  ],
+  "field_disposition": [
+    {
+      "field": "product release/version and locked manifest",
+      "status": "UNKNOWN",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "Only the unrelated 5.0.2 Sort tree has a cached release manifest; no product manifest is tied to either IBS5YG pair member."
+    },
+    {
+      "field": "Ark Runtime component revision and ancestry",
+      "status": "UNKNOWN",
+      "evidence_refs": ["S1-frozen-source-identity", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "The IBS5YG product's exact component revision is not identified. The only materialized 5.0.2 candidate pin is the unrelated Sort cherry-pick 1b23531531e768398682582969c2a9f17e72cafe; neither IBS5YG commit is its ancestor, so this pin is excluded as an IBS5YG substitute."
+    },
+    {
+      "field": "GN target, successful GN generation, build action, exact product args.gn",
+      "status": "FAIL",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "Existing rk3568 args.gn and host-tools/build attempt logs belong to the Sort experiment. No IBS5YG-bound successful target/action exists in the local evidence."
+    },
+    {
+      "field": "product compiler/linker, toolchain identity, sysroot",
+      "status": "UNKNOWN",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "No target toolchain or sysroot identity is bound to the IBS5YG component revision or build action. Sort prebuilt download/host probe records do not satisfy this field."
+    },
+    {
+      "field": "compile database and exact include closure",
+      "status": "UNKNOWN",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "The IBS5YG profile has no compile_commands.json or include_closure. No complete direct/transitive/generated input inventory is attached to an IBS5YG target."
+    },
+    {
+      "field": "generated inputs and preprocessed translation unit/macro log",
+      "status": "UNKNOWN",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "The case profile records no TU, preprocess output, or macro expansion log. Existing generated files under the unrelated Sort tree are not mapped to the IBS5YG pair."
+    },
+    {
+      "field": "successful compile/link output and build logs",
+      "status": "FAIL",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "The available Sort attempts failed in host/dependency or preloader stages and did not compile Ark Runtime. No successful IBS5YG action log exists."
+    },
+    {
+      "field": "shipped binary/image and source/component association",
+      "status": "UNKNOWN",
+      "evidence_refs": ["P1-IBS5YG-build-profile-manifest", "P2-unrelated-5_0_2-sort-attempt-excluded"],
+      "reason": "The Sort validation has no runtime binary/image SHA and no runtime source-to-shipped-product mapping; the IBS5YG profile likewise has no binary/image evidence."
+    },
+    {
+      "field": "official object-store acquisition/custody attestation",
+      "status": "UNKNOWN",
+      "evidence_refs": ["S1-frozen-source-identity"],
+      "reason": "The local bare store's configured origin is self-reported; no independent acquisition or custody record was found in this assessment."
+    }
+  ],
+  "required_inputs_and_responsible_parties": [
+    {
+      "owner": "Product/release owner",
+      "deliverables": [
+        "Exact shipped product name, release/build identifier, branch and locked product manifest.",
+        "The Ark Runtime component revision and a traceable source relationship to the frozen IBS5YG parent or fixed revision."
+      ]
+    },
+    {
+      "owner": "Build integration owner",
+      "deliverables": [
+        "Successful GN generation and target/action identity for the shipped product's Ark Runtime translation unit.",
+        "Exact args.gn/build arguments and successful compile/link logs for the same product/source identity."
+      ]
+    },
+    {
+      "owner": "Toolchain/build infrastructure owner",
+      "deliverables": [
+        "Compiler, linker, GN/Ninja versions and hashes; target triple and sysroot identity.",
+        "Complete direct/transitive include and generated-input closure for the exact target action."
+      ]
+    },
+    {
+      "owner": "Preprocess/build evidence owner",
+      "deliverables": [
+        "Compile database entry, preprocessing command, macro log and hashed preprocessed TU for the exact IBS5YG source/release profile."
+      ]
+    },
+    {
+      "owner": "Product release/verification owner",
+      "deliverables": [
+        "Hash-identified shipped binary/image and auditable mapping from the compiled Ark Runtime target/component revision into that artifact."
+      ]
+    },
+    {
+      "owner": "Evidence custodian",
+      "deliverables": [
+        "Independent source/acquisition and custody attestation for the official object store, if the project requires it for source provenance."
+      ]
+    }
+  ],
+  "conclusion": "Local material does not close the IBS5YG product build/preprocess profile. Keep this case BLOCKED and do not infer product vulnerability, applicability, or safety from source identity, a different C1 profile, or the 5.0.2 Sort host-tools attempt.",
+  "scope_note": "Read-only evidence assessment; no network access, product source edits, product build, or device PoC was performed.",
+  "independent_reviewer_handoff": {
+    "reviewer": "T4",
+    "review_scope": "Recompute this artifact hash, recheck pair/tree/blob ancestry and the component-revision mismatch, and challenge whether any cited unrelated args/build/TU/binary artifact could legitimately close an IBS5YG field.",
+    "feedback_status": "PRELIMINARY_FEEDBACK_RECEIVED; T4 independently confirmed pair identity and ancestry, the 1b235 mismatch, and exclusion of the Sort args/build artifacts. Final artifact hash review pending."
+  }
+}
