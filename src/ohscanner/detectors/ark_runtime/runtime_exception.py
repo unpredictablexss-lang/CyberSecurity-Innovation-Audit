@@ -1267,7 +1267,8 @@ def analyze_native_inline_exception_propagation(unit, budget=None):
     # Resolve the exact guard input, branch condition and replacement successors.
     sentinel_pairs = []
     pending_pairs = []
-    for binding, equal_call in assigned_calls(helper, "builder_.Equal"):
+    for binding, equal_call in (assigned_calls(helper, "builder_.Equal")
+                                + assigned_calls(helper, "builder_.NotEqual")):
         equal_args = args(helper, equal_call)
         if len(equal_args) != 2:
             continue
@@ -1284,7 +1285,8 @@ def analyze_native_inline_exception_propagation(unit, budget=None):
                                      if const_binding.identity == arg_binding.identity
                                      and const_call.start_byte < equal_call.start_byte)
         if len(value_positions) == 1 and len(sentinel_bindings) == 1:
-            sentinel_pairs.append((binding, equal_call, sentinel_bindings[0]))
+            sentinel_pairs.append((binding, equal_call, sentinel_bindings[0],
+                                   call_expression(helper, equal_call)))
 
     for binding, check_call in assigned_calls(helper, "builder_.HasPendingException"):
         check_args = args(helper, check_call)
@@ -1364,8 +1366,10 @@ def analyze_native_inline_exception_propagation(unit, budget=None):
         replace_ids[0] is not None and hir_gate_binding is not None
         and replace_ids[0].identity == hir_gate_binding.identity
         and replace_ids[1] is not None and replace_ids[2] is not None
-        and state_rows.get(replace_ids[1].name) == false_rows[0][0].identity
-        and state_rows.get(replace_ids[2].name) == true_rows[0][0].identity
+        and ((state_rows.get(replace_ids[1].name) == false_rows[0][0].identity
+              and state_rows.get(replace_ids[2].name) == true_rows[0][0].identity)
+             or (state_rows.get(replace_ids[1].name) == true_rows[0][0].identity
+                 and state_rows.get(replace_ids[2].name) == false_rows[0][0].identity))
         and ((len(state_bindings) == 1 and branch_state is not None
               and branch_state.identity == state_bindings[0].identity)
              or (not state_bindings and branch_state_call)))
@@ -1397,17 +1401,28 @@ def analyze_native_inline_exception_propagation(unit, budget=None):
             continue
         fixed_guard = True
     if fixed_guard:
-        return RuntimeExceptionResult("completed", "complete", (),
-                                      ("fixed_pending_exception_check_control_not_security_verdict",), 1)
+        fixed_exception_is_true = (state_rows.get(replace_ids[2].name) == true_rows[0][0].identity)
+        if fixed_exception_is_true:
+            return RuntimeExceptionResult("completed", "complete", (),
+                                          ("fixed_pending_exception_check_control_not_security_verdict",), 1)
+        return RuntimeExceptionResult("limited", "partial", (),
+                                      ("native_inline_guard_branch_relation_unknown",), 1)
 
-    matching_sentinel = [(eq_binding, eq_call, sentinel_binding)
-                         for eq_binding, eq_call, sentinel_binding in sentinel_pairs
+    matching_sentinel = [(eq_binding, eq_call, sentinel_binding, operator)
+                         for eq_binding, eq_call, sentinel_binding, operator in sentinel_pairs
                          if identifier(helper, branch_args[1]) is not None
                          and identifier(helper, branch_args[1]).identity == eq_binding.identity]
     if len(matching_sentinel) != 1:
         return RuntimeExceptionResult("limited", "partial", (),
                                       ("native_inline_guard_branch_relation_unknown",), 1)
-    equal_binding, equality, sentinel_binding = matching_sentinel[0]
+    equal_binding, equality, sentinel_binding, operator = matching_sentinel[0]
+    exception_is_true = state_rows.get(replace_ids[2].name) == true_rows[0][0].identity
+    # Equal(value, sentinel) routes the exception through IfTrue; NotEqual
+    # routes it through IfFalse. Other polarity/route combinations are unknown.
+    if ((operator == "builder_.Equal" and not exception_is_true)
+            or (operator == "builder_.NotEqual" and exception_is_true)):
+        return RuntimeExceptionResult("limited", "partial", (),
+                                      ("native_inline_guard_branch_relation_unknown",), 1)
     sentinel_call = next(call for binding, call in assigned_calls(helper, "builder_.ExceptionConstant")
                          if binding.identity == sentinel_binding.identity)
     if (has_reassignment(helper, value_binding, helper.body.start_byte, replacement_calls[0].start_byte)
