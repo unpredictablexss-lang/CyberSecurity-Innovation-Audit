@@ -22,7 +22,7 @@ Evidence inputs are pinned by commit, path and SHA-256 in the JSON. D50 is the h
 
 ## Source evidence vs parser evidence
 
-The source tree is pinned by commit/tree and each route file by SHA-256; D74 records source line excerpts and blob OIDs for all cross-layer route files except the stub header (whose SHA-256 is still pinned in D67). Direct source inspection can establish that the literal enum, forwarding call, transaction code, map assignment, dispatch expression, and handler call/body are present. The D50 partial parse specifically prevents claiming a fully parser-derived control-flow edge at the dispatch expression. A visible line is not proof of parser coverage. Conversely, a partial parse does not invalidate the hash-pinned source text.
+The source tree is pinned by commit/tree. D74 records source excerpts and blob OIDs; the replay independently resolves every route path from the pinned D52 Git tree, checks each blob OID, and recomputes SHA-256 from raw `git cat-file blob` bytes (including the stub header). The four evidence artifacts are also checked against their declared local SHA-256 and `git show <pinned-commit>:<path>` bytes and commit trees. Direct source inspection can establish that the literal enum, forwarding call, transaction code, map assignment, dispatch expression, and handler call/body are present. The D50 partial parse specifically prevents claiming a fully parser-derived control-flow edge at the dispatch expression. A visible line is not proof of parser coverage. Conversely, a partial parse does not invalidate the hash-pinned source text.
 
 ## Limit of conclusion
 
@@ -30,4 +30,4 @@ This map is source-only. It does not establish a product vulnerability, caller r
 
 ## Replay
 
-Run `python D79_d52_parse_coverage_replay.py --d50 <D50-pasteboard.json> --d67 <D67-audit.json> --d68 <D68-replay.json> --d74 <D74-source-trace.json> --expected D79_D52_GET_PASTE_DATA_PARSE_COVERAGE_20261026.json`. The script rejects duplicate JSON keys and fails on any bound source/status/issue mismatch.
+Run `python D79_d52_parse_coverage_replay.py --d50 <D50-pasteboard.json> --d67 <D67-audit.json> --d68 <D68-replay.json> --d74 <D74-source-trace.json> --expected D79_D52_GET_PASTE_DATA_PARSE_COVERAGE_20261026.json --d52-git-dir <pasteboard.git>`. It verifies each supplied evidence file SHA-256 against the JSON, then verifies the same commit/tree/path contents with `git show`; it also checks the D52 source commit/tree and recomputes each of the six raw blob SHA-256 values from `git cat-file`. The replay includes a negative control that appends one whitespace byte to D50 input bytes and confirms the bound-input check rejects that tampering. Duplicate JSON keys are rejected.

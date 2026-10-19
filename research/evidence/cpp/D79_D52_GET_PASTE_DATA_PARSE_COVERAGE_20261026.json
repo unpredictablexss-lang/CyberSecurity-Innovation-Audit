@@ -12,25 +12,35 @@
     "D50_component_replay": {
       "git_commit": "0f4560c4712dbf914d762948e2220942f16324ad",
       "path": "research/data_sensitive/D50_COMPONENT_CVE_REPLAY/pasteboard.json",
-      "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4"
+      "sha256": "b4279e00373c889f0c5142e2582412fc04c489dd4271167aa7b0223936edf9f4",
+      "git_tree": "92c00c127523253d298498bf06f4e5361df214c2"
     },
     "D67_parse_audit": {
       "git_commit": "ef215e737daee00c9fa659d14cd273974cf4fc2f",
       "path": "research/evidence/cpp/D67_PASTEBOARD_PARSE_AUDIT_20261023.json",
-      "sha256": "620579cbd7308e05b2e030ac341c3073c2eae015d7304e39609ccc1729e1fbd9"
+      "sha256": "620579cbd7308e05b2e030ac341c3073c2eae015d7304e39609ccc1729e1fbd9",
+      "git_tree": "bb8432940be00e5c170d3b2fed8a5df5f0accd69"
     },
     "D68_raw67_replay": {
       "git_commit": "3da049887999bd3cacb3d48da9ffa7baefa18ac5",
       "path": "research/evidence/cpp/D68_PASTEBOARD_RAW67_REPLAY_20261023.json",
-      "sha256": "491c63b8a5cf68497722c0c3f8c444857678c28848c07d0a9133538faaf5e13d"
+      "sha256": "491c63b8a5cf68497722c0c3f8c444857678c28848c07d0a9133538faaf5e13d",
+      "git_tree": "00547fc77bce9d23e65b38c3fd675eace3747494"
     },
     "D74_source_trace": {
       "git_commit": "a29275f7a795da17171fd3df2c712ef3a8576cb7",
       "path": "research/evidence/cpp/D74_PASTEBOARD_SOURCE_TRACE_20261020.json",
-      "sha256": "bf3b9fc8ae382b99c96d4318e91596eef9d30d70e9e85ca5b7ce08c79d330e4d"
+      "sha256": "bf3b9fc8ae382b99c96d4318e91596eef9d30d70e9e85ca5b7ce08c79d330e4d",
+      "git_tree": "d8468ae00a58a6ace81f13ad7c55c3db78c6c892"
     },
     "D67_commit_tree": "bb8432940be00e5c170d3b2fed8a5df5f0accd69",
-    "D68_commit_tree": "00547fc77bce9d23e65b38c3fd675eace3747494"
+    "D68_commit_tree": "00547fc77bce9d23e65b38c3fd675eace3747494",
+    "source_object_verification": {
+      "required_git_dir_argument": "--d52-git-dir",
+      "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+      "method": "git ls-tree + git cat-file blob; SHA-256 recomputed from raw Git blob bytes for all six route files"
+    }
   },
   "interpretation_boundary": {
     "D50_ast_limitation": "D50 partial status at services/zidl/src/pasteboard_service_stub.cpp:58 intersects the actual member-pointer dispatch expression. D50 does not provide a complete parser-derived dispatch-to-handler AST edge. Source-bound text evidence remains directly inspectable and line/hash pinned; partial parse is neither proof of coverage nor grounds to discard source text.",
@@ -103,7 +113,7 @@
       "path": "services/zidl/include/pasteboard_service_stub.h",
       "source_anchor": "pointer-to-member handler map declaration; D50/D68 issue at 35",
       "source_sha256": "d949deeb769a8b96b88d0548b665039c6c3ec9c30d9dc6ff43eefec7ebc256ec",
-      "blob_oid": null,
+      "blob_oid": "67b267c6e68b8e3bd49c68958d46951c6be76929",
       "D50_historical": {
         "status": "partial",
         "issues": [
