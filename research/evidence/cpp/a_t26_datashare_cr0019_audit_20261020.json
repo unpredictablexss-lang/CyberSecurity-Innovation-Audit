@@ -1,0 +1,71 @@
+{
+  "schema": "a-line-source-audit-v1",
+  "audit_id": "T26-DATASHARE-CR0019-20261020",
+  "independent_lane": "test/evidence",
+  "base_commit": "536fd14547ffb825e3c6f3f6f1871b7d8bc2b2bd",
+  "queue_input": "research/deliveries/cpp/a0_triage_20261019/queue.json",
+  "queue_rows_total": 345,
+  "queue_sha256": "cb528dcbcf91482db4d15264425bd43ea2332b45b6c3c86b88f34a5bc823733c",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_data_share",
+    "commit": "560c5cdadf08b4beeb691e93d70ff32cc2dca8bd",
+    "tree": "f731230c116c94d7619f5514c828b33ffac69924",
+    "path": "frameworks/native/proxy/src/data_proxy_observer_stub.cpp",
+    "line": 222,
+    "blob": "fa48e35a0fab0dbc776fb98b7f162c6f62432842",
+    "source_sha256": "0b48c5461891d336a34d6d0f2e458ed3f2d175aaa1980fe7c351080c0e5cc6e2",
+    "object_database": "D:/openHarmonyScanner/openharmony/.repo/project-objects/distributeddatamgr_data_share.git",
+    "retrieval": "offline git cat-file from local project-object database"
+  },
+  "source_analysis": {
+    "mechanism": "ProxyDataObserverStub implements IProxyDataObserver, whose descriptor is OHOS.DataShare.IProxyDataObserver, but OnRemoteRequest compares the incoming token with PublishedDataObserverStub::GetDescriptor() (OHOS.DataShare.IDataProxyPublishedDataObserver). The descriptors differ. This is a direct interface-token mismatch candidate.",
+    "positive_boundary_evidence": [
+      "Wrong descriptor is compared before request-code and payload processing.",
+      "Only request code 0 is accepted.",
+      "DataProxyChangeInfo payload decoding rejects length < 1, length > MAX_IPC_SIZE, and null ReadRawData before callback invocation.",
+      "OnChangeFromProxyData serializes callback_ use with mutex_."
+    ],
+    "registration_evidence": "ProxyDataSubscriberManager creates a ProxyDataObserverStub and passes it as sptr<IProxyDataObserver> through DataShareServiceProxy::SubscribeProxyData; service proxy writes the remote object into the subscription IPC request.",
+    "access_control": "No complete product service caller-authorization chain was established for this observer callback. The subscription proxy API establishes object registration but does not itself prove which principals can invoke the callback object.",
+    "build_evidence": "interfaces/inner_api/BUILD.gn lists data_proxy_observer_stub.cpp in an inner_api source set. The exact shipped product profile, target inclusion and runtime version are not pinned.",
+    "concurrency": "No same-object unordered shared-state access issue is alleged for this candidate; callback access is mutex-protected. This audit concerns descriptor identity and message dispatch.",
+    "impact": "A mismatched token may reject the intended IProxyDataObserver callback protocol and may accept a different interface token if the object is reachable through that interface. Which protocol token the remote sender emits, exploitability, and CIA impact require runtime/product evidence.",
+    "case_disposition": "PARTIAL/BLOCK",
+    "original_status_preserved": "not_testable",
+    "queue_status_preserved": "paused_pending_evidence"
+  },
+  "supporting_source_files": [
+    {"path":"frameworks/native/proxy/include/data_proxy_observer_stub.h","blob":"63f1890e131dad0f1dbea20b47a3fc08bc5bc79e","source_sha256":"fab056ad41636ace7b8366480dedc856ba377f9f899c63581d6a661f09d33292"},
+    {"path":"frameworks/native/proxy/include/data_proxy_observer.h","blob":"96e404acfc238ee98125f1a8b7441374cecbeee2","source_sha256":"8ea4725358808f50e269bbcaf36eafdb1d2cd42f1504786a4e881fa7053fafcf"},
+    {"path":"frameworks/native/proxy/src/proxy_data_subscriber_manager.cpp","blob":"b8238d6469f7f05ce8174c5ec2cd64360656c353","source_sha256":"ec6fb736da6574245c0e31ad66816bd6c9d72395f6f8838d0ad0c39c04211e21"},
+    {"path":"frameworks/native/proxy/src/data_share_service_proxy.cpp","blob":"9874af8e13bc2e47b3212f70f6ba557b7f8c6a47","source_sha256":"28170247510d60ef6b7922ca1067c32356c1d116907a2bc45d464c4cf67a1b4f"},
+    {"path":"frameworks/native/common/src/datashare_itypes_utils.cpp","blob":"8e6d1fafc8fb5d9b4d2d02357564a6b512d7f755","source_sha256":"89dcced0d37d46c98bcb7bd2cb6d941f6b1342902287e9667f1afd330d85dc77"},
+    {"path":"interfaces/inner_api/BUILD.gn","blob":"c72803136f1a6d2b4987905e66f8fc50c21d1766","source_sha256":"e05b15674ca4f73e302690efe112947da99784c434dffddc202d9be61a1659f1"}
+  ],
+  "cli_baseline": {
+    "command": "python -m src.cli.main ohscan-run --repo-dir research/evidence/cpp/.t26_datashare_source_repo --repository openharmony/distributeddatamgr_data_share --commit 560c5cdadf08b4beeb691e93d70ff32cc2dca8bd --include frameworks/native/proxy/src/data_proxy_observer_stub.cpp --include frameworks/native/proxy/include/data_proxy_observer_stub.h --include frameworks/native/proxy/include/data_proxy_observer.h --include frameworks/native/proxy/src/proxy_data_subscriber_manager.cpp --include frameworks/native/common/src/datashare_itypes_utils.cpp --detector ohscanner.interface.ipc --json-out research/evidence/cpp/a_t26_datashare_cr0019_cli_20261020.json --md-out research/evidence/cpp/a_t26_datashare_cr0019_cli_20261020.md",
+    "json_report": "research/evidence/cpp/a_t26_datashare_cr0019_cli_20261020.json",
+    "markdown_report": "research/evidence/cpp/a_t26_datashare_cr0019_cli_20261020.md",
+    "snapshot_sha256": "162723a8b65a7900a04b8fe6bf19ec862d19c83ff35bdbe3217f6797dd384122",
+    "profile_id": "light-ast",
+    "build_profile": "none",
+    "selected_files": 5,
+    "selected_bytes": 88786,
+    "parse_status": {"complete": 4, "partial": 1},
+    "partial_file": "frameworks/native/proxy/include/data_proxy_observer.h",
+    "detector_id": "ohscanner.interface.ipc",
+    "detector_version": "0.12.12",
+    "rule_id": "ipc.relay.descriptor-boundary",
+    "diagnostics": [
+      {"file": "frameworks/native/proxy/src/data_proxy_observer_stub.cpp", "line": 222, "candidate_id": "ohscanner.interface.ipc:ad8ff7e568ba904b", "kind": "syntax", "coverage": "candidate/unassessed"}
+    ],
+    "validated_vulnerability": 0,
+    "execution_status": "completed_with_limitations"
+  },
+  "limitations": [
+    "No fixed-source comparison was performed; this queue entry has no bound fixed object.",
+    "One of five selected files parsed partial; CLI result remains limited even though the candidate function was covered.",
+    "No exact shipped product profile, runtime version, service-side caller authorization proof, live callback token trace, build, or dynamic IPC test is bound.",
+    "Static token mismatch establishes a source-level interface consistency defect candidate, not attacker reachability, exploitability, or CIA impact."
+  ]
+}
