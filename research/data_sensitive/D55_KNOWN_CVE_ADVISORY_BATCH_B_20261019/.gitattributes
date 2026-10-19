@@ -1,0 +1,2 @@
+*.body -text -diff
+*.headers -text -diff

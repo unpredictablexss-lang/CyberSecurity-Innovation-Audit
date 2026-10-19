@@ -1,7 +1,9 @@
 # D55 Known-CVE Advisory Manifest — Batch B
 
-**Baseline:** D55 protocol commit `c86e0b0321eb38b0ff403e98b8597622c7cd556c`  
-**Batch scope:** exactly 8 IDs assigned to batch B. This is a supplement; it does not modify the frozen 17-ID catalog, scanner, D55 protocol, or another batch.  
+**Baseline:** D55 protocol commit `c86e0b0321eb38b0ff403e98b8597622c7cd556c`
+
+**Batch scope:** exactly 8 IDs assigned to batch B. This is a supplement; it does not modify the frozen 17-ID catalog, scanner, D55 protocol, or another batch.
+
 **Retrieval date:** 2026-10-19 UTC. The captured run began at `2026-10-19T18:06:22Z`.
 
 ## Status
