@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "task": "D57 independent second-layer review of D51 and D52",
+  "date": "2026-10-22",
+  "role": "read_only_second_layer_review",
+  "modified_detector_tests_fixtures_or_original_reports": false,
+  "product_fingerprint_available": false,
+  "product_vulnerability_conclusion": "UNKNOWN",
+  "candidates": [
+    {
+      "id": "D51",
+      "cve_association": "CVE-2025-25212",
+      "decision": "narrow",
+      "confidence": 0.86,
+      "allowed_conclusion": "Component-source candidate for observer registration without a visible hard count bound in the pinned old source.",
+      "not_established": [
+        "exact advisory-to-source-statement causality",
+        "product inclusion or affected product version",
+        "caller reachability",
+        "runtime denial-of-service impact",
+        "general quota-flow sensitivity beyond the exact T51 probes"
+      ],
+      "source": {
+        "repository": "openharmony/miscservices_pasteboard",
+        "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+        "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+        "path": "services/core/src/pasteboard_service.cpp",
+        "blob": "c380ac266a85edd818caa811f11b99722d351788",
+        "candidate_line": 241,
+        "candidate_anchor": "observer set insertion"
+      },
+      "fix_control": {
+        "commit": "836cf6990579451d6521e9177d749660b07ad34e",
+        "mechanism": "per-user/per-calling-PID aggregate observer count checked against MAX_OBSERVER_COUNT before insertion",
+        "exact_rule_replay_diagnostic": false,
+        "reason": "fix refactors the API/function shape; the reported zero-hit is non-diagnostic"
+      },
+      "test_evidence": {
+        "report": "T51 final independent acceptance for 0.19.3",
+        "result": "PASS_SCOPED_GUARD_SHAPES",
+        "whole_component_status": "blocked_partial",
+        "holdout_labels": false
+      },
+      "minimum_feedback": [
+        "Keep component-candidate wording and CVE causality unknown absent an authoritative exact mapping.",
+        "Bind product source revision, reachability, cleanup, and impact before product escalation.",
+        "Do not generalize T51's exact probe PASS to arbitrary control flow or parser coverage."
+      ]
+    },
+    {
+      "id": "D52",
+      "cve_association": "CVE-2025-27247",
+      "decision": "narrow",
+      "confidence": 0.82,
+      "allowed_conclusion": "Pinned-snapshot candidate: GET_PASTE_DATA reaches a data-return path whose inspected old core getter has no visible permission decision.",
+      "not_established": [
+        "complete framework/SystemAbility authorization failure",
+        "exact advisory-to-source-statement causality",
+        "product inclusion or affected product version",
+        "attacker reachability or runtime impact"
+      ],
+      "source": {
+        "repository": "openharmony/miscservices_pasteboard",
+        "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+        "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+        "stub_path": "services/zidl/src/pasteboard_service_stub.cpp",
+        "stub_blob": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+        "getter_path": "services/core/src/pasteboard_service.cpp",
+        "getter_blob": "c380ac266a85edd818caa811f11b99722d351788",
+        "reported_line": 41,
+        "reported_line_scope": "OnRemoteRequest method opening brace"
+      },
+      "history_boundary": {
+        "pinned_commit_date": "2022-07-22",
+        "earliest_inspected_CheckPastePermission_commit": "e13a4ad3b72be7650ccb75de560790c04fa84795",
+        "earliest_inspected_CheckPastePermission_date": "2022-08-15",
+        "interpretation": "Supports that the inspected July source predates this local getter gate; does not prove this commit is the CVE fix."
+      },
+      "rule_gap": "Rule 0.18.0 checks permission-like calls only in OnRemoteRequest and OnGetPasteData, not in the core GetPasteData getter, called helpers, inherited IPC framework, or product ACL.",
+      "test_evidence": {
+        "report": "T52 independent acceptance",
+        "result": "PASS_SCOPED_SIGNATURE_CONTROLS",
+        "whole_component_status": "blocked_partial",
+        "exact_fixed_source_replay": false,
+        "holdout_labels": false
+      },
+      "minimum_feedback": [
+        "Present as a pinned-snapshot read-permission candidate and disclose that line 41 is method-entry evidence.",
+        "Compare the exact fix diff and bind the framework/service authorization contract before assigning CVE causality.",
+        "Keep product applicability unknown until fingerprint, component manifest, policy/configuration, and fixed-product retest exist."
+      ]
+    }
+  ],
+  "reviewed_commits": {
+    "D51_developer": "c8f83b82291e82b3272c73b943623336a3c836c3",
+    "T51_acceptance": "d7de57f055bb6c22122b57799b2e21bf3b969424",
+    "D52_developer": "9d3b1e653a6e56a3f2f6aea376e30ac9f61ef4e",
+    "T52_acceptance": "184356d0f9863cf1e610c419452a0f3be6d62a1f"
+  }
+}
