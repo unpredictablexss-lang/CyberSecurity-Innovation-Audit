@@ -134,7 +134,7 @@ def analyze_receiver_guard(unit, *, caller_name=None,
         applicable = [fn.qualified_name for fn in functions
                       if fn.qualified_name.startswith(OWNER + '::')
                       and any(node.type == 'call_expression' and fn.call_name(node) == sink_name
-                              for node in wawÓ¾ü¶‰žËkºwµçivalent=(), invalidated=(), predicates=(), effects=(), escaped=()):
+                              for node in walk(fn.body))]
         self.values = dict(values or {})
         self.equivalent = frozenset(equivalent)
         self.invalidated = frozenset(invalidated)
