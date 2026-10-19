@@ -1,0 +1,45 @@
+{
+  "schema": "ohscanner.g12-pc-t5-intake-synthetic-cases/v1",
+  "target_case": "IBS5YG",
+  "model_note": "Canonical abstract cases only; adapt to the exact D5 schema without dropping conditions. Synthetic labels and bytes are not real product evidence.",
+  "canonical_valid_control": {
+    "openharmony_release": "SYNTHETIC-REL-01",
+    "product_build_id_or_image_version": "SYNTHETIC-BUILD-01",
+    "source_branch_or_release_tag": "refs/tags/synthetic-release-01",
+    "locked_manifest_uri_plus_sha256_or_immutable_commit": "synthetic://manifest/01#sha256=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "product_name": "SYNTHETIC-PRODUCT-01",
+    "board_or_device_target": "SYNTHETIC-BOARD-01",
+    "field_binding_rule": "Each field has an evidence reference, exact evidence-byte SHA-256, and issuer label; each binding names the same product/build tuple.",
+    "issuer": "SYNTHETIC-ISSUER-UNVERIFIED",
+    "caller_status": "READY"
+  },
+  "cases": [
+    {"id":"P01-valid-synthetic-control","mutation":"none; all six fields agree on synthetic product/build and evidence bytes hash correctly","expected":"STRUCTURE_READY_ONLY; must explicitly disclaim issuer authenticity, evidence sufficiency, custody, and product truth"},
+    {"id":"P02-waiting-control","mutation":"all six values null/unavailable","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N01-missing-release","mutation":"openharmony_release missing/null","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N02-missing-build","mutation":"product_build_id_or_image_version missing/null","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N03-missing-branch-tag","mutation":"source_branch_or_release_tag missing/null","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N04-missing-locked-manifest","mutation":"locked_manifest_uri_plus_sha256_or_immutable_commit missing/null","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N05-missing-product","mutation":"product_name missing/null","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N06-missing-board","mutation":"board_or_device_target missing/null","expected":"WAITING or BLOCKED; never READY"},
+    {"id":"N07-evidence-hash-mismatch","mutation":"change referenced evidence bytes but retain recorded digest","expected":"reject evidence binding; BLOCKED; never READY"},
+    {"id":"N08-path-traversal","mutation":"evidence reference contains ../ or equivalent traversal outside evidence root","expected":"reject; no outside-root read; BLOCKED"},
+    {"id":"N09-absolute-path","mutation":"evidence reference is absolute (POSIX and Windows drive/UNC forms)","expected":"reject; BLOCKED"},
+    {"id":"N10-symlink-escape","mutation":"in-root symlink points to a file outside evidence root","expected":"reject containment escape; BLOCKED; no outside-root bytes accepted"},
+    {"id":"N11-junction-escape","mutation":"in-root Windows junction points outside evidence root","expected":"reject containment escape; BLOCKED; if junction unsupported, NOT_RUN"},
+    {"id":"N12-missing-issuer","mutation":"remove issuer/owner identity from one required evidence binding","expected":"BLOCKED; never READY"},
+    {"id":"N13-conflicting-build-id","mutation":"one field's evidence binding names a different build ID from the other five","expected":"reject inconsistent identity; BLOCKED"},
+    {"id":"N14-mixed-product-release","mutation":"mix product name, release, board, branch/tag, or manifest bindings from two synthetic targets","expected":"reject inconsistent target tuple; BLOCKED"},
+    {"id":"N15-status-spoof-incomplete","mutation":"set caller-supplied status=READY while one required field/evidence binding is absent","expected":"ignore/reject caller status; effective result WAITING or BLOCKED"},
+    {"id":"N16-status-spoof-hash-failure","mutation":"set caller-supplied status=READY with a hash mismatch","expected":"ignore/reject caller status; effective result BLOCKED"},
+    {"id":"N17-issuer-label-not-authenticated","mutation":"issuer string exists but has no verifiable identity credential or trusted signature","expected":"at most STRUCTURE_READY_ONLY; output must not claim issuer verified/authentic"},
+    {"id":"N18-manifest-digest-not-recomputed","mutation":"manifest URI carries a syntactically valid SHA-256 but retrieved bytes/immutable commit cannot be resolved and recomputed","expected":"BLOCKED; format-valid digest alone is insufficient"}
+  ],
+  "cross_case_invariants": [
+    "No status field supplied by the input can override failed or missing checks.",
+    "All six minimum fields and their evidence bindings must identify one product/build tuple.",
+    "Manifest identity must be immutable and its bytes or commit identity independently verifiable.",
+    "Evidence references must be resolved beneath the explicitly selected evidence root after canonicalization and reparse-point checks.",
+    "All outputs distinguish structural readiness from authentic issuer, evidence sufficiency, source custody, product inclusion, and product vulnerability conclusions."
+  ]
+}
