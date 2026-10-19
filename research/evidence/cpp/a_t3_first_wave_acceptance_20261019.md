@@ -105,3 +105,37 @@ T3 independently audited D2 commits `67cdad2ad709a1d9c24245ef029e4034a0764c55` (
 | CVE-2025-23420 mutable-array bounds | unrelated | `3c7520b897b0362f09f90c675f5e6b38d9f7cc47` | `8f44957d94da37d5e48515b2523d2fe08d29e0f914640663be1ba9d9b16d3050` | `da9f468d3e3225c695102c5fb66916d3c810e6d4372b6efa46f8967f1416ff78` | complete, 0 diagnostics |
 
 All four controls are self-authored synthetic code; they are not additional real-project source identities and provide no Precision/Recall estimate. In combination with the already independently repeated exact real vulnerable/fixed pairs (CVE-2025-0587: complete 1/0; CVE-2025-23420: complete 5/0), they close the planned static detector regression matrix for those two root-cause shapes. **Updated T3 dispositions: PASS for static regression acceptance, not product security validation.** The T1 PR #30 before-matrix rows remain PARTIAL as historical baseline results and were not rewritten.
+
+## T1 CVE-2025-26690 independent replay audit
+
+T3 cherry-picked T1 frozen commit `a447b556c2c3da2cbcf2e856bd2c0798b32c48fb` into the independent validation checkout without conflict (local cherry-pick `442077b`). The original `matrix.json` was not edited. Source identities, synthetic snapshot identities, and detector analysis coverage were checked separately.
+
+### Upstream source/blob identity
+
+Using the connected GitHub source for `openharmony/communication_dsoftbus`, T3 independently fetched the file at each exact upstream ref with the GitHub file connector and fetched both commit metadata records:
+
+- Vulnerable ref [`258662cd9840b55a31546a72d91027f6368cea84`](https://github.com/openharmony/communication_dsoftbus/blob/258662cd9840b55a31546a72d91027f6368cea84/core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp): official file connector returned blob `a82b71fb5520b02278a4af695bbe918d14c1048e`. The byte-for-byte local synthetic package copy is 8,502 bytes, has the same Git blob SHA-1, and raw SHA-256 `5453bd68645a7708f0d9ef9c214451a4735a256b5223729f6808ab34095125a6`.
+- Fixed ref [`192f3e11d74beeaa3d879333471deb8a24a7e1c5`](https://github.com/openharmony/communication_dsoftbus/blob/192f3e11d74beeaa3d879333471deb8a24a7e1c5/core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp): official file connector returned blob `13ddbe93a7f617784dec0f3761e09f66b5c3217c`. The byte-for-byte local synthetic package copy is 9,387 bytes, has the same Git blob SHA-1, and raw SHA-256 `5a093d91efc624147d40bf3f4dbbe3ab7ab6d724b17978298e9d5c30d9e5eb81`.
+- GitHub commit metadata independently returned the requested commit SHAs. The fixed commit diff includes the target file and null checks; the vulnerable commit's changed-file list does not include this path, as expected for a vulnerable snapshot commit. Neither metadata response exposed the upstream tree ID; these checks do not establish tree-level ancestry or prove the local snapshots contain other upstream files.
+
+**Identity disposition: PASS for the exact upstream commit refs and file blobs/SHA-256; PARTIAL for full upstream commit/tree binding.** The A0 before matrix remains unchanged and historically records `BLOCK` before these source bytes were available locally.
+
+### Independent synthetic-package CLI replay
+
+The two local scan repositories contain only the exact fetched source file. Their commit/tree and M2 snapshot hashes are *synthetic packaging identities*, not upstream commit/tree IDs:
+
+| Variant | Upstream commit / blob | Synthetic scan commit / tree | Snapshot SHA-256 | Parser | Detector / finding |
+|---|---|---|---|---|---|
+| Vulnerable | `258662cd9840b55a31546a72d91027f6368cea84` / `a82b71fb5520b02278a4af695bbe918d14c1048e` | `4388f103aba08b6a2fc3f232fc02d7c71b330b05` / `eb1090510490b14714786bddaf42095d3e4dc2af` | `25102a7c1fde5d072f082828ed60bbc586309724014d42d6df042845a977b8db` | complete (1 file) | detector coverage partial, blocked; 5 null-deref candidates at 71, 82, 97, 108, 123 |
+| Fixed | `192f3e11d74beeaa3d879333471deb8a24a7e1c5` / `13ddbe93a7f617784dec0f3761e09f66b5c3217c` | `67deaf12a16bb5ddf74919554afaf9603dfe7aa7` / `563ed0715afbb5880673d11a0ca1bdf07fda1742` | `c8867f500a082ea923b8aede2735e12d409149f8071900098ee3f96f55e8bf11` | complete (1 file) | detector coverage partial, blocked; 0 findings |
+
+T3 independently re-ran both pinned-source production CLI commands from the T3 checkout (outputs only under `%TEMP%\t3-26690`):
+
+```powershell
+python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\a-line-cve-2025-26690-official-fetch-20261019\synthetic-vulnerable --repository openharmony/communication_dsoftbus --commit 4388f103aba08b6a2fc3f232fc02d7c71b330b05 --include core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp --detector ohscanner.cpp.null_dereference --json-out $env:TEMP\t3-26690\vulnerable.json --md-out $env:TEMP\t3-26690\vulnerable.md
+python -m src.cli ohscan-run --repo-dir D:\openHarmonyScanner\tmp\a-line-cve-2025-26690-official-fetch-20261019\synthetic-fixed --repository openharmony/communication_dsoftbus --commit 67deaf12a16bb5ddf74919554afaf9603dfe7aa7 --include core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp --detector ohscanner.cpp.null_dereference --json-out $env:TEMP\t3-26690\fixed.json --md-out $env:TEMP\t3-26690\fixed.md
+```
+
+Both independent outputs matched the recorded synthetic commit/tree, snapshot SHA, raw source hash, parse status, and diagnostic count/lines. The detector coverage object explicitly reports `status=partial`, no `analyzed_files`, and an `unexamined` row whose `parse_status=complete` and `reason=detector_model_incomplete`; each run is `blocked`. Thus syntax parsing is complete while the detector's semantic model is not. The fixed 0 finding is not a safety result.
+
+**Replay disposition: PASS for reproducibility of the static candidate differential; case disposition remains PARTIAL.** Five candidates align with the target entry points, and the fixed source yields zero same-rule findings, but upstream tree IDs are missing, no exact safe/unrelated controls are bound, and the detector itself reports incomplete semantic coverage. Do not promote to PASS for vulnerability detection or safe fixed behavior. Minimal next steps remain: bind the upstream tree objects/IDs, source-bound safe/unrelated controls, and improve/independently assess null-dereference detector coverage on this file.
