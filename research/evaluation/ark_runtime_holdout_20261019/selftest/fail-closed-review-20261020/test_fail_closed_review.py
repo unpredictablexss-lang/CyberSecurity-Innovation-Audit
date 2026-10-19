@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import os
+import subprocess
 import tempfile
 import unittest
 from argparse import Namespace
@@ -12,6 +14,10 @@ from research.evaluation.ark_runtime_holdout_20261019 import holdout_pipeline as
 def make_intake(root: Path) -> tuple[dict, dict, Path]:
     source_root = root / "sources"
     source_root.mkdir(parents=True, exist_ok=True)
+    evidence_root = root / "leakage-evidence"
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    evidence_bytes = b"synthetic leakage inventory evidence\n"
+    (evidence_root / "case-1.bin").write_bytes(evidence_bytes)
     source_path = "sample.cpp"
     source = b"int synthetic_sample(int x) { return x + 1; }\n"
     (source_root / source_path).write_bytes(source)
@@ -84,8 +90,8 @@ def make_intake(root: Path) -> tuple[dict, dict, Path]:
         "history_review_family_keys": [],
         "cases": {case_id: {
             "status": "no_overlap",
-            "evidence_ref": "synthetic-test-only",
-            "evidence_sha256": hp.sha256_bytes(b"synthetic leakage evidence"),
+            "evidence_ref": "case-1.bin",
+            "evidence_sha256": hp.sha256_bytes(evidence_bytes),
             "source_sha256": digest,
             "root_cause_family": case["root_cause_family"],
         }},
@@ -102,6 +108,11 @@ def make_intake(root: Path) -> tuple[dict, dict, Path]:
         case_id: {"label": "unknown", "model_generated": False, "root_cause_family": "synthetic-family-1"},
     }}
     return intake, truth, source_root
+
+
+def validate_intake(intake: dict, truth: dict, source_root: Path) -> list[str]:
+    """Pass the explicitly provisioned synthetic evidence root to production validation."""
+    return hp.validate_intake(intake, truth, source_root, evidence_root=source_root.parent / "leakage-evidence")
 
 
 def make_freeze_and_packet() -> tuple[dict, dict]:
@@ -168,14 +179,14 @@ class FailClosedReviewTests(unittest.TestCase):
     def test_complete_synthetic_intake_is_structurally_valid(self):
         with tempfile.TemporaryDirectory() as temp:
             intake, truth, source_root = make_intake(Path(temp))
-            self.assertEqual([], hp.validate_intake(intake, truth, source_root))
+            self.assertEqual([], validate_intake(intake, truth, source_root))
 
     def test_synthetic_fixture_cannot_bypass_real_truth_gate(self):
         with tempfile.TemporaryDirectory() as temp:
             intake, truth, source_root = make_intake(Path(temp))
             intake["synthetic_fixture"] = True
             truth["truth_status"] = "reliable_independent_human_adjudicated"
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("synthetic_fixture_cannot_claim_reliable_truth", errors)
 
     def test_missing_source_identity_or_profile_fails_closed(self):
@@ -183,7 +194,7 @@ class FailClosedReviewTests(unittest.TestCase):
             intake, truth, source_root = make_intake(Path(temp))
             del intake["cases"][0]["source_identity"]
             del intake["cases"][0]["profile"]
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("missing_source_identity:SYNTHETIC-CASE-1", errors)
             self.assertIn("missing_profile_identity:SYNTHETIC-CASE-1", errors)
 
@@ -193,7 +204,7 @@ class FailClosedReviewTests(unittest.TestCase):
             intake["cases"][0]["source_identity"]["tree"] = "3" * 40
             proof = intake["cases"][0]["source_verification"]
             proof["payload_sha256"] = hp.object_hash_without(proof, "payload_sha256")
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("source_verification_identity_mismatch:SYNTHETIC-CASE-1", errors)
             self.assertIn("profile_source_identity_mismatch:SYNTHETIC-CASE-1", errors)
 
@@ -202,7 +213,7 @@ class FailClosedReviewTests(unittest.TestCase):
             intake, truth, source_root = make_intake(Path(temp))
             intake["cases"][0]["source_identity"]["blob"] = "4" * 40
             intake["cases"][0]["source_sha256"] = "5" * 64
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("source_identity_blob_mismatch:SYNTHETIC-CASE-1", errors)
             self.assertIn("source_sha256_mismatch:SYNTHETIC-CASE-1", errors)
 
@@ -210,14 +221,14 @@ class FailClosedReviewTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             intake, truth, source_root = make_intake(Path(temp))
             intake["cases"][0]["profile"]["product_build_preprocess"]["status"] = "BLOCKED"
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("product_build_profile_not_complete:SYNTHETIC-CASE-1", errors)
 
     def test_preregistration_hash_tamper_and_missing_fields_fail(self):
         with tempfile.TemporaryDirectory() as temp:
             intake, truth, source_root = make_intake(Path(temp))
             intake["preregistration"]["protocol"].pop("sample_size")
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("preregistration_payload_hash_mismatch", errors)
             self.assertIn("preregistration_missing_sample_size", errors)
 
@@ -228,7 +239,7 @@ class FailClosedReviewTests(unittest.TestCase):
             ledger["ledger"]["history_review_family_keys"] = ["synthetic-family-1"]
             ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
             intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("development_or_history_family_overlap:SYNTHETIC-CASE-1", errors)
 
     def test_normalized_family_alias_and_missing_leakage_evidence_fail_closed(self):
@@ -238,14 +249,14 @@ class FailClosedReviewTests(unittest.TestCase):
             ledger["ledger"]["history_review_family_keys"] = ["  SYNTHETIC-FAMILY-1  "]
             ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
             intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("development_or_history_family_overlap:SYNTHETIC-CASE-1", errors)
 
             ledger["ledger"]["history_review_family_keys"] = []
             del ledger["ledger"]["cases"]["SYNTHETIC-CASE-1"]["evidence_sha256"]
             ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
             intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("leakage_case_evidence_invalid:SYNTHETIC-CASE-1", errors)
 
     def test_leakage_ledger_requires_explicit_inventory_fields(self):
@@ -255,15 +266,62 @@ class FailClosedReviewTests(unittest.TestCase):
             del ledger["ledger"]["history_review_source_sha256"]
             ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
             intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("leakage_ledger_missing_history_review_source_sha256", errors)
             self.assertIn("leakage_history_hashes_invalid", errors)
+
+    def test_leakage_evidence_is_bound_to_readable_bytes_and_safe_relative_paths(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            intake, truth, source_root = make_intake(root)
+            ledger = intake["development_leakage_ledger"]
+            row = ledger["ledger"]["cases"]["SYNTHETIC-CASE-1"]
+            evidence_root = root / "leakage-evidence"
+            outside = root / "outside.bin"
+            outside.write_bytes(b"outside evidence")
+
+            for unsafe_ref in ("../outside.bin", str(outside), "C:/outside.bin", "folder\\outside.bin"):
+                row["evidence_ref"] = unsafe_ref
+                ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+                intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+                self.assertIn("leakage_evidence_ref_unsafe:SYNTHETIC-CASE-1", validate_intake(intake, truth, source_root))
+
+            row["evidence_ref"] = "missing.bin"
+            ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+            intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+            self.assertIn("leakage_evidence_missing:SYNTHETIC-CASE-1", validate_intake(intake, truth, source_root))
+
+            row["evidence_ref"] = "case-1.bin"
+            row["evidence_sha256"] = "0" * 64
+            ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+            intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+            self.assertIn("leakage_case_evidence_sha256_mismatch:SYNTHETIC-CASE-1", validate_intake(intake, truth, source_root))
+
+            outside_dir = root / "outside-dir"
+            outside_dir.mkdir()
+            outside_evidence = outside_dir / "case.bin"
+            outside_evidence.write_bytes(b"outside evidence")
+            link = evidence_root / "escape"
+            try:
+                if os.name == "nt":
+                    result = subprocess.run(["cmd", "/c", "mklink", "/J", str(link), str(outside_dir)], capture_output=True, text=True)
+                    if result.returncode != 0:
+                        self.skipTest(f"junction creation unavailable in this environment: {result.stderr or result.stdout}")
+                else:
+                    os.symlink(outside_dir, link, target_is_directory=True)
+            except (OSError, NotImplementedError) as exc:
+                self.skipTest(f"symlink creation unavailable in this environment: {exc}")
+            row["evidence_ref"] = "escape/case.bin"
+            row["evidence_sha256"] = hp.sha256_bytes(outside_evidence.read_bytes())
+            ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
+            intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
+            self.assertIn("leakage_evidence_outside_root:SYNTHETIC-CASE-1", validate_intake(intake, truth, source_root))
 
     def test_development_overlap_self_report_is_not_accepted(self):
         with tempfile.TemporaryDirectory() as temp:
             intake, truth, source_root = make_intake(Path(temp))
             intake["cases"][0]["development_overlap"] = True
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("development_overlap_not_false:SYNTHETIC-CASE-1", errors)
 
     def test_leakage_ledger_case_identity_or_clearance_mismatch_fails(self):
@@ -274,7 +332,7 @@ class FailClosedReviewTests(unittest.TestCase):
             ledger = intake["development_leakage_ledger"]
             ledger["payload_sha256"] = hp.object_hash_without(ledger, "payload_sha256")
             intake["development_leakage_ledger_sha256"] = ledger["payload_sha256"]
-            errors = hp.validate_intake(intake, truth, source_root)
+            errors = validate_intake(intake, truth, source_root)
             self.assertIn("leakage_case_not_cleared:SYNTHETIC-CASE-1", errors)
 
     def test_reviewer_identity_role_signature_and_attestation_are_required(self):

@@ -413,7 +413,30 @@ def safe_relative(value: str) -> bool:
     if not isinstance(value, str):
         return False
     p = PurePosixPath(value)
-    return bool(value) and not p.is_absolute() and ".." not in p.parts and "\\" not in value
+    return (bool(value) and value not in {".", ".."} and not p.is_absolute()
+            and ".." not in p.parts and "\\" not in value and ":" not in value
+            and "\x00" not in value)
+
+
+def read_evidence_bytes(evidence_root: Path | None, evidence_ref: Any, case_id: str) -> tuple[bytes | None, list[str]]:
+    if evidence_root is None:
+        return None, [f"leakage_evidence_root_missing:{case_id}"]
+    if not isinstance(evidence_ref, str) or not safe_relative(evidence_ref):
+        return None, [f"leakage_evidence_ref_unsafe:{case_id}"]
+    root = evidence_root.resolve()
+    candidate = root.joinpath(*PurePosixPath(evidence_ref).parts)
+    try:
+        resolved = candidate.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return None, [f"leakage_evidence_missing:{case_id}"]
+    if not resolved.is_relative_to(root):
+        return None, [f"leakage_evidence_outside_root:{case_id}"]
+    try:
+        if not resolved.is_file():
+            return None, [f"leakage_evidence_not_file:{case_id}"]
+        return resolved.read_bytes(), []
+    except OSError:
+        return None, [f"leakage_evidence_unreadable:{case_id}"]
 
 
 def source_leak_errors(data: bytes, case_id: str, source_path: str) -> list[str]:
@@ -433,7 +456,7 @@ def pseudonym(secret: bytes, case_id: str) -> str:
     return hmac.new(secret, case_id.encode("utf-8"), hashlib.sha256).hexdigest()[:16]
 
 
-def validate_intake(intake: dict[str, Any], truth: dict[str, Any], source_root: Path) -> list[str]:
+def validate_intake(intake: dict[str, Any], truth: dict[str, Any], source_root: Path, evidence_root: Path | None = None) -> list[str]:
     if not isinstance(intake, dict) or not isinstance(truth, dict):
         return ["intake_or_truth_invalid"]
     errors: list[str] = []
@@ -558,17 +581,24 @@ def validate_intake(intake: dict[str, Any], truth: dict[str, Any], source_root: 
         if not synthetic:
             ledger_cases = ledger_payload.get("cases", {})
             ledger_row = ledger_cases.get(case_id, {}) if isinstance(ledger_cases, dict) else {}
-            if not isinstance(ledger_row, dict) or ledger_row.get("status") != "no_overlap":
+            if not isinstance(ledger_row, dict):
                 errors.append(f"leakage_case_not_cleared:{case_id}")
-            elif (not isinstance(ledger_row.get("evidence_ref"), str) or not ledger_row["evidence_ref"].strip()
-                  or not has_sha256(ledger_row.get("evidence_sha256"))):
-                errors.append(f"leakage_case_evidence_invalid:{case_id}")
-            elif (ledger_row.get("source_sha256") != digest
-                  or normalized_family(ledger_row.get("root_cause_family")) != normalized_family(family)):
-                errors.append(f"leakage_case_identity_mismatch:{case_id}")
-            elif (normalized_family(family) in forbidden_families
-                  or digest in forbidden_hashes):
-                errors.append(f"development_or_history_case_overlap:{case_id}")
+            else:
+                if ledger_row.get("status") != "no_overlap":
+                    errors.append(f"leakage_case_not_cleared:{case_id}")
+                if (not isinstance(ledger_row.get("evidence_ref"), str) or not ledger_row["evidence_ref"].strip()
+                        or not has_sha256(ledger_row.get("evidence_sha256"))):
+                    errors.append(f"leakage_case_evidence_invalid:{case_id}")
+                else:
+                    evidence_bytes, evidence_errors = read_evidence_bytes(evidence_root, ledger_row.get("evidence_ref"), case_id)
+                    errors.extend(evidence_errors)
+                    if evidence_bytes is not None and sha256_bytes(evidence_bytes) != ledger_row.get("evidence_sha256"):
+                        errors.append(f"leakage_case_evidence_sha256_mismatch:{case_id}")
+                if (ledger_row.get("source_sha256") != digest
+                        or normalized_family(ledger_row.get("root_cause_family")) != normalized_family(family)):
+                    errors.append(f"leakage_case_identity_mismatch:{case_id}")
+                if normalized_family(family) in forbidden_families or digest in forbidden_hashes:
+                    errors.append(f"development_or_history_case_overlap:{case_id}")
         entry = labels.get(case_id, {})
         if not isinstance(entry, dict):
             errors.append(f"truth_label_row_invalid:{case_id}")
@@ -590,7 +620,8 @@ def freeze(args: argparse.Namespace) -> int:
     intake = load_json(args.cases)
     truth = load_json(args.truth)
     source_root = args.source_root.resolve()
-    errors = validate_intake(intake, truth, source_root)
+    evidence_root = args.evidence_root.resolve() if getattr(args, "evidence_root", None) else None
+    errors = validate_intake(intake, truth, source_root, evidence_root=evidence_root)
     if errors:
         raise SystemExit("freeze rejected: " + ", ".join(errors))
     secret = args.secret_file.read_bytes().strip()
@@ -1155,6 +1186,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--cases", type=Path, required=True)
     p.add_argument("--truth", type=Path, required=True)
     p.add_argument("--source-root", type=Path, required=True)
+    p.add_argument("--evidence-root", type=Path, help="Root containing readable leakage-evidence bytes referenced by ledger cases")
     p.add_argument("--secret-file", type=Path, required=True)
     p.add_argument("--output-dir", type=Path, required=True)
     p.set_defaults(func=freeze)
