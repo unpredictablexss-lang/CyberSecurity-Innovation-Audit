@@ -28,6 +28,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - D18/T15 completed root-path binding and independent acceptance; D19/T16 completed compare-cost replay with no rule change. Both cJSON cases remain unresolved for full-source parser or trusted fixed-source evidence.
 - D20 completed no-change source analysis for libpng CVE-2026-33416: all four vulnerable/fixed target slices remain partial, so cross-file member alias and call-order evidence is not parser-supported. No rule was changed; the case remains PARTIAL/BLOCK.
 - D21 completed no-change source replay for libtiff CVE-2025-9900: the complete `_TIFFRGBAImage` function fragment reports the existing pointer-offset candidate at vulnerable line 621 and no finding for the fixed fragment; whole translation units remain partial/blocked. T17 is independently accepting both D20/D21 evidence packages.
+- T17 independently accepted the D20/D21 source identities, fragment outcomes, and whole-TU limits. Both cases remain PARTIAL/BLOCK; A0 and T13 queues remain 345/345 with original states.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -200,7 +201,7 @@ Done when: report each rule regression and CVE disposition separately as PASS/PA
 Boundaries: no detector/test/fixture edits; no acceptance from developer statements alone; no fixed PASS without a trusted exact fix and sufficient parsing.
 ```
 
-T17 runs after D20/D21 freeze. Both are evidence-only and do not modify detector, test, or fixture code; their commits are `fcbc7c7` and `60c7588`.
+T17 completed after D20/D21 freeze. Both were evidence-only and did not modify detector, test, or fixture code; their commits are `fcbc7c7` and `60c7588`.
 
 ## Stage goal
 
