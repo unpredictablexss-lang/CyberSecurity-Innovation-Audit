@@ -1,0 +1,98 @@
+{
+  "record_id": "CR-0335",
+  "candidate_id": "ohscanner.interface.ipc:301c45d0f546f9f3",
+  "original_status": "not_reproduced",
+  "queue_status": "queued_not_reproduced",
+  "audit_status": "PARTIAL",
+  "audit_scope": "Exact-source IPC stub and related fuzz harness review; not a product reproduction",
+  "repository": "openharmony/communication_wifi",
+  "repo_project_path": "foundation/communication/wifi",
+  "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+  "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+  "candidate_source": {
+    "path": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+    "blob": "1cc8c5c0c0e60a17f49332a7bf7ea1d7d1115b91",
+    "sha256": "d43aa28a22134dd47c85d17a5e0b017f9fb1d6b2611327c7f92140fbe347fc03",
+    "size_bytes": 15974,
+    "candidate_line": 385,
+    "candidate_line_text": "    if (memcpy_s(cfgData, cfgLen, dataBuffer, cfgLen) != EOK) {",
+    "function": "WifiP2pCallbackStub::RemoteOnConfigChanged",
+    "range_reviewed": [359, 394],
+    "transaction_registration_line": 54,
+    "on_remote_request_range": [66, 88],
+    "review": "cfgLen is read from MessageParcel and rejected when <= 0 or > MAX_LEN (1024) before ReadBuffer/allocation/copy. A cfgLen-byte destination is allocated; ReadBuffer(cfgLen) must return non-null; memcpy_s receives destination size cfgLen and source count cfgLen. The source excerpt therefore does not establish an out-of-bounds read at this copy. Parcel ReadBuffer implementation semantics, external caller trust, product build selection, and runtime behavior are not established here. Callback ownership after OnConfigChanged is a separate lifetime question, not evidence for the queued copy-range CWE-125 candidate."
+  },
+  "transaction": {
+    "symbol": "P2PInterfaceCode::WIFI_CBK_CMD_CFG_CHANGE",
+    "numeric_value": "0x3208",
+    "registration_file": "wifi/frameworks/native/interfaces/wifi_manager_service_ipc_interface_code.h",
+    "registration_line": 238,
+    "stub_map_file": "wifi/frameworks/native/src/wifi_p2p_callback_stub.cpp",
+    "stub_map_line": 53
+  },
+  "related_files": [
+    {
+      "path": "wifi/frameworks/native/src/wifi_p2p_callback_stub.h",
+      "blob": "8425637a6acea80dac4d67d9c1ebd41aa795724a",
+      "sha256": "aee5ccdb18c158caeabdbbe152486cc54c731b59d5ebb5f12be6f9d3bad1b31b",
+      "size_bytes": 5848,
+      "relevant_evidence": "MAX_LEN is defined as 1024 at line 17."
+    },
+    {
+      "path": "wifi/frameworks/native/interfaces/wifi_manager_service_ipc_interface_code.h",
+      "blob": "df9b8e086e551527f11d1d4432c6b50506fe765d",
+      "sha256": "39fe8e19cbfe7d61ba98d3aaa7990bc6c9097dafa2ed43283149511168951ec4",
+      "size_bytes": 17163,
+      "relevant_evidence": "CFG_CHANGE transaction constant is 0x3208 at line 238."
+    },
+    {
+      "path": "wifi/test/fuzztest/frameworks/native/c_adapter/wifip2pcbkstub_fuzzer/wifip2pcbkstub_fuzzer.cpp",
+      "blob": "de9192ad7967d565a4f18d6c67e25cda9301c6ee",
+      "sha256": "4969c5b581765c527e10cec6d368fcef0bbf75455d088c8ac166f70350db1dbe",
+      "size_bytes": 1947,
+      "relevant_evidence": "Fuzzer constructs MessageParcel input and invokes WifiP2pCallbackStub::OnRemoteRequest; this is test code, not a production caller or proof of target reachability."
+    },
+    {
+      "path": "wifi/test/fuzztest/frameworks/native/c_adapter/wifip2pcbkstub_fuzzer/BUILD.gn",
+      "blob": "03956d31a5e746e56ff32165d7f7456fe2db8c46",
+      "sha256": "c6562fc9248183f08e54024b7876ae79e36cf8faa72f0c47ee9ac7ceaa39c88a",
+      "size_bytes": 1874,
+      "relevant_evidence": "WifiP2pCbkStubFuzzTest compiles the stub source and fuzz harness with ipc:ipc_single; source proves a fuzz target is declared, not that it was built or run for this product profile."
+    }
+  ],
+  "boundary_review": {
+    "production_entry": "The class exposes OnRemoteRequest and dispatches a matching code through handleFuncMap after checking the interface token and an exception field. This file does not establish which external principal owns or can invoke the callback remote object.",
+    "permission": "No explicit permission check is visible in the reviewed stub path; effective access control and callback registration/ownership are not established.",
+    "fd_or_remote_object_flow": "No FD read/write or remote-object extraction/forwarding appears in RemoteOnConfigChanged or the reviewed dispatch path.",
+    "fuzzer": "The wifip2pcbkstub_fuzzer is test-only. Its harness derives a code in a bounded command range, writes an interface token and exception integer, appends fuzz bytes, and calls the stub directly. No fuzzer execution/build result was available or performed in this source audit."
+  },
+  "identity_conflict": {
+    "task_message_values": {
+      "commit": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "blob": "6106eb782ab6ffb605ec6ebff9e47ed5df923375",
+      "source_sha256": "b23dc2a3573232cf9b2c4c682f20062b3a17d29335ec2b69799a8df01fd71793"
+    },
+    "authoritative_queue_values": {
+      "commit": "e336c82b3b107d87f68c5e0448cc246b50b53b38",
+      "tree": "edd28e23c84d17fa072f8501d7fe3dfbfa55498f",
+      "blob": "1cc8c5c0c0e60a17f49332a7bf7ea1d7d1115b91",
+      "source_sha256": "d43aa28a22134dd47c85d17a5e0b017f9fb1d6b2611327c7f92140fbe347fc03"
+    },
+    "resolution": "The source commit resolves as a commit object; edd28... resolves as that commit's root tree, not a commit. The path at e336... resolves to blob 1cc8... with SHA-256 d43a.... The task-message blob 6106... exists as a blob object but is not the candidate path blob at the queue's commit; task-message SHA b23... does not match the exact path bytes. Retain the queue's source key and report the mismatch; do not rewrite A0 provenance or states."
+  },
+  "limitations": [
+    "No product build profile or effective IPC caller/permission boundary was available.",
+    "No target-derived harness or product-level reproduction was run.",
+    "This source audit does not reclassify the candidate as safe or confirmed."
+  ],
+  "reproducibility": {
+    "object_mirror": "D:/openHarmonyScanner/openharmony/.repo/project-objects/communication_wifi.git",
+    "command": "python research/evidence/cpp/verify_cr0335_wifi_p2p_source_audit.py --git-dir D:/openHarmonyScanner/openharmony/.repo/project-objects/communication_wifi.git",
+    "verified_object_types": {
+      "e336c82b3b107d87f68c5e0448cc246b50b53b38": "commit",
+      "edd28e23c84d17fa072f8501d7fe3dfbfa55498f": "tree",
+      "1cc8c5c0c0e60a17f49332a7bf7ea1d7d1115b91": "blob",
+      "6106eb782ab6ffb605ec6ebff9e47ed5df923375": "blob"
+    }
+  }
+}
