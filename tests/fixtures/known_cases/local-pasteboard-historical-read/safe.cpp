@@ -4,7 +4,7 @@ void AddPasteboardChangedObserver(Observer *observer) {
     std::shared_ptr<std::set<Observer *>> observers;
     if (it != observerMap_.end()) observers = it->second;
     else { observers = std::make_shared<std::set<Observer *>>(); observerMap_.insert({userId, observers}); }
-    if (observerQuota[userId] >= MAX_OBSERVERS_PER_PID) return;
+    if (observers->size() >= MAX_OBSERVERS_PER_PID) return;
     observers->insert(observer);
 }
 PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
