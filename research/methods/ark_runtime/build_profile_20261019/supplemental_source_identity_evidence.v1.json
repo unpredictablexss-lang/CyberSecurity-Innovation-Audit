@@ -530,5 +530,38 @@
     "The three unresolved cases have no sufficient manifest-bound commit/path pair; no commits or paths were inferred.",
     "Any absent recorded raw SHA/length is reported as not recorded; a recomputed value is not an independent expected value."
   ],
+  "summary": {
+    "anchored_cases": 7,
+    "unanchored_cases": 3,
+    "recorded_identity_checks": {
+      "MATCH": 17,
+      "NOT_RECORDED": 69,
+      "MISMATCH": 0
+    },
+    "checks_by_field": {
+      "tree": {
+        "MATCH": 7,
+        "NOT_RECORDED": 7,
+        "MISMATCH": 0
+      },
+      "recorded_git_blob_oid": {
+        "MATCH": 5,
+        "NOT_RECORDED": 19,
+        "MISMATCH": 0
+      },
+      "recorded_source_sha256": {
+        "MATCH": 3,
+        "NOT_RECORDED": 21,
+        "MISMATCH": 0
+      },
+      "recorded_bytes": {
+        "MATCH": 2,
+        "NOT_RECORDED": 22,
+        "MISMATCH": 0
+      }
+    },
+    "missing_side_paths": 2,
+    "blocked_expected_paths": 0
+  },
   "portfolio_status": "PC-1 IN_PROGRESS_BLOCKED; product build/preprocess profiles remain BLOCKED and 0/16 complete"
 }

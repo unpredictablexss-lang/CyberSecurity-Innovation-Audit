@@ -85,6 +85,8 @@ focused self-tests（含合成 bare store，不把其作为产品或上游证据
 ```powershell
 python research/methods/ark_runtime/build_profile_20261019/supplemental_source_identity_evidence.py --git-dir "D:\openHarmonyScanner\tmp\cve-2025-arkruntime-official.git" --write
 python research/methods/ark_runtime/build_profile_20261019/supplemental_source_identity_evidence.py --git-dir "D:\openHarmonyScanner\tmp\cve-2025-arkruntime-official.git" --verify-only
+python research/methods/ark_runtime/build_profile_20261019/supplemental_source_identity_evidence.py --self-test
+python -m unittest research.methods.ark_runtime.build_profile_20261019.selftest.test_supplemental_source_identity_evidence
 ```
 
-结果保存在 `supplemental_source_identity_evidence.v1.json`。三案仍为 `UNKNOWN`：`ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT` 没有 parent/fixed commit 和 scope（虽然描述提到两个历史 commit，但没有绑定关系）；`ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D` 与 `ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA` 没有 commit/tree/path。不得根据类似描述补猜身份。local object identity、commit ancestry 和 raw SHA 都不证明获取/保管链、服务器真实性或目标产品构建纳入。全部 16 个产品 profile 仍 `BLOCKED`，PC-1 仍 `IN_PROGRESS_BLOCKED`。
+结果保存在 `supplemental_source_identity_evidence.v1.json`。命令会分别打印 anchored/unanchored case 数、`MATCH`、`NOT_RECORDED`、`MISMATCH` 计数、missing-side path 和 blocked expected path 数；`NOT_RECORDED` 单独计数，不计为 `MATCH`。任一 `MISMATCH` 或 expected path 无法读取都会非零退出。合成负例检查证明正确值、错误值和缺记录值分别得到 `MATCH`、`MISMATCH`、`NOT_RECORDED`，并验证缺侧路径计数。三案仍为 `UNKNOWN`：`ARK-ARRAY-CALLBACK-ABRUPT-COMPLETION-HISTORY-VARIANT` 没有 parent/fixed commit 和 scope（虽然描述提到两个历史 commit，但没有绑定关系）；`ARK-TYPEDARRAY-CONSTRUCTOR-LENGTH-NARROWING-I7W51D` 与 `ARK-DATAVIEW-INDEX-WIDTH-AND-BOUNDS-IB8BCA` 没有 commit/tree/path。不得根据类似描述补猜身份。local object identity、commit ancestry 和 raw SHA 都不证明获取/保管链、服务器真实性或目标产品构建纳入。全部 16 个产品 profile 仍 `BLOCKED`，PC-1 仍 `IN_PROGRESS_BLOCKED`。

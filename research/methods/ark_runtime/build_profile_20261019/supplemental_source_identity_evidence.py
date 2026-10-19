@@ -63,6 +63,67 @@ def payload_digest(manifest: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_json_bytes(payload)).hexdigest()
 
 
+def compare_recorded(expected: Any, observed: Any) -> str:
+    """Keep absent expectations distinct from successful comparisons."""
+    if expected is None:
+        return "NOT_RECORDED"
+    return "MATCH" if expected == observed else "MISMATCH"
+
+
+def summarize(evidence: list[dict[str, Any]], unresolved_cases: list[dict[str, Any]]) -> dict[str, Any]:
+    counts = {"MATCH": 0, "NOT_RECORDED": 0, "MISMATCH": 0}
+    by_field = {field: dict(counts) for field in ("tree", "recorded_git_blob_oid", "recorded_source_sha256", "recorded_bytes")}
+    missing_side_paths = 0
+    blocked_paths = 0
+    for case in evidence:
+        for side in ("parent", "fixed"):
+            side_data = case.get(side) or {}
+            tree_state = side_data.get("tree_check")
+            if tree_state in counts:
+                counts[tree_state] += 1
+                by_field["tree"][tree_state] += 1
+            for file_record in side_data.get("files", []):
+                path_state = file_record.get("status")
+                if path_state == "NOT_PRESENT_IN_THIS_SIDE":
+                    missing_side_paths += 1
+                elif isinstance(path_state, str) and path_state.startswith("BLOCKED"):
+                    blocked_paths += 1
+                for field, state in (file_record.get("checks_against_manifest") or {}).items():
+                    if field in by_field and state in counts:
+                        counts[state] += 1
+                        by_field[field][state] += 1
+    return {
+        "anchored_cases": len(evidence),
+        "unanchored_cases": len(unresolved_cases),
+        "recorded_identity_checks": counts,
+        "checks_by_field": by_field,
+        "missing_side_paths": missing_side_paths,
+        "blocked_expected_paths": blocked_paths,
+    }
+
+
+def has_verification_failure(summary: dict[str, Any]) -> bool:
+    return bool(summary["recorded_identity_checks"]["MISMATCH"] or summary["blocked_expected_paths"])
+
+
+def self_test() -> None:
+    """Synthetic negative check: a bad recorded value fails; None stays unknown."""
+    assert compare_recorded("expected", "expected") == "MATCH"
+    assert compare_recorded("expected", "observed") == "MISMATCH"
+    assert compare_recorded(None, "observed") == "NOT_RECORDED"
+    synthetic = [{
+        "parent": {"tree_check": "MISMATCH", "files": [{"status": "OBJECT_BYTES_RECOMPUTED", "checks_against_manifest": {
+            "recorded_git_blob_oid": "MATCH", "recorded_source_sha256": "NOT_RECORDED", "recorded_bytes": "MISMATCH"}}]},
+        "fixed": {"tree_check": "NOT_RECORDED", "files": [{"status": "NOT_PRESENT_IN_THIS_SIDE"}]},
+    }]
+    summary = summarize(synthetic, [{"case_id": "synthetic-unanchored"}])
+    assert summary["recorded_identity_checks"] == {"MATCH": 1, "NOT_RECORDED": 2, "MISMATCH": 2}
+    assert summary["missing_side_paths"] == 1
+    assert has_verification_failure(summary), "recorded mismatch must fail the verification gate"
+    clean_summary = summarize([{"parent": {"tree_check": "MATCH", "files": []}, "fixed": {"tree_check": "NOT_RECORDED", "files": []}}], [])
+    assert not has_verification_failure(clean_summary), "NOT_RECORDED alone must not be treated as mismatch"
+
+
 def validate_store(git_dir: Path) -> dict[str, Any]:
     if git(git_dir, "rev-parse", "--is-bare-repository").decode("ascii").strip() != "true":
         raise EvidenceError("configured object store is not bare")
@@ -136,9 +197,9 @@ def inspect_case(git_dir: Path, case: dict[str, Any]) -> dict[str, Any]:
             sha_match = (expected or {}).get("recorded_source_sha256")
             length_match = (expected or {}).get("recorded_bytes")
             checks = {
-                "recorded_git_blob_oid": "NOT_RECORDED" if not isinstance(oid_match, str) else ("MATCH" if oid_match == blob_oid == raw_blob_oid else "MISMATCH"),
-                "recorded_source_sha256": "NOT_RECORDED" if not isinstance(sha_match, str) else ("MATCH" if sha_match == raw_sha256 else "MISMATCH"),
-                "recorded_bytes": "NOT_RECORDED" if not isinstance(length_match, int) else ("MATCH" if length_match == len(data) else "MISMATCH"),
+                "recorded_git_blob_oid": compare_recorded(oid_match, blob_oid if blob_oid == raw_blob_oid else "<raw-blob-oid-mismatch>"),
+                "recorded_source_sha256": compare_recorded(sha_match, raw_sha256),
+                "recorded_bytes": compare_recorded(length_match, len(data)),
             }
             failures = [key for key, state in checks.items() if state == "MISMATCH"]
             files.append({"path": path, "status": "MISMATCH" if failures else "OBJECT_BYTES_RECOMPUTED",
@@ -183,6 +244,8 @@ def generate(git_dir: Path) -> dict[str, Any]:
             "The three unresolved cases have no sufficient manifest-bound commit/path pair; no commits or paths were inferred.",
             "Any absent recorded raw SHA/length is reported as not recorded; a recomputed value is not an independent expected value.",
         ],
+        "summary": summarize(evidence, [{"case_id": key, "status": "UNKNOWN", "reason": reason}
+                                        for key, reason in sorted(UNRESOLVED_CASES.items())]),
         "portfolio_status": "PC-1 IN_PROGRESS_BLOCKED; product build/preprocess profiles remain BLOCKED and 0/16 complete",
     }
     return result
@@ -190,18 +253,32 @@ def generate(git_dir: Path) -> dict[str, Any]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--git-dir", type=Path, required=True, help="path to the local bare Ark Git object store")
+    parser.add_argument("--git-dir", type=Path, help="path to the local bare Ark Git object store")
     parser.add_argument("--write", action="store_true", help="write deterministic JSON evidence")
     parser.add_argument("--verify-only", action="store_true", help="recompute and compare saved JSON; performs no writes")
+    parser.add_argument("--self-test", action="store_true", help="run synthetic MATCH/NOT_RECORDED/MISMATCH checks; no Git store required")
     args = parser.parse_args()
+    if args.self_test:
+        self_test()
+        print("synthetic verifier checks passed: MATCH, NOT_RECORDED, MISMATCH, and missing-side path are distinct")
+        return 0
+    if args.git_dir is None:
+        parser.error("--git-dir is required unless --self-test is selected")
     try:
         result = generate(args.git_dir)
         encoded = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
+        summary = result["summary"]
+        checks = summary["recorded_identity_checks"]
+        print("cases: anchored={anchored_cases} unanchored={unanchored_cases}; identity checks: MATCH={MATCH} NOT_RECORDED={NOT_RECORDED} MISMATCH={MISMATCH}; missing-side paths={missing_side_paths}; blocked expected paths={blocked_expected_paths}".format(
+            **summary, **checks))
+        if has_verification_failure(summary):
+            print("FAIL: at least one recorded identity mismatched or an expected path could not be read", file=sys.stderr)
+            return 2
         if args.verify_only:
             saved = OUTPUT_PATH.read_text(encoding="utf-8")
             if saved != encoded:
                 raise EvidenceError("saved supplemental evidence differs from recomputed object-store evidence")
-            print("verified supplemental source identity evidence")
+            print("verified artifact bytes against current recomputation; NOT_RECORDED values are excluded from MATCH")
         elif args.write:
             OUTPUT_PATH.write_text(encoded, encoding="utf-8", newline="\n")
             print(f"wrote {OUTPUT_PATH}")
