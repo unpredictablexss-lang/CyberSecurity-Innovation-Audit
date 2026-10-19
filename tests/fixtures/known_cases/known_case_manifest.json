@@ -3,7 +3,7 @@
   "corpus_id": "C11-KNOWN-CASE-CORPUS-20261019",
   "baseline_commit": "ddd8556768d679fcc09f1fcb37d10730f49b2c6c",
   "detector_id": "ohscanner.known_disclosed_cves",
-  "detector_version": "0.18.0",
+  "detector_version": "0.19.0",
   "source_audit": {
     "path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
     "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",

@@ -444,18 +444,66 @@ class KnownDisclosedCveTests(unittest.TestCase):
         self.assertNotIn("CVE-2026-67215", {f.symbol for f in self.run_source(fixed, "cJSON_Utils.c").findings})
 
     def test_pasteboard_disclosed_cves_and_guarded_controls(self):
-        vulnerable = """void AddPasteboardChangedObserver(Observer *observer){ if(!observer)return; observers->insert(observer); }
+        vulnerable = """void AddPasteboardChangedObserver(Observer *observer) {
+            if (!observer) return;
+            auto userId = GetUserId();
+            auto it = observerMap_.find(userId);
+            std::shared_ptr<std::set<Observer *>> observers;
+            if (it != observerMap_.end()) observers = it->second;
+            else { observers = std::make_shared<std::set<Observer *>>(); observerMap_.insert({userId, observers}); }
+            observers->insert(observer); // exact repeated-growth statement; std::set only deduplicates identical handles
+        }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
         int OnGetPasteData(){ GetPasteData(); reply.WriteParcelable(data); return 0; }"""
-        fixed = """void AddPasteboardChangedObserver(Observer *observer){ int pid=GetCallingPid(); if(observers->size() >= MAX_OBSERVERS_PER_PID)return; observers->insert(observer); }
+        fixed = """void AddPasteboardChangedObserver(Observer *observer) {
+            int pid = GetCallingPid();
+            auto it = observerMap_.find(pid);
+            std::shared_ptr<std::set<Observer *>> observers;
+            if (it != observerMap_.end()) observers = it->second;
+            else { observers = std::make_shared<std::set<Observer *>>(); observerMap_.insert({pid, observers}); }
+            if (observers->size() >= MAX_OBSERVERS_PER_PID) return;
+            observers->insert(observer);
+        }
         PasteboardServiceStub::PasteboardServiceStub(){ memberFuncMap_[GET_PASTE_DATA] = &PasteboardServiceStub::OnGetPasteData; }
         int OnRemoteRequest(int code){ auto it=memberFuncMap_.find(code); if(it!=memberFuncMap_.end()) return (this->*it->second)(); return 0; }
         int OnGetPasteData(){ CheckPermission(); GetPasteData(); reply.WriteParcelable(data); return 0; }"""
-        findings = {f.symbol for f in self.run_source(vulnerable, "pasteboard_service.cpp").findings}
+        vulnerable_run = self.run_source(vulnerable, "pasteboard_service.cpp")
+        findings = {f.symbol for f in vulnerable_run.findings}
         self.assertIn("CVE-2025-25212", findings)
         self.assertIn("CVE-2025-27247", findings)
+        observer_finding = next(f for f in vulnerable_run.findings if f.symbol == "CVE-2025-25212")
+        expected_line = vulnerable[:vulnerable.index("observers->insert(observer)")].count("\n") + 1
+        self.assertEqual(expected_line, observer_finding.line)
         self.assertEqual((), self.run_source(fixed, "pasteboard_service.cpp").findings)
+
+    def test_pasteboard_quota_helper_and_unrelated_growth_controls(self):
+        helper_quota = """bool CanRegisterObserver(ObserverSet *observers) {
+            return observers->size() >= MAX_OBSERVERS_PER_PID ? false : true;
+        }
+        void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            if (!CanRegisterObserver(observers)) return;
+            observers->insert(observer);
+        }"""
+        unrelated = """void AddHistoryRecord(Record *record) {
+            historyMap_.find(GetUserId());
+            historyMap_.insert(record);
+        }"""
+        self.assertNotIn("CVE-2025-25212", {f.symbol for f in self.run_source(helper_quota, "pasteboard_service.cpp").findings})
+        self.assertNotIn("CVE-2025-25212", {f.symbol for f in self.run_source(unrelated, "other.cpp").findings})
+
+    def test_pasteboard_partial_parse_keeps_bound_observer_candidate_blocked(self):
+        source = """void AddPasteboardChangedObserver(Observer *observer) {
+            auto it = observerMap_.find(GetUserId());
+            auto observers = it->second;
+            observers->insert(observer);
+        }"""
+        run = self.run_source(source, "services/core/src/pasteboard_service.cpp", parse_status="partial")
+        finding = next(f for f in run.findings if f.symbol == "CVE-2025-25212")
+        self.assertEqual("blocked", run.status)
+        self.assertEqual(4, finding.line)
 
     def test_partial_parse_retains_lexical_candidate_but_blocks_coverage(self):
         source="void f(png_structp p,png_infop i){png_read_info(p,i);png_read_end(p,i);}"

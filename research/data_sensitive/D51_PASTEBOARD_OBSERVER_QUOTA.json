@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "task_id": "D51",
+  "title": "CVE-2025-25212 observer registration bound review",
+  "baseline": {
+    "workspace_head": "842948084660207fd64399cfd598ed93e5593dcc",
+    "baseline_rule_version": "0.18.0",
+    "frozen_rule_version": "0.19.0",
+    "detector_id": "ohscanner.known_disclosed_cves",
+    "rule_id": "ohknowncve-pasteboard-cve-2025-25212"
+  },
+  "vulnerable_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "official_url": "https://gitee.com/openharmony/miscservices_pasteboard.git",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "path": "services/core/src/pasteboard_service.cpp",
+    "blob": "c380ac266a85edd818caa811f11b99722d351788",
+    "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+    "d50_snapshot_sha256": "b1a29ee4fbd60595395d4757efe9a998caf9a262adc296f80a0ee4003ba95648",
+    "registration": {
+      "function": "PasteboardService::AddPasteboardChangedObserver",
+      "function_lines": [
+        221,
+        246
+      ],
+      "map_key": "GetUserId() -> IPCSkeleton::GetCallingUid() -> local account userId",
+      "map_insert_line": 239,
+      "repeated_set_insert_line": 241,
+      "duplicate_semantics": "std::set classcomp orders observer AsObject pointers; identical remote observer handles deduplicate, distinct observer objects remain distinct entries",
+      "quota": "no hard observer count bound found in registration function or exact source file"
+    },
+    "lifecycle": {
+      "single_remove_lines": [
+        247,
+        272
+      ],
+      "remove_all_for_user_lines": [
+        274,
+        288
+      ],
+      "notify_lines": [
+        290,
+        300
+      ],
+      "automatic_observer_death_cleanup": "not found in exact source scope",
+      "service_death_recipient": "framework client registers a death recipient for the pasteboard service itself; this does not prove observer callbacks are removed on caller death"
+    },
+    "visible_call_boundary": {
+      "transaction": "ADD_OBSERVER mapped in PasteboardServiceStub constructor",
+      "dispatch": "OnRemoteRequest validates interface token then selects memberFuncMap_ handler",
+      "handler": "OnAddPasteboardChangedObserver reads a remote object, iface_casts it, then directly calls AddPasteboardChangedObserver",
+      "permission_or_product_boundary": "service ability ACL/product policy/caller reachability not established"
+    }
+  },
+  "fixed_control": {
+    "repository": "openharmony/distributeddatamgr_pasteboard",
+    "official_url": "https://gitee.com/openharmony/distributeddatamgr_pasteboard.git",
+    "branch": "OpenHarmony-5.0.3-Release",
+    "pull_request": "https://gitee.com/openharmony/distributeddatamgr_pasteboard/pulls/1539",
+    "commit": "836cf6990579451d6521e9177d749660b07ad34e",
+    "tree": "8db5ac5a62c018c80818c85482e4914a836a4765",
+    "path": "services/core/src/pasteboard_service.cpp",
+    "blob": "af95e87bed596cc9f159bbf020536ea361835977",
+    "sha256": "e8202191adf1d660a7a6c3149481013747e1a40b6bb166aa5947fb28b67ad3d4",
+    "change": "PR !1539 changes observer storage to (userId, callingPid) keys and enforces MAX_OBSERVER_COUNT=10 across observer categories before insertion; fixed API was refactored from AddPasteboardChangedObserver to AddObserver",
+    "fix_lines": {
+      "get_all_count": 1664,
+      "add_observer": 1682,
+      "count_check": 1700,
+      "max_constant_header": 373
+    },
+    "interpretation": "trusted exact fix-mechanism control; exact fixed source zero-hit is not treated as a rule regression pass because the API/function shape changed"
+  },
+  "replay": {
+    "historical_d50": {
+      "rule_version": "0.16.0",
+      "status": "blocked",
+      "candidate_count": 1,
+      "candidate_line": 222,
+      "location_issue": "reported method-body opening, not repeated observer-set insertion"
+    },
+    "frozen_head_prechange": {
+      "rule_version": "0.18.0",
+      "status": "blocked",
+      "candidate_count": 1,
+      "candidate_line": 222
+    },
+    "d51_single_source_rule_replay": {
+      "rule_version": "0.19.0",
+      "source_commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+      "source_sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52",
+      "single_file_snapshot_sha256": "36e2b1276436831b2d77a9cd947cc03bd8f2820d3642d185c2c3bce81d8263f3",
+      "status": "blocked",
+      "candidate_count": 1,
+      "candidate_line": 241,
+      "candidate_column": 5,
+      "source_coverage": "one pinned source unit only; D50 full component coverage remains partial and blocked; no post-change full component scan claimed",
+      "parse_status_input": "partial (conservative source-only replay; not a new parser result)"
+    },
+    "fixed_single_source_rule_replay": {
+      "rule_version": "0.19.0",
+      "source_commit": "836cf6990579451d6521e9177d749660b07ad34e",
+      "source_sha256": "e8202191adf1d660a7a6c3149481013747e1a40b6bb166aa5947fb28b67ad3d4",
+      "single_file_snapshot_sha256": "eb700cef5acc97e44447ac34829a7b5007da33caef0a15ac20333292c6c78807",
+      "status": "blocked",
+      "candidate_count": 0,
+      "caveat": "method/API was renamed and restructured, so zero hit is not by itself proof the rule observes the fixed quota",
+      "parse_status_input": "partial (conservative source-only replay; not a new parser result)"
+    }
+  },
+  "controls": [
+    {
+      "id": "exact-vulnerable-source",
+      "actual": "1 candidate at observers->insert(observer), line 241",
+      "status": "candidate-supported"
+    },
+    {
+      "id": "exact-fixed-source",
+      "actual": "0 candidates; API refactor caveat above",
+      "status": "partial"
+    },
+    {
+      "id": "same-shape-direct-hard-quota",
+      "actual": "0 CVE-2025-25212 candidate",
+      "status": "pass"
+    },
+    {
+      "id": "same-translation-unit-quota-helper",
+      "actual": "0 CVE-2025-25212 candidate when helper body contains observer count bound",
+      "status": "pass"
+    },
+    {
+      "id": "observer-set-deduplication",
+      "actual": "candidate retained; set deduplicates identical handles only and does not bound distinct observer objects",
+      "status": "informative-positive"
+    },
+    {
+      "id": "remove-and-lifecycle",
+      "actual": "single-remove/remove-all APIs exist; no automatic callback death cleanup found; static source cannot prove registration is eventually removed",
+      "status": "unknown"
+    },
+    {
+      "id": "unrelated-map-growth",
+      "actual": "0 CVE-2025-25212 candidate",
+      "status": "pass"
+    },
+    {
+      "id": "partial-parse",
+      "actual": "candidate retained while DetectorRun is blocked",
+      "status": "pass"
+    }
+  ],
+  "test_results": {
+    "command": "python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q",
+    "result": "31 passed",
+    "git_diff_check": "passed",
+    "change_scope": "N/A: baseline ownership.json has no D lane; manually reviewed changed paths against task-authorized D51 scope; ownership policy was not modified"
+  },
+  "candidate_packet": {
+    "status": "candidate",
+    "component_root_cause_supported": true,
+    "product_vulnerability_confirmed": false,
+    "second_layer_question": "Does the exact source plus fixed PR establish that distinct observer Binder objects can accumulate without a hard bound in the affected component revision, and which caller-death, service-ACL, and product-build facts remain unproven?",
+    "required_unknowns": [
+      "component version/build identity",
+      "product inclusion",
+      "service ability ACL and attacker reachability",
+      "runtime memory/availability impact",
+      "automatic observer lifetime beyond inspected source scope"
+    ]
+  },
+  "limitations": [
+    "Official CVE record describes local denial of service by improper input for OpenHarmony v5.0.3 and prior; it does not name this exact source line. PR !1539 is strong fixed-mechanism evidence but does not by itself prove the complete CVE exploit path.",
+    "D50 is development corpus, not independent holdout.",
+    "No product build, dynamic reproduction, external service ACL/policy inspection, or product impact validation was performed.",
+    "Cross-file and external helper admission behavior beyond the exact visible Binder handler was not modeled; unknown remains unknown.",
+    "Exact fixed source refactor makes its no-hit non-diagnostic for the old signature; same-shape hard-quota unit control isolates the rule guard behavior."
+  ],
+  "official_references": [
+    "https://nvd.nist.gov/vuln/detail/cve-2025-25212",
+    "https://gitee.com/openharmony/security/blob/master/zh/security-disclosure/2025/2025-07.md",
+    "https://gitee.com/openharmony/distributeddatamgr_pasteboard/pulls/1539"
+  ],
+  "commands": [
+    "git --git-dir=D:/openHarmonyScanner/tmp/d51-source-objects fetch --no-tags https://gitee.com/openharmony/miscservices_pasteboard.git dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "git --git-dir=D:/openHarmonyScanner/tmp/d51-source-objects cat-file -p dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "git --git-dir=D:/openHarmonyScanner/tmp/d51-source-objects ls-tree dd22c7cb5e5f207a6c38c50f45b7369ee8575840 services/core/src/pasteboard_service.cpp",
+    "git --git-dir=D:/openHarmonyScanner/tmp/d51-fixed-source-objects fetch --no-tags https://gitee.com/openharmony/distributeddatamgr_pasteboard.git 836cf6990579451d6521e9177d749660b07ad34e",
+    "python -m pytest tests/detectors/test_known_disclosed_cves.py tests/detectors/test_known_case_corpus.py -q",
+    "git diff --check"
+  ]
+}

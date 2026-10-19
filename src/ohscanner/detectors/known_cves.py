@@ -6,7 +6,7 @@ from .adapters.artifacts import classify_artifact, limitation_message
 from .cpp.memory_safety import MAX_TOTAL_BYTES, MAX_UNIT_BYTES, line_column, mask_comments_and_literals
 
 DETECTOR_ID = "ohscanner.known_disclosed_cves"
-VERSION = "0.18.0"
+VERSION = "0.19.0"
 LINEAGE = "OH-KNOWN-CVE:component-source-signatures"
 OBLIGATIONS = (
     EvidenceObligation("component_identity", "Bind source to exact built component/version.", "missing"),
@@ -28,6 +28,12 @@ def _body(text: str, name: str):
                 depth -= 1
                 if depth == 0: return opening, text[opening + 1:i]
     return None
+
+def _has_observer_quota(text: str) -> bool:
+    """Recognize a local hard count comparison, not an arbitrary limit token."""
+    count = r"(?:\w*(?:observer|listener)\w*(?:count|size|quota|limit|number)|(?:all)?count|size\s*\(\s*\))"
+    limit = r"(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|(?:max|limit|quota)\w*|\d+"
+    return bool(re.search(rf"\b{count}\s*(?:>=|>)\s*{limit}\b", text, re.I))
 
 def _finding(unit: SourceUnit, pos: int, rule: str, cve: str, detail: str, cwe: str, impact: str = "availability_or_memory_safety"):
     line, col = line_column(unit.text, pos)
@@ -510,17 +516,32 @@ def _scan(unit: SourceUnit, curl_version=None):
         row = re.search(r"\b(?:png_read_row|png_read_rows|png_read_image|png_start_read_image)\s*\(", b)
         if info and finish and info.start() < finish.start() and not row:
             out.append(_finding(unit, start+1+finish.start(), "ohknowncve-libpng-cve-2026-46675", "CVE-2026-46675", "png_read_end follows png_read_info without reading image rows.", "CWE-416"))
-    # CVE-2025-25212: observer registrations can accumulate without a
-    # per-process quota. Lifecycle and Binder caller reachability remain
-    # outside this local signature, so every match is a candidate.
+    # CVE-2025-25212: retain the repeated observer-set insertion only when no
+    # hard count bound is visible in this registration body. The exact sink
+    # position is reported; caller reachability and cross-function lifecycle
+    # remain separate evidence obligations.
     observer = _body(s, "AddPasteboardChangedObserver")
     if observer:
         pos, b = observer
-        inserts = re.search(r"(?:observers|observerMap_)\s*(?:->|\.)\s*(?:insert|emplace|push_back)", b)
-        process_key = re.search(r"(?:GetCallingPid|GetCallingTokenID|GetCallingUid)", b)
-        quota = re.search(r"(?:size\s*\(\)\s*(?:>=|>)|(?:MAX|LIMIT|QUOTA)[A-Z0-9_]*|\b(?:max|limit|quota)\w*\b)", b, re.I)
-        if inserts and not process_key and not quota:
-            out.append(_finding(unit, pos, "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212", "pasteboard observer registration inserts into a shared collection without a visible per-process quota.", "CWE-770"))
+        map_access = re.search(r"\bobserverMap_\s*(?:->|\.)\s*(?:find|insert|emplace)\s*\(", b)
+        observer_insert = re.search(
+            r"\b([A-Za-z_]\w*)\s*(?:->|\.)\s*(?:insert|emplace_back|push_back)\s*\(\s*observer\b",
+            b,
+        )
+        helper_quota = False
+        if observer_insert:
+            for call in re.finditer(r"\b([A-Za-z_]\w*)\s*\(", b[:observer_insert.start()]):
+                helper = _body(s, call.group(1))
+                if helper and _has_observer_quota(helper[1]):
+                    helper_quota = True
+                    break
+        if map_access and observer_insert and not _has_observer_quota(b) and not helper_quota:
+            out.append(_finding(
+                unit, pos + 1 + observer_insert.start(),
+                "ohknowncve-pasteboard-cve-2025-25212", "CVE-2025-25212",
+                "pasteboard observer-set insertion has no visible hard count bound in this registration body; cross-function admission and lifecycle remain unverified.",
+                "CWE-770",
+            ))
     # CVE-2026-67215: untrusted JSON Patch can amplify nesting through deep
     # add/copy operations, then hit recursive cJSON_Delete cleanup. A local
     # shape match cannot prove that the file is built or fed untrusted input.
