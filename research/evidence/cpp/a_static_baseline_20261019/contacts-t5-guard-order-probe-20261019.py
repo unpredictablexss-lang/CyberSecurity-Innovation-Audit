@@ -65,6 +65,16 @@ def main() -> None:
     run = detector.detect(_context(unit), (unit,))
     print(f"guard_other_tainted_parameter: expected=2 actual={len(run.findings)} findings={[(f.symbol, f.line) for f in run.findings]}")
 
+    unrelated_receiver = BASE.replace(
+        "void OpenPath(const std::string &path) { open(path.c_str(), O_RDONLY); unlink(path.c_str()); }",
+        'void OpenPath(const std::string &path) { '
+        'if (other.find_first_of("/\\\\") != std::string::npos || path.empty()) return; '
+        "open(path.c_str(), O_RDONLY); unlink(path.c_str()); }",
+    )
+    unit = _unit(unrelated_receiver, "unrelated_receiver_boolean.cpp")
+    run = detector.detect(_context(unit), (unit,))
+    print(f"unrelated_receiver_boolean: expected=2 actual={len(run.findings)} findings={[(f.symbol, f.line) for f in run.findings]}")
+
 
 if __name__ == "__main__":
     main()
