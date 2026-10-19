@@ -132,12 +132,12 @@ def build_registry(detector_ids, *, allow_examples=False):
         raise ValueError("duplicate detector identifier")
     registry = DetectorRegistry()
     for name in names:
+        pending = pending_admission(name)
+        if pending:
+            raise ValueError("not-yet-approved detector admission blocked: " + name + "; "
+                             + "; ".join(pending["missing_evidence"]))
         spec = _APPROVED.get(name)
         if spec is None:
-            pending = pending_admission(name)
-            if pending:
-                raise ValueError("not-yet-approved detector admission blocked: " + name + "; "
-                                 + "; ".join(pending["missing_evidence"]))
             raise ValueError(
                 "unknown or not-yet-approved detector: "
                 + str(name) + "; available: " + ", ".join(sorted(_APPROVED))

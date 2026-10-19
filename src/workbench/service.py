@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 from src.ohscanner.contracts import safe_relative_path
+from src.ohscanner.detectors.admission import pending_admissions
 from src.ohscanner.detectors.catalog import build_registry, catalog_metadata
 from src.ohscanner.git_source import _git, resolve_commit, MAX_BLOB_BYTES
 
@@ -172,9 +173,10 @@ def revisions(repo, timeout=30):
 
 def detector_metadata():
     catalog = catalog_metadata()
+    pending_ids = {row["id"] for row in pending_admissions()}
     result = []
     for key, spec in catalog.items():
-        if spec["kind"] == "example":
+        if spec["kind"] == "example" or key in pending_ids:
             continue
         detector = build_registry((key,)).detectors()[0]
         result.append(

@@ -135,6 +135,84 @@ def analyze_receiver_guard(unit, *, caller_name=None,
                       if fn.qualified_name.startswith(OWNER + '::')
                       and any(node.type == 'call_expression' and fn.call_name(node) == sink_name
                               for node in walk(fn.body))]
+        if not applicable:
+            return ReceiverGuardResult('completed', 'complete')
+        results = [analyze_receiver_guard(unit, caller_name=name, caller_types=caller_types,
+                                          sink_name=sink_name, budget=budget) for name in applicable]
+        observations = tuple(item for result in results for item in result.observations)
+        limitations = tuple(sorted({item for result in results for item in result.limitations}))
+        steps = sum(result.steps for result in results)
+        outcome = ('partial' if limitations or unit.parse_status != 'complete'
+                   or any(result.file_outcome == 'partial' for result in results) else 'complete')
+        status = 'limited' if outcome != 'complete' else 'completed'
+        return ReceiverGuardResult(status, outcome, observations, limitations, steps)
+    functions = [fn for fn in functions if fn.qualified_name == caller_name]
+    if len(functions) != 1:
+        return ReceiverGuardResult('limited', 'not_analyzed',
+                                   limitations=('receiver_guard_caller_unresolved',))
+    fn = functions[0]
+    if fn.node.has_error or tuple(fn.parameter_types) != caller_types:
+        return ReceiverGuardResult('limited', 'not_analyzed',
+                                   limitations=('receiver_guard_caller_parse_or_signature_unknown',))
+    # Parameter positions are declaration offsets; evaluate each GateRef
+    # parameter binding and associate only same-binding queries/accessors.
+    candidates = [binding for binding in fn.bindings if binding.parameter and binding.type_name == 'GateRef']
+    if not candidates:
+        return ReceiverGuardResult('limited', 'not_analyzed',
+                                   limitations=('receiver_parameter_unresolved',))
+    try:
+        graph = build_graph(fn, budget)
+    except ValueError as error:
+        return ReceiverGuardResult('limited', 'not_analyzed', limitations=(str(error),))
+    observations, limitations, total_steps = [], [], 0
+    for receiver in candidates:
+        sinks = [(index, node) for index, instruction in enumerate(graph.instructions)
+                 for node in _sink_receiver(fn, instruction, sink_name, receiver)]
+        if not sinks:
+            continue
+        guards = {index for index, instruction in enumerate(graph.instructions)
+                  if instruction.kind == 'BRANCH'
+                  and _typed_array_guard(fn, instruction, receiver)}
+        if not guards:
+            for index, node in sinks:
+                observations.append(Observation('unknown', node.start_point[0] + 1,
+                                                node.start_point[1] + 1,
+                                                'receiver_type_guard_not_resolved',
+                                                symbol=fn.qualified_name,
+                                                region_start_byte=fn.node.start_byte,
+                                                region_end_byte=fn.node.end_byte))
+                limitations.append('receiver_type_guard_not_resolved')
+            continue
+        for sink_index, node in sinks:
+            unsafe, steps = _reachable_without_successful_guard(graph, sink_index, guards, budget)
+            total_steps += steps
+            if unsafe is None:
+                kind, reason = 'unknown', 'receiver_guard_path_unresolved'
+                limitations.append(reason)
+            elif unsafe:
+                kind, reason = 'candidate', 'backing_buffer_read_not_dominated_by_receiver_type_guard'
+            else:
+                kind, reason = 'matched', 'receiver_type_guard_dominates_backing_buffer_read'
+            observations.append(Observation(kind, node.start_point[0] + 1,
+                                            node.start_point[1] + 1, reason,
+                                            symbol=fn.qualified_name,
+                                            path=(fn.node.start_point[0] + 1,
+                                                  node.start_point[0] + 1),
+                                            region_start_byte=fn.node.start_byte,
+                                            region_end_byte=fn.node.end_byte))
+    if not observations:
+        outcome = 'partial' if graph.limitations else 'complete'
+        return ReceiverGuardResult('limited' if graph.limitations else 'completed', outcome,
+                                   limitations=tuple(graph.limitations), steps=total_steps)
+    if graph.limitations:
+        limitations.extend(graph.limitations)
+    outcome = 'partial' if limitations or unit.parse_status != 'complete' else 'complete'
+    return ReceiverGuardResult('limited' if outcome != 'complete' else 'completed', outcome,
+                               tuple(observations), tuple(sorted(set(limitations))), total_steps)
+
+
+class OriginState:
+    def __init__(self, values=None, equivalent=(), invalidated=(), predicates=(), effects=(), escaped=()):
         self.values = dict(values or {})
         self.equivalent = frozenset(equivalent)
         self.invalidated = frozenset(invalidated)

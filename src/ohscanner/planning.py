@@ -14,15 +14,17 @@ from src.workbench.planning import plan_audit, metadata_from_detectors
 
 def approved_metadata():
     rows, instances = [], []
+    pending = pending_admissions()
+    pending_ids = {row['id'] for row in pending}
     for ident, spec in catalog_metadata().items():
-        if spec['kind'] != 'research_candidate':
+        if spec['kind'] != 'research_candidate' or ident in pending_ids:
             continue
         detector = build_registry((ident,)).detectors()[0]
         rows.append({'id': ident, **spec, 'version': detector.version,
                      'supported_languages': list(detector.supported_languages),
                      'evidence_level': 'candidate/unassessed'})
         instances.append(detector)
-    return metadata_from_detectors(rows, instances) + pending_admissions()
+    return metadata_from_detectors(rows, instances) + pending
 
 
 def plan_context(context, tree, inventory, sources, selected_detector_ids=None, execution_budget=None):

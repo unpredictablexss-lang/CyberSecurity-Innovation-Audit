@@ -137,11 +137,11 @@ class ContractAdapterTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'outside_bound_context'):
             ArkRuntimeTypeSafetyDetector(model=model).detect(ctx, (supplied,))
 
-    def test_catalog_allows_explicit_selection_but_keeps_c_out_of_defaults(self):
+    def test_catalog_blocks_pending_c_even_when_explicitly_selected(self):
         from src.ohscanner.detectors.catalog import default_detector_ids
         self.assertNotIn(DETECTOR_ID, default_detector_ids())
-        registry = build_registry((DETECTOR_ID,))
-        self.assertEqual(registry.detectors()[0].detector_id, DETECTOR_ID)
+        with self.assertRaisesRegex(ValueError, 'admission blocked'):
+            build_registry((DETECTOR_ID,))
 
     def test_same_inputs_produce_stable_ids(self):
         first, _ = self.run_detector((case('C03'),))

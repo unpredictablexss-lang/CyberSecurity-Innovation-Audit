@@ -93,7 +93,7 @@ test("explicit full-rules research selects disabled approved rules and freezes t
   });
   assert.deepEqual(planPayload(valuesWithResearch, catalog), {
     repository_id: "repo", revision: "refs/tags/a", include_paths: ["src", "include"],
-    detector_ids: ["test.cpp", "test.null"],
+    detector_ids: ["test.cpp", "test.null"], timeout_seconds: 60, memory_mb: 512,
   });
   const ops = operationPayload("date", { ...valuesWithResearch, branch: "main", start: "2026-01-01T00:00:00", end: "2026-01-02T00:00:00", timezone: "UTC" }, catalog);
   assert.deepEqual(ops.detector_ids, ["test.cpp", "test.null"]);
