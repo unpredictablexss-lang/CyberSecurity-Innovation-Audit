@@ -22,7 +22,7 @@
       "parse": "4/4 files partial on both variants; run blocked",
       "trusted_fixed_source": "exact upstream release source bound; parent unavailable in local mirror, so no accepted fix ancestry control",
       "independent_checks": ["D54 source/CLI verifier PASS", "T61 source/CLI verifier PASS"],
-      "evidence": ["research/evidence/cpp/d54_libpng_lifetime_assessment_20261030.json", "research/evidence/cpp/t61_libpng_independent_acceptance_20261030.json"]
+      "evidence": ["research/evidence/cpp/d54_libpng_lifetime_assessment_20261020.json", "research/evidence/cpp/t61_libpng_independent_acceptance_20261020.json"]
     },
     {
       "case": "libpng CVE-2026-46675",
@@ -31,7 +31,7 @@
       "parse": "1/1 file partial on both variants; run blocked",
       "trusted_fixed_source": "fixed source blob bound; fix parent is pre-fix ancestry, not a safe control",
       "independent_checks": ["D54 source/CLI verifier PASS", "T61 source/CLI verifier PASS"],
-      "evidence": ["research/evidence/cpp/d54_libpng_lifetime_assessment_20261030.json", "research/evidence/cpp/t61_libpng_independent_acceptance_20261030.json"]
+      "evidence": ["research/evidence/cpp/d54_libpng_lifetime_assessment_20261020.json", "research/evidence/cpp/t61_libpng_independent_acceptance_20261020.json"]
     },
     {
       "case": "cJSON CVE-2026-67216 compare-cost",
@@ -67,7 +67,7 @@
       "parse": "syntax complete; semantic detector coverage partial/blocked (0/1 complete)",
       "fixed_control": "source pair bound; no dSoftBus-specific safe/unrelated controls and no signed publisher attestation",
       "independent_checks": ["T62 exact Git object/CLI/A0 verifier PASS"],
-      "evidence": ["research/evidence/cpp/t62_dsoftbus_cve_2025_26690_independent_acceptance_20261030.json"]
+      "evidence": ["research/evidence/cpp/t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.json"]
     }
   ],
   "additional_a0_retests": [

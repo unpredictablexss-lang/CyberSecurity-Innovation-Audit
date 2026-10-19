@@ -63,7 +63,7 @@ def main() -> None:
         "33416": r"D:/openHarmonyScanner/tmp/libpng-gitlab-mirror-pins-20261019.git",
         "46675": r"D:/openHarmonyScanner/tmp/t34-libpng46675-source-20261023.git",
     }
-    d54 = json.loads((EVIDENCE / "d54_libpng_lifetime_assessment_20261030.json").read_text(encoding="utf-8"))
+    d54 = json.loads((EVIDENCE / "d54_libpng_lifetime_assessment_20261020.json").read_text(encoding="utf-8"))
     for case, variants in d54["cases"].items():
         number = "33416" if case.endswith("33416") else "46675"
         db = libpng_dbs[number]
@@ -78,7 +78,7 @@ def main() -> None:
             assert cli["diagnostic_count"] == 0
 
     # dSoftBus exact commit/tree/blob/SHA pairs and current result artifact.
-    t62 = json.loads((EVIDENCE / "t62_dsoftbus_cve_2025_26690_independent_acceptance_20261030.json").read_text(encoding="utf-8"))
+    t62 = json.loads((EVIDENCE / "t62_dsoftbus_cve_2025_26690_independent_acceptance_20261020.json").read_text(encoding="utf-8"))
     dsoftbus_db = r"D:/openHarmonyScanner/tmp/d22-upstream-dsoftbus-object-store"
     dsoftbus_path = "core/bus_center/ipc/standard/src/bus_center_client_proxy.cpp"
     for variant in t62["source_objects"].values():
