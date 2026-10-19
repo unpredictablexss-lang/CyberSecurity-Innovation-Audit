@@ -42,6 +42,41 @@ This independent integration review starts from T3 commit `50b2806a7df38cd1ad07f
 3. **T7 queue continuation:** preserve the 345 original IDs/statuses; process the first five queued `not_testable` entries only as evidence arrives, and write the next evidence action without upgrading unknown candidates.
 4. Re-run `scripts.check_change_scope` and the queue verifier on the frozen integration commit. Record each item as PASS/PARTIAL/BLOCK/N/A with evidence boundaries.
 
+## Structured Vibe Coding prompts for the next parallel wave
+
+### D9 — Bounds source closure (development)
+
+```text
+Role: A-line C/C++ bounds-detector developer.
+Continuous goal: improve disclosed bounds-root-cause candidates only where exact source and a reproducible detector gap support a narrow rule change.
+Inputs: current T3 integration commit; D7 bounds evidence; T1/T3 libtiff and web_webview artifacts; exact upstream vulnerable/fixed Git objects if available.
+Steps: verify repo/commit/tree/blob/source hashes; replay current CLI with identical scope and rule version; identify whether each miss is parser coverage, detector-model coverage, or absent input; change only the responsible detector pattern; add vulnerable, guarded/fixed, safe, unrelated, renamed and partial controls as applicable; record runtime and commands.
+Done when: bounded positive and negative controls pass; source-level claims preserve parser/model coverage; missing web_webview vulnerable object remains BLOCK; libtiff full-source result is not promoted while parsing is partial; scope and diff checks pass.
+Boundaries: C++ detector/tests/evidence only; do not change Catalog, API, shared parser, shared docs, or source acquisition policy; never infer safety from zero partial findings.
+```
+
+### D10 — Resource cases and source-bound controls (development)
+
+```text
+Role: A-line C/C++ resource-lifecycle and resource-exhaustion developer.
+Continuous goal: close cJSON and libpng disclosed resource-root cases with distinct, source-bound candidate rules and quiet controls.
+Inputs: current T3 integration commit; D8 resource evidence and tests; T3/T4 libpng and cJSON source identities; any trusted upstream fixes found by read-only provenance review.
+Steps: replay each exact source at the current rule version; distinguish parser incompleteness from detector-model gaps; retain separate compare-cost, recursive cleanup, and cross-function lifetime identities; add only root-cause-specific candidates and hash-bound positive/safe/unrelated/partial fixtures; use fixed controls only when a trusted fix is bound.
+Done when: each new rule has bounded positive and negative controls, reproducible source identity, recorded parser/detector coverage and command; missing fixes and partial analysis remain explicit PARTIAL/BLOCK; scope and diff checks pass.
+Boundaries: no generic recursion/complexity alerts, no fabricated fixed version, no shared parser/API/Catalog/docs changes.
+```
+
+### T7 — Independent frozen-commit regression and queue audit (testing)
+
+```text
+Role: independent A-line static-regression and provenance auditor; do not participate in detector implementation.
+Continuous goal: independently verify each frozen development commit and preserve the 345-candidate evidence queue until every row has a sourced disposition.
+Inputs: separate clean checkout of the submitted D9/D10 commits; T1/T2/T3/T6 matrices; exact source refs, hashes, scopes, detector outputs, and A0 original IDs/states.
+Steps: rerun focused tests and exact-source CLI; independently verify repository/commit/tree/blob/source hashes, finding rule/location, parser and detector coverage; compare positive/fixed/safe/unrelated/renamed/partial controls; reconcile web_webview matrix/report discrepancy; preserve original queue IDs and states while adding only sourced evidence actions.
+Done when: every changed case has PASS/PARTIAL/BLOCK/N/A with a specific evidence boundary; queue verifier, source-hash checks, branch-scope check and diff check pass; unknown inputs remain blocked and no unsupported precision/recall claim is made.
+Boundaries: no detector/test/fixture edits; no developer result accepted without independent replay; partial zero-finding is never safe; missing fix is not a fixed pass.
+```
+
 ## Overall decision
 
 **PARTIAL.** D7 and D8 improve bounded static candidate coverage and their regressions pass independently. The identified upstream cases remain blocked or partial where full parsing, fixed source, detector coverage, or production integration is missing. No zero-result partial run is a safety result, and the A-line continuous goal remains active.
