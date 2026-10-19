@@ -6,7 +6,7 @@ Date: 2026-10-21 (Asia/Shanghai)
 
 The current source snapshot implements a caller-side permission decision on the `GetPasteData` service path. The source and product configuration snapshots identify several HiHope product definitions whose inherited product profiles directly include the `pasteboard` component. This establishes source/config correlation only. **Applicability to a specific built or installed product remains unknown** because the local evidence set has no product build fingerprint, compiled image, build output manifest, or installed-device record.
 
-The machine-readable companion records Git commit/tree and per-file blob plus SHA-256 identities: [D53 JSON](D53_PASTEBOARD_PRODUCT_PROFILE_20261021.json).
+The machine-readable companion records Git commit/tree and per-file blob plus SHA-256 identities: [D53 JSON](D53_PASTEBOARD_PRODUCT_PROFILE_20261021.json). File SHA-256 and byte counts are calculated over raw Git blob bytes (`git cat-file blob <oid>`), not working-tree files; all 31 file entries were mechanically checked against their path OID and recomputed raw blob digest.
 
 ## Source repositories
 
@@ -15,9 +15,9 @@ The machine-readable companion records Git commit/tree and per-file blob plus SH
 | `distributeddatamgr_pasteboard` | `e73747b227104e6743e957ce31040edf58507221` | `4128cdf9ad11d393c30f2839f43419e97a5a466d` | clean |
 | `productdefine_common` | `c9317af4074bf0e445fe3fc3979e53c470687153` | `71f1c83472fbf4b0360bf9fbde23572c529cef21` | clean |
 | `vendor_hihope` | `b40eabbe69943126c65df1f9ff28057f56e93e46` | `aa95785ef84ddde8d1c3622e2c2d80d6b388caeb` | clean |
-| `device_hihope` | `9a1997c6c116f6eebaf537c0a1c69d7d6cfa3e35` | `1129825189f092bbc66157b94133706870b54d99` | clean |
+| `build` | `6b6d6533967db07e8e7d40d140fc63d0faabacbd` | `d58b57c4bc6273a51e182a1014eea26ae60df028` | clean |
 
-These are current local mirror checkouts, not a verified unified product build manifest.
+These are current local mirror checkouts, not a verified unified product build manifest. The build repository is included because it owns component and compilation whitelists; `device_hihope` is not used as a substitute for build metadata.
 
 ## SA ownership and process setup
 
@@ -87,3 +87,11 @@ rg --files D:\OpenHarmony807 | rg '(^|\\)(out|build|images)(\\|$)|build\.ninja$|
 ## Scope
 
 Only the two requested D53 evidence files are intended to change. No scanner rule, ownership, or configuration changes were made. No product build or runtime test was available; this task is source/config evidence research.
+
+## Build whitelist evidence and evidence boundary
+
+The `build` repository at the recorded HEAD contains `indep_component_whitelist.json`, with `pasteboard` and `distributeddatamgr_pasteboard` entries, and `component_compilation_whitelist.json`, with pasteboard related targets including `pasteboard_client`, the pasteboard dialog HAP, and two NAPI tests. Their blob OIDs, raw Git byte lengths, and SHA-256 digests are in the JSON. These whitelist entries show build-system recognition/target inclusion metadata; they do not identify an executed product build.
+
+The D52 historical candidate came from a different source repository and revision: `openharmony/miscservices_pasteboard@dd22c7cb5e5f207a6c38c50f45b7369ee8575840`, tree `e374a0d61c9ec664ddd29fc17002797828c480ee`, file `services/zidl/src/pasteboard_service_stub.cpp`. The current snapshot is `openharmony/distributeddatamgr_pasteboard@e73747b227104e6743e957ce31040edf58507221`, tree `4128cdf9ad11d393c30f2839f43419e97a5a466d`. Repository migration/ancestry between these source identities has not been verified. The current revision's permission guard cannot by itself establish that the historical candidate was fixed, migrated, or absent from any concrete product.
+
+The JSON `files` array is the machine-checkable provenance table. For each entry, `blob` is the path object at the recorded repository HEAD; `sha256` and `bytes` refer to the raw object bytes returned by `git cat-file blob <blob>`. Working-tree newline conversion values are not used.
