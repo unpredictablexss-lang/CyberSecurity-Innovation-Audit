@@ -127,7 +127,7 @@ class OwnerIntegrationTests(unittest.TestCase):
         self.assertIn('No reviewed sensitive-source model', ' '.join(run['limitations']))
         self.assertTrue(any(item['rule_id'] == 'data.log.sensitive-value'
                             for item in run['diagnostics']))
-        self.assertEqual(run['tool_version'], '0.18.0')
+        self.assertEqual(run['tool_version'], '0.21.0')
         self.assertEqual(report['validated_vulnerability'], 0)
 
     def test_changed_branch_after_preview_requires_new_plan(self):

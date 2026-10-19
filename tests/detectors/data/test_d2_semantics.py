@@ -66,7 +66,7 @@ class D2SemanticsTests(unittest.TestCase):
              'void emit(const char *v){AUTH_LOGI(0,"%{public}s",v);} '
              'void emit(char *v){} '
              'void Callback(const char *secret){emit(secret);}',
-             'data.log.sensitive-value',None),
+             'data.sensitive.unresolved-escape','callee_binding'),
             ('recursive same-file helper',
              'void relay(const char *v){relay(v);} '
              'void Callback(const char *secret){relay(secret);}',

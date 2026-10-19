@@ -9,7 +9,7 @@ from src.ohscanner.git_source import GitSource
 from src.ohscanner.fixture import snapshot_digest
 from src.ohscanner.runner import DetectorRegistry, run_all_with_coverage
 from src.ohscanner.detectors.data.models import (
-    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, IOTC_LOCAL_CONTROL_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
+    ACCESS_TOKEN_SOURCE, DEFAULT_SOURCE, DSOFTBUS_CURRENT_SOURCE, IOTC_LOCAL_CONTROL_SOURCE, SUPPORTED_SOURCE_MODELS, SensitiveSourceModel)
 from src.ohscanner.detectors.data.sensitive_exposure import SensitiveExposureDetector, formats, looks_sensitive_name
 
 MODEL=SensitiveSourceModel('fixture/d-sensitive','d'*40,parameters=(('service.cpp','Callback',0),),provenance='Synthetic model for regression only; no real vulnerability')
@@ -26,6 +26,25 @@ class SensitiveTests(unittest.TestCase):
     def analyze(self,source,**kwargs):
         c=self.context(source,**kwargs)
         return SensitiveExposureDetector(MODEL).detect(c,c.units)
+
+    def analyze_many(self, sources, partial_paths=()):
+        git_sources=[]
+        for path,source in sources:
+            data=source.encode()
+            git_sources.append(GitSource(
+                path,'cpp',
+                hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(),
+                data))
+        units,ast,_=index_sources(tuple(git_sources))
+        units=tuple(sorted(
+            (replace(unit,parse_status='partial') if unit.path in partial_paths else unit
+             for unit in units), key=lambda unit:unit.path))
+        for path in partial_paths:
+            ast[path]['parse_status']='partial'
+        request=ScanRequest('d-interfile',MODEL.repository,MODEL.commit,
+                            snapshot_digest(units),'current-component:'+MODEL.repository)
+        context=ScanContext(request,units,{'ast':ast})
+        return SensitiveExposureDetector(MODEL).detect(context,units)
     def test_controls_from_manifest(self):
         cases=json.loads((ROOT/'fixtures/data_sensitive/cases.json').read_text())
         d5=json.loads((ROOT/'fixtures/data_sensitive/d5_cases.json').read_text())
@@ -65,14 +84,29 @@ class SensitiveTests(unittest.TestCase):
             'interfaces/innerkits/accesstoken/src/accesstoken_kit.cpp',
             'void AccessTokenKit::GetKernelPermissions(AccessTokenID tokenID) { '
             'LOGI(ATM_DOMAIN, ATM_TAG, "TokenID=%{public}u", tokenID); }')
+        dsoftbus_current = analyze(
+            DSOFTBUS_CURRENT_SOURCE.repository, DSOFTBUS_CURRENT_SOURCE.commit,
+            'core/authentication/src/auth_hichain.c',
+            'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t sessionKeyLen) { '
+            'AUTH_LOGI(AUTH_HICHAIN, "key=%{public}s", sessionKey); }')
+        dsoftbus_current_safe = analyze(
+            DSOFTBUS_CURRENT_SOURCE.repository, DSOFTBUS_CURRENT_SOURCE.commit,
+            'core/authentication/src/auth_hichain.c',
+            'void OnSessionKeyReturned(int64_t authSeq, const uint8_t *sessionKey, uint32_t sessionKeyLen) { '
+            'AUTH_LOGI(AUTH_HICHAIN, "len=%{public}u", sessionKeyLen); }')
         self.assertEqual(len(dsoftbus.findings), 1)
         self.assertEqual(len(access_token.findings), 1)
+        self.assertEqual(len(dsoftbus_current.findings), 1)
+        self.assertEqual(len(dsoftbus_current_safe.findings), 0)
         self.assertEqual(len(dsoftbus.findings[0].source_sha256), 64)
         self.assertEqual(len(access_token.findings[0].source_sha256), 64)
         self.assertNotEqual(dsoftbus.findings[0].source_sha256,
                             access_token.findings[0].source_sha256)
         self.assertTrue(any(model.repository == DEFAULT_SOURCE.repository for model in SUPPORTED_SOURCE_MODELS))
         self.assertTrue(any(model.repository == ACCESS_TOKEN_SOURCE.repository for model in SUPPORTED_SOURCE_MODELS))
+        self.assertTrue(any(model.repository == DSOFTBUS_CURRENT_SOURCE.repository and
+                            model.commit == DSOFTBUS_CURRENT_SOURCE.commit
+                            for model in SUPPORTED_SOURCE_MODELS))
 
         unknown = analyze(DEFAULT_SOURCE.repository, 'f'*40,
                           'core/authentication/src/auth_hichain.c',
@@ -100,6 +134,95 @@ class SensitiveTests(unittest.TestCase):
         self.assertTrue(any(item.kind == 'source_semantics' and 'Unreviewed' in item.description
                             for item in finding.evidence_obligations))
         self.assertIn('heuristic candidates are incomplete', ' '.join(run.limitations))
+
+    def test_cross_file_unique_helper_reaches_public_log_sink(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { relay(key); }'),
+            ('logging.cpp','void relay(const char *value) { HILOG_INFO(1,"%{public}s",value); }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        finding=run.findings[0]
+        self.assertEqual(finding.file,'logging.cpp')
+        self.assertEqual(finding.rule_id,'data.log.sensitive-value')
+        self.assertIn('service.cpp:1 source Callback parameter 0',finding.message)
+        self.assertIn('call relay argument 0',finding.message)
+        self.assertIn('HILOG_INFO public operand 0',finding.message)
+        self.assertEqual(run.status,'blocked')
+        self.assertTrue(all(state=='partial' for _,state in run.file_outcomes))
+
+    def test_partial_cross_file_body_adds_may_finding_and_keeps_caller_candidate(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { relay(key); }'),
+            ('logging.cpp','void relay(const char *value) { HILOG_INFO(1,"%{public}s",value); }'),
+        ),partial_paths=('logging.cpp',))
+        self.assertTrue(any(f.rule_id=='data.log.sensitive-value'
+                            and f.file=='logging.cpp' for f in run.findings))
+        self.assertTrue(any(f.rule_id=='data.sensitive.unresolved-escape'
+                            and f.file=='service.cpp' for f in run.findings))
+        self.assertTrue(all(state=='partial' for _,state in run.file_outcomes))
+        self.assertEqual(run.status,'blocked')
+
+    def test_cross_file_helper_return_reaches_caller_sink(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { const char *copy = relay(key); HILOG_INFO(1,"%{public}s",copy); }'),
+            ('relay.cpp','const char *relay(const char *value) { return value; }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].file,'service.cpp')
+        self.assertEqual(run.findings[0].rule_id,'data.log.sensitive-value')
+        self.assertIn('call relay argument 0',run.findings[0].message)
+        self.assertIn('return from relay',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
+
+    def test_reviewed_cleanup_apis_do_not_emit_escape_candidates(self):
+        source='''void Callback(const char *key) {
+            SoftBusFree((void *)key);
+            memset_s((void *)key, 32, 0, 32);
+        }'''
+        model=replace(MODEL,non_escaping_calls=('SoftBusFree','memset_s'))
+        context=SensitiveTests().context(source)
+        run=SensitiveExposureDetector(model).detect(context,context.units)
+        self.assertEqual(run.findings,())
+        self.assertIn('classifies SoftBusFree as cleanup',
+                      ' '.join(run.limitations))
+
+    def test_member_copy_is_retained_and_flows_through_returned_object(self):
+        run=self.analyze(
+            'struct Box { char *data; }; '
+            'Box *make(const char *value) { Box *box=(Box *)SoftBusCalloc(sizeof(Box)); '
+            'memcpy_s(box->data,64,value,32); return box; } '
+            'void Callback(const char *key) { Box *box=make(key); '
+            'HILOG_INFO(1,"%{public}s",box->data); }')
+        self.assertTrue(any(f.rule_id=='data.sensitive.unresolved-escape'
+                            and 'member object binding is unknown' in f.message for f in run.findings))
+        self.assertTrue(any(f.rule_id=='data.log.sensitive-value'
+                            and 'return from make' in f.message for f in run.findings))
+        self.assertEqual(run.status,'blocked')
+
+    def test_cross_file_local_sink_name_is_not_credited_without_body_binding(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { HILOG_INFO(1,"%{public}s",key); }'),
+            ('logger.cpp','void HILOG_INFO(int tag, const char *format, const char *value) { (void)tag; (void)format; (void)value; }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].rule_id,'data.sensitive.unresolved-escape')
+        self.assertNotIn('data.log.sensitive-value',
+                         {finding.rule_id for finding in run.findings})
+        self.assertIn('helper body did not establish',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
+
+    def test_cross_file_ambiguous_helper_preserves_candidate_without_crediting_sink(self):
+        run=self.analyze_many((
+            ('service.cpp','void Callback(const char *key) { relay(key); }'),
+            ('a.cpp','void relay(const char *value) { HILOG_INFO(1,"%{public}s",value); }'),
+            ('b.cpp','void relay(const char *value) { (void)value; }'),
+        ))
+        self.assertEqual(len(run.findings),1)
+        self.assertEqual(run.findings[0].rule_id,'data.sensitive.unresolved-escape')
+        self.assertNotIn('data.log.sensitive-value',
+                         {finding.rule_id for finding in run.findings})
+        self.assertIn('ambiguous',run.findings[0].message)
+        self.assertEqual(run.status,'blocked')
 
     def test_wifi_log_macro_detects_preshared_key_candidate(self):
         source = 'void dump(const char *preSharedKey) { WIFI_LOGI("%{public}s", preSharedKey); }'

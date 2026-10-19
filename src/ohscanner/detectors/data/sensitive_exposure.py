@@ -5,7 +5,8 @@ because shared outlines expose no expression/binding facts. No global IR changes
 """
 import ast
 import re
-from dataclasses import dataclass
+from collections import OrderedDict
+from dataclasses import dataclass, replace
 import tree_sitter_c
 import tree_sitter_cpp
 from tree_sitter import Language, Parser
@@ -124,9 +125,152 @@ def formats(value, default_privacy='private'):
     return out, arg
 
 
+class CrossFileResolver:
+    """Lazy, bounded C/C++ function-body lookup for sensitive call arguments.
+
+    Resolution is syntax/name/arity based only. Overload, receiver, macro,
+    include, and build identity are not inferred; ambiguity and budget exhaustion
+    preserve an unresolved candidate.
+    """
+    MAX_CANDIDATE_UNITS = 24
+    MAX_PARSED_UNITS = 128
+    MAX_TOTAL_BYTES = 64 * 1024 * 1024
+    MAX_UNIT_BYTES = 2 * 1024 * 1024
+    CACHE_SIZE = 8
+
+    def __init__(self, units, model, heuristic_sources=False, flow_factory=None):
+        self.units = tuple(units)
+        self.model = model
+        self.heuristic_sources = heuristic_sources
+        self.flow_factory = flow_factory
+        self.cache = OrderedDict()
+        self.call_stack = []
+        self.parsed_units = 0
+        self.parsed_bytes = 0
+        self.limitations = set()
+        self.partial_paths = set()
+
+    @staticmethod
+    def eligible(unit):
+        return (unit.language in ('c', 'cpp')
+                and not any(p.lower() in ('tests', 'test', 'unittest', 'mock', 'mocks', 'fuzztest')
+                            for p in unit.path.split('/')))
+
+    def flow(self, unit):
+        cached = self.cache.pop(unit.path, None)
+        if cached is not None:
+            self.cache[unit.path] = cached
+            return cached
+        size = len(unit.text.encode('utf-8'))
+        if (size > self.MAX_UNIT_BYTES
+                or self.parsed_units >= self.MAX_PARSED_UNITS
+                or self.parsed_bytes + size > self.MAX_TOTAL_BYTES):
+            self.limitations.add(
+                'cross-file function index reached its parse budget; unresolved calls remain candidates')
+            return None
+        self.parsed_units += 1
+        self.parsed_bytes += size
+        result = (self.flow_factory(unit, self) if self.flow_factory else
+                  LocalFlow(unit, self.model, self.heuristic_sources, self))
+        self.cache[unit.path] = result
+        while len(self.cache) > self.CACHE_SIZE:
+            self.cache.popitem(last=False)
+        return result
+
+    @staticmethod
+    def writable_parameter(parameter, flow):
+        # Tree-sitter may attach const to a sibling of the declarator. Inspect
+        # the full parameter declaration so const pointees are never treated
+        # as output parameters.
+        declaration = flow.text(parameter)
+        declarator = flow.text(parameter.child_by_field_name('declarator'))
+        operators = list(re.finditer(r'[*&]', declarator))
+        return len(operators) == 1 and not re.search(r'\bconst\b', declaration)
+
+    @staticmethod
+    def function_name(node, flow):
+        d = node.child_by_field_name('declarator')
+        fd = next((x for x in walk(d) if x.type == 'function_declarator'), None) if d else None
+        name = flow.text(fd.child_by_field_name('declarator')) if fd else ''
+        params = fd.child_by_field_name('parameters') if fd else None
+        values = [p for p in params.named_children if p.type != 'variadic_parameter'] if params else []
+        return name, fd, values
+
+    def resolve(self, name, arity, caller_name, current_path):
+        terminal = name.rsplit('::', 1)[-1]
+        pattern = re.compile(r'(?<![A-Za-z_0-9])' + re.escape(terminal) + r'\s*\(')
+        candidates = [u for u in self.units
+                      if u.path != current_path and self.eligible(u)
+                      and pattern.search(u.text)]
+        if len(candidates) > self.MAX_CANDIDATE_UNITS:
+            self.limitations.add(
+                'cross-file helper lookup is ambiguous or exceeds candidate-unit budget: ' + name)
+            return (), 'budget'
+
+        matches = []
+        incomplete = False
+        for unit in candidates:
+            if unit.parse_status in ('failed', 'not_run'):
+                incomplete = True
+                continue
+            flow = self.flow(unit)
+            if flow is None:
+                incomplete = True
+                continue
+            flow_partial = unit.parse_status != 'complete' or flow.tree.root_node.has_error
+            for definition in flow.function_nodes.values():
+                for node in definition:
+                    qname, fd, params = self.function_name(node, flow)
+                    if not qname:
+                        continue
+                    if '::' in name:
+                        if qname != name:
+                            continue
+                    elif qname.rsplit('::', 1)[-1] != terminal:
+                        continue
+                    if len(params) != arity:
+                        continue
+                    body = node.child_by_field_name('body')
+                    if (fd is None or body is None
+                            or node.has_error or body.has_error):
+                        incomplete = True
+                        continue
+                    matches.append((flow, node, params, qname))
+                    # A clean function subtree inside a partial translation
+                    # unit is useful only as a may-summary. Callers must retain
+                    # an unresolved candidate and the unit remains partial.
+                    if flow_partial:
+                        incomplete = True
+
+        owner = caller_name.rsplit('::', 1)[0] if '::' in caller_name else ''
+        if owner and '::' not in name:
+            owner_matches = [row for row in matches
+                             if row[3].rsplit('::', 1)[0] == owner]
+            if owner_matches:
+                matches = owner_matches
+        if len(matches) == 1 and not incomplete:
+            return tuple(matches), 'unique'
+        if len(matches) == 1 and incomplete:
+            self.limitations.add(
+                'cross-file helper body is syntactically clean inside a partial translation unit; '
+                'only a may-summary is used and call binding remains unknown: ' + name)
+            return tuple(matches), 'partial'
+        if incomplete:
+            self.limitations.add(
+                'cross-file helper lookup encountered partial definitions; overload/type identity remains unknown: '
+                + name)
+            return (), 'partial'
+        if len(matches) > 1:
+            self.limitations.add(
+                'cross-file helper lookup found multiple same-name/arity definitions; call remains unresolved: '
+                + name)
+            return (), 'ambiguous'
+        return (), 'missing'
+
+
 class SensitiveExposureDetector:
     detector_id = 'ohscanner.data.sensitive_exposure'
-    version = '0.18.0'
+    version = '0.21.0'
     supported_languages = ('c', 'cpp')
     required_facts = ('ast',)
 
@@ -137,8 +281,9 @@ class SensitiveExposureDetector:
         self.model = model if model is not None else DEFAULT_SOURCE
         self.models = (model,) if model is not None else SUPPORTED_SOURCE_MODELS
 
-    def make_flow(self, unit, model=None, heuristic_sources=False):
-        return LocalFlow(unit, model if model is not None else self.model, heuristic_sources)
+    def make_flow(self, unit, model=None, heuristic_sources=False, resolver=None):
+        return LocalFlow(unit, model if model is not None else self.model,
+                         heuristic_sources, resolver)
 
     def detect(self, context, units):
         model = next((candidate for candidate in self.models
@@ -151,6 +296,10 @@ class SensitiveExposureDetector:
                 output_calls=(), parameters=(),
                 provenance='Unreviewed sensitive-name heuristic only; type, content and secret semantics are unknown. Candidate triage required.')
         findings, outcomes, limits = [], [], set()
+        resolver = CrossFileResolver(
+            units, model, heuristic_sources,
+            flow_factory=lambda unit, active_resolver: self.make_flow(
+                unit, model, heuristic_sources, active_resolver))
         if heuristic_sources:
             limits.add('No reviewed sensitive-source model for this repository/commit; heuristic candidates are incomplete and the scan is blocked.')
         for u in units:
@@ -164,12 +313,19 @@ class SensitiveExposureDetector:
                 outcomes.append((u.path, 'failed')); continue
             if u.parse_status == 'not_run' or not outline:
                 outcomes.append((u.path, 'not_analyzed')); continue
-            analysis = (self.make_flow(u, model, True) if heuristic_sources else self.make_flow(u, model))
+            analysis = resolver.flow(u)
+            if analysis is None:
+                outcomes.append((u.path, 'partial'))
+                limits.add(u.path + ': cross-file helper parse budget exhausted')
+                continue
             rows = analysis.run()
             findings.extend(rows)
             partial = heuristic_sources or analysis.gaps or u.parse_status != 'complete' or outline.get('parse_status') != 'complete'
             outcomes.append((u.path, 'partial' if partial else 'complete'))
             limits.update(u.path+': '+s for s in analysis.gaps)
+        outcomes=[(path,'partial' if path in resolver.partial_paths and state=='complete' else state)
+                  for path,state in outcomes]
+        limits.update(resolver.limitations)
         limits.update((
             'Candidate only: runtime log readers, production enablement and impact require independent review.',
             'Function-local syntax dependencies, not CFG/alias/full-program proof; no secret values recorded.',
@@ -178,19 +334,35 @@ class SensitiveExposureDetector:
             'Detailed private Tree-sitter statements pending owner-approved shared expression facts; no new global frontend.',
             'Private/default-private sensitive operands retained as conditional candidates; runtime privacy configuration and reader exposure remain obligations.',
         ))
+        merged={}
+        for finding in findings:
+            key=(finding.file,finding.line,finding.rule_id,finding.symbol or '',
+                 finding.source_sha256)
+            previous=merged.get(key)
+            if previous is None:
+                merged[key]=finding
+            else:
+                merged[key]=replace(
+                    previous,
+                    message=previous.message if finding.message in previous.message
+                           else previous.message+' | '+finding.message,
+                    evidence_obligations=tuple(dict.fromkeys(
+                        previous.evidence_obligations+finding.evidence_obligations)))
         return DetectorRun(self.detector_id, self.version,
             'completed' if not heuristic_sources and outcomes and all(s == 'complete' for _, s in outcomes) else 'blocked',
             analyzed_files=tuple(p for p,s in outcomes if s in ('complete','partial')),
-            findings=tuple(sorted(findings, key=lambda f:(f.file,f.line,f.rule_id,f.symbol or ''))),
+            findings=tuple(sorted(merged.values(), key=lambda f:(f.file,f.line,f.rule_id,f.symbol or ''))),
             file_outcomes=tuple(outcomes), limitations=tuple(sorted(limits)))
 
 
 class LocalFlow:
-    def __init__(self, unit, model, heuristic_sources=False):
+    def __init__(self, unit, model, heuristic_sources=False, resolver=None):
         self.u, self.model = unit, model
+        self.resolver = resolver
         self.heuristic_sources = heuristic_sources
         self.b = unit.text.encode()
         self.gaps, self.findings = set(), []
+        self.external_gaps = set()
         self.source_sites, self.sink_sites = [], []
         lang = tree_sitter_c if unit.language == 'c' else tree_sitter_cpp
         self.tree = Parser(Language(lang.language())).parse(self.b)
@@ -204,13 +376,14 @@ class LocalFlow:
             item[0]: (item[1], item[2], item[3])
             for item in model.copy_calls
         }
+        self.non_escaping_calls = frozenset(model.non_escaping_calls)
         self.fields = dict(model.fields)
         self.non_sensitive_fields = dict(model.non_sensitive_fields)
         self.shadows = set()
         self.function_definitions = set()
         self.function_bodies = {}
         self.function_nodes = {}
-        self.call_stack = []
+        self.call_stack = resolver.call_stack if resolver is not None else []
         self.call_results = {}
         self.type_conflicts = set()
         for n in walk(self.tree.root_node):
@@ -281,7 +454,8 @@ class LocalFlow:
             if root in types:
                 return () # known nonmaterial field (len/iv/index), not whole object taint
             if root in env:
-                self.gaps.add('unknown field/alias propagation')
+                self.gaps.add('unknown field/alias propagation; aggregate object taint is propagated as a may-flow')
+                return env[root]
             return ()
         if n.type=='conditional_expression':
             self.gaps.add('conditional value is may-flow; no path feasibility proof')
@@ -320,6 +494,14 @@ class LocalFlow:
 
     def addstep(self,flows,text):
         return tuple(Flow(f.steps+(text,)) for f in flows)
+
+    @staticmethod
+    def store_value(env, destination, flows):
+        values=tuple(dict.fromkeys(flows))
+        env[destination]=values
+        if '.' in destination:
+            root=destination.split('.',1)[0]
+            env[root]=tuple(dict.fromkeys(tuple(env.get(root,()))+values))
 
     def literal(self,n):
         if n.type=='concatenated_string':
@@ -360,80 +542,162 @@ class LocalFlow:
             )))
 
     def expand_tainted_call(self,fn,args,env,types,call_line,call_node=None,fnname=''):
-        """Analyze one bounded same-file helper call and summarize return/out flows."""
-        definitions=self.function_nodes.get(fn,())
-        if not definitions or fn in self.sinks:
+        """Summarize a bounded same-file or uniquely resolved cross-file helper."""
+        arg_flows=[self.expr(arg,env,types) for arg in args]
+
+        matches=[]
+        local_definitions=self.function_nodes.get(fn,())
+        for definition in local_definitions:
+            _,fd,parameters=CrossFileResolver.function_name(definition,self)
+            if fd is not None and len(parameters)==len(args):
+                matches.append((self,definition,parameters,fn))
+        cross_file=False
+        partial_binding=False
+        if not local_definitions and self.resolver is not None:
+            matches,status=self.resolver.resolve(fn,len(args),fnname,self.u.path)
+            if status in ('ambiguous','budget') or (status == 'partial' and len(matches) != 1):
+                self.gaps.add('cross-file helper call could not be bound uniquely: '+fn)
+                if call_node is not None:
+                    self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                                'cross-file definition is ambiguous, partial, or over budget')
+                return True
+            if status == 'unique':
+                cross_file=True
+            elif status == 'partial':
+                cross_file=True
+                partial_binding=True
+                self.gaps.add('cross-file helper body summary is partial evidence; caller candidate is retained: '+fn)
+                if call_node is not None:
+                    self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                                'callee body is inside a partial translation unit')
+            else:
+                return False
+        elif not local_definitions:
             return False
-        if fn in self.call_stack or len(self.call_stack)>=3:
-            self.gaps.add('same-file call expansion stopped by recursion/depth bound: '+fn)
+
+        if not matches:
+            self.gaps.add('helper call has unresolved overload/arity: '+fn)
+            if call_node is not None:
+                self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                            'helper overload/arity binding failed')
+            return True
+        if len(matches)>1:
+            self.gaps.add('same-file helper call has ambiguous definitions: '+fn)
+            if call_node is not None:
+                self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                            'same-file helper definition is ambiguous')
+            return True
+
+        callee_flow,definition,parameters,callee_name=matches[0]
+        if cross_file and self.resolver is not None:
+            self.resolver.partial_paths.update((self.u.path,callee_flow.u.path))
+        call_key=(callee_flow.u.path,callee_name)
+        findings_before=len(callee_flow.findings)
+        if call_key in self.call_stack or len(self.call_stack)>=3:
+            self.gaps.add('interprocedural call expansion stopped by recursion/depth bound: '+fn)
             if call_node is not None:
                 self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
                                             'recursion/depth limit stopped body analysis')
             return True
-        arg_flows=[self.expr(arg,env,types) for arg in args]
-        matching=[]
-        for definition in definitions:
-            d=definition.child_by_field_name('declarator')
-            fd=next((x for x in walk(d) if x.type=='function_declarator'),None) if d else None
-            params=fd.child_by_field_name('parameters') if fd else None
-            parameters=[p for p in params.named_children if p.type!='variadic_parameter'] if params else []
-            if len(parameters)==len(args):matching.append((definition,parameters))
-        if not matching:
-            self.gaps.add('same-file helper call has unresolved overload/arity: '+fn)
+
+        fd=definition.child_by_field_name('declarator')
+        body=definition.child_by_field_name('body')
+        if fd is None or body is None or body.has_error:
+            self.gaps.add('helper definition lacks a complete supported body: '+fn)
             if call_node is not None:
                 self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
-                                            'same-file overload/arity binding failed')
+                                            'helper body is incomplete')
             return True
-        if len(matching)>1:
-            self.gaps.add('same-file helper call has ambiguous definitions: '+fn)
-        returned=[]
-        outputs={}
-        for definition,parameters in matching:
-            d=definition.child_by_field_name('declarator')
-            fd=next((x for x in walk(d) if x.type=='function_declarator'),None) if d else None
-            body=definition.child_by_field_name('body')
-            if not fd or not body:
-                self.gaps.add('same-file helper definition lacks a supported body: '+fn)
-                if call_node is not None:
-                    self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
-                                                'same-file helper body is unsupported')
+
+        local_values={};local_types={};local_shadows=set();bound=[]
+        for index,param in enumerate(parameters):
+            ident=callee_flow.name(param.child_by_field_name('declarator'))
+            bound.append(ident)
+            if not ident:
                 continue
-            local_values={};local_types={};local_shadows=set();bound=[]
-            for index,param in enumerate(parameters):
-                ident=self.name(param.child_by_field_name('declarator'))
-                bound.append(ident)
-                if not ident:continue
-                local_shadows.add(ident)
-                local_values[ident]=self.addstep(arg_flows[index],
-                    f'{call_line} call {fn} argument {index}')
-                typ=self.text(param.child_by_field_name('type'))
-                if typ in self.fields:local_types[ident]=typ
-            self.call_stack.append(fn)
-            try:
-                self.gaps.add('bounded same-file helper expansion; cross-file and deeper call flows remain unknown')
-                result=self.block(body,LocalState(local_values,local_types,local_shadows),fn)
-            finally:
-                self.call_stack.pop()
-            returned.extend(flow for exit in result.exit_states
-                            if exit.kind=='return_statement' for flow in exit.returned)
-            states=([result.fallthrough_state] if result.fallthrough_state is not None else [])
-            states.extend(exit.state for exit in result.exit_states)
-            for index,(param,ident) in enumerate(zip(parameters,bound)):
-                if not ident or not re.search(r'[&*]',self.text(param)):
-                    continue
-                actual=self.lvalue(args[index],types)
-                if not actual:continue
-                writes=tuple(dict.fromkeys(flow for state in states
-                                           for flow in state.values.get(ident,())))
-                if writes:
-                    outputs.setdefault(actual,[]).extend(
-                        self.addstep(writes,f'{call_line} {fn} may write through argument {index}'))
+            local_shadows.add(ident)
+            local_values[ident]=callee_flow.addstep(
+                arg_flows[index],
+                f'{call_line} call {callee_name} argument {index}')
+            typ=callee_flow.text(param.child_by_field_name('type'))
+            if typ in callee_flow.fields:
+                local_types[ident]=typ
+
+        callee_flow.call_stack.append(call_key)
+        try:
+            summary_note = (
+                'bounded cross-file helper summary; overload, receiver, macro, include and build identity remain unknown'
+                if cross_file else
+                'bounded same-file helper expansion; compiler type identity remains unknown')
+            callee_flow.gaps.add(summary_note)
+            if cross_file:
+                callee_flow.external_gaps.add(summary_note)
+            result=callee_flow.block(
+                body,LocalState(local_values,local_types,local_shadows),callee_name)
+        finally:
+            callee_flow.call_stack.pop()
+
+        new_callee_findings=callee_flow.findings[findings_before:]
+        if callee_flow is not self:
+            self.findings.extend(new_callee_findings)
+            self.gaps.update(callee_flow.gaps)
+            self.external_gaps.update(callee_flow.external_gaps)
+
+        returned=tuple(flow for exit in result.exit_states
+                       if exit.kind=='return_statement' for flow in exit.returned)
+        states=([result.fallthrough_state] if result.fallthrough_state is not None else [])
+        states.extend(exit.state for exit in result.exit_states)
+        outputs={}
+        initial_values = {
+            ident: tuple(local_values.get(ident, ()))
+            for ident in bound if ident
+        }
+        for index,(param,ident) in enumerate(zip(parameters,bound)):
+            if not ident or not CrossFileResolver.writable_parameter(param,callee_flow):
+                continue
+            actual=self.lvalue(args[index],types)
+            if not actual:
+                continue
+            writes = tuple(dict.fromkeys(
+                flow for state in states
+                for flow in state.values.get(ident, ())))
+            if cross_file:
+                original = set(initial_values.get(ident, ()))
+                writes = tuple(flow for flow in writes if flow not in original)
+            if writes:
+                outputs.setdefault(actual,[]).extend(
+                    self.addstep(writes,
+                                 f'{call_line} {callee_name} may write through argument {index}'))
         for actual,flows in outputs.items():
-            env[actual]=tuple(dict.fromkeys(tuple(env.get(actual,()))+tuple(flows)))
+            self.store_value(env,actual,tuple(env.get(actual,()))+tuple(flows))
         call_flows=self.addstep(tuple(dict.fromkeys(returned)),
-                                f'{call_line} return from {fn}')
+                                f'{call_line} return from {callee_name}')
         if call_node is not None:
             self.call_results[call_node.id]=call_flows
+
+        # A body summary that neither reaches a modeled sink nor returns/writes
+        # tainted material is not a clean proof: preserve the escape candidate.
+        if (cross_file and not partial_binding and not new_callee_findings
+                and not returned and not outputs and call_node is not None):
+            self.emit_unresolved_escape(fn,args,env,types,call_node,fnname,
+                                        'bounded helper body did not establish a sink or a safe value summary')
+        return True
+
+    def unresolved_member_destination(self,node,types=None):
+        if node is None or node.type!='field_expression':
+            return False
+        base=node.child_by_field_name('argument')
+        operator=self.text(node.child_by_field_name('operator'))
+        field=self.text(node.child_by_field_name('field'))
+        if base is None or base.type!='identifier' or not field:
+            return True
+        if operator=='->':
+            return True
+        if operator=='.':
+            root=self.text(base)
+            type_name=(types or {}).get(root)
+            return (not type_name or type_name not in self.fields
+                    or type_name in self.type_conflicts)
         return True
 
     def lvalue(self,node,types=None):
@@ -445,11 +709,14 @@ class LocalFlow:
             base=node.child_by_field_name('argument')
             field=self.text(node.child_by_field_name('field'))
             operator=self.text(node.child_by_field_name('operator'))
-            if (operator=='.' and base is not None and base.type=='identifier'
-                    and types and types.get(self.text(base)) in self.fields
-                    and self.fields.get(types[self.text(base)])==field
-                    and types[self.text(base)] not in self.type_conflicts):
-                return self.text(base)+'.'+field
+            if (operator in ('.','->') and base is not None
+                    and base.type=='identifier' and field):
+                root=self.text(base)
+                if (operator=='.' and types and types.get(root) in self.fields
+                        and self.fields.get(types[root])!=field
+                        and types[root] not in self.type_conflicts):
+                    return ''
+                return root+'.'+field
             return ''
         if node.type in ('pointer_expression','unary_expression'):
             op=self.text(node.child_by_field_name('operator'))
@@ -493,6 +760,11 @@ class LocalFlow:
                 self.gaps.add('same-owner unqualified method call is ambiguous: '+fn)
         if fn in ('strlen','strnlen','strnlen_s','wcslen') and not locally_defined:
             return
+        if (fn in self.non_escaping_calls and not locally_defined
+                and fn not in self.shadows):
+            if any(self.expr(arg,env,types) for arg in args):
+                self.gaps.add('exact source model classifies '+fn+' as cleanup, not an exposure sink')
+            return
         if locally_defined and (fn in self.output_calls or fn in self.copy_calls):
             self.gaps.add('modeled source/transform name has a same-file definition; API identity unresolved: '+fn)
             return
@@ -502,7 +774,7 @@ class LocalFlow:
                 dst=self.lvalue(args[0],types)
                 if dst:
                     source=args[2] if len(args)>2 else args[-1]
-                    env[dst]=self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
+                    self.store_value(env,dst,self.addstep(self.expr(source,env,types),f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
                 else:
                     self.emit_unresolved_escape(fn,args,env,types,n,fnname,
                                                 'same-file copy-like callee may write sensitive input to an unresolved destination')
@@ -513,7 +785,7 @@ class LocalFlow:
                 dst=self.lvalue(args[0],types)
                 if dst:
                     flows=tuple(flow for arg in args[1:] for flow in self.expr(arg,env,types))
-                    env[dst]=self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}')
+                    self.store_value(env,dst,self.addstep(flows,f'{n.start_point[0]+1} unresolved {fn} may write {dst}'))
                 else:
                     self.emit_unresolved_escape(fn,args,env,types,n,fnname,
                                                 'same-file formatting callee may write sensitive input to an unresolved destination')
@@ -524,17 +796,30 @@ class LocalFlow:
                     child.type not in ('comment','empty_statement') for child in bodies[0].named_children):
                 self.gaps.add('same-file modeled sink resolves to a visible empty body: '+fn)
                 return
-            self.gaps.add('same-file modeled sink has unresolved implementation identity: '+fn)
+            self.gaps.add('same-file modeled sink name has a visible local definition; body is analyzed before sink modeling: '+fn)
         if locally_defined and self.expand_tainted_call(
                 callee,args,env,types,n.start_point[0]+1,n,fnname):
             return
+        # A cross-TU definition can shadow a modeled log macro/API or receive
+        # sensitive material. Resolve and inspect it before crediting the name.
+        if not locally_defined and self.resolver is not None:
+            tainted_args=any(self.expr(arg,env,types) for arg in args)
+            if tainted_args and self.expand_tainted_call(
+                    fn,args,env,types,n.start_point[0]+1,n,fnname):
+                return
         if fn in self.output_calls:
             index, arity = self.output_calls[fn]
             if len(args) != arity:
                 self.gaps.add('source API argument count unresolved');return
             if index<len(args):
                 dst=self.lvalue(args[index],types)
-                if dst:env[dst]=(self.source(fn+' output argument '+str(index),n),)
+                if dst:
+                    source=self.source(fn+' output argument '+str(index),n)
+                    self.store_value(env,dst,(source,))
+                    if self.unresolved_member_destination(args[index],types):
+                        self.emit_unresolved_flows(fn,n,fnname,(source,),
+                            'modeled sensitive source writes to a destination whose identity is unresolved',
+                            'destination_binding')
                 else:
                     self.gaps.add('complex source output destination')
                     source=self.source(fn+' output argument '+str(index),n)
@@ -547,7 +832,13 @@ class LocalFlow:
                 self.gaps.add('copy API argument count unresolved');return
             dst=self.lvalue(args[0],types)
             if dst:
-                env[dst]=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
+                flows=self.addstep(self.expr(args[2],env,types),f'{n.start_point[0]+1} {fn} -> {dst}')
+                self.store_value(env,dst,flows)
+                if self.unresolved_member_destination(args[0],types) and flows:
+                    self.gaps.add('pointer/member destination retained as a may-flow; object identity and aliasing remain unknown')
+                    self.emit_unresolved_flows(fn,n,fnname,flows,
+                        'sensitive bytes are copied to a destination whose identity is unresolved (member object binding is unknown)',
+                        'destination_binding')
             else:
                 self.gaps.add('member/pointer output copy unsupported')
                 flows=tuple(dict.fromkeys(flow for value in args
@@ -566,7 +857,13 @@ class LocalFlow:
                 vals=tuple(v for _,ids,_ in slots for i in ids for v in self.expr(operands[i],env,types))
                 dst=self.lvalue(args[0],types)
                 if dst:
-                    env[dst]=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
+                    flows=self.addstep(vals,f'{n.start_point[0]+1} {fn} -> {dst}')
+                    self.store_value(env,dst,flows)
+                    if self.unresolved_member_destination(args[0],types) and flows:
+                        self.gaps.add('pointer/member destination retained as a may-flow; object identity and aliasing remain unknown')
+                        self.emit_unresolved_flows(fn,n,fnname,flows,
+                            'sensitive formatted bytes use a destination whose identity is unresolved (member object binding is unknown)',
+                            'destination_binding')
                 elif vals:
                     self.gaps.add('member/pointer formatting destination identity unresolved')
                     flows=tuple(dict.fromkeys(flow for value in args
@@ -590,8 +887,14 @@ class LocalFlow:
             destination = self.lvalue(args[destination_index], types)
             flows = self.expr(args[source_index], env, types)
             if destination:
-                env[destination] = self.addstep(
+                written=self.addstep(
                     flows, f'{n.start_point[0]+1} {fn} -> {destination}')
+                self.store_value(env,destination,written)
+                if self.unresolved_member_destination(args[destination_index],types) and written:
+                    self.gaps.add('pointer/member destination retained as a may-flow; object identity and aliasing remain unknown')
+                    self.emit_unresolved_flows(fn,n,fnname,written,
+                        'sensitive bytes pass through a modeled encoder to a destination whose identity is unresolved (member object binding is unknown)',
+                        'destination_binding')
             elif flows:
                 self.gaps.add('modeled copy destination identity unresolved: '+fn)
                 self.emit_unresolved_flows(
@@ -718,7 +1021,8 @@ class LocalFlow:
             if destination:
                 op=self.text(node.child_by_field_name('operator'))
                 if op!='=':self.gaps.add('compound assignment semantics incomplete')
-                state.values[destination]=self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}')
+                self.store_value(state.values,destination,
+                    self.addstep(self.value(right,state),f'{node.start_point[0]+1} assign {destination}'))
             else:self.gaps.add('pointer/member assignment requires alias proof')
             return
         if node.type=='binary_expression' and self.text(node.child_by_field_name('operator')) in ('&&','||'):
@@ -859,7 +1163,7 @@ class LocalFlow:
     def run(self):
         if self.tree.root_node.has_error:self.gaps.add('detailed syntax partial')
         self.function_audits=[]
-        file_gaps=set(self.gaps);all_gaps=set(self.gaps)
+        file_gaps=set(self.gaps)|set(self.external_gaps);all_gaps=set(file_gaps)
         for fn in (n for n in walk(self.tree.root_node) if n.type=='function_definition'):
             self.gaps=set(file_gaps)
             body=fn.child_by_field_name('body');d=fn.child_by_field_name('declarator')
