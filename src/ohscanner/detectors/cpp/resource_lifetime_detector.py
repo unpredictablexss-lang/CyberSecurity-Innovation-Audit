@@ -29,7 +29,7 @@ RULE_USE_AFTER_FREE = "ohcpp-resource-lifetime-use-after-free-candidate-002"
 RULE_RECURSIVE_CLEANUP = "ohcpp-resource-lifetime-recursive-cleanup-candidate-003"
 RULE_RECURSIVE_TREE_AMPLIFICATION = "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
 RULE_RECURSIVE_COMPARE_COST = "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005"
-RULE_VERSION = "0.4.0"
+RULE_VERSION = "0.4.1"
 RULE_LINEAGE_ID = "A-RES-01:ohcpp-resource-lifetime-candidate"
 
 _ALLOC_RE = re.compile(
@@ -325,7 +325,20 @@ def _recursive_destructors(units: Sequence[SourceUnit]) -> Set[str]:
             child_recursion = bool(
                 re.search(rf"\b{re.escape(function.name)}\s*\([^;]*?(?:->|\.)\s*child\b", body)
             )
-            releases = bool(re.search(r"\b(?:free|[A-Za-z_]\w*(?:free|destroy|release|delete|dealloc))\s*\(|\bdelete\b", body, re.IGNORECASE))
+            # A recursive function named `*_delete` is not itself evidence of
+            # a release sink. Require a distinct free/release/deallocator call
+            # or the C++ delete operator. This still recognizes custom allocator
+            # members such as `global_hooks.deallocate(...)`.
+            release_calls = re.finditer(
+                r"\b(?P<callee>(?:[A-Za-z_]\w*(?:free|destroy|release|dealloc(?:ate)?)|"
+                r"free|destroy|release|dealloc(?:ate)?))\s*\(",
+                body,
+                re.IGNORECASE,
+            )
+            releases = any(
+                match.group("callee").casefold() != function.name.casefold()
+                for match in release_calls
+            ) or bool(re.search(r"\bdelete\b", body))
             if child_recursion and releases:
                 result.add(function.name)
     return result
