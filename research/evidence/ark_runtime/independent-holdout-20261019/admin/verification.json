@@ -1,0 +1,24 @@
+{
+  "schema": "ohscanner.c7-holdout.verification.v1",
+  "verified_at": "2026-10-19T09:58:42.5615623+08:00",
+  "status": "PASS_PREHUMAN_PREPARATION",
+  "required_files_present": true,
+  "json_parse": true,
+  "source_byte_identity": true,
+  "blank_double_labels": true,
+  "double_blind_random_ids": true,
+  "reviewer_prediction_or_answer_leakage": false,
+  "root_family_inclusion_exclusion": true,
+  "protocol_frozen": true,
+  "fail_closed_scoring_gate": true,
+  "precision": null,
+  "recall": null,
+  "model_self_label_used": false,
+  "human_labels_present": false,
+  "remaining_human_actions": [
+    "two independent labels",
+    "source-only adjudication",
+    "fresh independent target-rule sample collection",
+    "sealed prediction join after label freeze"
+  ]
+}

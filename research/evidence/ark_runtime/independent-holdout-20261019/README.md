@@ -1,0 +1,2 @@
+# C7-HOLDOUT
+Frozen double-blind preparation. All findings are **candidate/unassessed**. Reviewer packets contain source only: no detector predictions, expected answers, sampling-intent answers or model labels. Give each reviewer only their directory; keep admin and ledger sealed until both label files are frozen. C3's 16 controls share development origin and C4's nine-sample audit has no independent truth here, so Precision/Recall remain blocked. See `protocol.md` and `scoring_gate.md`.

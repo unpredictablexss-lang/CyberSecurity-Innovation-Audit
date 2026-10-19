@@ -1,0 +1,176 @@
+tests.detectors.ark_runtime.test_c3_mechanisms (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_catalog (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_detector_cases (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_exception_guard (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_ir_path (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_parser_owner (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_receiver_guard (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_runtime_exception (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_size_overflow (unittest.loader._FailedTest) ... ERROR
+tests.detectors.ark_runtime.test_type_origin (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_c3_mechanisms (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_c3_mechanisms
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_c3_mechanisms.py", line 4, in <module>
+    from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_catalog (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_catalog
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_catalog.py", line 4, in <module>
+    from src.ohscanner.detectors.catalog import (
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/catalog.py", line 11, in <module>
+    from .ark_runtime.detector import ArkRuntimeTypeSafetyDetector
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/detector.py", line 5, in <module>
+    from .analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_detector_cases (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_detector_cases
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_detector_cases.py", line 4, in <module>
+    from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_exception_guard (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_exception_guard
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_exception_guard.py", line 11, in <module>
+    from src.ohscanner.detectors.ark_runtime.detector import ArkRuntimeTypeSafetyDetector
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/detector.py", line 5, in <module>
+    from .analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_ir_path (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_ir_path
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_ir_path.py", line 2, in <module>
+    from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_parser_owner (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_parser_owner
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_parser_owner.py", line 8, in <module>
+    from src.ohscanner.detectors.ark_runtime.syntax import parse_functions, walk
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.syntax'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_receiver_guard (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_receiver_guard
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_receiver_guard.py", line 6, in <module>
+    from src.ohscanner.detectors.ark_runtime.receiver_guard import analyze_receiver_guard
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/receiver_guard.py", line 137
+    for node in wawӾ�����k�w��ivalent=(), invalidated=(), predicates=(), effects=(), escaped=()):
+                       ^
+SyntaxError: (unicode error) 'utf-8' codec can't decode byte 0xfc in position 5: invalid start byte
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_runtime_exception (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_runtime_exception
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_runtime_exception.py", line 4, in <module>
+    from src.ohscanner.detectors.ark_runtime.runtime_exception import (
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_exception'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_size_overflow (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_size_overflow
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_size_overflow.py", line 3, in <module>
+    from src.ohscanner.detectors.ark_runtime.size_overflow import analyze_size_overflow
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.size_overflow'
+
+
+======================================================================
+ERROR: tests.detectors.ark_runtime.test_type_origin (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: tests.detectors.ark_runtime.test_type_origin
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/usr/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/ark_runtime/test_type_origin.py", line 2, in <module>
+    from src.ohscanner.detectors.ark_runtime.analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.001s
+
+FAILED (errors=10)

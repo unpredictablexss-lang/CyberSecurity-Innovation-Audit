@@ -1,0 +1,34 @@
+test_arrow_allocation_inside_cycle_is_not_a_fresh_identity (__main__.C3MechanismTests.test_arrow_allocation_inside_cycle_is_not_a_fresh_identity) ... ok
+test_budget_after_multiple_paths_discards_truncated_candidates (__main__.C3MechanismTests.test_budget_after_multiple_paths_discards_truncated_candidates) ... ok
+test_compound_assignment_is_not_token_copy (__main__.C3MechanismTests.test_compound_assignment_is_not_token_copy) ... ok
+test_copywithin_reviewed_reads_preserve_same_object_type (__main__.C3MechanismTests.test_copywithin_reviewed_reads_preserve_same_object_type) ... ok
+test_deleted_special_member_has_no_body_and_cannot_crash_parser (__main__.C3MechanismTests.test_deleted_special_member_has_no_body_and_cannot_crash_parser) ... ok
+test_fresh_read_does_not_revalidate_an_old_copy (__main__.C3MechanismTests.test_fresh_read_does_not_revalidate_an_old_copy) ... ok
+test_global_creator_type_homonym_is_not_a_reviewed_builder (__main__.C3MechanismTests.test_global_creator_type_homonym_is_not_a_reviewed_builder) ... ok
+test_host_builder_write_does_not_mutate_runtime_type (__main__.C3MechanismTests.test_host_builder_write_does_not_mutate_runtime_type) ... ok
+test_host_gate_ref_rebinding_is_not_a_runtime_phi (__main__.C3MechanismTests.test_host_gate_ref_rebinding_is_not_a_runtime_phi) ... ok
+test_host_return_cannot_emit_future_label (__main__.C3MechanismTests.test_host_return_cannot_emit_future_label) ... ok
+test_later_function_budget_retains_only_completed_function_evidence (__main__.C3MechanismTests.test_later_function_budget_retains_only_completed_function_evidence) ... ok
+test_mechanism_matrix (__main__.C3MechanismTests.test_mechanism_matrix) ... ok
+test_multiple_supported_functions_keep_independent_states (__main__.C3MechanismTests.test_multiple_supported_functions_keep_independent_states) ... ok
+test_other_reviewed_owner_function_uses_actual_symbol (__main__.C3MechanismTests.test_other_reviewed_owner_function_uses_actual_symbol) ... ok
+test_readonly_summary_requires_exact_builder_receiver (__main__.C3MechanismTests.test_readonly_summary_requires_exact_builder_receiver) ... ok
+test_same_type_creator_and_exact_buffer_copy_preserve_origin (__main__.C3MechanismTests.test_same_type_creator_and_exact_buffer_copy_preserve_origin) ... ok
+test_same_type_creator_requires_token_from_its_exact_exemplar (__main__.C3MechanismTests.test_same_type_creator_requires_token_from_its_exact_exemplar) ... ok
+test_shadowed_equality_macro_is_not_admitted (__main__.C3MechanismTests.test_shadowed_equality_macro_is_not_admitted) ... ok
+test_species_creation_invalidates_current_type_but_not_token_origin (__main__.C3MechanismTests.test_species_creation_invalidates_current_type_but_not_token_origin) ... ok
+test_two_stale_snapshots_cannot_prove_current_destination_type (__main__.C3MechanismTests.test_two_stale_snapshots_cannot_prove_current_destination_type) ... ok
+test_unknown_build_profile_does_not_silently_drop_assertions (__main__.C3MechanismTests.test_unknown_build_profile_does_not_silently_drop_assertions) ... ok
+test_unknown_loop_never_upgrades_file_coverage (__main__.C3MechanismTests.test_unknown_loop_never_upgrades_file_coverage) ... ok
+test_unknown_reference_parameter_cannot_reuse_pre_call_alias (__main__.C3MechanismTests.test_unknown_reference_parameter_cannot_reuse_pre_call_alias) ... ok
+test_unknown_runtime_call_still_invalidates_same_type_relation (__main__.C3MechanismTests.test_unknown_runtime_call_still_invalidates_same_type_relation) ... ok
+test_unmodelled_cpp_expression_writes_cannot_leave_type_facts_live (__main__.C3MechanismTests.test_unmodelled_cpp_expression_writes_cannot_leave_type_facts_live) ... ok
+test_unmodelled_generated_return_does_not_fall_through (__main__.C3MechanismTests.test_unmodelled_generated_return_does_not_fall_through) ... ok
+test_unreviewed_constructor_in_detached_block_still_blocks_host_proof (__main__.C3MechanismTests.test_unreviewed_constructor_in_detached_block_still_blocks_host_proof) ... ok
+test_verified_by_value_call_does_not_refresh_old_token (__main__.C3MechanismTests.test_verified_by_value_call_does_not_refresh_old_token) ... ok
+test_visible_type_helper_definition_requires_review (__main__.C3MechanismTests.test_visible_type_helper_definition_requires_review) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.206s
+
+OK

@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c3_20261017\replay.py", line 226, in <module>
+    result = run(args.repo_dir, args.output)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c3_20261017\replay.py", line 92, in run
+    context, tree, _, _, _ = prepare_git_context(Path(repo), 'openharmony/arkcompiler_ets_runtime', commit, (TARGET,))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\indexing.py", line 42, in prepare_git_context
+    pinned, tree, sources, inventory = load_git_sources(repo_dir, commit, includes)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 184, in load_git_sources
+    raise ValueError("missing_local_git_object: blob unavailable locally "
+ValueError: missing_local_git_object: blob unavailable locally 054451b1be4f39254d56a1683cc9d1c1b5e55018 (ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp); offline-only read (no fetch)

@@ -1,0 +1,28 @@
+test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner (__main__.ParserOwnerTests.test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner) ... ERROR
+test_complete_namespace_and_class_method_have_distinct_structural_owners (__main__.ParserOwnerTests.test_complete_namespace_and_class_method_have_distinct_structural_owners) ... ok
+test_custom_ir_else_error_recovers_owner_for_following_definition (__main__.ParserOwnerTests.test_custom_ir_else_error_recovers_owner_for_following_definition) ... ok
+test_missing_macro_and_type_declarations_remain_unknown_on_partial_file (__main__.ParserOwnerTests.test_missing_macro_and_type_declarations_remain_unknown_on_partial_file) ... ok
+test_nested_namespaces_and_same_named_methods_keep_distinct_owners (__main__.ParserOwnerTests.test_nested_namespaces_and_same_named_methods_keep_distinct_owners) ... ok
+test_owner_and_signature_controls_do_not_collapse_to_name_only (__main__.ParserOwnerTests.test_owner_and_signature_controls_do_not_collapse_to_name_only) ... ok
+test_partial_tree_recovers_owner_but_keeps_dependencies_unknown (__main__.ParserOwnerTests.test_partial_tree_recovers_owner_but_keeps_dependencies_unknown) ... ok
+test_truncated_namespace_disables_lexical_owner_recovery (__main__.ParserOwnerTests.test_truncated_namespace_disables_lexical_owner_recovery) ... ok
+
+======================================================================
+ERROR: test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner (__main__.ParserOwnerTests.test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_parser_owner.py", line 190, in test_bound_typedarray_target_stays_partial_but_recovers_lexical_owner
+    source = (repo / relative).read_bytes()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'E:\\����\\_oh_targets\\arkcompiler_ets_runtime\\ecmascript\\compiler\\builtins\\builtins_typedarray_stub_builder.cpp'
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.013s
+
+FAILED (errors=1)

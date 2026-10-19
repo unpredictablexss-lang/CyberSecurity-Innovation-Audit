@@ -1,0 +1,17 @@
+test_aggregate_limited_does_not_discard_valid_local_candidate (__main__.ContractAdapterTests.test_aggregate_limited_does_not_discard_valid_local_candidate) ... ok
+test_catalog_allows_explicit_selection_but_keeps_c_out_of_defaults (__main__.ContractAdapterTests.test_catalog_allows_explicit_selection_but_keeps_c_out_of_defaults) ... ok
+test_complete_fixture_produces_source_bound_v2_candidate (__main__.ContractAdapterTests.test_complete_fixture_produces_source_bound_v2_candidate) ... ok
+test_direct_adapter_rejects_mixed_source_context (__main__.ContractAdapterTests.test_direct_adapter_rejects_mixed_source_context) ... ok
+test_exactly_bound_partial_fixture_preserves_candidate_and_unknown_scope (__main__.ContractAdapterTests.test_exactly_bound_partial_fixture_preserves_candidate_and_unknown_scope) ... ok
+test_missing_facts_are_not_bypassed_in_direct_adapter (__main__.ContractAdapterTests.test_missing_facts_are_not_bypassed_in_direct_adapter) ... ok
+test_mixed_scope_retains_valid_complete_file_candidate (__main__.ContractAdapterTests.test_mixed_scope_retains_valid_complete_file_candidate) ... ok
+test_model_digest_binds_repository_revision_and_target_blob (__main__.ContractAdapterTests.test_model_digest_binds_repository_revision_and_target_blob) ... ok
+test_same_inputs_produce_stable_ids (__main__.ContractAdapterTests.test_same_inputs_produce_stable_ids) ... ok
+test_source_content_hash_tamper_is_rejected (__main__.ContractAdapterTests.test_source_content_hash_tamper_is_rejected) ... ok
+test_target_blob_mismatch_is_rejected_before_partial_analysis (__main__.ContractAdapterTests.test_target_blob_mismatch_is_rejected_before_partial_analysis) ... ok
+test_visible_incompatible_store_signature_is_unknown (__main__.ContractAdapterTests.test_visible_incompatible_store_signature_is_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.020s
+
+OK

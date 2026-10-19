@@ -1,0 +1,604 @@
+{
+  "base": {
+    "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c"
+  },
+  "criteria": [
+    {
+      "id": "rule_version_and_scope",
+      "observed": "0.3.2 including ark.runtime.typedarray-store-type-origin",
+      "required": "0.7.0 including ark.runtime.typedarray-store-type-origin, ark.runtime.typedarray-allocation-exception-guard",
+      "status": "gap"
+    },
+    {
+      "id": "implementation_hash_self_consistency",
+      "observed": {
+        "research/full_scan_20261018/lanes/c/analysis.py": {
+          "actual": "5e1b818981930d34c0f686172b0f2bbf71fa13ae6f4c7819d9cc3bd34c030f80",
+          "expected": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee",
+          "status": "mismatch"
+        },
+        "research/full_scan_20261018/lanes/c/detector.py": {
+          "actual": "5dd3dfd92c57abe999cf6ce4828f6ce8c40843ef18a718822ce167432aee7d32",
+          "expected": "0421c00c414f71872c851477406f29de7e846c80fe811314c0078f20bdca37b2",
+          "status": "mismatch"
+        },
+        "research/full_scan_20261018/lanes/c/model.py": {
+          "actual": "e37e42d282426243d4f66b3a0c6c3f9f393c9f1629c755e2b26b6a253c86768d",
+          "expected": "c19f9f3744faf059c546a1d4ff01d47ee5e6885fa21e27fbce2e21b0504d1b60",
+          "status": "mismatch"
+        },
+        "research/full_scan_20261018/lanes/c/runtime_ir.py": {
+          "actual": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+          "expected": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+          "status": "match"
+        },
+        "research/full_scan_20261018/lanes/c/syntax.py": {
+          "actual": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+          "expected": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+          "status": "match"
+        },
+        "research/full_scan_20261018/lanes/c/type_origin.py": {
+          "actual": "3ba6af5739953f8a74634df8b2e350542adff9e00db6a7e4e27e353a06aede3a",
+          "expected": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795",
+          "status": "mismatch"
+        }
+      },
+      "required": "all frozen implementation SHA-256 values match the pinned implementation paths",
+      "status": "gap"
+    },
+    {
+      "id": "freeze_manifest_digest_binding",
+      "observed": {
+        "freeze_manifest_file_sha256": "852d403e158816ee2a9f29ac00e925f53c3d33064f929dd56ec4259c5d205cae",
+        "packet_referenced_hashes": [
+          "0b8b08a443e3578136c9f4610b3b83474d5cb39a4d0dee7f9360ce0147ad8291"
+        ]
+      },
+      "required": "packet freeze_manifest_sha256 resolves unambiguously to the pinned freeze manifest",
+      "status": "gap"
+    },
+    {
+      "id": "current_0_7_0_source_binding",
+      "observed": {
+        "current_model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+        "current_source_sha256": {
+          "src/ohscanner/detectors/ark_runtime/__init__.py": "68c6fe492bf9c9c60e8be85cf5f2b058774625e3b75ca3ba3d95de31ef27840a",
+          "src/ohscanner/detectors/ark_runtime/analysis.py": "8b8ec3b2f0a6d3c27c0bb3024c0616757d3bb6625a8615ee0e59ed2183a2e1ec",
+          "src/ohscanner/detectors/ark_runtime/detector.py": "98839f70ed2b04017dab13eb9977617ff0cf4a1ee3267966c3cd152ee2ac4b92",
+          "src/ohscanner/detectors/ark_runtime/exception_guard.py": "5bbbb4b043a8de7b331fdca66ab27fd297b5683a95bf11a1d82dbf12188a1a73",
+          "src/ohscanner/detectors/ark_runtime/model.py": "8d85e8fca11d6bf20cd890a49b00a750bcb885289e6285a8e2188fc6c1f46052",
+          "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "865457254732a9f1a5a00b82d604f07c046f103cc2939e79c73ba3b1c54a5373",
+          "src/ohscanner/detectors/ark_runtime/syntax.py": "3de88d5819149d216201c23b534f94078b5890b545623efa7f70970fd589ba42",
+          "src/ohscanner/detectors/ark_runtime/type_origin.py": "2c01a7fda8abe22533165ed6f3f7a28621e773da9d472d7b30679fd63a52ce05"
+        },
+        "remote_ref_contains_current_ark_source": false
+      },
+      "required": "rule freeze binds the 0.7.0 src/ohscanner/detectors/ark_runtime files in this base",
+      "status": "gap"
+    },
+    {
+      "id": "profile_and_resource_limits",
+      "observed": {
+        "expected_limits": {
+          "max_instructions": 4096,
+          "max_scope_depth": 128,
+          "max_seconds": 5.0,
+          "max_source_bytes": 1048576,
+          "max_states": 2048,
+          "max_steps": 8192
+        },
+        "expected_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+        "freeze_keys": [
+          "bound_model_source_count_per_profile",
+          "detector",
+          "detector_version",
+          "freeze_scope",
+          "implementation_sha256",
+          "limitations",
+          "model_sha256",
+          "rule_id",
+          "schema",
+          "source_profiles",
+          "verification"
+        ]
+      },
+      "required": "build profile and AnalysisBudget limits are frozen explicitly",
+      "status": "gap"
+    },
+    {
+      "id": "blind_packets_and_blank_labels",
+      "observed": [
+        {
+          "base": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4",
+          "blank_label_cells": true,
+          "leaked_keys": []
+        },
+        {
+          "base": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67",
+          "blank_label_cells": true,
+          "leaked_keys": []
+        }
+      ],
+      "required": "visible packets contain no predictions/truth and reviewer label cells start blank",
+      "status": "pass"
+    },
+    {
+      "id": "independent_truth",
+      "observed": "runtime-core explicitly not independent; frontend is applicability-only; all label cells blank",
+      "required": "independent reliable labels completed for a true holdout",
+      "status": "gap"
+    },
+    {
+      "id": "reviewer_timing_and_adjudication_schema",
+      "observed": [
+        {
+          "adjudication_fields_present": false,
+          "columns": [
+            "applicability",
+            "evidence_label",
+            "root_cause",
+            "unknown_reason",
+            "source_lines",
+            "reviewer_notes"
+          ],
+          "confidence_column_present": false,
+          "missing_required_fields": [
+            "active_seconds",
+            "adjudication_status",
+            "confidence",
+            "disagreement_type",
+            "paused_seconds",
+            "reviewed_at",
+            "reviewer_id"
+          ],
+          "reviewer_identity_column_present": false,
+          "timing_columns_present": []
+        },
+        {
+          "adjudication_fields_present": false,
+          "columns": [
+            "model_scope",
+            "evidence_label",
+            "root_cause",
+            "unknown_reason",
+            "evidence_lines",
+            "reviewer_notes"
+          ],
+          "confidence_column_present": false,
+          "missing_required_fields": [
+            "active_seconds",
+            "adjudication_status",
+            "confidence",
+            "disagreement_type",
+            "paused_seconds",
+            "reviewed_at",
+            "reviewer_id"
+          ],
+          "reviewer_identity_column_present": false,
+          "timing_columns_present": []
+        }
+      ],
+      "required": "reviewer identity/confidence, active/paused timing, disagreement and adjudication fields",
+      "status": "gap"
+    },
+    {
+      "id": "metrics_disabled",
+      "observed": {
+        "eligible_for_metrics": false,
+        "fn": null,
+        "fp": null,
+        "precision": null,
+        "recall": null,
+        "tn": null,
+        "tp": null
+      },
+      "required": "no Precision/Recall/TP/FP/FN/TN before reliable independent truth",
+      "status": "pass"
+    },
+    {
+      "id": "coverage_performance_fields",
+      "observed": {
+        "coverage_ledger_keys": [
+          "cases",
+          "lane",
+          "schema_version",
+          "status_dimensions",
+          "updated_at"
+        ],
+        "coverage_ledger_lane": "A_CPP",
+        "performance_fields_present": []
+      },
+      "required": "coverage/partial/unknown plus wall/RSS/Token/cost fields",
+      "status": "gap"
+    }
+  ],
+  "date": "2026-10-19",
+  "expected_rule_freeze": {
+    "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+    "implementation_sha256": {
+      "src/ohscanner/detectors/ark_runtime/__init__.py": "68c6fe492bf9c9c60e8be85cf5f2b058774625e3b75ca3ba3d95de31ef27840a",
+      "src/ohscanner/detectors/ark_runtime/analysis.py": "8b8ec3b2f0a6d3c27c0bb3024c0616757d3bb6625a8615ee0e59ed2183a2e1ec",
+      "src/ohscanner/detectors/ark_runtime/detector.py": "98839f70ed2b04017dab13eb9977617ff0cf4a1ee3267966c3cd152ee2ac4b92",
+      "src/ohscanner/detectors/ark_runtime/exception_guard.py": "5bbbb4b043a8de7b331fdca66ab27fd297b5683a95bf11a1d82dbf12188a1a73",
+      "src/ohscanner/detectors/ark_runtime/model.py": "8d85e8fca11d6bf20cd890a49b00a750bcb885289e6285a8e2188fc6c1f46052",
+      "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "865457254732a9f1a5a00b82d604f07c046f103cc2939e79c73ba3b1c54a5373",
+      "src/ohscanner/detectors/ark_runtime/syntax.py": "3de88d5819149d216201c23b534f94078b5890b545623efa7f70970fd589ba42",
+      "src/ohscanner/detectors/ark_runtime/type_origin.py": "2c01a7fda8abe22533165ed6f3f7a28621e773da9d472d7b30679fd63a52ce05"
+    },
+    "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+    "path": "research/methods/ark_runtime/rule_freeze_0.7.0/expected_rule_freeze_0.7.0.json",
+    "resource_limits": {
+      "max_instructions": 4096,
+      "max_scope_depth": 128,
+      "max_seconds": 5.0,
+      "max_source_bytes": 1048576,
+      "max_states": 2048,
+      "max_steps": 8192
+    },
+    "rule_ids": [
+      "ark.runtime.typedarray-store-type-origin",
+      "ark.runtime.typedarray-allocation-exception-guard"
+    ],
+    "rule_version": "0.7.0"
+  },
+  "limitations": [
+    "This is a pinned-artifact audit only; no remote file was overwritten.",
+    "Runtime-core was inspected before freeze and is not an independent holdout.",
+    "ETS Frontend is an applicability/false-match frame, not a reliable semantic recall truth set.",
+    "Blank labels, partial parse and missing Git objects remain unknown/partial rather than safe or miss."
+  ],
+  "metrics_gate": {
+    "eligible_for_metrics": false,
+    "precision": null,
+    "product_cia_cve_or_confirmed_claim_allowed": false,
+    "recall": null,
+    "validated_vulnerability": 0,
+    "zero_fp_fn_claim_allowed": false
+  },
+  "missing_items": [
+    {
+      "acceptance": "rule version 0.7.0, both rule IDs, current source SHA-256 values, model digest, build profile and AnalysisBudget limits are bound.",
+      "id": "M01",
+      "item": "Publish a non-overwriting 0.7.0 rule-freeze manifest for both Ark rules and the current eight source files.",
+      "priority": 1
+    },
+    {
+      "acceptance": "each packet reference hashes the exact pinned freeze manifest bytes or documents and reproduces a canonicalization algorithm.",
+      "id": "M02",
+      "item": "Resolve the freeze_manifest_sha256 mismatch/unexplained digest convention.",
+      "priority": 1
+    },
+    {
+      "acceptance": "all implementation_sha256 entries match their pinned path bytes at the reviewed ref, or a separate immutable implementation snapshot is added.",
+      "id": "M03",
+      "item": "Repair frozen implementation self-consistency without rewriting historical packets.",
+      "priority": 1
+    },
+    {
+      "acceptance": "at least two independent reviewers label every eligible case; the author/developer is not the truth authority.",
+      "id": "M04",
+      "item": "Obtain independent reviewer labels for a true unseen holdout.",
+      "priority": 1
+    },
+    {
+      "acceptance": "reviewer_id, reviewed_at, confidence, active_seconds, paused_seconds, unknown_reason and evidence are complete.",
+      "id": "M05",
+      "item": "Add a separate reviewer metadata/timing extension rather than editing pinned CSVs.",
+      "priority": 2
+    },
+    {
+      "acceptance": "all disagreements are retained, adjudicator identity/basis is recorded, and unresolved cases stay unknown.",
+      "id": "M06",
+      "item": "Add disagreement and adjudication ledger.",
+      "priority": 2
+    },
+    {
+      "acceptance": "coverage/partial/unknown, wall, RSS, Token and cost fields are present with unknown explicitly stated when not measured.",
+      "id": "M07",
+      "item": "Record exact replay argv/env and performance for the frozen 0.7.0 packet run.",
+      "priority": 2
+    },
+    {
+      "acceptance": "no missing object is converted to safe/miss; unavailable objects remain unknown/blocked.",
+      "id": "M08",
+      "item": "Acquire missing upstream commit/tree/creator objects in a local pinned store or keep source replay blocked.",
+      "priority": 3
+    }
+  ],
+  "packets": [
+    {
+      "algorithm_freeze": {
+        "counts_as_independent_holdout": false,
+        "detector_version": "0.3.2",
+        "developer_inspected_source_before_freeze": true,
+        "freeze_manifest_sha256": "0b8b08a443e3578136c9f4610b3b83474d5cb39a4d0dee7f9360ce0147ad8291",
+        "model_sha256": "6f26027b58baed730d5b8287c77f4c5f763873ab5f78416c8484f6a712f212df",
+        "sample_regenerated_after_freeze": true
+      },
+      "algorithm_freeze_reference": {
+        "counts_as_independent_holdout": false,
+        "detector_version": "0.3.2",
+        "developer_inspected_source_before_freeze": true,
+        "freeze_manifest_sha256": "0b8b08a443e3578136c9f4610b3b83474d5cb39a4d0dee7f9360ce0147ad8291",
+        "model_sha256": "6f26027b58baed730d5b8287c77f4c5f763873ab5f78416c8484f6a712f212df",
+        "sample_regenerated_after_freeze": true
+      },
+      "artifacts": [
+        {
+          "bytes": 10863,
+          "git_blob": "253e39b4e74344cb5ff46699f0b3d4d7913987c5",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4/blind_manifest.json",
+          "sha256": "1a7c56a9d5f354391e4fcf400e53f1275732ee3ab043ded1d57b0bbd3a684557"
+        },
+        {
+          "bytes": 16197,
+          "git_blob": "bf567a203d3513937af611bd1431d1356d8b222c",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4/blind_packet.md",
+          "sha256": "0266825076e2a47dda4fec4a6ed523cb81278683a9551b84810e818e23563368"
+        },
+        {
+          "bytes": 334,
+          "git_blob": "d0d22176921c01e2d8f27257250717071c35a02b",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4/reviewer_labels.csv",
+          "sha256": "33d06619d2e005a2fef112d2ebabf3ae4025c6edaae028a1f881678832e5d7de"
+        },
+        {
+          "bytes": 7043,
+          "git_blob": "19ad65b1a6d80ff7ea6c9388dec862d677c7429e",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4/prepare_blind_review.py",
+          "sha256": "40ebb90a96a6a1a015a3a7d8618e8a39909add19729ae7b601a7b13c860fec01"
+        }
+      ],
+      "base": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4",
+      "blindness": {
+        "blank_label_cells": true,
+        "detector_prediction_or_truth_keys_in_visible_records": [],
+        "nonempty_label_cells": 0,
+        "packet_file_sha256": "0266825076e2a47dda4fec4a6ed523cb81278683a9551b84810e818e23563368"
+      },
+      "label_template": {
+        "adjudication_fields_present": false,
+        "columns": [
+          "applicability",
+          "evidence_label",
+          "root_cause",
+          "unknown_reason",
+          "source_lines",
+          "reviewer_notes"
+        ],
+        "confidence_column_present": false,
+        "missing_required_fields": [
+          "active_seconds",
+          "adjudication_status",
+          "confidence",
+          "disagreement_type",
+          "paused_seconds",
+          "reviewed_at",
+          "reviewer_id"
+        ],
+        "reviewer_identity_column_present": false,
+        "timing_columns_present": []
+      },
+      "metrics_gate": {
+        "eligible_for_metrics": false,
+        "fn": null,
+        "fp": null,
+        "precision": null,
+        "reason": "No independent completed truth labels; packet strata are not a reliable labelled truth set.",
+        "recall": null,
+        "tn": null,
+        "tp": null
+      },
+      "sample_count_manifest": 20,
+      "sample_count_selection_additional": 0,
+      "sample_id_count": 20,
+      "sample_ids_match_manifest_samples": true,
+      "sample_ids_unique": true,
+      "schema": "c-line-cross-component-review-frame-v1",
+      "source_binding": {
+        "commit": "a053abc44c608b11d9f9dd10bd681dc222b9d4a9",
+        "git_object_status": {
+          "commit": "missing",
+          "tree": "missing"
+        },
+        "path": "static_core/plugins/ets/runtime/intrinsics/escompat_TypedArrays.cpp",
+        "repository": "openharmony/arkcompiler_runtime_core",
+        "sha256": "b656c5c83dceff1e804dbd295916e49d54b58ad0dd824ed2549f98a1e9fa81c4",
+        "tree": "96c955e45cae52cd03fe9b5c33407ef119047aef"
+      }
+    },
+    {
+      "algorithm_freeze": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+      "algorithm_freeze_reference": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+      "artifacts": [
+        {
+          "bytes": 8315,
+          "git_blob": "fc3b5bcbfc9656b6268e0638057921b24b242017",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/blind_manifest.json",
+          "sha256": "9d25e31c86e5ff50bbf07fca4de2b054f339f97881ecf163326c36aa9c83399e"
+        },
+        {
+          "bytes": 18894,
+          "git_blob": "7c7eeac2e5dba7c235410b2723b8908f6eab4041",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/blind_packet.md",
+          "sha256": "31e977d11291ea12cc2d03e8b43c884e0df05b645ea85d53cce394f8e4f71d9d"
+        },
+        {
+          "bytes": 324,
+          "git_blob": "4f425371ce3946310abc287aaa48a8738d0ee939",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/reviewer_labels.csv",
+          "sha256": "30d030ec602ccd3af13bce48ebcdcd5fe73a7b1ea60df68ae4c4eb794df108a2"
+        },
+        {
+          "bytes": 5866,
+          "git_blob": "87974852f05c491d4cdc9088cf40f29d273673c8",
+          "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/prepare_blind_review.py",
+          "sha256": "be65a8d602b7931967416603ccf23ed9b2f135d8f530421f1cd1c8fc09d9d38e"
+        }
+      ],
+      "base": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67",
+      "blindness": {
+        "blank_label_cells": true,
+        "detector_prediction_or_truth_keys_in_visible_records": [],
+        "nonempty_label_cells": 0,
+        "packet_file_sha256": "31e977d11291ea12cc2d03e8b43c884e0df05b645ea85d53cce394f8e4f71d9d"
+      },
+      "label_template": {
+        "adjudication_fields_present": false,
+        "columns": [
+          "model_scope",
+          "evidence_label",
+          "root_cause",
+          "unknown_reason",
+          "evidence_lines",
+          "reviewer_notes"
+        ],
+        "confidence_column_present": false,
+        "missing_required_fields": [
+          "active_seconds",
+          "adjudication_status",
+          "confidence",
+          "disagreement_type",
+          "paused_seconds",
+          "reviewed_at",
+          "reviewer_id"
+        ],
+        "reviewer_identity_column_present": false,
+        "timing_columns_present": []
+      },
+      "metrics_gate": {
+        "eligible_for_metrics": false,
+        "fn": null,
+        "fp": null,
+        "precision": null,
+        "reason": "No independent completed truth labels; packet strata are not a reliable labelled truth set.",
+        "recall": null,
+        "tn": null,
+        "tp": null
+      },
+      "sample_count_manifest": 0,
+      "sample_count_selection_additional": 20,
+      "sample_id_count": 21,
+      "sample_ids_match_manifest_samples": false,
+      "sample_ids_unique": true,
+      "schema": "c-line-same-name-holdout-v2",
+      "source_binding": {
+        "blob_oid": "39bec9bd9abd6e5d570bbbce21e34afba6c5f916",
+        "commit": "fadba67b0bdf625d30d69e0940e26c52992669df",
+        "git_object_status": {
+          "blob_oid": "available",
+          "commit": "missing",
+          "tree": "missing"
+        },
+        "path": "ets2panda/lsp/src/symbol_reference_index.cpp",
+        "repository": "openharmony/arkcompiler_ets_frontend",
+        "sha256": "b9809fd39fe3f3b058e19008f51968b3d6f5ba56a0ed3203d4f08e7104f36847",
+        "tree": "cae995ac693e849ac9d71bb38ec961da58aaeadb"
+      }
+    }
+  ],
+  "remote_freeze_observed": {
+    "detector_version": "0.3.2",
+    "freeze_manifest_file_sha256": "852d403e158816ee2a9f29ac00e925f53c3d33064f929dd56ec4259c5d205cae",
+    "implementation_checks": {
+      "research/full_scan_20261018/lanes/c/analysis.py": {
+        "actual": "5e1b818981930d34c0f686172b0f2bbf71fa13ae6f4c7819d9cc3bd34c030f80",
+        "expected": "6be789fcf9ef96b6bd8726c72d38c1294a5665085905c63defef88bddcdd38ee",
+        "status": "mismatch"
+      },
+      "research/full_scan_20261018/lanes/c/detector.py": {
+        "actual": "5dd3dfd92c57abe999cf6ce4828f6ce8c40843ef18a718822ce167432aee7d32",
+        "expected": "0421c00c414f71872c851477406f29de7e846c80fe811314c0078f20bdca37b2",
+        "status": "mismatch"
+      },
+      "research/full_scan_20261018/lanes/c/model.py": {
+        "actual": "e37e42d282426243d4f66b3a0c6c3f9f393c9f1629c755e2b26b6a253c86768d",
+        "expected": "c19f9f3744faf059c546a1d4ff01d47ee5e6885fa21e27fbce2e21b0504d1b60",
+        "status": "mismatch"
+      },
+      "research/full_scan_20261018/lanes/c/runtime_ir.py": {
+        "actual": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+        "expected": "f3c2c85f086e223cb5897150f7d1e6890bf568599a287c1a6fe6e5411c2a39ca",
+        "status": "match"
+      },
+      "research/full_scan_20261018/lanes/c/syntax.py": {
+        "actual": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+        "expected": "efcd76fc5312acf0021ecce701f9506ece1db781f7ba51e6c702b75125e6e5c4",
+        "status": "match"
+      },
+      "research/full_scan_20261018/lanes/c/type_origin.py": {
+        "actual": "3ba6af5739953f8a74634df8b2e350542adff9e00db6a7e4e27e353a06aede3a",
+        "expected": "e4bd9eb47c508fb0cdfa482e5eaf6133d99c643f505d0455c61f01fa9356b795",
+        "status": "mismatch"
+      }
+    },
+    "model_sha256": "6f26027b58baed730d5b8287c77f4c5f763873ab5f78416c8484f6a712f212df",
+    "packet_referenced_freeze_hashes": [
+      "0b8b08a443e3578136c9f4610b3b83474d5cb39a4d0dee7f9360ce0147ad8291"
+    ],
+    "rule_id": "ark.runtime.typedarray-store-type-origin",
+    "source_profile_object_status": [
+      {
+        "objects": {
+          "commit": "missing",
+          "creator_blob": "missing",
+          "target_blob": "available",
+          "tree": "missing"
+        },
+        "repository": "openharmony/arkcompiler_ets_runtime"
+      },
+      {
+        "objects": {
+          "commit": "missing",
+          "creator_blob": "missing",
+          "target_blob": "available",
+          "tree": "missing"
+        },
+        "repository": "openharmony/arkcompiler_ets_runtime"
+      }
+    ],
+    "source_profiles": [
+      {
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "target_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4"
+      },
+      {
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "target_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165"
+      }
+    ]
+  },
+  "reviewed_artifacts": [
+    {
+      "bytes": 2760,
+      "git_blob": "c2f3b5a582fb2ad23c1fd8af36049eec1b534535",
+      "path": "research/deliveries/cpp/ark-runtime-c-line-algorithm-freeze-20261018.json",
+      "sha256": "852d403e158816ee2a9f29ac00e925f53c3d33064f929dd56ec4259c5d205cae"
+    },
+    {
+      "bytes": 2760,
+      "git_blob": "c2f3b5a582fb2ad23c1fd8af36049eec1b534535",
+      "path": "research/deliveries/cpp/C_LINE_FREEZE_OBSERVED_20261019.json",
+      "sha256": "852d403e158816ee2a9f29ac00e925f53c3d33064f929dd56ec4259c5d205cae"
+    },
+    {
+      "bytes": 14674,
+      "git_blob": "b0d063429ef85b4d170090c182bcbf074095e952",
+      "path": "research/deliveries/cpp/coverage_ledger_20261019.json",
+      "sha256": "6268668f850ad5fb8299b231a8f7968db6c396fc4144f7e6033779948feaebd7"
+    }
+  ],
+  "reviewed_ref": {
+    "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+    "ref": "origin/codex/c-line-ark-runtime-replay-20261019",
+    "tree": "684c42e94c4797640113f0f2ffeca5a0c988a136"
+  },
+  "schema": "ark-runtime-pinned-artifact-gap-matrix-v1"
+}

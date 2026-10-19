@@ -1,0 +1,774 @@
+{
+  "baseline": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+  "dependency_results": [
+    {
+      "actual_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "actual_path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "757b8d050d306d349822600deacb295c7a54245e"
+          ],
+          "elapsed_seconds": 0.040234,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 757b8d050d306d349822600deacb295c7a54245e: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "830e85b40240677039719fcbf14f721ad3b19050"
+          ],
+          "elapsed_seconds": 0.04283,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "579712c1ebbb703d17cea422b1572023bed5d8a4\n0f5024602bd29681dedb70f5bb3832c79870c4ce 01652f9b256fdbc58ab256be45117ec0578b7961\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "830e85b40240677039719fcbf14f721ad3b19050"
+          ],
+          "elapsed_seconds": 0.038668,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "830e85b40240677039719fcbf14f721ad3b19050",
+            "--",
+            "ecmascript/compiler/new_object_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.042848,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 757b8d050d306d349822600deacb295c7a54245e\tecmascript/compiler/new_object_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "830e85b40240677039719fcbf14f721ad3b19050^{commit}"
+          ],
+          "elapsed_seconds": 0.04013,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "830e85b40240677039719fcbf14f721ad3b19050\n"
+        }
+      },
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "expected_blob": "757b8d050d306d349822600deacb295c7a54245e",
+      "expected_bytes": 126036,
+      "expected_source_sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "C1_CREATOR_DEPENDENCY",
+      "object_ref": "830e85b40240677039719fcbf14f721ad3b19050",
+      "parents": [
+        "0f5024602bd29681dedb70f5bb3832c79870c4ce",
+        "01652f9b256fdbc58ab256be45117ec0578b7961"
+      ],
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "dependency",
+      "status": "failed",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4"
+    },
+    {
+      "actual_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "actual_path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "05dda56de74949f07a241942be6465beaf94b52a"
+          ],
+          "elapsed_seconds": 0.069146,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 05dda56de74949f07a241942be6465beaf94b52a: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783"
+          ],
+          "elapsed_seconds": 0.041226,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a\n952188685663d5024954269269979ef4f34174b2 bf8c27dc8f2bfb5652f02221f06528072424be33\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783"
+          ],
+          "elapsed_seconds": 0.042059,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783",
+            "--",
+            "ecmascript/compiler/new_object_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.043561,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 05dda56de74949f07a241942be6465beaf94b52a\tecmascript/compiler/new_object_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783^{commit}"
+          ],
+          "elapsed_seconds": 0.039219,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "c758818dbfd0b146a908d43d21f6ca1706c33783\n"
+        }
+      },
+      "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "expected_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "expected_bytes": null,
+      "expected_source_sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "EXCEPTION_CREATOR_DEPENDENCY_PARENT",
+      "object_ref": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "parents": [
+        "952188685663d5024954269269979ef4f34174b2",
+        "bf8c27dc8f2bfb5652f02221f06528072424be33"
+      ],
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "dependency",
+      "status": "failed",
+      "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a"
+    },
+    {
+      "actual_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "actual_path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "05dda56de74949f07a241942be6465beaf94b52a"
+          ],
+          "elapsed_seconds": 0.045249,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 05dda56de74949f07a241942be6465beaf94b52a: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e"
+          ],
+          "elapsed_seconds": 0.042644,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5\nc758818dbfd0b146a908d43d21f6ca1706c33783\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e"
+          ],
+          "elapsed_seconds": 0.040471,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e",
+            "--",
+            "ecmascript/compiler/new_object_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.03933,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 05dda56de74949f07a241942be6465beaf94b52a\tecmascript/compiler/new_object_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e^{commit}"
+          ],
+          "elapsed_seconds": 0.040184,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "81ca57487d04ea30cd11c271e86494a4e130f43e\n"
+        }
+      },
+      "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "expected_blob": "05dda56de74949f07a241942be6465beaf94b52a",
+      "expected_bytes": null,
+      "expected_source_sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "EXCEPTION_CREATOR_DEPENDENCY_FIX",
+      "object_ref": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "parents": [
+        "c758818dbfd0b146a908d43d21f6ca1706c33783"
+      ],
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "dependency",
+      "status": "failed",
+      "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5"
+    }
+  ],
+  "git_no_lazy_fetch": "1",
+  "network_used": false,
+  "object_results": [
+    {
+      "actual_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "actual_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "054451b1be4f39254d56a1683cc9d1c1b5e55018"
+          ],
+          "elapsed_seconds": 0.039691,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 054451b1be4f39254d56a1683cc9d1c1b5e55018: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "830e85b40240677039719fcbf14f721ad3b19050"
+          ],
+          "elapsed_seconds": 0.042661,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "579712c1ebbb703d17cea422b1572023bed5d8a4\n0f5024602bd29681dedb70f5bb3832c79870c4ce 01652f9b256fdbc58ab256be45117ec0578b7961\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "830e85b40240677039719fcbf14f721ad3b19050"
+          ],
+          "elapsed_seconds": 0.037037,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "830e85b40240677039719fcbf14f721ad3b19050",
+            "--",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.04411,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 054451b1be4f39254d56a1683cc9d1c1b5e55018\tecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "830e85b40240677039719fcbf14f721ad3b19050^{commit}"
+          ],
+          "elapsed_seconds": 0.071212,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "830e85b40240677039719fcbf14f721ad3b19050\n"
+        }
+      },
+      "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+      "expected_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "expected_bytes": 150433,
+      "expected_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "C1_TYPE_ORIGIN_PARENT",
+      "object_ref": "830e85b40240677039719fcbf14f721ad3b19050",
+      "parents": [
+        "0f5024602bd29681dedb70f5bb3832c79870c4ce",
+        "01652f9b256fdbc58ab256be45117ec0578b7961"
+      ],
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "parent",
+      "status": "failed",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4"
+    },
+    {
+      "actual_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "actual_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "95f54f2875f401afe3167c62f8c1e7799782be8c"
+          ],
+          "elapsed_seconds": 0.041161,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 95f54f2875f401afe3167c62f8c1e7799782be8c: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "a0e30483ab3e4aead67ecfb5c708489915e447f9"
+          ],
+          "elapsed_seconds": 0.040012,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "82af11ced4297818410ccf61906b703d25b69165\n830e85b40240677039719fcbf14f721ad3b19050\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "a0e30483ab3e4aead67ecfb5c708489915e447f9"
+          ],
+          "elapsed_seconds": 0.042515,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+            "--",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.040976,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 95f54f2875f401afe3167c62f8c1e7799782be8c\tecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "a0e30483ab3e4aead67ecfb5c708489915e447f9^{commit}"
+          ],
+          "elapsed_seconds": 0.04129,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "a0e30483ab3e4aead67ecfb5c708489915e447f9\n"
+        }
+      },
+      "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "expected_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "expected_bytes": 150509,
+      "expected_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "C1_TYPE_ORIGIN_FIX",
+      "object_ref": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "parents": [
+        "830e85b40240677039719fcbf14f721ad3b19050"
+      ],
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "fix",
+      "status": "failed",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165"
+    },
+    {
+      "actual_blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+      "actual_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "857ad416bc102fcd5d462e9702d2ba7c51f29b6d"
+          ],
+          "elapsed_seconds": 0.03582,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 857ad416bc102fcd5d462e9702d2ba7c51f29b6d: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783"
+          ],
+          "elapsed_seconds": 0.040997,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a\n952188685663d5024954269269979ef4f34174b2 bf8c27dc8f2bfb5652f02221f06528072424be33\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783"
+          ],
+          "elapsed_seconds": 0.04169,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783",
+            "--",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.041962,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 857ad416bc102fcd5d462e9702d2ba7c51f29b6d\tecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "c758818dbfd0b146a908d43d21f6ca1706c33783^{commit}"
+          ],
+          "elapsed_seconds": 0.040451,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "c758818dbfd0b146a908d43d21f6ca1706c33783\n"
+        }
+      },
+      "commit": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "expected_blob": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+      "expected_bytes": null,
+      "expected_source_sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "EXCEPTION_PATH_PARENT",
+      "object_ref": "c758818dbfd0b146a908d43d21f6ca1706c33783",
+      "parents": [
+        "952188685663d5024954269269979ef4f34174b2",
+        "bf8c27dc8f2bfb5652f02221f06528072424be33"
+      ],
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "unknown",
+      "status": "failed",
+      "tree": "5d7c18a5d5ccbf48617b3c07ae9353f5f427d07a"
+    },
+    {
+      "actual_blob": "3b9de9d915d767d7a67316145451da2446162884",
+      "actual_path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "cat_file_blob": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "blob",
+            "3b9de9d915d767d7a67316145451da2446162884"
+          ],
+          "elapsed_seconds": 0.037997,
+          "exit_code": 128,
+          "stderr": "fatal: git cat-file 3b9de9d915d767d7a67316145451da2446162884: bad file\n",
+          "stdout_chars": 0
+        },
+        "commit_tree_parents": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "show",
+            "-s",
+            "--format=%T%n%P",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e"
+          ],
+          "elapsed_seconds": 0.040221,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5\nc758818dbfd0b146a908d43d21f6ca1706c33783\n"
+        },
+        "commit_type": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "cat-file",
+            "-t",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e"
+          ],
+          "elapsed_seconds": 0.037873,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "commit\n"
+        },
+        "ls_tree": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "ls-tree",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e",
+            "--",
+            "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp"
+          ],
+          "elapsed_seconds": 0.04188,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "100644 blob 3b9de9d915d767d7a67316145451da2446162884\tecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp\n"
+        },
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "81ca57487d04ea30cd11c271e86494a4e130f43e^{commit}"
+          ],
+          "elapsed_seconds": 0.041271,
+          "exit_code": 0,
+          "stderr": "",
+          "stdout": "81ca57487d04ea30cd11c271e86494a4e130f43e\n"
+        }
+      },
+      "commit": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "expected_blob": "3b9de9d915d767d7a67316145451da2446162884",
+      "expected_bytes": null,
+      "expected_source_sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0",
+      "fail_closed_reason": "blob_bytes_unavailable_no_lazy_fetch",
+      "id": "EXCEPTION_PATH_FIX",
+      "object_ref": "81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "parents": [
+        "c758818dbfd0b146a908d43d21f6ca1706c33783"
+      ],
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "fix",
+      "status": "failed",
+      "tree": "f0ddee8ee7f74b3f22e45b174ce96a269b2e57a5"
+    },
+    {
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "a65a2853ccae13da167d9aa4720ab8b11ec16656^{commit}"
+          ],
+          "elapsed_seconds": 0.037223,
+          "exit_code": 128,
+          "stderr": "fatal: ambiguous argument 'a65a2853ccae13da167d9aa4720ab8b11ec16656^{commit}': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n",
+          "stdout": "a65a2853ccae13da167d9aa4720ab8b11ec16656^{commit}\n"
+        }
+      },
+      "expected_blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "expected_bytes": null,
+      "expected_source_sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c",
+      "fail_closed_reason": "commit_ref_unresolved",
+      "id": "CURRENT_BOUND_CONTROL",
+      "object_ref": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "safe_control_not_verdict",
+      "status": "failed"
+    },
+    {
+      "assessment": "candidate/unassessed",
+      "checks": {
+        "resolve_commit": {
+          "command": [
+            "git",
+            "-C",
+            "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+            "rev-parse",
+            "a65a2853ccae13da167d9aa4720ab8b11ec16656^^{commit}"
+          ],
+          "elapsed_seconds": 0.038453,
+          "exit_code": 128,
+          "stderr": "fatal: ambiguous argument 'a65a2853ccae13da167d9aa4720ab8b11ec16656^^{commit}': unknown revision or path not in the working tree.\nUse '--' to separate paths from revisions, like this:\n'git <command> [<revision>...] -- [<file>...]'\n",
+          "stdout": "a65a2853ccae13da167d9aa4720ab8b11ec16656^^{commit}\n"
+        }
+      },
+      "expected_blob": null,
+      "expected_bytes": null,
+      "expected_source_sha256": null,
+      "fail_closed_reason": "commit_ref_unresolved",
+      "id": "CURRENT_UNBOUND_PARENT_CONTROL",
+      "object_ref": "a65a2853ccae13da167d9aa4720ab8b11ec16656^",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "repository_declared": "openharmony/arkcompiler_ets_runtime",
+      "role": "unrelated",
+      "status": "failed"
+    }
+  ],
+  "replays": {
+    "c2": {
+      "command": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "research/experiments/ark_runtime/c2_20261017/replay.py",
+        "--repo-dir",
+        "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+        "--output",
+        "E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c7_historical_replay_20261019\\_work\\c2"
+      ],
+      "elapsed_seconds": 0.507331,
+      "exit_code": 1,
+      "stderr_file": "_work/replay_c2.stderr.txt",
+      "stdout_file": "_work/replay_c2.stdout.txt"
+    },
+    "c3": {
+      "command": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "research/experiments/ark_runtime/c3_20261017/replay.py",
+        "--repo-dir",
+        "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+        "--output",
+        "E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c7_historical_replay_20261019\\_work\\c3"
+      ],
+      "elapsed_seconds": 0.154696,
+      "exit_code": 1,
+      "stderr_file": "_work/replay_c3.stderr.txt",
+      "stdout_file": "_work/replay_c3.stdout.txt"
+    }
+  },
+  "repo": "E:\\\u7f51\u5b89\\_oh_targets\\arkcompiler_ets_runtime",
+  "schema": "c7-execution-results-v2",
+  "summary": {
+    "all_object_bytes_verified": false,
+    "c2_exit_code": 1,
+    "c3_exit_code": 1,
+    "dependencies_checked": 3,
+    "dependencies_verified": 0,
+    "object_fail_closed": 6,
+    "objects_checked": 6,
+    "objects_verified": 0,
+    "unittest_exit_code": 1
+  },
+  "unittest": {
+    "command": [
+      "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c7_historical_replay_20261019\\_work\\baseline\\tests\\detectors\\ark_runtime\\test_historical.py",
+      "-v"
+    ],
+    "elapsed_seconds": 2.284316,
+    "exit_code": 1,
+    "stderr_file": "_work/unittest.stderr.txt",
+    "stdout_file": "_work/unittest.stdout.txt"
+  }
+}

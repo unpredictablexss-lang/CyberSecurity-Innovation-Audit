@@ -1,0 +1,166 @@
+{
+  "schema": "ohscanner.c7-holdout.labels.v1",
+  "reviewer_side": "reviewer_a",
+  "reviewer": null,
+  "reviewed_at": null,
+  "prior_exposure": {
+    "saw_predictions": null,
+    "saw_intent_or_truth": null,
+    "tuned_algorithm": null,
+    "eligible": null,
+    "explanation": null
+  },
+  "allowed_labels": [
+    "vulnerable_target_rule",
+    "fixed_control",
+    "safe_control",
+    "unrelated",
+    "unknown"
+  ],
+  "cases": [
+    {
+      "case_id": "A-1642B0C0421E",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-4A4429305CBB",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-D712076A858B",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-148B80BCF8B6",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-1BE71C570FE0",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-2B97B9E8F88E",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-AEFA4F283851",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-F53FB5613BF9",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-88B44DAD58C5",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-4528EF465360",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-2E570A67E837",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-89F1583504CB",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-9AB614989AB7",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-9EE072CDFAB0",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-FE93EF91E493",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    },
+    {
+      "case_id": "A-6AFEDBDDB08F",
+      "label": null,
+      "confidence": null,
+      "rationale": null,
+      "source_lines": null,
+      "evidence": null,
+      "unknown_reason": null
+    }
+  ]
+}

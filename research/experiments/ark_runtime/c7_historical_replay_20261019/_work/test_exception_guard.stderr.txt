@@ -1,0 +1,49 @@
+test_exact_parent_and_fixed_source_through_registered_adapter (__main__.ExceptionGuardHistoricalTests.test_exact_parent_and_fixed_source_through_registered_adapter) ... fatal: bad object c758818dbfd0b146a908d43d21f6ca1706c33783:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp
+
+  test_exact_parent_and_fixed_source_through_registered_adapter (__main__.ExceptionGuardHistoricalTests.test_exact_parent_and_fixed_source_through_registered_adapter) (commit='c758818dbfd0b146a908d43d21f6ca1706c33783') ... ERROR
+fatal: bad object 81ca57487d04ea30cd11c271e86494a4e130f43e:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp
+  test_exact_parent_and_fixed_source_through_registered_adapter (__main__.ExceptionGuardHistoricalTests.test_exact_parent_and_fixed_source_through_registered_adapter) (commit='81ca57487d04ea30cd11c271e86494a4e130f43e') ... ERROR
+test_budget_exhaustion_does_not_emit_candidate (__main__.ExceptionGuardSyntheticTests.test_budget_exhaustion_does_not_emit_candidate) ... ok
+test_exception_return_before_use_suppresses_candidate (__main__.ExceptionGuardSyntheticTests.test_exception_return_before_use_suppresses_candidate) ... ok
+test_load_hclass_signature_mismatch_is_unknown (__main__.ExceptionGuardSyntheticTests.test_load_hclass_signature_mismatch_is_unknown) ... ok
+test_missing_exception_guard_is_candidate (__main__.ExceptionGuardSyntheticTests.test_missing_exception_guard_is_candidate) ... ok
+test_missing_expected_caller_keeps_candidate_partial (__main__.ExceptionGuardSyntheticTests.test_missing_expected_caller_keeps_candidate_partial) ... ok
+test_nested_call_in_declaration_fails_closed_as_unknown (__main__.ExceptionGuardSyntheticTests.test_nested_call_in_declaration_fails_closed_as_unknown) ... ok
+test_nested_call_in_expression_fails_closed_as_unknown (__main__.ExceptionGuardSyntheticTests.test_nested_call_in_expression_fails_closed_as_unknown) ... ok
+test_pending_exception_check_on_other_glue_is_not_accepted (__main__.ExceptionGuardSyntheticTests.test_pending_exception_check_on_other_glue_is_not_accepted) ... ok
+test_reassigned_gate_ref_is_not_treated_as_allocation_result (__main__.ExceptionGuardSyntheticTests.test_reassigned_gate_ref_is_not_treated_as_allocation_result) ... ok
+test_sensitive_read_requires_exact_wrapper_expression (__main__.ExceptionGuardSyntheticTests.test_sensitive_read_requires_exact_wrapper_expression) ... ok
+test_unmodeled_effect_fails_closed_as_unknown (__main__.ExceptionGuardSyntheticTests.test_unmodeled_effect_fails_closed_as_unknown) ... ok
+
+======================================================================
+ERROR: test_exact_parent_and_fixed_source_through_registered_adapter (__main__.ExceptionGuardHistoricalTests.test_exact_parent_and_fixed_source_through_registered_adapter) (commit='c758818dbfd0b146a908d43d21f6ca1706c33783')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_exception_guard.py", line 138, in test_exact_parent_and_fixed_source_through_registered_adapter
+    content = subprocess.check_output(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', 'E:\\����\\_oh_targets\\arkcompiler_ets_runtime', 'show', 'c758818dbfd0b146a908d43d21f6ca1706c33783:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp']' returned non-zero exit status 128.
+
+======================================================================
+ERROR: test_exact_parent_and_fixed_source_through_registered_adapter (__main__.ExceptionGuardHistoricalTests.test_exact_parent_and_fixed_source_through_registered_adapter) (commit='81ca57487d04ea30cd11c271e86494a4e130f43e')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_exception_guard.py", line 138, in test_exact_parent_and_fixed_source_through_registered_adapter
+    content = subprocess.check_output(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\work_work\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', 'E:\\����\\_oh_targets\\arkcompiler_ets_runtime', 'show', '81ca57487d04ea30cd11c271e86494a4e130f43e:ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp']' returned non-zero exit status 128.
+
+----------------------------------------------------------------------
+Ran 12 tests in 2.222s
+
+FAILED (errors=2)

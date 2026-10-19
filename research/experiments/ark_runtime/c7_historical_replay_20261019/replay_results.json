@@ -1,0 +1,112 @@
+{
+  "schema": "c7-replay-results-v2",
+  "generated_at": "2026-10-19T00:00:00+08:00",
+  "status": "executed_fail_closed",
+  "network_used": false,
+  "external_scanner_used": false,
+  "dynamic_attack_executed": false,
+  "baseline_replay_source": "_work/baseline extracted from git object b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+  "tests": [
+    {
+      "suite": "unittest",
+      "tests_run": 6,
+      "passed": 1,
+      "errors": 4,
+      "skipped": 1,
+      "status": "failed_fail_closed",
+      "log": "_work/unittest.stderr.txt"
+    },
+    {
+      "suite": "test_exception_guard",
+      "tests_run": 12,
+      "passed": 10,
+      "errors": 2,
+      "skipped": 0,
+      "status": "failed_fail_closed",
+      "log": "_work/test_exception_guard.stderr.txt"
+    },
+    {
+      "suite": "test_detector_cases",
+      "tests_run": 12,
+      "passed": 12,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "log": "_work/test_detector_cases.stderr.txt"
+    },
+    {
+      "suite": "test_c3_mechanisms",
+      "tests_run": 29,
+      "passed": 29,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "log": "_work/test_c3_mechanisms.stderr.txt"
+    },
+    {
+      "suite": "test_type_origin",
+      "tests_run": 20,
+      "passed": 20,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "log": "_work/test_type_origin.stderr.txt"
+    },
+    {
+      "suite": "test_ir_path",
+      "tests_run": 13,
+      "passed": 13,
+      "errors": 0,
+      "skipped": 0,
+      "status": "passed",
+      "log": "_work/test_ir_path.stderr.txt"
+    },
+    {
+      "suite": "test_parser_owner",
+      "tests_run": 8,
+      "passed": 7,
+      "errors": 1,
+      "skipped": 0,
+      "status": "failed_fail_closed",
+      "log": "_work/test_parser_owner.stderr.txt"
+    }
+  ],
+  "replays": [
+    {
+      "id": "C2_EXISTING_REPLAY",
+      "execution_status": "failed_fail_closed",
+      "exit_code": 1,
+      "output_created": false,
+      "reason": "missing_local_git_object 054451b1be4f39254d56a1683cc9d1c1b5e55018 under blob:none partial clone; no lazy fetch",
+      "stdout_file": "_work/replay_c2.stdout.txt",
+      "stderr_file": "_work/replay_c2.stderr.txt"
+    },
+    {
+      "id": "C3_EXISTING_REPLAY",
+      "execution_status": "failed_fail_closed",
+      "exit_code": 1,
+      "output_created": false,
+      "reason": "missing_local_git_object 054451b1be4f39254d56a1683cc9d1c1b5e55018 under blob:none partial clone; no lazy fetch",
+      "stdout_file": "_work/replay_c3.stdout.txt",
+      "stderr_file": "_work/replay_c3.stderr.txt"
+    }
+  ],
+  "historical_object_test_observation": {
+    "expected_object_dependent_tests": 6,
+    "executed": 6,
+    "passed": 1,
+    "errors": 4,
+    "skipped": 1,
+    "skip_reason": "Bound commit parent is absent from supplied component Git store",
+    "fail_closed": "skip is not pass; errors are not safe/miss"
+  },
+  "metrics": {
+    "precision": null,
+    "recall": null,
+    "false_positive_rate": null,
+    "false_negative_rate": null,
+    "reason": "no independent reliable labels; historical exact replay blocked by absent blobs"
+  },
+  "verdict": "candidate/unassessed",
+  "validated_vulnerability": 0
+}

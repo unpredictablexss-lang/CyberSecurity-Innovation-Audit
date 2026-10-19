@@ -1,0 +1,59 @@
+{
+  "schema": "ohscanner.ac-line.integration-verification.v1",
+  "generated_at": "2026-10-19T13:21:55.3025867+08:00",
+  "repository_root": "E:\\网安\\CyberSecurity-Innovation-Audit",
+  "integration_worktree": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ac_parallel_20261019\\worktrees\\catalog-integration",
+  "branch": "codex/ac-path-deletefile-integration-20261019",
+  "head": "2e515c61669486396c5cf5740cbec24dabaa3454",
+  "commits": [
+    "73edbc0283f99aa6711029a61a17093f84ef091f",
+    "fd64eb63d6ae60814b54966d9206de83946ed2e5",
+    "271565810d489e934fc426b357431158d4609f03",
+    "2e515c61669486396c5cf5740cbec24dabaa3454"
+  ],
+  "source_audit_record": {
+    "substitute_evidence_only": true,
+    "requested_path": "源码漏洞审查记录_20261018.md",
+    "status": "missing_after_third_explicit_fetch"
+  },
+  "scanner_assurance": {
+    "focused_passed": 16,
+    "focused_tests": 16,
+    "known_finding": "ohscanner-contacts-path-traversal-001",
+    "detector": "ohscanner.cpp.path_traversal",
+    "contacts_deletefile_candidates": 3,
+    "rule": "ohcpp-path-traversal-candidate-001",
+    "validated_vulnerability": 0,
+    "candidate_status": "candidate/unassessed",
+    "catalog_default_enabled": true,
+    "catalog_status": "research_candidate/default_enabled"
+  },
+  "compatibility": {
+    "legacy_v1": "passed",
+    "catalog_runner": "passed",
+    "passed": 72,
+    "schema_v2": "passed",
+    "tests": 75,
+    "environment_errors": 3
+  },
+  "c_line": {
+    "precision_recall_computed": false,
+    "ark_unittest_tests": 116,
+    "ark_unittest_failed": 0,
+    "historical_replay": "blocked",
+    "holdout_eligible_for_metrics": false,
+    "ark_unittest_skipped": 8
+  },
+  "validation": {
+    "docs_budget": "passed_in_main_checkout",
+    "broad_cpp_baseline": "4 failures/3 errors due CRLF/LF and pre-existing manifest mismatches",
+    "git_diff_check": "passed",
+    "compileall": "passed"
+  },
+  "limitations": [
+    "No push, merge, PR, Draft Ready, product CIA/CVE or Precision/Recall claim.",
+    "Windows symlink/encoding environment errors remain.",
+    "Missing source-audit Markdown remains fail-closed unknown."
+  ],
+  "artifacts_root": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ac_parallel_20261019\\integration_20261019"
+}

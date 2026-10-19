@@ -1,0 +1,194 @@
+.....F............F........F.............sF.FFFFFF......F....Fssssss.............s....................................
+======================================================================
+FAIL: test_fresh_read_does_not_revalidate_an_old_copy (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_fresh_read_does_not_revalidate_an_old_copy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_c3_mechanisms.py", line 247, in test_fresh_read_does_not_revalidate_an_old_copy
+    self.assertEqual([o.kind for o in result.observations], ['matched', 'unknown'])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched', 'unknown']
+
+First differing element 0:
+'unknown'
+'matched'
+
+- ['unknown', 'unknown']
++ ['matched', 'unknown']
+
+======================================================================
+FAIL: test_species_creation_invalidates_current_type_but_not_token_origin (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_species_creation_invalidates_current_type_but_not_token_origin)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_c3_mechanisms.py", line 188, in test_species_creation_invalidates_current_type_but_not_token_origin
+    self.assertEqual(classify(analyze_unit(unit(code))), 'unknown')
+AssertionError: 'matched' != 'unknown'
+- matched
++ unknown
+
+
+======================================================================
+FAIL: test_verified_by_value_call_does_not_refresh_old_token (tests.detectors.ark_runtime.test_c3_mechanisms.C3MechanismTests.test_verified_by_value_call_does_not_refresh_old_token)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_c3_mechanisms.py", line 201, in test_verified_by_value_call_does_not_refresh_old_token
+    self.assertEqual([o.kind for o in sorted(result.observations, key=lambda o: o.line)], ['unknown', 'matched'])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['unknown', 'matched']
+
+First differing element 1:
+'unknown'
+'matched'
+
+- ['unknown', 'unknown']
++ ['unknown', 'matched']
+
+======================================================================
+FAIL: test_branch_and_loop_paths_keep_local_candidate_or_guard_match (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_branch_and_loop_paths_keep_local_candidate_or_guard_match)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 188, in test_branch_and_loop_paths_keep_local_candidate_or_guard_match
+    self.assertEqual([item.kind for item in analyze_exception_guard(branch).observations], ['candidate'])
+AssertionError: Lists differ: ['unknown'] != ['candidate']
+
+First differing element 0:
+'unknown'
+'candidate'
+
+- ['unknown']
++ ['candidate']
+
+======================================================================
+FAIL: test_exception_return_before_use_suppresses_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_exception_return_before_use_suppresses_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 39, in test_exception_return_before_use_suppresses_candidate
+    self.assertEqual(result.file_outcome, 'complete')
+AssertionError: 'partial' != 'complete'
+- partial
++ complete
+
+
+======================================================================
+FAIL: test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown) (control='Fixed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 131, in test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown
+    self.assertEqual(kinds, [expected])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched']
+
+First differing element 0:
+'unknown'
+'matched'
+
+First list contains 1 additional elements.
+First extra element 1:
+'unknown'
+
+- ['unknown', 'unknown']
++ ['matched']
+
+======================================================================
+FAIL: test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown) (control='Safe')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 131, in test_fixture_control_matrix_positive_fixed_safe_unrelated_unknown
+    self.assertEqual(kinds, [expected])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched']
+
+First differing element 0:
+'unknown'
+'matched'
+
+First list contains 1 additional elements.
+First extra element 1:
+'unknown'
+
+- ['unknown', 'unknown']
++ ['matched']
+
+======================================================================
+FAIL: test_guard_before_effect_is_matched_and_guard_after_effect_is_candidate (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_guard_before_effect_is_matched_and_guard_after_effect_is_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 148, in test_guard_before_effect_is_matched_and_guard_after_effect_is_candidate
+    self.assertEqual([item.kind for item in analyze_exception_guard(before).observations], ['matched'])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched']
+
+First differing element 0:
+'unknown'
+'matched'
+
+First list contains 1 additional elements.
+First extra element 1:
+'unknown'
+
+- ['unknown', 'unknown']
++ ['matched']
+
+======================================================================
+FAIL: test_historical_missing_guard_mechanism_regression (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_historical_missing_guard_mechanism_regression) (caller='Filter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 224, in test_historical_missing_guard_mechanism_regression
+    self.assertEqual([item.kind for item in fixed_result.observations], ['matched'])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched']
+
+First differing element 0:
+'unknown'
+'matched'
+
+First list contains 1 additional elements.
+First extra element 1:
+'unknown'
+
+- ['unknown', 'unknown']
++ ['matched']
+
+======================================================================
+FAIL: test_historical_missing_guard_mechanism_regression (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_historical_missing_guard_mechanism_regression) (caller='Map')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 224, in test_historical_missing_guard_mechanism_regression
+    self.assertEqual([item.kind for item in fixed_result.observations], ['matched'])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched']
+
+First differing element 0:
+'unknown'
+'matched'
+
+First list contains 1 additional elements.
+First extra element 1:
+'unknown'
+
+- ['unknown', 'unknown']
++ ['matched']
+
+======================================================================
+FAIL: test_potential_throw_helper_requires_guard_before_external_effect (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_potential_throw_helper_requires_guard_before_external_effect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 168, in test_potential_throw_helper_requires_guard_before_external_effect
+    self.assertEqual([item.kind for item in result.observations], ['matched'])
+AssertionError: Lists differ: ['unknown', 'unknown'] != ['matched']
+
+First differing element 0:
+'unknown'
+'matched'
+
+First list contains 1 additional elements.
+First extra element 1:
+'unknown'
+
+- ['unknown', 'unknown']
++ ['matched']
+
+======================================================================
+FAIL: test_zero_length_return_path_is_unknown_not_safe (tests.detectors.ark_runtime.test_exception_guard.ExceptionGuardSyntheticTests.test_zero_length_return_path_is_unknown_not_safe)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit-c-line-opt-20261019\tests\detectors\ark_runtime\test_exception_guard.py", line 207, in test_zero_length_return_path_is_unknown_not_safe
+    self.assertIn('result_return_before_modeled_effect_order_unknown', result.limitations)
+AssertionError: 'result_return_before_modeled_effect_order_unknown' not found in ('exception_path_not_fully_modeled', 'throwing_condition_order_unknown')
+
+----------------------------------------------------------------------
+Ran 116 tests in 0.209s
+
+FAILED (failures=12, skipped=8)

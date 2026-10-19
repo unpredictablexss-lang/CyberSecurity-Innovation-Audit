@@ -1,0 +1,18 @@
+test_C09_host_branch_merge_is_unknown (__main__.GeneratedPathTests.test_C09_host_branch_merge_is_unknown) ... ok
+test_C10_unmodelled_control_stops_inference (__main__.GeneratedPathTests.test_C10_unmodelled_control_stops_inference) ... ok
+test_C11_damaged_target_is_not_analyzed (__main__.GeneratedPathTests.test_C11_damaged_target_is_not_analyzed) ... ok
+test_C12_detached_label_has_no_runtime_predecessor (__main__.GeneratedPathTests.test_C12_detached_label_has_no_runtime_predecessor) ... ok
+test_budget_expiry_after_a_candidate_does_not_publish_it (__main__.GeneratedPathTests.test_budget_expiry_after_a_candidate_does_not_publish_it) ... ok
+test_false_generated_branch_prunes_sink (__main__.GeneratedPathTests.test_false_generated_branch_prunes_sink) ... ok
+test_repeated_immutable_predicate_cannot_be_true_and_false (__main__.GeneratedPathTests.test_repeated_immutable_predicate_cannot_be_true_and_false) ... ok
+test_scope_depth_budget_is_bounded (__main__.GeneratedPathTests.test_scope_depth_budget_is_bounded) ... ok
+test_state_budget_does_not_publish_partial_candidates (__main__.GeneratedPathTests.test_state_budget_does_not_publish_partial_candidates) ... ok
+test_time_budget_does_not_publish_partial_candidates (__main__.GeneratedPathTests.test_time_budget_does_not_publish_partial_candidates) ... ok
+test_type_equality_guard_is_narrow_suppression (__main__.GeneratedPathTests.test_type_equality_guard_is_narrow_suppression) ... ok
+test_type_equality_is_not_valid_after_unknown_mutation (__main__.GeneratedPathTests.test_type_equality_is_not_valid_after_unknown_mutation) ... ok
+test_unknown_label_is_not_a_reachable_path (__main__.GeneratedPathTests.test_unknown_label_is_not_a_reachable_path) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.020s
+
+OK

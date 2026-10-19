@@ -1,0 +1,9 @@
+{
+  "schema": "ohscanner.status-archive.v1",
+  "source_path": "docs/项目现状与下一步.md",
+  "archive_path": "research/status/2026-10-19/项目状态完整归档_20261019.md",
+  "source_sha256": "5ef06b87b2527d8042de1a2af8c319d0e78747e20f9483998a0636ef08dddc56",
+  "archive_sha256": "5ef06b87b2527d8042de1a2af8c319d0e78747e20f9483998a0636ef08dddc56",
+  "repository_head": "0f8e6403095ea0fd8d6c8ac41a4789299915d139",
+  "migrated_at": "2026-10-19T13:21:55.3025867+08:00"
+}

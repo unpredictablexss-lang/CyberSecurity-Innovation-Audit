@@ -1,0 +1,131 @@
+{
+  "schema": "ohscanner.ac-line.artifact-hashes.v1",
+  "generated_at": "2026-10-19T13:26:10.8086070+08:00",
+  "artifacts": [
+    {
+      "path": "AC_LINE_INTEGRATION_REPORT.md",
+      "bytes": 5496,
+      "sha256": "9198683f63445af838f7eb2d83b4f6f6cbbe0262c6b6619a4ad32e3054cdfbd5"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 2357,
+      "sha256": "09b2b18f209e02f9164595faf61b32b91b673215ae3b14790593a5a59de223cd"
+    },
+    {
+      "path": "artifacts/audit/fail-closed-self-test.json",
+      "bytes": 3139,
+      "sha256": "fe03961c01f272a248161513d25fed6f64a8cea24f349188dc61fdffb871698d"
+    },
+    {
+      "path": "artifacts/audit/minimal-patch.diff",
+      "bytes": 97391,
+      "sha256": "3c50cc9235239623511b7f88297f30c0d89cf4e32837ddb4572eea96ec4c99da"
+    },
+    {
+      "path": "artifacts/audit/run-manifest.json",
+      "bytes": 13815,
+      "sha256": "22fe9d8b7301360a648160ccfc1e308996e9b0fd7b139c4907c87c42ff13e300"
+    },
+    {
+      "path": "artifacts/holdout/expected_rule_freeze_0.7.0.json",
+      "bytes": 2248,
+      "sha256": "2c09af846b083060553f0060187c725e6c7f6ce6324e7e602d90389c6d80abce"
+    },
+    {
+      "path": "artifacts/holdout/MISSING_ITEMS_20261019.md",
+      "bytes": 2708,
+      "sha256": "d9a086458e34528623ed8df18f10c0dc14f595959f635ec0f9163bdadcfcc065"
+    },
+    {
+      "path": "artifacts/holdout/PINNED_ARTIFACT_GAP_MATRIX_20261019.md",
+      "bytes": 5283,
+      "sha256": "25f0211501d882af1288e0866d4529f8d4c8cffefdd4afda5f10bd04f93df664"
+    },
+    {
+      "path": "artifacts/holdout/remote_artifact_gap_matrix_20261019.json",
+      "bytes": 25146,
+      "sha256": "cfe39969620e305c51a6ce3264237f390697ac09bf5ca1141cfe2418138e07bb"
+    },
+    {
+      "path": "artifacts/holdout/review_completion_extension_schema_20261019.json",
+      "bytes": 2428,
+      "sha256": "3cf1923551afec2cf9c6c2a2c658d087ffda96a0255afe3af6770def93b812ba"
+    },
+    {
+      "path": "artifacts/holdout/verification_20261019.json",
+      "bytes": 9300,
+      "sha256": "ffdbda4da8c49c80a40b21006399e20806e72aa29e1a021dab00a1d40c9df516"
+    },
+    {
+      "path": "artifacts/path/acceptance_hashes.json",
+      "bytes": 6107,
+      "sha256": "f3c886e1852a18900d9d85246b7a12362bc1dd4439b2b64d734cb0f9f5780424"
+    },
+    {
+      "path": "artifacts/path/deletefile_acceptance_report.md",
+      "bytes": 12555,
+      "sha256": "1f54f67d11b4d25f8d77be20de2792949df24f53f5df921a7f2c5d194da7324d"
+    },
+    {
+      "path": "artifacts/path/deletefile_acceptance.patch",
+      "bytes": 7055,
+      "sha256": "171d0c71eb0f6e9aa80269ed5a1788bef01a56b097c63a179c6baa1f407e15df"
+    },
+    {
+      "path": "artifacts/path/final_measured_run_manifest.json",
+      "bytes": 1110,
+      "sha256": "1811864aacd423c16a0def78ec89c96d0d752b16c02a1a802dcdb0bc1674bcb5"
+    },
+    {
+      "path": "artifacts/path/final_unittest_stdout_stderr.txt",
+      "bytes": 2415,
+      "sha256": "059ee5e823eb8c9f12b5b03ff21e471e814917ceb883b55fb0abdbdf258ef9b9"
+    },
+    {
+      "path": "artifacts/replay/continuation_dependencies.json",
+      "bytes": 1964,
+      "sha256": "026db2eec62414ce1383e684de894e55b8035e8f0568bc3f0784920890805fad"
+    },
+    {
+      "path": "artifacts/replay/finding_rule_control_reconciliation.json",
+      "bytes": 26553,
+      "sha256": "6dc596c181cda114c770735c43117eb5af487837563f11e3f7999c3614d82876"
+    },
+    {
+      "path": "artifacts/replay/pinned_artifact_audit.json",
+      "bytes": 17806,
+      "sha256": "beb89cbb38ac452e7bb34e6ff02edb004aafbb9f616f9c7ca7848550b0fe56f2"
+    },
+    {
+      "path": "artifacts/replay/README.md",
+      "bytes": 5480,
+      "sha256": "d998bc8fb7e99263c23e50c6d1d86fb8a4103cebcc4f7dee3f2f73de7f63cefa"
+    },
+    {
+      "path": "artifacts/replay/verification-manifest.json",
+      "bytes": 4693,
+      "sha256": "f265371db7a1be71ba944f8a329ec7f4a46553df65f46dda3b541e99f117a440"
+    },
+    {
+      "path": "patches/0001-fix-cpp-detect-uncontained-DeleteFile-path-traversal.patch",
+      "bytes": 10856,
+      "sha256": "1e9a8699752606bd0cddbeaca4c1f903ccb9b520ceef520c992290386af91a34"
+    },
+    {
+      "path": "patches/0002-feat-catalog-admit-path-traversal-research-detector.patch",
+      "bytes": 9155,
+      "sha256": "50925df31fb22dabd4d2317a0343b0fa7f450bdf80cf418cc18eb7592cd26de2"
+    },
+    {
+      "path": "patches/0003-style-cpp-normalize-path-detector-EOF.patch",
+      "bytes": 817,
+      "sha256": "11f086bf21a4f185773f5f6ad0456408073f1717cc52bda68c1180e9c722af2c"
+    },
+    {
+      "path": "patches/0004-feat-catalog-enable-path-traversal-coverage-by-defau.patch",
+      "bytes": 2570,
+      "sha256": "f3d9adb2a4ae486e339f580db62f1d3add05e2fbc960220eb9c8c5861ee57f36"
+    }
+  ]
+}

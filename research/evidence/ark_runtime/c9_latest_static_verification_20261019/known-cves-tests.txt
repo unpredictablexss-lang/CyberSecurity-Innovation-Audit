@@ -1,0 +1,24 @@
+test_known_disclosed_cves (unittest.loader._FailedTest) ... ERROR
+
+======================================================================
+ERROR: test_known_disclosed_cves (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_known_disclosed_cves
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/unittest/loader.py", line 154, in loadTestsFromName
+    module = __import__(module_name)
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/tests/detectors/test_known_disclosed_cves.py", line 6, in <module>
+    from src.ohscanner.detectors.catalog import build_registry, catalog_metadata, default_detector_ids
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/catalog.py", line 11, in <module>
+    from .ark_runtime.detector import ArkRuntimeTypeSafetyDetector
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/detector.py", line 5, in <module>
+    from .analysis import analyze_unit
+  File "/mnt/e/网安/CyberSecurity-Innovation-Audit-c-line-static-20261019/src/ohscanner/detectors/ark_runtime/analysis.py", line 13, in <module>
+    from .runtime_ir import build_graph
+ModuleNotFoundError: No module named 'src.ohscanner.detectors.ark_runtime.runtime_ir'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

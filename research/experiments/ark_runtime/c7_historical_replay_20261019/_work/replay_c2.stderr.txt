@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 180, in <module>
+    result = write_report(args.repo_dir, args.output)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 130, in write_report
+    sources, history, results = case_results(repo)
+                                ^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 91, in case_results
+    sources, history = replay_history(repo)
+                       ^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 47, in replay_history
+    commit, tree, git_sources, inventory = load_git_sources(Path(repo), source['commit'], (source['path'],))
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 184, in load_git_sources
+    raise ValueError("missing_local_git_object: blob unavailable locally "
+ValueError: missing_local_git_object: blob unavailable locally 054451b1be4f39254d56a1683cc9d1c1b5e55018 (ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp); offline-only read (no fetch)

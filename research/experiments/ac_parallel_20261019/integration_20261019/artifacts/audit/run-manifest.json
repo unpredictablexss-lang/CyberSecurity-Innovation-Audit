@@ -1,0 +1,330 @@
+{
+  "schema_version": "c8.source-audit.run-manifest/v2",
+  "run_id": "c8-source-audit-reconciliation-20261019",
+  "generated_at": "2026-10-19T05:13:55+00:00",
+  "exact_command": {
+    "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "executable": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "argv": [
+      "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py",
+      "--strict-input",
+      "--write-run-manifest"
+    ],
+    "shell_rendering": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py --strict-input --write-run-manifest"
+  },
+  "checkout_identity": {
+    "worktree": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "head": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "head_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "base": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "base_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "detached": true,
+    "remote_origin": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git"
+  },
+  "blocked": true,
+  "blocked_status": "blocked_missing_input",
+  "expected_exit_code": 10,
+  "exit_code": 10,
+  "input": {
+    "status": "missing",
+    "path": "源码漏洞审查记录_20261018.md",
+    "resolved_path": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\源码漏洞审查记录_20261018.md",
+    "recorded_sha256": "unknown",
+    "actual_sha256": "unknown",
+    "git_identity": {
+      "commit": "unknown",
+      "tree": "unknown",
+      "blob": "unknown",
+      "status": "missing_input",
+      "path_tracked": false
+    },
+    "explicit_hash_refresh": false
+  },
+  "scanner_execution": false,
+  "metrics_computed": false,
+  "extracted_vulnerability_entries": 0,
+  "entry_mappings": [],
+  "known_substitute_findings": [
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-001",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-002",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-003",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-004",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-005",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C3-TO-COUNTEREXAMPLE-006",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-FILTER-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-MAP-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-TOREVERSED-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C4-EXG-ORDER-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C7-DEPENDENCY-LIMIT-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "C7-REPLAY-LIMIT-UNKNOWN",
+      "source_report_finding_id": null,
+      "source_role": null,
+      "classification": "unknown",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "A-PATH-DELIVERY-20261018",
+      "source_report_finding_id": null,
+      "source_role": "a_path_source_to_sink_delivery",
+      "classification": "candidate",
+      "product_vulnerability": false
+    },
+    {
+      "entry_id": "A-SAMPLE30-CONTACTS-PATH-TRAVERSAL-001",
+      "source_report_finding_id": "ohscanner-contacts-path-traversal-001",
+      "source_role": "a_sample30_confirmed_finding_substitute",
+      "classification": "candidate",
+      "product_vulnerability": false
+    }
+  ],
+  "validation": {
+    "worktree_identity": "pass",
+    "input_presence": "blocked",
+    "input_hash": "not_evaluated",
+    "entry_schema": "not_evaluated",
+    "mapping": "not_evaluated",
+    "known_substitute_evidence": "pass",
+    "regression_scaffolding": "pass"
+  },
+  "failure_codes": [
+    "input_missing"
+  ],
+  "failures": [
+    "source-audit input missing: 源码漏洞审查记录_20261018.md"
+  ],
+  "unknown_ledger": [
+    "source-audit input missing: no vulnerability entries imported"
+  ],
+  "self_test": {
+    "schema_version": "c8.source-audit.fail-closed-self-test/v1",
+    "generated_at": "2026-10-19T05:13:37+00:00",
+    "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+    "exact_argv": [
+      "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py",
+      "--self-test-fail-closed"
+    ],
+    "scanner_execution": false,
+    "metrics_computed": false,
+    "cases": [
+      {
+        "case": "missing",
+        "first_status": "blocked_missing_input",
+        "rerun_status": "blocked_missing_input",
+        "failure_codes": [
+          "input_missing"
+        ],
+        "entry_count": 0,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_missing_input",
+        "expected_failure_codes": [
+          "input_missing"
+        ],
+        "passed": true
+      },
+      {
+        "case": "present_no_entries",
+        "first_status": "blocked_no_entries",
+        "rerun_status": "blocked_no_entries",
+        "failure_codes": [
+          "input_no_supported_entries"
+        ],
+        "entry_count": 0,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_no_entries",
+        "expected_failure_codes": [
+          "input_no_supported_entries"
+        ],
+        "passed": true
+      },
+      {
+        "case": "schema_invalid",
+        "first_status": "blocked_schema_invalid",
+        "rerun_status": "blocked_schema_invalid",
+        "failure_codes": [
+          "input_schema_invalid"
+        ],
+        "entry_count": 1,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_schema_invalid",
+        "expected_failure_codes": [
+          "input_schema_invalid"
+        ],
+        "passed": true
+      },
+      {
+        "case": "hash_mismatch",
+        "first_status": "blocked_hash_mismatch",
+        "rerun_status": "blocked_hash_mismatch",
+        "failure_codes": [
+          "input_hash_mismatch"
+        ],
+        "entry_count": 0,
+        "mapped_entry_ids": [],
+        "mapped_source_identity_count": 0,
+        "rerunnable_stable": true,
+        "expected_status": "blocked_hash_mismatch",
+        "expected_failure_codes": [
+          "input_hash_mismatch"
+        ],
+        "passed": true
+      },
+      {
+        "case": "valid_mapping",
+        "first_status": "not_blocked",
+        "rerun_status": "not_blocked",
+        "failure_codes": [],
+        "entry_count": 1,
+        "mapped_entry_ids": [
+          "SELFTEST-PATH-ENTRY-001"
+        ],
+        "mapped_source_identity_count": 1,
+        "rerunnable_stable": true,
+        "expected_status": "not_blocked",
+        "expected_failure_codes": [],
+        "passed": true
+      }
+    ],
+    "status": "pass"
+  },
+  "hashes": {
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/README.md": {
+      "sha256": "ccd34dcd5af3846dc869b6d1895e80a07354ce53322562d462af1ae1e24ed102",
+      "git_blob": "279cb10aebe4f0d95be5d8b680ee725ac683e326",
+      "size_bytes": 3401
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/audit-schema.json": {
+      "sha256": "dcb9b3b1f0df769726d379b01dc5dd633248d97422b1b84ba554535cef2aef83",
+      "git_blob": "8bb3b301c4be06423a021f4f9cd916059ff74831",
+      "size_bytes": 5330
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/input-manifest.json": {
+      "sha256": "4fdc7c09766ef5f3b573e61c98d8b77f4f40815f22e14c46c4b51305d18f9e88",
+      "git_blob": "6784d6031c50f56ba25587f85fee3d948d4db057",
+      "size_bytes": 2856
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/known-source-findings.json": {
+      "sha256": "a11d9295345db181c0cc878f8508a32c2ec61bae428c8a475689987c5c8e0855",
+      "git_blob": "29331ae2a2deb44d5ede9bc1a4c8af359671e436",
+      "size_bytes": 46376
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/expected-regressions.json": {
+      "sha256": "09806893603d8ecbadee35e09c94f3fa0578db174e0dbfee2762d95a2a605a7e",
+      "git_blob": "1820847758408721927bebcd96e791a6671513ec",
+      "size_bytes": 10939
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/reconcile.py": {
+      "sha256": "ae7cc17a731794e4c153594b9b856e63716f737dc640b539a43df1d9691ef818",
+      "git_blob": "5a8b77e36ff20e3d0654f396635edeec42d0d325",
+      "size_bytes": 48262
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/minimal-patch.diff": {
+      "sha256": "3c50cc9235239623511b7f88297f30c0d89cf4e32837ddb4572eea96ec4c99da",
+      "git_blob": "418761f0e59b5dec352f47cc6c2220fc156c7dad",
+      "size_bytes": 97391
+    },
+    "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/fail-closed-self-test.json": {
+      "sha256": "fe03961c01f272a248161513d25fed6f64a8cea24f349188dc61fdffb871698d",
+      "git_blob": "8c6a7ab6ea66d1534788704ee4b5fe2c940691ca",
+      "size_bytes": 3139
+    }
+  },
+  "minimal_patch": {
+    "path": "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/minimal-patch.diff",
+    "generation_command": "git diff --binary -- research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019 ':(exclude)research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/run-manifest.json' > research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/minimal-patch.diff",
+    "generated_output_excluded": [
+      "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/run-manifest.json",
+      "research/experiments/ark_runtime/c8_source_audit_reconciliation_20261019/fail-closed-self-test.json"
+    ],
+    "sha256": "3c50cc9235239623511b7f88297f30c0d89cf4e32837ddb4572eea96ec4c99da",
+    "git_blob": "418761f0e59b5dec352f47cc6c2220fc156c7dad",
+    "size_bytes": 97391
+  },
+  "limitations": [
+    "源码漏洞审查记录_20261018.md remains absent from the checkout and local pinned objects; its original prose was not read or reconstructed.",
+    "A sample30 and A_PATH_TRAVERSAL_DELIVERY_20261018 are substitute evidence only, not imported source-audit entries.",
+    "No substitute evidence is promoted to product confirmed/reportable in this reconciliation.",
+    "No scanner was executed by this script; expected regressions are mapping/acceptance scaffolding only.",
+    "No Precision/Recall, FP/FN, CWE/CVE or product impact conclusion is computed or imported.",
+    "ohscanner.cpp.path_traversal is research-only and not enabled in the product Runner/Catalog at the fixed base."
+  ],
+  "next_slice": [
+    "Provide the exact 源码漏洞审查记录_20261018.md, explicitly refresh its input hash, then rerun strict reconciliation.",
+    "Bind every imported entry to repo/commit/tree/blob/source SHA-256 and map detector/rule/control identities.",
+    "Keep multi-file, multi-commit and v1 read-only compatibility work in later auditable slices without rewriting historical IDs."
+  ]
+}

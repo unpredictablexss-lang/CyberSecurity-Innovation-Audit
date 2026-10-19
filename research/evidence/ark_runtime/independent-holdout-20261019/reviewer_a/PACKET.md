@@ -1,0 +1,2 @@
+# Blind reviewer packet
+Inspect only `cases/` and complete `labels.template.json`. Do not use predictions, sampling metadata, original names or the other packet. Declare exposure first. Select exactly one source-semantic class: vulnerable_target_rule, fixed_control, safe_control, unrelated or unknown. Cite lines and rationale; use unknown when evidence is insufficient. Never infer from filename/order. Freeze and hash `labels.json` before discussion.

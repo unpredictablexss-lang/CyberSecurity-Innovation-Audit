@@ -1,0 +1,23 @@
+{
+  "schema_version": "ohscanner-test-measurement-v1",
+  "mode": "final",
+  "cwd": "E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\research\\experiments\\ac_parallel_20261019\\worktrees\\path-traversal",
+  "python": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+  "argv": [
+    "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "tests.detectors.test_cpp_path_traversal_detector",
+    "-v"
+  ],
+  "command": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe -X utf8 -m unittest tests.detectors.test_cpp_path_traversal_detector -v",
+  "env": {
+    "PYTHONPATH": ".;E:\\\u7f51\u5b89\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps"
+  },
+  "returncode": 0,
+  "wall_seconds": 0.17463409999982105,
+  "max_rss_bytes": 27897856,
+  "output_file": "research\\experiments\\ac_parallel_20261019\\path_traversal_20261019\\final_measured_unittest_stdout_stderr.txt"
+}

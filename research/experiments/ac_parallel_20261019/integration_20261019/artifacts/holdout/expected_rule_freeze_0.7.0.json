@@ -1,0 +1,46 @@
+{
+  "base_commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+  "base_tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+  "build_profile": "assumed:NDEBUG=1;ENABLE_ASM_ASSERT=0;not_product_build_verified",
+  "detector_id": "ohscanner.ark.runtime.type_safety",
+  "evidence_gate": {
+    "confirmed_reportable": 0,
+    "default_status": "candidate/unassessed",
+    "eligible_for_metrics": false,
+    "precision": null,
+    "recall": null,
+    "validated_vulnerability": 0
+  },
+  "freeze_policy": {
+    "external_scanner_dependency": false,
+    "historical_verdicts_consumed": false,
+    "public_schema_runner_catalog_changes": false,
+    "tuning_after_freeze_forbidden": true
+  },
+  "implementation_sha256": {
+    "src/ohscanner/detectors/ark_runtime/__init__.py": "68c6fe492bf9c9c60e8be85cf5f2b058774625e3b75ca3ba3d95de31ef27840a",
+    "src/ohscanner/detectors/ark_runtime/analysis.py": "8b8ec3b2f0a6d3c27c0bb3024c0616757d3bb6625a8615ee0e59ed2183a2e1ec",
+    "src/ohscanner/detectors/ark_runtime/detector.py": "98839f70ed2b04017dab13eb9977617ff0cf4a1ee3267966c3cd152ee2ac4b92",
+    "src/ohscanner/detectors/ark_runtime/exception_guard.py": "5bbbb4b043a8de7b331fdca66ab27fd297b5683a95bf11a1d82dbf12188a1a73",
+    "src/ohscanner/detectors/ark_runtime/model.py": "8d85e8fca11d6bf20cd890a49b00a750bcb885289e6285a8e2188fc6c1f46052",
+    "src/ohscanner/detectors/ark_runtime/runtime_ir.py": "865457254732a9f1a5a00b82d604f07c046f103cc2939e79c73ba3b1c54a5373",
+    "src/ohscanner/detectors/ark_runtime/syntax.py": "3de88d5819149d216201c23b534f94078b5890b545623efa7f70970fd589ba42",
+    "src/ohscanner/detectors/ark_runtime/type_origin.py": "2c01a7fda8abe22533165ed6f3f7a28621e773da9d472d7b30679fd63a52ce05"
+  },
+  "model_digest": "d2b7e4664c228db8afcadbc81d5fd6a403abe853eb437ac883199801b5521e00",
+  "resource_limits": {
+    "max_instructions": 4096,
+    "max_scope_depth": 128,
+    "max_seconds": 5.0,
+    "max_source_bytes": 1048576,
+    "max_states": 2048,
+    "max_steps": 8192
+  },
+  "rule_ids": [
+    "ark.runtime.typedarray-store-type-origin",
+    "ark.runtime.typedarray-allocation-exception-guard"
+  ],
+  "rule_version": "0.7.0",
+  "schema": "ark-runtime-rule-freeze-requirements-v1",
+  "status": "review_reference_only_not_an_execution_result"
+}

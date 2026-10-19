@@ -1,0 +1,63 @@
+{
+  "schema": "c7-next-object-manifest-v2",
+  "generated_at": "2026-10-19T00:00:00+08:00",
+  "policy": "local object supply only; no implicit fetch",
+  "minimum_missing_object_list": [
+    {
+      "kind": "commit+tree+blob+source_sha256",
+      "object": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "68fb3b0adc4f9062889a861be51b7be90362e37a",
+      "sha256": "76418526220ea039410d5a214b03d923436ce9441d9852538832b3664c41bd3c"
+    },
+    {
+      "kind": "commit+tree+blob+source_sha256",
+      "object": "a65a2853ccae13da167d9aa4720ab8b11ec16656^",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "resolution": "full parent commit and exact blob/hash required"
+    },
+    {
+      "kind": "blob",
+      "object": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422"
+    },
+    {
+      "kind": "blob",
+      "object": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e"
+    },
+    {
+      "kind": "blob",
+      "object": "757b8d050d306d349822600deacb295c7a54245e",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "sha256": "3fd7e99e957fb5b7793cb7c36c01b370208c05645aa93551da6abeecaf2e7198"
+    },
+    {
+      "kind": "blob",
+      "object": "857ad416bc102fcd5d462e9702d2ba7c51f29b6d",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "sha256": "984e45f2b6ea652c412437be03dda4189549afe4cf77c95713cf0d0c5d361db9"
+    },
+    {
+      "kind": "blob",
+      "object": "3b9de9d915d767d7a67316145451da2446162884",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "sha256": "4684a1587519e7d141f181b595317db489991a3908e1f1b4ef67513c25d9efd0"
+    },
+    {
+      "kind": "blob",
+      "object": "05dda56de74949f07a241942be6465beaf94b52a",
+      "path": "ecmascript/compiler/new_object_stub_builder.cpp",
+      "sha256": "c10e934be1804fe9388d599cba54369eed4ee150b078d04924e0da68a2f43b9e"
+    }
+  ],
+  "verification_commands": [
+    "git cat-file -e <blob>^{blob}",
+    "git ls-tree <commit> -- <path>",
+    "sha256(git cat-file blob <blob>)"
+  ],
+  "network_supplement_required": false,
+  "next_action": "supply a local complete object store/alternates or local blob pack, then rerun _work/run_c7_replay.py; do not fetch"
+}

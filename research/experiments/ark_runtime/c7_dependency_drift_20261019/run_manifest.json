@@ -1,0 +1,113 @@
+{
+  "schema_version": "c7-run-manifest-v1",
+  "task": "C7-DEP",
+  "write_scope": "research/experiments/ark_runtime/c7_dependency_drift_20261019/",
+  "checkout": {
+    "root": "E:/网安/CyberSecurity-Innovation-Audit",
+    "head": "0f8e6403095ea0fd8d6c8ac41a4789299915d139",
+    "branch": "codex/full-runtime-performance-audit-20261014",
+    "pre_write_status": "clean"
+  },
+  "pinned": {
+    "commit": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+    "tree": "f4db05167c5cec007270c782c6bb97711e6414ae",
+    "parent": "5decf34dd496240ea56a2da82f0d13566e80b1c5"
+  },
+  "environment": {
+    "shell": "PowerShell",
+    "os": "Windows",
+    "python": "unavailable: launcher exit 9009",
+    "tree_sitter": "not run: Python launcher unavailable; skip not pass",
+    "timezone": "Asia/Shanghai",
+    "network": "not used",
+    "external_scanner": "not used"
+  },
+  "inputs": {
+    "model_version": "0.6.2",
+    "comparison_commit": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+    "dependency_count": 19,
+    "unchanged_count": 1,
+    "changed_count": 18,
+    "c3_manifests": [
+      "research/experiments/ark_runtime/c3_20261018/model_dependency_comparison.json",
+      "research/experiments/ark_runtime/c3_20261017/C3_SOURCE_EVIDENCE.json"
+    ],
+    "c4_manifests": [
+      "research/experiments/ark_runtime/c4_20261018/C4_SOURCE_BINDINGS.json",
+      "research/experiments/ark_runtime/c4_20261018/C4_VALIDATION.json"
+    ],
+    "c4_manifest_model_version": "0.6.1",
+    "c3_model_sha256": "662c74d79b75b2a111f7ec0eca4cb819a8b1f092ea3e9f7e6cff63621a3d8a1a"
+  },
+  "object_availability": {
+    "path": "D:\\OpenHarmony807\\repos\\arkcompiler_ets_runtime",
+    "exists": false,
+    "probe_exit_code": 128,
+    "interpretation": "missing or failed lookup is not pass",
+    "ohscanner_object_database": {
+      "unique_upstream_blobs": 33,
+      "found": 0,
+      "missing": 33,
+      "result": "all expected/current dependency source blobs unavailable"
+    }
+  },
+  "commands": [
+    "git show pinned C3 comparison:0",
+    "git show pinned C4 source bindings:0",
+    "git show pinned model.py:0",
+    "PowerShell JSON parse dependency_review.json:0",
+    "compare 18 review rows to 18 C3 changed rows:0",
+    "verify 18 fixtures and four controls:0",
+    "verify C3/model 0.6.2 and C4 0.6.1 distinction:0",
+    "python/Tree-sitter probe:9009 (skip_not_pass)",
+    "git diff --check:",
+    0,
+    "PowerShell trailing-whitespace check:",
+    0,
+    "git cat-file upstream blob probe:0 (found=0 missing=33)",
+    "PowerShell JSON parse run_manifest.json:0",
+    "Get-ChildItem C7 delivery:0"
+  ],
+  "artifact_hashes_sha256": {
+    "README.md": "ad31c57cb444af18caee23a1d45d2fc5cd1a4f6afa7e15e449c1f81fe2d40c3b",
+    "dependency_review.json": "7aff1b33bcf7e0f1aef5097d31ae15c9e506b19c0b5f7eab0d37d7eb5c42b55f",
+    "versioning_proposal.md": "317c087a311bc221c37fa2b0345c6c1a41d56eb567db084b6be65a6332aba84e",
+    "replay_plan.md": "7133033a7e2b7c75b0581375d7e6a15bee688db69ba96d58daf76e5734367e2c",
+    "run_manifest.json": "self_hash_excluded"
+  },
+  "validation": {
+    "dependency_rows": 18,
+    "c3_rows_match": true,
+    "fixture_controls_complete": true,
+    "version_bindings_verified": true,
+    "dependency_json_parser": "PowerShell ConvertFrom-Json",
+    "dependency_json_parsed": true,
+    "run_manifest_json_parser": "PowerShell ConvertFrom-Json",
+    "run_manifest_json_parsed": true,
+    "python_json_tool_exit_code": 9009,
+    "tree_sitter_status": "not_run_python_unavailable_skip_not_pass",
+    "git_diff_check_exit_code": 0,
+    "trailing_whitespace_lines": 0,
+    "upstream_blobs_found": 0,
+    "upstream_blobs_missing": 33,
+    "skip_not_pass": true,
+    "files_listed": true
+  },
+  "limits": [
+    "source objects unavailable",
+    "18 semantic relations unknown",
+    "provenance/build closure incomplete",
+    "no runtime or CIA evidence",
+    "candidate/unassessed"
+  ],
+  "prohibited_actions": {
+    "fetch": false,
+    "checkout": false,
+    "external_scanner": false,
+    "public_contract_modification": false,
+    "commit": false,
+    "push": false,
+    "merge": false,
+    "pull_request": false
+  }
+}

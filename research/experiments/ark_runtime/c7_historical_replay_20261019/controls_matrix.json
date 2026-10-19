@@ -1,0 +1,57 @@
+{
+  "schema": "c7-controls-matrix-v2",
+  "generated_at": "2026-10-19T00:00:00+08:00",
+  "policy": "partial/failed/unexecuted/unknown never become safe or miss",
+  "controls": [
+    {
+      "control": "parent",
+      "object": "830e85b40240677039719fcbf14f721ad3b19050",
+      "local_synthetic_control": "candidate semantics implemented",
+      "historical_status": "metadata verified; blob/source bytes unavailable",
+      "replay_status": "failed_fail_closed",
+      "classification": "candidate/unassessed"
+    },
+    {
+      "control": "fix",
+      "object": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+      "local_synthetic_control": "fixed/zero-candidate semantics implemented",
+      "historical_status": "metadata and parent relation verified; blob/source bytes unavailable",
+      "replay_status": "failed_fail_closed",
+      "classification": "candidate/unassessed"
+    },
+    {
+      "control": "safe",
+      "object": "a65a2853ccae13da167d9aa4720ab8b11ec16656",
+      "local_synthetic_control": "safe/unknown control semantics exercised in local tests",
+      "historical_status": "commit unresolved",
+      "replay_status": "failed_fail_closed",
+      "classification": "unknown; safe is a control role, never verdict"
+    },
+    {
+      "control": "unrelated",
+      "object": "a65a2853ccae13da167d9aa4720ab8b11ec16656^",
+      "local_synthetic_control": "wrong-version/not-admitted semantics exercised in local tests",
+      "historical_status": "parent ref unresolved",
+      "replay_status": "failed_fail_closed",
+      "classification": "unknown; unrelated is a control role, never verdict"
+    },
+    {
+      "control": "unknown",
+      "object": "c758818dbfd0b146a908d43d21f6ca1706c33783 -> 81ca57487d04ea30cd11c271e86494a4e130f43e",
+      "local_synthetic_control": "exception-path and unknown-effect controls exercised in local tests",
+      "historical_status": "metadata and parent relation verified; target/dependency blob bytes unavailable",
+      "replay_status": "failed_fail_closed",
+      "classification": "unknown; runtime effect and CIA unresolved"
+    }
+  ],
+  "local_control_suites": {
+    "test_detector_cases": "12/12 passed",
+    "test_c3_mechanisms": "29/29 passed",
+    "test_type_origin": "20/20 passed",
+    "test_ir_path": "13/13 passed",
+    "test_exception_guard": "10 passed, 2 historical errors",
+    "test_parser_owner": "7 passed, 1 source-file error"
+  },
+  "all_historical_controls_executed": false,
+  "validated_vulnerability": 0
+}

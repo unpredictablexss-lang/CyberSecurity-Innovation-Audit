@@ -1,0 +1,43 @@
+{
+  "schema": "ac-replay-02-continuation-dependencies/v1",
+  "blocking_dependencies": [
+    {
+      "id": "FROZEN-0.3.1-IMPLEMENTATION",
+      "need": "Byte-identical 0.3.1 implementation files, especially model.py SHA-256 299b493a9bf5ae3d7fb1a8b15f352dbabb0adcc852c3803202b29d4ef363f3f3, or an explicitly versioned new freeze.",
+      "status": "missing"
+    },
+    {
+      "id": "ARK-HISTORY-OBJECTS",
+      "need": "Local pinned Ark Git commit/tree objects for 830e85b40240677039719fcbf14f721ad3b19050, a0e30483ab3e4aead67ecfb5c708489915e447f9 and the C4 c758818dbfd0b146a908d43d21f6ca1706c33783/81ca57487d04ea30cd11c271e86494a4e130f43e pair, plus exact creator/dependency blobs.",
+      "status": "missing_or_unbound"
+    },
+    {
+      "id": "C7-DEPENDENCY-AND-REPLAY-LEDGER",
+      "need": "Referenced C7 dependency-drift and historical replay directories with run manifests and object inventory.",
+      "status": "missing"
+    },
+    {
+      "id": "C3-C4-REPLAY-COVERAGE",
+      "need": "A frozen, versioned replay that executes the six C3 invalidation controls and C4 guard positive/fixed/safe/unrelated/unknown controls while preserving source hashes.",
+      "status": "not_covered_by_pinned_replay"
+    },
+    {
+      "id": "INDEPENDENT-TRUTH",
+      "need": "Independent blind labels for the 21+20 holdout rows; current reviewer CSVs are empty and one packet is explicitly not independent.",
+      "status": "missing"
+    }
+  ],
+  "post_replay_algorithm_slices": [
+    "alias merge and invalidation",
+    "cross-function effect summaries",
+    "macro and cross-translation-unit binding",
+    "ToReversed input-read and empty-loop exception semantics"
+  ],
+  "competition_gate_dependencies": [
+    "product build/profile and exact shipped revision",
+    "reachable entry/permission boundary and trigger condition",
+    "concrete CIA impact",
+    "authorized isolated PoC and fix revalidation",
+    "supported CWE/CVE closure and complete report"
+  ]
+}

@@ -1,0 +1,24 @@
+test_fixed_64_bit_bounds_control_remains_explicitly_unproven (tests.detectors.ark_runtime.test_c10_ark_gap_rules.DataViewIndexBoundsGapTests.test_fixed_64_bit_bounds_control_remains_explicitly_unproven) ... ok
+test_positive_32_bit_index_arithmetic_is_candidate (tests.detectors.ark_runtime.test_c10_ark_gap_rules.DataViewIndexBoundsGapTests.test_positive_32_bit_index_arithmetic_is_candidate) ... ok
+test_rule_version_is_stable (tests.detectors.ark_runtime.test_c10_ark_gap_rules.DataViewIndexBoundsGapTests.test_rule_version_is_stable) ... ok
+test_subtraction_safe_local_control_is_not_security_verdict (tests.detectors.ark_runtime.test_c10_ark_gap_rules.DataViewIndexBoundsGapTests.test_subtraction_safe_local_control_is_not_security_verdict) ... ok
+test_unknown_bounds_helper_is_explicit_unknown (tests.detectors.ark_runtime.test_c10_ark_gap_rules.DataViewIndexBoundsGapTests.test_unknown_bounds_helper_is_explicit_unknown) ... ok
+test_unrelated_integer_addition_is_not_applicable (tests.detectors.ark_runtime.test_c10_ark_gap_rules.DataViewIndexBoundsGapTests.test_unrelated_integer_addition_is_not_applicable) ... ok
+test_fixed_pending_exception_control_has_no_same_root_candidate (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_fixed_pending_exception_control_has_no_same_root_candidate) ... ok
+test_missing_helper_is_explicit_unknown (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_missing_helper_is_explicit_unknown) ... ok
+test_native_inline_lowering_path_is_selected (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_native_inline_lowering_path_is_selected) ... ok
+test_positive_is_source_bound_candidate (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_positive_is_source_bound_candidate) ... ok
+test_rule_versions_are_stable (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_rule_versions_are_stable) ... ok
+test_safe_local_guard_control_is_not_a_security_verdict (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_safe_local_guard_control_is_not_a_security_verdict) ... ok
+test_unrelated_owner_is_not_analyzed (tests.detectors.ark_runtime.test_c10_ark_gap_rules.NativeInlineExceptionGapTests.test_unrelated_owner_is_not_analyzed) ... ok
+test_fixed_unsigned_conversion_has_no_same_root_candidate (tests.detectors.ark_runtime.test_c10_ark_gap_rules.TypedArrayLengthGapTests.test_fixed_unsigned_conversion_has_no_same_root_candidate) ... ok
+test_positive_signed_narrowing_to_allocation_is_candidate (tests.detectors.ark_runtime.test_c10_ark_gap_rules.TypedArrayLengthGapTests.test_positive_signed_narrowing_to_allocation_is_candidate) ... ok
+test_rule_version_is_stable (tests.detectors.ark_runtime.test_c10_ark_gap_rules.TypedArrayLengthGapTests.test_rule_version_is_stable) ... ok
+test_safe_local_zero_length_control_is_not_security_verdict (tests.detectors.ark_runtime.test_c10_ark_gap_rules.TypedArrayLengthGapTests.test_safe_local_zero_length_control_is_not_security_verdict) ... ok
+test_unknown_conversion_helper_is_explicit_unknown (tests.detectors.ark_runtime.test_c10_ark_gap_rules.TypedArrayLengthGapTests.test_unknown_conversion_helper_is_explicit_unknown) ... ok
+test_unrelated_signed_conversion_is_not_applicable (tests.detectors.ark_runtime.test_c10_ark_gap_rules.TypedArrayLengthGapTests.test_unrelated_signed_conversion_is_not_applicable) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.010s
+
+OK

@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "imported_at": "2026-10-19T00:00:00+08:00",
+  "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+  "source_branch": "origin/codex/c-line-ark-runtime-20261018",
+  "source_commit": "e4e0761501a83ac25cc67d04c527eefe9f4a1b50",
+  "source_tree": "307ac8237263db793028e0bf34a82a85f60821a5",
+  "source_path": "research/deliveries/c-line/OHScanner_G盘源码漏洞审查记录_20261018.md",
+  "source_git_blob": "dbedea677c8dc70c1b0066c7bc52df27bcff06ea",
+  "source_bytes": 29553,
+  "source_sha256": "732b17b4adba11f1fefb93940859d951e03d35a69987b77a61f9a785eefe1240",
+  "import_method": "git cat-file blob redirected byte-for-byte",
+  "verified_by": [
+    "git ls-tree -l",
+    "git hash-object"
+  ],
+  "imported_status": "untracked_research_asset",
+  "conclusions_boundary": "public disclosure/component reproduction/static candidates/product vulnerability remain separate",
+  "missing": "reviewer identity, independent truth and product closure are not part of this source import"
+}

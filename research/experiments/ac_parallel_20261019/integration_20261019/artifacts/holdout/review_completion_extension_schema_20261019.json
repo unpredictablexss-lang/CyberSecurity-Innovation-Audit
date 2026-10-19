@@ -1,0 +1,62 @@
+{
+  "schema": "ark-runtime-review-completion-extension-v1",
+  "purpose": "Non-overwriting extension for the pinned reviewer_labels.csv files; it does not replace or rewrite packet artifacts.",
+  "packet_identity_fields": [
+    "packet_id",
+    "sample_id",
+    "source_sha256"
+  ],
+  "reviewer_fields": {
+    "reviewer_id": {"type": "string", "required": true},
+    "reviewed_at": {"type": "datetime", "required": true},
+    "independence_declaration": {"type": "string", "required": true},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1, "required": true}
+  },
+  "label_fields": {
+    "model_scope": {"type": "string", "required": true},
+    "evidence_label": {"type": "string", "required": true},
+    "root_cause": {"type": "string", "required": true},
+    "evidence_lines": {"type": "string", "required": true},
+    "unknown_reason": {"type": "string", "required_when": "label is unknown or evidence is incomplete"},
+    "reviewer_notes": {"type": "string", "required": false}
+  },
+  "timing_fields": {
+    "started_at": {"type": "datetime", "required": true},
+    "paused_at": {"type": ["datetime", "null"], "required": false},
+    "resumed_at": {"type": ["datetime", "null"], "required": false},
+    "completed_at": {"type": "datetime", "required": true},
+    "active_seconds": {"type": "number", "minimum": 0, "required": true},
+    "paused_seconds": {"type": "number", "minimum": 0, "required": true},
+    "timing_status": {
+      "type": "string",
+      "enum": ["not_started", "active", "paused", "completed", "unknown"],
+      "required": true
+    }
+  },
+  "adjudication_fields": {
+    "disagreement_type": {
+      "type": ["string", "null"],
+      "enum": [null, "label", "root_cause", "scope", "evidence", "timing"],
+      "required": true
+    },
+    "adjudicator_id": {"type": ["string", "null"], "required": true},
+    "adjudicated_at": {"type": ["datetime", "null"], "required": true},
+    "final_label": {"type": ["string", "null"], "required": true},
+    "adjudication_basis": {"type": ["string", "null"], "required": true},
+    "adjudication_status": {
+      "type": "string",
+      "enum": ["not_needed", "pending", "resolved", "unresolved_unknown"],
+      "required": true
+    }
+  },
+  "metrics_gate": {
+    "eligible_for_metrics": false,
+    "precision": null,
+    "recall": null,
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "tn": null,
+    "zero_fp_fn_claim_allowed": false
+  }
+}

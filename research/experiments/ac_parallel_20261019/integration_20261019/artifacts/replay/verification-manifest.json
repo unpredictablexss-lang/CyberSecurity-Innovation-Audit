@@ -1,0 +1,108 @@
+{
+  "schema": "ac-replay-02-verification-manifest/v1",
+  "environment": {
+    "python": "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "python_version": "3.12.14",
+    "PYTHONPATH": ".;E:\\网安\\CyberSecurity-Innovation-Audit\\.venv\\windows-audit-deps",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_ALLOW_PROTOCOL": "",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "checks": [
+    {
+      "name": "pinned_artifact_audit",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "research\\experiments\\ark_runtime\\c8_known_vulnerability_replay_20261019\\audit_pinned_artifacts.py",
+        "--audit-pinned-artifacts"
+      ],
+      "status": "passed_with_declared_hash_manifest_mismatch",
+      "exit_code": 0,
+      "wall_seconds": 2.695686000000933,
+      "peak_rss_kib": 20520,
+      "notes": [
+        "12 reconciliation entries written.",
+        "41 holdout rows inspected, 0 labels.",
+        "Git object identities passed; 2 declared file hashes did not match pinned bytes."
+      ]
+    },
+    {
+      "name": "focused_static_reconciliation_unittest_first_attempt",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.ark_runtime.test_c8_pinned_replay_reconciliation"
+      ],
+      "status": "failed_test_harness_path_resolution",
+      "exit_code": 1,
+      "exact_error": "FileNotFoundError: [Errno 2] No such file or directory: '...\\c8_parallel_20261019\\worktrees\\research\\experiments\\ark_runtime\\c8_known_vulnerability_replay_20261019\\pinned_artifact_audit.json'",
+      "classification": "test harness ROOT parents[4] path error, not an algorithm failure"
+    },
+    {
+      "name": "focused_static_reconciliation_unittest",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.detectors.ark_runtime.test_c8_pinned_replay_reconciliation"
+      ],
+      "status": "passed",
+      "exit_code": 0,
+      "tests_run": 5,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "wall_seconds": 0.12642,
+      "peak_rss_kib": 16616,
+      "stdout_log": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/unittest-stdout.txt",
+      "stderr_log": "research/experiments/ark_runtime/c8_known_vulnerability_replay_20261019/unittest-stderr.txt",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "971bc19bff12cf3594db5a34383326feaa141efb2f94210e31d9cf2cfb6e6cf6"
+    },
+    {
+      "name": "py_compile",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "py_compile",
+        "research\\experiments\\ark_runtime\\c8_known_vulnerability_replay_20261019\\audit_pinned_artifacts.py",
+        "tests\\detectors\\ark_runtime\\test_c8_pinned_replay_reconciliation.py"
+      ],
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "name": "json_parse",
+      "argv": [
+        "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-c",
+        "parse all output JSON"
+      ],
+      "status": "passed",
+      "exit_code": 0,
+      "files_valid": 6
+    },
+    {
+      "name": "git_diff_check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "status": "passed",
+      "exit_code": 0
+    }
+  ],
+  "not_run": [
+    "No Ark Runtime detector unittest or historical replay was rerun; the pinned 0.3.1 implementation is not reconstructible and the remote replay emitted no detector result.",
+    "No Precision/Recall, product vulnerability, CVE or zero FP/FN calculation was run."
+  ],
+  "preflight_corrections": [
+    "A measurement-update attempt failed with ValueError: could not convert string to float: '$wall' because the PowerShell here-string was not expanded. No algorithm or detector code ran in that attempt.",
+    "The first Start-Process measurement exposed PeakWorkingSet64 as empty after process exit; the final measurement polls PeakWorkingSet64 while the child is alive.",
+    "The final measurement updater then raised KeyError: 'wall_seconds' only while printing the wrong loop variable after the verification JSON had already been written. The stored measurement was inspected and retained; this was a reporting bug, not an algorithm failure."
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "schema": "ohscanner.c7-holdout.adjudication.v1",
+  "adjudicator": null,
+  "process": "Resolve source-semantic disagreement only; keep predictions sealed.",
+  "cases": [
+    {
+      "source_case_id": "H01",
+      "reviewer_a_id": "A-1642B0C0421E",
+      "reviewer_b_id": "B-8E6D25FEC5E6",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H02",
+      "reviewer_a_id": "A-4A4429305CBB",
+      "reviewer_b_id": "B-C5A6A0287C9E",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H03",
+      "reviewer_a_id": "A-D712076A858B",
+      "reviewer_b_id": "B-8B01AF2A7149",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H04",
+      "reviewer_a_id": "A-148B80BCF8B6",
+      "reviewer_b_id": "B-A52EFB7A02A1",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H05",
+      "reviewer_a_id": "A-1BE71C570FE0",
+      "reviewer_b_id": "B-E3033E6B1B4B",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H06",
+      "reviewer_a_id": "A-2B97B9E8F88E",
+      "reviewer_b_id": "B-4F7C8888D95A",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H07",
+      "reviewer_a_id": "A-AEFA4F283851",
+      "reviewer_b_id": "B-8A4DFBBCF94B",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H08",
+      "reviewer_a_id": "A-F53FB5613BF9",
+      "reviewer_b_id": "B-AA93FA14FBFD",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H09",
+      "reviewer_a_id": "A-88B44DAD58C5",
+      "reviewer_b_id": "B-0CE6F6E7482F",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H10",
+      "reviewer_a_id": "A-4528EF465360",
+      "reviewer_b_id": "B-CB8BBCD0B17A",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H11",
+      "reviewer_a_id": "A-2E570A67E837",
+      "reviewer_b_id": "B-CBD5486A13C2",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H12",
+      "reviewer_a_id": "A-89F1583504CB",
+      "reviewer_b_id": "B-45FC4B1A2AC7",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H13",
+      "reviewer_a_id": "A-9AB614989AB7",
+      "reviewer_b_id": "B-B5A5F5703E0C",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H14",
+      "reviewer_a_id": "A-9EE072CDFAB0",
+      "reviewer_b_id": "B-86AA33D119A3",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H15",
+      "reviewer_a_id": "A-FE93EF91E493",
+      "reviewer_b_id": "B-860E7CE6FCDA",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    },
+    {
+      "source_case_id": "H16",
+      "reviewer_a_id": "A-6AFEDBDDB08F",
+      "reviewer_b_id": "B-E85BF228FFF4",
+      "reviewer_a_label": null,
+      "reviewer_b_label": null,
+      "adjudicated_label": null,
+      "reason": null,
+      "vulnerability_status": "candidate/unassessed"
+    }
+  ]
+}

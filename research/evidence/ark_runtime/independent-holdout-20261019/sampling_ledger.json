@@ -1,0 +1,287 @@
+{
+  "schema": "ohscanner.c7-holdout.sampling-ledger.v1",
+  "baseline": {
+    "commit": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+    "tree": "f4db05167c5cec007270c782c6bb97711e6414ae",
+    "c3_samples": 16,
+    "c4_audit_samples": 9
+  },
+  "frozen": {
+    "algorithm_commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+    "c3_model": "0.2.0",
+    "c4_model": "0.6.1"
+  },
+  "rules": [
+    {
+      "id": "RF-DST-TOKEN",
+      "slots_per_class": 4,
+      "inclusion": "source receiver token and independently allocated destination store are visible; type-changing creation path or trigger is stated",
+      "exclusion": "same-type destination proved on all paths; store uses actual destination token; owner/operation mismatch; missing allocation or store",
+      "state": "FROZEN_FOR_SAMPLING"
+    },
+    {
+      "id": "RF-EXC-ORDER",
+      "slots_per_class": 4,
+      "inclusion": "allocation, exception-capable intervening effect and sensitive result use are visible",
+      "exclusion": "guard immediately follows allocation; no result use; unknown effect cannot establish safety",
+      "state": "FROZEN_FOR_SAMPLING"
+    },
+    {
+      "id": "RF-ORIGIN-REBIND",
+      "slots_per_class": 4,
+      "inclusion": "token provenance and invalidating alias, rebind, shadow, host write or unknown effect are visible",
+      "exclusion": "valid resampling/equality proof; no invalidating effect; unbindable ownership",
+      "state": "FROZEN_FOR_SAMPLING"
+    }
+  ],
+  "inclusion": [
+    "vulnerable: visible mechanism and trigger",
+    "fixed: matched repair",
+    "safe: applicable with valid guard",
+    "unrelated: exact non-applicability"
+  ],
+  "exclusion": [
+    "mixed revision",
+    "missing binding",
+    "duplicate hash",
+    "label leakage",
+    "exposed reviewer",
+    "unsupported semantics"
+  ],
+  "never_convert": [
+    "unknown",
+    "partial",
+    "failed",
+    "not_applicable",
+    "unlabelled",
+    "disputed"
+  ],
+  "fresh_sampling": {
+    "status": "required",
+    "strata": [
+      "vulnerable",
+      "fixed",
+      "safe",
+      "unrelated"
+    ],
+    "independent_source": true
+  },
+  "cases": [
+    {
+      "case_id": "H01",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H01.cpp",
+      "git_blob": "6c62aae4f08d3f13825f952020d7aca38ac9ac44",
+      "source_sha256": "c633c9b96d4766a48ba6c4a515a733c2a52575ee23512a53663fa131a19cae3b",
+      "reviewer_a_id": "A-1642B0C0421E",
+      "reviewer_b_id": "B-8E6D25FEC5E6",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H02",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H02.cpp",
+      "git_blob": "46159986ff9a4abaafe18f87631db3b84b9284c7",
+      "source_sha256": "5b982a72a36972ce0c72f911b3002f7f25228e5838943e03942b78c3b1d1b7f0",
+      "reviewer_a_id": "A-4A4429305CBB",
+      "reviewer_b_id": "B-C5A6A0287C9E",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H03",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H03.cpp",
+      "git_blob": "8413e94cbac47f61894015598c0413faceb4b071",
+      "source_sha256": "5d57b6e71a068359c29044c4fb8bac7ab7c0811e3180b75120c4294fc922d93a",
+      "reviewer_a_id": "A-D712076A858B",
+      "reviewer_b_id": "B-8B01AF2A7149",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H04",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H04.cpp",
+      "git_blob": "ab6191689b345cdc713f5195e196641f68f125fb",
+      "source_sha256": "fe3b7a99f8a8d4dc5412b97c4e9beba9dab9b8c1ec99c43596022011d8b41c2a",
+      "reviewer_a_id": "A-148B80BCF8B6",
+      "reviewer_b_id": "B-A52EFB7A02A1",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H05",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H05.cpp",
+      "git_blob": "402e610f0f3a56f5a664e0b07d2f95c76a76173e",
+      "source_sha256": "eb18cbef78d1484264f391a84b84d5c3fb9f4038329e3d39c5a4c99f8dea4a2c",
+      "reviewer_a_id": "A-1BE71C570FE0",
+      "reviewer_b_id": "B-E3033E6B1B4B",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H06",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H06.cpp",
+      "git_blob": "3a049469d77931557fdd867fd3ff70056511ac1c",
+      "source_sha256": "8b3895ed6e0789d06c828327709d06bb4111f318373a8fc8effd693b845ca183",
+      "reviewer_a_id": "A-2B97B9E8F88E",
+      "reviewer_b_id": "B-4F7C8888D95A",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H07",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H07.cpp",
+      "git_blob": "852e2148ad049509528526ac8a8cf25563c6c9eb",
+      "source_sha256": "6d8fc766317b4c5a30cafc5b1d067a9bc312309d526df6f66106318ff1ed7e51",
+      "reviewer_a_id": "A-AEFA4F283851",
+      "reviewer_b_id": "B-8A4DFBBCF94B",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H08",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H08.cpp",
+      "git_blob": "370f153e6b014fbe1d26c0ccfafccf6da816575e",
+      "source_sha256": "cab61c04e02d2e69e7d585598ab999ff9468cf33fff6c813e4eb0d24ef7b8a1c",
+      "reviewer_a_id": "A-F53FB5613BF9",
+      "reviewer_b_id": "B-AA93FA14FBFD",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H09",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H09.cpp",
+      "git_blob": "9015712f67c184883bd7ff8c92e72079a9e6c7fd",
+      "source_sha256": "f7d9fbaf995236650288035b95f5e5060c0c29a4729839f10a1b3430fdc07748",
+      "reviewer_a_id": "A-88B44DAD58C5",
+      "reviewer_b_id": "B-0CE6F6E7482F",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H10",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H10.cpp",
+      "git_blob": "dd046df03141db7dda398a69983b7637ac2dc149",
+      "source_sha256": "f4c635c2eb7c96e63dad114aac7d8f478b1427796e59fcdd5da9ad55686683d3",
+      "reviewer_a_id": "A-4528EF465360",
+      "reviewer_b_id": "B-CB8BBCD0B17A",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H11",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H11.cpp",
+      "git_blob": "e166860579b0c16eec0419a2b6de5ddda16468eb",
+      "source_sha256": "56b2ef044c9d2c276b13f53552d60f3e41baa0635c5fb3aa50d1d171305c4377",
+      "reviewer_a_id": "A-2E570A67E837",
+      "reviewer_b_id": "B-CBD5486A13C2",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H12",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H12.cpp",
+      "git_blob": "73a29dfc1f12c30060549ffbf189cafed8445713",
+      "source_sha256": "5393d4b87c0427adbe28c46fa761b365c0962d02ac2123f630731451f984b41c",
+      "reviewer_a_id": "A-89F1583504CB",
+      "reviewer_b_id": "B-45FC4B1A2AC7",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H13",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H13.cpp",
+      "git_blob": "ef209c56f12ac454917b835005e9ef82371fbabc",
+      "source_sha256": "23b6330bd79afb92dce28e843ffd0d9574d467ca8aa795d56877ea4d6cfe97ed",
+      "reviewer_a_id": "A-9AB614989AB7",
+      "reviewer_b_id": "B-B5A5F5703E0C",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H14",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H14.cpp",
+      "git_blob": "539a8e84df8dd088bb5c30e5866e29c0c2684160",
+      "source_sha256": "3fef6b85dd33b87eb3bcbb56752056624535c4849033ebc657e947521cbe683e",
+      "reviewer_a_id": "A-9EE072CDFAB0",
+      "reviewer_b_id": "B-86AA33D119A3",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H15",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H15.cpp",
+      "git_blob": "88be74fad18d928fb64c7121a85d84eb81da6f6f",
+      "source_sha256": "64ed2ca6de402d620c10d5a66a330df873d12a7ddf7c204845b0d45b321e5298",
+      "reviewer_a_id": "A-FE93EF91E493",
+      "reviewer_b_id": "B-860E7CE6FCDA",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    },
+    {
+      "case_id": "H16",
+      "source_path": "research/experiments/ark_runtime/c3_20261017/holdout/H16.cpp",
+      "git_blob": "bc0950c11992082c135c41b8803cdea85b6c14c5",
+      "source_sha256": "cf0b0de5da4141112cf68d48b3bd8b4b6d4e06f5faaaddc812b3d6028b782ddd",
+      "reviewer_a_id": "A-6AFEDBDDB08F",
+      "reviewer_b_id": "B-E85BF228FFF4",
+      "state": "candidate/unassessed",
+      "labels": "awaiting_two_independent_humans",
+      "metric_eligibility": "blocked"
+    }
+  ],
+  "metrics": {
+    "tp": null,
+    "fp": null,
+    "fn": null,
+    "precision": null,
+    "recall": null,
+    "status": "BLOCKED_NO_INDEPENDENT_LABELS"
+  },
+  "protocol_freeze": {
+    "id": "C7-HOLDOUT-20261019-v1",
+    "status": "FROZEN",
+    "labels_opened": false,
+    "predictions_opened": false,
+    "implementation_tuning_prohibited": true,
+    "frozen_at": "2026-10-19T09:57:59.1429559+08:00"
+  },
+  "evidence_gate_bindings": {
+    "repository": "https://github.com/unpredictablexss-lang/CyberSecurity-Innovation-Audit.git",
+    "commit": "b011ea0cf732e5c07cb9d9fe0ab9ec451e87c5df",
+    "tree": "f4db05167c5cec007270c782c6bb97711e6414ae",
+    "blobs": "bound per sampling_ledger.json cases",
+    "source_hashes": "verified against C3_HOLDOUT_MANIFEST.json",
+    "detector_rule": "C7-HOLDOUT-20261019-v1 sampling rule freeze",
+    "algorithm_commit": "4ea5f4020884aed5860a88d50f5a926610e7b98a",
+    "scope": "16 developer-origin C++ semantic controls plus explicit fresh-sampling slots",
+    "profile": "static source double-blind review; no build, runtime, product reachability or CIA claim",
+    "artifacts": [
+      "reviewer_a/",
+      "reviewer_b/",
+      "admin/random_id_map.template.json",
+      "admin/adjudication.template.json",
+      "admin/verification.json"
+    ],
+    "missing_explicit_unknown": [
+      "C4 nine-sample item identities",
+      "independent truth labels",
+      "fresh independent source samples",
+      "runtime/product impact"
+    ]
+  }
+}

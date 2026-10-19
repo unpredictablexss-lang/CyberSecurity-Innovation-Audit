@@ -1,0 +1,89 @@
+test_bound_current_component_is_explicitly_selected_but_partial_stays_unknown (__main__.CurrentComponentRunnerBindingTests.test_bound_current_component_is_explicitly_selected_but_partial_stays_unknown) ... ERROR
+test_current_component_rules_remain_default_off_and_require_explicit_selection (__main__.CurrentComponentRunnerBindingTests.test_current_component_rules_remain_default_off_and_require_explicit_selection) ... ok
+test_same_path_at_unbound_commit_is_not_analyzed (__main__.CurrentComponentWrongVersionTests.test_same_path_at_unbound_commit_is_not_analyzed) ... skipped 'Bound commit parent is absent from supplied component Git store'
+test_C01_pinned_before_has_origin_candidate (__main__.HistoricalPairTests.test_C01_pinned_before_has_origin_candidate) ... ERROR
+test_C02_pinned_fix_has_no_rule_candidate (__main__.HistoricalPairTests.test_C02_pinned_fix_has_no_rule_candidate) ... ERROR
+test_exact_parent_and_fix_through_runner_keep_candidate_and_coverage_distinct (__main__.HistoricalPairTests.test_exact_parent_and_fix_through_runner_keep_candidate_and_coverage_distinct) ... ERROR
+
+======================================================================
+ERROR: test_bound_current_component_is_explicitly_selected_but_partial_stays_unknown (__main__.CurrentComponentRunnerBindingTests.test_bound_current_component_is_explicitly_selected_but_partial_stays_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_historical.py", line 79, in test_bound_current_component_is_explicitly_selected_but_partial_stays_unknown
+    context, _, _, _, _ = prepare_git_context(
+                          ^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\indexing.py", line 42, in prepare_git_context
+    pinned, tree, sources, inventory = load_git_sources(repo_dir, commit, includes)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 140, in load_git_sources
+    pinned_commit, tree = resolve_commit(repo, commit)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 117, in resolve_commit
+    resolved = _git(repo, "rev-parse", "--verify", commit + "^{commit}").decode().strip()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 44, in _git
+    raise ValueError(
+ValueError: Git object operation failed (rev-parse --verify): fatal: Needed a single revision
+
+
+======================================================================
+ERROR: test_C01_pinned_before_has_origin_candidate (__main__.HistoricalPairTests.test_C01_pinned_before_has_origin_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_historical.py", line 37, in test_C01_pinned_before_has_origin_candidate
+    result = self.run_version(0)
+             ^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_historical.py", line 30, in run_version
+    ctx, _, _, _, _ = pinned_context(Path(os.environ['OHSCANNER_ARK_REPO']), entry['commit'], entry['source_sha256'])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 35, in pinned_context
+    context, tree, inventory, coverage, sources = prepare_git_context(
+                                                  ^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\indexing.py", line 42, in prepare_git_context
+    pinned, tree, sources, inventory = load_git_sources(repo_dir, commit, includes)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 184, in load_git_sources
+    raise ValueError("missing_local_git_object: blob unavailable locally "
+ValueError: missing_local_git_object: blob unavailable locally 054451b1be4f39254d56a1683cc9d1c1b5e55018 (ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp); offline-only read (no fetch)
+
+======================================================================
+ERROR: test_C02_pinned_fix_has_no_rule_candidate (__main__.HistoricalPairTests.test_C02_pinned_fix_has_no_rule_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_historical.py", line 42, in test_C02_pinned_fix_has_no_rule_candidate
+    result = self.run_version(1)
+             ^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_historical.py", line 30, in run_version
+    ctx, _, _, _, _ = pinned_context(Path(os.environ['OHSCANNER_ARK_REPO']), entry['commit'], entry['source_sha256'])
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 35, in pinned_context
+    context, tree, inventory, coverage, sources = prepare_git_context(
+                                                  ^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\indexing.py", line 42, in prepare_git_context
+    pinned, tree, sources, inventory = load_git_sources(repo_dir, commit, includes)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 184, in load_git_sources
+    raise ValueError("missing_local_git_object: blob unavailable locally "
+ValueError: missing_local_git_object: blob unavailable locally 95f54f2875f401afe3167c62f8c1e7799782be8c (ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp); offline-only read (no fetch)
+
+======================================================================
+ERROR: test_exact_parent_and_fix_through_runner_keep_candidate_and_coverage_distinct (__main__.HistoricalPairTests.test_exact_parent_and_fix_through_runner_keep_candidate_and_coverage_distinct)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\tests\detectors\ark_runtime\test_historical.py", line 55, in test_exact_parent_and_fix_through_runner_keep_candidate_and_coverage_distinct
+    context, _, _, _, _ = pinned_context(
+                          ^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\research\experiments\ark_runtime\c2_20261017\replay.py", line 35, in pinned_context
+    context, tree, inventory, coverage, sources = prepare_git_context(
+                                                  ^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\indexing.py", line 42, in prepare_git_context
+    pinned, tree, sources, inventory = load_git_sources(repo_dir, commit, includes)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\����\CyberSecurity-Innovation-Audit\research\experiments\ark_runtime\c7_historical_replay_20261019\_work\baseline\src\ohscanner\git_source.py", line 184, in load_git_sources
+    raise ValueError("missing_local_git_object: blob unavailable locally "
+ValueError: missing_local_git_object: blob unavailable locally 054451b1be4f39254d56a1683cc9d1c1b5e55018 (ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp); offline-only read (no fetch)
+
+----------------------------------------------------------------------
+Ran 6 tests in 1.523s
+
+FAILED (errors=4, skipped=1)

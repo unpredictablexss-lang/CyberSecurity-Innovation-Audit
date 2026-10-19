@@ -1,0 +1,375 @@
+{
+  "schema": "ac-replay-02-pinned-artifact-audit/v1",
+  "review_target": {
+    "ref": "origin/codex/c-line-ark-runtime-replay-20261019",
+    "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+    "tree": "684c42e94c4797640113f0f2ffeca5a0c988a136",
+    "history_directory_tree": "699be8e43ea0413255250202930672c8bca9ca6f",
+    "frontend_holdout_tree": "28711cdedf2fd15347ec7604d1b5d5651af1e02a",
+    "runtime_holdout_tree": "128564f9b1edd34ec98fd25284e9ece2a9e72556"
+  },
+  "working_target": {
+    "commit": "7af25f5ced471e5d6acc8cf5efd4c696275ce940",
+    "tree": "11f53fe00d79d477c383e7e9b49ad3b1adcae86c",
+    "c8_directory_tree": "a0b1de2277566e490fabd527e5b5fefd94f5d22e"
+  },
+  "identity_checks": {
+    "review_ref_resolves_to_expected_commit": true,
+    "review_commit_tree_matches": true,
+    "history_directory_tree_matches": true,
+    "frontend_holdout_tree_matches": true,
+    "runtime_holdout_tree_matches": true,
+    "base_head_matches": true,
+    "base_tree_matches": true,
+    "c8_directory_tree_matches": true
+  },
+  "hash_manifest_checks": [
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/README.md",
+      "expected_sha256": "02ede663f879b3c620baa06cbc56c0d2d6e4332ad82d72d8ee22b1bf573d8d8d",
+      "actual_sha256": "91b2bf44e44fc603d10ee1e4596ec40ae5320789db179d8242e978e47f9fdb7a",
+      "match": false
+    },
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/commands.txt",
+      "expected_sha256": "bee8dc1bcc773bb2d2cbe1d94347defdb1ced3f767ac2037c291c9450d1dcab9",
+      "actual_sha256": "bee8dc1bcc773bb2d2cbe1d94347defdb1ced3f767ac2037c291c9450d1dcab9",
+      "match": true
+    },
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/replay.py",
+      "expected_sha256": "a192c3962002912ac7c92b59d783d837fe7b6e7b9b66ef1e23483faf4692310a",
+      "actual_sha256": "a192c3962002912ac7c92b59d783d837fe7b6e7b9b66ef1e23483faf4692310a",
+      "match": true
+    },
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/frozen-contract-start-snapshot.json",
+      "expected_sha256": "c6224e6286b347364a1240efda6804c1b9af3e6c3a5c83c3d1e490548b8dca4b",
+      "actual_sha256": "c6224e6286b347364a1240efda6804c1b9af3e6c3a5c83c3d1e490548b8dca4b",
+      "match": true
+    },
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/replay-manifest.json",
+      "expected_sha256": "3e4d001433af6731066eb86e528810d9c93844c2aaba2923c9cab6ea3038424e",
+      "actual_sha256": "3e4d001433af6731066eb86e528810d9c93844c2aaba2923c9cab6ea3038424e",
+      "match": true
+    },
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/run-summary.json",
+      "expected_sha256": "814583bcb8dfe89e1ce1a1d45753009d8e15e01f90f00b131e0ab07e5dc06ae3",
+      "actual_sha256": "814583bcb8dfe89e1ce1a1d45753009d8e15e01f90f00b131e0ab07e5dc06ae3",
+      "match": true
+    },
+    {
+      "path": "docs/项目现状与下一步.md",
+      "expected_sha256": "e358abe6ebe252d6a40b7a37ec165e6c77f313022fe6fae6307ba99ddc0522df",
+      "actual_sha256": "8af3cbfbbdbabda86d8ddf4eb1731fb0bf53a884c51117b8264e724d4502b92c",
+      "match": false
+    },
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/hash-manifest.sha256",
+      "expected_sha256": "54ccb7e2af9748364c68f59b82d9200e6dab0393c7711ef466574f415fdef3dd",
+      "actual_sha256": "54ccb7e2af9748364c68f59b82d9200e6dab0393c7711ef466574f415fdef3dd",
+      "match": true
+    }
+  ],
+  "pinned_python_compile_checks": [
+    {
+      "path": "research/experiments/ark-runtime-history-replay-20261018/replay.py",
+      "status": "compiled",
+      "error": null,
+      "sha256": "a192c3962002912ac7c92b59d783d837fe7b6e7b9b66ef1e23483faf4692310a"
+    },
+    {
+      "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/prepare_blind_review.py",
+      "status": "compiled",
+      "error": null,
+      "sha256": "be65a8d602b7931967416603ccf23ed9b2f135d8f530421f1cd1c8fc09d9d38e"
+    },
+    {
+      "path": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4/prepare_blind_review.py",
+      "status": "compiled",
+      "error": null,
+      "sha256": "40ebb90a96a6a1a015a3a7d8618e8a39909add19729ae7b601a7b13c860fec01"
+    }
+  ],
+  "history_replay_review": {
+    "overall_status": "blocked",
+    "freeze_snapshot_is_byte_exact": false,
+    "frozen_contract": {
+      "detector": "ohscanner.ark.runtime.type_safety",
+      "version": "0.3.1",
+      "rule_id": "ark.runtime.typedarray-store-type-origin",
+      "model_sha256": "ec13c5edf488ade409fd6f13709193879a3bbc2a58f3129017786c7559ccc575",
+      "freeze_scope": "Research holdout only. Any implementation/model change requires a new detector version and invalidates this holdout packet for evaluation."
+    },
+    "source_integrity": {
+      "parent": {
+        "role": "vulnerable_parent",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "830e85b40240677039719fcbf14f721ad3b19050",
+        "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+        "bytes": 150433,
+        "recomputed_git_blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+        "recomputed_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+        "preserved_source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+        "blob_bytes_match": true,
+        "commit_tree_object_status": "not_confirmed_local_cache",
+        "raw_bytes_source": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-parent.cpp",
+        "commit_tree_object_check": {
+          "commit_object": "unavailable_local_no_fetch",
+          "tree_object": "not_checked",
+          "matches_recorded_tree": false
+        }
+      },
+      "fix": {
+        "role": "fix_revision",
+        "repository": "openharmony/arkcompiler_ets_runtime",
+        "commit": "a0e30483ab3e4aead67ecfb5c708489915e447f9",
+        "tree": "82af11ced4297818410ccf61906b703d25b69165",
+        "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+        "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "creator_blob": "757b8d050d306d349822600deacb295c7a54245e",
+        "bytes": 150509,
+        "recomputed_git_blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+        "recomputed_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+        "preserved_source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+        "blob_bytes_match": true,
+        "commit_tree_object_status": "not_confirmed_local_cache",
+        "raw_bytes_source": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-fix.cpp",
+        "commit_tree_object_check": {
+          "commit_object": "unavailable_local_no_fetch",
+          "tree_object": "not_checked",
+          "matches_recorded_tree": false
+        }
+      }
+    },
+    "sample_dispositions": {
+      "typedarray_parent": {
+        "status": "blocked",
+        "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+      },
+      "typedarray_fix": {
+        "status": "blocked",
+        "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+      },
+      "safe_Set_control": {
+        "status": "blocked",
+        "reason": "In-scope control in fix blob; not run because frozen implementation cannot be restored."
+      },
+      "unrelated_Map_control": {
+        "status": "not_analyzed",
+        "reason": "Map is outside the frozen caller profiles; no caller override or custom config was used."
+      },
+      "exception_propagation_parent_fix": {
+        "status": "not_analyzed",
+        "reason": "Different file family and separate research-only detector/probe; previous outputs are quarantined and not combined."
+      }
+    },
+    "blockers": [
+      "One or more 0.3.1 implementation files whose SHA-256 values are in the task-start freeze snapshot are absent from the working tree and do not match the recorded executed-workspace commit; the live freeze and model have since moved to 0.3.2.",
+      "The typedarray parent and fix commit/tree objects are unavailable in the local history cache. The original source checkout has an empty .git/config; no fetch was performed.",
+      "The frozen NewObjectStubBuilder creator dependency bytes are not present in the preserved source bundle."
+    ],
+    "no_accuracy_claim": true,
+    "assessment": "Fail-closed missing-object handling is satisfied. Vulnerable-hit, fixed-miss and safe-control replay coverage is not satisfied; unrelated non-applicability and unknown status preservation are satisfied only at disposition level."
+  },
+  "holdout_packet_review": [
+    {
+      "directory": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67",
+      "tree": "28711cdedf2fd15347ec7604d1b5d5651af1e02a",
+      "schema": "c-line-same-name-holdout-v2",
+      "source_identity": {
+        "path": "research/deliveries/cpp/holdout-arkcompiler-ets-frontend-fadba67/symbol_reference_index.cpp",
+        "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+        "git_blob": "39bec9bd9abd6e5d570bbbce21e34afba6c5f916",
+        "recomputed_git_blob": "39bec9bd9abd6e5d570bbbce21e34afba6c5f916",
+        "sha256": "b9809fd39fe3f3b058e19008f51968b3d6f5ba56a0ed3203d4f08e7104f36847",
+        "bytes": 46366
+      },
+      "declared_sha256": "b9809fd39fe3f3b058e19008f51968b3d6f5ba56a0ed3203d4f08e7104f36847",
+      "declared_git_blob": "39bec9bd9abd6e5d570bbbce21e34afba6c5f916",
+      "source_sha256_match": true,
+      "source_git_blob_match": true,
+      "reviewer_rows": 21,
+      "nonempty_evidence_labels": 0,
+      "labels_present": false,
+      "detector_invoked": false,
+      "counts_as_independent_holdout": null,
+      "review_boundary": "unlabelled development/coverage frame; not independent truth and not metric eligible"
+    },
+    {
+      "directory": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4",
+      "tree": "128564f9b1edd34ec98fd25284e9ece2a9e72556",
+      "schema": "c-line-cross-component-review-frame-v1",
+      "source_identity": {
+        "path": "research/deliveries/cpp/holdout-arkcompiler-runtime-core-a053abc4/escompat_TypedArrays.cpp",
+        "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+        "git_blob": "e748456cb94ef3b012254bcd345e548d9d1b54e6",
+        "recomputed_git_blob": "e748456cb94ef3b012254bcd345e548d9d1b54e6",
+        "sha256": "b656c5c83dceff1e804dbd295916e49d54b58ad0dd824ed2549f98a1e9fa81c4",
+        "bytes": 95631
+      },
+      "declared_sha256": "b656c5c83dceff1e804dbd295916e49d54b58ad0dd824ed2549f98a1e9fa81c4",
+      "declared_git_blob": "e748456cb94ef3b012254bcd345e548d9d1b54e6",
+      "source_sha256_match": true,
+      "source_git_blob_match": true,
+      "reviewer_rows": 20,
+      "nonempty_evidence_labels": 0,
+      "labels_present": false,
+      "detector_invoked": false,
+      "counts_as_independent_holdout": false,
+      "review_boundary": "unlabelled development/coverage frame; not independent truth and not metric eligible"
+    }
+  ],
+  "minimal_patch_review": [
+    {
+      "role": "pinned_minimal_type_origin_patch",
+      "rule_or_scope": "ark.runtime.typedarray-store-type-origin",
+      "path": "research/experiments/ark-runtime-exact-source-20261018/sources/type-origin-parent-fix.patch",
+      "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+      "git_blob": "6518220a3887a97c21de5ae27b3046b02caaca8d",
+      "recomputed_git_blob": "6518220a3887a97c21de5ae27b3046b02caaca8d",
+      "sha256": "621b951b10796fc70df0cac7a2b089108a9583fd5b9162529738190722f1d157",
+      "bytes": 2107
+    },
+    {
+      "role": "pinned_minimal_exception_propagation_patch",
+      "rule_or_scope": "research-only separate probe; not C4 exception guard rule",
+      "path": "research/experiments/ark-runtime-exact-source-20261018/sources/exception-parent-fix.patch",
+      "commit": "a7962043cda3cbb99f79ada7418508709fc951ca",
+      "git_blob": "0dcbb6dc1812c0bdea2dd7ef9e7a5a40cae9dd91",
+      "recomputed_git_blob": "0dcbb6dc1812c0bdea2dd7ef9e7a5a40cae9dd91",
+      "sha256": "c219f1dfe8f8ee8a60c0342347124aa6fd4e5be7b5a34832b3ed3ecb5f188627",
+      "bytes": 1203
+    }
+  ],
+  "control_matrix": [
+    {
+      "category": "vulnerable_hit",
+      "control_ids": [
+        "C8-TO-POS-001",
+        "C8-EG-POS-001"
+      ],
+      "expected": "candidate/unassessed on positive controls",
+      "pinned_disposition": {
+        "status": "blocked",
+        "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+      },
+      "satisfied": false,
+      "counted_as_detector_pass": false,
+      "reason": "Pinned parent source bytes are verified, but the frozen 0.3.1 implementation and commit/tree provenance were unavailable, so no detector result was emitted."
+    },
+    {
+      "category": "fixed_miss",
+      "control_ids": [
+        "C8-TO-FIX-001",
+        "C8-EG-FIX-001"
+      ],
+      "expected": "no candidate on a true fixed control; 0 findings is not safe",
+      "pinned_disposition": {
+        "status": "blocked",
+        "reason": "Frozen implementation and exact commit/tree provenance are not restored; no 0.3.1 replay was run."
+      },
+      "satisfied": false,
+      "counted_as_detector_pass": false,
+      "reason": "The pinned TypeSafety fix is expected to remain unknown under frozen 0.3.1 because the new type read precedes pending-exception handling; this is not a fixed-miss replay and the C4 guard-fix pair is absent."
+    },
+    {
+      "category": "safe_control",
+      "control_ids": [
+        "C8-TO-SAFE-001",
+        "C8-EG-SAFE-001"
+      ],
+      "expected": "control behavior preserved without a product safe claim",
+      "pinned_disposition": {
+        "status": "blocked",
+        "reason": "In-scope control in fix blob; not run because frozen implementation cannot be restored."
+      },
+      "satisfied": false,
+      "counted_as_detector_pass": false,
+      "reason": "The in-scope Set control was not run because the frozen implementation could not be restored."
+    },
+    {
+      "category": "unrelated_control",
+      "control_ids": [
+        "C8-TO-UNR-001",
+        "C8-EG-UNR-001"
+      ],
+      "expected": "out of scope remains not_analyzed and is not a safe/miss result",
+      "pinned_disposition": {
+        "status": "not_analyzed",
+        "reason": "Map is outside the frozen caller profiles; no caller override or custom config was used."
+      },
+      "satisfied": true,
+      "counted_as_detector_pass": false,
+      "reason": "Map is outside the frozen TypeSafety caller profiles and remained not_analyzed with no override. This satisfies non-applicability preservation only."
+    },
+    {
+      "category": "unknown",
+      "control_ids": [
+        "C8-TO-UNKNOWN-001",
+        "C8-TO-UNKNOWN-002",
+        "C8-TO-UNKNOWN-003",
+        "C8-TO-UNKNOWN-004",
+        "C8-TO-UNKNOWN-005",
+        "C8-TO-UNKNOWN-006",
+        "C8-EG-UNKNOWN-001",
+        "C8-OWNER-UNKNOWN-001"
+      ],
+      "expected": "unknown is retained and is not converted to safe/miss",
+      "pinned_disposition": {
+        "status_preserved": true,
+        "algorithm_replay": false,
+        "expected_parent_fix_difference": "The parent samples the receiver type token before storing into a species-created result; the fix samples the result array type. Under the frozen 0.3.1 semantics the parent is expected to remain a partial candidate, while the fixed source is unknown because the type read occurs before pending-exception handling. That expected difference is not a replay result or safety label."
+      },
+      "satisfied": true,
+      "counted_as_detector_pass": false,
+      "reason": "Status semantics preserve unknown/blocked, but the six C3 cases and C4 unknown cases were not executed by the pinned replay."
+    },
+    {
+      "category": "missing_object_fail_closed",
+      "control_ids": [
+        "C8-HISTORY-MISSING-001",
+        "C8-DEPENDENCY-UNKNOWN-001"
+      ],
+      "expected": "missing parent/fix/current object or dependency evidence is blocked/unknown and never counted as passed",
+      "pinned_disposition": {
+        "parent_commit_tree": {
+          "commit_object": "unavailable_local_no_fetch",
+          "tree_object": "not_checked",
+          "matches_recorded_tree": false
+        },
+        "fix_commit_tree": {
+          "commit_object": "unavailable_local_no_fetch",
+          "tree_object": "not_checked",
+          "matches_recorded_tree": false
+        },
+        "overall_status": "blocked",
+        "code_restored": false
+      },
+      "satisfied": true,
+      "counted_as_detector_pass": false,
+      "reason": "Commit/tree and frozen implementation gaps were retained as blockers; blob-byte integrity was reported separately and not promoted to a detector pass."
+    }
+  ],
+  "acceptance": {
+    "ac_replay_02_status": "partially_satisfied",
+    "review_object_identity_passed": true,
+    "declared_hash_manifest_passed": false,
+    "pinned_artifact_integrity_passed": false,
+    "detector_replay_completed": false,
+    "vulnerable_hit_satisfied": false,
+    "fixed_miss_satisfied": false,
+    "safe_control_satisfied": false,
+    "unrelated_non_applicability_satisfied": true,
+    "unknown_status_preserved": true,
+    "missing_object_fail_closed_satisfied": true,
+    "skip_or_error_counted_as_pass": false,
+    "validated_vulnerability": 0,
+    "eligible_for_precision_recall": false
+  }
+}

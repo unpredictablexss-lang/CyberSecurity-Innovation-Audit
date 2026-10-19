@@ -1,0 +1,98 @@
+{
+  "schema_version": "c8.source-audit.fail-closed-self-test/v1",
+  "generated_at": "2026-10-19T05:13:37+00:00",
+  "cwd": "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner",
+  "exact_argv": [
+    "C:\\Users\\work_work\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "E:\\网安\\CyberSecurity-Innovation-Audit\\research\\experiments\\ark_runtime\\c8_parallel_20261019\\worktrees\\partial-owner\\research\\experiments\\ark_runtime\\c8_source_audit_reconciliation_20261019\\reconcile.py",
+    "--self-test-fail-closed"
+  ],
+  "scanner_execution": false,
+  "metrics_computed": false,
+  "cases": [
+    {
+      "case": "missing",
+      "first_status": "blocked_missing_input",
+      "rerun_status": "blocked_missing_input",
+      "failure_codes": [
+        "input_missing"
+      ],
+      "entry_count": 0,
+      "mapped_entry_ids": [],
+      "mapped_source_identity_count": 0,
+      "rerunnable_stable": true,
+      "expected_status": "blocked_missing_input",
+      "expected_failure_codes": [
+        "input_missing"
+      ],
+      "passed": true
+    },
+    {
+      "case": "present_no_entries",
+      "first_status": "blocked_no_entries",
+      "rerun_status": "blocked_no_entries",
+      "failure_codes": [
+        "input_no_supported_entries"
+      ],
+      "entry_count": 0,
+      "mapped_entry_ids": [],
+      "mapped_source_identity_count": 0,
+      "rerunnable_stable": true,
+      "expected_status": "blocked_no_entries",
+      "expected_failure_codes": [
+        "input_no_supported_entries"
+      ],
+      "passed": true
+    },
+    {
+      "case": "schema_invalid",
+      "first_status": "blocked_schema_invalid",
+      "rerun_status": "blocked_schema_invalid",
+      "failure_codes": [
+        "input_schema_invalid"
+      ],
+      "entry_count": 1,
+      "mapped_entry_ids": [],
+      "mapped_source_identity_count": 0,
+      "rerunnable_stable": true,
+      "expected_status": "blocked_schema_invalid",
+      "expected_failure_codes": [
+        "input_schema_invalid"
+      ],
+      "passed": true
+    },
+    {
+      "case": "hash_mismatch",
+      "first_status": "blocked_hash_mismatch",
+      "rerun_status": "blocked_hash_mismatch",
+      "failure_codes": [
+        "input_hash_mismatch"
+      ],
+      "entry_count": 0,
+      "mapped_entry_ids": [],
+      "mapped_source_identity_count": 0,
+      "rerunnable_stable": true,
+      "expected_status": "blocked_hash_mismatch",
+      "expected_failure_codes": [
+        "input_hash_mismatch"
+      ],
+      "passed": true
+    },
+    {
+      "case": "valid_mapping",
+      "first_status": "not_blocked",
+      "rerun_status": "not_blocked",
+      "failure_codes": [],
+      "entry_count": 1,
+      "mapped_entry_ids": [
+        "SELFTEST-PATH-ENTRY-001"
+      ],
+      "mapped_source_identity_count": 1,
+      "rerunnable_stable": true,
+      "expected_status": "not_blocked",
+      "expected_failure_codes": [],
+      "passed": true
+    }
+  ],
+  "status": "pass"
+}

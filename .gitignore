@@ -252,3 +252,7 @@ outputs/reports/*/
 outputs/reports/m1_descriptor_identity/*
 !outputs/reports/m1_descriptor_identity/historical_identity_baseline.json
 outputs/workbench-review-*/
+
+# Local linked worktrees used for bounded parallel experiments; never commit as submodules.
+research/experiments/**/worktrees/
+

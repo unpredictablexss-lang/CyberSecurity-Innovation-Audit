@@ -1,0 +1,3 @@
+bash: line 1: warning: here-document at line 1 delimited by end-of-file (wanted `PYnfrom')
+bash: -c: line 1: syntax error near unexpected token `('
+bash: -c: line 1: `cd /mnt/e/网安/CyberSecurity-Innovation-Audit-main-latest-20261019 && PYTHONPATH=. /mnt/e/网安/CyberSecurity-Innovation-Audit/.venv-web/bin/python - <<'PY'\nfrom src.ohscanner.detectors.catalog import catalog_metadata, default_detector_ids\nimport json\nprint(json.dumps({'default_detector_ids': default_detector_ids(), 'known_cves': catalog_metadata()['ohscanner.known_disclosed_cves']}, ensure_ascii=False, indent=2, sort_keys=True))\nPY'
