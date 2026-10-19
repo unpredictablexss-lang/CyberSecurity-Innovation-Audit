@@ -1,0 +1,132 @@
+{
+  "schema": "ohscanner.secondary_static_review/v1",
+  "rule_id": "ark.runtime.typedarray-filter-result-type-origin",
+  "review_scope": "One pinned upstream parent/fixed source pair; source-level only",
+  "identity": {
+    "candidate_source": {
+      "detector_binding": "unknown",
+      "object_verification": "verified",
+      "product_profile": "blocked"
+    },
+    "parent": {
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "tree": "579712c1ebbb703d17cea422b1572023bed5d8a4",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "bytes": 150433,
+      "object_verification": "verified"
+    },
+    "fixed": {
+      "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+      "tree": "82af11ced4297818410ccf61906b703d25b69165",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "bytes": 150509,
+      "object_verification": "verified"
+    },
+    "object_store": {
+      "path": "D:/openHarmonyScanner/tmp/cve-2025-arkruntime-official.git",
+      "declared_remote": "https://gitee.com/openharmony/arkcompiler_ets_runtime.git",
+      "commit_tree_blob_byte_length_sha256_and_parent_ancestry": "matched",
+      "acquisition_and_custody": "not_independently_verified"
+    }
+  },
+  "static_root_cause": "supported",
+  "decision": "candidate_supported",
+  "root_cause": "In parent BuiltinsTypedArrayStubBuilder::Filter, the final copy loop writes to the newly allocated newArray but supplies arrayType derived from thisValue to StoreTypedArrayElement. The fixed source reads newArrayType from the allocated destination and supplies that type to the store. StoreTypedArrayElement forwards jsType to SetTypeArrayPropertyByIndex, so this is a concrete source-level mismatch between the destination object and the type used for its write. The fixed patch supports the same local root cause. The exact runtime conditions and security impact are not established by these source snippets alone.",
+  "evidence": [
+    {
+      "claim": "Filter allocates newArray after the callback/filter loop, checks allocation exception state, then copies kept values into that destination.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1414-1458,1474-1500",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "direct"
+    },
+    {
+      "claim": "The parent copy loop stores into newArray while passing arrayType captured from thisValue to StoreTypedArrayElement.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1476-1499",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "direct"
+    },
+    {
+      "claim": "The fixed source loads newArrayType from the allocated destination and passes it to StoreTypedArrayElement.",
+      "commit": "919e4fbb011f610427e788889083fa8e28d2f951",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::Filter",
+      "line_or_range": "1476-1500",
+      "blob": "95f54f2875f401afe3167c62f8c1e7799782be8c",
+      "source_sha256": "8751b09dfc53d57338d0937d9c120574cdd4c7dfedd417fda41ccc399be7f74e",
+      "kind": "direct"
+    },
+    {
+      "claim": "The store helper passes jsType to SetTypeArrayPropertyByIndex after detached-buffer and index-range checks.",
+      "commit": "2ea501258ab4155826b64f01b499b43d1911e0e2",
+      "path": "ecmascript/compiler/builtins/builtins_typedarray_stub_builder.cpp",
+      "symbol": "BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement",
+      "line_or_range": "113-138",
+      "blob": "054451b1be4f39254d56a1683cc9d1c1b5e55018",
+      "source_sha256": "847d54f51e384368f49d4e2dd45e900ce6d305a142638a02dda83e3cc6eca422",
+      "kind": "direct"
+    }
+  ],
+  "protections": [
+    {
+      "condition": "Detached-buffer and index-range guards prevent writes for detached buffers and out-of-range indices; they do not validate jsType against the destination type.",
+      "result": "effective",
+      "evidence_refs": [
+        "parent:BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement:113-138"
+      ]
+    },
+    {
+      "condition": "Filter checks fast typed array, detached input, constructor/prototype/accessor guards before the callback loop; these checks do not directly establish that the allocated destination type equals the captured source arrayType.",
+      "result": "unknown",
+      "evidence_refs": [
+        "parent:BuiltinsTypedArrayStubBuilder::Filter:1384-1403"
+      ]
+    }
+  ],
+  "fixed_comparison": {
+    "status": "same_root_cause_fixed",
+    "evidence_refs": [
+      "parent:BuiltinsTypedArrayStubBuilder::Filter:1476-1499",
+      "fixed:BuiltinsTypedArrayStubBuilder::Filter:1476-1500",
+      "parent:BuiltinsTypedArrayStubBuilder::StoreTypedArrayElement:113-138"
+    ]
+  },
+  "safe_unrelated_comparison": [],
+  "entry_attacker_trigger_impact": {
+    "entry": "unknown",
+    "attacker_control": "unknown",
+    "trigger": "unknown",
+    "cia_impact": "unknown"
+  },
+  "missing_evidence": [
+    "Independent acquisition/custody or server-authenticity evidence for the local object store",
+    "A concrete shipped product revision and a source-to-product component binding for IBS5YG",
+    "Exact GN target/action/args, compiler/linker/sysroot, include/generated-input closure, and preprocessed translation unit",
+    "Runtime proof of when the allocated destination's element type can differ from the captured source arrayType under the guarded Filter path",
+    "A product-reachable entry, attacker-controlled trigger, and security-relevant impact",
+    "Same-profile fixed-product build and regression revalidation"
+  ],
+  "recommended_next_check": [
+    "Obtain the target product release/branch/manifest and prove its exact Ark Runtime component revision before product-profile work.",
+    "On that source revision, trace NewTypedArray result type and SetTypeArrayPropertyByIndex behavior for the guarded Filter path.",
+    "Keep product vulnerability, exploitability, and safety unknown until build, runtime, and impact evidence is independently verified."
+  ],
+  "confidence": "medium",
+  "limitations": [
+    "This is a source-level inference based on direct parent/fixed differences and a shared store helper.",
+    "The local object database is content-consistent with its declared remote but acquisition and custody were not independently attested.",
+    "No product build, preprocessed TU, runtime test, product PoC, exploitability analysis, or fixed-product replay was performed.",
+    "The review does not map the candidate to a CVE or assert vulnerability severity."
+  ]
+}
