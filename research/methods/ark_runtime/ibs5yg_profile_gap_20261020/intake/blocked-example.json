@@ -1,0 +1,12 @@
+{
+  "schema": "ohscanner.ark-runtime.ibs5yg-d5-intake/v1",
+  "case_id": "ARK-TYPEDARRAY-FILTER-RESULT-TYPE-ORIGIN-IBS5YG",
+  "fields": {
+    "openharmony_release": null,
+    "product_build_id_or_image_version": null,
+    "source_branch_or_release_tag": null,
+    "locked_manifest_uri_plus_sha256_or_immutable_commit": null,
+    "product_name": null,
+    "board_or_device_target": null
+  }
+}
