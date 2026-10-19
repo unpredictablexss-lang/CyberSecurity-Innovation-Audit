@@ -61,7 +61,8 @@ class CppPathTraversalDetectorTests(unittest.TestCase):
         self.assertTrue(all(item.candidate_cwe == "CWE-22" for item in run.findings))
         self.assertTrue(all(item.source_sha256 == unit.sha256 for item in run.findings))
         self.assertTrue(all(item.rule_version == RULE_VERSION for item in run.findings))
-        self.assertTrue(all(item.identity_quality == "partial" for item in run.findings))
+        self.assertTrue(all(item.identity_quality == "complete" for item in run.findings))
+        self.assertTrue(all(item.ast_fingerprint for item in run.findings))
 
     def test_synthetic_fixed_shaped_basename_control_is_safe(self) -> None:
         source = SOURCE_AND_FILE_FLOW.replace(
@@ -103,6 +104,36 @@ class CppPathTraversalDetectorTests(unittest.TestCase):
                      " LogText(title);\n}\n", "unrelated.cpp")
         run = self.detector.detect(_context(unit), (unit,))
         self.assertEqual(run.findings, ())
+
+    def test_bucket_component_separator_rejection_is_safe(self) -> None:
+        source = SOURCE_AND_FILE_FLOW.replace(
+            'void OpenPath(const std::string &path) { open(path.c_str(), O_RDONLY); }',
+            'void OpenPath(const std::string &path) { if (path.find_first_of("/\\\\") != std::string::npos) return; open(path.c_str(), O_RDONLY); }'
+        ).replace(
+            'void RemovePath(const std::string &path) { unlink(path.c_str()); }',
+            'void RemovePath(const std::string &path) { if (path.find_first_of("/\\\\") != std::string::npos) return; unlink(path.c_str()); }'
+        )
+        unit = _unit(source, "validated_component.cpp")
+        run = self.detector.detect(_context(unit), (unit,))
+        self.assertEqual(run.findings, ())
+
+    def test_bucket_presence_and_nonempty_checks_do_not_validate_path_component(self) -> None:
+        unit = _unit(SOURCE_AND_FILE_FLOW.replace(
+            'ExtractFilename(bucket, filename);',
+            'ExtractFilename(bucket, filename);\n'
+            '    if (filename.empty()) return;'
+        ), "nonempty_only.cpp")
+        run = self.detector.detect(_context(unit), (unit,))
+        self.assertEqual(len(run.findings), 2)
+
+    def test_reversed_separator_condition_does_not_suppress_candidate(self) -> None:
+        source = SOURCE_AND_FILE_FLOW.replace(
+            'void OpenPath(const std::string &path) { open(path.c_str(), O_RDONLY); }',
+            'void OpenPath(const std::string &path) { if (path.find_first_of("/\\\\") == std::string::npos) return; open(path.c_str(), O_RDONLY); }'
+        )
+        unit = _unit(source, "reversed_guard.cpp")
+        run = self.detector.detect(_context(unit), (unit,))
+        self.assertEqual(len(run.findings), 2)
 
 
 if __name__ == "__main__":
