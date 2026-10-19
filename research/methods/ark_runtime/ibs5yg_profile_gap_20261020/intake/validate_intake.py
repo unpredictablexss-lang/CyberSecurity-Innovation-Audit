@@ -87,21 +87,48 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _is_immutable_manifest_reference(value: str) -> bool:
+def _manifest_reference(value: str) -> tuple[str, str] | None:
     if IMMUTABLE_COMMIT.fullmatch(value):
-        return True
+        return "commit", value.removeprefix("commit:").lower()
     try:
         parsed = urlsplit(value)
     except ValueError:
-        return False
-    if parsed.scheme != "https" or not parsed.netloc:
-        return False
+        return None
+    if parsed.scheme != "https" or not parsed.netloc or not parsed.path:
+        return None
+    digests = []
     for encoded in (parsed.query, parsed.fragment):
-        params = parse_qs(encoded, keep_blank_values=True)
-        digests = params.get("sha256", [])
-        if len(digests) == 1 and HEX_SHA256.fullmatch(digests[0]):
-            return True
-    return False
+        digests.extend(parse_qs(encoded, keep_blank_values=True).get("sha256", []))
+    if len(digests) == 1 and HEX_SHA256.fullmatch(digests[0]):
+        return "uri_sha256", digests[0].lower()
+    return None
+
+
+def _verify_local_commit(evidence_root: Path, oid: str, evidence_path: Path) -> bool:
+    """Require the referenced commit object to exist locally and match evidence bytes.
+
+    `git -C` only reads the local object database; no remote is contacted.
+    """
+    try:
+        fmt = subprocess.check_output(
+            ["git", "-C", str(evidence_root), "rev-parse", "--show-object-format"],
+            stderr=subprocess.DEVNULL, text=True,
+        ).strip()
+        if (fmt == "sha1" and len(oid) != 40) or (fmt == "sha256" and len(oid) != 64) or fmt not in ("sha1", "sha256"):
+            return False
+        resolved = subprocess.check_output(
+            ["git", "-C", str(evidence_root), "rev-parse", "--verify", "--end-of-options", oid + "^{commit}"],
+            stderr=subprocess.DEVNULL, text=True,
+        ).strip().lower()
+        if resolved != oid:
+            return False
+        content = subprocess.check_output(
+            ["git", "-C", str(evidence_root), "cat-file", "commit", oid],
+            stderr=subprocess.DEVNULL,
+        )
+        return content == evidence_path.read_bytes()
+    except (OSError, subprocess.CalledProcessError):
+        return False
 
 
 def validate(document: Any, evidence_root: Path) -> dict[str, Any]:
@@ -133,8 +160,11 @@ def validate(document: Any, evidence_root: Path) -> dict[str, Any]:
         value = entry.get("value")
         if not isinstance(value, str) or not value.strip():
             errors.append({"code": "field_value_missing", "field": field})
-        elif field == "locked_manifest_uri_plus_sha256_or_immutable_commit" and not _is_immutable_manifest_reference(value):
-            errors.append({"code": "manifest_reference_not_immutable", "field": field})
+        manifest_reference = None
+        if isinstance(value, str) and field == "locked_manifest_uri_plus_sha256_or_immutable_commit":
+            manifest_reference = _manifest_reference(value)
+            if manifest_reference is None:
+                errors.append({"code": "manifest_reference_not_immutable", "field": field})
         evidence = entry.get("evidence")
         if not isinstance(evidence, dict):
             errors.append({"code": "evidence_reference_missing", "field": field})
@@ -153,8 +183,15 @@ def validate(document: Any, evidence_root: Path) -> dict[str, Any]:
                 errors.append({"code": path_error, "field": field})
             elif path is not None:
                 try:
-                    if _sha256(path).lower() != expected_hash.lower():
+                    actual_hash = _sha256(path).lower()
+                    if actual_hash != expected_hash.lower():
                         errors.append({"code": "evidence_sha256_mismatch", "field": field})
+                    if field == "locked_manifest_uri_plus_sha256_or_immutable_commit" and manifest_reference:
+                        ref_kind, ref_value = manifest_reference
+                        if ref_kind == "uri_sha256" and actual_hash != ref_value:
+                            errors.append({"code": "manifest_digest_does_not_match_evidence_bytes", "field": field})
+                        elif ref_kind == "commit" and not _verify_local_commit(evidence_root, ref_value, path):
+                            errors.append({"code": "manifest_commit_unresolved_or_evidence_bytes_mismatch", "field": field})
                 except OSError:
                     errors.append({"code": "evidence_read_failed", "field": field})
 
@@ -187,11 +224,13 @@ def _result(errors: list[dict[str, str]]) -> dict[str, Any]:
 
 
 def _synthetic_document(root: Path) -> dict[str, Any]:
+    manifest_bytes = b"<manifest>synthetic</manifest>\n"
+    manifest_digest = hashlib.sha256(manifest_bytes).hexdigest()
     values = {
         "openharmony_release": "SYNTHETIC-RELEASE",
         "product_build_id_or_image_version": "SYNTHETIC-BUILD",
         "source_branch_or_release_tag": "SYNTHETIC-REF",
-        "locked_manifest_uri_plus_sha256_or_immutable_commit": "commit:" + "a" * 40,
+        "locked_manifest_uri_plus_sha256_or_immutable_commit": f"https://synthetic.invalid/manifest.xml#sha256={manifest_digest}",
         "product_name": "SYNTHETIC-PRODUCT",
         "board_or_device_target": "SYNTHETIC-BOARD",
     }
@@ -200,7 +239,7 @@ def _synthetic_document(root: Path) -> dict[str, Any]:
     fields: dict[str, Any] = {}
     for index, (field, value) in enumerate(values.items()):
         rel = f"evidence/{field}.txt"
-        payload = f"synthetic-evidence-{index}\n".encode()
+        payload = manifest_bytes if field == "locked_manifest_uri_plus_sha256_or_immutable_commit" else f"synthetic-evidence-{index}\n".encode()
         (root / rel).write_bytes(payload)
         fields[field] = {
             "value": value,
@@ -238,6 +277,9 @@ def self_test() -> dict[str, Any]:
         check("conflicting_build_identity", lambda d: d["fields"][FIELDS[1]]["evidence"]["build_identity"].update(product_name="OTHER"), "conflicting_build_identity")
         check("value_disagrees_with_binding", lambda d: d["fields"][FIELDS[0]].update(value="OTHER"), "field_value_conflicts_with_build_identity")
         check("mutable_manifest_reference", lambda d: d["fields"][FIELDS[3]].update(value="https://example.invalid/manifest.xml"), "manifest_reference_not_immutable")
+        check("manifest_uri_digest_mismatch", lambda d: (d["fields"][FIELDS[3]].update(value="https://synthetic.invalid/manifest.xml#sha256=" + "b" * 64), d["fields"][FIELDS[3]]["evidence"]["build_identity"].update({FIELDS[3]: "https://synthetic.invalid/manifest.xml#sha256=" + "b" * 64})), "manifest_digest_does_not_match_evidence_bytes")
+        check("unresolved_manifest_uri_digest", lambda d: (d["fields"][FIELDS[3]].update(value="https://synthetic.invalid/nonexistent.xml?sha256=" + "c" * 64), d["fields"][FIELDS[3]]["evidence"]["build_identity"].update({FIELDS[3]: "https://synthetic.invalid/nonexistent.xml?sha256=" + "c" * 64})), "manifest_digest_does_not_match_evidence_bytes")
+        check("commit_without_local_object_store", lambda d: (d["fields"][FIELDS[3]].update(value="commit:" + "a" * 40), d["fields"][FIELDS[3]]["evidence"]["build_identity"].update({FIELDS[3]: "commit:" + "a" * 40})), "manifest_commit_unresolved_or_evidence_bytes_mismatch")
 
         link_supported = False
         outside = root.parent / (root.name + "-outside")
