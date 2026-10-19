@@ -219,3 +219,16 @@ Boundaries: no detector/tests/fixtures edits; no status promotion; no bypass cla
 Keep one active continuous objective across both tracks: improve root-cause candidate coverage for source-bound A-line cases on the development side; independently verify source identity, regression behavior, and the 345-row evidence queue on the test side. Complete only when applicable cases pass independent full-scope acceptance, all remaining cases carry a precise PARTIAL/BLOCK/N/A reason, and the change-scope check passes. Do not close the goal while any required evidence remains outstanding.
 
 T18 completed in `78d252c`; CR-0224/0225/0226 retain `PARTIAL` and their original queue states after exact source verification. See [T18 report](a_t18_samgr_0224_0226_20261020.md). The next test-line step is to continue A0 evidence triage from remaining queued IDs without promoting statuses absent new evidence.
+
+### T19 — Samgr unit-test candidate source triage (testing/evidence)
+
+```text
+Role: Independent A-line IPC testing/evidence reviewer.
+Continuous goal: source-bind the remaining CR-0227–CR-0230 candidates and establish whether the reported IPC/descriptor statements are product implementation or test-only code.
+Inputs: current integration checkout; A0 queue rows CR-0227–CR-0230; exact Samgr project commit/tree/blob/SHA; production proxy/stub source at that same source commit.
+Steps: fetch and verify the exact source commit/tree/blob/SHA; inspect test fixture, transaction codes, tests that invoke it, production API send paths and receiver handlers; map each queue ID to the exact statement and preserve original status; state missing build/policy/reachability/impact evidence; add source-bound evidence and a verifier.
+Done when: all four IDs have independently verifiable source identities, test-vs-product classification, production API mapping and blockers, while original queue states remain unchanged; A0 verifier, source verifier, diff check and cpp change-scope check pass.
+Boundaries: do not modify detector, tests, fixtures or A0 IDs/statuses; do not infer product flaws from mock code; do not call a test-only candidate a confirmed vulnerability.
+```
+
+T19 completed in the current integration branch: CR-0227–CR-0230 bind to one test-only `MultiUserProxyRemoteStub::OnRemoteRequest` implementation. Lines 74/76 synthesize `IRemoteObject`/bool replies for real client proxy calls, but do not execute the product `SystemAbilityManagerStub`; no descriptor operation appears. All four remain **PARTIAL**, with original `not_testable` / `paused_pending_evidence` states. See [T19 report](a_t19_samgr_test_proxy_0227_0230_20261020.md) and run [the source verifier](verify_t19_samgr_test_proxy_0227_0230.py).
