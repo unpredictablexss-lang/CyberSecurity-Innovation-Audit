@@ -52,7 +52,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
     def test_manifest_is_hash_bound_and_covers_control_classes(self) -> None:
         self.assertEqual(
             {item["category"] for item in self.manifest["cases"]},
-            {"positive", "fixed", "unrelated", "unknown"},
+            {"positive", "fixed", "safe", "unrelated", "unknown"},
         )
         for item in self.manifest["cases"]:
             path = ROOT / item["fixture"]
@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.3.0")
+        self.assertEqual(self.detector.version, "0.4.0")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,7 +69,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.3.0")
+                self.assertEqual(finding.rule_version, "0.4.0")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:
@@ -103,6 +103,8 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
         safe, _ = self.run_case("safe_recursive_compare_cost.c")
         self.assertFalse(any(f.rule_id == "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005" for f in safe.findings))
+        indexed, _ = self.run_case("safe_recursive_compare_indexed_lookup.c")
+        self.assertFalse(any(f.rule_id == "ohcpp-resource-exhaustion-recursive-compare-cost-candidate-005" for f in indexed.findings))
 
     def test_recursive_tree_amplification_candidate_is_separate(self) -> None:
         release = make_unit(ROOT / "positive_recursive_tree_release.c", "partial")
