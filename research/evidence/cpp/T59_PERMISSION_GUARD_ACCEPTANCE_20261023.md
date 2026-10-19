@@ -2,7 +2,7 @@
 
 Date: 2026-10-23 (Asia/Shanghai)
 
-## Independent review of D59 follow-up
+## Independent review of D59 follow-up; new permission-identity failure
 
 T59 prepared an independent acceptance worktree at the D51 frozen scanner commit `c8f83b82291e82b3272c73b943623336a3c836c3` (detector blob `94113fdd45b2273e6ea9dd02c7eeac886b853329`, rule version 0.19.3). The D52 pinned source was fetched as raw bytes from the Git object database, not read from a line-ending-normalized checkout:
 
@@ -38,12 +38,33 @@ The fixture also emits the separate D51 observer candidate `CVE-2025-25212` for 
 
 An additional in-memory probe placed a valid-looking denial branch under `if (is_privileged)` and then performed `GetPasteData()` after the outer conditional. Baseline c8 and D59 0.19.4 suppressed the candidate, even though the outer false branch bypasses the denial exit. T59 reported this to root and D59. D59 0.19.5 requires the guard to be top-level in the checked method; the exact probe now retains the candidate and is included in D59 regression tests.
 
+### Unrelated-permission false suppressions
+
+An independent D59 0.19.5 in-memory probe inserted each of these exact top-level guards before `GetPasteData(); reply.WriteParcelable(data);`:
+
+```cpp
+if (!CheckBluetoothPermission()) return ERR_NO_PERMISSION;
+GetPasteData(); reply.WriteParcelable(data);
+```
+
+```cpp
+if (!CheckPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION;
+GetPasteData(); reply.WriteParcelable(data);
+```
+
+```cpp
+if (!VerifyCallingPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION;
+GetPasteData(); reply.WriteParcelable(data);
+```
+
+All three runs completed with only the separate D51 `CVE-2025-25212` finding; D52 `CVE-2025-27247` was suppressed. The generic permission-name matcher does not bind the permission or resource to Pasteboard read access. This is an actionable candidate-retention precision failure for D60/D61, not evidence about runtime helper semantics.
+
 ## Acceptance dimensions
 
-- **fix-correctness:** **PASS** for the specified matrix and the supplemental conditional-outer-branch adversary on D59 0.19.5. Immediate `return`/`throw` are syntactic exits only; exception/catch behavior is not modeled.
-- **candidate-retention:** **PASS on the exact pinned source**: the historical D52 candidate remains, and the separate D51 sibling candidate remains. This does not offset the supplemental synthetic false suppression described above.
+- **fix-correctness:** **PARTIAL**. The specified matrix and conditional-outer-branch adversary pass on D59 0.19.5, but unrelated Bluetooth/Network permission guards still suppress D52. Immediate `return`/`throw` are syntactic exits only; exception/catch behavior is not modeled.
+- **candidate-retention:** **PASS on the exact pinned source** and 67-unit replay, but **FAIL** on the three unrelated-permission controls above. The historical D52 and separate D51 candidate remain on the pinned source.
 - **coverage:** **PARTIAL**. The exact source-unit and full 67-unit replay remain blocked; the D50 parser packet has 57 complete and 10 partial units. Product/framework coverage is not established.
-- **scope:** **PASS for final commit `da019561`**. The final patch changes the D52 matcher, focused controls/corpus, and the two corresponding fixture bindings. T59's evidence files are separate; T59 made no detector or fixture edits.
+- **scope:** **PASS for final commit `da019561`**. The final patch changes the D52 matcher, focused controls/corpus, and the two corresponding fixture bindings. T59's evidence files are separate; T59 made no detector or fixture edits. Assign permission identity binding/conservative ambiguity behavior to D60/D61.
 
 These are syntactic candidate expectations. They do not prove permission helper semantics, control-flow dominance in general, framework authorization, CVE causality, product inclusion, or runtime vulnerability. D52 remains a pinned-source candidate with full framework/product/CVE conclusions unknown.
 

@@ -1,7 +1,7 @@
 {
   "task": "T59",
   "date": "2026-10-23",
-  "phase": "complete-independent-review-of-D59-follow-up",
+  "phase": "D59-independent-review-with-new-unrelated-permission-precision-failure",
   "patch": {
     "commit": "da0195610f2203ce97af1f43385f0091f040504e",
     "parent_baseline": "c8f83b82291e82b3272c73b943623336a3c836c3",
@@ -103,8 +103,8 @@
     "expected_after_D59": "no change in D51 rule behavior or unrelated CVE identities"
   },
   "acceptance_scope": {
-    "fix_correctness": "PASS for the specified matrix, including the previously failing non-dominating conditional guard in D59 0.19.5; return/throw are syntactic early exits only",
-    "candidate_retention": "PASS; exact pinned D52 candidate and D51 sibling candidate retained with same IDs, anchors, and source hashes",
+    "fix_correctness": "PARTIAL; the required matrix and non-dominating conditional guard pass, but unrelated permission guards still suppress the Pasteboard candidate",
+    "candidate_retention": "PASS on exact pinned source/full component replay; FAIL on top-level unrelated Bluetooth/Network permission controls, which suppress D52",
     "coverage": "PARTIAL; exact source-unit and 67-unit component runs are blocked; parser states are 57 complete / 10 partial; full framework/product coverage is not established",
     "scope": "PASS for frozen commit da019561; patch diff is limited to D52 matcher, focused regression/corpus controls, fixture binding updates, and D59 evidence; T59 modified no detector, fixture, or expected-output file"
   },
@@ -174,5 +174,36 @@
     "expected_candidate_behavior": "retain candidate because the outer condition can bypass the only denial exit before the read",
     "disposition": "resolved in D59 follow-up 0.19.5; top-level guard requirement added with a regression test",
     "semantic_limit": "This probe reasons about a concrete branch bypass in the synthetic control. It does not establish any real permission helper or product behavior."
+  },
+  "unrelated_permission_false_suppressions": [
+    {
+      "detector_version": "0.19.5",
+      "id": "bluetooth_permission_does_not_authorize_pasteboard",
+      "exact_handler": "if (!CheckBluetoothPermission()) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "run_status": "completed",
+      "findings": ["CVE-2025-25212"],
+      "pasteboard_candidate": "suppressed",
+      "expected": "retain CVE-2025-27247 candidate; guard names unrelated Bluetooth permission"
+    },
+    {
+      "detector_version": "0.19.5",
+      "id": "network_permission_does_not_authorize_pasteboard",
+      "exact_handler": "if (!CheckPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "run_status": "completed",
+      "findings": ["CVE-2025-25212"],
+      "pasteboard_candidate": "suppressed",
+      "expected": "retain CVE-2025-27247 candidate; generic permission helper is passed unrelated network permission"
+    },
+    {
+      "detector_version": "0.19.5",
+      "id": "verify_network_permission_does_not_authorize_pasteboard",
+      "exact_handler": "if (!VerifyCallingPermission(PERMISSION_NETWORK)) return ERR_NO_PERMISSION; GetPasteData(); reply.WriteParcelable(data);",
+      "run_status": "completed",
+      "findings": ["CVE-2025-25212"],
+      "pasteboard_candidate": "suppressed",
+      "expected": "retain CVE-2025-27247 candidate; VerifyCallingPermission is given an unrelated network permission"
+    }
+  ],
+  "followup_recommendation": "Actionable candidate-retention precision issue; D60/D61 should bind permission token/resource to Pasteboard read access or conservatively retain candidate when permission identity is unrelated or ambiguous."
   }
 }
