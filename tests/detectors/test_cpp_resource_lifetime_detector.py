@@ -61,7 +61,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
 
     def test_identity_and_positive_controls(self) -> None:
         self.assertEqual(self.detector.detector_id, "ohscanner.cpp.resource_lifetime")
-        self.assertEqual(self.detector.version, "0.4.1")
+        self.assertEqual(self.detector.version, "0.4.2")
         double_free, _ = self.run_case("positive_double_free.cpp")
         alias_uaf, _ = self.run_case("positive_alias_uaf.cpp")
         self.assertEqual({item.rule_id for item in double_free.findings}, {"ohcpp-resource-lifetime-double-free-candidate-001"})
@@ -69,7 +69,7 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
         for run in (double_free, alias_uaf):
             for finding in run.findings:
                 self.assertEqual(finding.candidate_cwe, finding.consequence_cwe)
-                self.assertEqual(finding.rule_version, "0.4.1")
+                self.assertEqual(finding.rule_version, "0.4.2")
                 self.assertEqual(finding.rule_lineage_id, "A-RES-01:ohcpp-resource-lifetime-candidate")
 
     def test_fixed_unrelated_and_unknown_controls(self) -> None:
@@ -126,6 +126,27 @@ class ResourceLifetimeDetectorTests(unittest.TestCase):
             f.rule_id == "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
             for f in recursive_name_only.findings
         ))
+
+        json_patch, patch_unit = self.run_case("positive_recursive_tree_json_patch.c")
+        tree_candidates = [
+            finding for finding in json_patch.findings
+            if finding.rule_id == "ohcpp-resource-exhaustion-tree-amplification-candidate-004"
+        ]
+        self.assertEqual([finding.line for finding in tree_candidates], [29, 31])
+        self.assertEqual(json_patch.status, "completed")
+        renamed_text = patch_unit.text.replace("apply_patch", "mutate_item")
+        renamed = SourceUnit(
+            path="tests/detectors/fixtures/cpp_resource_lifetime/renamed_json_patch.c",
+            language="c",
+            text=renamed_text,
+            sha256=hashlib.sha256(renamed_text.encode("utf-8")).hexdigest(),
+            parse_status="complete",
+        )
+        renamed_run = self.detector.detect(context_for(renamed), (renamed,))
+        self.assertEqual(
+            sum(f.rule_id == "ohcpp-resource-exhaustion-tree-amplification-candidate-004" for f in renamed_run.findings),
+            2,
+        )
 
     def test_tree_amplification_and_compare_keep_distinct_rules(self) -> None:
         self.assertNotEqual(
