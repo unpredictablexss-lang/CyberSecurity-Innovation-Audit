@@ -25,6 +25,7 @@ Date: 2026-10-20 (Asia/Shanghai)
 - T15 independently confirmed D18's exact source positions and controls: rule regression PASS, cJSON case PARTIAL, fixed-source comparison BLOCK; 345-row queue and 160-test C++ suite pass.
 - D19 completed no-change review: the existing compare-cost rule still finds cJSON.c:3161, renamed and safe/unrelated controls behave as expected, and the upstream develop patch is only an experimental comparison. The case remains PARTIAL/BLOCK; T16 is independently accepting.
 - T16 independently accepted the D19 rule regression and verified upstream cJSON commit/tree/blob/SHA via the OpenHarmony project-object mirror. The CVE case remains PARTIAL and a trusted released fixed comparison remains BLOCK.
+- D18/T15 completed root-path binding and independent acceptance; D19/T16 completed compare-cost replay with no rule change. Both cJSON cases remain unresolved for full-source parser or trusted fixed-source evidence.
 
 T12 completion note: the independent wave audit is committed as `1262d0ab9` and reports 3 PASS / 8 PARTIAL / 0 BLOCK / 2 N/A, with all 345 A0 IDs and original states retained. After that audit, D14's historical JSON/Markdown tree-null fields were reconciled to T11/T12's verified commit trees; this metadata cleanup does not change replay outcomes or case disposition.
 
@@ -162,6 +163,39 @@ Inputs: frozen D19 commit; exact cJSON vulnerable source and D17 upstream branch
 Steps: independently bind source repo/commit/tree/blob/SHA; rerun exact source, fragment, safe, unrelated, renamed, partial and any explicitly experimental branch comparison; inspect parse status, rule version, location, and source arguments; run focused and full C++ tests, queue verifier, scope and diff checks.
 Done when: separate rule regression and CVE status are recorded as PASS/PARTIAL/BLOCK/N/A; no unmerged branch is described as fixed and queue IDs/states remain unchanged.
 Boundaries: no detector/test/fixture edits; no unsupported precision/recall; partial zero findings are inconclusive.
+```
+
+### D20 — libpng CVE-2026-33416 local root assessment (development)
+
+```text
+Role: A-line C/C++ resource-lifetime detector developer.
+Continuous goal: determine whether the libpng 33416 cross-file alias/release/use root can be represented as a bounded candidate from source-visible function slices without weakening parser status.
+Inputs: current integration HEAD; exact vulnerable/fixed commits/trees and hash-bound pngset.c/png.c/pngread.c/pngrtran.c from D12/T4; existing resource lifetime detector 0.4.2 and source method card.
+Steps: trace png_set_PLTE/png_set_tRNS, png_free_data, png_do_expand_palette and required field/type declarations across files; rerun exact source baseline; classify missing evidence as parser, cross-file alias, or absent control; make a detector change only if one narrow relation is source-visible and can be hash-bound; add vulnerable, exact fixed if trusted, safe, unrelated, renamed and partial controls.
+Done when: an independently replayable root candidate is tied to the vulnerable operation with explicit cross-file coverage, or a no-change record explains the exact parser/model boundary; never upgrade partial TU or fixed status.
+Boundaries: resource_lifetime detector and dedicated tests/fixtures/evidence only; no shared parser/API/Catalog/docs; do not infer safety from zero findings.
+```
+
+### D21 — libtiff CVE-2025-9900 bounds gap assessment (development)
+
+```text
+Role: A-line C/C++ integer/bounds detector developer.
+Continuous goal: decide whether the exact libtiff 9900 unsigned dimension-subtraction/pointer-offset root can be detected on a source-bound complete local function, while preserving whole-file partial status.
+Inputs: current integration HEAD; D7/D9/T1 exact vulnerable/fixed libtiff identities and reports; bounds detector 0.3.0, method card, existing positive/guarded/signed controls.
+Steps: verify source commit/tree/blob/SHA for both variants; run exact current baseline; isolate the source function plus declarations with original offsets; distinguish parser incompleteness from detector-model gap; only implement a narrow rule if complete function evidence supports it; record target-file and whole-TU coverage separately and add safe/unrelated/renamed/partial controls.
+Done when: exact vulnerable root is candidate and valid fixed/guarded controls are quiet at function scope, or a no-change evidence package lists the missing parse/model context; full file remains PARTIAL if so.
+Boundaries: bounds detector and dedicated tests/fixtures/evidence only; no parser/API/Catalog/shared docs; never call zero findings on partial input a safe result.
+```
+
+### T17 — libpng/libtiff independent acceptance (testing)
+
+```text
+Role: independent A-line C/C++ source and regression auditor.
+Continuous goal: verify any frozen D20/D21 changes from exact source identity, bounded function scope, controls, and parser status independently.
+Inputs: frozen D20 and D21 commits/evidence; T1/T4/T7 matrices; exact vulnerable/fixed source manifests and commands.
+Steps: clean independent checkout; verify source identities and source-range extraction; replay exact source and all submitted controls; compare candidate location, rule version, parse and detector coverage; run focused/full C++ tests, queue verifier, scope and diff checks.
+Done when: report each rule regression and CVE disposition separately as PASS/PARTIAL/BLOCK/N/A, reconcile all changed source identities, and preserve 345 queue IDs/statuses.
+Boundaries: no detector/test/fixture edits; no acceptance from developer statements alone; no fixed PASS without a trusted exact fix and sufficient parsing.
 ```
 
 ## Stage goal
