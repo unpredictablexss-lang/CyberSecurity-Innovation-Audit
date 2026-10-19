@@ -251,3 +251,6 @@ D24 assessed CR-0005–CR-0012 against the exact DataShare object and current CL
 ### T26 — CR-0019 DataShare descriptor candidate
 
 See [T26 independent audit addendum](a_line_parallel_queue_20261020_T26_addendum.md). T26 independently bound the frozen CR-0019 source and replayed the current IPC detector. A source-level interface-token mismatch candidate is present; runtime reachability, sender token, product authorization, build and impact remain unverified. Original A0 states are unchanged (`not_testable / paused_pending_evidence`).
+
+
+T27 independently audited Preferences CR-0020–CR-0024. The two shared header accesses are detected on complete source; three fuzz-file candidates are test-only harness code. All five retain the original A0 states. See [T27 addendum](a_line_parallel_queue_20261020_T27_addendum.md), [per-ID report](t27_preferences_source_audit_20261020.md), and [source verifier](verify_t27_preferences_source_audit.py).

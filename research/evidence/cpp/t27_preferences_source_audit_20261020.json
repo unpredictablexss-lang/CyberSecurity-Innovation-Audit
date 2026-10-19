@@ -1,0 +1,45 @@
+{
+  "schema_version": "t27-preferences-audit-v1",
+  "task": "T27",
+  "source": {
+    "repository": "openharmony/distributeddatamgr_preferences",
+    "commit": "bff9efd79afc0d7d1ed22a63ff355f1600404596",
+    "tree": "7761d9e273ae7007046ae115797f255e554523ae"
+  },
+  "queue": {
+    "csv": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-triage\\20261018\\queue.csv",
+    "json": "D:\\openHarmonyScanner\\CyberSecurity-Innovation-Audit\\research\\deliveries\\a-line-triage\\20261018\\queue.json",
+    "rows": 345,
+    "unique_ids": 345,
+    "counts": {
+      "original_status": {
+        "not_reproduced": 9,
+        "not_testable": 336
+      },
+      "queue_status": {
+        "queued_not_reproduced": 9,
+        "queued_first_batch": 5,
+        "paused_pending_evidence": 331
+      }
+    },
+    "target_rows": {
+      "CR-0020": "ohscanner.cpp.shared_ptr_race:1cb5a9a34aed57b1",
+      "CR-0021": "ohscanner.cpp.shared_ptr_race:874d6f969feeb34b",
+      "CR-0022": "ohscanner.cpp.shared_ptr_race:6865dec2e2f3cb53",
+      "CR-0023": "ohscanner.cpp.shared_ptr_race:325abf25b06a4bba",
+      "CR-0024": "ohscanner.cpp.shared_ptr_race:d532e632aa287f97"
+    }
+  },
+  "cli": {
+    "raw": "research/evidence/cpp/t27_preferences_header_and_fuzzer_20261020.json",
+    "tool": "ohscanner.cpp.shared_ptr_race",
+    "version": "0.5.1",
+    "status": "completed",
+    "parse": {
+      "complete": 2
+    },
+    "diagnostic_count": 21
+  },
+  "disposition": "PARTIAL",
+  "queue_states_changed": false
+}
