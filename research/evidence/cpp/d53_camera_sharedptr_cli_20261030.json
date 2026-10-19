@@ -1,0 +1,505 @@
+{
+  "schema_version": 1,
+  "task": "D53",
+  "repository": "openharmony/multimedia_camera_framework",
+  "commit": "35445b57d739a41cb916330935e61f1e83d982ca",
+  "git_tree": "2907d1748b46897c49c8f8c253c49384294a6a7a",
+  "detector": "ohscanner.cpp.shared_ptr_race",
+  "detector_version": "0.5.1",
+  "profile": "light-ast",
+  "build_profile": "none",
+  "a0_row_count": 345,
+  "selected_ids": [
+    "CR-0261",
+    "CR-0262",
+    "CR-0263",
+    "CR-0264",
+    "CR-0265",
+    "CR-0266",
+    "CR-0267",
+    "CR-0268",
+    "CR-0269",
+    "CR-0270",
+    "CR-0271",
+    "CR-0272",
+    "CR-0273",
+    "CR-0274",
+    "CR-0275",
+    "CR-0276",
+    "CR-0277",
+    "CR-0278",
+    "CR-0279",
+    "CR-0280",
+    "CR-0281",
+    "CR-0282",
+    "CR-0283",
+    "CR-0284",
+    "CR-0285",
+    "CR-0286",
+    "CR-0287",
+    "CR-0288",
+    "CR-0289",
+    "CR-0290"
+  ],
+  "selected_count": 30,
+  "unique_files": 13,
+  "files": [
+    {
+      "path": "frameworks/taihe/include/camera_auto_ref_taihe.h",
+      "blob": "7696d21cf0dff92e54416f7f6131644c6d2e5a48",
+      "sha256": "d43b2035615f59cfd6307730ae8e247f6f89153597b954d1a02dc6b6b42005ba",
+      "bytes": 1775,
+      "cases": [
+        {
+          "queue_id": "CR-0261",
+          "line": 52,
+          "line_text": "        return callbackRef_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:63f16c3954fe8f3b",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": [
+        {
+          "line": 27,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''callbackRef_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 43,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''callbackRef_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 48,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''callbackRef_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 52,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''callbackRef_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        }
+      ]
+    },
+    {
+      "path": "frameworks/taihe/include/camera_event_listener_taihe.h",
+      "blob": "0cb85f150ec88ece3c06cc3ebec4ece465060d72",
+      "sha256": "4af3371f674207beed7d1331e2757493df6b6c886fe4dfd7fdb306a7ee55a37a",
+      "bytes": 2600,
+      "cases": [
+        {
+          "queue_id": "CR-0262",
+          "line": 58,
+          "line_text": "        auto it = eventListenerMap_.find(env);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:025c98bffb6e3b7c",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0263",
+          "line": 59,
+          "line_text": "        if (it == eventListenerMap_.end()) {",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:8050249b18d0cb46",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0264",
+          "line": 67,
+          "line_text": "        eventListenerMap_[env] = eventListener;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:185d71ccd8e14788",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "frameworks/taihe/include/picker/camera_picker_taihe.h",
+      "blob": "1cd105d15ac9a675a1b510ce50f903fb0aa6b7ff",
+      "sha256": "598fd456de5b98d57cc5e045b2eff624a2451fabd23d528f3594e87220615942",
+      "bytes": 6465,
+      "cases": [
+        {
+          "queue_id": "CR-0265",
+          "line": 192,
+          "line_text": "    CameraPickerJsAsyncContextImpl(std::shared_ptr<CameraPickerAsyncContext> asyncCtx) : asyncCtx_(asyncCtx) {};",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:fd08fec354cc941d",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "interfaces/inner_api/native/camera/include/session/capture_session.h",
+      "blob": "161b794306a6af15fd0484f4fdd85d287dce69b5",
+      "sha256": "333c4315015c28194261e63203250398cf76000737a48505a10cf933c0ce29ba",
+      "bytes": 93455,
+      "cases": [
+        {
+          "queue_id": "CR-0266",
+          "line": 2162,
+          "line_text": "        return metadataResultProcessor_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:4bae6d0c83531ee6",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "interfaces/kits/js/camera_napi/include/camera_napi_event_listener.h",
+      "blob": "73e7dd958a15c21e245a291513cf3c6d04bf8658",
+      "sha256": "34eb42f47c43789d9583f8bb646b6aebf45e25bfcd9ce914f4b5cf48394df7a6",
+      "bytes": 2566,
+      "cases": [
+        {
+          "queue_id": "CR-0267",
+          "line": 60,
+          "line_text": "        auto it = eventListenerMap_.find(env);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:b00635959f0bb1ae",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0268",
+          "line": 61,
+          "line_text": "        if (it == eventListenerMap_.end()) {",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:258cb6a0e4a27027",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0269",
+          "line": 69,
+          "line_text": "        eventListenerMap_[env] = eventListener;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:90c2d2ae620825f1",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "interfaces/kits/js/camera_napi/include/camera_napi_object_types.h",
+      "blob": "b97ca84d919b7bd8493c8a609dc1648badcc8f28",
+      "sha256": "cbacf1e12a5143262096a319a1dc4af300e2fc1b44e3970a91de14758cadadaa",
+      "bytes": 4882,
+      "cases": [
+        {
+          "queue_id": "CR-0270",
+          "line": 43,
+          "line_text": "        ptrHolder_.emplace_back(ptr);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:b3b8b8070335fa98",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "interfaces/kits/js/camera_napi/include/camera_napi_param_parser.h",
+      "blob": "cdb4c82e08c50be500aab060b6875c3d4be31ee5",
+      "sha256": "e9d4009f7a81fc6fc8e9fc5edf30c86437fd9dafc08c2e32d0939927447b5d9c",
+      "bytes": 13886,
+      "cases": [
+        {
+          "queue_id": "CR-0271",
+          "line": 208,
+          "line_text": "        : env_(env), asyncFunction_(asyncFunction)",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:9dcff13de34998e8",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0272",
+          "line": 210,
+          "line_text": "        size_t paramSizeIncludeAsyncFun = napiParamSize + (asyncFunction_ == nullptr ? 0 : 1);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:423b1de4c6b46003",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0273",
+          "line": 217,
+          "line_text": "        if (asyncFunction_ != nullptr) {",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:9399b4bd7da7ca1a",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0274",
+          "line": 224,
+          "line_text": "                    napiError = asyncFunction_->CreateCallback(paramValue_[paramSize_ - 1]);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:9232d448880676ab",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0275",
+          "line": 229,
+          "line_text": "                napiError = asyncFunction_->CreatePromise();",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:dbe3b1502db03ec7",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "mediastream/include/buffer/buffer_wrapper_base.h",
+      "blob": "a01f6d1ae4a2f2045dcc0b529d40ccd8b73cb9f8",
+      "sha256": "575d137d75a281a88e0cf411d8330574d89495a25f2eb71188c3a7415cc32ce9",
+      "bytes": 2993,
+      "cases": [
+        {
+          "queue_id": "CR-0276",
+          "line": 47,
+          "line_text": "        encodedBuffer_= nullptr;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:cc9a1b91bac47dc5",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0277",
+          "line": 122,
+          "line_text": "        encodedBuffer_ = buffer;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:5b1a3de099d27b57",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0278",
+          "line": 127,
+          "line_text": "        return encodedBuffer_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:2c6879338c55ff03",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": [
+        {
+          "line": 47,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''encodedBuffer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 122,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''encodedBuffer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 127,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''encodedBuffer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        }
+      ]
+    },
+    {
+      "path": "mediastream/include/filter/moving_photo_video_encoder_filter.h",
+      "blob": "645cdc780b7ea2499af2d0b1d51f5ad9198ab6a4",
+      "sha256": "b40c147dabd728eb7943ccaef1b3b4fda0b0ff99b121ac9575a144c1ea81d8c6",
+      "bytes": 5271,
+      "cases": [
+        {
+          "queue_id": "CR-0279",
+          "line": 82,
+          "line_text": "        return configureParameter_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:71b0dd5f79fb4165",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "moviefile/include/pipeline/producer/unified_pipeline_audio_capture_wrap.h",
+      "blob": "f0d8f9e04aba7fcee04c48707d9303427a0fb73e",
+      "sha256": "cc83094c7138a82dbe167edcd31476b8b829daae63a8e8c06d342da90ed2b0c6",
+      "bytes": 9323,
+      "cases": [
+        {
+          "queue_id": "CR-0280",
+          "line": 75,
+          "line_text": "        return audioCapturer_->SetCapturerReadCallback(callback);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:fbdc3bdedbbb808e",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0281",
+          "line": 81,
+          "line_text": "        return audioCapturer_->SetCapturerMetaDataCallback(callback);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:0c77d8c52776ae35",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0282",
+          "line": 86,
+          "line_text": "        MEDIA_INFO_LOG(\"SetCaptureMode enter, audioCapturer_ is nullptr: %{public}d\", audioCapturer_ == nullptr);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:2340d0aaf0eaee13",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0283",
+          "line": 87,
+          "line_text": "        return audioCapturer_->SetCaptureMode(captureMode);",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:15aabae6f95b6d5f",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0284",
+          "line": 205,
+          "line_text": "    explicit MyAudioCapturerReadCallback(std::shared_ptr<UnifiedPipelineAudioCaptureWrap> wrap) : wrapPtr_(wrap) {}",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:9f3f0aafc3581eb6",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0285",
+          "line": 220,
+          "line_text": "    explicit MyAudioCapturerMetaDataCallback(std::shared_ptr<UnifiedPipelineAudioCaptureWrap> wrap) : wrapPtr_(wrap) {}",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:e6f1a4ae01343280",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": [
+        {
+          "line": 75,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''audioCapturer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 81,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''audioCapturer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 86,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''audioCapturer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 87,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member read of ''audioCapturer_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: one-sided mutex leaves one access unprotected; cross-function synchronization protocol is unknown."
+        }
+      ]
+    },
+    {
+      "path": "services/camera_service/include/camera_rotate_strategy_parser.h",
+      "blob": "ec39591b222dbc01b98349d4e31eb317d24cf185",
+      "sha256": "fdfebd429798df1bca8ddcb5253192f0c03a52844d36aafb7b734ba4e8498606",
+      "bytes": 1967,
+      "cases": [
+        {
+          "queue_id": "CR-0286",
+          "line": 40,
+          "line_text": "        curNode_ = CameraXmlNode::Create();",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:0d45daef16949c39",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0287",
+          "line": 48,
+          "line_text": "        curNode_ = nullptr;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:eb28cff5aa353bf5",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": [
+        {
+          "line": 40,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''curNode_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        },
+        {
+          "line": 48,
+          "rule_id": "ohcpp-shared-ptr-race-candidate-001",
+          "message": "Candidate only: candidate/unknown non-atomic shared_ptr member write of ''curNode_''. Primary candidate root cause is a possible race condition (CWE-362); CWE-416/use-after-free is only a possible consequence. This syntax evidence does not prove UAF, guard dominance, concurrent interleaving, attacker control, or security impact; it is not proof of safety. Synchronization evidence: no reliable mutex covers the pair; cross-function synchronization protocol is unknown."
+        }
+      ]
+    },
+    {
+      "path": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_controller.h",
+      "blob": "c4bff670af6b01cb69c77808b602df03c51bac12",
+      "sha256": "973959d919a4c533355dd94ba5e5118bb4b40c98665cffeb702bd04c2ef81133",
+      "bytes": 2442,
+      "cases": [
+        {
+          "queue_id": "CR-0288",
+          "line": 38,
+          "line_text": "        return videoProcessor_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:9d1809917b1f6178",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    },
+    {
+      "path": "services/deferred_processing_service/include/schedule/video_processor/deferred_video_processor.h",
+      "blob": "e2a80a1b8b5da186b66e65254231b4242be50ed9",
+      "sha256": "bf0bf468b2bdd9d325aadfe6c11017531ddd231c72bac7ad9c7597c6e6a356d9",
+      "bytes": 4198,
+      "cases": [
+        {
+          "queue_id": "CR-0289",
+          "line": 65,
+          "line_text": "        return repository_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:47cfef3ea9eaf17e",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        },
+        {
+          "queue_id": "CR-0290",
+          "line": 70,
+          "line_text": "        return postProcessor_;",
+          "candidate_id": "ohscanner.cpp.shared_ptr_race:cc8145947a18ce39",
+          "original_status": "not_testable",
+          "queue_status": "paused_pending_evidence"
+        }
+      ],
+      "parse_status": "complete",
+      "parse_issues": [],
+      "diagnostics": []
+    }
+  ],
+  "limitations": [
+    "Selected-source lexical/AST replay only; no product build or macro expansion.",
+    "No global CFG, alias, thread, lifecycle, product inclusion or runtime proof.",
+    "Diagnostics are candidates; zero findings are not safety evidence."
+  ]
+}
