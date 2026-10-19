@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "task": "T80 independent acceptance of D80 integrated D52 candidate review",
+  "status": "accepted_with_limitations",
+  "D80": {
+    "commit": "717cefbe384b134f0c891e1a7c7cef28d359139b",
+    "tree": "f5c57d29fb9bc53580c5810c04299a7c25be7b75"
+  },
+  "verified_upstream_artifact_inventory": {
+    "groups": 13,
+    "report_files": 26,
+    "result": "all_commit_tree_and_git_blob_sha256_match"
+  },
+  "D52_source": {
+    "repository": "openharmony/miscservices_pasteboard",
+    "remote": "https://gitcode.com/openharmony/miscservices_pasteboard.git",
+    "commit": "dd22c7cb5e5f207a6c38c50f45b7369ee8575840",
+    "tree": "e374a0d61c9ec664ddd29fc17002797828c480ee",
+    "retrieval": "independent fresh bare clone",
+    "source_files": [
+      {
+        "path": "services/core/include/i_pasteboard_service.h",
+        "blob_oid": "1a5b83f314d6188f0b3465a13ac1668cb9933839",
+        "sha256": "ffef3626d4dcd2d0757381e64e652a8a023d352dd59bc9afa20deafb2fd8e3fc"
+      },
+      {
+        "path": "framework/innerkits/src/pasteboard_client.cpp",
+        "blob_oid": "c204c426cff25c7ee637068143ecaaccc98614ec",
+        "sha256": "ace24f733b0f0590c8a3d2b723dc41fda8ea80dfd9cfdf99bcb7d9699c20598a"
+      },
+      {
+        "path": "services/zidl/src/pasteboard_service_proxy.cpp",
+        "blob_oid": "679117492f1207fc9aa424899daa143d4df07249",
+        "sha256": "61f66fbbe53a1190ec31a8ff34b41a0d6b3ea28cdea72df8f0d3bc921d21f600"
+      },
+      {
+        "path": "services/zidl/include/pasteboard_service_stub.h",
+        "blob_oid": "67b267c6e68b8e3bd49c68958d46951c6be76929",
+        "sha256": "d949deeb769a8b96b88d0548b665039c6c3ec9c30d9dc6ff43eefec7ebc256ec"
+      },
+      {
+        "path": "services/zidl/src/pasteboard_service_stub.cpp",
+        "blob_oid": "3dbc3150ada27a765938f06ea6e8cfd0a2d7146b",
+        "sha256": "d2e166bc3e04edd2b53060429b7be137c79d11be393436f4e7a8b1e54a1f7868",
+        "line_58": "(this->*memberFunc)(data, reply)"
+      },
+      {
+        "path": "services/core/src/pasteboard_service.cpp",
+        "blob_oid": "c380ac266a85edd818caa811f11b99722d351788",
+        "sha256": "73847a64595c9c3f4c3e9ff2ea6bdea17db9cf45f02faf1436fe1b6753a73a52"
+      }
+    ]
+  },
+  "D79_replay": {
+    "result": "pass",
+    "route_rows": 6,
+    "input_evidence_bindings": 4,
+    "raw_source_blobs_recomputed": 6,
+    "negative_controls": [
+      "appended whitespace to D50 input rejected",
+      "duplicate JSON key rejected by strict loader"
+    ],
+    "stdout": [
+      "D79 replay PASS: 6 route rows; four evidence input hashes and Git snapshots verified; six raw source blobs verified.",
+      "Negative control PASS: appended whitespace to D50 bytes changes SHA-256 and is rejected by the bound-input check.",
+      "D50 stub.cpp ERROR:58 intersects the actual member-pointer dispatch expression; verdict remains source-only."
+    ]
+  },
+  "parser_boundary": {
+    "D50_stub_cpp": "partial; ERROR:58 intersects actual member-pointer dispatch; historical parser-derived dispatch-to-handler edge incomplete",
+    "D68_stub_cpp": "complete in later runtime replay; not back-projected",
+    "interface_header": "partial ERROR:43",
+    "stub_header": "partial MISSING:35"
+  },
+  "D78_boundary": {
+    "samgr_gates": "conditional acquisition/loading gates only",
+    "peng_lai_double_read": "static initializer and stub constructor separately read ohos.boot.minisys.mode; no source guarantee of alignment or immutability",
+    "null_checker": "fail-open",
+    "product_binding": "unknown"
+  },
+  "D52_disposition": "retain_narrow_source_only_with_historical_dispatch_ast_limitation",
+  "product_vulnerability_or_CVE": "not_established",
+  "diff_check": "pass"
+}
