@@ -1,0 +1,306 @@
+{
+  "schema": "ohscanner.g12-pc-t5-blackbox-run/v1",
+  "validator": "D:\\openHarmonyScanner\\worktrees\\c-d5-intake-gate-20261020\\research\\methods\\ark_runtime\\ibs5yg_profile_gap_20261020\\intake\\validate_intake.py",
+  "validator_sha256": "1cf554323b891c8921111abb44d9cd6993482c3f267080fd5439ff62031771e6",
+  "case_count": 21,
+  "passed": true,
+  "checks": [
+    {
+      "id": "P01-valid-synthetic-control",
+      "passed": true,
+      "exit_code": 0,
+      "status": "STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW",
+      "admission_ready": false,
+      "error_codes": [],
+      "input_sha256": "cca05e7d294ba11fd6a77fbb284950d0b75c5f406965ed9c91e09f8ca8ad7803",
+      "expected_exit_code": 0,
+      "expected_status": "STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW",
+      "expected_error": null
+    },
+    {
+      "id": "P02-all-six-missing",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object"
+      ],
+      "input_sha256": "74dd4d5fd63863da71399377592cd74a6e6d7ff45ab66cc1abc6deb717c5b783",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_missing_or_not_object"
+    },
+    {
+      "id": "N01-missing-openharmony_release",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object",
+        "field_set_mismatch"
+      ],
+      "input_sha256": "93dde423eac422a11ba102edf89bc93630028c0cca2824695d62352001c58766",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_set_mismatch"
+    },
+    {
+      "id": "N02-missing-product_build_id_or_image_version",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object",
+        "field_set_mismatch"
+      ],
+      "input_sha256": "8ce0313e5b40f7da43195eb89fa7b5dd66865bae6a018a1c9ec3285b634a542f",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_set_mismatch"
+    },
+    {
+      "id": "N03-missing-source_branch_or_release_tag",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object",
+        "field_set_mismatch"
+      ],
+      "input_sha256": "f08c598d05e5e0f92bd651e196cb87d1f7cd5dae91121f6aa771b2eea8490ce6",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_set_mismatch"
+    },
+    {
+      "id": "N04-missing-locked_manifest_uri_plus_sha256_or_immutable_commit",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object",
+        "field_set_mismatch"
+      ],
+      "input_sha256": "92a9984aa5097a44e668a3ad37e44babd3377f133b97d22e387592cc280d60a8",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_set_mismatch"
+    },
+    {
+      "id": "N05-missing-product_name",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object",
+        "field_set_mismatch"
+      ],
+      "input_sha256": "940417866eb034ce2bfd3abd4afa867f527449750e1806e94fbbc8491d728a57",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_set_mismatch"
+    },
+    {
+      "id": "N06-missing-board_or_device_target",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "field_missing_or_not_object",
+        "field_set_mismatch"
+      ],
+      "input_sha256": "e8eff25ade5e74a1fdd28069080548a78347ae8d5ea8f241abda81d381c8a4c2",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "field_set_mismatch"
+    },
+    {
+      "id": "N08-evidence-hash-mismatch",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "evidence_sha256_mismatch"
+      ],
+      "input_sha256": "cca05e7d294ba11fd6a77fbb284950d0b75c5f406965ed9c91e09f8ca8ad7803",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "evidence_sha256_mismatch"
+    },
+    {
+      "id": "N09-path-traversal",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "evidence_path_not_safe_relative"
+      ],
+      "input_sha256": "a6d1fc4412272537b9d871a5cf55407a06704623f8620e5c2724575e47e354b9",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "evidence_path_not_safe_relative"
+    },
+    {
+      "id": "N10-absolute-posix-path",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "evidence_path_not_safe_relative"
+      ],
+      "input_sha256": "cdf285b194dacfcfc9dcca19cace5a92564fe791448e9a96d0268af53e18a867",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "evidence_path_not_safe_relative"
+    },
+    {
+      "id": "N11-absolute-drive-path",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "evidence_path_not_safe_relative"
+      ],
+      "input_sha256": "77eff71a6f1af9b20d4f357ff8130f449ab4dc7810d482b9cf65b7dc716614a8",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "evidence_path_not_safe_relative"
+    },
+    {
+      "id": "N12-missing-issuer",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "evidence_keys_mismatch",
+        "issuer_missing"
+      ],
+      "input_sha256": "793aadbcc4ed34f7c8df777af946186bd42cc183554b236e9b4ac5c1785638c4",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "evidence_keys_mismatch"
+    },
+    {
+      "id": "N13-conflicting-build-identity",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "conflicting_build_identity",
+        "field_value_conflicts_with_build_identity"
+      ],
+      "input_sha256": "a469ffd6d91454c47d373090e926f1836eb7f6a4315c99180c459c3744610ac3",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "conflicting_build_identity"
+    },
+    {
+      "id": "N14-mixed-product-release-binding",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "conflicting_build_identity"
+      ],
+      "input_sha256": "08bf244a7edc3d247b7c2d22a201cc8f4b12cea4a190f6e7181c4fcc170472e0",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "conflicting_build_identity"
+    },
+    {
+      "id": "N15-status-spoof-extra-field",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "unexpected_or_missing_top_level_keys"
+      ],
+      "input_sha256": "c5cf682b2c9a80b3346328f32ab787e4357a2df3e73eff6901fc20f3f244220b",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "unexpected_or_missing_top_level_keys"
+    },
+    {
+      "id": "N16-unverified-issuer-label-structural-only",
+      "passed": true,
+      "exit_code": 0,
+      "status": "STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW",
+      "admission_ready": false,
+      "error_codes": [],
+      "input_sha256": "a4c3f5e790f821219b37773c02736638eedc7fcb986340397b7029d4ea25c30d",
+      "expected_exit_code": 0,
+      "expected_status": "STRUCTURE_COMPLETE_REQUIRES_INDEPENDENT_REVIEW",
+      "expected_error": null
+    },
+    {
+      "id": "N17-manifest-uri-digest-not-bound-to-retrieved-bytes",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "manifest_digest_does_not_match_evidence_bytes"
+      ],
+      "input_sha256": "7a5b5141001e142634684c4178e19d01e5a2422a62fb90480b1ca0a2d6604412",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "manifest_digest_does_not_match_evidence_bytes"
+    },
+    {
+      "id": "N18-manifest-uri-unresolved",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "manifest_digest_does_not_match_evidence_bytes"
+      ],
+      "input_sha256": "68d0d1dc2f404a512bbc6782de7fd09fedcfff5abb45129141760107f55f5af6",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "manifest_digest_does_not_match_evidence_bytes"
+    },
+    {
+      "id": "N19-fake-immutable-commit-unresolved",
+      "passed": true,
+      "exit_code": 2,
+      "status": "WAITING_OR_BLOCKED",
+      "admission_ready": false,
+      "error_codes": [
+        "manifest_commit_unresolved_or_evidence_bytes_mismatch"
+      ],
+      "input_sha256": "dc17b97214a075bff3f19f55143923af0c4b33c0fb186d8f815c3e28964c83ea",
+      "expected_exit_code": 2,
+      "expected_status": "WAITING_OR_BLOCKED",
+      "expected_error": "manifest_commit_unresolved_or_evidence_bytes_mismatch"
+    },
+    {
+      "id": "N20-symlink-or-junction-escape",
+      "passed": true,
+      "status": "WAITING_OR_BLOCKED",
+      "exit_code": 2,
+      "admission_ready": false,
+      "error_codes": [
+        "evidence_path_contains_symlink_or_reparse_point"
+      ],
+      "input_sha256": "b457050a4694859221a03273f0891b4beb827d349040681f38546d891213f06b",
+      "link_type": "JUNCTION"
+    }
+  ],
+  "limitation": "Synthetic structural gate tests only. No real issuer, manifest authority, product identity, source custody, or product build was verified."
+}
