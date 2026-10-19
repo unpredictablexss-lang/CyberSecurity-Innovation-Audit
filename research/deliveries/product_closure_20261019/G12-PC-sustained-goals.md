@@ -55,3 +55,4 @@ D3/T2/T6 并行交付已完成：D3 完成 source-side PC-3 定位但产品入�
 - **持续反馈:** 每个 D2 source verifier 更新由 T4 复算对象统计和错误门；每个 T2 pipeline 更新先用合成负例验证，再由 owner/T2 独立复跑。获得产品 owner 或独立 holdout owner 的真实材料前，维持所有对应 blocked/unknown 状态。
 
 - D2 按 T4 反馈把缺失/错误类型 commit、缺 tree、expected-path blocker 和 ancestry 非 PASS 纳入 verifier failure gate；owner 重跑 self-test 和 build-profile 16 项 suite 通过。T4 独立验收通过；接下来仍须保持未记录字段和无锚点案例 UNKNOWN，等待 source owner 提供三案锚点。
+- **D5/T5 intake gate:** T5 在 D5 初版发现 manifest URI 摘要未绑定证据字节，D5 修复后 T5 对精确新 SHA 的 21 项黑盒复测通过；正例仍返回 `admission_ready=false`。此 gate 只校验结构和本地字节摘要，不验证 issuer、证据内容、URL 可达、custody 或产品构建关系。六项产品身份仍全为 null，PC-1 维持 0/16 blocked；真实 build profile 收集等待产品 owner 提供唯一目标身份。
